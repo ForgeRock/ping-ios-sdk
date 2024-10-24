@@ -39,7 +39,7 @@ final class NodeTests: XCTestCase {
 }
 
 // Supporting Test Classes
-class WorkflowMock: Workflow {
+class WorkflowMock: Workflow, @unchecked Sendable {
     var nextReturnValue: Node?
   override func next(_ context: FlowContext, _ current: ContinueNode) async -> Node {
         return nextReturnValue ?? NodeMock()
@@ -48,9 +48,9 @@ class WorkflowMock: Workflow {
 
 class FlowContextMock: FlowContext {}
 
-class NodeMock: Node {}
+final class NodeMock: Node, Sendable {}
 
-class TestContinueNode: ContinueNode {
+class TestContinueNode: ContinueNode, @unchecked Sendable  {
     override func asRequest() -> Request {
         return RequestMock(urlString: "https://openam.example.com")
     }

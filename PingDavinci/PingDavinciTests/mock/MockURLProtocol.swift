@@ -13,9 +13,10 @@ import Foundation
 import XCTest
 
 class MockURLProtocol: URLProtocol {
-    public static var requestHistory: [URLRequest] = [URLRequest]()
+  
+  nonisolated(unsafe)public static var requestHistory: [URLRequest] = [URLRequest]()
     
-    static var requestHandler: ((URLRequest) throws -> (HTTPURLResponse, Data))?
+  nonisolated(unsafe) static var requestHandler: ((URLRequest) throws -> (HTTPURLResponse, Data))?
     
     static func startInterceptingRequests() {
         URLProtocol.registerClass(MockURLProtocol.self)

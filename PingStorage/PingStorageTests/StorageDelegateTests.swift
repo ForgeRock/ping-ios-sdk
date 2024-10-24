@@ -12,7 +12,7 @@
 import XCTest
 @testable import PingStorage
 
-final class StorageDelegateTests: XCTestCase {
+final class StorageDelegateTests: XCTestCase, @unchecked Sendable {
   private var storageDelegate: StorageDelegate<TestItem>!
   private var memoryStorage: MemoryStorage<TestItem>!
 

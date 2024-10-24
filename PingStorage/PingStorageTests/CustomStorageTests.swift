@@ -67,7 +67,7 @@ public class CustomStorage<T: Codable>: Storage {
 
 }
 
-public class CustomStorageDelegate<T: Codable & Sendable>: StorageDelegate<T> {
+public class CustomStorageDelegate<T: Codable & Sendable>: StorageDelegate<T>, @unchecked Sendable {
   public init(cacheable: Bool = false) {
     super.init(delegate: CustomStorage<T>(), cacheable: cacheable)
   }
