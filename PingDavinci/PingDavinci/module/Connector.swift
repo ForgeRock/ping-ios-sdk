@@ -1,5 +1,5 @@
 //
-//  DavinciConnector.swift
+//  Connector.swift
 //  PingDavinci
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
@@ -13,33 +13,33 @@ import PingOrchestrate
 /// Extension to get the id of a ContinueNode.
 extension ContinueNode {
     public var id: String {
-        return (self as? DaVinciConnector)?.idValue ?? ""
+        return (self as? Connector)?.idValue ?? ""
     }
     
     public var name: String {
-        return (self as? DaVinciConnector)?.nameValue ?? ""
+        return (self as? Connector)?.nameValue ?? ""
     }
     
     public var description: String {
-        return (self as? DaVinciConnector)?.descriptionValue ?? ""
+        return (self as? Connector)?.descriptionValue ?? ""
     }
     
     public var category: String {
-        return (self as? DaVinciConnector)?.categoryValue ?? ""
+        return (self as? Connector)?.categoryValue ?? ""
     }
     
 }
 
 
-/// Class representing a DaVinciConnector.
+/// Class representing a Connector.
 ///- property context: The FlowContext of the ContinueNode.
-///- property workflow: The Workflow of the ContinueNode.
+///- property davinci: The Davinci Flow of the ContinueNode.
 ///- property input: The input JsonObject of the ContinueNode.
 ///- property collectors: The collectors of the ContinueNode.
-class DaVinciConnector: ContinueNode {
+class Connector: ContinueNode {
     
-    init(context: FlowContext, workflow: Workflow, input: [String: Any], collectors: Collectors) {
-        super.init(context: context, workflow: workflow, input: input, actions: collectors)
+  init(context: FlowContext, davinci: DaVinci, input: [String: Any], collectors: Collectors) {
+    super.init(context: context, workflow: davinci, input: input, actions: collectors)
     }
     
     /// Function to convert the connector to a dictionary.

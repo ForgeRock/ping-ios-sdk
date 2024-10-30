@@ -71,38 +71,40 @@ extension SuccessNode {
 /// - property user: The user.
 /// - property session: The session.
 struct UserDelegate: User, Session {
-    private let daVinci: DaVinci
-    private let user: User
-    private let session: Session
-    
-    init(daVinci: DaVinci, user: User, session: Session) {
-        self.daVinci = daVinci
-        self.user = user
-        self.session = session
+  private let daVinci: DaVinci
+  private let user: User
+  private let session: Session
+  
+  init(daVinci: DaVinci, user: User, session: Session) {
+    self.daVinci = daVinci
+    self.user = user
+    self.session = session
+  }
+  
+  /// Method to log out the user.
+  /// This method removes the cached user from the context and signs off the user.
+  func logout() async {
+    // remove the cached user from the context
+    _ = daVinci.sharedContext.removeValue(forKey: SharedContext.Keys.userKey)
+    // instead of calling `OidcClient.endSession` directly, we call `DaVinci.signOff` to sign off the user
+    _ = await daVinci.signOff()
+  }
+  
+  func token() async -> Result<Token, OidcError> {
+    return await user.token()
+  }
+  
+  func revoke() async {
+    await user.revoke()
+  }
+  
+  func userinfo(cache: Bool) async -> Result<UserInfo, OidcError> {
+    await user.userinfo(cache: cache)
+  }
+  
+  var value: String {
+    get {
+      return session.value
     }
-    
-    /// Method to log out the user.
-    /// This method removes the cached user from the context and signs off the user.
-    func logout() async {
-        // remove the cached user from the context
-        _ = daVinci.sharedContext.removeValue(forKey: SharedContext.Keys.userKey)
-        // instead of calling `OidcClient.endSession` directly, we call `DaVinci.signOff` to sign off the user
-        _ = await daVinci.signOff()
-    }
-    
-    func token() async -> Result<Token, OidcError> {
-        return await user.token()
-    }
-    
-    func revoke() async {
-        await user.revoke()
-    }
-    
-    func userinfo(cache: Bool) async -> Result<UserInfo, OidcError> {
-        await user.userinfo(cache: cache)
-    }
-    
-    func value() -> String {
-        return session.value()
-    }
+  }
 }
