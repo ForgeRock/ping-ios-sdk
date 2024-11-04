@@ -21,7 +21,7 @@ public protocol Closeable {
 public protocol Node: Sendable {}
 
 /// Represents an EmptyNode node in the workflow.
-public struct EmptyNode: Node, @unchecked Sendable {
+public struct EmptyNode: Node, Sendable {
   public init() {}
 }
 

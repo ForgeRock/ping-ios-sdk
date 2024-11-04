@@ -13,8 +13,8 @@ import Foundation
 import PingLogger
 
 /// `HttpClient` is responsible for handling HTTP requests and logging the details of those requests and responses.
-public final class HttpClient {
-    var session: URLSession
+public final class HttpClient: Sendable {
+    let session: URLSession
     
     /// Initializes a new instance of `HttpClient`.
     /// - Parameter session: The URLSession instance to be used for HTTP requests. Defaults to a session with `RedirectPreventer` delegate.
