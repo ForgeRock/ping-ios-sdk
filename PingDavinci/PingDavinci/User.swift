@@ -70,7 +70,7 @@ extension SuccessNode {
 /// - property daVinci: The DaVinci instance.
 /// - property user: The user.
 /// - property session: The session.
-struct UserDelegate: User, Session {
+struct UserDelegate: User, Session, Sendable {
     private let daVinci: DaVinci
     private let user: User
     private let session: Session

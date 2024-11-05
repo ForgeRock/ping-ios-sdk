@@ -28,7 +28,7 @@ public class Mock<T: Codable>: Storage {
     }
 }
 
-public class MockStorage<T: Codable>: StorageDelegate<T>, @unchecked Sendable {
+public class MockStorage<T: Codable & Sendable>: StorageDelegate<T>, @unchecked Sendable {
     public init(cacheable: Bool = false) {
         super.init(delegate: Mock<T>(), cacheable: cacheable)
     }

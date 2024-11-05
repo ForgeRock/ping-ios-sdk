@@ -10,7 +10,7 @@
 
 
 /// Class for an OIDC User
-public class OidcUser: User {
+public final class OidcUser: User, @unchecked Sendable {
     private var userinfo: UserInfo?
     private let oidcClient: OidcClient
     

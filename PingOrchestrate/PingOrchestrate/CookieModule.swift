@@ -12,6 +12,7 @@
 import Foundation
 import PingStorage
 
+/// Module for injecting cookies into requests.
 public actor CookieModule {
     
     public init() {}

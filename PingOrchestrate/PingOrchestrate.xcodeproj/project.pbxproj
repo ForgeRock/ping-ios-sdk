@@ -20,7 +20,7 @@
 		3A54417F2BCDF1D900385131 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5441742BCDF1D900385131 /* PingOrchestrate.framework */; };
 		3A5441842BCDF1D900385131 /* PingOrchestrateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5441832BCDF1D900385131 /* PingOrchestrateTests.swift */; };
 		3A5441852BCDF1D900385131 /* PingOrchestrate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A5441772BCDF1D900385131 /* PingOrchestrate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3A6D7F392CD9636700EFEBCC /* ThreadSafeHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6D7F382CD9636100EFEBCC /* ThreadSafeHelper.swift */; };
+		3A6D7F392CD9636700EFEBCC /* SendableHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6D7F382CD9636100EFEBCC /* SendableHelper.swift */; };
 		3A7575762C063F2A00891EC7 /* ModuleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7575752C063F2A00891EC7 /* ModuleTests.swift */; };
 		3A7575782C0673A100891EC7 /* ResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7575772C0673A100891EC7 /* ResponseTests.swift */; };
 		3A75757A2C06947000891EC7 /* SharedContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7575792C06947000891EC7 /* SharedContext.swift */; };
@@ -83,7 +83,7 @@
 		3A5441772BCDF1D900385131 /* PingOrchestrate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PingOrchestrate.h; sourceTree = "<group>"; };
 		3A54417E2BCDF1D900385131 /* PingOrchestrateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingOrchestrateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A5441832BCDF1D900385131 /* PingOrchestrateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOrchestrateTests.swift; sourceTree = "<group>"; };
-		3A6D7F382CD9636100EFEBCC /* ThreadSafeHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeHelper.swift; sourceTree = "<group>"; };
+		3A6D7F382CD9636100EFEBCC /* SendableHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendableHelper.swift; sourceTree = "<group>"; };
 		3A7575752C063F2A00891EC7 /* ModuleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleTests.swift; sourceTree = "<group>"; };
 		3A7575772C0673A100891EC7 /* ResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseTests.swift; sourceTree = "<group>"; };
 		3A7575792C06947000891EC7 /* SharedContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedContext.swift; sourceTree = "<group>"; };
@@ -151,7 +151,7 @@
 			children = (
 				A5A712452CAC523B00B7DD58 /* PrivacyInfo.xcprivacy */,
 				3A5441772BCDF1D900385131 /* PingOrchestrate.h */,
-				3A6D7F382CD9636100EFEBCC /* ThreadSafeHelper.swift */,
+				3A6D7F382CD9636100EFEBCC /* SendableHelper.swift */,
 				3A203DA92BE06DFF0020C995 /* CookieModule.swift */,
 				A51D4CE22C62EB4B00FE09E0 /* CustomHeader.swift */,
 				3A203DA12BE0312A0020C995 /* HttpClient.swift */,
@@ -330,7 +330,7 @@
 				3A75757A2C06947000891EC7 /* SharedContext.swift in Sources */,
 				3AB1C9E92BD6410A003FCE3C /* Response.swift in Sources */,
 				3A203D592BD9DC600020C995 /* Request.swift in Sources */,
-				3A6D7F392CD9636700EFEBCC /* ThreadSafeHelper.swift in Sources */,
+				3A6D7F392CD9636700EFEBCC /* SendableHelper.swift in Sources */,
 				A51D4CE32C62EB4B00FE09E0 /* CustomHeader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

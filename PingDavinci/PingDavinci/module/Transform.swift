@@ -80,7 +80,8 @@ public actor NodeTransformModule {
   }
 }
 
-struct SessionResponse: Session {
+struct SessionResponse: Session, Sendable {
+  nonisolated(unsafe)
   public let json: [String: Any]
   
   public init(json: [String: Any] = [:]) {

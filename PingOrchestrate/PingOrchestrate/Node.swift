@@ -10,10 +10,10 @@
 
 
 /// Protocol for actions
-public protocol Action {}
+public protocol Action: Sendable {}
 
 /// Protocol for closeable resources
-public protocol Closeable {
+public protocol Closeable: Sendable {
   func close()
 }
 
@@ -27,7 +27,7 @@ public struct EmptyNode: Node, Sendable {
 
 /// Represents an Failure node in the workflow.
 /// - property cause: The cause of the error.
-public struct FailureNode: Node, @unchecked Sendable {
+public struct FailureNode: Node, Sendable {
   public init(cause: any Error) {
     self.cause = cause
   }
@@ -39,7 +39,7 @@ public struct FailureNode: Node, @unchecked Sendable {
 /// - property status: The status of the error.
 /// - property input: The input for the error.
 /// - property message: The message for the error.
-public struct ErrorNode: Node, @unchecked Sendable {
+public struct ErrorNode: Node, Sendable {
   public init(status: Int? = nil,
               input: [String : Any] = [:],
               message: String = "") {
@@ -48,6 +48,7 @@ public struct ErrorNode: Node, @unchecked Sendable {
     self.status = status
   }
   
+  nonisolated(unsafe)
   public let input: [String: Any]
   public let message: String
   public let status: Int?
@@ -56,7 +57,8 @@ public struct ErrorNode: Node, @unchecked Sendable {
 /// Represents a success node in the workflow.
 /// - property input: The input for the success.
 /// - property session: The session for the success.
-public struct SuccessNode: Node, @unchecked Sendable {
+public struct SuccessNode: Node, Sendable {
+  nonisolated(unsafe)
   public let input: [String: Any]
   public let session: Session
   
@@ -75,6 +77,7 @@ open class ContinueNode: Node, @unchecked Sendable {
   public let context: FlowContext
   public let workflow: Workflow
   public let input: [String: Any]
+  
   public let actions: [any Action]
   
   public init(context: FlowContext, workflow: Workflow, input: [String: Any], actions: [any Action]) {
@@ -98,7 +101,7 @@ open class ContinueNode: Node, @unchecked Sendable {
 }
 
 /// Protocol for a Session. A Session represents a user's session in the application.
-public protocol Session {
+public protocol Session: Sendable {
   /// Returns the value of the session as a String.
   func value() -> String
 }
