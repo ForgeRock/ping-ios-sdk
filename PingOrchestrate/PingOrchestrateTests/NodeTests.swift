@@ -46,7 +46,7 @@ class WorkflowMock: Workflow, @unchecked Sendable {
     }
 }
 
-class FlowContextMock: FlowContext {}
+class FlowContextMock: FlowContext, @unchecked Sendable {}
 
 final class NodeMock: Node, Sendable {}
 
@@ -56,7 +56,7 @@ class TestContinueNode: ContinueNode, @unchecked Sendable  {
     }
 }
 
-class TestAction: Action, Closeable {
+class TestAction: Action, Closeable, @unchecked Sendable {
     var isClosed = false
     func close() {
         isClosed = true

@@ -10,7 +10,7 @@
 
 
 /// Provides methods for token management, user information retrieval, and logout.
-public protocol User {
+public protocol User: Sendable {
     /// Retrieves the token for the user.
     /// - Returns: A `Result` object containing either the `Token` or an `OidcError`.
     func token() async -> Result<Token, OidcError>

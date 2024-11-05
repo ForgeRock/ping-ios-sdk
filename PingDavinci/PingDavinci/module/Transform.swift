@@ -14,7 +14,7 @@ import PingOidc
 import PingOrchestrate
 
 /// Module for transforming the response from DaVinci to `Node`.
-public actor NodeTransformModule {
+public actor NodeTransformModule: Sendable {
   
   public static let config: Module<Void> = Module.of(setup: { setup in
     setup.transform { flowContext, response in
@@ -80,7 +80,8 @@ public actor NodeTransformModule {
   }
 }
 
-struct SessionResponse: Session {
+struct SessionResponse: Session, Sendable {
+  nonisolated(unsafe)
   public let json: [String: Any]
   
   public init(json: [String: Any] = [:]) {

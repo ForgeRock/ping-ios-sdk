@@ -13,7 +13,7 @@ import Foundation
 import PingOidc
 import PingOrchestrate
 
-public actor OidcModule {
+public actor OidcModule: Sendable {
     
     public init() {}
     

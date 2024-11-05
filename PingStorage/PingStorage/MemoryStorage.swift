@@ -12,7 +12,7 @@
 import Foundation
 
 /// A storage for storing objects in memory, where `T` is he type of the object to be stored.
-public class Memory<T: Codable & Sendable>: Storage {
+public class Memory<T: Codable>: Storage {
   private var data: T?
   
   /// Saves the given item in memory.

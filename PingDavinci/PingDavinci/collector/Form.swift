@@ -13,7 +13,7 @@ import Foundation
 
 /// Class that handles the parsing and JSON representation of collectors.
 /// This class provides functions to parse a JSON object into a list of collectors and to represent a list of collectors as a JSON object.
-actor Form {
+struct Form {
   
   /// Parses a JSON object into a list of collectors.
   ///  This function takes a JSON object and extracts the "form" field. It then iterates over the "fields" array in the "components" object,

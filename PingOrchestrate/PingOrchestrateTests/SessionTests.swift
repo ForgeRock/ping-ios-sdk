@@ -24,7 +24,7 @@ final class SessionTests: XCTestCase {
         XCTAssertEqual("session_value", session.value())
     }
     
-    class MockSession: Session {
+    final class MockSession: Session, Sendable {
         func value() -> String {
             return "session_value"
         }
