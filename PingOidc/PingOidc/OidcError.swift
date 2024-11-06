@@ -12,7 +12,7 @@
 import Foundation
 
 /// enum fopr class for OIDC errors.
-public enum OidcError: LocalizedError {
+public enum OidcError: LocalizedError, Sendable {
     case authorizeError(cause: Error? = nil, message: String? = nil)
     case networkError(cause: Error? = nil, message: String? = nil)
     case apiError(code: Int, message: String)

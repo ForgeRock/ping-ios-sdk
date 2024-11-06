@@ -20,12 +20,10 @@ final class KeychainStorageTests: XCTestCase {
         keychainStorage = KeychainStorage(account: "testAccount", encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
     }
 
-    override func tearDown() {
-      Task {
-        try? await keychainStorage.delete()
-        keychainStorage = nil
-      }
-      super.tearDown()
+    override func tearDown() async throws {
+      try? await keychainStorage.delete()
+      keychainStorage = nil
+      try await super.tearDown()
     }
 
     func testSaveItem() async throws {

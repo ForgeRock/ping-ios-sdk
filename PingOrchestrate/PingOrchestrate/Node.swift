@@ -10,24 +10,24 @@
 
 
 /// Protocol for actions
-public protocol Action {}
+public protocol Action: Sendable {}
 
 /// Protocol for closeable resources
-public protocol Closeable {
+public protocol Closeable: Sendable {
   func close()
 }
 
 /// Protocol for Node. Represents a node in the workflow.
-public protocol Node {}
+public protocol Node: Sendable {}
 
 /// Represents an EmptyNode node in the workflow.
-public struct EmptyNode: Node {
+public struct EmptyNode: Node, Sendable {
   public init() {}
 }
 
 /// Represents an Failure node in the workflow.
 /// - property cause: The cause of the error.
-public struct FailureNode: Node {
+public struct FailureNode: Node, Sendable {
   public init(cause: any Error) {
     self.cause = cause
   }
@@ -39,7 +39,7 @@ public struct FailureNode: Node {
 /// - property status: The status of the error.
 /// - property input: The input for the error.
 /// - property message: The message for the error.
-public struct ErrorNode: Node {
+public struct ErrorNode: Node, Sendable {
   public init(status: Int? = nil,
               input: [String : Any] = [:],
               message: String = "") {
@@ -48,6 +48,7 @@ public struct ErrorNode: Node {
     self.status = status
   }
   
+  nonisolated(unsafe)
   public let input: [String: Any]
   public let message: String
   public let status: Int?
@@ -56,7 +57,8 @@ public struct ErrorNode: Node {
 /// Represents a success node in the workflow.
 /// - property input: The input for the success.
 /// - property session: The session for the success.
-public struct SuccessNode: Node {
+public struct SuccessNode: Node, Sendable {
+  nonisolated(unsafe)
   public let input: [String: Any]
   public let session: Session
   
@@ -71,10 +73,11 @@ public struct SuccessNode: Node {
 /// - property workflow: The workflow for the node.
 /// - property input: The input for the node.
 /// - property actions: The actions for the node.
-open class ContinueNode: Node, Closeable {
+open class ContinueNode: Node, @unchecked Sendable {
   public let context: FlowContext
   public let workflow: Workflow
   public let input: [String: Any]
+  
   public let actions: [any Action]
   
   public init(context: FlowContext, workflow: Workflow, input: [String: Any], actions: [any Action]) {
@@ -98,14 +101,14 @@ open class ContinueNode: Node, Closeable {
 }
 
 /// Protocol for a Session. A Session represents a user's session in the application.
-public protocol Session {
+public protocol Session: Sendable {
   /// Returns the value of the session as a String.
   func value() -> String
 }
 
 
 /// Singleton for an EmptySession. An EmptySession represents a session with no value.
-public struct EmptySession: Session {
+public struct EmptySession: Session, Sendable {
   public init() {}
   
   /// The value of the empty session as a String.

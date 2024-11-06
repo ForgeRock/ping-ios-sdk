@@ -41,7 +41,7 @@ public class Memory<T: Codable>: Storage {
 /// The generic type `T` must conform to `Codable` to ensure that objects can be encoded and decoded when written to and read from memory, respectively.
 ///
 /// - Parameter T: The type of the objects to be stored. Must conform to `Codable`.
-public class MemoryStorage<T: Codable>: StorageDelegate<T> {
+public class MemoryStorage<T: Codable & Sendable>: StorageDelegate<T>, @unchecked Sendable {
   /// Initializes a new instance of `MemoryStorage`.
   ///
   /// This initializer creates a `MemoryStorage` instance that acts as a delegate for an in-memory storage

@@ -12,7 +12,8 @@
 import Foundation
 import PingStorage
 
-public class CookieModule {
+/// Module for injecting cookies into requests.
+public actor CookieModule {
     
     public init() {}
     
@@ -153,7 +154,7 @@ extension Workflow {
     }
 }
 
-public final class InMemoryCookieStorage: HTTPCookieStorage {
+public final class InMemoryCookieStorage: HTTPCookieStorage, @unchecked Sendable {
     private var cookieStore: [HTTPCookie] = []
     
     public override func setCookie(_ cookie: HTTPCookie) {
