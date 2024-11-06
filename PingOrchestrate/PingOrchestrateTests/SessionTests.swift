@@ -1,4 +1,4 @@
-// 
+//
 //  SessionTests.swift
 //  PingOrchestrateTests
 //
@@ -14,19 +14,18 @@ import XCTest
 @testable import PingOrchestrate
 
 final class SessionTests: XCTestCase {
-    
-    func testEmptySessionValueShouldReturnEmptyString() {
-        XCTAssertEqual("", EmptySession().value())
-    }
-    
-    func testSessionValueShouldReturnCorrectSessionValue() {
-        let session = MockSession()
-        XCTAssertEqual("session_value", session.value())
-    }
-    
-    class MockSession: Session {
-        func value() -> String {
-            return "session_value"
-        }
-    }
+  
+  func testEmptySessionValueShouldReturnEmptyString() {
+    XCTAssertEqual("", EmptySession().value)
+  }
+  
+  func testSessionValueShouldReturnCorrectSessionValue() {
+    let session = MockSession()
+    XCTAssertEqual("session_value", session.value)
+  }
+  
+  class MockSession: Session {
+    var value: String = "session_value"
+  }
+  
 }

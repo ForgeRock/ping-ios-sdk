@@ -55,7 +55,7 @@ public class NodeTransformModule {
           return FailureNode(cause: ApiError.error(status, json, body))
         }
         
-        return transform(context: flowContext, workflow: setup.workflow, json: json)
+        return transform(context: flowContext, davinci: setup.workflow, json: json)
       }
       
       // 5XX errors are treated as unrecoverable failures
@@ -64,7 +64,7 @@ public class NodeTransformModule {
     
   })
   
-  private static func transform(context: FlowContext, workflow: Workflow, json: [String: Any]) -> Node {
+  private static func transform(context: FlowContext, davinci: DaVinci, json: [String: Any]) -> Node {
     // If authorizeResponse is present, return success
     if let _ = json[Constants.authorizeResponse] as? [String: Any] {
       return SuccessNode(input: json, session: SessionResponse(json: json))
@@ -75,7 +75,7 @@ public class NodeTransformModule {
       collectors.append(contentsOf: Form.parse(json: json))
     }
     
-    return DaVinciConnector(context: context, workflow: workflow, input: json, collectors: collectors)
+    return Connector(context: context, davinci: davinci, input: json, collectors: collectors)
   }
 }
 
@@ -86,10 +86,13 @@ struct SessionResponse: Session {
     self.json = json
   }
   
-  func value() -> String {
-    let authResponse = json[Constants.authorizeResponse] as? [String: Any]
-    return authResponse?[Constants.code] as? String ?? ""
+  var value: String {
+    get {
+      let authResponse = json[Constants.authorizeResponse] as? [String: Any]
+      return authResponse?[Constants.code] as? String ?? ""
+    }
   }
+  
 }
 
 public enum ApiError: Error {

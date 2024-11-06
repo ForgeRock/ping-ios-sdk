@@ -37,7 +37,7 @@ internal class CreateAgent: Agent {
     func authorize(oidcConfig: OidcConfig<T>) async throws -> AuthCode {
         // We don't get the state; The state may not be returned since this is primarily for
         // CSRF in redirect-based interactions, and pi.flow doesn't use redirect.
-        guard !session.value().isEmpty else {
+        guard !session.value.isEmpty else {
             throw OidcError.authorizeError(message: "Please start DaVinci flow to authenticate.")
         }
         guard !used else {
@@ -53,6 +53,6 @@ internal class CreateAgent: Agent {
 extension Session {
     func authCode(pkce: Pkce?) -> AuthCode {
         // parse the response and return the auth code
-        return AuthCode(code: value(), codeVerifier: pkce?.codeVerifier)
+        return AuthCode(code: value, codeVerifier: pkce?.codeVerifier)
     }
 }

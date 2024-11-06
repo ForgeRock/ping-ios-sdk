@@ -100,7 +100,7 @@ open class ContinueNode: Node, Closeable {
 /// Protocol for a Session. A Session represents a user's session in the application.
 public protocol Session {
   /// Returns the value of the session as a String.
-  func value() -> String
+  var value: String { get }
 }
 
 
@@ -109,7 +109,6 @@ public struct EmptySession: Session {
   public init() {}
   
   /// The value of the empty session as a String.
-  public func value() -> String {
-    return ""
-  }
+  public var value: String = ""
+ 
 }
