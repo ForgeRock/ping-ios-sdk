@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A5A796F92BE1782E004D0F2D"
-               BuildableName = "PingStorage.framework"
-               BlueprintName = "PingStorage"
-               ReferencedContainer = "container:PingStorage.xcodeproj">
+               BuildableName = "Storage.framework"
+               BlueprintName = "Storage"
+               ReferencedContainer = "container:Storage.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -36,9 +36,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A5A797032BE1782F004D0F2D"
-               BuildableName = "PingStorageTests.xctest"
-               BlueprintName = "PingStorageTests"
-               ReferencedContainer = "container:PingStorage.xcodeproj">
+               BuildableName = "StorageTests.xctest"
+               BlueprintName = "StorageTests"
+               ReferencedContainer = "container:Storage.xcodeproj">
             </BuildableReference>
             <SkippedTests>
                <Test
@@ -69,9 +69,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A5A796F92BE1782E004D0F2D"
-            BuildableName = "PingStorage.framework"
-            BlueprintName = "PingStorage"
-            ReferencedContainer = "container:PingStorage.xcodeproj">
+            BuildableName = "Storage.framework"
+            BlueprintName = "Storage"
+            ReferencedContainer = "container:Storage.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

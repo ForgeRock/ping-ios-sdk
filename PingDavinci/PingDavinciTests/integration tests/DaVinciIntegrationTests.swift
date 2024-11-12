@@ -13,7 +13,7 @@ import XCTest
 @testable import PingOrchestrate
 @testable import PingLogger
 @testable import PingOidc
-@testable import PingStorage
+@testable import Storage
 @testable import PingDavinci
 
 class DaVinciIntegrationTests: XCTestCase {

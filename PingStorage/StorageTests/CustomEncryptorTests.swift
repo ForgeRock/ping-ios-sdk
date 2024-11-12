@@ -1,6 +1,6 @@
 //
 //  CustomEncryptorTests.swift
-//  PingStorageTests
+//  StorageTests
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -11,7 +11,7 @@
 
 import Foundation
 import XCTest
-@testable import PingStorage
+@testable import Storage
 
 final class CustomEncryptorTests: XCTestCase {
   var encryptor: CustomEncryptor!

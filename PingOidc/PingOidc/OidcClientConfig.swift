@@ -12,7 +12,7 @@
 import Foundation
 import PingOrchestrate
 import PingLogger
-import PingStorage
+import Storage
 
 public class OidcClientConfig {
     public var openId: OpenIdConfiguration?

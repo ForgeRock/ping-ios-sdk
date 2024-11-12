@@ -13,7 +13,7 @@ import XCTest
 @testable import PingOidc
 @testable import PingOrchestrate
 @testable import PingLogger
-@testable import PingStorage
+@testable import Storage
 
 final class OidcClientConfigTests: XCTestCase {
     

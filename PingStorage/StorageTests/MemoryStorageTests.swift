@@ -1,6 +1,6 @@
 //
 //  MemoryStorageTests.swift
-//  PingStorageTests
+//  StorageTests
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -10,7 +10,7 @@
 
 
 import XCTest
-@testable import PingStorage
+@testable import Storage
 
 final class MemoryStorageTests: XCTestCase {
     private var memoryStorage: MemoryStorage<TestItem>!

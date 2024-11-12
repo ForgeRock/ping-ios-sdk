@@ -1,6 +1,6 @@
 //
 //  SecuredKey.swift
-//  PingStorage
+//  Storage
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //

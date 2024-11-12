@@ -12,7 +12,7 @@
 import Foundation
 import XCTest
 @testable import PingOrchestrate
-@testable import PingStorage
+@testable import Storage
 @testable import PingLogger
 @testable import PingOidc
 @testable import PingDavinci

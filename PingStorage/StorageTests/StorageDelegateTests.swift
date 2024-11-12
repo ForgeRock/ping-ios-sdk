@@ -1,6 +1,6 @@
 //
 //  StorageDelegateTests.swift
-//  PingStorageTests
+//  StorageTests
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -10,7 +10,7 @@
 
 
 import XCTest
-@testable import PingStorage
+@testable import Storage
 
 final class StorageDelegateTests: XCTestCase {
   private var storageDelegate: StorageDelegate<TestItem>!
