@@ -1,6 +1,6 @@
 //
-//  PingLoggerTests.swift
-//  PingLoggerTests
+//  LoggerTests.swift
+//  LoggerTests
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -10,9 +10,9 @@
 
 
 import XCTest
-@testable import PingLogger
+@testable import Logger
 
-final class PingLoggerTests: XCTestCase {
+final class LoggerTests: XCTestCase {
 
   func testLoggerSetAndGet() {
     let noneLogger = NoneLogger()

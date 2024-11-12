@@ -1,6 +1,6 @@
 //
 //  StandardLogger.swift
-//  PingLogger
+//  Logger
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //

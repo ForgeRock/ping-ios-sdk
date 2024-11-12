@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		A5A712402CAC51BE00B7DD58 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5A7123F2CAC51BE00B7DD58 /* PrivacyInfo.xcprivacy */; };
-		A5A796B72BE04E68004D0F2D /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A796AE2BE04E67004D0F2D /* PingLogger.framework */; };
-		A5A796BC2BE04E68004D0F2D /* PingLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A796BB2BE04E68004D0F2D /* PingLoggerTests.swift */; };
-		A5A796BD2BE04E68004D0F2D /* PingLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A796B12BE04E67004D0F2D /* PingLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A5A796B72BE04E68004D0F2D /* Logger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A796AE2BE04E67004D0F2D /* Logger.framework */; };
+		A5A796BC2BE04E68004D0F2D /* LoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A796BB2BE04E68004D0F2D /* LoggerTests.swift */; };
+		A5A796BD2BE04E68004D0F2D /* Logger.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A796B12BE04E67004D0F2D /* Logger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5A796D02BE04EDE004D0F2D /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A796CF2BE04EDE004D0F2D /* Logger.swift */; };
 		A5A796D22BE050DB004D0F2D /* NoneLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A796D12BE050DB004D0F2D /* NoneLogger.swift */; };
 		A5A796D62BE05C9B004D0F2D /* StandardLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A796D52BE05C9B004D0F2D /* StandardLogger.swift */; };
@@ -28,10 +28,10 @@
 
 /* Begin PBXFileReference section */
 		A5A7123F2CAC51BE00B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		A5A796AE2BE04E67004D0F2D /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A5A796B12BE04E67004D0F2D /* PingLogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PingLogger.h; sourceTree = "<group>"; };
-		A5A796B62BE04E68004D0F2D /* PingLoggerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingLoggerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A5A796BB2BE04E68004D0F2D /* PingLoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingLoggerTests.swift; sourceTree = "<group>"; };
+		A5A796AE2BE04E67004D0F2D /* Logger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Logger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5A796B12BE04E67004D0F2D /* Logger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
+		A5A796B62BE04E68004D0F2D /* LoggerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LoggerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5A796BB2BE04E68004D0F2D /* LoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerTests.swift; sourceTree = "<group>"; };
 		A5A796CF2BE04EDE004D0F2D /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		A5A796D12BE050DB004D0F2D /* NoneLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoneLogger.swift; sourceTree = "<group>"; };
 		A5A796D52BE05C9B004D0F2D /* StandardLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandardLogger.swift; sourceTree = "<group>"; };
@@ -49,7 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5A796B72BE04E68004D0F2D /* PingLogger.framework in Frameworks */,
+				A5A796B72BE04E68004D0F2D /* Logger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,8 +59,8 @@
 		A5A796A42BE04E67004D0F2D = {
 			isa = PBXGroup;
 			children = (
-				A5A796B02BE04E67004D0F2D /* PingLogger */,
-				A5A796BA2BE04E68004D0F2D /* PingLoggerTests */,
+				A5A796B02BE04E67004D0F2D /* Logger */,
+				A5A796BA2BE04E68004D0F2D /* LoggerTests */,
 				A5A796AF2BE04E67004D0F2D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,30 +68,30 @@
 		A5A796AF2BE04E67004D0F2D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A5A796AE2BE04E67004D0F2D /* PingLogger.framework */,
-				A5A796B62BE04E68004D0F2D /* PingLoggerTests.xctest */,
+				A5A796AE2BE04E67004D0F2D /* Logger.framework */,
+				A5A796B62BE04E68004D0F2D /* LoggerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A5A796B02BE04E67004D0F2D /* PingLogger */ = {
+		A5A796B02BE04E67004D0F2D /* Logger */ = {
 			isa = PBXGroup;
 			children = (
 				A5A7123F2CAC51BE00B7DD58 /* PrivacyInfo.xcprivacy */,
-				A5A796B12BE04E67004D0F2D /* PingLogger.h */,
+				A5A796B12BE04E67004D0F2D /* Logger.h */,
 				A5A796CF2BE04EDE004D0F2D /* Logger.swift */,
 				A5A796D12BE050DB004D0F2D /* NoneLogger.swift */,
 				A5A796D52BE05C9B004D0F2D /* StandardLogger.swift */,
 			);
-			path = PingLogger;
+			path = Logger;
 			sourceTree = "<group>";
 		};
-		A5A796BA2BE04E68004D0F2D /* PingLoggerTests */ = {
+		A5A796BA2BE04E68004D0F2D /* LoggerTests */ = {
 			isa = PBXGroup;
 			children = (
-				A5A796BB2BE04E68004D0F2D /* PingLoggerTests.swift */,
+				A5A796BB2BE04E68004D0F2D /* LoggerTests.swift */,
 			);
-			path = PingLoggerTests;
+			path = LoggerTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -101,16 +101,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5A796BD2BE04E68004D0F2D /* PingLogger.h in Headers */,
+				A5A796BD2BE04E68004D0F2D /* Logger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		A5A796AD2BE04E67004D0F2D /* PingLogger */ = {
+		A5A796AD2BE04E67004D0F2D /* Logger */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A5A796C02BE04E68004D0F2D /* Build configuration list for PBXNativeTarget "PingLogger" */;
+			buildConfigurationList = A5A796C02BE04E68004D0F2D /* Build configuration list for PBXNativeTarget "Logger" */;
 			buildPhases = (
 				A5A796A92BE04E67004D0F2D /* Headers */,
 				A5A796AA2BE04E67004D0F2D /* Sources */,
@@ -121,14 +121,14 @@
 			);
 			dependencies = (
 			);
-			name = PingLogger;
+			name = Logger;
 			productName = PingLogger;
-			productReference = A5A796AE2BE04E67004D0F2D /* PingLogger.framework */;
+			productReference = A5A796AE2BE04E67004D0F2D /* Logger.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		A5A796B52BE04E68004D0F2D /* PingLoggerTests */ = {
+		A5A796B52BE04E68004D0F2D /* LoggerTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A5A796C32BE04E68004D0F2D /* Build configuration list for PBXNativeTarget "PingLoggerTests" */;
+			buildConfigurationList = A5A796C32BE04E68004D0F2D /* Build configuration list for PBXNativeTarget "LoggerTests" */;
 			buildPhases = (
 				A5A796B22BE04E68004D0F2D /* Sources */,
 				A5A796B32BE04E68004D0F2D /* Frameworks */,
@@ -139,9 +139,9 @@
 			dependencies = (
 				A5A796B92BE04E68004D0F2D /* PBXTargetDependency */,
 			);
-			name = PingLoggerTests;
+			name = LoggerTests;
 			productName = PingLoggerTests;
-			productReference = A5A796B62BE04E68004D0F2D /* PingLoggerTests.xctest */;
+			productReference = A5A796B62BE04E68004D0F2D /* LoggerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -163,7 +163,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A5A796A82BE04E67004D0F2D /* Build configuration list for PBXProject "PingLogger" */;
+			buildConfigurationList = A5A796A82BE04E67004D0F2D /* Build configuration list for PBXProject "Logger" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -176,8 +176,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A5A796AD2BE04E67004D0F2D /* PingLogger */,
-				A5A796B52BE04E68004D0F2D /* PingLoggerTests */,
+				A5A796AD2BE04E67004D0F2D /* Logger */,
+				A5A796B52BE04E68004D0F2D /* LoggerTests */,
 			);
 		};
 /* End PBXProject section */
@@ -215,7 +215,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5A796BC2BE04E68004D0F2D /* PingLoggerTests.swift in Sources */,
+				A5A796BC2BE04E68004D0F2D /* LoggerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,7 +224,7 @@
 /* Begin PBXTargetDependency section */
 		A5A796B92BE04E68004D0F2D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A5A796AD2BE04E67004D0F2D /* PingLogger */;
+			target = A5A796AD2BE04E67004D0F2D /* Logger */;
 			targetProxy = A5A796B82BE04E68004D0F2D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -379,7 +379,8 @@
 				MARKETING_VERSION = "0.9.0-beta2";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingLogger;
+				OTHER_SWIFT_FLAGS = "-no-verify-emitted-module-interface";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Logger;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -414,7 +415,8 @@
 				MARKETING_VERSION = "0.9.0-beta2";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingLogger;
+				OTHER_SWIFT_FLAGS = "-no-verify-emitted-module-interface";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Logger;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -433,7 +435,8 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingLoggerTests;
+				OTHER_SWIFT_FLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.LoggerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -451,7 +454,8 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingLoggerTests;
+				OTHER_SWIFT_FLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.LoggerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -463,7 +467,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A5A796A82BE04E67004D0F2D /* Build configuration list for PBXProject "PingLogger" */ = {
+		A5A796A82BE04E67004D0F2D /* Build configuration list for PBXProject "Logger" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A5A796BE2BE04E68004D0F2D /* Debug */,
@@ -472,7 +476,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A5A796C02BE04E68004D0F2D /* Build configuration list for PBXNativeTarget "PingLogger" */ = {
+		A5A796C02BE04E68004D0F2D /* Build configuration list for PBXNativeTarget "Logger" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A5A796C12BE04E68004D0F2D /* Debug */,
@@ -481,7 +485,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A5A796C32BE04E68004D0F2D /* Build configuration list for PBXNativeTarget "PingLoggerTests" */ = {
+		A5A796C32BE04E68004D0F2D /* Build configuration list for PBXNativeTarget "LoggerTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A5A796C42BE04E68004D0F2D /* Debug */,

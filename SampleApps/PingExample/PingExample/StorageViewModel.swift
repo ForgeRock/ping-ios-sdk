@@ -10,7 +10,7 @@
 
 import Foundation
 import Storage
-import PingLogger
+import Logger
 
 class StorageViewModel {
     

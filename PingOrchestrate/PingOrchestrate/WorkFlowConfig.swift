@@ -10,7 +10,7 @@
 
 
 import Foundation
-import PingLogger
+import Logger
 
 /// Enum representing the mode of module override.
 public enum OverrideMode {

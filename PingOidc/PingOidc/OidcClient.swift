@@ -10,7 +10,7 @@
 
 
 import Foundation
-import PingLogger
+import Logger
 import PingOrchestrate
 
 /// Class representing an OpenID Connect client.

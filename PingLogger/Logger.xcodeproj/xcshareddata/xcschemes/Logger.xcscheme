@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A5A796AD2BE04E67004D0F2D"
-               BuildableName = "PingLogger.framework"
-               BlueprintName = "PingLogger"
-               ReferencedContainer = "container:PingLogger.xcodeproj">
+               BuildableName = "Logger.framework"
+               BlueprintName = "Logger"
+               ReferencedContainer = "container:Logger.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -36,9 +36,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A5A796B52BE04E68004D0F2D"
-               BuildableName = "PingLoggerTests.xctest"
-               BlueprintName = "PingLoggerTests"
-               ReferencedContainer = "container:PingLogger.xcodeproj">
+               BuildableName = "LoggerTests.xctest"
+               BlueprintName = "LoggerTests"
+               ReferencedContainer = "container:Logger.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -64,9 +64,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A5A796AD2BE04E67004D0F2D"
-            BuildableName = "PingLogger.framework"
-            BlueprintName = "PingLogger"
-            ReferencedContainer = "container:PingLogger.xcodeproj">
+            BuildableName = "Logger.framework"
+            BlueprintName = "Logger"
+            ReferencedContainer = "container:Logger.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

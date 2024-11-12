@@ -18,23 +18,6 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:..\/PingLogger\/PingLogger.xcodeproj",
-        "identifier" : "A5A796B52BE04E68004D0F2D",
-        "name" : "PingLoggerTests"
-      }
-    },
-    {
-      "skippedTests" : [
-        "StorageDelegateTests\/testConcurrentAccess()"
-      ],
-      "target" : {
-        "containerPath" : "container:..\/PingStorage\/PingStorage.xcodeproj",
-        "identifier" : "A5A797032BE1782F004D0F2D",
-        "name" : "PingStorageTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/PingOidc\/PingOidc.xcodeproj",
         "identifier" : "3AB1CA0E2BD6F99C003FCE3C",
         "name" : "PingOidcTests"
@@ -57,6 +40,23 @@
         "containerPath" : "container:..\/PingOrchestrate\/PingOrchestrate.xcodeproj",
         "identifier" : "3A54417D2BCDF1D900385131",
         "name" : "PingOrchestrateTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/PingLogger\/Logger.xcodeproj",
+        "identifier" : "A5A796B52BE04E68004D0F2D",
+        "name" : "LoggerTests"
+      }
+    },
+    {
+      "skippedTests" : [
+        "StorageDelegateTests\/testConcurrentAccess()"
+      ],
+      "target" : {
+        "containerPath" : "container:..\/PingStorage\/Storage.xcodeproj",
+        "identifier" : "A5A797032BE1782F004D0F2D",
+        "name" : "StorageTests"
       }
     }
   ],

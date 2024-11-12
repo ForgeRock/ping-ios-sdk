@@ -11,7 +11,7 @@
 
 import Foundation
 import XCTest
-import PingLogger
+import Logger
 
 class MockURLProtocol: URLProtocol {
     public static var requestHistory: [URLRequest] = [URLRequest]()

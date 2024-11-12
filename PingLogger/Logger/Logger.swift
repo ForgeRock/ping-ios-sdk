@@ -1,6 +1,6 @@
 //
-//  NoneLogger.swift
-//  PingLogger
+//  Logger.swift
+//  Logger
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -11,31 +11,36 @@
 
 import Foundation
 
-/// The None class is an implementation of the Logger interface that performs no operations.
-/// This can be used as a default or placeholder logger.
-public class NoneLogger: Logger {
+/// Logger protocol that provides methods for logging different levels of information.
+public protocol Logger {
   /// Logs a debug message.
   /// - Parameter message: The debug message to be logged.
-  public func d(_ message: String) {}
+  func d(_ message: String)
 
   /// Logs an informational message.
   /// - Parameter message: The message to be logged.
-  public func i(_ message: String) {}
+  func i(_ message: String)
 
   /// Logs a warning message.
   /// - Parameters:
   ///   - message: The warning message to be logged.
   ///   - error: Optional Error associated with the warning.
-  public func w(_ message: String, error: Error?) {}
-
+  func w(_ message: String, error: Error?)
+  
   /// Logs an error message.
   /// - Parameters:
   ///   - message: The error message to be logged.
   ///   - error: Optional Error associated with the warning.
-  public func e(_ message: String, error: Error?) {}
+  func e(_ message: String, error: Error?)
 }
 
-extension LogManager {
-  /// Staic logger of `NoneLogger` type
-  public static var none: Logger { return NoneLogger() }
+///LogManager to access the global logger instances
+public struct LogManager {
+  private static var shared: Logger = NoneLogger()
+
+  ///Global logger instance. If no logger is set, it defaults to Logger.None.
+  public static var logger: Logger {
+    get { shared }
+    set { shared = newValue }
+  }
 }

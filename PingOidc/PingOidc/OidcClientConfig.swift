@@ -11,7 +11,7 @@
 
 import Foundation
 import PingOrchestrate
-import PingLogger
+import Logger
 import Storage
 
 public class OidcClientConfig {

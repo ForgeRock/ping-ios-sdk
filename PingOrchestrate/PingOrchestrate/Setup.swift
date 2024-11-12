@@ -10,7 +10,7 @@
 
 
 import Foundation
-import PingLogger
+import Logger
 
 /// Struct for a Setup. A Setup represents the setup of a module in the application.
 /// - property workflow: The workflow of the application.
