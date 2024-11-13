@@ -1,7 +1,7 @@
 ## [0.9.0]
 #### Added
-- Added PingLogger initial version
-- Added PingStorage initial version
-- Added PingOidc initial version
-- Added PingOrchestrate initial version
-- Added PingDavinci initial version
+- Added Logger initial version
+- Added Storage initial version
+- Added Oidc initial version
+- Added Orchestrate initial version
+- Added Davinci initial version
