@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3A8532292BE2C5DB00F8619D /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8532282BE2C5DB00F8619D /* PingOrchestrate.framework */; };
-		3A85322A2BE2C5DB00F8619D /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8532282BE2C5DB00F8619D /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3AB1CA102BD6F99C003FCE3C /* PingOidc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AB1CA072BD6F99C003FCE3C /* PingOidc.framework */; };
 		3AB1CA162BD6F99C003FCE3C /* PingOidc.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AB1CA0A2BD6F99C003FCE3C /* PingOidc.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3AB1CA2D2BD7727B003FCE3C /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CA2A2BD7727B003FCE3C /* Token.swift */; };
@@ -29,6 +27,7 @@
 		A50966E32C4F2F4300A4E5B5 /* OidcClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50966E22C4F2F4300A4E5B5 /* OidcClientTests.swift */; };
 		A50966EF2C4FF75400A4E5B5 /* MockStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50966EE2C4FF75400A4E5B5 /* MockStorage.swift */; };
 		A50967092C50843E00A4E5B5 /* MockAPIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50967082C50843E00A4E5B5 /* MockAPIEndpoint.swift */; };
+		A57A08BA2CE4FD6A006F0CBB /* Orchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A57A08B92CE4FD6A006F0CBB /* Orchestrate.framework */; };
 		A5A712442CAC520500B7DD58 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
@@ -41,20 +40,6 @@
 			remoteInfo = PingOidc;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		3A85322B2BE2C5DC00F8619D /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				3A85322A2BE2C5DB00F8619D /* PingOrchestrate.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		3A8532282BE2C5DB00F8619D /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,6 +64,7 @@
 		A50966E22C4F2F4300A4E5B5 /* OidcClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcClientTests.swift; sourceTree = "<group>"; };
 		A50966EE2C4FF75400A4E5B5 /* MockStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockStorage.swift; sourceTree = "<group>"; };
 		A50967082C50843E00A4E5B5 /* MockAPIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIEndpoint.swift; sourceTree = "<group>"; };
+		A57A08B92CE4FD6A006F0CBB /* Orchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Orchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -87,7 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A8532292BE2C5DB00F8619D /* PingOrchestrate.framework in Frameworks */,
+				A57A08BA2CE4FD6A006F0CBB /* Orchestrate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +91,7 @@
 		3A8532272BE2C5DB00F8619D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A57A08B92CE4FD6A006F0CBB /* Orchestrate.framework */,
 				3A8532282BE2C5DB00F8619D /* PingOrchestrate.framework */,
 			);
 			name = Frameworks;
@@ -193,7 +180,6 @@
 				3AB1CA032BD6F99C003FCE3C /* Sources */,
 				3AB1CA042BD6F99C003FCE3C /* Frameworks */,
 				3AB1CA052BD6F99C003FCE3C /* Resources */,
-				3A85322B2BE2C5DC00F8619D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

@@ -11,7 +11,7 @@
 import Foundation
 import PingDavinci
 import PingOidc
-import PingOrchestrate
+import Orchestrate
 
 
 public let davinciStage = DaVinci.createDaVinci { config in

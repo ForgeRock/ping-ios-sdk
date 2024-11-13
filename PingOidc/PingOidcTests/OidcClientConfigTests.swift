@@ -11,7 +11,7 @@
 
 import XCTest
 @testable import PingOidc
-@testable import PingOrchestrate
+@testable import Orchestrate
 @testable import Logger
 @testable import Storage
 

@@ -11,7 +11,7 @@
 
 import Foundation
 import XCTest
-@testable import PingOrchestrate
+@testable import Orchestrate
 @testable import Storage
 @testable import Logger
 @testable import PingOidc

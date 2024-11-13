@@ -11,7 +11,7 @@
 
 import Foundation
 import PingOidc
-import PingOrchestrate
+import Orchestrate
 
 extension OidcClientConfig {
     internal func populateRequest(

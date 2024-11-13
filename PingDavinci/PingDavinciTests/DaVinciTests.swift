@@ -10,7 +10,7 @@
 
 
 import XCTest
-@testable import PingOrchestrate
+@testable import Orchestrate
 @testable import Logger
 @testable import PingOidc
 @testable import Storage

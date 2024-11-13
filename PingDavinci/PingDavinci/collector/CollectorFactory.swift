@@ -9,7 +9,7 @@
 //
 
 
-import PingOrchestrate
+import Orchestrate
 
 /// The CollectorFactory singleton is responsible for creating and managing Collector instances.
 /// It maintains a dictionary of collector creation functions, keyed by type.

@@ -37,9 +37,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/PingOrchestrate\/PingOrchestrate.xcodeproj",
+        "containerPath" : "container:..\/PingOrchestrate\/Orchestrate.xcodeproj",
         "identifier" : "3A54417D2BCDF1D900385131",
-        "name" : "PingOrchestrateTests"
+        "name" : "OrchestrateTests"
       }
     },
     {

@@ -11,7 +11,7 @@
 
 import Foundation
 import Logger
-import PingOrchestrate
+import Orchestrate
 
 /// Class representing an OpenID Connect client.
 public class OidcClient {
