@@ -39,7 +39,7 @@ final class CookieModuleTests: XCTestCase {
                 return SuccessNode(session: EmptySession())
             }
         }
-        let memory = MemoryStorage<[PingHTTPCookie]>()
+        let memory = MemoryStorage<[HTTPCookie]>()
         let workflow = Workflow.createWorkflow { config in
             config.httpClient = HttpClient(session: .shared)
             config.module(dummy)
@@ -69,7 +69,7 @@ final class CookieModuleTests: XCTestCase {
                 return SuccessNode(session: EmptySession())
             }
         }
-        let memory = MemoryStorage<[PingHTTPCookie]>()
+        let memory = MemoryStorage<[HTTPCookie]>()
         let workflow = Workflow.createWorkflow { config in
             config.httpClient = HttpClient(session: .shared)
             config.module(dummy)
@@ -111,7 +111,7 @@ final class CookieModuleTests: XCTestCase {
                 }
             }
         }
-        let memory = MemoryStorage<[PingHTTPCookie]>()
+        let memory = MemoryStorage<[HTTPCookie]>()
         workflow = Workflow.createWorkflow { config in
             config.httpClient = HttpClient(session: .shared)
             config.module(dummy)
@@ -160,7 +160,7 @@ final class CookieModuleTests: XCTestCase {
                 return SuccessNode(session: EmptySession())
             }
         }
-        let memory = MemoryStorage<[PingHTTPCookie]>()
+        let memory = MemoryStorage<[HTTPCookie]>()
         let workflow = Workflow.createWorkflow { config in
             config.httpClient = HttpClient(session: .shared)
             config.module(dummy)

@@ -127,7 +127,7 @@ final class DaVinciTests: XCTestCase {
     
     func testDaVinciSimpleHappyPath() async throws {
         let tokenStorage = MemoryStorage<Token>()
-        let cookieStorage = MemoryStorage<[PingHTTPCookie]>()
+        let cookieStorage = MemoryStorage<[HTTPCookie]>()
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
@@ -270,7 +270,7 @@ final class DaVinciTests: XCTestCase {
     
     func testDaVinciRevokeAccessToken() async throws {
         let tokenStorage = MemoryStorage<Token>()
-        let cookieStorage = MemoryStorage<[PingHTTPCookie]>()
+        let cookieStorage = MemoryStorage<[HTTPCookie]>()
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             

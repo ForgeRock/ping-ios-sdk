@@ -25,7 +25,7 @@
 		3A75757A2C06947000891EC7 /* SharedContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7575792C06947000891EC7 /* SharedContext.swift */; };
 		3A75757C2C06B59F00891EC7 /* RequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A75757B2C06B59F00891EC7 /* RequestTests.swift */; };
 		3AB1C9E92BD6410A003FCE3C /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1C9E52BD6410A003FCE3C /* Response.swift */; };
-		3AB1C9F22BD6B2F9003FCE3C /* PingHTTPCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1C9F02BD6B2F9003FCE3C /* PingHTTPCookie.swift */; };
+		3AB1C9F22BD6B2F9003FCE3C /* HTTPCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1C9F02BD6B2F9003FCE3C /* HTTPCookie.swift */; };
 		3AF7D3BB2BF3CF410056F497 /* Module.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7D3BA2BF3CF410056F497 /* Module.swift */; };
 		A51D4CE32C62EB4B00FE09E0 /* CustomHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CE22C62EB4B00FE09E0 /* CustomHeader.swift */; };
 		A51D4CFC2C6BA9BD00FE09E0 /* CustomHeaderModuleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CFB2C6BA9BD00FE09E0 /* CustomHeaderModuleTests.swift */; };
@@ -89,7 +89,7 @@
 		3A75757D2C06F60600891EC7 /* PingStorage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingStorage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A75757F2C06F62A00891EC7 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AB1C9E52BD6410A003FCE3C /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
-		3AB1C9F02BD6B2F9003FCE3C /* PingHTTPCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PingHTTPCookie.swift; sourceTree = "<group>"; };
+		3AB1C9F02BD6B2F9003FCE3C /* HTTPCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPCookie.swift; sourceTree = "<group>"; };
 		3AB7D7CB2C012C0000CA4A02 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AF7D3BA2BF3CF410056F497 /* Module.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Module.swift; sourceTree = "<group>"; };
 		A51D4CE22C62EB4B00FE09E0 /* CustomHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeader.swift; sourceTree = "<group>"; };
@@ -157,7 +157,7 @@
 				3AF7D3BA2BF3CF410056F497 /* Module.swift */,
 				3A203DA52BE068E10020C995 /* ModuleRegistry.swift */,
 				3A203D5A2BD9E2C80020C995 /* Node.swift */,
-				3AB1C9F02BD6B2F9003FCE3C /* PingHTTPCookie.swift */,
+				3AB1C9F02BD6B2F9003FCE3C /* HTTPCookie.swift */,
 				3A203D582BD9DC600020C995 /* Request.swift */,
 				3AB1C9E52BD6410A003FCE3C /* Response.swift */,
 				3A203DA72BE069120020C995 /* Setup.swift */,
@@ -327,7 +327,7 @@
 				3A203DA82BE069120020C995 /* Setup.swift in Sources */,
 				3A203D5B2BD9E2C80020C995 /* Node.swift in Sources */,
 				3A12F9BE2BCE20B50087DF67 /* Workflow.swift in Sources */,
-				3AB1C9F22BD6B2F9003FCE3C /* PingHTTPCookie.swift in Sources */,
+				3AB1C9F22BD6B2F9003FCE3C /* HTTPCookie.swift in Sources */,
 				3A75757A2C06947000891EC7 /* SharedContext.swift in Sources */,
 				3AB1C9E92BD6410A003FCE3C /* Response.swift in Sources */,
 				3A203D592BD9DC600020C995 /* Request.swift in Sources */,
