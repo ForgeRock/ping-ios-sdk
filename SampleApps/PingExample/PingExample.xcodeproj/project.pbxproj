@@ -53,20 +53,6 @@
 			remoteGlobalIDString = 3AB1CA0F2BD6F99C003FCE3C;
 			remoteInfo = OidcTests;
 		};
-		A57A08D62CE5071E006F0CBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3A5442212BCE1F3800385131 /* Orchestrate.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3A5441742BCDF1D900385131;
-			remoteInfo = Orchestrate;
-		};
-		A57A08D82CE5071E006F0CBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3A5442212BCE1F3800385131 /* Orchestrate.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3A54417E2BCDF1D900385131;
-			remoteInfo = OrchestrateTests;
-		};
 		A57A08E92CE50D07006F0CBB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3A54420F2BCE1F2900385131 /* Davinci.xcodeproj */;
@@ -109,6 +95,20 @@
 			remoteGlobalIDString = A5A797042BE1782F004D0F2D;
 			remoteInfo = StorageTests;
 		};
+		A57A09092CE50FA5006F0CBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3A5442212BCE1F3800385131 /* Orchestrate.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3A5441742BCDF1D900385131;
+			remoteInfo = Orchestrate;
+		};
+		A57A090B2CE50FA5006F0CBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3A5442212BCE1F3800385131 /* Orchestrate.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3A54417E2BCDF1D900385131;
+			remoteInfo = OrchestrateTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -136,7 +136,7 @@
 		3A54414B2BCDF10B00385131 /* PingExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingExampleUITests.swift; sourceTree = "<group>"; };
 		3A54414D2BCDF10B00385131 /* PingExampleUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingExampleUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		3A54420F2BCE1F2900385131 /* Davinci.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Davinci.xcodeproj; path = ../../PingDavinci/Davinci.xcodeproj; sourceTree = "<group>"; };
-		3A5442212BCE1F3800385131 /* Orchestrate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Orchestrate.xcodeproj; path = ../../PingOrchestrate/Orchestrate.xcodeproj; sourceTree = "<group>"; };
+		3A5442212BCE1F3800385131 /* Orchestrate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Orchestrate.xcodeproj; path = ../../Orchestrate/Orchestrate.xcodeproj; sourceTree = "<group>"; };
 		3A8092F32BE99F0F00AD667F /* InputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputView.swift; sourceTree = "<group>"; };
 		3A8092F52BE9BB6B00AD667F /* TokenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenViewModel.swift; sourceTree = "<group>"; };
 		3A8532322BE2D5D800F8619D /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
@@ -261,15 +261,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A57A08CA2CE5071E006F0CBB /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A57A08D72CE5071E006F0CBB /* Orchestrate.framework */,
-				A57A08D92CE5071E006F0CBB /* OrchestrateTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		A57A08E52CE50D06006F0CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -293,6 +284,15 @@
 			children = (
 				A57A09022CE50EF1006F0CBB /* Storage.framework */,
 				A57A09042CE50EF1006F0CBB /* StorageTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A57A09052CE50FA5006F0CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A57A090A2CE50FA5006F0CBB /* Orchestrate.framework */,
+				A57A090C2CE50FA5006F0CBB /* OrchestrateTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -402,7 +402,7 @@
 					ProjectRef = 3AB1CA1F2BD6F9AD003FCE3C /* Oidc.xcodeproj */;
 				},
 				{
-					ProductGroup = A57A08CA2CE5071E006F0CBB /* Products */;
+					ProductGroup = A57A09052CE50FA5006F0CBB /* Products */;
 					ProjectRef = 3A5442212BCE1F3800385131 /* Orchestrate.xcodeproj */;
 				},
 				{
@@ -432,20 +432,6 @@
 			fileType = wrapper.cfbundle;
 			path = OidcTests.xctest;
 			remoteRef = A57A08D22CE5071E006F0CBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A57A08D72CE5071E006F0CBB /* Orchestrate.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Orchestrate.framework;
-			remoteRef = A57A08D62CE5071E006F0CBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A57A08D92CE5071E006F0CBB /* OrchestrateTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = OrchestrateTests.xctest;
-			remoteRef = A57A08D82CE5071E006F0CBB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		A57A08EA2CE50D07006F0CBB /* Davinci.framework */ = {
@@ -488,6 +474,20 @@
 			fileType = wrapper.cfbundle;
 			path = StorageTests.xctest;
 			remoteRef = A57A09032CE50EF1006F0CBB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A57A090A2CE50FA5006F0CBB /* Orchestrate.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Orchestrate.framework;
+			remoteRef = A57A09092CE50FA5006F0CBB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A57A090C2CE50FA5006F0CBB /* OrchestrateTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OrchestrateTests.xctest;
+			remoteRef = A57A090B2CE50FA5006F0CBB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
