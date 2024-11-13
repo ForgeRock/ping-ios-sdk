@@ -39,20 +39,6 @@
 			remoteGlobalIDString = 3A54412C2BCDF10900385131;
 			remoteInfo = PingExample;
 		};
-		A57A08D02CE5071E006F0CBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3AB1CA1F2BD6F9AD003FCE3C /* Oidc.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3AB1CA072BD6F99C003FCE3C;
-			remoteInfo = Oidc;
-		};
-		A57A08D22CE5071E006F0CBB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3AB1CA1F2BD6F9AD003FCE3C /* Oidc.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3AB1CA0F2BD6F99C003FCE3C;
-			remoteInfo = OidcTests;
-		};
 		A57A08E92CE50D07006F0CBB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3A54420F2BCE1F2900385131 /* Davinci.xcodeproj */;
@@ -109,6 +95,20 @@
 			remoteGlobalIDString = 3A54417E2BCDF1D900385131;
 			remoteInfo = OrchestrateTests;
 		};
+		A57A09112CE51162006F0CBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3AB1CA1F2BD6F9AD003FCE3C /* Oidc.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3AB1CA072BD6F99C003FCE3C;
+			remoteInfo = Oidc;
+		};
+		A57A09132CE51162006F0CBB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3AB1CA1F2BD6F9AD003FCE3C /* Oidc.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3AB1CA0F2BD6F99C003FCE3C;
+			remoteInfo = OidcTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -141,7 +141,7 @@
 		3A8092F52BE9BB6B00AD667F /* TokenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenViewModel.swift; sourceTree = "<group>"; };
 		3A8532322BE2D5D800F8619D /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		3AB1C9F32BD6C6F3003FCE3C /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
-		3AB1CA1F2BD6F9AD003FCE3C /* Oidc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Oidc.xcodeproj; path = ../../PingOidc/Oidc.xcodeproj; sourceTree = "<group>"; };
+		3AB1CA1F2BD6F9AD003FCE3C /* Oidc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Oidc.xcodeproj; path = ../../Oidc/Oidc.xcodeproj; sourceTree = "<group>"; };
 		3ACD90E02BE586BC00DABCE6 /* DavinciViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DavinciViewModel.swift; sourceTree = "<group>"; };
 		3AE945732BF27223007B3381 /* LoginUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginUtility.swift; sourceTree = "<group>"; };
 		A588CFEA2BF69F1A00F9052A /* Logger.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Logger.xcodeproj; path = ../../Logger/Logger.xcodeproj; sourceTree = "<group>"; };
@@ -252,15 +252,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		A57A08C82CE5071E006F0CBB /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A57A08D12CE5071E006F0CBB /* Oidc.framework */,
-				A57A08D32CE5071E006F0CBB /* OidcTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		A57A08E52CE50D06006F0CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -293,6 +284,15 @@
 			children = (
 				A57A090A2CE50FA5006F0CBB /* Orchestrate.framework */,
 				A57A090C2CE50FA5006F0CBB /* OrchestrateTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A57A090D2CE51162006F0CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A57A09122CE51162006F0CBB /* Oidc.framework */,
+				A57A09142CE51162006F0CBB /* OidcTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -398,7 +398,7 @@
 					ProjectRef = A588CFEA2BF69F1A00F9052A /* Logger.xcodeproj */;
 				},
 				{
-					ProductGroup = A57A08C82CE5071E006F0CBB /* Products */;
+					ProductGroup = A57A090D2CE51162006F0CBB /* Products */;
 					ProjectRef = 3AB1CA1F2BD6F9AD003FCE3C /* Oidc.xcodeproj */;
 				},
 				{
@@ -420,20 +420,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		A57A08D12CE5071E006F0CBB /* Oidc.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Oidc.framework;
-			remoteRef = A57A08D02CE5071E006F0CBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A57A08D32CE5071E006F0CBB /* OidcTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = OidcTests.xctest;
-			remoteRef = A57A08D22CE5071E006F0CBB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		A57A08EA2CE50D07006F0CBB /* Davinci.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -488,6 +474,20 @@
 			fileType = wrapper.cfbundle;
 			path = OrchestrateTests.xctest;
 			remoteRef = A57A090B2CE50FA5006F0CBB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A57A09122CE51162006F0CBB /* Oidc.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Oidc.framework;
+			remoteRef = A57A09112CE51162006F0CBB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A57A09142CE51162006F0CBB /* OidcTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OidcTests.xctest;
+			remoteRef = A57A09132CE51162006F0CBB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

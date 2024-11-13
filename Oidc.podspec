@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint PingOidc.podspec' to ensure this is a
+# Be sure to run `pod lib lint Oidc.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -7,11 +7,11 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'PingOidc'
+  s.name             = 'Oidc'
   s.version          = '0.9.0-beta2'
-  s.summary          = 'PingOidc SDK for iOS'
+  s.summary          = 'Oidc SDK for iOS'
   s.description      = <<-DESC
-  The PingOidc SDK provides OIDC client for PingOne and ForgeRock platform..
+  The Oidc SDK provides OIDC client for PingOne and ForgeRock platform..
                        DESC
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
@@ -22,14 +22,14 @@ Pod::Spec.new do |s|
       :tag => s.version.to_s
   }
 
-  s.module_name   = 'PingOidc'
+  s.module_name   = 'Oidc'
 
   s.ios.deployment_target = '13.0'
 
-  base_dir = "PingOidc/PingOidc"
+  base_dir = "Oidc/Oidc"
   s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.h'
   s.resource_bundles = {
-    'PingOidc' => [base_dir + '/*.xcprivacy']
+    'Oidc' => [base_dir + '/*.xcprivacy']
   }
   
   s.ios.dependency 'PingOrchestrate', '~> 0.9.0-beta2'

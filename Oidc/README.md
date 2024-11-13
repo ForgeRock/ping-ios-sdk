@@ -4,9 +4,9 @@
   </picture>
 </div>
 
-`PingOidc` module provides OIDC client for PingOne and ForgeRock platform.
+`Oidc` module provides OIDC client for PingOne and ForgeRock platform.
 
-The `PingOidc` module follows the [OIDC](https://openid.net/specs/openid-connect-core-1_0.html) specification and
+The `Oidc` module follows the [OIDC](https://openid.net/specs/openid-connect-core-1_0.html) specification and
 provides a simple and easy-to-use API to interact with the OIDC server. It allows you to authenticate, retrieve the
 access token, revoke the token, and sign out from the OIDC server.
 
@@ -108,13 +108,13 @@ class CustomAgent: Agent {
         return { CustomAgentConfig() }
     }
     
-    func authorize(oidcConfig: PingOidc.OidcConfig<T>) async throws -> PingOidc.AuthCode {
+    func authorize(oidcConfig: Oidc.OidcConfig<T>) async throws -> Oidc.AuthCode {
         oidcConfig.config.config2 //Access the agent configuration
         oidcConfig.oidcClientConfig.openId?.endSessionEndpoint //Access the oidcClientConfig
         return AuthCode(code: "TestAgent", codeVerifier: "")
     }
     
-    func endSession(oidcConfig: PingOidc.OidcConfig<CustomAgentConfig>, idToken: String) async throws -> Bool {
+    func endSession(oidcConfig: Oidc.OidcConfig<CustomAgentConfig>, idToken: String) async throws -> Bool {
         //Logout session with idToken
         oidcConfig.config.config1 //Access the agent configuration
         oidcConfig.oidcClientConfig.openId?.endSessionEndpoint //Access the oidcClientConfig
