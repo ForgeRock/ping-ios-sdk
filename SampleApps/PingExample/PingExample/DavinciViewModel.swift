@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import PingDavinci
+import Davinci
 import Oidc
 import Orchestrate
 

@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3A203D852BDB1A900020C995 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5442152BCE1F2900385131 /* PingDavinci.framework */; };
-		3A203D862BDB1A900020C995 /* PingDavinci.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5442152BCE1F2900385131 /* PingDavinci.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3A3709962BEB038200AA7B51 /* AccessToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3709952BEB038200AA7B51 /* AccessToken.swift */; };
 		3A5441332BCDF10900385131 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5441322BCDF10900385131 /* ContentView.swift */; };
 		3A5441352BCDF10B00385131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A5441342BCDF10B00385131 /* Assets.xcassets */; };
@@ -40,20 +38,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3A54412C2BCDF10900385131;
 			remoteInfo = PingExample;
-		};
-		3A5442142BCE1F2900385131 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3A54420F2BCE1F2900385131 /* PingDavinci.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3A5441A12BCDF20700385131;
-			remoteInfo = PingDavinci;
-		};
-		3A5442162BCE1F2900385131 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3A54420F2BCE1F2900385131 /* PingDavinci.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3A5441A92BCDF20700385131;
-			remoteInfo = PingDavinciTests;
 		};
 		A57A08A92CE41495006F0CBB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -120,7 +104,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				3A203D862BDB1A900020C995 /* PingDavinci.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -138,7 +121,7 @@
 		3A5441472BCDF10B00385131 /* PingExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A54414B2BCDF10B00385131 /* PingExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingExampleUITests.swift; sourceTree = "<group>"; };
 		3A54414D2BCDF10B00385131 /* PingExampleUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingExampleUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		3A54420F2BCE1F2900385131 /* PingDavinci.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PingDavinci.xcodeproj; path = ../../PingDavinci/PingDavinci.xcodeproj; sourceTree = "<group>"; };
+		3A54420F2BCE1F2900385131 /* Davinci.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Davinci.xcodeproj; path = ../../PingDavinci/Davinci.xcodeproj; sourceTree = "<group>"; };
 		3A5442212BCE1F3800385131 /* Orchestrate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Orchestrate.xcodeproj; path = ../../PingOrchestrate/Orchestrate.xcodeproj; sourceTree = "<group>"; };
 		3A8092F32BE99F0F00AD667F /* InputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputView.swift; sourceTree = "<group>"; };
 		3A8092F52BE9BB6B00AD667F /* TokenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenViewModel.swift; sourceTree = "<group>"; };
@@ -158,7 +141,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A203D852BDB1A900020C995 /* PingDavinci.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,7 +168,7 @@
 				A588CFF92BF69F3300F9052A /* Storage.xcodeproj */,
 				3A5442212BCE1F3800385131 /* Orchestrate.xcodeproj */,
 				3AB1CA1F2BD6F9AD003FCE3C /* Oidc.xcodeproj */,
-				3A54420F2BCE1F2900385131 /* PingDavinci.xcodeproj */,
+				3A54420F2BCE1F2900385131 /* Davinci.xcodeproj */,
 				3A54412F2BCDF10900385131 /* PingExample */,
 				3A5441402BCDF10B00385131 /* PingExampleTests */,
 				3A54414A2BCDF10B00385131 /* PingExampleUITests */,
@@ -254,15 +236,6 @@
 			children = (
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		3A5442102BCE1F2900385131 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				3A5442152BCE1F2900385131 /* PingDavinci.framework */,
-				3A5442172BCE1F2900385131 /* PingDavinciTests.xctest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		A57A08A32CE41494006F0CBB /* Products */ = {
@@ -406,10 +379,6 @@
 					ProjectRef = 3A5442212BCE1F3800385131 /* Orchestrate.xcodeproj */;
 				},
 				{
-					ProductGroup = 3A5442102BCE1F2900385131 /* Products */;
-					ProjectRef = 3A54420F2BCE1F2900385131 /* PingDavinci.xcodeproj */;
-				},
-				{
 					ProductGroup = A57A08A32CE41494006F0CBB /* Products */;
 					ProjectRef = A588CFF92BF69F3300F9052A /* Storage.xcodeproj */;
 				},
@@ -424,20 +393,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		3A5442152BCE1F2900385131 /* PingDavinci.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = PingDavinci.framework;
-			remoteRef = 3A5442142BCE1F2900385131 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		3A5442172BCE1F2900385131 /* PingDavinciTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = PingDavinciTests.xctest;
-			remoteRef = 3A5442162BCE1F2900385131 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		A57A08AA2CE41495006F0CBB /* Logger.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;

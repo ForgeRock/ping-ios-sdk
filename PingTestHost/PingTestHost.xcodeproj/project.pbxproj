@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A51D4CEB2C656D8E00FE09E0 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A51D4CEA2C656D8E00FE09E0 /* PingDavinci.framework */; };
-		A51D4CEC2C656D8E00FE09E0 /* PingDavinci.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A51D4CEA2C656D8E00FE09E0 /* PingDavinci.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A54BF4692BF2E33C00CD24D4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54BF4682BF2E33C00CD24D4 /* AppDelegate.swift */; };
 		A54BF46B2BF2E33C00CD24D4 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54BF46A2BF2E33C00CD24D4 /* SceneDelegate.swift */; };
 		A54BF46D2BF2E33C00CD24D4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54BF46C2BF2E33C00CD24D4 /* ViewController.swift */; };
@@ -23,6 +21,8 @@
 		A57A08BD2CE4FD96006F0CBB /* Orchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A57A08BB2CE4FD96006F0CBB /* Orchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A57A08C32CE50537006F0CBB /* Oidc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A57A08C22CE50537006F0CBB /* Oidc.framework */; };
 		A57A08C42CE50537006F0CBB /* Oidc.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A57A08C22CE50537006F0CBB /* Oidc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A57A08DF2CE50937006F0CBB /* Davinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A57A08DE2CE50937006F0CBB /* Davinci.framework */; };
+		A57A08E02CE50937006F0CBB /* Davinci.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A57A08DE2CE50937006F0CBB /* Davinci.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,8 +33,8 @@
 			dstSubfolderSpec = 10;
 			files = (
 				A57A089F2CE412E8006F0CBB /* Logger.framework in Embed Frameworks */,
+				A57A08E02CE50937006F0CBB /* Davinci.framework in Embed Frameworks */,
 				A57A08BD2CE4FD96006F0CBB /* Orchestrate.framework in Embed Frameworks */,
-				A51D4CEC2C656D8E00FE09E0 /* PingDavinci.framework in Embed Frameworks */,
 				A57A08C42CE50537006F0CBB /* Oidc.framework in Embed Frameworks */,
 				A57A08992CE40FDE006F0CBB /* Storage.framework in Embed Frameworks */,
 			);
@@ -61,6 +61,7 @@
 		A57A089D2CE412E8006F0CBB /* Logger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Logger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A57A08BB2CE4FD96006F0CBB /* Orchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Orchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A57A08C22CE50537006F0CBB /* Oidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Oidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A57A08DE2CE50937006F0CBB /* Davinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Davinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5D1CD5E2BF504E400D1C83E /* PingStorage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingStorage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -69,8 +70,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A51D4CEB2C656D8E00FE09E0 /* PingDavinci.framework in Frameworks */,
 				A57A08BC2CE4FD96006F0CBB /* Orchestrate.framework in Frameworks */,
+				A57A08DF2CE50937006F0CBB /* Davinci.framework in Frameworks */,
 				A57A08982CE40FDE006F0CBB /* Storage.framework in Frameworks */,
 				A57A08C32CE50537006F0CBB /* Oidc.framework in Frameworks */,
 				A57A089E2CE412E8006F0CBB /* Logger.framework in Frameworks */,
@@ -114,6 +115,7 @@
 		A54BF4822BF2E5B800CD24D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A57A08DE2CE50937006F0CBB /* Davinci.framework */,
 				A57A08C22CE50537006F0CBB /* Oidc.framework */,
 				A57A08BB2CE4FD96006F0CBB /* Orchestrate.framework */,
 				A57A089D2CE412E8006F0CBB /* Logger.framework */,
