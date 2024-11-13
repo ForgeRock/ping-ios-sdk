@@ -12,7 +12,7 @@
 import XCTest
 @testable import Orchestrate
 @testable import Logger
-@testable import PingOidc
+@testable import Oidc
 @testable import Storage
 @testable import PingDavinci
 

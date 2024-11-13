@@ -17,13 +17,6 @@
   },
   "testTargets" : [
     {
-      "target" : {
-        "containerPath" : "container:..\/PingOidc\/PingOidc.xcodeproj",
-        "identifier" : "3AB1CA0E2BD6F99C003FCE3C",
-        "name" : "PingOidcTests"
-      }
-    },
-    {
       "skippedTests" : [
         "DaVinciIntegrationTests\/testHappyPathWithNoAccount()",
         "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
@@ -57,6 +50,13 @@
         "containerPath" : "container:..\/PingStorage\/Storage.xcodeproj",
         "identifier" : "A5A797032BE1782F004D0F2D",
         "name" : "StorageTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/PingOidc\/Oidc.xcodeproj",
+        "identifier" : "3AB1CA0E2BD6F99C003FCE3C",
+        "name" : "OidcTests"
       }
     }
   ],

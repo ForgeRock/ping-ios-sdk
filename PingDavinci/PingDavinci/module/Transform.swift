@@ -10,7 +10,7 @@
 
 
 import Foundation
-import PingOidc
+import Oidc
 import Orchestrate
 
 /// Module for transforming the response from DaVinci to `Node`.

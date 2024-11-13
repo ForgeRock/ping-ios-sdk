@@ -14,7 +14,7 @@ import XCTest
 @testable import Orchestrate
 @testable import Storage
 @testable import Logger
-@testable import PingOidc
+@testable import Oidc
 @testable import PingDavinci
 
 class DaVinciErrorTests: XCTestCase {

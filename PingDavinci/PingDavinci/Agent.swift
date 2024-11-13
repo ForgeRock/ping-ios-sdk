@@ -10,7 +10,7 @@
 
 
 import Foundation
-import PingOidc
+import Oidc
 import Orchestrate
 
 internal class CreateAgent: Agent {

@@ -11,7 +11,7 @@
 
 import Foundation
 import Orchestrate
-import PingOidc
+import Oidc
 
 public typealias DaVinci = Workflow
 public typealias DaVinciConfig = WorkflowConfig

@@ -10,7 +10,7 @@
 
 import Foundation
 import PingDavinci
-import PingOidc
+import Oidc
 import Orchestrate
 import SwiftUI
 import Observation

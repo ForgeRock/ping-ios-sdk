@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AB1CA062BD6F99C003FCE3C"
-               BuildableName = "PingOidc.framework"
-               BlueprintName = "PingOidc"
-               ReferencedContainer = "container:PingOidc.xcodeproj">
+               BuildableName = "Oidc.framework"
+               BlueprintName = "Oidc"
+               ReferencedContainer = "container:Oidc.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -36,9 +36,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3AB1CA0E2BD6F99C003FCE3C"
-               BuildableName = "PingOidcTests.xctest"
-               BlueprintName = "PingOidcTests"
-               ReferencedContainer = "container:PingOidc.xcodeproj">
+               BuildableName = "OidcTests.xctest"
+               BlueprintName = "OidcTests"
+               ReferencedContainer = "container:Oidc.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -64,9 +64,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AB1CA062BD6F99C003FCE3C"
-            BuildableName = "PingOidc.framework"
-            BlueprintName = "PingOidc"
-            ReferencedContainer = "container:PingOidc.xcodeproj">
+            BuildableName = "Oidc.framework"
+            BlueprintName = "Oidc"
+            ReferencedContainer = "container:Oidc.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

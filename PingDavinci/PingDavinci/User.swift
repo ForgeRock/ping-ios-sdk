@@ -9,7 +9,7 @@
 //
 
 
-import PingOidc
+import Oidc
 import Orchestrate
 
 extension DaVinci {

@@ -1,6 +1,6 @@
 //
 //  OidcClientTests.swift
-//  PingOidcTests
+//  OidcTests
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -10,7 +10,7 @@
 
 
 import XCTest
-@testable import PingOidc
+@testable import Oidc
 @testable import Orchestrate
 @testable import Storage
 
