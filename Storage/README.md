@@ -4,9 +4,9 @@
   </picture>
 </div>
 
-# Ping Storage SDK
+# Storage SDK
 
-The Ping Storage SDK provides a flexible storage interface and a set of common storage solutions for the Ping SDKs.
+The Storage SDK provides a flexible storage interface and a set of common storage solutions for the Ping SDKs.
 
 ## Integrating the SDK into your project
 
@@ -96,7 +96,7 @@ public class CustomStorageDelegate<T: Codable>: StorageDelegate<T> {
 
 ## Available Storage Solutions
 
-The Ping Storage SDK provides the following storage solutions:
+The Storage SDK provides the following storage solutions:
 
 | Storage          | Description                                                                                                                                 |
 |------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
