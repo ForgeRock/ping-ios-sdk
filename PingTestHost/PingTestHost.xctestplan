@@ -41,11 +41,6 @@
       }
     },
     {
-      "skippedTests" : [
-        "DaVinciIntegrationTests\/testHappyPathWithNoAccount()",
-        "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
-        "DaVinciIntegrationTests\/testInvalidPassword()"
-      ],
       "target" : {
         "containerPath" : "container:..\/PingDavinci\/PingDavinci.xcodeproj",
         "identifier" : "3A5441A82BCDF20700385131",
