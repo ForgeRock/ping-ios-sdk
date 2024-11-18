@@ -7,19 +7,19 @@ let package = Package (
         .iOS(.v13)
     ],
     products: [
-        .library(name: "PingLogger", targets: ["Logger"]),
-        .library(name: "PingStorage", targets: ["Storage"]),
-        .library(name: "PingOrchestrate", targets: ["Orchestrate"]),
-        .library(name: "PingOidc", targets: ["Oidc"]),
-        .library(name: "PingDavinci", targets: ["Davinci"])
+        .library(name: "PingLogger", targets: ["PingLogger"]),
+        .library(name: "PingStorage", targets: ["PingStorage"]),
+        .library(name: "PingOrchestrate", targets: ["PingOrchestrate"]),
+        .library(name: "PingOidc", targets: ["PingOidc"]),
+        .library(name: "PingDavinci", targets: ["PingDavinci"])
     ],
     dependencies: [
     ],
     targets: [
-        .target(name: "Logger", dependencies: [], path: "Logger/Logger", exclude: ["Logger.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "Storage", dependencies: [], path: "Storage/Storage", exclude: ["Storage.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "Orchestrate", dependencies: [.target(name: "Logger"), .target(name: "Storage")], path: "Orchestrate/Orchestrate", exclude: ["Orchestrate.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "Oidc", dependencies: [.target(name: "Orchestrate")], path: "Oidc/Oidc", exclude: ["Oidc.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "Davinci", dependencies: [.target(name: "Oidc"),], path: "Davinci/Davinci", exclude: ["Davinci.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingLogger", dependencies: [], path: "Logger/Logger", exclude: ["Logger.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingStorage", dependencies: [], path: "Storage/Storage", exclude: ["Storage.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingOrchestrate", dependencies: [.target(name: "Logger"), .target(name: "Storage")], path: "Orchestrate/Orchestrate", exclude: ["Orchestrate.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingOidc", dependencies: [.target(name: "Orchestrate")], path: "Oidc/Oidc", exclude: ["Oidc.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingDavinci", dependencies: [.target(name: "Oidc"),], path: "Davinci/Davinci", exclude: ["Davinci.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
     ]
 )
