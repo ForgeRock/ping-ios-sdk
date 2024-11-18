@@ -10,11 +10,11 @@
 
 
 import XCTest
-@testable import Orchestrate
-@testable import Logger
-@testable import Oidc
-@testable import Storage
-@testable import Davinci
+@testable import PingOrchestrate
+@testable import PingLogger
+@testable import PingOidc
+@testable import PingStorage
+@testable import PingDavinci
 
 class DaVinciIntegrationTests: XCTestCase {
     

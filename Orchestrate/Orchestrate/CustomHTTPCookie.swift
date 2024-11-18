@@ -1,5 +1,5 @@
 //
-//  HTTPCookie.swift
+//  CustomHTTPCookie.swift
 //  Orchestrate
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
@@ -10,7 +10,7 @@
 
 import Foundation
 
-public struct HTTPCookie: Codable {
+public struct CustomHTTPCookie: Codable {
     var version: Int
     var name: String?
     var value: String?

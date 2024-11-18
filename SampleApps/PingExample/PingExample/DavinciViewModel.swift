@@ -9,10 +9,9 @@
 //
 
 import Foundation
-import Davinci
-import Oidc
-import Orchestrate
-
+import PingDavinci
+import PingOidc
+import PingOrchestrate
 
 public let davinciStage = DaVinci.createDaVinci { config in
   //config.debug = true

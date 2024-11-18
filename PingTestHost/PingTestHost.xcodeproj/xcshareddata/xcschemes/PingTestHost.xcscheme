@@ -55,6 +55,46 @@
                ReferencedContainer = "container:../PingOidc/Oidc.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A5A797032BE1782F004D0F2D"
+               BuildableName = "StorageTests.xctest"
+               BlueprintName = "StorageTests"
+               ReferencedContainer = "container:../Storage/Storage.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A5A796B52BE04E68004D0F2D"
+               BuildableName = "LoggerTests.xctest"
+               BlueprintName = "LoggerTests"
+               ReferencedContainer = "container:../Logger/Logger.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3AB1CA0E2BD6F99C003FCE3C"
+               BuildableName = "OidcTests.xctest"
+               BlueprintName = "OidcTests"
+               ReferencedContainer = "container:../Oidc/Oidc.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3A5441A82BCDF20700385131"
+               BuildableName = "DavinciTests.xctest"
+               BlueprintName = "DavinciTests"
+               ReferencedContainer = "container:../Davinci/Davinci.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

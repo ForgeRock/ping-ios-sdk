@@ -10,10 +10,10 @@
 
 
 import XCTest
-@testable import Oidc
-@testable import Orchestrate
-@testable import Logger
-@testable import Storage
+@testable import PingOidc
+@testable import PingOrchestrate
+@testable import PingLogger
+@testable import PingStorage
 
 final class OidcClientConfigTests: XCTestCase {
     
@@ -177,7 +177,7 @@ class MockAgent: Agent {
         return {}
     }
     
-    func endSession(oidcConfig: Oidc.OidcConfig<T>, idToken: String) async throws -> Bool {
+    func endSession(oidcConfig: PingOidc.OidcConfig<T>, idToken: String) async throws -> Bool {
         let params = [
             "client_id": oidcConfig.oidcClientConfig.clientId,
             "id_token_hint": idToken
@@ -192,7 +192,7 @@ class MockAgent: Agent {
         return true
     }
     
-    func authorize(oidcConfig: Oidc.OidcConfig<T>) async throws -> Oidc.AuthCode {
+    func authorize(oidcConfig: PingOidc.OidcConfig<T>) async throws -> PingOidc.AuthCode {
         return AuthCode(code: "TestAgent", codeVerifier: "codeVerifier")
     }
     

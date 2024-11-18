@@ -18,7 +18,7 @@
 		A57613972C45ACFA00EC0E3F /* SecuredKeyEncryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57613962C45ACFA00EC0E3F /* SecuredKeyEncryptor.swift */; };
 		A588CFA72BF654FA00F9052A /* CustomStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A588CFA62BF654FA00F9052A /* CustomStorageTests.swift */; };
 		A5A712422CAC51D800B7DD58 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5A712412CAC51D700B7DD58 /* PrivacyInfo.xcprivacy */; };
-		A5A797052BE1782F004D0F2D /* Storage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A796FA2BE1782E004D0F2D /* Storage.framework */; };
+		A5A797052BE1782F004D0F2D /* PingStorage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A796FA2BE1782E004D0F2D /* PingStorage.framework */; };
 		A5A7970B2BE1782F004D0F2D /* Storage.h in Headers */ = {isa = PBXBuildFile; fileRef = A5A796FD2BE1782E004D0F2D /* Storage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A5A7971E2BE17C95004D0F2D /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A7971D2BE17C95004D0F2D /* Storage.swift */; };
 		A5A797392BE18BE3004D0F2D /* MemoryStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A797382BE18BE3004D0F2D /* MemoryStorage.swift */; };
@@ -48,7 +48,7 @@
 		A57613962C45ACFA00EC0E3F /* SecuredKeyEncryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecuredKeyEncryptor.swift; sourceTree = "<group>"; };
 		A588CFA62BF654FA00F9052A /* CustomStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStorageTests.swift; sourceTree = "<group>"; };
 		A5A712412CAC51D700B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		A5A796FA2BE1782E004D0F2D /* Storage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Storage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5A796FA2BE1782E004D0F2D /* PingStorage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingStorage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A796FD2BE1782E004D0F2D /* Storage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Storage.h; sourceTree = "<group>"; };
 		A5A797042BE1782F004D0F2D /* StorageTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StorageTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A7971D2BE17C95004D0F2D /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
@@ -69,7 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5A797052BE1782F004D0F2D /* Storage.framework in Frameworks */,
+				A5A797052BE1782F004D0F2D /* PingStorage.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,7 +88,7 @@
 		A5A796FB2BE1782E004D0F2D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A5A796FA2BE1782E004D0F2D /* Storage.framework */,
+				A5A796FA2BE1782E004D0F2D /* PingStorage.framework */,
 				A5A797042BE1782F004D0F2D /* StorageTests.xctest */,
 			);
 			name = Products;
@@ -138,9 +138,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		A5A796F92BE1782E004D0F2D /* Storage */ = {
+		A5A796F92BE1782E004D0F2D /* PingStorage */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A5A7970E2BE1782F004D0F2D /* Build configuration list for PBXNativeTarget "Storage" */;
+			buildConfigurationList = A5A7970E2BE1782F004D0F2D /* Build configuration list for PBXNativeTarget "PingStorage" */;
 			buildPhases = (
 				A5A796F52BE1782E004D0F2D /* Headers */,
 				A5A796F62BE1782E004D0F2D /* Sources */,
@@ -151,9 +151,9 @@
 			);
 			dependencies = (
 			);
-			name = Storage;
+			name = PingStorage;
 			productName = PingStorage;
-			productReference = A5A796FA2BE1782E004D0F2D /* Storage.framework */;
+			productReference = A5A796FA2BE1782E004D0F2D /* PingStorage.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		A5A797032BE1782F004D0F2D /* StorageTests */ = {
@@ -205,7 +205,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A5A796F92BE1782E004D0F2D /* Storage */,
+				A5A796F92BE1782E004D0F2D /* PingStorage */,
 				A5A797032BE1782F004D0F2D /* StorageTests */,
 			);
 		};
@@ -263,7 +263,7 @@
 /* Begin PBXTargetDependency section */
 		A5A797072BE1782F004D0F2D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A5A796F92BE1782E004D0F2D /* Storage */;
+			target = A5A796F92BE1782E004D0F2D /* PingStorage */;
 			targetProxy = A5A797062BE1782F004D0F2D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -510,7 +510,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A5A7970E2BE1782F004D0F2D /* Build configuration list for PBXNativeTarget "Storage" */ = {
+		A5A7970E2BE1782F004D0F2D /* Build configuration list for PBXNativeTarget "PingStorage" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A5A7970F2BE1782F004D0F2D /* Debug */,

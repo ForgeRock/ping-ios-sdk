@@ -255,7 +255,7 @@
 		A57A08F52CE50D51006F0CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A57A08FA2CE50D51006F0CBB /* Logger.framework */,
+				A57A08FA2CE50D51006F0CBB /* PingLogger.framework */,
 				A57A08FC2CE50D51006F0CBB /* LoggerTests.xctest */,
 			);
 			name = Products;
@@ -264,7 +264,7 @@
 		A57A08FD2CE50EF1006F0CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A57A09022CE50EF1006F0CBB /* Storage.framework */,
+				A57A09022CE50EF1006F0CBB /* PingStorage.framework */,
 				A57A09042CE50EF1006F0CBB /* StorageTests.xctest */,
 			);
 			name = Products;
@@ -273,7 +273,7 @@
 		A57A09052CE50FA5006F0CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A57A090A2CE50FA5006F0CBB /* Orchestrate.framework */,
+				A57A090A2CE50FA5006F0CBB /* PingOrchestrate.framework */,
 				A57A090C2CE50FA5006F0CBB /* OrchestrateTests.xctest */,
 			);
 			name = Products;
@@ -282,7 +282,7 @@
 		A57A090D2CE51162006F0CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A57A09122CE51162006F0CBB /* Oidc.framework */,
+				A57A09122CE51162006F0CBB /* PingOidc.framework */,
 				A57A09142CE51162006F0CBB /* OidcTests.xctest */,
 			);
 			name = Products;
@@ -291,7 +291,7 @@
 		A57A09152CE511E7006F0CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A57A091A2CE511E7006F0CBB /* Davinci.framework */,
+				A57A091A2CE511E7006F0CBB /* PingDavinci.framework */,
 				A57A091C2CE511E7006F0CBB /* DavinciTests.xctest */,
 			);
 			name = Products;
@@ -420,10 +420,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		A57A08FA2CE50D51006F0CBB /* Logger.framework */ = {
+		A57A08FA2CE50D51006F0CBB /* PingLogger.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = Logger.framework;
+			path = PingLogger.framework;
 			remoteRef = A57A08F92CE50D51006F0CBB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -434,10 +434,10 @@
 			remoteRef = A57A08FB2CE50D51006F0CBB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A57A09022CE50EF1006F0CBB /* Storage.framework */ = {
+		A57A09022CE50EF1006F0CBB /* PingStorage.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = Storage.framework;
+			path = PingStorage.framework;
 			remoteRef = A57A09012CE50EF1006F0CBB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -448,10 +448,10 @@
 			remoteRef = A57A09032CE50EF1006F0CBB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A57A090A2CE50FA5006F0CBB /* Orchestrate.framework */ = {
+		A57A090A2CE50FA5006F0CBB /* PingOrchestrate.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = Orchestrate.framework;
+			path = PingOrchestrate.framework;
 			remoteRef = A57A09092CE50FA5006F0CBB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -462,10 +462,10 @@
 			remoteRef = A57A090B2CE50FA5006F0CBB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A57A09122CE51162006F0CBB /* Oidc.framework */ = {
+		A57A09122CE51162006F0CBB /* PingOidc.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = Oidc.framework;
+			path = PingOidc.framework;
 			remoteRef = A57A09112CE51162006F0CBB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -476,10 +476,10 @@
 			remoteRef = A57A09132CE51162006F0CBB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A57A091A2CE511E7006F0CBB /* Davinci.framework */ = {
+		A57A091A2CE511E7006F0CBB /* PingDavinci.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = Davinci.framework;
+			path = PingDavinci.framework;
 			remoteRef = A57A09192CE511E7006F0CBB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -713,7 +713,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = "0.9.0-beta2";
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgerock.ios.sdk.swiftui.PingExample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -744,7 +744,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = "0.9.0-beta2";
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgerock.ios.sdk.swiftui.PingExample;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -763,7 +763,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgerock.ios.sdk.swiftui.PingExampleTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -783,7 +783,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgerock.ios.sdk.swiftui.PingExampleTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -801,7 +801,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgerock.ios.sdk.swiftui.PingExampleUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -819,7 +819,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.forgerock.ios.sdk.swiftui.PingExampleUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;

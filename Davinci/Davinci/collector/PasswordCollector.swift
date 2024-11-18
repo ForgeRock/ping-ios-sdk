@@ -10,7 +10,7 @@
 
 
 import Foundation
-import Orchestrate
+import PingOrchestrate
 
 /// Class representing a PasswordCollector.
 /// This class inherits from the FieldCollector class and implements the Closeable and Collector protocols.

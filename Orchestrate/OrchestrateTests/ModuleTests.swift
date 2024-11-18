@@ -10,7 +10,7 @@
 
 
 import XCTest
-@testable import Orchestrate
+@testable import PingOrchestrate
 
 final class ModuleTests: XCTestCase {
     

@@ -2,16 +2,16 @@
 import PackageDescription
 
 let package = Package (
-    name: "PingOne-ios-sdk",
+    name: "Ping-SDK-iOS",
     platforms: [
         .iOS(.v13)
     ],
     products: [
-        .library(name: "Logger", targets: ["Logger"]),
-        .library(name: "Storage", targets: ["Storage"]),
-        .library(name: "Orchestrate", targets: ["Orchestrate"]),
-        .library(name: "Oidc", targets: ["Oidc"]),
-        .library(name: "Davinci", targets: ["Davinci"])
+        .library(name: "PingLogger", targets: ["Logger"]),
+        .library(name: "PingStorage", targets: ["Storage"]),
+        .library(name: "PingOrchestrate", targets: ["Orchestrate"]),
+        .library(name: "PingOidc", targets: ["Oidc"]),
+        .library(name: "PingDavinci", targets: ["Davinci"])
     ],
     dependencies: [
     ],

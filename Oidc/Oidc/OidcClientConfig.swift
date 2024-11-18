@@ -10,9 +10,9 @@
 
 
 import Foundation
-import Orchestrate
-import Logger
-import Storage
+import PingOrchestrate
+import PingLogger
+import PingStorage
 
 public class OidcClientConfig {
     public var openId: OpenIdConfiguration?

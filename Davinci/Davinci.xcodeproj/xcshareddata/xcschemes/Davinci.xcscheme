@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3A5441A02BCDF20700385131"
-               BuildableName = "Davinci.framework"
-               BlueprintName = "Davinci"
+               BuildableName = "PingDavinci.framework"
+               BlueprintName = "PingDavinci"
                ReferencedContainer = "container:Davinci.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -64,8 +64,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3A5441A02BCDF20700385131"
-            BuildableName = "Davinci.framework"
-            BlueprintName = "Davinci"
+            BuildableName = "PingDavinci.framework"
+            BlueprintName = "PingDavinci"
             ReferencedContainer = "container:Davinci.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -17,46 +17,42 @@
   },
   "testTargets" : [
     {
-      "skippedTests" : [
-        "DaVinciIntegrationTests\/testHappyPathWithNoAccount()",
-        "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
-        "DaVinciIntegrationTests\/testInvalidPassword()"
-      ],
       "target" : {
-        "containerPath" : "container:..\/PingDavinci\/PingDavinci.xcodeproj",
-        "identifier" : "3A5441A82BCDF20700385131",
-        "name" : "PingDavinciTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/PingOrchestrate\/Orchestrate.xcodeproj",
-        "identifier" : "3A54417D2BCDF1D900385131",
-        "name" : "OrchestrateTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/PingLogger\/Logger.xcodeproj",
+        "containerPath" : "container:..\/Logger\/Logger.xcodeproj",
         "identifier" : "A5A796B52BE04E68004D0F2D",
         "name" : "LoggerTests"
       }
     },
     {
-      "skippedTests" : [
-        "StorageDelegateTests\/testConcurrentAccess()"
-      ],
       "target" : {
-        "containerPath" : "container:..\/PingStorage\/Storage.xcodeproj",
+        "containerPath" : "container:..\/Storage\/Storage.xcodeproj",
         "identifier" : "A5A797032BE1782F004D0F2D",
         "name" : "StorageTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/PingOidc\/Oidc.xcodeproj",
+        "containerPath" : "container:..\/Oidc\/Oidc.xcodeproj",
         "identifier" : "3AB1CA0E2BD6F99C003FCE3C",
         "name" : "OidcTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Orchestrate\/Orchestrate.xcodeproj",
+        "identifier" : "3A54417D2BCDF1D900385131",
+        "name" : "OrchestrateTests"
+      }
+    },
+    {
+      "skippedTests" : [
+        "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
+        "DaVinciIntegrationTests\/testInvalidPassword()"
+      ],
+      "target" : {
+        "containerPath" : "container:..\/Davinci\/Davinci.xcodeproj",
+        "identifier" : "3A5441A82BCDF20700385131",
+        "name" : "DavinciTests"
       }
     }
   ],

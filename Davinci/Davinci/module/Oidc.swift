@@ -10,8 +10,8 @@
 
 
 import Foundation
-import Oidc
-import Orchestrate
+import PingOidc
+import PingOrchestrate
 
 public class OidcModule {
     

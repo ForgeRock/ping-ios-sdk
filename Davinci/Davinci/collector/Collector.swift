@@ -8,7 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 
 
-import Orchestrate
+import PingOrchestrate
 import Foundation
 
 /// Protocol representing a Collector.

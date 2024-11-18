@@ -11,7 +11,7 @@
 		3A203D972BDB2CD70020C995 /* Oidc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A203D962BDB2CD70020C995 /* Oidc.swift */; };
 		3A203D9B2BDE155D0020C995 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A203D9A2BDE155D0020C995 /* Transform.swift */; };
 		3A292C822BF58462006977EF /* Agent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A292C812BF58462006977EF /* Agent.swift */; };
-		3A5441AA2BCDF20700385131 /* Davinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5441A12BCDF20700385131 /* Davinci.framework */; };
+		3A5441AA2BCDF20700385131 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5441A12BCDF20700385131 /* PingDavinci.framework */; };
 		3A5441AF2BCDF20700385131 /* DaVinciTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5441AE2BCDF20700385131 /* DaVinciTests.swift */; };
 		3A5441B02BCDF20700385131 /* Davinci.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A5441A42BCDF20700385131 /* Davinci.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A57CB622C44D68C001EC9A0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A57CB612C44D688001EC9A0 /* User.swift */; };
@@ -19,6 +19,8 @@
 		3AC13E342C3FFF1000DEF23A /* Collector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E302C3FFF1000DEF23A /* Collector.swift */; };
 		3AC13E352C3FFF1000DEF23A /* Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E322C3FFF1000DEF23A /* Form.swift */; };
 		3AC13E362C3FFF1000DEF23A /* Connector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E312C3FFF1000DEF23A /* Connector.swift */; };
+		A50981C22CEBDF2600F4B487 /* PingOidc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50981C12CEBDF2600F4B487 /* PingOidc.framework */; };
+		A50981C32CEBDF2600F4B487 /* PingOidc.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A50981C12CEBDF2600F4B487 /* PingOidc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A51D4CD12C585B4500FE09E0 /* FieldCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CD02C585B4500FE09E0 /* FieldCollector.swift */; };
 		A51D4CD32C585D7C00FE09E0 /* FlowCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CD22C585D7C00FE09E0 /* FlowCollector.swift */; };
 		A51D4CD52C585DCD00FE09E0 /* PasswordCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CD42C585DCD00FE09E0 /* PasswordCollector.swift */; };
@@ -33,8 +35,6 @@
 		A51D4CF62C65743100FE09E0 /* MockAPIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CF52C65743100FE09E0 /* MockAPIEndpoint.swift */; };
 		A51D4CF82C65978300FE09E0 /* DaVinciIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CF72C65978300FE09E0 /* DaVinciIntegrationTests.swift */; };
 		A51D4CFA2C6BA75000FE09E0 /* CallbackFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CF92C6BA75000FE09E0 /* CallbackFactoryTests.swift */; };
-		A57A08BF2CE5052A006F0CBB /* Oidc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A57A08BE2CE5052A006F0CBB /* Oidc.framework */; };
-		A57A08C02CE5052A006F0CBB /* Oidc.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A57A08BE2CE5052A006F0CBB /* Oidc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5A712482CAC527200B7DD58 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5A712472CAC527200B7DD58 /* PrivacyInfo.xcprivacy */; };
 		A5CCE5E72C85E96B00349A5E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5CCE5E62C85E96B00349A5E /* Constants.swift */; };
 /* End PBXBuildFile section */
@@ -50,13 +50,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		A57A08C12CE5052A006F0CBB /* Embed Frameworks */ = {
+		A50981C42CEBDF2600F4B487 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A57A08C02CE5052A006F0CBB /* Oidc.framework in Embed Frameworks */,
+				A50981C32CEBDF2600F4B487 /* PingOidc.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -65,13 +65,10 @@
 
 /* Begin PBXFileReference section */
 		3A203D7E2BDB136C0020C995 /* DaVinci.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinci.swift; sourceTree = "<group>"; };
-		3A203D812BDB13FF0020C995 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A203D962BDB2CD70020C995 /* Oidc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Oidc.swift; sourceTree = "<group>"; };
-		3A203D982BDBF4040020C995 /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A203D9A2BDE155D0020C995 /* Transform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
-		3A203D9C2BDE27290020C995 /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A292C812BF58462006977EF /* Agent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Agent.swift; sourceTree = "<group>"; };
-		3A5441A12BCDF20700385131 /* Davinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Davinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A5441A12BCDF20700385131 /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A5441A42BCDF20700385131 /* Davinci.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Davinci.h; sourceTree = "<group>"; };
 		3A5441A92BCDF20700385131 /* DavinciTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DavinciTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A5441AE2BCDF20700385131 /* DaVinciTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciTests.swift; sourceTree = "<group>"; };
@@ -80,6 +77,7 @@
 		3AC13E302C3FFF1000DEF23A /* Collector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collector.swift; sourceTree = "<group>"; };
 		3AC13E312C3FFF1000DEF23A /* Connector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connector.swift; sourceTree = "<group>"; };
 		3AC13E322C3FFF1000DEF23A /* Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form.swift; sourceTree = "<group>"; };
+		A50981C12CEBDF2600F4B487 /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A51D4CD02C585B4500FE09E0 /* FieldCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldCollector.swift; sourceTree = "<group>"; };
 		A51D4CD22C585D7C00FE09E0 /* FlowCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowCollector.swift; sourceTree = "<group>"; };
 		A51D4CD42C585DCD00FE09E0 /* PasswordCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordCollector.swift; sourceTree = "<group>"; };
@@ -94,7 +92,6 @@
 		A51D4CF52C65743100FE09E0 /* MockAPIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIEndpoint.swift; sourceTree = "<group>"; };
 		A51D4CF72C65978300FE09E0 /* DaVinciIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciIntegrationTests.swift; sourceTree = "<group>"; };
 		A51D4CF92C6BA75000FE09E0 /* CallbackFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackFactoryTests.swift; sourceTree = "<group>"; };
-		A57A08BE2CE5052A006F0CBB /* Oidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Oidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A712472CAC527200B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A5CCE5E62C85E96B00349A5E /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -104,7 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A57A08BF2CE5052A006F0CBB /* Oidc.framework in Frameworks */,
+				A50981C22CEBDF2600F4B487 /* PingOidc.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,7 +109,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A5441AA2BCDF20700385131 /* Davinci.framework in Frameworks */,
+				3A5441AA2BCDF20700385131 /* PingDavinci.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,10 +119,7 @@
 		3A203D802BDB13FF0020C995 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A57A08BE2CE5052A006F0CBB /* Oidc.framework */,
-				3A203D9C2BDE27290020C995 /* PingOidc.framework */,
-				3A203D982BDBF4040020C995 /* PingOidc.framework */,
-				3A203D812BDB13FF0020C995 /* PingOrchestrate.framework */,
+				A50981C12CEBDF2600F4B487 /* PingOidc.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -143,7 +137,7 @@
 		3A5441A22BCDF20700385131 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3A5441A12BCDF20700385131 /* Davinci.framework */,
+				3A5441A12BCDF20700385131 /* PingDavinci.framework */,
 				3A5441A92BCDF20700385131 /* DavinciTests.xctest */,
 			);
 			name = Products;
@@ -236,23 +230,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		3A5441A02BCDF20700385131 /* Davinci */ = {
+		3A5441A02BCDF20700385131 /* PingDavinci */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3A5441B32BCDF20700385131 /* Build configuration list for PBXNativeTarget "Davinci" */;
+			buildConfigurationList = 3A5441B32BCDF20700385131 /* Build configuration list for PBXNativeTarget "PingDavinci" */;
 			buildPhases = (
 				3A54419C2BCDF20700385131 /* Headers */,
 				3A54419D2BCDF20700385131 /* Sources */,
 				3A54419E2BCDF20700385131 /* Frameworks */,
 				3A54419F2BCDF20700385131 /* Resources */,
-				A57A08C12CE5052A006F0CBB /* Embed Frameworks */,
+				A50981C42CEBDF2600F4B487 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = Davinci;
+			name = PingDavinci;
 			productName = PingDavinci;
-			productReference = 3A5441A12BCDF20700385131 /* Davinci.framework */;
+			productReference = 3A5441A12BCDF20700385131 /* PingDavinci.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		3A5441A82BCDF20700385131 /* DavinciTests */ = {
@@ -305,7 +299,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3A5441A02BCDF20700385131 /* Davinci */,
+				3A5441A02BCDF20700385131 /* PingDavinci */,
 				3A5441A82BCDF20700385131 /* DavinciTests */,
 			);
 		};
@@ -374,7 +368,7 @@
 /* Begin PBXTargetDependency section */
 		3A5441AC2BCDF20700385131 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3A5441A02BCDF20700385131 /* Davinci */;
+			target = 3A5441A02BCDF20700385131 /* PingDavinci */;
 			targetProxy = 3A5441AB2BCDF20700385131 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -626,7 +620,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3A5441B32BCDF20700385131 /* Build configuration list for PBXNativeTarget "Davinci" */ = {
+		3A5441B32BCDF20700385131 /* Build configuration list for PBXNativeTarget "PingDavinci" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3A5441B42BCDF20700385131 /* Debug */,

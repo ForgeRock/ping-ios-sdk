@@ -8,7 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 
 
-import Orchestrate
+import PingOrchestrate
 
 /// Extension to get the id of a ContinueNode.
 extension ContinueNode {

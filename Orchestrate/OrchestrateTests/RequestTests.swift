@@ -11,7 +11,7 @@
 
 import Foundation
 import XCTest
-@testable import Orchestrate
+@testable import PingOrchestrate
 
 final class RequestTests: XCTestCase {
     

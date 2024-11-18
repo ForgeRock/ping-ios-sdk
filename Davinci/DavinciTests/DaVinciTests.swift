@@ -10,11 +10,11 @@
 
 
 import XCTest
-@testable import Orchestrate
-@testable import Logger
-@testable import Oidc
-@testable import Storage
-@testable import Davinci
+@testable import PingOrchestrate
+@testable import PingLogger
+@testable import PingOidc
+@testable import PingStorage
+@testable import PingDavinci
 
 final class DaVinciTests: XCTestCase {
     
@@ -127,7 +127,7 @@ final class DaVinciTests: XCTestCase {
     
     func testDaVinciSimpleHappyPath() async throws {
         let tokenStorage = MemoryStorage<Token>()
-        let cookieStorage = MemoryStorage<[HTTPCookie]>()
+        let cookieStorage = MemoryStorage<[CustomHTTPCookie]>()
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
@@ -270,7 +270,7 @@ final class DaVinciTests: XCTestCase {
     
     func testDaVinciRevokeAccessToken() async throws {
         let tokenStorage = MemoryStorage<Token>()
-        let cookieStorage = MemoryStorage<[HTTPCookie]>()
+        let cookieStorage = MemoryStorage<[CustomHTTPCookie]>()
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             

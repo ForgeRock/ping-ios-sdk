@@ -9,8 +9,8 @@
 //
 
 import Foundation
-import Storage
-import Logger
+import PingStorage
+import PingLogger
 
 class StorageViewModel {
     

@@ -11,7 +11,7 @@
 
 import Foundation
 import XCTest
-@testable import Storage
+@testable import PingStorage
 
 final class CustomEncryptorTests: XCTestCase {
   var encryptor: CustomEncryptor!

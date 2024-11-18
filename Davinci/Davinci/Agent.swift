@@ -10,8 +10,8 @@
 
 
 import Foundation
-import Oidc
-import Orchestrate
+import PingOidc
+import PingOrchestrate
 
 internal class CreateAgent: Agent {
     typealias T = Void

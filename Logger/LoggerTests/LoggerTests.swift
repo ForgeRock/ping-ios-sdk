@@ -10,7 +10,7 @@
 
 
 import XCTest
-@testable import Logger
+@testable import PingLogger
 
 final class LoggerTests: XCTestCase {
 

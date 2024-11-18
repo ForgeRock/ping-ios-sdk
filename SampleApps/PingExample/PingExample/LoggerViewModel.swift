@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import Logger
+import PingLogger
 
 class LoggerViewModel {
 

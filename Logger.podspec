@@ -7,7 +7,7 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'Logger'
+  s.name             = 'PingLogger'
   s.version          = '0.9.0-beta2'
   s.summary          = 'Logger SDK for iOS'
   s.description      = <<-DESC
@@ -18,11 +18,12 @@ Pod::Spec.new do |s|
   s.author           = 'Ping Identity'
 
   s.source           = {
-      :git => 'https://github.com/ForgeRock/unified-sdk-ios.git',
+      :git => 'https://github.com/ForgeRock/ping-ios-sdk.git',
       :tag => s.version.to_s
   }
 
-  s.module_name   = 'Logger'
+  s.module_name   = 'PingLogger'
+  s.swift_versions = ['5.0', '5.1']
 
   s.ios.deployment_target = '13.0'
 

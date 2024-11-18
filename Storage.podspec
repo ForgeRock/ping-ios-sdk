@@ -7,7 +7,7 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'Storage'
+  s.name             = 'PingStorage'
   s.version          = '0.9.0-beta2'
   s.summary          = 'Storage SDK for iOS'
   s.description      = <<-DESC
@@ -18,11 +18,12 @@ Pod::Spec.new do |s|
   s.author           = 'Ping Identity'
 
   s.source           = {
-      :git => 'https://github.com/ForgeRock/unified-sdk-ios.git',
+      :git => 'https://github.com/ForgeRock/ping-ios-sdk.git',
       :tag => s.version.to_s
   }
 
-  s.module_name   = 'Storage'
+  s.module_name   = 'PingStorage'
+  s.swift_versions = ['5.0', '5.1']
 
   s.ios.deployment_target = '13.0'
 

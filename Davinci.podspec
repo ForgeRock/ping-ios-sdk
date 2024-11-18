@@ -7,7 +7,7 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'Davinci'
+  s.name             = 'PingDavinci'
   s.version          = '0.9.0-beta2'
   s.summary          = 'Davinci SDK for iOS'
   s.description      = <<-DESC
@@ -19,11 +19,11 @@ occur during the authentication process.
   s.author           = 'Ping Identity'
 
   s.source           = {
-      :git => 'https://github.com/ForgeRock/unified-sdk-ios.git',
+      :git => 'https://github.com/ForgeRock/ping-ios-sdk.git',
       :tag => s.version.to_s
   }
 
-  s.module_name   = 'Davinci'
+  s.module_name   = 'PingDavinci'
   s.swift_versions = ['5.0', '5.1']
 
   s.ios.deployment_target = '13.0'

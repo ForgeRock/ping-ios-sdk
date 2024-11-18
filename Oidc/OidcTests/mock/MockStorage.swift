@@ -10,7 +10,7 @@
 
 
 import Foundation
-import Storage
+import PingStorage
 
 public class Mock<T: Codable>: Storage {
     private var data: T?

@@ -11,11 +11,11 @@
 
 import Foundation
 import XCTest
-@testable import Orchestrate
-@testable import Storage
-@testable import Logger
-@testable import Oidc
-@testable import Davinci
+@testable import PingOrchestrate
+@testable import PingStorage
+@testable import PingLogger
+@testable import PingOidc
+@testable import PingDavinci
 
 class DaVinciErrorTests: XCTestCase {
   

@@ -10,9 +10,9 @@
 
 
 import XCTest
-@testable import Oidc
-@testable import Orchestrate
-@testable import Storage
+@testable import PingOidc
+@testable import PingOrchestrate
+@testable import PingStorage
 
 final class OidcClientTests: XCTestCase {
     var oidcClientConfig: OidcClientConfig!

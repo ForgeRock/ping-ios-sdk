@@ -10,7 +10,7 @@
 
 
 import Foundation
-import Storage
+import PingStorage
 
 public class CookieModule {
     
@@ -72,7 +72,7 @@ public class CookieModule {
     }
     
     static func inject(url: URL,
-                       cookies: [HTTPCookie],
+                       cookies: [CustomHTTPCookie],
                        inMemoryStorage: InMemoryCookieStorage?,
                        request: Request) {
         
@@ -117,7 +117,7 @@ public class CookieModule {
             let cookieData = storage?.cookies(for: url)?
                 .filter { cookieConfig.persist.contains($0.name) }
                 .compactMap { value in
-                    HTTPCookie(from: value)
+                    CustomHTTPCookie(from: value)
                 }
             if let cookieData = cookieData {
                 try? await cookieConfig.cookieStorage.save(item: cookieData)
@@ -137,17 +137,17 @@ public class CookieConfig {
     public var persist: [String] = []
     
     public private(set) var inMemoryStorage: InMemoryCookieStorage
-    public internal(set) var cookieStorage: StorageDelegate<[HTTPCookie]>
+    public internal(set) var cookieStorage: StorageDelegate<[CustomHTTPCookie]>
     
     public init() {
-        cookieStorage = KeychainStorage<[HTTPCookie]>(account: SharedContext.Keys.cookieStorage, encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
+        cookieStorage = KeychainStorage<[CustomHTTPCookie]>(account: SharedContext.Keys.cookieStorage, encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
         inMemoryStorage = InMemoryCookieStorage()
     }
 }
 
 extension Workflow {
     public func hasCookies() async -> Bool {
-        let storage = sharedContext.get(key: SharedContext.Keys.cookieStorage) as? StorageDelegate<[HTTPCookie]>
+        let storage = sharedContext.get(key: SharedContext.Keys.cookieStorage) as? StorageDelegate<[CustomHTTPCookie]>
         let value = try? await storage?.get()
         return (value != nil) && (value?.count ?? 0 > 0)
     }

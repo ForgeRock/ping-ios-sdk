@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3A5441732BCDF1D900385131"
-               BuildableName = "Orchestrate.framework"
-               BlueprintName = "Orchestrate"
+               BuildableName = "PingOrchestrate.framework"
+               BlueprintName = "PingOrchestrate"
                ReferencedContainer = "container:Orchestrate.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -64,8 +64,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3A5441732BCDF1D900385131"
-            BuildableName = "Orchestrate.framework"
-            BlueprintName = "Orchestrate"
+            BuildableName = "PingOrchestrate.framework"
+            BlueprintName = "PingOrchestrate"
             ReferencedContainer = "container:Orchestrate.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

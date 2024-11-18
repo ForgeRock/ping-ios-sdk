@@ -10,7 +10,7 @@
 
 
 import XCTest
-@testable import Oidc
+@testable import PingOidc
 
 final class PkceTests: XCTestCase {
     

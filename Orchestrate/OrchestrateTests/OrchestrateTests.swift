@@ -10,7 +10,7 @@
 //
 //import Testing
 //
-//@testable import Orchestrate
+//@testable import PingOrchestrate
 //
 //struct OrchestrateTests {
 //  

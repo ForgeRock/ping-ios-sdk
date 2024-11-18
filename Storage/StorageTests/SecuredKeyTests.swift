@@ -10,7 +10,7 @@
 
 
 import XCTest
-@testable import Storage
+@testable import PingStorage
 
 final class SecuredKeyTests: XCTestCase {
 
