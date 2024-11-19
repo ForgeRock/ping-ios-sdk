@@ -4,11 +4,11 @@
   </picture>
 </div>
 
-# Orchestrate
+# PingOrchestrate
 
 ## Overview
 
-Orchestrate provides a simple way to build a state machine for ForgeRock Journey and PingOne DaVinci.
+PingOrchestrate provides a simple way to build a state machine for ForgeRock Journey and PingOne DaVinci.
 It allows you to define a series of states and transitions between them. You can use the workflow engine to build
 complex workflows that involve multiple steps and conditions.
 The Workflow engine allows you to define a series of functions and register them as a module to the `Workflow` instance

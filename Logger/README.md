@@ -4,9 +4,9 @@
   </picture>
 </div>
 
-# Logger SDK
+# PingLogger SDK
 
-The Logger SDK provides a versatile logging interface and a set of common loggers for the Ping
+The PingLogger SDK provides a versatile logging interface and a set of common loggers for the Ping
 SDKs.
 
 ## Integrating the SDK into your project
@@ -20,7 +20,7 @@ Use Cocoapods or Swift Package Manger
 To log messages to the console, use the `standard` logger:
 
 ```swift
-import Logger
+import PingLogger
 
 let logger = LogManager.standard
 logger.i("Hello World")
@@ -33,10 +33,10 @@ Ping SDK <Version>
 
 ### Disabling Logging
 
-The Logger SDK provides a `none` logger that does not log any messages:
+The PingLogger SDK provides a `none` logger that does not log any messages:
 
 ```swift
-import Logger
+import PingLogger
 
 let logger = LogManager.none
 logger.i("Hello World") // This message will not be logged
@@ -94,7 +94,7 @@ LogManager also provides a global shared logger: `LogManager.logger`. Default va
 
 ## Available Loggers
 
-The Logger SDK provides the following loggers:
+The PingLogger SDK provides the following loggers:
 
 | Logger   | Description                                           |
 |----------|-------------------------------------------------------|

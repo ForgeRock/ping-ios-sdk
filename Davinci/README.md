@@ -4,11 +4,11 @@
   </picture>
 </div>
 
-# DaVinci
+# PingDavinci
 
 ## Overview
 
-DaVinci is a powerful and flexible library for Authentication and Authorization. It is designed to be easy to use and
+PingDavinci is a powerful and flexible library for Authentication and Authorization. It is designed to be easy to use and
 extensible. It provides a simple API for navigating the authentication flow and handling the various states that can
 occur during the authentication process.
 
@@ -39,7 +39,7 @@ var node = await daVinci.start()
 node = await (node as! ContinueNode).next()
 ```
 
-The `DaVinci` depends on `PingOidc` module. It discovers the OIDC endpoints with `discoveryEndpoint` attribute.
+The `PingDavinci` depends on `PingOidc` module. It discovers the OIDC endpoints with `discoveryEndpoint` attribute.
 
 The `start` method returns a `Node` instance. The `Node` class represents the current state of the application. You can
 use the `next` method to transition to the next state.

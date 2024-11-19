@@ -4,9 +4,9 @@
   </picture>
 </div>
 
-`Oidc` module provides OIDC client for PingOne and ForgeRock platform.
+`PingOidc` module provides OIDC client for PingOne and ForgeRock platform.
 
-The `Oidc` module follows the [OIDC](https://openid.net/specs/openid-connect-core-1_0.html) specification and
+The `PingOidc` module follows the [OIDC](https://openid.net/specs/openid-connect-core-1_0.html) specification and
 provides a simple and easy-to-use API to interact with the OIDC server. It allows you to authenticate, retrieve the
 access token, revoke the token, and sign out from the OIDC server.
 
