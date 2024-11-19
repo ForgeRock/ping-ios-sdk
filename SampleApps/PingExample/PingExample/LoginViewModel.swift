@@ -9,11 +9,11 @@
 //
 
 import Foundation
+import SwiftUI
+import Observation
 import PingDavinci
 import PingOidc
 import PingOrchestrate
-import SwiftUI
-import Observation
 
 class LoginViewModel: ObservableObject {
     

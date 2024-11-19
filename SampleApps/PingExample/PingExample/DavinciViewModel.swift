@@ -13,7 +13,6 @@ import PingDavinci
 import PingOidc
 import PingOrchestrate
 
-
 public let davinciStage = DaVinci.createDaVinci { config in
   //config.debug = true
   

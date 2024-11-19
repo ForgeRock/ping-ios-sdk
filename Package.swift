@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package (
-    name: "PingOne-unified-sdk-ios",
+    name: "Ping-SDK-iOS",
     platforms: [
         .iOS(.v13)
     ],
@@ -16,10 +16,10 @@ let package = Package (
     dependencies: [
     ],
     targets: [
-        .target(name: "PingLogger", dependencies: [], path: "PingLogger/PingLogger", exclude: ["PingLogger.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingStorage", dependencies: [], path: "PingStorage/PingStorage", exclude: ["PingStorage.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingOrchestrate", dependencies: [.target(name: "PingLogger"), .target(name: "PingStorage")], path: "PingOrchestrate/PingOrchestrate", exclude: ["PingOrchestrate.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingOidc", dependencies: [.target(name: "PingOrchestrate")], path: "PingOidc/PingOidc", exclude: ["PingOidc.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingDavinci", dependencies: [.target(name: "PingOidc"),], path: "PingDavinci/PingDavinci", exclude: ["PingDavinci.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingLogger", dependencies: [], path: "Logger/Logger", exclude: ["Logger.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingStorage", dependencies: [], path: "Storage/Storage", exclude: ["Storage.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingOrchestrate", dependencies: [.target(name: "PingLogger"), .target(name: "PingStorage")], path: "Orchestrate/Orchestrate", exclude: ["Orchestrate.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingOidc", dependencies: [.target(name: "PingOrchestrate")], path: "Oidc/Oidc", exclude: ["Oidc.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingDavinci", dependencies: [.target(name: "PingOidc"),], path: "Davinci/Davinci", exclude: ["Davinci.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
     ]
 )

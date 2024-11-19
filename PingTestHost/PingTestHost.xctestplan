@@ -18,45 +18,41 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:..\/PingLogger\/PingLogger.xcodeproj",
+        "containerPath" : "container:..\/Logger\/Logger.xcodeproj",
         "identifier" : "A5A796B52BE04E68004D0F2D",
-        "name" : "PingLoggerTests"
+        "name" : "LoggerTests"
       }
     },
     {
-      "skippedTests" : [
-        "StorageDelegateTests\/testConcurrentAccess()"
-      ],
       "target" : {
-        "containerPath" : "container:..\/PingStorage\/PingStorage.xcodeproj",
+        "containerPath" : "container:..\/Storage\/Storage.xcodeproj",
         "identifier" : "A5A797032BE1782F004D0F2D",
-        "name" : "PingStorageTests"
+        "name" : "StorageTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/PingOidc\/PingOidc.xcodeproj",
+        "containerPath" : "container:..\/Oidc\/Oidc.xcodeproj",
         "identifier" : "3AB1CA0E2BD6F99C003FCE3C",
-        "name" : "PingOidcTests"
+        "name" : "OidcTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Orchestrate\/Orchestrate.xcodeproj",
+        "identifier" : "3A54417D2BCDF1D900385131",
+        "name" : "OrchestrateTests"
       }
     },
     {
       "skippedTests" : [
-        "DaVinciIntegrationTests\/testHappyPathWithNoAccount()",
         "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
         "DaVinciIntegrationTests\/testInvalidPassword()"
       ],
       "target" : {
-        "containerPath" : "container:..\/PingDavinci\/PingDavinci.xcodeproj",
+        "containerPath" : "container:..\/Davinci\/Davinci.xcodeproj",
         "identifier" : "3A5441A82BCDF20700385131",
-        "name" : "PingDavinciTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/PingOrchestrate\/PingOrchestrate.xcodeproj",
-        "identifier" : "3A54417D2BCDF1D900385131",
-        "name" : "PingOrchestrateTests"
+        "name" : "DavinciTests"
       }
     }
   ],
