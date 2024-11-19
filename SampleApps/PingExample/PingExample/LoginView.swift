@@ -81,6 +81,7 @@ struct ConnectorView: View {
       Image("Logo").resizable().scaledToFill().frame(width: 100, height: 100)
         .padding(.vertical, 32)
       HeaderView(name: nextNode.name)
+      DescriptionView(name: nextNode.description)
       NewLoginView(
         davinciViewModel: viewmodel,
         nextNode: nextNode, collectorsList: nextNode.collectors)
@@ -105,6 +106,16 @@ struct HeaderView: View {
     VStack {
       Text(name)
         .font(.title)
+    }
+  }
+}
+
+struct DescriptionView: View {
+  var name: String = ""
+  var body: some View {
+    VStack {
+      Text(name)
+        .font(.subheadline)
     }
   }
 }
