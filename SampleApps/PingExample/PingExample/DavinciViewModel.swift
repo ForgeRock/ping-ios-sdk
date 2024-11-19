@@ -39,10 +39,10 @@ public let davinciProd = DaVinci.createDaVinci { config in
   //config.debug = true
   
   config.module(OidcModule.config) { oidcValue in
-    oidcValue.clientId = "9a452a38-0db8-4864-b9b8-11ff5edae99b"
+    oidcValue.clientId = "021b83ce-a9b1-4ad4-8c1d-79e576eeab76"
     oidcValue.scopes = ["openid", "email", "address", "phone", "profile"]
     oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
-    oidcValue.discoveryEndpoint = "https://auth.pingone.com/4b69e4ad-03bd-4203-89bb-0504221d9a1c/as/.well-known/openid-configuration"
+    oidcValue.discoveryEndpoint = "https://auth.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/as/.well-known/openid-configuration"
   }
 }
 
