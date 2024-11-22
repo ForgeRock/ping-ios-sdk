@@ -30,6 +30,7 @@ final class SecuredKeyEncryptorTests: XCTestCase {
     XCTAssertNotNil(encryptor, "Initialization should succeed")
   }
   
+  // TestRailCase(24709)
   func testEncryption() async {
     let data = Data("Test data".utf8)
     
@@ -41,6 +42,7 @@ final class SecuredKeyEncryptorTests: XCTestCase {
     }
   }
   
+  // TestRailCase(24709)
   func testDecryption() async {
     let data = Data("Test data".utf8)
     

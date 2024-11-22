@@ -26,6 +26,7 @@ final class SecuredKeyTests: XCTestCase {
          super.tearDown()
      }
 
+     // TestRailCase(24709)
      func testEncryptAndDecrypt() {
          let data = "Test data".data(using: .utf8)!
          let encryptedData = securedKey.encrypt(data: data)

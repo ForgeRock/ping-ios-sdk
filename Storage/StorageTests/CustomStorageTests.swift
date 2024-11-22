@@ -26,6 +26,7 @@ final class CustomStorageTests: XCTestCase {
       super.tearDown()
   }
 
+  // TestRailCase(24710)
   func testSaveItem() async throws {
       let item = TestItem(id: 1, name: "Test")
       try await customStorage.save(item: item)
@@ -33,6 +34,7 @@ final class CustomStorageTests: XCTestCase {
       XCTAssertEqual(retrievedItem, item)
   }
 
+  // TestRailCase(24711)
   func testGetItem() async throws {
       let item = TestItem(id: 1, name: "Test")
       try await customStorage.save(item: item)
@@ -40,6 +42,7 @@ final class CustomStorageTests: XCTestCase {
       XCTAssertEqual(retrievedItem, item)
   }
 
+  // TestRailCase(24714)
   func testDeleteItem() async throws {
       let item = TestItem(id: 1, name: "Test")
       try await customStorage.save(item: item)

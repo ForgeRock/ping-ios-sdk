@@ -14,6 +14,7 @@ import XCTest
 
 final class LoggerTests: XCTestCase {
 
+  // TestRailCase(22062, 22063, 22064, 22065)
   func testLoggerSetAndGet() {
     let noneLogger = NoneLogger()
     LogManager.logger = noneLogger
@@ -41,6 +42,7 @@ final class LoggerTests: XCTestCase {
   }
 
 
+  // TestRailCase(24702)
   func testCustomLogger() {
     var customLogger = LogManager.customLogger
     XCTAssert(customLogger is CustomLogger)

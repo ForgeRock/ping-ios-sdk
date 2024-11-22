@@ -12,13 +12,13 @@
 import XCTest
 @testable import PingStorage
 
-final class KeychainStorageTests: XCTestCase {
+final class EncryptedKeychainStorageTests: XCTestCase {
     private var keychainStorage: KeychainStorage<TestItem>!
 
     override func setUp() {
         super.setUp()
-        // By default the KeychainStorage does not use encryption
-        keychainStorage = KeychainStorage(account: "testAccount")
+        // Test KeychainStorage with the SecuredKeyEncryptor - the OOTB encryptor provided by the SDK
+        keychainStorage = KeychainStorage(account: "testAccount", encryptor: SecuredKeyEncryptor()!)
     }
 
     override func tearDown() {
@@ -29,7 +29,7 @@ final class KeychainStorageTests: XCTestCase {
       super.tearDown()
     }
 
-    // TestRailCase(24703)
+    // TestRailCase(24706)
     func testSaveItem() async throws {
         let item = TestItem(id: 1, name: "Test")
         try await keychainStorage.save(item: item)
@@ -37,7 +37,7 @@ final class KeychainStorageTests: XCTestCase {
         XCTAssertEqual(retrievedItem, item)
     }
 
-    // TestRailCase(24704)
+    // TestRailCase(24707)
     func testGetItem() async throws {
         let item = TestItem(id: 1, name: "Test")
         try await keychainStorage.save(item: item)
@@ -45,7 +45,7 @@ final class KeychainStorageTests: XCTestCase {
         XCTAssertEqual(retrievedItem, item)
     }
 
-    // TestRailCase(24705)
+    // TestRailCase(24708)
     func testDeleteItem() async throws {
         let item = TestItem(id: 1, name: "Test")
         try await keychainStorage.save(item: item)
