@@ -92,6 +92,7 @@ public class OidcClientConfig {
     
     func update(with other: OidcClientConfig) {
         self.openId = other.openId
+        self.refreshThreshold = other.refreshThreshold
         self.agent = other.agent
         self.logger = other.logger
         self.storage = other.storage

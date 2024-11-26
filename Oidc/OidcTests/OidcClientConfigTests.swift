@@ -100,6 +100,7 @@ final class OidcClientConfigTests: XCTestCase {
     }
     
     func testClone() {
+        oidcClientConfig.refreshThreshold = 100
         oidcClientConfig.agent = AgentDelegate(agent: MockAgent(), agentConfig: (), oidcClientConfig: oidcClientConfig)
         oidcClientConfig.logger = LogManager.standard
         oidcClientConfig.storage = MockStorage<Token>()
@@ -119,6 +120,7 @@ final class OidcClientConfigTests: XCTestCase {
         let clonedConfig = oidcClientConfig.clone()
         
         XCTAssertEqual(oidcClientConfig.openId.debugDescription, clonedConfig.openId.debugDescription)
+        XCTAssertEqual(oidcClientConfig.refreshThreshold, clonedConfig.refreshThreshold)
         XCTAssertEqual(oidcClientConfig.agent.debugDescription, clonedConfig.agent.debugDescription)
         XCTAssertEqual(oidcClientConfig.discoveryEndpoint, clonedConfig.discoveryEndpoint)
         XCTAssertEqual(oidcClientConfig.clientId, clonedConfig.clientId)
