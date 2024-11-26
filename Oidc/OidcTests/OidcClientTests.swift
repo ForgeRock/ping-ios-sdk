@@ -57,6 +57,7 @@ final class OidcClientTests: XCTestCase {
         super.tearDown()
     }
     
+    // TestRailCase(22118)
     func testFailedToLookupDiscoveryEndpoint() async throws {
         
         MockURLProtocol.requestHandler = { request in
@@ -83,6 +84,7 @@ final class OidcClientTests: XCTestCase {
         }
     }
     
+    // TestRailCase(22085)
     func testAccessTokenShouldReturnCachedTokenIfNotExpired() async throws {
         let result = await oidcClient.token()
         switch result {
@@ -107,6 +109,7 @@ final class OidcClientTests: XCTestCase {
         XCTAssertEqual(MockURLProtocol.requestHistory.count, 2)
     }
     
+    // TestRailCase(22086)
     func testAccessTokenShouldRefreshTokenIfExpired() async throws {
         let result = await oidcClient.token()
         switch result {
@@ -126,6 +129,7 @@ final class OidcClientTests: XCTestCase {
         XCTAssertEqual(Int(MockURLProtocol.requestHistory.last!.value(forHTTPHeaderField: "Content-Length")!), "grant_type=refresh_token&refresh_token=Dummy RefreshToken&client_id=test-client-id".count)
     }
     
+    // TestRailCase(24712)
     func testRevokeShouldDeleteTokenFromStorage() async throws {
         // First, get an access token
         let result = await oidcClient.token()
@@ -144,6 +148,7 @@ final class OidcClientTests: XCTestCase {
         XCTAssertNil(tokenInStorage)
     }
     
+    // TestRailCase(22087)
     func testUserinfoShouldReturnUserInfo() async throws {
         let result = await oidcClient.userinfo()
         switch result {
@@ -155,6 +160,7 @@ final class OidcClientTests: XCTestCase {
         }
     }
     
+    // TestRailCase(22088)
     func testEndSessionShouldEndSessionAndRevokeToken() async throws {
         // First, get an access token
         let result = await oidcClient.token()
@@ -185,6 +191,7 @@ final class OidcClientTests: XCTestCase {
         XCTAssertTrue(signOffCalled, "The /signoff endpoint was not called.")
     }
     
+    // TestRailCase(22091)
     func testFailedToRetrieveAccessToken() async throws {
         
         MockURLProtocol.requestHandler = { request in
@@ -212,6 +219,7 @@ final class OidcClientTests: XCTestCase {
         }
     }
     
+    // TestRailCase(22092)
     func testFailedToInjectAccessTokenToUserinfo() async throws {
         
         MockURLProtocol.requestHandler = { request in
@@ -239,6 +247,7 @@ final class OidcClientTests: XCTestCase {
         }
     }
     
+    // TestRailCase(22093)
     func testFailedToRetrieveUserinfo() async throws {
         
         MockURLProtocol.requestHandler = { request in
@@ -268,6 +277,7 @@ final class OidcClientTests: XCTestCase {
         }
     }
     
+    // TestRailCase(22094)
     func testFailedToRefreshTokenAfterTokenExpired() async throws {
         
         MockURLProtocol.requestHandler = { request in

@@ -34,6 +34,7 @@ final class OidcClientConfigTests: XCTestCase {
         super.tearDown()
     }
     
+    // TestRailCase(22106)
     func testDefaultInitialization() {
         oidcClientConfig = OidcClientConfig()
         
@@ -61,11 +62,13 @@ final class OidcClientConfigTests: XCTestCase {
         XCTAssertNotNil(oidcClientConfig.agent)
     }
     
+    // TestRailCase(22118)
     func testScopeInsertion() {
         oidcClientConfig.scope("openid")
         XCTAssertTrue(oidcClientConfig.scopes.contains("openid"))
     }
     
+    // TestRailCase(22118)
     func testOidcInitializeInvalidDiscovery() async throws {
         
         MockURLProtocol.requestHandler =  { request in
@@ -80,6 +83,7 @@ final class OidcClientConfigTests: XCTestCase {
         XCTAssertNil(oidcClientConfig.openId)
     }
     
+    // TestRailCase(24720)
     func testOidcInitializeValidDiscovery() async throws {
         
         MockURLProtocol.requestHandler =  { request in
@@ -99,6 +103,7 @@ final class OidcClientConfigTests: XCTestCase {
         }
     }
     
+    // TestRailCase(22081)
     func testClone() {
         oidcClientConfig.refreshThreshold = 100
         oidcClientConfig.agent = AgentDelegate(agent: MockAgent(), agentConfig: (), oidcClientConfig: oidcClientConfig)
@@ -136,6 +141,7 @@ final class OidcClientConfigTests: XCTestCase {
         XCTAssertEqual(oidcClientConfig.httpClient.debugDescription, clonedConfig.httpClient.debugDescription)
     }
     
+    // TestRailCase(24719)
     func testUpdate() {
         let otherConfig = OidcClientConfig()
         otherConfig.agent = AgentDelegate(agent: MockAgent(), agentConfig: (), oidcClientConfig: oidcClientConfig)

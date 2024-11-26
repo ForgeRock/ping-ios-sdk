@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -82,10 +82,6 @@
 		A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		954BD27D2CEFD8CD000A7733 /* integration tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "integration tests"; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
-
 /* Begin PBXFrameworksBuildPhase section */
 		3AB1CA042BD6F99C003FCE3C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -155,7 +151,6 @@
 		3AB1CA132BD6F99C003FCE3C /* OidcTests */ = {
 			isa = PBXGroup;
 			children = (
-				954BD27D2CEFD8CD000A7733 /* integration tests */,
 				A509D1CC2C6D04E9003A0006 /* mock */,
 				A50966DE2C4DF3CD00A4E5B5 /* OidcClientConfigTests.swift */,
 				A50966E22C4F2F4300A4E5B5 /* OidcClientTests.swift */,
@@ -221,9 +216,6 @@
 			);
 			dependencies = (
 				3AB1CA122BD6F99C003FCE3C /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				954BD27D2CEFD8CD000A7733 /* integration tests */,
 			);
 			name = OidcTests;
 			productName = PingOidcTests;

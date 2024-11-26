@@ -14,6 +14,7 @@ import XCTest
 
 final class PkceTests: XCTestCase {
     
+    // TestRailCase(22111)
     func testGeneratePkce() {
         let pkce = Pkce.generate()
         
@@ -22,6 +23,7 @@ final class PkceTests: XCTestCase {
         XCTAssertEqual(pkce.codeChallengeMethod, "S256", "Code challenge method should be 'S256'")
     }
     
+    // TestRailCase(22110)
     func testGenerateDifferentPkce() {
         let pkce1 = Pkce.generate()
         let pkce2 = Pkce.generate()

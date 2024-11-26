@@ -12,13 +12,15 @@ import Foundation
 import PingDavinci
 import PingOidc
 import PingOrchestrate
+import PingLogger
+import PingStorage
 
 public let davinciStage = DaVinci.createDaVinci { config in
   //config.debug = true
   
   config.module(OidcModule.config) { oidcValue in
-    oidcValue.clientId = "3172d977-8fdc-4e8b-b3c5-4f3a34cb7262"
-    oidcValue.scopes = ["openid", "email", "address", "phone", "profile"]
+    oidcValue.clientId = "2dde00e2-3dd5-42b1-96e9-ad17e29f4bbd"
+    oidcValue.scopes = ["openid", "email", "address", "phone", "profile", "ttl"]
     oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
     oidcValue.discoveryEndpoint = "https://auth.test-one-pingone.com/0c6851ed-0f12-4c9a-a174-9b1bf8b438ae/as/.well-known/openid-configuration"
   }
@@ -26,7 +28,6 @@ public let davinciStage = DaVinci.createDaVinci { config in
 
 public let davinciTest = DaVinci.createDaVinci { config in
   //config.debug = true
-  
   config.module(OidcModule.config) { oidcValue in
     oidcValue.clientId = "c12743f9-08e8-4420-a624-71bbb08e9fe1"
     oidcValue.scopes = ["openid", "email", "address", "phone", "profile"]
@@ -37,10 +38,9 @@ public let davinciTest = DaVinci.createDaVinci { config in
 
 public let davinciProd = DaVinci.createDaVinci { config in
   //config.debug = true
-  
   config.module(OidcModule.config) { oidcValue in
-    oidcValue.clientId = "021b83ce-a9b1-4ad4-8c1d-79e576eeab76"
-    oidcValue.scopes = ["openid", "email", "address", "phone", "profile"]
+    oidcValue.clientId = "2dde00e2-3dd5-42b1-96e9-ad17e29f4bbd"
+    oidcValue.scopes = ["openid", "email", "address", "phone", "profile", "ttl"]
     oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
     oidcValue.discoveryEndpoint = "https://auth.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/as/.well-known/openid-configuration"
   }
