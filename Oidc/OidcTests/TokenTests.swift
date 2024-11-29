@@ -33,6 +33,7 @@ final class TokenTests: XCTestCase {
         XCTAssertFalse(token.isExpired)
     }
     
+    // TestRailCase(22116, 22117)
     func testEncodingDecoding() throws {
         let token = Token(
             accessToken: "testAccessToken",
@@ -58,6 +59,7 @@ final class TokenTests: XCTestCase {
         XCTAssertEqual(decodedToken.expiresAt, token.expiresAt)
     }
     
+    // TestRailCase(22112)
     func testIsExpired() {
         let token = Token(
             accessToken: "testAccessToken",
@@ -71,6 +73,7 @@ final class TokenTests: XCTestCase {
         XCTAssertTrue(token.isExpired)
     }
     
+    // TestRailCase(22114, 22115)
     func testIsExpiredWithThreshold() {
         let token = Token(
             accessToken: "testAccessToken",

@@ -70,7 +70,7 @@ public class OidcClientConfig {
         }
         
         guard let httpClient else {
-            logger.e("Invalid Http Clinet URL", error: nil)
+            logger.e("Invalid Http Client URL", error: nil)
             return nil
         }
         let request = Request()

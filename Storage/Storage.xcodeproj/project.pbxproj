@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		95E10E5D2CEEA80B0089FF5E /* EncryptedKeychainStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E10E5C2CEEA80B0089FF5E /* EncryptedKeychainStorageTests.swift */; };
 		A509667B2C45C19500A4E5B5 /* SecuredKeyEncryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A509667A2C45C19500A4E5B5 /* SecuredKeyEncryptorTests.swift */; };
 		A509667D2C45C4E000A4E5B5 /* CustomEncryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A509667C2C45C4E000A4E5B5 /* CustomEncryptorTests.swift */; };
 		A54BF44C2BED188000CD24D4 /* SecuredKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54BF44B2BED188000CD24D4 /* SecuredKey.swift */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		95E10E5C2CEEA80B0089FF5E /* EncryptedKeychainStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptedKeychainStorageTests.swift; sourceTree = "<group>"; };
 		A509667A2C45C19500A4E5B5 /* SecuredKeyEncryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecuredKeyEncryptorTests.swift; sourceTree = "<group>"; };
 		A509667C2C45C4E000A4E5B5 /* CustomEncryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEncryptorTests.swift; sourceTree = "<group>"; };
 		A54BF44B2BED188000CD24D4 /* SecuredKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecuredKey.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 				A509667C2C45C4E000A4E5B5 /* CustomEncryptorTests.swift */,
 				A588CFA62BF654FA00F9052A /* CustomStorageTests.swift */,
 				A54BF4E62BF39E0900CD24D4 /* KeychainStorageTests.swift */,
+				95E10E5C2CEEA80B0089FF5E /* EncryptedKeychainStorageTests.swift */,
 				A54BF4E42BF39DC200CD24D4 /* MemoryStorageTests.swift */,
 				A54BF49E2BF2F04E00CD24D4 /* SecuredKeyTests.swift */,
 				A509667A2C45C19500A4E5B5 /* SecuredKeyEncryptorTests.swift */,
@@ -253,6 +256,7 @@
 				A54BF4E72BF39E0900CD24D4 /* KeychainStorageTests.swift in Sources */,
 				A509667D2C45C4E000A4E5B5 /* CustomEncryptorTests.swift in Sources */,
 				A54BF4E52BF39DC200CD24D4 /* MemoryStorageTests.swift in Sources */,
+				95E10E5D2CEEA80B0089FF5E /* EncryptedKeychainStorageTests.swift in Sources */,
 				A54BF49F2BF2F04E00CD24D4 /* SecuredKeyTests.swift in Sources */,
 				A588CFA72BF654FA00F9052A /* CustomStorageTests.swift in Sources */,
 			);

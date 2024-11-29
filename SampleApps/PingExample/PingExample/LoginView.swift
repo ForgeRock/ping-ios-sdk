@@ -48,7 +48,7 @@ struct DavinciView: View {
             if let nextNode = viewmodel.data.previousNode as? ContinueNode {
               ConnectorView(viewmodel: viewmodel, nextNode: nextNode)
             }
-            ErrorView(name: errorNode.message)
+              ErrorView(name: "\(errorNode.message) :: \((errorNode.input["details"] as! [[String: Any]]).first!["message"])")
           default:
             EmptyView()
           }
@@ -94,7 +94,7 @@ struct ErrorView: View {
   
   var body: some View {
     VStack {
-      Text("Oops! Something went wrong.\(name)")
+      Text("\(name)")
         .foregroundColor(.red).padding(.top, 20)
     }
   }

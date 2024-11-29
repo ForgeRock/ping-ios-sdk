@@ -26,6 +26,7 @@ final class CustomEncryptorTests: XCTestCase {
     super.tearDown()
   }
   
+  // TestRailCase(24716)
   func testEncryption() async {
     let data = Data("Test data".utf8)
     
@@ -38,6 +39,7 @@ final class CustomEncryptorTests: XCTestCase {
     }
   }
   
+  // TestRailCase(24716)
   func testDecryption() async {
     let data = Data("Test data".utf8)
     let encryptedData = try! await encryptor.encrypt(data: data)
