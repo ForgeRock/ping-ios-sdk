@@ -20,7 +20,7 @@ extension DaVinci {
     public static func createDaVinci(block: (DaVinciConfig) -> Void = {_ in }) -> DaVinci {
         let config = DaVinciConfig()
         config.module(CustomHeader.config) { customHeaderConfig in
-            customHeaderConfig.header(name: Request.Constants.xRequestedWith, value: Request.Constants.forgerockSdk)
+            customHeaderConfig.header(name: Request.Constants.xRequestedWith, value: Request.Constants.pingSdk)
             customHeaderConfig.header(name: Request.Constants.xRequestedPlatform, value: Request.Constants.ios)
         }
         config.module(NodeTransformModule.config)

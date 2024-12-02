@@ -181,7 +181,7 @@ final class DaVinciTests: XCTestCase {
         //            XCTAssertEqual(formData["username"] as? String, "My First Name")
         //            XCTAssertEqual(formData["password"] as? String, "My Password")
         
-        XCTAssertEqual(request.allHTTPHeaderFields!["x-requested-with"], "forgerock-sdk")
+        XCTAssertEqual(request.allHTTPHeaderFields!["x-requested-with"], "ping-sdk")
         XCTAssertEqual(request.allHTTPHeaderFields!["x-requested-platform"], "ios")
         XCTAssertTrue(request.allHTTPHeaderFields!["Cookie"]?.contains("interactionId") ?? false)
         //XCTAssertTrue(request.allHTTPHeaderFields!["Cookie"]?.contains("interactionToken") ?? false)

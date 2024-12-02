@@ -110,7 +110,7 @@ public class Request {
         public static let accept = "Accept"
         public static let xRequestedWith = "x-requested-with"
         public static let xRequestedPlatform = "x-requested-platform"
-        public static let forgerockSdk = "forgerock-sdk"
+        public static let pingSdk = "ping-sdk"
         public static let ios = "ios"
         public static let stCookie = "ST"
         public static let stNoSsCookie = "ST-NO-SS"
