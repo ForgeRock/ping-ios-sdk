@@ -26,8 +26,9 @@ public class HttpClient {
     /// Sets the timeout interval for HTTP requests.
     /// - Parameter timeoutInterval: The timeout interval in seconds.
     public func setTimeoutInterval(timeoutInterval: TimeInterval) {
-        self.session.configuration.timeoutIntervalForRequest = timeoutInterval
-        self.session.configuration.timeoutIntervalForResource = timeoutInterval
+        let configuration = session.configuration
+        configuration.timeoutIntervalForRequest = timeoutInterval
+        session = URLSession(configuration: configuration)
     }
     
     /// Logs the details of an HTTP request.
