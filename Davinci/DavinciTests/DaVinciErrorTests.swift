@@ -545,4 +545,47 @@ class DaVinciErrorTests: XCTestCase {
     XCTAssertEqual(errorNode.message, "Invalid username and/or password")
     XCTAssertTrue(errorNode.input.description.contains("The provided password did not match provisioned password"))
   }
+  
+  func testDaVinci3xxErrorWithLocationHeaderInResponse() async throws {
+    MockURLProtocol.requestHandler = { request in
+      switch request.url!.path {
+      case MockAPIEndpoint.discovery.url.path:
+        return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfigurationResponse)
+      case MockAPIEndpoint.authorization.url.path:
+        var headers = MockResponse.authorizeResponseHeaders
+        headers["Location"] = "https://apps.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/signon/?error=test"
+        return (HTTPURLResponse(url: MockAPIEndpoint.authorization.url, statusCode: 302, httpVersion: nil, headerFields: headers)!, " ".data(using: .utf8)!)
+      default:
+        return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+      }
+    }
+    
+    let daVinci = DaVinci.createDaVinci { config in
+      config.httpClient = HttpClient(session: .shared)
+      
+      config.module(OidcModule.config) { oidcValue in
+        oidcValue.clientId = "test"
+        oidcValue.scopes = ["openid", "email", "address"]
+        oidcValue.redirectUri = "http://localhost:8080"
+        oidcValue.discoveryEndpoint = "http://localhost/.well-known/openid-configuration"
+        oidcValue.storage = MemoryStorage()
+        oidcValue.logger = LogManager.standard
+      }
+      
+      config.module(CookieModule.config) { cookieValue in
+        cookieValue.cookieStorage = MemoryStorage()
+        cookieValue.persist = ["ST"]
+      }
+    }
+    
+    let node = await daVinci.start()
+    XCTAssertTrue(node is FailureNode)
+    let failureNode = node as! FailureNode
+    let apiError = failureNode.cause as! ApiError
+    switch apiError {
+    case .error(let code, _, let message):
+      XCTAssertEqual(message, "Location: https://apps.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/signon/?error=test")
+      XCTAssertTrue(code == 302)
+    }
+  }
 }
