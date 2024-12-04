@@ -15,6 +15,8 @@ import PingLogger
 /// `HttpClient` is responsible for handling HTTP requests and logging the details of those requests and responses.
 public class HttpClient {
     var session: URLSession
+    /// The timeout interval for HTTP requests.
+    public var timeoutIntervalForRequest: TimeInterval = 60.0
     
     /// Initializes a new instance of `HttpClient`.
     /// - Parameter session: The URLSession instance to be used for HTTP requests. Defaults to a session with `RedirectPreventer` delegate.
@@ -23,27 +25,20 @@ public class HttpClient {
         self.session = session
     }
     
-    /// Sets the timeout interval for HTTP requests.
-    /// - Parameter timeoutInterval: The timeout interval in seconds.
-    public func setTimeoutInterval(timeoutInterval: TimeInterval) {
-        let configuration = session.configuration
-        configuration.timeoutIntervalForRequest = timeoutInterval
-        session = URLSession(configuration: configuration)
-    }
-    
     /// Logs the details of an HTTP request.
     /// - Parameter request: The URLRequest to be logged.
     public func logRequest(request: URLRequest?) {
-        if request != nil {
+      if let request = request {
             var log = "⬆\n"
-            log += "Request URL: \(request?.url?.absoluteString ?? "")\n"
-            log += "Request Method: \(request?.httpMethod ?? "")\n"
-            if let headers = request?.allHTTPHeaderFields {
+            log += "Request URL: \(request.url?.absoluteString ?? "")\n"
+            log += "Request Method: \(request.httpMethod ?? "")\n"
+            if let headers = request.allHTTPHeaderFields {
                 log += "Request Headers: \(headers)\n"
             }
-            if let bodyData = request?.httpBody, let bodyString = String(data: bodyData, encoding: .utf8) {
+            if let bodyData = request.httpBody, let bodyString = String(data: bodyData, encoding: .utf8) {
                 log += "Request Body: \(bodyString)\n"
             }
+          log += "Request Timeout: \(request.timeoutInterval)\n"
             LogManager.standard.d(log)
         }
     }
@@ -70,6 +65,8 @@ public class HttpClient {
     /// - Throws: An error if the request fails.
     /// - Returns: A tuple containing the response data and metadata.
     func sendRequest(request: URLRequest) async throws -> (Data, URLResponse) {
+        var request = request
+        request.timeoutInterval = timeoutIntervalForRequest
         logRequest(request: request)
         let (data, response) = try await session.data(for: request)
         logResponse(responseData: data, response: response)

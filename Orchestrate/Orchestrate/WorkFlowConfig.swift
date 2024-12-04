@@ -74,7 +74,7 @@ public class WorkflowConfig {
     }
     
     public func register(workflow: Workflow) {
-        httpClient.setTimeoutInterval(timeoutInterval: timeout)
+        httpClient.timeoutIntervalForRequest = timeout
         modules.sort(by: { $0.priority < $1.priority })
         modules.forEach { $0.register(workflow: workflow) }
     }
