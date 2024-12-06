@@ -46,4 +46,5 @@ enum Constants {
   static let pingOneAuthenticationConnector = "pingOneAuthenticationConnector"
   static let returnSuccessResponseRedirect = "returnSuccessResponseRedirect"
   static let setSession = "setSession"
+  static let location = "Location"
 }

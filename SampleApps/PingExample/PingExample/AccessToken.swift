@@ -16,27 +16,26 @@ struct AccessTokenView: View {
     
     var body: some View {
         VStack {
-            
-            TextEditor(text: $accessToken.accessToken)
-                            .foregroundStyle(.secondary)
-                            .padding(.horizontal)
-                            .navigationTitle("AccessToken")
+            ScrollView {
+                Text($accessToken.accessToken.wrappedValue)
+                  .foregroundStyle(.secondary)
+                  .padding(.horizontal)
+                  .navigationTitle("AccessToken")
+            }
         }
-        
     }
 }
 
 struct UserInfoView: View {
     
-    @StateObject var vm = UserInfoViewModel()
+    @StateObject var userInfoViewModel = UserInfoViewModel()
     
     var body: some View {
-        
-        TextEditor(text: $vm.userInfo)
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal)
-                        .navigationTitle("User Info")
-        
-        
+        ScrollView {
+            Text($userInfoViewModel.userInfo.wrappedValue)
+              .foregroundStyle(.secondary)
+              .padding(.horizontal)
+              .navigationTitle("User Info")
+        }
     }
 }
