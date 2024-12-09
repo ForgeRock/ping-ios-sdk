@@ -1,6 +1,6 @@
 //
 //  DaVinci.swift
-//  Davinci
+//  PingDavinci
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -17,6 +17,9 @@ public typealias DaVinci = Workflow
 public typealias DaVinciConfig = WorkflowConfig
 
 extension DaVinci {
+    /// Method to create a DaVinci instance.
+    /// - Parameter block: The configuration block.
+    /// - Returns: The DaVinci instance.
     public static func createDaVinci(block: (DaVinciConfig) -> Void = {_ in }) -> DaVinci {
         let config = DaVinciConfig()
         config.module(CustomHeader.config) { customHeaderConfig in

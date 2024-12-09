@@ -1,6 +1,6 @@
 // 
 //  FlowCollector.swift
-//  Davinci
+//  PingDavinci
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
