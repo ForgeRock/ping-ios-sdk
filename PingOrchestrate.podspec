@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint Logger.podspec' to ensure this is a
+# Be sure to run `pod lib lint PingOrchestrate.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -7,11 +7,11 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'PingLogger'
+  s.name             = 'PingOrchestrate'
   s.version          = '0.9.0-beta2'
-  s.summary          = 'Logger SDK for iOS'
+  s.summary          = 'PingOrchestrate SDK for iOS'
   s.description      = <<-DESC
-  The Logger SDK provides a versatile logging interface and a set of common loggers for the Ping SDKs.
+  The PingOrchestrate SDK provides a simple way to build a state machine for ForgeRock Journey and PingOne DaVinci.
                        DESC
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
@@ -22,14 +22,17 @@ Pod::Spec.new do |s|
       :tag => s.version.to_s
   }
 
-  s.module_name   = 'PingLogger'
+  s.module_name   = 'PingOrchestrate'
   s.swift_versions = ['5.0', '5.1']
 
   s.ios.deployment_target = '13.0'
 
-  base_dir = "Logger/Logger"
+  base_dir = "Orchestrate/Orchestrate"
   s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.h'
   s.resource_bundles = {
-    'Logger' => [base_dir + '/*.xcprivacy']
+    'Orchestrate' => [base_dir + '/*.xcprivacy']
   }
+  
+  s.ios.dependency 'PingLogger', '~> 0.9.0-beta2'
+  s.ios.dependency 'PingStorage', '~> 0.9.0-beta2'
 end
