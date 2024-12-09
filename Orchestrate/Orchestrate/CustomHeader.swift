@@ -1,6 +1,6 @@
 //
 //  CustomHeader.swift
-//  Orchestrate
+//  PingOrchestrate
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -11,7 +11,7 @@
 
 import Foundation
 
-//// Configuration class for CustomHeader.
+/// Configuration class for CustomHeader.
 /// Allows adding custom headers to be injected into requests.
 public class CustomHeaderConfig {
     internal var headers = [(String, String)]()
@@ -25,11 +25,14 @@ public class CustomHeaderConfig {
     }
 }
 
+
 /// Module for injecting custom headers into requests.
 public class CustomHeader {
-    
+  
+    /// Initializes a new instance of `CustomHeader`.
     public init() {}
-    
+  
+    /// The module configuration.
     public static let config: Module<CustomHeaderConfig> = Module.of({ CustomHeaderConfig() }) { setup in
         setup.start { flowContext, request in
             setup.config.headers.forEach { name, value in

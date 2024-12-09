@@ -1,6 +1,6 @@
 //
 //  SharedContext.swift
-//  Orchestrate
+//  PingOrchestrate
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -11,7 +11,7 @@
 
 import Foundation
 
-/// An actor that manages a shared context using a dictionary.
+/// A class that manages a shared context using a dictionary.
 public class SharedContext {
     private var map: [String: Any] = [:]
     private var queue = DispatchQueue(label: "shared.conext.queue", attributes: .concurrent)
@@ -64,7 +64,5 @@ public class SharedContext {
     }
     
     /// A namespace for key names to be added in an extension.
-    public enum Keys {
-        
-    }
+    public enum Keys { }
 }

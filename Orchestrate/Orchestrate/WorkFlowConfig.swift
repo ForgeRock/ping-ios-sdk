@@ -1,6 +1,6 @@
 //
 //  WorkflowConfig.swift
-//  Orchestrate
+//  PingOrchestrate
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -19,24 +19,32 @@ public enum OverrideMode {
     case ignore // Ignore if the module is already registered
 }
 
+
 /// Workflow configuration
 public class WorkflowConfig {
-    // Use a list instead of a map to allow registering a module twice with different configurations
+    /// Use a list instead of a map to allow registering a module twice with different configurations
     public private(set) var modules: [any ModuleRegistryProtocol] = []
-    // Timeout for the HTTP client, default is 15 seconds
+    /// Timeout for the HTTP client, default is 15 seconds
     public var timeout: TimeInterval = 15.0
-    // Logger for the log, default is NoneLogger
+    /// Logger for the log, default is NoneLogger
     public var logger: Logger = LogManager.logger {
         didSet {
             // Propagate the logger to Modules
             LogManager.logger = logger
         }
     }
-    // HTTP client for the engine
+    /// HTTP client for the engine
     public internal(set) var httpClient: HttpClient = HttpClient()
-    
+  
+    /// Initializes a new WorkflowConfig instance.
     public init() {}
-    
+  
+    /// Register a module.
+    /// - Parameters:
+    ///   - module: The module to be registered.
+    ///   - priority: The priority of the module in the registry. Default is 10.
+    ///   - mode: The mode of the module registration. Default is `override`. If the mode is `override`, the module will be overridden if it is already registered.
+    ///   - config: The configuration for the module.
     public func module<T: Any>(_ module: Module<T>,
                                _ priority: Int = 10,
                                mode: OverrideMode = .override,
@@ -72,11 +80,12 @@ public class WorkflowConfig {
         nextValue(initConfig)
         return initConfig
     }
-    
+  
+    /// Registers the workflow
+    /// - Parameter workflow: The workflow to be registered.
     public func register(workflow: Workflow) {
         httpClient.timeoutIntervalForRequest = timeout
         modules.sort(by: { $0.priority < $1.priority })
         modules.forEach { $0.register(workflow: workflow) }
     }
-    
 }
