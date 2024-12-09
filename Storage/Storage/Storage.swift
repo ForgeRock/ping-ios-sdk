@@ -1,6 +1,6 @@
 //
 //  Storage.swift
-//  Storage
+//  PingStorage
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -13,9 +13,16 @@ import Foundation
 
 /// Protocol to persist and retrieve `Codable` instanse.
 public protocol Storage<T> {
-    associatedtype T: Codable
-
-    func save(item: T) async throws
-    func get() async throws -> T?
-    func delete() async throws
+  associatedtype T: Codable
+  
+  /// Saves the given item.
+  /// - Parameter item: The item to be saved.
+  func save(item: T) async throws
+  
+  /// Retrieves the stored item.
+  /// - Returns: The stored item, or null if no item is stored.
+  func get() async throws -> T?
+  
+  /// Deletes the stored item.
+  func delete() async throws
 }

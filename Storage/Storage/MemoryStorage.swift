@@ -1,6 +1,6 @@
 //
 //  MemoryStorage.swift
-//  Storage
+//  PingStorage
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -11,7 +11,7 @@
 
 import Foundation
 
-/// A storage for storing objects in memory, where `T` is he type of the object to be stored.
+/// A storage for storing objects in memory, where `T` is the type of the object to be stored.
 public class Memory<T: Codable>: Storage {
   private var data: T?
   
@@ -22,7 +22,7 @@ public class Memory<T: Codable>: Storage {
   }
   
   /// Retrieves the item from memory.
-  /// - Returns: The item if it exists, null otherwise.
+  /// - Returns: The item if it exists, `nil` otherwise.
   public func get() async throws -> T?  {
     return data
   }
@@ -31,8 +31,8 @@ public class Memory<T: Codable>: Storage {
   public func delete() async throws {
     data = nil
   }
-
 }
+
 
 /// `MemoryStorage` provides an in-memory storage solution for objects of type `T`.
 /// It conforms to the `StorageDelegate` protocol, enabling it to interact seamlessly with other components expecting a storage delegate.

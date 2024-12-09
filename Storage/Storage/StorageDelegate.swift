@@ -1,6 +1,6 @@
 //
 //  StorageDelegate.swift
-//  Storage
+//  PingStorage
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -11,12 +11,12 @@
 
 import Foundation
 
-/// A storage dlegate class that delegates its operations to a storage.
+/// A storage delegate class that delegates its operations to a storage.
 /// It can optionally cache the stored item in memory.
 /// This class is designed to be subclassed by specific storage strategies (e.g., keychain, in-memory) that conform to the `Storage` protocol.
 ///
-/// - Parameter T: The type of the objects being stored. Must conform to `Codable` to ensure that
-///                objects can be easily encoded and decoded.
+/// - Parameter T: The type of the object being stored. Must conform to `Codable` to ensure that
+///                object can be easily encoded and decoded.
 open class StorageDelegate<T: Codable>: Storage {
   private let delegate: any Storage<T>
   private let cacheable: Bool
@@ -26,7 +26,7 @@ open class StorageDelegate<T: Codable>: Storage {
   /// Initializer for StorageDelegate
   /// - Parameters:
   ///   - delegate: The storage to delegate the operations to.
-  ///   - cacheable: Whether the storage dleegate should cache the object in memory.
+  ///   - cacheable: Whether the storage delegate should cache the object in memory.
   public init(delegate: any Storage<T>, cacheable: Bool = false) {
     self.delegate = delegate
     self.cacheable = cacheable
@@ -53,7 +53,7 @@ open class StorageDelegate<T: Codable>: Storage {
   }
   
   /// Retrieves the item from memory if it's cached, otherwise from the storage.
-  /// - Returns: The item if it exists, null otherwise.
+  /// - Returns: The item if it exists, `nil` otherwise.
   public func get() async throws -> T? {
     try await withCheckedThrowingContinuation { continuation in
       queue.async {
