@@ -1,4 +1,6 @@
-## [0.9.0]
+## [1.0.0]
+- General Availability release of the Ping SDK for iOS
+
 #### Added
 - Added Logger initial version
 - Added Storage initial version
