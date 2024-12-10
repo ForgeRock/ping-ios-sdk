@@ -1,6 +1,6 @@
 //
 //  Agent.swift
-//  Davinci
+//  PingDavinci
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -49,6 +49,7 @@ internal class CreateAgent: Agent {
     }
     
 }
+
 
 extension Session {
     func authCode(pkce: Pkce?) -> AuthCode {

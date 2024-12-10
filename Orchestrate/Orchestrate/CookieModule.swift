@@ -1,6 +1,6 @@
 //
 //  CookieModule.swift
-//  Orchestrate
+//  PingOrchestrate
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -12,15 +12,17 @@
 import Foundation
 import PingStorage
 
+/// A module that manages cookies.
 public class CookieModule {
-    
+  
+    /// Initializes a new instance of `CookieModule`.
     public init() {}
-    
-    public static let config: Module<CookieConfig> = Module.of({ CookieConfig() }) { 
+  
+    /// The module configuration for managing cookies.
+    public static let config: Module<CookieConfig> = Module.of({ CookieConfig() }) {
         setup in
         
         setup.initialize {
-            //setup.config.initConfig()
             setup.context.set(key: SharedContext.Keys.cookieStorage, value: setup.config.cookieStorage)
         }
         
@@ -71,6 +73,12 @@ public class CookieModule {
         }
     }
     
+    /// Injects cookies into an HTTP request.
+    /// - Parameters:
+    ///   - url: The URL of the request.
+    ///   - cookies: The cookies to be injected.
+    ///   - inMemoryStorage: In-memory cookie storage.
+    ///   - request: The HTTP request to modify.
     static func inject(url: URL,
                        cookies: [CustomHTTPCookie],
                        inMemoryStorage: InMemoryCookieStorage?,
@@ -86,7 +94,13 @@ public class CookieModule {
         }
     }
     
-    
+    /// Parses cookies from an HTTP response and updates storage.
+    /// - Parameters:
+    ///   - context: The workflow context.
+    ///   - url: The URL associated with the response.
+    ///   - cookies: The cookies received in the response.
+    ///   - storage: In-memory cookie storage.
+    ///   - cookieConfig: Configuration for cookie persistence.
     static func parseResponseForCookie(context: FlowContext,
                                        url: URL,
                                        cookies: [HTTPCookie],
@@ -131,21 +145,28 @@ public class CookieModule {
 }
 
 
+/// Configuration for managing cookies in the application.
 public class CookieConfig {
     typealias Cookies = [String]
     
+    /// A list of Cookies name that should be persisted to the storage. For cookies that should not be persisted, do not add the cookie name to this list.
     public var persist: [String] = []
-    
+    /// In-memory storage for cookies.
     public private(set) var inMemoryStorage: InMemoryCookieStorage
+    /// Persistent storage for cookies.
     public internal(set) var cookieStorage: StorageDelegate<[CustomHTTPCookie]>
     
+    /// Initializes a new instance of `CookieConfig`.
     public init() {
         cookieStorage = KeychainStorage<[CustomHTTPCookie]>(account: SharedContext.Keys.cookieStorage, encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
         inMemoryStorage = InMemoryCookieStorage()
     }
 }
 
+
 extension Workflow {
+    /// Checks if the workflow has cookies available in storage.
+    /// - Returns: A Boolean value indicating whether cookies exist in the storage.
     public func hasCookies() async -> Bool {
         let storage = sharedContext.get(key: SharedContext.Keys.cookieStorage) as? StorageDelegate<[CustomHTTPCookie]>
         let value = try? await storage?.get()
@@ -153,32 +174,47 @@ extension Workflow {
     }
 }
 
+/// A storage class for managing in-memory cookies.
 public final class InMemoryCookieStorage: HTTPCookieStorage {
     private var cookieStore: [HTTPCookie] = []
     
+    /// Adds or updates a cookie in the storage.
+    /// - Parameter cookie: The cookie to add or update.
     public override func setCookie(_ cookie: HTTPCookie) {
         cookieStore.removeAll { $0.name == cookie.name && $0.domain == cookie.domain && $0.path == cookie.path }
         cookieStore.append(cookie)
     }
     
+    /// Deletes a specific cookie from the storage.
+    /// - Parameter cookie: The cookie to delete.
     public override func deleteCookie(_ cookie: HTTPCookie) {
         cookieStore.removeAll { $0 == cookie }
     }
     
+    /// Deletes all cookies associated with a specific URL.
+    /// - Parameter url: The URL whose cookies should be deleted.
     public func deleteCookies(url: URL) {
         cookies(for: url)?.forEach { value in
             deleteCookie(value)
         }
     }
     
+    /// Retrieves all cookies currently stored.
     public override var cookies: [HTTPCookie]? {
         return cookieStore
     }
     
+    /// Retrieves cookies associated with a specific URL.
+    /// - Parameter url: The URL to fetch cookies for.
     public override func cookies(for url: URL) -> [HTTPCookie]? {
         return cookieStore.filter {!$0.isExpired && $0.validateURL(url)  }
     }
     
+    /// Deletes all cookies from the storage./// Adds multiple cookies to the storage.
+    /// - Parameters:
+    ///   - cookies: The cookies to add.
+    ///   - url: The URL associated with the cookies (optional).
+    ///   - mainDocumentURL: The main document URL (optional).
     public override func setCookies(_ cookies: [HTTPCookie], for url: URL?, mainDocumentURL: URL?) {
         for cookie in cookies {
             setCookie(cookie)
@@ -186,12 +222,13 @@ public final class InMemoryCookieStorage: HTTPCookieStorage {
     }
 }
 
+
 extension SharedContext.Keys {
     static let cookieStorage = "COOKIE_STORAGE"
 }
 
+
 extension HTTPCookie {
-    
     var isExpired: Bool {
         get {
             if let expDate = self.expiresDate, expDate.timeIntervalSince1970 < Date().timeIntervalSince1970 {
@@ -200,7 +237,6 @@ extension HTTPCookie {
             return false
         }
     }
-    
     
     func validateIsSecure(_ url: URL) -> Bool {
         if !self.isSecure {
@@ -212,11 +248,9 @@ extension HTTPCookie {
         return false
     }
     
-    
     func validateURL(_ url: URL) -> Bool {
         return self.validateDomain(url: url) && self.validatePath(url: url)
     }
-    
     
     private func validatePath(url: URL) -> Bool {
         let path = url.path.count == 0 ? "/" : url.path
@@ -265,4 +299,3 @@ extension HTTPCookie {
         return false
     }
 }
-

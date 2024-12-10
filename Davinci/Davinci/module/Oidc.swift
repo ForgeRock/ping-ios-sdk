@@ -1,6 +1,6 @@
 //
 //  OIDC.swift
-//  Davinci
+//  PingDavinci
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -13,10 +13,13 @@ import Foundation
 import PingOidc
 import PingOrchestrate
 
+/// A module that integrates OIDC capabilities into the DaVinci workflow.
 public class OidcModule {
     
+    /// Initializes a new instance of `OidcModule`.
     public init() {}
     
+    /// The configuration for the OIDC module.
     public static let config: Module<OidcClientConfig> = Module.of ({ OidcClientConfig() }) { setup in
         
         let config: OidcClientConfig = setup.config
@@ -75,7 +78,12 @@ public class OidcModule {
 }
 
 extension SharedContext.Keys {
+    /// The key used to store the PKCE value in the shared context.
     public static let pkceKey = "com.pingidentity.davinci.PKCE"
+  
+    /// The key used to store the user in the shared context.
     public static let userKey = "com.pingidentity.davinci.User"
+  
+    /// The key used to store the OIDC client configuration in the shared context.
     public static let oidcClientConfigKey = "com.pingidentity.davinci.OidcClientConfig"
 }

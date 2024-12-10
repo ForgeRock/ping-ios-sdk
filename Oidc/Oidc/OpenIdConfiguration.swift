@@ -1,6 +1,6 @@
 //
 //  OpenIdConfiguration.swift
-//  Oidc
+//  PingOidc
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -11,12 +11,17 @@
 
 import Foundation
 
+/// Struct representing the OpenID Connect configuration.
 public struct OpenIdConfiguration: Codable {
-    // Define properties corresponding to the serialized names
+    /// The URL of the authorization endpoint.
     public let authorizationEndpoint: String
+    /// The URL of the token endpoint.
     public let tokenEndpoint: String
+    /// The URL of the userinfo endpoint.
     public let userinfoEndpoint: String
+    /// The URL of the end session endpoint.
     public let endSessionEndpoint: String
+    /// The URL of the revocation endpoint .
     public let revocationEndpoint: String
     
     // Define CodingKeys enum to map serialized names to property names

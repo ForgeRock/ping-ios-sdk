@@ -1,6 +1,6 @@
 //
 //  PKCE.swift
-//  Oidc
+//  PingOidc
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -48,6 +48,7 @@ public struct Pkce {
         return Data(digest).base64URLEncodedString() // remove padding as per https://tools.ietf.org/html/rfc7636#section-4.1
     }
 }
+
 
 extension Data {
     func base64URLEncodedString() -> String {

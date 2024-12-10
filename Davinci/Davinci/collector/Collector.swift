@@ -1,6 +1,6 @@
 //
 //  FlowCollector.swift
-//  Davinci
+//  PingDavinci
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -17,7 +17,9 @@ public protocol Collector: Action, Identifiable {
     init(with json: [String: Any])
 }
 
- extension ContinueNode {
+
+extension ContinueNode {
+    /// Returns the list of collectors from the actions.
     public var collectors: [any Collector] {
         return actions.compactMap { $0 as? (any Collector) }
     }
@@ -25,6 +27,7 @@ public protocol Collector: Action, Identifiable {
 
 ///  Type alias for a list of collectors.
 public typealias Collectors = [any Collector]
+
 
 extension Collectors {
     /// Finds the event type from a list of collectors.

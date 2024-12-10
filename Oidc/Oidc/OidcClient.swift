@@ -1,6 +1,6 @@
 //
 //  OidcClient.swift
-//  Oidc
+//  PingOidc
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -108,7 +108,7 @@ public class OidcClient {
     }
     
     /// Revokes the access token.
-    func revoke() async {
+    public func revoke() async {
         await revoke(nil)
     }
     
@@ -157,7 +157,7 @@ public class OidcClient {
     /// Ends the session. Best effort to end the session.
     /// The stored token is removed regardless of the result.
     /// - Returns:  A boolean indicating whether the session was ended successfully.
-    func endSession() async -> Bool {
+    public func endSession() async -> Bool {
         return await endSession { idToken in
             return try await self.config.agent?.endSession(idToken: idToken) ?? false
         }
@@ -184,7 +184,7 @@ public class OidcClient {
     
     /// Retrieves user information.
     /// - Returns: A Result containing the user information or an error.
-    func userinfo() async -> Result<UserInfo, OidcError> {
+    public func userinfo() async -> Result<UserInfo, OidcError> {
         do {
             try await config.oidcInitialize()
             

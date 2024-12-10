@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint Oidc.podspec' to ensure this is a
+# Be sure to run `pod lib lint PingOidc.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.version          = '0.9.0-beta2'
   s.summary          = 'Oidc SDK for iOS'
   s.description      = <<-DESC
-  The Oidc SDK provides OIDC client for PingOne and ForgeRock platform..
+  The PingOidc SDK provides OIDC client for PingOne and ForgeRock platform..
                        DESC
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }

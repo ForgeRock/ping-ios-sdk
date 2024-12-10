@@ -1,6 +1,6 @@
 //
 //  StandardLogger.swift
-//  Logger
+//  PingLogger
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -12,14 +12,14 @@
 import Foundation
 import os.log
 
-/// Stadard Logger to go to the iOS Console
+/// Stadard Logger to log to the iOS Console
 public class StandardLogger: Logger {
   /// SDK Version to be updated with each release
   private let sdkVersion = "Ping SDK 0.9.0-beta2"
   var log: OSLog
   
   /// Initializer for StandardLogger
-  /// - Parameter log: Optional OSLog. Default: subsystem: "com.pingidentity.ios", category: "Standard"
+  /// - Parameter log: Optional OSLog. Default: `OSLog(subsystem: "com.pingidentity.ios", category: "Standard")`
   public init (log: OSLog? = nil) {
     self.log = log ?? OSLog(subsystem: "com.pingidentity.ios", category: "Standard")
   }
@@ -58,16 +58,20 @@ public class StandardLogger: Logger {
   }
 }
 
+///  Warning Logger that only logs warnings and errors
 public class WarningLogger: StandardLogger {
+  /// Logs a debug message. This implementation does nothing.
+  /// - Parameter message: The debug message to be logged.
   public override func d(_ message: String) { }
-
+  
+  /// Logs an info message. This implementation does nothing.
+  /// - Parameter message: The informational message to be logged.
   public override func i(_ message: String) { }
 }
 
 extension LogManager {
   /// Static logger of `StandardLogger` type
   public static var standard: Logger { return StandardLogger() }
-  /// Static logger of `StandardWarningLogger` type
-  public static var warning: Logger { return WarningLogger()
-  }
+  /// Static logger of `WarningLogger` type
+  public static var warning: Logger { return WarningLogger() }
 }

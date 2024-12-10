@@ -1,6 +1,6 @@
 //
 //  User.swift
-//  Davinci
+//  PingDavinci
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -57,12 +57,14 @@ extension DaVinci {
     }
 }
 
-/// Extension property for SuccessNodet o cast the `SuccessNode.session` to a User.
+
 extension SuccessNode {
-    var user: User? {
+  /// Extension property for SuccessNode to cast the `SuccessNode.session` to a User.
+    public var user: User? {
         return session as? User
     }
 }
+
 
 /// Struct representing a UserDelegate.
 /// This struct is a delegate for the User and Session interfaces.

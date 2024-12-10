@@ -1,6 +1,6 @@
 //
 //  User.swift
-//  Oidc
+//  PingOidc
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -9,6 +9,7 @@
 //
 
 
+/// Protocol for a User.
 /// Provides methods for token management, user information retrieval, and logout.
 public protocol User {
     /// Retrieves the token for the user.
@@ -27,4 +28,6 @@ public protocol User {
     func logout() async
 }
 
+
+/// A type alias representing user information as a dictionary.
 public typealias UserInfo = [String: Any]

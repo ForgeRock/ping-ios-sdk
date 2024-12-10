@@ -1,6 +1,6 @@
 //
 //  Module.swift
-//  Orchestrate
+//  PingOrchestrate
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -17,6 +17,7 @@ import Foundation
 public class Module<ModuleConfig>: Equatable {
     public private(set) var setup: (Setup<ModuleConfig>) -> (Void)
     public private(set) var config: () -> (ModuleConfig)
+    /// The unique identifier of the module.
     public var id: UUID = UUID()
     
     ///  Constructs a module with config.
@@ -38,7 +39,12 @@ public class Module<ModuleConfig>: Equatable {
     ) -> Module<ModuleConfig> {
         return Module<ModuleConfig>(config: config, setup: setup)
     }
-    
+  
+    /// Compares two modules.
+    /// - Parameters:
+    ///   - lhs: The left-hand module.
+    ///   - rhs: The right-hand module.
+    /// - Returns: A boolean value indicating whether the two modules are equal.
     public static func == (lhs: Module<ModuleConfig>, rhs: Module<ModuleConfig>) -> Bool {
         return lhs.id == rhs.id
     }

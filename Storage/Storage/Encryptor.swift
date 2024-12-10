@@ -1,6 +1,6 @@
 //
 //  Encryptor.swift
-//  Storage
+//  PingStorage
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -19,7 +19,7 @@ public protocol Encryptor {
   /// - Throws: An error if encryption fails.
   func encrypt(data: Data) async throws -> Data
   
-  // Decrypts the given data.
+  /// Decrypts the given data.
   /// - Parameter data: The data to decrypt.
   /// - Returns: The decrypted data.
   /// - Throws: An error if decryption fails.

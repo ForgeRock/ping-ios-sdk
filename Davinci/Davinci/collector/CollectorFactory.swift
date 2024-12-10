@@ -1,6 +1,6 @@
 //
 //  CollectorFactory.swift
-//  Davinci
+//  PingDavinci
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -14,10 +14,11 @@ import PingOrchestrate
 /// The CollectorFactory singleton is responsible for creating and managing Collector instances.
 /// It maintains a dictionary of collector creation functions, keyed by type.
 /// It also provides functions to register new types of collectors and to create collectors from a JSON array.
-final class CollectorFactory {
+public final class CollectorFactory {
     // A dictionary to hold the collector creation functions.
-    public var collectors: [String: any Collector.Type] = [:]
-    
+    var collectors: [String: any Collector.Type] = [:]
+  
+    /// The shared instance of the CollectorFactory.
     public static let shared = CollectorFactory()
     
     init() {
@@ -39,7 +40,7 @@ final class CollectorFactory {
     /// Each dictionary should have a "type" field that matches a registered Collector type.
     /// - Parameter array: The array of dictionaries to create the Collectors from.
     /// - Returns: A list of Collector instances.
-    func collector(from array: [[String: Any]]) -> Collectors {
+    public func collector(from array: [[String: Any]]) -> Collectors {
         var list: [any Collector] = []
         for item in array {
             if let type = item[Constants.type] as? String, let collectorType = collectors[type] {
@@ -49,7 +50,8 @@ final class CollectorFactory {
         return list
     }
     
-    func reset() {
+    /// Resets the CollectorFactory by clearing all registered collectors.
+    public func reset() {
         collectors.removeAll()
     }
 }

@@ -1,6 +1,6 @@
 //
 //  Transform.swift
-//  Davinci
+//  PingDavinci
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -16,6 +16,7 @@ import PingOrchestrate
 /// Module for transforming the response from DaVinci to `Node`.
 public class NodeTransformModule {
   
+  /// The module configuration for transforming the response from DaVinci to `Node`.
   public static let config: Module<Void> = Module.of(setup: { setup in
     setup.transform { flowContext, response in
       let status = response.status()
@@ -88,22 +89,35 @@ public class NodeTransformModule {
   }
 }
 
-struct SessionResponse: Session {
+
+/// Represents a session response parsed from a JSON object.
+public struct SessionResponse: Session {
+  /// The raw JSON data of the session response.
   public let json: [String: Any]
   
+  /// Initializes a new session response with the given JSON data.
+  /// - Parameter json: The JSON data representing the session response.
   public init(json: [String: Any] = [:]) {
     self.json = json
   }
   
-  var value: String {
+  /// The session value extracted from the JSON response.
+  /// - Returns: A string representing the session code or an empty string if not available.
+  public var value: String {
     get {
       let authResponse = json[Constants.authorizeResponse] as? [String: Any]
       return authResponse?[Constants.code] as? String ?? ""
     }
   }
-  
 }
 
+
+/// Represents API errors that occur during response transformation.
 public enum ApiError: Error {
+  /// An error containing an HTTP status code, a JSON object, and a descriptive message.
+  /// - Parameters:
+  ///   - status: The HTTP status code of the error.
+  ///   - json: The JSON data associated with the error.
+  ///   - message: A descriptive message explaining the error.
   case error(Int, [String: Any], String)
 }

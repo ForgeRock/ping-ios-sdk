@@ -1,6 +1,6 @@
 //
 //  Request.swift
-//  Davinci
+//  PingDavinci
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -58,6 +58,7 @@ extension OidcClientConfig {
         return request
     }
 }
+
 
 extension OidcClient.Constants {
     static let response_mode = "response_mode"

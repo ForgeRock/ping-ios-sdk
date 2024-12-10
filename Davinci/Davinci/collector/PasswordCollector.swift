@@ -1,6 +1,6 @@
 //
 //  PasswordCollector.swift
-//  Davinci
+//  PingDavinci
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -16,6 +16,7 @@ import PingOrchestrate
 /// This class inherits from the FieldCollector class and implements the Closeable and Collector protocols.
 /// It is used to collect password data.
 public class PasswordCollector: FieldCollector, Closeable {
+    /// A flag to determine whether to clear the password or not after submission.
     public var clearPassword: Bool = true
     
     /// Overrides the close function from the Closeable protocol.
