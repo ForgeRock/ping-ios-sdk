@@ -1,4 +1,4 @@
-## [1.0.0]
+## [1.0.0-beta1]
 - General Availability release of the Ping SDK for iOS
 
 #### Added
