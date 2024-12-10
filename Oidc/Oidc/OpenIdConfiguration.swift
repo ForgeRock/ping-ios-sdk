@@ -11,7 +11,7 @@
 
 import Foundation
 
-/// Struct epresenting the OpenID Connect configuration.
+/// Struct representing the OpenID Connect configuration.
 public struct OpenIdConfiguration: Codable {
     /// The URL of the authorization endpoint.
     public let authorizationEndpoint: String
