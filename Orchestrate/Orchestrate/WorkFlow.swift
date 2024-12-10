@@ -1,6 +1,6 @@
 //
 //  Workflow.swift
-//  Orchestrate
+//  PingOrchestrate
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -22,6 +22,7 @@ public class FlowContext {
     }
 }
 
+
 extension Workflow {
     /// Creates a new Workflow instance with the provided configuration block.
     /// - Parameter block: The configuration block for the Workflow.
@@ -33,11 +34,14 @@ extension Workflow {
     }
 }
 
+
+/// Enum representing the keys for the modules.
 public enum ModuleKeys: String {
     case customHeader = "customHeader"
     case nosession = "nosession"
     case forceAuth = "forceAuth"
 }
+
 
 /// Class representing a workflow.
 public class Workflow {
@@ -87,7 +91,7 @@ public class Workflow {
     
     /// Starts the workflow with the provided request.
     /// - Parameter request: The request to start the workflow with.
-    /// - Returns: The resulting Node after processing the workflow.
+    /// - Returns: The resulting `Node` after processing the workflow.
     private func start(request: Request) async throws -> Node {
         // Before we start, make sure all the module init has been completed
         try await initialize()
@@ -110,7 +114,7 @@ public class Workflow {
     }
     
     /// Starts the workflow with a default request.
-    /// - Returns: The resulting Node after processing the workflow.
+    /// - Returns: The resulting `Node` after processing the workflow.
     public func start() async -> Node {
         do {
             return try await start(request: Request())
@@ -147,7 +151,7 @@ public class Workflow {
     /// - Parameters:
     ///   - context: The context of the flow.
     ///   - node: The current node.
-    /// - Returns: The resulting Node after processing the next step.
+    /// - Returns: The resulting `Node` after processing the next step.
     private func next(_ context: FlowContext, _ node: Node) async throws -> Node {
         if let success = node as? SuccessNode {
             var result = success

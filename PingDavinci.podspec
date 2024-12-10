@@ -9,9 +9,9 @@
 Pod::Spec.new do |s|
   s.name             = 'PingDavinci'
   s.version          = '1.0.0'
-  s.summary          = 'Davinci SDK for iOS'
+  s.summary          = 'PingDavinci SDK for iOS'
   s.description      = <<-DESC
-  The Davinci SDK is a powerful and flexible library for Authentication and Authorization. It is designed to be easy to use and extensible. It provides a simple API for navigating the authentication flow and handling the various states that can
+  The PingDavinci SDK is a powerful and flexible library for Authentication and Authorization. It is designed to be easy to use and extensible. It provides a simple API for navigating the authentication flow and handling the various states that can
 occur during the authentication process.
                        DESC
   s.homepage         = 'https://www.pingidentity.com/'

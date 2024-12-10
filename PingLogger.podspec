@@ -9,9 +9,9 @@
 Pod::Spec.new do |s|
   s.name             = 'PingLogger'
   s.version          = '1.0.0'
-  s.summary          = 'Logger SDK for iOS'
+  s.summary          = 'PingLogger SDK for iOS'
   s.description      = <<-DESC
-  The Logger SDK provides a versatile logging interface and a set of common loggers for the Ping SDKs.
+  The PingLogger SDK provides a versatile logging interface and a set of common loggers for the Ping SDKs.
                        DESC
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }

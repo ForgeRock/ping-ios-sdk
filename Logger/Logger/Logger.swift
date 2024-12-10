@@ -1,6 +1,6 @@
 //
 //  Logger.swift
-//  Logger
+//  PingLogger
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -34,11 +34,11 @@ public protocol Logger {
   func e(_ message: String, error: Error?)
 }
 
-///LogManager to access the global logger instances
+/// LogManager to access the global logger instances
 public struct LogManager {
   private static var shared: Logger = NoneLogger()
 
-  ///Global logger instance. If no logger is set, it defaults to Logger.None.
+  /// Global logger instance. If no logger is set, it defaults to `NoneLogger()`.
   public static var logger: Logger {
     get { shared }
     set { shared = newValue }

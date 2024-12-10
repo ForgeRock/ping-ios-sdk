@@ -1,6 +1,6 @@
 //
 //  SecuredKey.swift
-//  Storage
+//  PingStorage
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -13,9 +13,8 @@ import Foundation
 import LocalAuthentication
 import CryptoKit
 
-/// SecuredKey is a representation of Secure Enclave keypair and performing PKI using Secure Enclave
+/// `SecuredKey` is a representation of Secure Enclave keypair and performing PKI using Secure Enclave
 public struct SecuredKey {
-
   /// Private Key of SecuredKey
   fileprivate var privateKey: SecKey
   /// Public Key of SecuredKey
@@ -25,14 +24,12 @@ public struct SecuredKey {
 
   /// Validates whether SecuredKey using Secure Enclave is available on the device or not
   public static func isAvailable() -> Bool {
-
     return SecureEnclave.isAvailable
   }
 
-  /// Initializes SecuredKey object with designated service; SecuredKey may return nil if it failed to generate keypair
+  /// Initializes `SecuredKey` object with designated service; `SecuredKey` may return `nil` if it failed to generate keypair
   /// - Parameter applicationTag: Unique identifier for SecuredKey
   public init?(applicationTag: String) {
-
     guard SecuredKey.isAvailable() else {
       return nil
     }
@@ -125,8 +122,10 @@ public struct SecuredKey {
     SecItemDelete(query as CFDictionary)
   }
 
-  /// Encrypts Data object using SecuredKey object
+  /// Encrypts Data object using `SecuredKey` object
   /// - Parameter data: Encrypted Data object
+  /// - Parameter secAlgorithm: Algorithm to be used for encryption. Default: `.eciesEncryptionCofactorVariableIVX963SHA256AESGCM`
+  /// - Returns: Encrypted Data object  or `nil` if encryption fails
   public func encrypt(data: Data, secAlgorithm: SecKeyAlgorithm = .eciesEncryptionCofactorVariableIVX963SHA256AESGCM) -> Data? {
 
     guard SecKeyIsAlgorithmSupported(publicKey, .encrypt, secAlgorithm) else {
@@ -140,6 +139,8 @@ public struct SecuredKey {
 
   /// Decrypts Data object using SecuredKey object
   /// - Parameter data: Decrypted Data object
+  /// - Parameter secAlgorithm: Algorithm to be used for decryption. Default: `.eciesEncryptionCofactorVariableIVX963SHA256AESGCM`
+  /// - Returns: Decrypted Data object or `nil` if decryption fails
   public func decrypt(data: Data, secAlgorithm: SecKeyAlgorithm = .eciesEncryptionCofactorVariableIVX963SHA256AESGCM) -> Data? {
 
     guard SecKeyIsAlgorithmSupported(privateKey, .decrypt, secAlgorithm) else {

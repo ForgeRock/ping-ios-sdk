@@ -1,6 +1,6 @@
 //
 //  NoneLogger.swift
-//  Logger
+//  PingLogger
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -11,7 +11,7 @@
 
 import Foundation
 
-/// The None class is an implementation of the Logger interface that performs no operations.
+/// The NoneLogger class is an implementation of the Logger interface that performs no operations.
 /// This can be used as a default or placeholder logger.
 public class NoneLogger: Logger {
   /// Logs a debug message.
@@ -36,6 +36,6 @@ public class NoneLogger: Logger {
 }
 
 extension LogManager {
-  /// Staic logger of `NoneLogger` type
+  /// Static logger of `NoneLogger` type
   public static var none: Logger { return NoneLogger() }
 }

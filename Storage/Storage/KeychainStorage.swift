@@ -1,6 +1,6 @@
 //
 //  KeychainStorage.swift
-//  Storage
+//  PingStorage
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -48,7 +48,7 @@ public class Keychain<T: Codable>: Storage {
   }
 
   /// Retrieves the item from the keychain.
-  /// - Returns: The item if it exists, null otherwise.
+  /// - Returns: The item if it exists, `nil` otherwise.
   public func get() async throws -> T? {
     let query = [
       kSecClass as String: kSecClassGenericPassword,
@@ -83,13 +83,15 @@ public class Keychain<T: Codable>: Storage {
   }
 }
 
+
 /// `KeychainError` represents errors that can occur while interacting with the keychain.
 public enum KeychainError: LocalizedError {
   case unableToSave
   case unableToRetrieve
   case unableToDelete
   
-  var errorMessage: String {
+  /// A localized message describing what error occurred.
+  public var errorMessage: String {
     switch self {
     case .unableToSave:
       return "Uanble to save to the keychain"
@@ -100,6 +102,7 @@ public enum KeychainError: LocalizedError {
     }
   }
 }
+
 
 /// `KeychainStorage` is a generic class that conforms to the `StorageDelegate` protocol, providing a secure storage solution by leveraging the keychain.
 /// It is designed to store, retrieve, and manage objects of type `T`, where `T` must conform to the `Codable` protocol. This requirement ensures that the objects can be easily encoded and decoded for secure storage in the keychain.

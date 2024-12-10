@@ -9,9 +9,9 @@
 Pod::Spec.new do |s|
   s.name             = 'PingOrchestrate'
   s.version          = '1.0.0'
-  s.summary          = 'Orchestrate SDK for iOS'
+  s.summary          = 'PingOrchestrate SDK for iOS'
   s.description      = <<-DESC
-  The Orchestrate SDK provides a simple way to build a state machine for ForgeRock Journey and PingOne DaVinci.
+  The PingOrchestrate SDK provides a simple way to build a state machine for ForgeRock Journey and PingOne DaVinci.
                        DESC
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }

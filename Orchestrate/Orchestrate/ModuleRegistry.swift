@@ -1,6 +1,6 @@
 //
 //  ModuleRegistry.swift
-//  Orchestrate
+//  PingOrchestrate
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -11,15 +11,22 @@
 
 import Foundation
 
+/// Represents a ModuleRegistry protocol. A ModuleRegistry represents a registry of modules in the application.
 public protocol ModuleRegistryProtocol<Config> {
     associatedtype Config: Any
+    /// The UUID of the module
     var id: UUID { get set }
+    /// The priority of the module in the registry.
     var priority: Int { get }
+    /// The configuration for the module.
     var config: Config { get }
+    /// The function that sets up the module.
     var setup: (Setup<Config>) -> (Void) { get }
     
+    /// Registers the module to the workflow.
     func register(workflow: Workflow)
 }
+
 
 /// Class for a ModuleRegistry. A ModuleRegistry represents a registry of modules in the application.
 ///  - property id: The UUID of the module
@@ -50,13 +57,23 @@ public class ModuleRegistry<Config>: ModuleRegistryProtocol {
     }
 }
 
+
 extension ModuleRegistry: Comparable {
+    /// Compares two ModuleRegistry instances.
+    /// - Parameters:
+    ///   - lhs: The left-hand side ModuleRegistry instance.
+    ///   - rhs: The right-hand side ModuleRegistry instance.
+    /// - Returns: A boolean value indicating whether the left-hand side ModuleRegistry instance is less than the right-hand side ModuleRegistry instance.
     public static func < (lhs: ModuleRegistry, rhs: ModuleRegistry) -> Bool {
         return lhs.priority < rhs.priority
     }
-    
+  
+    /// Compares two ModuleRegistry instances for equality.
+    /// - Parameters:
+    ///   - lhs: The left-hand side ModuleRegistry instance
+    ///   - rhs: The right-hand side ModuleRegistry instance
+    /// - Returns: A boolean value indicating whether the left-hand side ModuleRegistry instance is equal to the right-hand side ModuleRegistry instance.
     public static func == (lhs: ModuleRegistry, rhs: ModuleRegistry) -> Bool {
         return lhs.priority == rhs.priority
     }
 }
-

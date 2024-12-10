@@ -1,6 +1,6 @@
 //
 //  SampleRequest.swift
-//  Orchestrate
+//  PingOrchestrate
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -13,7 +13,7 @@ import Foundation
 
 /// Struct for a Response. A Response represents a response received from a network request.
 /// - property data: The data  received from the network request.
-/// - response The URLResponse received from the network request.
+/// - property response: The URLResponse received from the network request.
 public struct Response {
     public let data: Data
     public let response: URLResponse

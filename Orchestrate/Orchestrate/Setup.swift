@@ -1,6 +1,6 @@
 //
 //  Setup.swift
-//  Orchestrate
+//  PingOrchestrate
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -24,7 +24,11 @@ public struct Setup<ModuleConfig> {
     public let logger: Logger
     public let httpClient: HttpClient
     public let config: ModuleConfig
-    
+  
+    /// Initializes a new Setup instance.
+    /// - Parameters:
+    ///   - workflow: The workflow of the application.
+    ///   - config: The configuration for the module.
     public init(workflow: Workflow, config: ModuleConfig) {
         self.workflow = workflow
         self.context = workflow.sharedContext
@@ -35,7 +39,7 @@ public struct Setup<ModuleConfig> {
     
     /// Adds an initialization block to the workflow.
     /// - Parameter block: The block to be added.
-    public func initialize( block: @escaping() async throws -> Void) {
+    public func initialize(block: @escaping() async throws -> Void) {
         workflow.initHandlers.append(block)
     }
     

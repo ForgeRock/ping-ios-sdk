@@ -1,6 +1,6 @@
 //
 //  AuthCode.swift
-//  Oidc
+//  PingOidc
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -11,10 +11,15 @@
 
 import Foundation
 
+/// Struct representing an authorization code.
 public struct AuthCode: Codable {
     let code: String
     let codeVerifier: String?
-
+  
+    /// Initializes a new instance of `AuthCode`.
+    /// - Parameters:
+    ///   - code: The authorization code as a string. Default is an empty string.
+    ///   - codeVerifier: An optional code verifier associated with the authorization code. Default is `nil`.
     public init(code: String = "", codeVerifier: String? = nil) {
         self.code = code
         self.codeVerifier = codeVerifier

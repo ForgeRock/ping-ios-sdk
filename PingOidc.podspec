@@ -9,9 +9,9 @@
 Pod::Spec.new do |s|
   s.name             = 'PingOidc'
   s.version          = '1.0.0'
-  s.summary          = 'Oidc SDK for iOS'
+  s.summary          = 'PingOidc SDK for iOS'
   s.description      = <<-DESC
-  The Oidc SDK provides OIDC client for PingOne and ForgeRock platform..
+  The PingOidc SDK provides OIDC client for PingOne and ForgeRock platform.
                        DESC
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }

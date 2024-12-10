@@ -1,6 +1,6 @@
 //
 //  SecuredKeyEncryptor.swift
-//  Storage
+//  PingStorage
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -38,7 +38,7 @@ public struct SecuredKeyEncryptor: Encryptor {
     return encryptedData
   }
   
-  // Decrypts the given data.
+  /// Decrypts the given data.
   /// - Parameter data: The data to decrypt.
   /// - Returns: The decrypted data.
   /// - Throws: `EncryptorError.failedToDecrypt` if the decryption fails.
@@ -56,7 +56,8 @@ public enum EncryptorError: LocalizedError {
   case failedToEncrypt
   case failedToDecrypt
   
-  var errorMessage: String {
+  /// A localized message describing what error occurred.
+  public var errorMessage: String {
     switch self {
     case .failedToEncrypt:
       return "Failed to encrypt given data"

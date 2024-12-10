@@ -1,6 +1,6 @@
 //
 //  HttpClient.swift
-//  Orchestrate
+//  PingOrchestrate
 //
 //  Copyright (c) 2024 Ping Identity. All rights reserved.
 //
@@ -43,7 +43,7 @@ public class HttpClient {
         }
     }
     
-    // Logs the details of an HTTP response.
+    /// Logs the details of an HTTP response.
     /// - Parameter responseData: The data returned by the server.
     /// - Parameter response: The URLResponse object containing the response metadata.
     func logResponse(responseData: Data?, response: URLResponse?) {
@@ -80,7 +80,6 @@ public class HttpClient {
     public func sendRequest(request: Request) async throws -> (Data, URLResponse) {
         return try await sendRequest(request:  request.urlRequest)
     }
-    
 }
 
 

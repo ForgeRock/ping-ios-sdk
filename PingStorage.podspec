@@ -9,9 +9,9 @@
 Pod::Spec.new do |s|
   s.name             = 'PingStorage'
   s.version          = '1.0.0'
-  s.summary          = 'Storage SDK for iOS'
+  s.summary          = 'PingStorage SDK for iOS'
   s.description      = <<-DESC
-  The Storage SDK provides a flexible storage interface and a set of common storage solutions for the Ping SDKs.
+  The PingStorage SDK provides a flexible storage interface and a set of common storage solutions for the Ping SDKs.
                        DESC
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
