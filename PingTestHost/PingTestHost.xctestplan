@@ -1,0 +1,60 @@
+{
+  "configurations" : [
+    {
+      "id" : "653B9364-499B-4DFE-A77C-201EEBA63A50",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:PingTestHost.xcodeproj",
+      "identifier" : "A54BF4642BF2E33C00CD24D4",
+      "name" : "PingTestHost"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:..\/Logger\/Logger.xcodeproj",
+        "identifier" : "A5A796B52BE04E68004D0F2D",
+        "name" : "LoggerTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Storage\/Storage.xcodeproj",
+        "identifier" : "A5A797032BE1782F004D0F2D",
+        "name" : "StorageTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Oidc\/Oidc.xcodeproj",
+        "identifier" : "3AB1CA0E2BD6F99C003FCE3C",
+        "name" : "OidcTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Orchestrate\/Orchestrate.xcodeproj",
+        "identifier" : "3A54417D2BCDF1D900385131",
+        "name" : "OrchestrateTests"
+      }
+    },
+    {
+      "skippedTests" : [
+        "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
+        "DaVinciIntegrationTests\/testInvalidPassword()"
+      ],
+      "target" : {
+        "containerPath" : "container:..\/Davinci\/Davinci.xcodeproj",
+        "identifier" : "3A5441A82BCDF20700385131",
+        "name" : "DavinciTests"
+      }
+    }
+  ],
+  "version" : 1
+}
