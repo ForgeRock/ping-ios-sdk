@@ -1,8 +1,9 @@
-<div>
-  <picture>
-     <img src="https://www.pingidentity.com/content/dam/ping-6-2-assets/topnav-json-configs/Ping-Logo.svg" width="80" height="80"  alt=""/>
-  </picture>
-</div>
+<p align="center">
+  <a href="https://github.com/ForgeRock/ping-ios-sdk">
+    <img src="https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg" alt="Logo">
+  </a>
+  <hr/>
+</p>
 
 `PingOidc` module provides OIDC client for PingOne and ForgeRock platform.
 

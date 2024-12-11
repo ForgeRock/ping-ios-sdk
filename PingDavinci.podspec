@@ -8,8 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingDavinci'
-  s.version          = '0.9.0-beta2'
-  s.summary          = 'Davinci SDK for iOS'
+  s.version          = '1.0.0'
+  s.summary          = 'PingDavinci SDK for iOS'
   s.description      = <<-DESC
   The PingDavinci SDK is a powerful and flexible library for Authentication and Authorization. It is designed to be easy to use and extensible. It provides a simple API for navigating the authentication flow and handling the various states that can
 occur during the authentication process.
@@ -34,6 +34,6 @@ occur during the authentication process.
     'Davinci' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingOidc', '~> 0.9.0-beta2'
+  s.ios.dependency 'PingOidc', '~> 1.0.0'
     
 end
