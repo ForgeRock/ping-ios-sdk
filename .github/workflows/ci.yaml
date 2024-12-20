@@ -25,3 +25,35 @@ jobs:
       MEND_EMAIL: ${{ secrets.MEND_EMAIL }}
       MEND_USER_KEY: ${{ secrets.MEND_USER_KEY }}
       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }} 
+
+  # Build and sign BitBar test artifacts (PingTestHost.ipa and DavinciTests.xctest.zip)
+  bitbar-prepare-artifacts:
+    name: Prepare device farm artifacts
+    uses: ./.github/workflows/bitbar-prepare-artifacts.yaml
+    needs: build-and-test
+    secrets:
+      CERTIFICATES_FILE_BASE64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
+      CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      BUILD_PROVISION_PROFILE: ${{ secrets.BUILD_PROVISION_PROFILE_ZIP_BASE64}}
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+  
+  # Execute e2e test cases in BitBar. The workflow outputs the newly created run id.
+  bitbar-run:
+    name: Run e2e tests in BitBar
+    uses: ./.github/workflows/bitbar-run.yaml
+    needs: bitbar-prepare-artifacts
+    secrets:
+      BITBAR_API_KEY: ${{ secrets.BITBAR_API_KEY }}
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+  # Wait for BitBar test run to finish and publish results
+  bitbar-results:
+    name: Wait for and publish BitBar test results
+    uses: ./.github/workflows/bitbar-results.yaml
+    needs: bitbar-run
+    secrets:
+      BITBAR_API_KEY: ${{ secrets.BITBAR_API_KEY }}
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+    with:
+      bitbar-run-id: ${{ needs.bitbar-run.outputs.bitbar-run-id }}
