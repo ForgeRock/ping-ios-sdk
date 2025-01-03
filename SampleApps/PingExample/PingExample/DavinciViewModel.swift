@@ -15,39 +15,23 @@ import PingOrchestrate
 import PingLogger
 import PingStorage
 
-public let davinciStage = DaVinci.createDaVinci { config in
-  //config.debug = true
-  
+
+/// Configures and initializes the DaVinci instance with the PingOne server and OAuth 2.0 client details.
+/// - This configuration includes:
+///   - Client ID
+///   - Scopes
+///   - Redirect URI
+///   - Discovery Endpoint
+///   - Other optional fields
+public let davinci = DaVinci.createDaVinci { config in
+  //TODO: Provide here the Server configuration. Add the PingOne server Discovery Endpoint and the OAuth2.0 client details
   config.module(OidcModule.config) { oidcValue in
-    oidcValue.clientId = "2dde00e2-3dd5-42b1-96e9-ad17e29f4bbd"
-    oidcValue.scopes = ["openid", "email", "address", "phone", "profile", "ttl"]
-    oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
-    oidcValue.discoveryEndpoint = "https://auth.test-one-pingone.com/0c6851ed-0f12-4c9a-a174-9b1bf8b438ae/as/.well-known/openid-configuration"
+    oidcValue.clientId = <#"Client ID"#>
+    oidcValue.scopes = [<#"scope1"#>, <#"scope2"#>, <#"scope3"#>]
+    oidcValue.redirectUri = <#"Redirect URI"#>
+    oidcValue.discoveryEndpoint = <#"Discovery Endpoint"#>
   }
 }
-
-public let davinciTest = DaVinci.createDaVinci { config in
-  //config.debug = true
-  config.module(OidcModule.config) { oidcValue in
-    oidcValue.clientId = "c12743f9-08e8-4420-a624-71bbb08e9fe1"
-    oidcValue.scopes = ["openid", "email", "address", "phone", "profile"]
-    oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
-    oidcValue.discoveryEndpoint = "https://auth.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/as/.well-known/openid-configuration"
-  }
-}
-
-public let davinciProd = DaVinci.createDaVinci { config in
-  //config.debug = true
-  config.module(OidcModule.config) { oidcValue in
-    oidcValue.clientId = "2dde00e2-3dd5-42b1-96e9-ad17e29f4bbd"
-    oidcValue.scopes = ["openid", "email", "address", "phone", "profile", "ttl"]
-    oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
-    oidcValue.discoveryEndpoint = "https://auth.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/as/.well-known/openid-configuration"
-  }
-}
-
-// Change this to Prod/Stage
-public let davinci = davinciProd
 
 class DavinciViewModel: ObservableObject {
   
