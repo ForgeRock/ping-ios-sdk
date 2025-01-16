@@ -2,7 +2,7 @@
 //  Transform.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -82,10 +82,12 @@ public class NodeTransformModule {
     
     var collectors: Collectors = []
     if let _ = json[Constants.form] {
-      collectors.append(contentsOf: Form.parse(json: json))
+      collectors.append(contentsOf: Form.parse(json: json)) 
     }
     
-    return Connector(context: context, davinci: davinci, input: json, collectors: collectors)
+    let connector = Connector(context: context, davinci: davinci, input: json, collectors: collectors)
+    CollectorFactory.shared.inject(continueNode: connector)
+    return connector
   }
 }
 

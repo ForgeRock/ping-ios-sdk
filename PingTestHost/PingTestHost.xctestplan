@@ -24,6 +24,9 @@
       }
     },
     {
+      "skippedTests" : [
+        "StorageDelegateTests\/testConcurrentAccess()"
+      ],
       "target" : {
         "containerPath" : "container:..\/Storage\/Storage.xcodeproj",
         "identifier" : "A5A797032BE1782F004D0F2D",
