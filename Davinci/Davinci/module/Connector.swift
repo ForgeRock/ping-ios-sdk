@@ -2,7 +2,7 @@
 //  Connector.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -61,7 +61,7 @@ class Connector: ContinueNode {
         
         return [
             Constants.id: (input[Constants.id] as? String) ?? "",
-            Constants.eventName: (input[Constants.eventName] as? String) ?? "",
+            Constants.eventName: (input[Constants.eventName] as? String) ?? "continue",
             Constants.parameters: parameters
         ]
     }

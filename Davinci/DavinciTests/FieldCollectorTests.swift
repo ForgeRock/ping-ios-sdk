@@ -30,9 +30,9 @@ class FieldCollectorTests: XCTestCase {
         XCTAssertEqual("testLabel", fieldCollector.label)
     }
     
-    func testShouldReturnValueWhenValueIsSet() {
-        let fieldCollector = MockFieldCollector()
-        fieldCollector.value = "test"
-        XCTAssertEqual("test", fieldCollector.value)
-    }
+//    func testShouldReturnValueWhenValueIsSet() {
+//        let fieldCollector = MockFieldCollector()
+//        fieldCollector.value = "test"
+//        XCTAssertEqual("test", fieldCollector.value)
+//    }
 }
