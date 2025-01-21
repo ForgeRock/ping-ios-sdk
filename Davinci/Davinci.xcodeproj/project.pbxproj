@@ -46,6 +46,15 @@
 		A5E9AEBE2D2F2DAE000533ED /* MultiSelectCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEBD2D2F2DAC000533ED /* MultiSelectCollector.swift */; };
 		A5E9AEC02D2F44CD000533ED /* PasswordPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEBF2D2F44CB000533ED /* PasswordPolicy.swift */; };
 		A5EFA9D12D38B4CF00F771FE /* ContinueNodeAware.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA9D02D38B4C900F771FE /* ContinueNodeAware.swift */; };
+		A5EFAA062D3F304500F771FE /* FlowCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA052D3F303900F771FE /* FlowCollectorTests.swift */; };
+		A5EFAA082D3F30E600F771FE /* LabelCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA072D3F30E200F771FE /* LabelCollectorTests.swift */; };
+		A5EFAA0A2D3F325B00F771FE /* MultiSelectCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA092D3F325800F771FE /* MultiSelectCollectorTests.swift */; };
+		A5EFAA0C2D3F441400F771FE /* PasswordCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA0B2D3F441200F771FE /* PasswordCollectorTests.swift */; };
+		A5EFAA0E2D3F484100F771FE /* PasswordPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA0D2D3F483900F771FE /* PasswordPolicyTests.swift */; };
+		A5EFAA102D3F50A700F771FE /* SingleSelectCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA0F2D3F50A500F771FE /* SingleSelectCollectorTests.swift */; };
+		A5EFAA122D3F518B00F771FE /* SubmitCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA112D3F518800F771FE /* SubmitCollectorTests.swift */; };
+		A5EFAA142D3F51CC00F771FE /* TextCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA132D3F51CA00F771FE /* TextCollectorTests.swift */; };
+		A5EFAA162D3F52F500F771FE /* ValidatedCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA152D3F52F300F771FE /* ValidatedCollectorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,6 +121,15 @@
 		A5E9AEBD2D2F2DAC000533ED /* MultiSelectCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelectCollector.swift; sourceTree = "<group>"; };
 		A5E9AEBF2D2F44CB000533ED /* PasswordPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordPolicy.swift; sourceTree = "<group>"; };
 		A5EFA9D02D38B4C900F771FE /* ContinueNodeAware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueNodeAware.swift; sourceTree = "<group>"; };
+		A5EFAA052D3F303900F771FE /* FlowCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowCollectorTests.swift; sourceTree = "<group>"; };
+		A5EFAA072D3F30E200F771FE /* LabelCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelCollectorTests.swift; sourceTree = "<group>"; };
+		A5EFAA092D3F325800F771FE /* MultiSelectCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelectCollectorTests.swift; sourceTree = "<group>"; };
+		A5EFAA0B2D3F441200F771FE /* PasswordCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordCollectorTests.swift; sourceTree = "<group>"; };
+		A5EFAA0D2D3F483900F771FE /* PasswordPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordPolicyTests.swift; sourceTree = "<group>"; };
+		A5EFAA0F2D3F50A500F771FE /* SingleSelectCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSelectCollectorTests.swift; sourceTree = "<group>"; };
+		A5EFAA112D3F518800F771FE /* SubmitCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitCollectorTests.swift; sourceTree = "<group>"; };
+		A5EFAA132D3F51CA00F771FE /* TextCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextCollectorTests.swift; sourceTree = "<group>"; };
+		A5EFAA152D3F52F300F771FE /* ValidatedCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedCollectorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +204,15 @@
 				A51D4CF12C65729A00FE09E0 /* DaVinciErrorTests.swift */,
 				3A5441AE2BCDF20700385131 /* DaVinciTests.swift */,
 				A51D4CED2C656EE100FE09E0 /* FieldCollectorTests.swift */,
+				A5EFAA052D3F303900F771FE /* FlowCollectorTests.swift */,
+				A5EFAA072D3F30E200F771FE /* LabelCollectorTests.swift */,
+				A5EFAA092D3F325800F771FE /* MultiSelectCollectorTests.swift */,
+				A5EFAA0B2D3F441200F771FE /* PasswordCollectorTests.swift */,
+				A5EFAA0D2D3F483900F771FE /* PasswordPolicyTests.swift */,
+				A5EFAA0F2D3F50A500F771FE /* SingleSelectCollectorTests.swift */,
+				A5EFAA112D3F518800F771FE /* SubmitCollectorTests.swift */,
+				A5EFAA132D3F51CA00F771FE /* TextCollectorTests.swift */,
+				A5EFAA152D3F52F300F771FE /* ValidatedCollectorTests.swift */,
 			);
 			path = DavinciTests;
 			sourceTree = "<group>";
@@ -389,13 +416,22 @@
 			files = (
 				A51D4CEE2C656EE100FE09E0 /* FieldCollectorTests.swift in Sources */,
 				A51D4CFA2C6BA75000FE09E0 /* CallbackFactoryTests.swift in Sources */,
+				A5EFAA082D3F30E600F771FE /* LabelCollectorTests.swift in Sources */,
+				A5EFAA142D3F51CC00F771FE /* TextCollectorTests.swift in Sources */,
+				A5EFAA122D3F518B00F771FE /* SubmitCollectorTests.swift in Sources */,
 				A51D4CF62C65743100FE09E0 /* MockAPIEndpoint.swift in Sources */,
+				A5EFAA0E2D3F484100F771FE /* PasswordPolicyTests.swift in Sources */,
 				A51D4CE52C656A0C00FE09E0 /* CollectorRegistryTests.swift in Sources */,
+				A5EFAA0C2D3F441400F771FE /* PasswordCollectorTests.swift in Sources */,
 				A51D4CF02C656FC600FE09E0 /* MockResponse.swift in Sources */,
+				A5EFAA162D3F52F500F771FE /* ValidatedCollectorTests.swift in Sources */,
+				A5EFAA062D3F304500F771FE /* FlowCollectorTests.swift in Sources */,
+				A5EFAA0A2D3F325B00F771FE /* MultiSelectCollectorTests.swift in Sources */,
 				A51D4CF42C6572E600FE09E0 /* MockURLProtocol.swift in Sources */,
 				A51D4CF82C65978300FE09E0 /* DaVinciIntegrationTests.swift in Sources */,
 				3A5441AF2BCDF20700385131 /* DaVinciTests.swift in Sources */,
 				A51D4CF22C65729A00FE09E0 /* DaVinciErrorTests.swift in Sources */,
+				A5EFAA102D3F50A700F771FE /* SingleSelectCollectorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

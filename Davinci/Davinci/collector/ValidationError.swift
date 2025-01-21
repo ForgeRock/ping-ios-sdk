@@ -12,7 +12,7 @@
 import Foundation
 
 /// An error type that represents validation errors.
-public enum ValidationError: Error, Identifiable {
+public enum ValidationError: Error, Identifiable, Equatable {
     /// A unique identifier for the error.
     public var id: UUID { UUID() }
     
@@ -28,8 +28,8 @@ public enum ValidationError: Error, Identifiable {
         switch self {
         case .required:
             return "This field cannot be empty."
-        case .regexError:
-            return "The input format is invalid."
+        case .regexError(let message):
+            return message
         case .invalidLength(let min, let max):
             return "The input length must be between \(min) and \(max) characters."
         case .uniqueCharacter(let min):

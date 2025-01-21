@@ -49,61 +49,35 @@ public struct PasswordPolicy: Codable {
     /// Indicates whether this policy is the default one.
     public let `default`: Bool
     
-    /// Initializes a new `PasswordPolicy` instance.
-    /// - Parameters:
-    ///   - name: A name identifying this password policy.
-    ///   - description: A human-readable description of the policy.
-    ///   - excludesProfileData: Whether profile data is excluded
-    ///   - notSimilarToCurrent: Whether new passwords must not be similar to the current password.
-    ///   - excludesCommonlyUsed: Whether commonly used passwords are excluded.
-    ///   - maxAgeDays: he maximum number of days a password is valid before it must be changed.
-    ///   - minAgeDays: The minimum number of days a password must be used before it can be changed.
-    ///   - maxRepeatedCharacters: The maximum number of repeated characters allowed in a password.
-    ///   - minUniqueCharacters: The minimum number of unique characters required in a password.
-    ///   - history: `History` struct specifying password history restrictions, if any.
-    ///   - lockout: `Lockout` struct specifying lockout rules, if any.
-    ///   - length: `Length` struct specifying minimum and maximum length constraints.
-    ///   - minCharacters: A dictionary specifying minimum required counts for certain character types
-    ///   - populationCount: An integer denoting how many users or “population” this policy applies to
-    ///   - createdAt: The creation timestamp of this policy
-    ///   - updatedAt: The last update timestamp of this policy
-    ///   - `default`: Indicates whether this policy is the default one.
-    public init(
-        name: String = "",
-        description: String = "",
-        excludesProfileData: Bool = false,
-        notSimilarToCurrent: Bool = false,
-        excludesCommonlyUsed: Bool = false,
-        maxAgeDays: Int = 0,
-        minAgeDays: Int = 0,
-        maxRepeatedCharacters: Int = Int.max,
-        minUniqueCharacters: Int = 0,
-        history: History? = nil,
-        lockout: Lockout? = nil,
-        length: Length = Length(min: 0, max: Int.max),
-        minCharacters: [String: Int] = [:],
-        populationCount: Int = 0,
-        createdAt: String = "",
-        updatedAt: String = "",
-        `default`: Bool = false
-    ) {
-        self.name = name
-        self.description = description
-        self.excludesProfileData = excludesProfileData
-        self.notSimilarToCurrent = notSimilarToCurrent
-        self.excludesCommonlyUsed = excludesCommonlyUsed
-        self.maxAgeDays = maxAgeDays
-        self.minAgeDays = minAgeDays
-        self.maxRepeatedCharacters = maxRepeatedCharacters
-        self.minUniqueCharacters = minUniqueCharacters
-        self.history = history
-        self.lockout = lockout
-        self.length = length
-        self.minCharacters = minCharacters
-        self.populationCount = populationCount
-        self.createdAt = createdAt
-        self.updatedAt = updatedAt
-        self.`default` = `default`
+    enum CodingKeys: String, CodingKey {
+        case name, description, excludesProfileData, notSimilarToCurrent, excludesCommonlyUsed
+        case maxAgeDays, minAgeDays, maxRepeatedCharacters, minUniqueCharacters
+        case history, lockout, length, minCharacters, populationCount
+        case createdAt, updatedAt, `default`
+    }
+    
+    /// Initializes a new `PasswordPolicy` instance from the provided decoder.
+    /// - Parameter decoder: The decoder to read data from.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
+        description = try container.decodeIfPresent(String.self, forKey: .description) ?? ""
+        excludesProfileData = try container.decodeIfPresent(Bool.self, forKey: .excludesProfileData) ?? false
+        notSimilarToCurrent = try container.decodeIfPresent(Bool.self, forKey: .notSimilarToCurrent) ?? false
+        excludesCommonlyUsed = try container.decodeIfPresent(Bool.self, forKey: .excludesCommonlyUsed) ?? false
+        maxAgeDays = try container.decodeIfPresent(Int.self, forKey: .maxAgeDays) ?? 0
+        minAgeDays = try container.decodeIfPresent(Int.self, forKey: .minAgeDays) ?? 0
+        maxRepeatedCharacters = try container.decodeIfPresent(Int.self, forKey: .maxRepeatedCharacters) ?? Int.max
+        minUniqueCharacters = try container.decodeIfPresent(Int.self, forKey: .minUniqueCharacters) ?? 0
+        history = try container.decodeIfPresent(History.self, forKey: .history)
+        lockout = try container.decodeIfPresent(Lockout.self, forKey: .lockout)
+        length = try container.decodeIfPresent(Length.self, forKey: .length) ?? Length()
+        minCharacters = try container.decodeIfPresent([String: Int].self, forKey: .minCharacters) ?? [:]
+        populationCount = try container.decodeIfPresent(Int.self, forKey: .populationCount) ?? 0
+        createdAt = try container.decodeIfPresent(String.self, forKey: .createdAt) ?? ""
+        updatedAt = try container.decodeIfPresent(String.self, forKey: .updatedAt) ?? ""
+        `default` = try container.decodeIfPresent(Bool.self, forKey: .default) ?? false
     }
 }
 
@@ -115,13 +89,16 @@ public struct History: Codable {
     /// The retention period (in days) for password history entries.
     public let retentionDays: Int
     
-    /// Initializes a new `History` configuration.
-    /// - Parameters:
-    ///   - count: How many passwords to remember (disallowing reuse).
-    ///   - retentionDays: How many days a password remains in the history.
-    public init(count: Int, retentionDays: Int) {
-        self.count = count
-        self.retentionDays = retentionDays
+    enum CodingKeys: String, CodingKey {
+        case count, retentionDays
+    }
+    
+    /// Initializes a new `History` instance.
+    /// - Parameter decoder: The decoder to read data from.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        count = try container.decodeIfPresent(Int.self, forKey: .count) ?? 0
+        retentionDays = try container.decodeIfPresent(Int.self, forKey: .retentionDays) ?? 0
     }
 }
 
@@ -133,13 +110,16 @@ public struct Lockout: Codable {
     /// The lockout duration in seconds once the failure threshold is reached.
     public let durationSeconds: Int
     
-    /// Initializes a new `Lockout` configuration.
-    /// - Parameters:
-    ///   - failureCount: Number of failed attempts before lockout.
-    ///   - durationSeconds: Lockout duration in seconds.
-    public init(failureCount: Int, durationSeconds: Int) {
-        self.failureCount = failureCount
-        self.durationSeconds = durationSeconds
+    enum CodingKeys: String, CodingKey {
+        case failureCount, durationSeconds
+    }
+    
+    /// Initializes a new `Lockout` instance.
+    /// - Parameter decoder: The decoder to read data from.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        failureCount = try container.decodeIfPresent(Int.self, forKey: .failureCount) ?? 0
+        durationSeconds = try container.decodeIfPresent(Int.self, forKey: .durationSeconds) ?? 0
     }
 }
 
@@ -150,6 +130,18 @@ public struct Length: Codable {
     public let min: Int
     /// The maximum allowed length for a password.
     public let max: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case min, max
+    }
+    
+    /// Initializes a new `Length` instance.
+    /// - Parameter decoder: The decoder to read data from.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        min = try container.decodeIfPresent(Int.self, forKey: .min) ?? 0
+        max = try container.decodeIfPresent(Int.self, forKey: .max) ?? Int.max
+    }
     
     /// Initializes a new `Length` configuration.
     /// - Parameters:
