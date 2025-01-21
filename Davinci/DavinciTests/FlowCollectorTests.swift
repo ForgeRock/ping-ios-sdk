@@ -1,8 +1,8 @@
 // 
-//  FieldCollectorTests.swift
+//  FlowCollectorTests.swift
 //  DavinciTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -13,7 +13,7 @@ import Foundation
 import XCTest
 @testable import PingDavinci
 
-class FieldCollectorTests: XCTestCase {
+class FlowCollectorTests: XCTestCase {
     
     func testShouldInitializeKeyAndLabelFromJsonObject() {
         
@@ -23,11 +23,11 @@ class FieldCollectorTests: XCTestCase {
             "label": "testLabel"
         ]
         
-        let fieldCollector = FieldCollector(with: jsonObject)
+        let flowCollector = FlowCollector(with: jsonObject)
         
-        XCTAssertEqual("testType", fieldCollector.type)
-        XCTAssertEqual("testKey", fieldCollector.key)
-        XCTAssertEqual("testLabel", fieldCollector.label)
+        XCTAssertEqual("testType", flowCollector.type)
+        XCTAssertEqual("testKey", flowCollector.key)
+        XCTAssertEqual("testLabel", flowCollector.label)
     }
     
     func testShouldReturnValueWhenValueIsSet() {

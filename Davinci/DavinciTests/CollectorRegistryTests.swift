@@ -2,7 +2,7 @@
 //  CollectorRegistryTests.swift
 //  DavinciTests
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -13,7 +13,7 @@ import Foundation
 import XCTest
 @testable import PingDavinci
 
-class CollectorRegistryTests: XCTestCase {
+final class CollectorRegistryTests: XCTestCase {
     
     private var collectorFactory: CollectorFactory!
     
@@ -32,7 +32,14 @@ class CollectorRegistryTests: XCTestCase {
             ["type": "TEXT"],
             ["type": "PASSWORD"],
             ["type": "SUBMIT_BUTTON"],
-            ["type": "FLOW_BUTTON"]
+            ["type": "FLOW_BUTTON"],
+            ["type": "PASSWORD_VERIFY"],
+            ["type": "FLOW_LINK"],
+            ["type": "LABEL"],
+            ["type": "DROPDOWN"],
+            ["type": "RADIO"],
+            ["type": "COMBOBOX"],
+            ["type": "CHECKBOX"],
         ]
         
         let collectors = collectorFactory.collector(from: jsonArray)
@@ -40,6 +47,13 @@ class CollectorRegistryTests: XCTestCase {
         XCTAssertTrue(collectors[1] is PasswordCollector)
         XCTAssertTrue(collectors[2] is SubmitCollector)
         XCTAssertTrue(collectors[3] is FlowCollector)
+        XCTAssertTrue(collectors[4] is PasswordCollector)
+        XCTAssertTrue(collectors[5] is FlowCollector)
+        XCTAssertTrue(collectors[6] is LabelCollector)
+        XCTAssertTrue(collectors[7] is SingleSelectCollector)
+        XCTAssertTrue(collectors[8] is SingleSelectCollector)
+        XCTAssertTrue(collectors[9] is MultiSelectCollector)
+        XCTAssertTrue(collectors[10] is MultiSelectCollector)
     }
     
     func testShouldIgnoreUnknownCollector() {

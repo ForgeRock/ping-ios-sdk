@@ -2,7 +2,7 @@
 //  CollectorFactory.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -22,10 +22,17 @@ public final class CollectorFactory {
     public static let shared = CollectorFactory()
     
     init() {
-        register(type: Constants.TEXT, collector: TextCollector.self)
+        register(type: Constants.TEXT, collector: TextCollector.self)//
         register(type: Constants.PASSWORD, collector: PasswordCollector.self)
-        register(type: Constants.SUBMIT_BUTTON, collector: SubmitCollector.self)
-        register(type: Constants.FLOW_BUTTON, collector:  FlowCollector.self)
+        register(type: Constants.PASSWORD_VERIFY, collector: PasswordCollector.self)
+        register(type: Constants.SUBMIT_BUTTON, collector: SubmitCollector.self)//
+        register(type: Constants.FLOW_BUTTON, collector: FlowCollector.self)
+        register(type: Constants.FLOW_LINK, collector: FlowCollector.self)
+        register(type: Constants.LABEL, collector: LabelCollector.self)//
+        register(type: Constants.DROPDOWN, collector: SingleSelectCollector.self)
+        register(type: Constants.RADIO, collector: SingleSelectCollector.self)
+        register(type: Constants.COMBOBOX, collector: MultiSelectCollector.self)
+        register(type: Constants.CHECKBOX, collector: MultiSelectCollector.self)
     }
     
     /// Registers a new type of Collector.
@@ -48,6 +55,16 @@ public final class CollectorFactory {
             }
         }
         return list
+    }
+    
+    /// Injects the ContinueNode instances into the collectors.
+    /// - Parameter continueNode: The ContinueNode instance to be injected.
+    public func inject(continueNode: ContinueNode) {
+        continueNode.collectors.forEach { collector in
+            if var collector = collector as? ContinueNodeAware {
+                collector.continueNode = continueNode
+            }
+        }
     }
     
     /// Resets the CollectorFactory by clearing all registered collectors.

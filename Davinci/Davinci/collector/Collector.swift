@@ -2,7 +2,7 @@
 //  FlowCollector.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -64,14 +64,96 @@ extension Collectors {
         var formData: [String: Any] = [:]
         for collector in self {
             if let textCollector = collector as? TextCollector, !textCollector.value.isEmpty {
-                formData[textCollector.key] = textCollector.value
+                //TODO: Revert this when the nested key is removed.
+                //formData[textCollector.key] = textCollector.value
+                toMap(map: &formData, key: textCollector.key, value: textCollector.value)
             }
             if let passwordCollector = collector as? PasswordCollector, !passwordCollector.value.isEmpty {
-                formData[passwordCollector.key] = passwordCollector.value
+                //TODO: Revert this when the nested key is removed.
+                //formData[passwordCollector.key] = passwordCollector.value
+                toMap(map: &formData, key: passwordCollector.key, value: passwordCollector.value)
+            }
+            if let singleSelectCollector = collector as? SingleSelectCollector, !singleSelectCollector.value.isEmpty {
+                //TODO: Revert this when the nested key is removed.
+                //formData[singleSelectCollector.key] = singleSelectCollector.value
+                toMap(map: &formData, key: singleSelectCollector.key, value: singleSelectCollector.value)
+            }
+            if let multiSelectCollector = collector as? MultiSelectCollector, !multiSelectCollector.value.isEmpty {
+                //TODO: Revert this when the nested key is removed.
+                //formData[multiSelectCollector.key] = multiSelectCollector.value
+                toMap(map: &formData, key: multiSelectCollector.key, value: multiSelectCollector.value)
             }
         }
         
-        jsonObject[Constants.formData] = formData
+        //TODO: Revert this when the nested key is removed.
+        // jsonObject[Constants.formData] = formData
+        jsonObject[Constants.formData] = Helper.mapToJsonObject(map: formData)
+        return jsonObject
+    }
+    
+    //TODO: Remove this when the nested key is removed.
+    private func toMap(map: inout [String: Any], key: String, value: Any) {
+        let parts = key.components(separatedBy: ".")
+        Helper.setNestedValue(&map, parts: parts, value: value)
+    }
+        
+}
+
+//TODO: Remove this when the nested key is removed.
+struct Helper {
+    //TODO: Remove this when the nested key is removed.
+    static func setNestedValue(_ map: inout [String: Any],
+                                parts: [String],
+                                value: Any) {
+        guard !parts.isEmpty else { return }
+        
+        let head = parts[0]
+        let x = parts.dropFirst()
+        let tail = Array(x)
+        if tail.isEmpty {
+            // We've reached the final key—set the value
+            map[head] = value
+        } else {
+            // If the sub-dictionary at `head` does not exist or is not a dictionary, create a new one
+            if map[head] == nil || !(map[head] is [String: Any]) {
+                map[head] = [String: Any]()
+            }
+            
+            // Descend into the nested dictionary
+            var child = map[head] as! [String: Any]
+            setNestedValue(&child, parts: tail, value: value)
+            
+            // Write the updated child back
+            map[head] = child
+        }
+    }
+    
+    //TODO: Remove this when the nested key is removed.
+    static func mapToJsonObject(map: [String: Any]) -> [String: Any] {
+        var jsonObject: [String: Any] = [:]
+        
+        for (key, value) in map {
+            switch value {
+            case let nestedMap as [String: Any]:
+                jsonObject[key] = mapToJsonObject(map: nestedMap)
+                
+            case let array as [Any]:
+                jsonObject[key] = array.map { String(describing: $0) }
+                
+            case let string as String:
+                jsonObject[key] = string
+                
+            case let bool as Bool:
+                jsonObject[key] = bool
+                
+            case let number as NSNumber:
+                jsonObject[key] = number
+                
+            default:
+                jsonObject[key] = String(describing: value)
+            }
+        }
+        
         return jsonObject
     }
 }

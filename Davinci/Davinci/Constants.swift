@@ -2,7 +2,7 @@
 //  Constants.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -15,6 +15,7 @@ enum Constants {
   static let type = "type"
   static let key = "key"
   static let label = "label"
+  static let value = "value"
   static let form = "form"
   static let components = "components"
   static let fields = "fields"
@@ -37,8 +38,15 @@ enum Constants {
   static let FAILED = "FAILED"
   static let TEXT = "TEXT"
   static let PASSWORD =  "PASSWORD"
+  static let PASSWORD_VERIFY = "PASSWORD_VERIFY"
   static let SUBMIT_BUTTON = "SUBMIT_BUTTON"
   static let FLOW_BUTTON = "FLOW_BUTTON"
+  static let FLOW_LINK = "FLOW_LINK"
+  static let LABEL = "LABEL"
+  static let DROPDOWN = "DROPDOWN"
+  static let RADIO = "RADIO"
+  static let COMBOBOX = "COMBOBOX"
+  static let CHECKBOX = "CHECKBOX"
   static let error = "error"
   static let connectorId = "connectorId"
   static let capabilityName = "capabilityName"
@@ -47,4 +55,11 @@ enum Constants {
   static let returnSuccessResponseRedirect = "returnSuccessResponseRedirect"
   static let setSession = "setSession"
   static let location = "Location"
+  static let content = "content"
+  static let required = "required"
+  static let options = "options"
+  static let passwordPolicy = "passwordPolicy"
+  static let validation = "validation"
+  static let regex = "regex"
+  static let errorMessage = "errorMessage"
 }
