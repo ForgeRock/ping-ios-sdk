@@ -19,6 +19,8 @@
 		3AC13E342C3FFF1000DEF23A /* Collector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E302C3FFF1000DEF23A /* Collector.swift */; };
 		3AC13E352C3FFF1000DEF23A /* Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E322C3FFF1000DEF23A /* Form.swift */; };
 		3AC13E362C3FFF1000DEF23A /* Connector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E312C3FFF1000DEF23A /* Connector.swift */; };
+		959249A72D405A1C00A6DA9C /* FormFieldValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959249A62D405A1C00A6DA9C /* FormFieldValidationTest.swift */; };
+		959249A92D405A4600A6DA9C /* FormFieldsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959249A82D405A4600A6DA9C /* FormFieldsTests.swift */; };
 		A50981C22CEBDF2600F4B487 /* PingOidc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50981C12CEBDF2600F4B487 /* PingOidc.framework */; };
 		A50981C32CEBDF2600F4B487 /* PingOidc.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A50981C12CEBDF2600F4B487 /* PingOidc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A51D4CD12C585B4500FE09E0 /* FieldCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CD02C585B4500FE09E0 /* FieldCollector.swift */; };
@@ -95,6 +97,8 @@
 		3AC13E302C3FFF1000DEF23A /* Collector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collector.swift; sourceTree = "<group>"; };
 		3AC13E312C3FFF1000DEF23A /* Connector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connector.swift; sourceTree = "<group>"; };
 		3AC13E322C3FFF1000DEF23A /* Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form.swift; sourceTree = "<group>"; };
+		959249A62D405A1C00A6DA9C /* FormFieldValidationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFieldValidationTest.swift; sourceTree = "<group>"; };
+		959249A82D405A4600A6DA9C /* FormFieldsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFieldsTests.swift; sourceTree = "<group>"; };
 		A50981C12CEBDF2600F4B487 /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A51D4CD02C585B4500FE09E0 /* FieldCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldCollector.swift; sourceTree = "<group>"; };
 		A51D4CD22C585D7C00FE09E0 /* FlowCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowCollector.swift; sourceTree = "<group>"; };
@@ -231,6 +235,8 @@
 			isa = PBXGroup;
 			children = (
 				A51D4CF72C65978300FE09E0 /* DaVinciIntegrationTests.swift */,
+				959249A62D405A1C00A6DA9C /* FormFieldValidationTest.swift */,
+				959249A82D405A4600A6DA9C /* FormFieldsTests.swift */,
 			);
 			path = "integration tests";
 			sourceTree = "<group>";
@@ -417,6 +423,7 @@
 				A51D4CEE2C656EE100FE09E0 /* FieldCollectorTests.swift in Sources */,
 				A51D4CFA2C6BA75000FE09E0 /* CallbackFactoryTests.swift in Sources */,
 				A5EFAA082D3F30E600F771FE /* LabelCollectorTests.swift in Sources */,
+				959249A92D405A4600A6DA9C /* FormFieldsTests.swift in Sources */,
 				A5EFAA142D3F51CC00F771FE /* TextCollectorTests.swift in Sources */,
 				A5EFAA122D3F518B00F771FE /* SubmitCollectorTests.swift in Sources */,
 				A51D4CF62C65743100FE09E0 /* MockAPIEndpoint.swift in Sources */,
@@ -432,6 +439,7 @@
 				3A5441AF2BCDF20700385131 /* DaVinciTests.swift in Sources */,
 				A51D4CF22C65729A00FE09E0 /* DaVinciErrorTests.swift in Sources */,
 				A5EFAA102D3F50A700F771FE /* SingleSelectCollectorTests.swift in Sources */,
+				959249A72D405A1C00A6DA9C /* FormFieldValidationTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
