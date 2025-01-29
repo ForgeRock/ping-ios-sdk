@@ -141,6 +141,13 @@ final class PasswordCollectorTests: XCTestCase {
         XCTAssertTrue(collector.validate().isEmpty)
     }
     
+    func testShouldInitializeDefaultValue() {
+        let input = "test"
+        let collector = PasswordCollector(with: [:])
+        collector.initialize(with: input)
+        XCTAssertEqual("test", collector.value)
+    }
+    
 }
 
 class MockContinueNode: ContinueNode { }

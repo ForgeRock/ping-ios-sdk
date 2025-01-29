@@ -365,7 +365,7 @@ final class DaVinciTests: XCTestCase {
         XCTAssertEqual(collector3.required, true)
         XCTAssertEqual(collector3.validation?.regex?.pattern, ".")
         XCTAssertEqual(collector3.validation?.errorMessage, "Must be valid email address")
-        //XCTAssertEqual(collector3.value, "default-username")
+        XCTAssertEqual(collector3.value, "default-username")
         
         guard let collector4 = (continueNode.collectors[3] as? PasswordCollector) else {
              XCTFail("PasswordCollector is nil")
@@ -375,7 +375,7 @@ final class DaVinciTests: XCTestCase {
         XCTAssertEqual(collector4.key, "password")
         XCTAssertEqual(collector4.label, "Password")
         XCTAssertEqual(collector4.required, true)
-        //XCTAssertEqual(collector4.value, "default-password")
+        XCTAssertEqual(collector4.value, "default-password")
         
         guard let collector5 = (continueNode.collectors[4] as? SubmitCollector) else {
              XCTFail("SubmitCollector is nil")
@@ -410,7 +410,7 @@ final class DaVinciTests: XCTestCase {
         XCTAssertEqual(collector8.label, "Dropdown")
         XCTAssertEqual(collector8.required, true)
         XCTAssertEqual(collector8.options.count, 3)
-        //XCTAssertEqual(collector8.value, "default-dropdown")
+        XCTAssertEqual(collector8.value, "default-dropdown")
         
         guard let collector9 = (continueNode.collectors[8] as? MultiSelectCollector) else {
              XCTFail("MultiSelectCollector is nil")
@@ -421,7 +421,7 @@ final class DaVinciTests: XCTestCase {
         XCTAssertEqual(collector9.label, "Combobox")
         XCTAssertEqual(collector9.required, true)
         XCTAssertEqual(collector9.options.count, 2)
-        //XCTAssertEqual(collector9.value, "default-combobox")
+        XCTAssertEqual(collector9.value, ["default-combobox"])
         
         guard let collector10 = (continueNode.collectors[9] as? SingleSelectCollector) else {
              XCTFail("MultiSelectCollector is nil")
@@ -432,7 +432,7 @@ final class DaVinciTests: XCTestCase {
         XCTAssertEqual(collector10.label, "Radio")
         XCTAssertEqual(collector10.required, true)
         XCTAssertEqual(collector10.options.count, 2)
-        //XCTAssertEqual(collector10.value, "default-radio")
+        XCTAssertEqual(collector10.value, "default-radio")
         
         guard let collector11 = (continueNode.collectors[10] as? MultiSelectCollector) else {
              XCTFail("SingleSelectCollector is nil")
@@ -443,6 +443,6 @@ final class DaVinciTests: XCTestCase {
         XCTAssertEqual(collector11.label, "Checkbox")
         XCTAssertEqual(collector11.required, true)
         XCTAssertEqual(collector11.options.count, 2)
-        //XCTAssertEqual(collector3.value, "default-checkbox")
+        XCTAssertEqual(collector11.value, ["default-checkbox"])
     }
 }

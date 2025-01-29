@@ -63,7 +63,18 @@ final class MultiSelectCollectorTests: XCTestCase {
         ]
         let inputDefault = "Selected Option"
         let collector = MultiSelectCollector(with: input)
-        collector.value = [inputDefault]
+        collector.initialize(with: inputDefault)
+        
+        XCTAssertEqual(collector.validate(), [])
+    }
+    
+    func testDoesNotAddRequiredErrorWhenValueIsArrayAndRequired() {
+        let input: [String: Any] = [
+            "required": true
+        ]
+        let inputDefault = ["Selected Option"]
+        let collector = MultiSelectCollector(with: input)
+        collector.initialize(with: inputDefault)
         
         XCTAssertEqual(collector.validate(), [])
     }
