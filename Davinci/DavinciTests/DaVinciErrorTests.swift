@@ -2,7 +2,7 @@
 //  DaVinciErrorTests.swift
 //  DavinciTests
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -588,4 +588,88 @@ class DaVinciErrorTests: XCTestCase {
       XCTAssertTrue(code == 302)
     }
   }
+    
+    
+    func testDaVinciPasswordPolicyFailed() async throws {
+        
+        MockURLProtocol.requestHandler = { request in
+            switch request.url!.path {
+            case MockAPIEndpoint.discovery.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfigurationResponse)
+            case MockAPIEndpoint.authorization.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.authorization.url, statusCode: 400, httpVersion: nil, headerFields: MockResponse.authorizeResponseHeaders)!, MockResponse.passwordValidationError)
+            default:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+            }
+        }
+        
+        let daVinci = DaVinci.createDaVinci { config in
+            config.httpClient = HttpClient(session: .shared)
+            
+            config.module(OidcModule.config) { oidcValue in
+                oidcValue.clientId = "test"
+                oidcValue.scopes = ["openid", "email", "address"]
+                oidcValue.redirectUri = "http://localhost:8080"
+                oidcValue.discoveryEndpoint = "http://localhost/.well-known/openid-configuration"
+                oidcValue.storage = MemoryStorage()
+                oidcValue.logger = LogManager.standard
+            }
+            
+            config.module(CookieModule.config) { cookieValue in
+                cookieValue.cookieStorage = MemoryStorage()
+                cookieValue.persist = ["ST"]
+            }
+        }
+        
+        let node = await daVinci.start()
+        XCTAssertTrue(node is ErrorNode)
+        let errorNode = node as! ErrorNode
+        
+        let details = errorNode.details
+        XCTAssertEqual(details.count, 1)
+        
+        let detail = details[0]
+        // Validate rawResponse
+        XCTAssertEqual(detail.rawResponse.id, "ffbab117-06e6-44be-a17a-ae619d3d7334")
+        XCTAssertEqual(detail.rawResponse.code, "INVALID_DATA")
+        XCTAssertEqual(detail.rawResponse.message, "The request could not be completed. One or more validation errors were in the request.")
+        
+        // Validate details
+        XCTAssertEqual(detail.rawResponse.details?.count, 1)
+        let errorDetail = detail.rawResponse.details?[0]
+        XCTAssertEqual(errorDetail?.code, "INVALID_VALUE")
+        XCTAssertEqual(errorDetail?.target, "password")
+        XCTAssertEqual(errorDetail?.message, "User password did not satisfy password policy requirements")
+        
+        // Validate inner errors
+        XCTAssertEqual(errorDetail?.innerError?.errors.count, 5)
+        let errors = errorDetail?.innerError?.errors
+        
+        XCTAssertEqual(
+            errors?["minCharacters"],
+            "The provided password did not contain enough characters from the character set 'ZYXWVUTSRQPONMLKJIHGFEDCBA'.  The minimum number of characters from that set that must be present in user passwords is 1"
+        )
+        
+        XCTAssertEqual(
+            errors?["excludesCommonlyUsed"],
+            "The provided password (or a variant of that password) was found in a list of prohibited passwords"
+        )
+        
+        XCTAssertEqual(
+            errors?["length"],
+            "The provided password is shorter than the minimum required length of 8 characters"
+        )
+        
+        XCTAssertEqual(
+            errors?["maxRepeatedCharacters"],
+            "The provided password is not acceptable because it contains a character repeated more than 2 times in a row"
+        )
+        
+        XCTAssertEqual(
+            errors?["minUniqueCharacters"],
+            "The provided password does not contain enough unique characters.  The minimum number of unique characters that may appear in a user password is 5"
+        )
+        
+        XCTAssertEqual(detail.statusCode, 400)
+    }
 }
