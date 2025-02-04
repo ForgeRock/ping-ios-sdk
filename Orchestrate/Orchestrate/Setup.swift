@@ -84,4 +84,10 @@ public struct Setup<ModuleConfig> {
     public func signOff(block: @escaping (Request) async -> Request) {
         workflow.signOffHandlers.append(block)
     }
+    
+    /// Sets the browser block of the workflow.
+    /// - Parameter block: The block to be set.
+    public func browser(block: @escaping (FlowContext, Request) async throws -> String) {
+        workflow.browserHandler = block
+    }
 }

@@ -13,8 +13,8 @@ import Foundation
 
 /// Struct representing an authorization code.
 public struct AuthCode: Codable {
-    let code: String
-    let codeVerifier: String?
+    public let code: String
+    public let codeVerifier: String?
   
     /// Initializes a new instance of `AuthCode`.
     /// - Parameters:

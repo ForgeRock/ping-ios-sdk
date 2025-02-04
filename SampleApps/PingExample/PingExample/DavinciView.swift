@@ -16,7 +16,7 @@ import PingDavinci
 /// The main view for orchestrating the Davinci flow.
 struct DavinciView: View {
   /// The view model that manages the Davinci flow logic.
-  @StateObject private var davinciViewModel =  DavinciViewModel()
+  @StateObject private var davinciViewModel = DavinciViewModel()
   /// A binding to the navigation stack path.
   @Binding var path: [String]
   

@@ -23,6 +23,8 @@ public struct OpenIdConfiguration: Codable {
     public let endSessionEndpoint: String
     /// The URL of the revocation endpoint .
     public let revocationEndpoint: String
+    /// The URL of the end session endpoint.
+    public let pingEndsessionEndpoint: String?
     
     // Define CodingKeys enum to map serialized names to property names
     private enum CodingKeys: String, CodingKey {
@@ -31,5 +33,6 @@ public struct OpenIdConfiguration: Codable {
         case userinfoEndpoint = "userinfo_endpoint"
         case endSessionEndpoint = "end_session_endpoint"
         case revocationEndpoint = "revocation_endpoint"
+        case pingEndsessionEndpoint = "ping_end_idp_session_endpoint"
     }
 }

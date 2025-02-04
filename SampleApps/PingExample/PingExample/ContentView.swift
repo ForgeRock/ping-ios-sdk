@@ -10,7 +10,7 @@
 
 
 import SwiftUI
-
+import PingCentralized
 /// The main application entry point.
 @main
 struct MyApp: App {
@@ -27,10 +27,18 @@ struct ContentView: View {
     @State private var startDavinici = false
     /// State variable for managing the navigation stack path.
     @State private var path: [String] = []
+    /// State variable for managing the configuration view model.
+    @State private var configurationViewModel: ConfigurationViewModel = ConfigurationManager.shared.loadConfigurationViewModel()
     
     var body: some View {
         NavigationStack(path: $path) {
             List {
+                NavigationLink(value: "Configuration") {
+                    Text("Edit configuration")
+                }
+//                NavigationLink(value: "OIDC") {
+//                    Text("Launch OIDC")
+//                }
                 NavigationLink(value: "Davinci") {
                     Text("Launch Davinci")
                 }
@@ -51,10 +59,14 @@ struct ContentView: View {
                 }
             }.navigationDestination(for: String.self) { item in
                 switch item {
+                case "Configuration":
+                    ConfigurationView(configurationViewModel: $configurationViewModel)
                 case "Davinci":
                     DavinciView(path: $path)
+//                case "OIDC":
+//                    CentralizedView(path: $path)
                 case "Token":
-                    AccessTokenView()
+                    AccessTokenView(accessTokenViewModel: AccessTokenViewModel())
                 case "User":
                     UserInfoView()
                 case "Logout":

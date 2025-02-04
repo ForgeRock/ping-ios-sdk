@@ -15,6 +15,7 @@ import PingOrchestrate
 
 /// Class representing an OpenID Connect client.
 public class OidcClient {
+    public var pkce: Pkce?
     private let config: OidcClientConfig
     private let logger: Logger
     
@@ -25,6 +26,38 @@ public class OidcClient {
         self.logger = config.logger
     }
     
+    
+    public func generateAuthorizeUrl(customParams: [String: String]? = nil) throws -> URL {
+        var request = Request()
+        self.pkce = Pkce.generate()
+        request = config.populateRequest(request: request, pkce: pkce!, responseMode: OidcClient.Constants.query)
+        if let customParams = customParams {
+            for parameter in customParams {
+                request.parameter(name: parameter.key, value: parameter.value)
+            }
+        }
+        guard let url = request.urlRequest.url, let redirectURI = URL(string: config.redirectUri), let _ = redirectURI.scheme else {
+            throw OidcError.networkError(message: "URL not found")
+        }
+        
+        return url
+    }
+    
+    public func extractCodeAndGetToken(from url: URL) async throws -> Token {
+        if let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true), let code = components.queryItems?.filter({$0.name == "code"}).first?.value, let pcke = self.pkce {
+            let authCode = AuthCode(code: code, codeVerifier: pcke.codeVerifier)
+            return try await self.exchangeToken(authCode)
+        } else {
+            throw OidcError.authorizeError(message: "Authorization code not found")
+        }
+    }
+    
+    public func redirectURIScheme() -> String? {
+        if let redirectURI = URL(string: config.redirectUri), let callbackURLScheme = redirectURI.scheme {
+            return callbackURLScheme
+        }
+        return nil
+    }
     /// Retrieves an access token. If a cached token is available and not expired, it is returned.
     /// Otherwise, a new token is fetched with refresh token if refresh grant is available.
     /// - Returns: A Result containing the access token or an error.
@@ -73,7 +106,7 @@ public class OidcClient {
     /// Refreshes the access token.
     /// - Parameter refreshToken: The refresh token to use for refreshing the access token.
     /// - Returns: The refreshed access token.
-    private func refreshToken(_ refreshToken: String) async throws -> Token {
+    public func refreshToken(_ refreshToken: String) async throws -> Token {
         try await config.oidcInitialize()
         config.logger.i("Refreshing token")
         
@@ -264,4 +297,68 @@ public class OidcClient {
         public static let code = "code"
         public static let id_token_hint = "id_token_hint"
     }
+}
+
+extension OidcClientConfig {
+    internal func populateRequest(
+        request: Request,
+        pkce: Pkce,
+        responseMode: String = OidcClient.Constants.piflow
+    ) -> Request {
+        request.url(openId?.authorizationEndpoint ?? "")
+        request.parameter(name: OidcClient.Constants.response_mode, value: responseMode)
+        request.parameter(name: OidcClient.Constants.client_id, value: clientId)
+        request.parameter(name: OidcClient.Constants.response_type, value: OidcClient.Constants.code)
+        request.parameter(name: OidcClient.Constants.scope, value: scopes.joined(separator: " "))
+        request.parameter(name: OidcClient.Constants.redirect_uri, value: redirectUri)
+        request.parameter(name: OidcClient.Constants.code_challenge, value: pkce.codeChallenge)
+        request.parameter(name: OidcClient.Constants.code_challenge_method, value: pkce.codeChallengeMethod)
+        
+        if let acr = acrValues {
+            request.parameter(name: OidcClient.Constants.acr_values, value: acr)
+        }
+        
+        if let display = display {
+            request.parameter(name: OidcClient.Constants.display, value: display)
+        }
+        
+        for (key, value) in additionalParameters {
+            request.parameter(name: key, value: value)
+        }
+        
+        if let loginHint = loginHint {
+            request.parameter(name: OidcClient.Constants.login_hint, value: loginHint)
+        }
+        
+        if let nonce = nonce {
+            request.parameter(name: OidcClient.Constants.nonce, value: nonce)
+        }
+        
+        if let prompt = prompt {
+            request.parameter(name: OidcClient.Constants.prompt, value: prompt)
+        }
+        
+        if let uiLocales = uiLocales {
+            request.parameter(name: OidcClient.Constants.ui_locales, value: uiLocales)
+        }
+        
+        return request
+    }
+}
+
+
+extension OidcClient.Constants {
+    static let response_mode = "response_mode"
+    static let response_type = "response_type"
+    static let scope = "scope"
+    static let code_challenge = "code_challenge"
+    static let code_challenge_method = "code_challenge_method"
+    static let acr_values = "acr_values"
+    static let display = "display"
+    static let nonce = "nonce"
+    static let prompt = "prompt"
+    static let ui_locales = "ui_locales"
+    static let login_hint = "login_hint"
+    static let piflow = "pi.flow"
+    static let query = "query"
 }
