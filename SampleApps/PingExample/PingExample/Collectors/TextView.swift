@@ -32,6 +32,9 @@ struct TextView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(isValid ? Color.gray : Color.red, lineWidth: 1)
                 )
+                .onAppear(perform: {
+                    text = field.value
+                })
                 .onChange(of: text) { newValue in
                     field.value = newValue
                     isValid = field.validate().isEmpty

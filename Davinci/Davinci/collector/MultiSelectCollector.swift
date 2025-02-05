@@ -33,9 +33,7 @@ open class MultiSelectCollector: FieldCollector {
     /// Initializes the `MultiSelectCollector` with the given value.
     /// - Parameter input: The value to initialize the collector with.
     public override func initialize(with value: Any) {
-        if let stringValue = value as? String, !stringValue.isEmpty {
-            self.value.append(stringValue)
-        } else if let arrayValue = value as? [String], !arrayValue.isEmpty {
+        if let arrayValue = value as? [String], !arrayValue.isEmpty {
             self.value.append(contentsOf: arrayValue)
         }
     }

@@ -41,6 +41,15 @@ final class MultiSelectCollectorTests: XCTestCase {
         )
     }
     
+    func testInitializesOptionsWithProvidedArray() {
+        let input: [String: Any] = [:]
+        let inputDefault: Any = ["Hello", "World"]
+        let collector = MultiSelectCollector(with: input)
+        collector.initialize(with: inputDefault)
+        
+        XCTAssertEqual(collector.value, ["Hello", "World"])
+    }
+    
     func testInitializesOptionsWithEmptyListWhenNoValueProvided() {
         let input: [String: Any] = [:]
         let collector = MultiSelectCollector(with: input)
@@ -61,7 +70,7 @@ final class MultiSelectCollectorTests: XCTestCase {
         let input: [String: Any] = [
             "required": true
         ]
-        let inputDefault = "Selected Option"
+        let inputDefault = ["Hello"]
         let collector = MultiSelectCollector(with: input)
         collector.initialize(with: inputDefault)
         
