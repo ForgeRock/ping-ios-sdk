@@ -21,7 +21,7 @@ class FacebookHandler: IdpHandler {
 //    var loginManager: LoginManager = LoginManager()
     
     // Authorization call
-    func authorize(idpClient: IdpClient) async throws -> Request {
+    func authorize(url: URL?) async throws -> Request {
         throw IdpExceptions.unsupportedIdpException(message: "Facebook is not implemented yet")
     }
     

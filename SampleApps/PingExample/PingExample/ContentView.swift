@@ -10,7 +10,7 @@
 
 
 import SwiftUI
-import PingCentralized
+//import PingCentralized
 /// The main application entry point.
 @main
 struct MyApp: App {

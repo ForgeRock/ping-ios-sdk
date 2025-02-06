@@ -14,7 +14,7 @@ import PingOidc
 import PingOrchestrate
 import PingLogger
 import PingStorage
-
+import Extrernal_idp
 
 /// Configures and initializes the DaVinci instance with the PingOne server and OAuth 2.0 client details.
 /// - This configuration includes:
@@ -31,6 +31,9 @@ public let davinci = DaVinci.createDaVinci { config in
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
         oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
     }
+#if canImport(Extrernal_idp)
+    CollectorFactory.shared.register(type: Constants.SOCIAL_LOGIN_BUTTON, collector: IdpCollector.self)
+#endif
 }
 
 // A view model that manages the flow and state of the DaVinci orchestration process.
@@ -61,7 +64,9 @@ class DavinciViewModel: ObservableObject {
         
         // Starts the DaVinci orchestration process and retrieves the first node.
         let next = await davinci.start()
-        
+        if let successNode = next as? SuccessNode {
+            ConfigurationManager.shared.currentUser = successNode.user
+        }
         await MainActor.run {
             self.state = DavinciState(previous: next , node: next)
             isLoading = false
@@ -77,6 +82,9 @@ class DavinciViewModel: ObservableObject {
         if let current = node as? ContinueNode {
             // Retrieves the next node in the flow.
             let next = await current.next()
+            if let successNode = next as? SuccessNode {
+                ConfigurationManager.shared.currentUser = successNode.user
+            }
             await MainActor.run {
                 self.state = DavinciState(previous: current, node: next)
                 isLoading = false

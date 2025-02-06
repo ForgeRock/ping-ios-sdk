@@ -15,5 +15,5 @@ import PingOrchestrate
 public protocol IdpHandler {
     var tokenType: String { get set }
     
-    func authorize(idpClient: IdpClient) async throws -> Request
+    func authorize(url: URL?) async throws -> Request
 }

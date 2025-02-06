@@ -18,7 +18,7 @@ class AppleHandler: IdpHandler {
     /// Credentials type for Google credentials
     var tokenType: String = "id_token"
     
-    func authorize(idpClient: IdpClient) async throws -> Request {
+    func authorize(url: URL?) async throws -> Request {
         throw IdpExceptions.unsupportedIdpException(message: "Apple is not implemented yet")
     }
     

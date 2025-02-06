@@ -118,5 +118,9 @@ public class Request {
         public static let ios = "ios"
         public static let stCookie = "ST"
         public static let stNoSsCookie = "ST-NO-SS"
+        public static let authorization = "Authorization"
+        public static let _links = "_links"
+        public static let _continue = "continue"
+        public static let href = "href"
     }
 }

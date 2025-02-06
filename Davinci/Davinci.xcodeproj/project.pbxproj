@@ -57,6 +57,7 @@
 		A5EFAA122D3F518B00F771FE /* SubmitCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA112D3F518800F771FE /* SubmitCollectorTests.swift */; };
 		A5EFAA142D3F51CC00F771FE /* TextCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA132D3F51CA00F771FE /* TextCollectorTests.swift */; };
 		A5EFAA162D3F52F500F771FE /* ValidatedCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA152D3F52F300F771FE /* ValidatedCollectorTests.swift */; };
+		ECB7C5C02D53D4440006F1C8 /* RequestInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7C5BF2D53D4390006F1C8 /* RequestInterceptor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -134,6 +135,8 @@
 		A5EFAA112D3F518800F771FE /* SubmitCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitCollectorTests.swift; sourceTree = "<group>"; };
 		A5EFAA132D3F51CA00F771FE /* TextCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextCollectorTests.swift; sourceTree = "<group>"; };
 		A5EFAA152D3F52F300F771FE /* ValidatedCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedCollectorTests.swift; sourceTree = "<group>"; };
+		ECB7C5BF2D53D4390006F1C8 /* RequestInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestInterceptor.swift; sourceTree = "<group>"; };
+		ECBF06752D525BE20066A3BD /* Extrernal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Extrernal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +162,7 @@
 		3A203D802BDB13FF0020C995 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				ECBF06752D525BE20066A3BD /* Extrernal_idp.framework */,
 				A50981C12CEBDF2600F4B487 /* PingOidc.framework */,
 			);
 			name = Frameworks;
@@ -186,6 +190,7 @@
 		3A5441A32BCDF20700385131 /* Davinci */ = {
 			isa = PBXGroup;
 			children = (
+				ECB7C5BF2D53D4390006F1C8 /* RequestInterceptor.swift */,
 				A5A712472CAC527200B7DD58 /* PrivacyInfo.xcprivacy */,
 				3A5441A42BCDF20700385131 /* Davinci.h */,
 				A5CCE5E62C85E96B00349A5E /* Constants.swift */,
@@ -389,6 +394,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A51D4CD12C585B4500FE09E0 /* FieldCollector.swift in Sources */,
+				ECB7C5C02D53D4440006F1C8 /* RequestInterceptor.swift in Sources */,
 				A5E9AEB82D2F2689000533ED /* ValidationError.swift in Sources */,
 				A5E9AEC02D2F44CD000533ED /* PasswordPolicy.swift in Sources */,
 				A51D4CDF2C599BFF00FE09E0 /* Request.swift in Sources */,

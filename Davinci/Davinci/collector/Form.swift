@@ -24,7 +24,7 @@ class Form {
         if let form = json[Constants.form] as? [String: Any],
            let components = form[Constants.components] as? [String: Any],
            let fields = components[Constants.fields] as? [[String: Any]] {
-            collectors = CollectorFactory().collector(from: fields)
+            collectors = CollectorFactory.shared.collector(from: fields)
         }
         return collectors
     }

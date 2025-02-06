@@ -62,4 +62,10 @@ public enum Constants {
     public static let validation = "validation"
     public static let regex = "regex"
     public static let errorMessage = "errorMessage"
+    public static let SOCIAL_LOGIN_BUTTON = "SOCIAL_LOGIN_BUTTON"
+    public static let idpEnabled = "idpEnabled"
+    public static let idpId = "idpId"
+    public static let idpType = "idpType"
+    public static let links = "links"
+    public static let authenticate = "authenticate"
 }

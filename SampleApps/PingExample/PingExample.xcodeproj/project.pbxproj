@@ -49,13 +49,14 @@
 		A5EFA9812D360ACC00F771FE /* ContinueNodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA9802D360AC800F771FE /* ContinueNodeView.swift */; };
 		EC0815E62D49389400F1AD02 /* Extrernal_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0815D82D49382A00F1AD02 /* Extrernal_idp.framework */; };
 		EC0815E72D49389400F1AD02 /* Extrernal_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0815D82D49382A00F1AD02 /* Extrernal_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EC0816B22D4A6A7A00F1AD02 /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; };
-		EC0816B32D4A6A7A00F1AD02 /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC0816BD2D4A81D700F1AD02 /* CentralizedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816BC2D4A81CE00F1AD02 /* CentralizedViewModel.swift */; };
 		EC0816BF2D4A832C00F1AD02 /* ConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */; };
 		EC0816C12D4A833400F1AD02 /* ConfigurationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */; };
 		EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */; };
 		EC0816C92D4CE97300F1AD02 /* CentralizedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C82D4CE97000F1AD02 /* CentralizedView.swift */; };
+		ECBF06732D5229BC0066A3BD /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; };
+		ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECBF06A42D5391690066A3BD /* SocialButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06A32D5391610066A3BD /* SocialButtonView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -173,13 +174,13 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */,
 				EC0815E72D49389400F1AD02 /* Extrernal_idp.framework in Embed Frameworks */,
 				A5560CA32CFE4EDA0076CA8D /* PingLogger.framework in Embed Frameworks */,
 				A5560CA52CFE4EDA0076CA8D /* PingOidc.framework in Embed Frameworks */,
 				A5560CA12CFE4EDA0076CA8D /* PingDavinci.framework in Embed Frameworks */,
 				A5560CA92CFE4EDA0076CA8D /* PingStorage.framework in Embed Frameworks */,
 				A5560CA72CFE4EDA0076CA8D /* PingOrchestrate.framework in Embed Frameworks */,
-				EC0816B32D4A6A7A00F1AD02 /* PingBrowser.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -233,6 +234,7 @@
 		EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
 		EC0816C82D4CE97000F1AD02 /* CentralizedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralizedView.swift; sourceTree = "<group>"; };
 		ECBF05EB2D50D7A50066A3BD /* Centralized.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Centralized.xcodeproj; path = ../../Centralized/Centralized.xcodeproj; sourceTree = SOURCE_ROOT; };
+		ECBF06A32D5391610066A3BD /* SocialButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialButtonView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -240,13 +242,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECBF06732D5229BC0066A3BD /* PingBrowser.framework in Frameworks */,
 				EC0815E62D49389400F1AD02 /* Extrernal_idp.framework in Frameworks */,
 				A5560CA22CFE4EDA0076CA8D /* PingLogger.framework in Frameworks */,
 				A5560CA42CFE4EDA0076CA8D /* PingOidc.framework in Frameworks */,
 				A5560CA02CFE4EDA0076CA8D /* PingDavinci.framework in Frameworks */,
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
 				A5560CA62CFE4EDA0076CA8D /* PingOrchestrate.framework in Frameworks */,
-				EC0816B22D4A6A7A00F1AD02 /* PingBrowser.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,6 +408,7 @@
 		A5E9AED92D309FEF000533ED /* Collectors */ = {
 			isa = PBXGroup;
 			children = (
+				ECBF06A32D5391610066A3BD /* SocialButtonView.swift */,
 				A5EFA96C2D35F2F800F771FE /* CheckBoxView.swift */,
 				A5EFA97C2D35F78700F771FE /* ComboBoxView.swift */,
 				A5EFA97A2D35F6D500F771FE /* DropdownView.swift */,
@@ -730,6 +733,7 @@
 				3A8092F42BE99F0F00AD667F /* CustomViews.swift in Sources */,
 				A5EFA97F2D35F88D00F771FE /* PasswordView.swift in Sources */,
 				A5E9AED02D3037E0000533ED /* UserInfoView.swift in Sources */,
+				ECBF06A42D5391690066A3BD /* SocialButtonView.swift in Sources */,
 				A5E9AED82D303962000533ED /* StorageView.swift in Sources */,
 				3A3709962BEB038200AA7B51 /* AccessTokenView.swift in Sources */,
 				A5E9AEDB2D30A020000533ED /* LabelView.swift in Sources */,
