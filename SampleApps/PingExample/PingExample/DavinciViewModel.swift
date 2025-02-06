@@ -31,9 +31,6 @@ public let davinci = DaVinci.createDaVinci { config in
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
         oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
     }
-#if canImport(Extrernal_idp)
-    CollectorFactory.shared.register(type: Constants.SOCIAL_LOGIN_BUTTON, collector: IdpCollector.self)
-#endif
 }
 
 // A view model that manages the flow and state of the DaVinci orchestration process.

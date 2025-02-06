@@ -12,7 +12,8 @@ import Foundation
 import PingOrchestrate
 import PingDavinci
 
-public class IdpCollector: Collector, ContinueNodeAware, RequestInterceptor {
+@objc
+public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterceptor {
     
     public var continueNode: PingOrchestrate.ContinueNode?
     
@@ -58,6 +59,11 @@ public class IdpCollector: Collector, ContinueNodeAware, RequestInterceptor {
            let href = authenticate[Constants.href] as? String {
             link = URL(string: href)
         }
+    }
+    
+    @objc
+    public static func registerCollector() {
+        CollectorFactory.shared.register(type: Constants.SOCIAL_LOGIN_BUTTON, collector: IdpCollector.self)
     }
     
     public func authorize() async -> Result<Bool, IdpExceptions> {

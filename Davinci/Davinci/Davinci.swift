@@ -32,6 +32,8 @@ extension DaVinci {
             cookieConfig.persist = [Request.Constants.stCookie, Request.Constants.stNoSsCookie]
         }
         
+        CollectorFactory.shared.registerDefaultCollectors()
+        
         // Apply custom configuration
         block(config)
         

@@ -8,7 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
-
+import Foundation
 import PingOrchestrate
 
 /// The CollectorFactory singleton is responsible for creating and managing Collector instances.
@@ -21,7 +21,10 @@ public final class CollectorFactory {
     /// The shared instance of the CollectorFactory.
     public static let shared = CollectorFactory()
     
-    init() {
+    init() { }
+    
+    /// Registers the default DaVinci Collectors.
+    public func registerDefaultCollectors() {
         register(type: Constants.TEXT, collector: TextCollector.self)//
         register(type: Constants.PASSWORD, collector: PasswordCollector.self)
         register(type: Constants.PASSWORD_VERIFY, collector: PasswordCollector.self)
@@ -33,6 +36,9 @@ public final class CollectorFactory {
         register(type: Constants.RADIO, collector: SingleSelectCollector.self)
         register(type: Constants.COMBOBOX, collector: MultiSelectCollector.self)
         register(type: Constants.CHECKBOX, collector: MultiSelectCollector.self)
+        if let c: NSObject.Type = NSClassFromString("Extrernal_idp.IdpCollector") as? NSObject.Type {
+            c.perform(Selector(("registerCollector")))
+        }
     }
     
     /// Registers a new type of Collector.
