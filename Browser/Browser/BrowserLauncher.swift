@@ -36,12 +36,12 @@ public class BrowserLauncher: NSObject {
     
     /// Static shared instance of current Browser object
     public static var currentBrowser: BrowserLauncher? = BrowserLauncher()
-    /// Custom URL query parameter for /authorize request
-    public var customParams: [String: String] = [:]
-    /// Type of external user-agent; Authentication Service, Native Browser App, or SFSafariViewController
-    public var browserType: BrowserType = .authSession
     /// Boolean indicator whether or not current Browser object is in progress
     public var isInProgress: Bool = false
+    /// Custom URL query parameter for /authorize request
+    var customParams: [String: String] = [:]
+    /// Type of external user-agent; Authentication Service, Native Browser App, or SFSafariViewController
+    var browserType: BrowserType = .authSession
     /// Current external user-agent instance
     var currentSession: Any?
     /// Browser mode (either login, logout or custom)
