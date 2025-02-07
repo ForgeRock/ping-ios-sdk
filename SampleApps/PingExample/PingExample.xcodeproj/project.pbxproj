@@ -233,6 +233,7 @@
 		EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewModel.swift; sourceTree = "<group>"; };
 		EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
 		EC0816C82D4CE97000F1AD02 /* CentralizedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralizedView.swift; sourceTree = "<group>"; };
+		ECB7C5D02D562FAC0006F1C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		ECBF05EB2D50D7A50066A3BD /* Centralized.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Centralized.xcodeproj; path = ../../Centralized/Centralized.xcodeproj; sourceTree = SOURCE_ROOT; };
 		ECBF06A32D5391610066A3BD /* SocialButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialButtonView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -301,6 +302,7 @@
 		3A54412F2BCDF10900385131 /* PingExample */ = {
 			isa = PBXGroup;
 			children = (
+				ECB7C5D02D562FAC0006F1C8 /* Info.plist */,
 				A5E9AED92D309FEF000533ED /* Collectors */,
 				3A3709952BEB038200AA7B51 /* AccessTokenView.swift */,
 				A5E9AECD2D3037BC000533ED /* AccessTokenViewModel.swift */,
@@ -905,6 +907,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PingExample/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Davinci;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -936,6 +939,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PingExample/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Davinci;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

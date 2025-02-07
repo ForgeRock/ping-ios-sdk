@@ -1,4 +1,4 @@
-// 
+//
 //  SocialButtonView.swift
 //  PingExample
 //
@@ -29,7 +29,8 @@ public struct SocialButtonView: View {
                     switch result {
                     case .success(_):
                         onNext(true)
-                    case .failure(let failure):
+                    case .failure(let error):
+                        print(error)
                         onStart()
                     }
                 }
@@ -57,11 +58,11 @@ public class SocialButtonViewModel: ObservableObject {
     public func socialButtonText() -> some View {
         let bgColor: Color
         switch idpCollector.idpType {
-            case "APPLE":
+        case "APPLE":
             bgColor = Color.appleButtonBackground
-            case "GOOGLE":
+        case "GOOGLE":
             bgColor = Color.googleButtonBackground
-            case "FACEBOOK":
+        case "FACEBOOK":
             bgColor = Color.facebookButtonBackground
         default:
             bgColor = Color.themeButtonBackground

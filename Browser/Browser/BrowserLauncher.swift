@@ -84,7 +84,15 @@ public class BrowserLauncher: NSObject {
                     }
                 }
             case .ephemeralAuthSession:
-                break
+                asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: true) { result in
+                    self.isInProgress = false
+                    switch result {
+                    case .success(let url):
+                        continuation.resume(returning: url)
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
+                    }
+                }
             }
         }
     }

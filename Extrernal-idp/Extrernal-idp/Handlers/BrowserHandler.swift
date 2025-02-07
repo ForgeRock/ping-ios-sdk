@@ -29,7 +29,7 @@ public class BrowserHandler: IdpHandler {
         }
         
         do {
-            let result = try await BrowserLauncher.currentBrowser?.launch(url: continueUrl, callbackURLScheme: callbackURLScheme)
+            let result = try await BrowserLauncher.currentBrowser?.launch(url: continueUrl, browserType: .ephemeralAuthSession, callbackURLScheme: callbackURLScheme)
             guard let url = result,
                   let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
                   let queryItems = components.queryItems else {
@@ -54,6 +54,4 @@ public class BrowserHandler: IdpHandler {
             throw IdpExceptions.illegalStateException(message: "BrowserLauncher failed")
         }
     }
-    
-    
 }
