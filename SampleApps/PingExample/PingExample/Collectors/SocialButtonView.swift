@@ -52,7 +52,7 @@ public class SocialButtonViewModel: ObservableObject {
     }
     
     public func startSocialAuthentication() async -> Result<Bool, IdpExceptions> {
-        return await idpCollector.authorize()
+        return await idpCollector.authorize(callbackURLScheme: "myAppScheme")
     }
     
     public func socialButtonText() -> some View {

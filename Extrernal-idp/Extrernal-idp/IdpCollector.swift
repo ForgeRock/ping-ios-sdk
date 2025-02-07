@@ -66,14 +66,25 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
         CollectorFactory.shared.register(type: Constants.SOCIAL_LOGIN_BUTTON, collector: IdpCollector.self)
     }
     
-    public func authorize() async -> Result<Bool, IdpExceptions> {
+    public func authorize(callbackURLScheme: String? = nil) async -> Result<Bool, IdpExceptions> {
         do {
             
             guard let url = link else {
                 return .failure(.illegalArgumentException(message: "Missing link URL"))
             }
             
-            let request = try await BrowserHandler(continueNode: continueNode!, tokenType: "code", callbackURLScheme: "myApp").authorize(url: url)
+            let urlScheme: String
+            if let customScheme = callbackURLScheme {
+                urlScheme = customScheme
+            } else {
+                guard let urlSchemes = getCustomURLSchemes(), let scheme = urlSchemes.first else {
+                    return .failure(.illegalArgumentException(message: "Missing custom URL schemes"))
+                }
+                urlScheme = scheme
+            }
+            
+            
+            let request = try await BrowserHandler(continueNode: continueNode!, tokenType: "code", callbackURLScheme: urlScheme).authorize(url: url)
             self.resumeRequest = request
             
             return .success(true)
@@ -86,5 +97,16 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     //MARK: RequestInterceptor
     public func intercept(context: FlowContext, request: Request) -> Request {
         return resumeRequest ?? request
+    }
+    
+    private func getCustomURLSchemes() -> [String]? {
+        if let urlTypes = Bundle.main.infoDictionary?["CFBundleURLTypes"] as? [[String: Any]] {
+            for urlType in urlTypes {
+                if let urlSchemes = urlType["CFBundleURLSchemes"] as? [String] {
+                    return urlSchemes  // Return the first set of schemes found
+                }
+            }
+        }
+        return nil
     }
 }

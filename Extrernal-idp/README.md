@@ -47,7 +47,7 @@ myapp://callback
 
 ### App Redirect Uri Setup
 
-In the App project file go to `Info -> URL Types` file, add the following `url scheme` to the project:
+In the App project file go to `Info -> URL Types` file, add the following `url scheme` to the project. The IdpCollector will use the first scheme as it appears on the list:
 
 <img src="images/urlScheme.png" width="700">
 
@@ -108,7 +108,13 @@ Task {
     }
 }
 ```
+### More IdpCollector configuration
 
+When calling `await idpCollector.authorize()` developers can optionally pass a `callbackURLScheme` to override the configuration used by the collector. Example:
+```swift
+await idpCollector.authorize(callbackURLScheme: "myAppScheme")
+``` 
+The value needs to match with the configuration of the Social Provider.
 
 ## Native External Identity Providers (IDP) Integration with Google and Facebook and Apple for iOS
 
