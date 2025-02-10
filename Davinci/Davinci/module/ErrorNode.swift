@@ -19,7 +19,7 @@ extension ErrorNode {
     ///
     /// - Returns: An array of `Detail` objects if parsing is successful, otherwise an empty array.
     public var details: [Detail] {
-        guard let detailsArray = input["details"] as? [[String: Any]] else {
+        guard let detailsArray = input[Constants.details] as? [[String: Any]] else {
             return []
         }
         return detailsArray.compactMap { try? Detail(dictionary: $0) }
@@ -39,8 +39,8 @@ public struct Detail: Codable {
     /// - Parameter dictionary: A dictionary containing the error details.
     /// - Throws: `SerializationError.invalidFormat` if required fields are missing or invalid.
     public init(dictionary: [String: Any]) throws {
-        guard let statusCode = dictionary["statusCode"] as? Int,
-              let rawResponseDict = dictionary["rawResponse"] as? [String: Any] else {
+        guard let statusCode = dictionary[Constants.statusCode] as? Int,
+              let rawResponseDict = dictionary[Constants.rawResponse] as? [String: Any] else {
             throw SerializationError.invalidFormat
         }
         
@@ -68,11 +68,11 @@ public struct RawResponse: Codable {
     /// - Parameter dictionary: A dictionary containing the raw response data.
     /// - Throws: `SerializationError.invalidFormat` if required fields are missing or invalid.
     public init(dictionary: [String: Any]) throws {
-        self.id = dictionary["id"] as? String
-        self.code = dictionary["code"] as? String
-        self.message = dictionary["message"] as? String
+        self.id = dictionary[Constants.id] as? String
+        self.code = dictionary[Constants.code] as? String
+        self.message = dictionary[Constants.message] as? String
         
-        if let detailsArray = dictionary["details"] as? [[String: Any]] {
+        if let detailsArray = dictionary[Constants.details] as? [[String: Any]] {
             self.details = try detailsArray.map { try ErrorDetail(dictionary: $0) }
         } else {
             self.details = nil
@@ -99,11 +99,11 @@ public struct ErrorDetail: Codable {
     /// - Parameter dictionary: A dictionary containing the error detail data.
     /// - Throws: `SerializationError.invalidFormat` if required fields are missing or invalid.
     public init(dictionary: [String: Any]) throws {
-        self.code = dictionary["code"] as? String
-        self.target = dictionary["target"] as? String
-        self.message = dictionary["message"] as? String
+        self.code = dictionary[Constants.code] as? String
+        self.target = dictionary[Constants.target] as? String
+        self.message = dictionary[Constants.message] as? String
         
-        if let innerErrorDict = dictionary["innerError"] as? [String: Any] {
+        if let innerErrorDict = dictionary[Constants.innerError] as? [String: Any] {
             self.innerError = try InnerError(dictionary: innerErrorDict)
         } else {
             self.innerError = nil
@@ -121,7 +121,7 @@ public struct InnerError: Codable {
     /// - Parameter dictionary: A dictionary containing inner error details.
     /// - Throws: `SerializationError.invalidFormat` if required fields are missing or invalid.
     public init(dictionary: [String: Any]) throws {
-        guard let unsatisfiedRequirements = dictionary["unsatisfiedRequirements"] as? [String] else {
+        guard let unsatisfiedRequirements = dictionary[Constants.unsatisfiedRequirements] as? [String] else {
             throw SerializationError.invalidFormat
         }
         
