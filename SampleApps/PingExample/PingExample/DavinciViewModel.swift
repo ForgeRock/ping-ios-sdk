@@ -14,6 +14,7 @@ import PingOidc
 import PingOrchestrate
 import PingLogger
 import PingStorage
+import External_idp
 
 /// Configures and initializes the DaVinci instance with the PingOne server and OAuth 2.0 client details.
 /// - This configuration includes:
@@ -30,6 +31,7 @@ public let davinci = DaVinci.createDaVinci { config in
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
         oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
     }
+    
 }
 
 // A view model that manages the flow and state of the DaVinci orchestration process.

@@ -36,7 +36,7 @@ public final class CollectorFactory {
         register(type: Constants.RADIO, collector: SingleSelectCollector.self)
         register(type: Constants.COMBOBOX, collector: MultiSelectCollector.self)
         register(type: Constants.CHECKBOX, collector: MultiSelectCollector.self)
-        if let c: NSObject.Type = NSClassFromString("Extrernal_idp.IdpCollector") as? NSObject.Type {
+        if let c: NSObject.Type = NSClassFromString("External_idp.IdpCollector") as? NSObject.Type {
             c.perform(Selector(("registerCollector")))
         }
     }
