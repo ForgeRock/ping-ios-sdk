@@ -9,7 +9,18 @@
 /* Begin PBXBuildFile section */
 		EC0816AD2D4A692E00F1AD02 /* Browser.h in Headers */ = {isa = PBXBuildFile; fileRef = EC0816AB2D4A692E00F1AD02 /* Browser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EC0816B12D4A696F00F1AD02 /* BrowserLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816AE2D4A696F00F1AD02 /* BrowserLauncher.swift */; };
+		ECB7C66D2D5A1FAB0006F1C8 /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816962D4A68FB00F1AD02 /* PingBrowser.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		ECB7C66E2D5A1FAB0006F1C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC08168D2D4A68FB00F1AD02 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EC0816952D4A68FB00F1AD02;
+			remoteInfo = PingBrowser;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		EC0816962D4A68FB00F1AD02 /* PingBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -17,13 +28,30 @@
 		EC0816AE2D4A696F00F1AD02 /* BrowserLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserLauncher.swift; sourceTree = "<group>"; };
 		EC0816B52D4A805800F1AD02 /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC0816B92D4A805D00F1AD02 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECB7C6692D5A1FAB0006F1C8 /* PingBrowserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingBrowserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		ECB7C66A2D5A1FAB0006F1C8 /* PingBrowserTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PingBrowserTests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		EC0816932D4A68FB00F1AD02 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ECB7C6662D5A1FAB0006F1C8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ECB7C66D2D5A1FAB0006F1C8 /* PingBrowser.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -34,6 +62,7 @@
 			isa = PBXGroup;
 			children = (
 				EC0816AC2D4A692E00F1AD02 /* Browser */,
+				ECB7C66A2D5A1FAB0006F1C8 /* PingBrowserTests */,
 				EC0816B42D4A805800F1AD02 /* Frameworks */,
 				EC0816972D4A68FB00F1AD02 /* Products */,
 			);
@@ -43,6 +72,7 @@
 			isa = PBXGroup;
 			children = (
 				EC0816962D4A68FB00F1AD02 /* PingBrowser.framework */,
+				ECB7C6692D5A1FAB0006F1C8 /* PingBrowserTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -99,6 +129,29 @@
 			productReference = EC0816962D4A68FB00F1AD02 /* PingBrowser.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		ECB7C6682D5A1FAB0006F1C8 /* PingBrowserTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ECB7C6722D5A1FAB0006F1C8 /* Build configuration list for PBXNativeTarget "PingBrowserTests" */;
+			buildPhases = (
+				ECB7C6652D5A1FAB0006F1C8 /* Sources */,
+				ECB7C6662D5A1FAB0006F1C8 /* Frameworks */,
+				ECB7C6672D5A1FAB0006F1C8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				ECB7C66F2D5A1FAB0006F1C8 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				ECB7C66A2D5A1FAB0006F1C8 /* PingBrowserTests */,
+			);
+			name = PingBrowserTests;
+			packageProductDependencies = (
+			);
+			productName = PingBrowserTests;
+			productReference = ECB7C6692D5A1FAB0006F1C8 /* PingBrowserTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -106,11 +159,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					EC0816952D4A68FB00F1AD02 = {
 						CreatedOnToolsVersion = 16.2;
 						LastSwiftMigration = 1620;
+					};
+					ECB7C6682D5A1FAB0006F1C8 = {
+						CreatedOnToolsVersion = 16.2;
 					};
 				};
 			};
@@ -129,12 +186,20 @@
 			projectRoot = "";
 			targets = (
 				EC0816952D4A68FB00F1AD02 /* PingBrowser */,
+				ECB7C6682D5A1FAB0006F1C8 /* PingBrowserTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		EC0816942D4A68FB00F1AD02 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ECB7C6672D5A1FAB0006F1C8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -152,7 +217,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ECB7C6652D5A1FAB0006F1C8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		ECB7C66F2D5A1FAB0006F1C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EC0816952D4A68FB00F1AD02 /* PingBrowser */;
+			targetProxy = ECB7C66E2D5A1FAB0006F1C8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		EC08169D2D4A68FB00F1AD02 /* Debug */ = {
@@ -351,6 +431,40 @@
 			};
 			name = Release;
 		};
+		ECB7C6702D5A1FAB0006F1C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingBrowserTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		ECB7C6712D5A1FAB0006F1C8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingBrowserTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -368,6 +482,15 @@
 			buildConfigurations = (
 				EC08169D2D4A68FB00F1AD02 /* Debug */,
 				EC08169E2D4A68FB00F1AD02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ECB7C6722D5A1FAB0006F1C8 /* Build configuration list for PBXNativeTarget "PingBrowserTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ECB7C6702D5A1FAB0006F1C8 /* Debug */,
+				ECB7C6712D5A1FAB0006F1C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

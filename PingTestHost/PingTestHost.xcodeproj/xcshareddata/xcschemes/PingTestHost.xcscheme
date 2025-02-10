@@ -95,6 +95,36 @@
                ReferencedContainer = "container:../Davinci/Davinci.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ECB7C6682D5A1FAB0006F1C8"
+               BuildableName = "PingBrowserTests.xctest"
+               BlueprintName = "PingBrowserTests"
+               ReferencedContainer = "container:../Browser/Browser.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ECB7C6682D5A1FAB0006F1C8"
+               BuildableName = "PingBrowserTests.xctest"
+               BlueprintName = "PingBrowserTests"
+               ReferencedContainer = "container:../Browser/Browser.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ECB7C6972D5A2C1F0006F1C8"
+               BuildableName = "External-idpTests.xctest"
+               BlueprintName = "External-idpTests"
+               ReferencedContainer = "container:../Extrernal-idp/External-idp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

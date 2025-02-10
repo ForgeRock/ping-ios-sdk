@@ -16,8 +16,19 @@
 		EC08161C2D49429000F1AD02 /* GoogleHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC08161B2D49428C00F1AD02 /* GoogleHandler.swift */; };
 		EC08161E2D49429B00F1AD02 /* AppleHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC08161D2D49429500F1AD02 /* AppleHandler.swift */; };
 		ECB7C5C22D54D9100006F1C8 /* IdpCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */; };
+		ECB7C69C2D5A2C1F0006F1C8 /* External_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0815B72D49377500F1AD02 /* External_idp.framework */; };
 		ECBF06492D50ED7A0066A3BD /* BrowserHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06482D50ED750066A3BD /* BrowserHandler.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		ECB7C69D2D5A2C1F0006F1C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC0815AE2D49377500F1AD02 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EC0815B62D49377500F1AD02;
+			remoteInfo = "External-idp";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		EC0815B72D49377500F1AD02 /* External_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = External_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -30,15 +41,32 @@
 		EC08161B2D49428C00F1AD02 /* GoogleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleHandler.swift; sourceTree = "<group>"; };
 		EC08161D2D49429500F1AD02 /* AppleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleHandler.swift; sourceTree = "<group>"; };
 		ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpCollector.swift; sourceTree = "<group>"; };
+		ECB7C6982D5A2C1F0006F1C8 /* External-idpTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "External-idpTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF06442D50EBF60066A3BD /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF06482D50ED750066A3BD /* BrowserHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		ECB7C6992D5A2C1F0006F1C8 /* External-idpTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "External-idpTests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		EC0815B42D49377500F1AD02 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ECB7C6952D5A2C1F0006F1C8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ECB7C69C2D5A2C1F0006F1C8 /* External_idp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -49,6 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				EC0815E32D49387A00F1AD02 /* Extrernal-idp */,
+				ECB7C6992D5A2C1F0006F1C8 /* External-idpTests */,
 				ECBF06432D50EBF60066A3BD /* Frameworks */,
 				EC0815B82D49377500F1AD02 /* Products */,
 			);
@@ -58,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				EC0815B72D49377500F1AD02 /* External_idp.framework */,
+				ECB7C6982D5A2C1F0006F1C8 /* External-idpTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -129,6 +159,29 @@
 			productReference = EC0815B72D49377500F1AD02 /* External_idp.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		ECB7C6972D5A2C1F0006F1C8 /* External-idpTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ECB7C6A12D5A2C1F0006F1C8 /* Build configuration list for PBXNativeTarget "External-idpTests" */;
+			buildPhases = (
+				ECB7C6942D5A2C1F0006F1C8 /* Sources */,
+				ECB7C6952D5A2C1F0006F1C8 /* Frameworks */,
+				ECB7C6962D5A2C1F0006F1C8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				ECB7C69E2D5A2C1F0006F1C8 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				ECB7C6992D5A2C1F0006F1C8 /* External-idpTests */,
+			);
+			name = "External-idpTests";
+			packageProductDependencies = (
+			);
+			productName = "External-idpTests";
+			productReference = ECB7C6982D5A2C1F0006F1C8 /* External-idpTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -136,11 +189,15 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					EC0815B62D49377500F1AD02 = {
 						CreatedOnToolsVersion = 16.2;
 						LastSwiftMigration = 1620;
+					};
+					ECB7C6972D5A2C1F0006F1C8 = {
+						CreatedOnToolsVersion = 16.2;
 					};
 				};
 			};
@@ -159,6 +216,7 @@
 			projectRoot = "";
 			targets = (
 				EC0815B62D49377500F1AD02 /* External-idp */,
+				ECB7C6972D5A2C1F0006F1C8 /* External-idpTests */,
 			);
 		};
 /* End PBXProject section */
@@ -169,6 +227,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC0815E42D49387A00F1AD02 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ECB7C6962D5A2C1F0006F1C8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,7 +255,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ECB7C6942D5A2C1F0006F1C8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		ECB7C69E2D5A2C1F0006F1C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EC0815B62D49377500F1AD02 /* External-idp */;
+			targetProxy = ECB7C69D2D5A2C1F0006F1C8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		EC0815C02D49377500F1AD02 /* Debug */ = {
@@ -389,6 +469,40 @@
 			};
 			name = Release;
 		};
+		ECB7C69F2D5A2C1F0006F1C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.External-idpTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		ECB7C6A02D5A2C1F0006F1C8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.External-idpTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -406,6 +520,15 @@
 			buildConfigurations = (
 				EC0815C02D49377500F1AD02 /* Debug */,
 				EC0815C12D49377500F1AD02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ECB7C6A12D5A2C1F0006F1C8 /* Build configuration list for PBXNativeTarget "External-idpTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ECB7C69F2D5A2C1F0006F1C8 /* Debug */,
+				ECB7C6A02D5A2C1F0006F1C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

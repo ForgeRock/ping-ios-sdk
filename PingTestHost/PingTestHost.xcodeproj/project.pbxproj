@@ -23,10 +23,10 @@
 		A54BF4702BF2E33C00CD24D4 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = A54BF46F2BF2E33C00CD24D4 /* Base */; };
 		A54BF4722BF2E34000CD24D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A54BF4712BF2E34000CD24D4 /* Assets.xcassets */; };
 		A54BF4752BF2E34000CD24D4 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = A54BF4742BF2E34000CD24D4 /* Base */; };
-		EC0816662D4A65AF00F1AD02 /* Browser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816652D4A65AF00F1AD02 /* Browser.framework */; };
-		EC0816672D4A65AF00F1AD02 /* Browser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816652D4A65AF00F1AD02 /* Browser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EC0816692D4A65B500F1AD02 /* Extrernal_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816682D4A65B500F1AD02 /* Extrernal_idp.framework */; };
-		EC08166A2D4A65B500F1AD02 /* Extrernal_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816682D4A65B500F1AD02 /* Extrernal_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECB7C6802D5A24780006F1C8 /* External_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECB7C67F2D5A24780006F1C8 /* External_idp.framework */; };
+		ECB7C6812D5A24780006F1C8 /* External_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECB7C67F2D5A24780006F1C8 /* External_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECB7C6922D5A27840006F1C8 /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECB7C6912D5A27840006F1C8 /* PingBrowser.framework */; };
+		ECB7C6932D5A27840006F1C8 /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECB7C6912D5A27840006F1C8 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -36,13 +36,13 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				ECB7C6932D5A27840006F1C8 /* PingBrowser.framework in Embed Frameworks */,
 				A507A26A2CEBED9F007F5C16 /* PingLogger.framework in Embed Frameworks */,
 				A507A26C2CEBED9F007F5C16 /* PingOidc.framework in Embed Frameworks */,
 				A507A2682CEBED9F007F5C16 /* PingDavinci.framework in Embed Frameworks */,
 				A507A2702CEBED9F007F5C16 /* PingStorage.framework in Embed Frameworks */,
-				EC08166A2D4A65B500F1AD02 /* Extrernal_idp.framework in Embed Frameworks */,
 				A507A26E2CEBED9F007F5C16 /* PingOrchestrate.framework in Embed Frameworks */,
-				EC0816672D4A65AF00F1AD02 /* Browser.framework in Embed Frameworks */,
+				ECB7C6812D5A24780006F1C8 /* External_idp.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -74,8 +74,8 @@
 		A57A08C22CE50537006F0CBB /* Oidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Oidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A57A08DE2CE50937006F0CBB /* Davinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Davinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5D1CD5E2BF504E400D1C83E /* PingStorage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingStorage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC0816652D4A65AF00F1AD02 /* Browser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Browser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC0816682D4A65B500F1AD02 /* Extrernal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Extrernal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECB7C67F2D5A24780006F1C8 /* External_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = External_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECB7C6912D5A27840006F1C8 /* PingBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,13 +83,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECB7C6922D5A27840006F1C8 /* PingBrowser.framework in Frameworks */,
 				A507A2692CEBED9F007F5C16 /* PingLogger.framework in Frameworks */,
 				A507A26B2CEBED9F007F5C16 /* PingOidc.framework in Frameworks */,
 				A507A2672CEBED9F007F5C16 /* PingDavinci.framework in Frameworks */,
 				A507A26F2CEBED9F007F5C16 /* PingStorage.framework in Frameworks */,
-				EC0816692D4A65B500F1AD02 /* Extrernal_idp.framework in Frameworks */,
 				A507A26D2CEBED9F007F5C16 /* PingOrchestrate.framework in Frameworks */,
-				EC0816662D4A65AF00F1AD02 /* Browser.framework in Frameworks */,
+				ECB7C6802D5A24780006F1C8 /* External_idp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,8 +130,8 @@
 		A54BF4822BF2E5B800CD24D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EC0816682D4A65B500F1AD02 /* Extrernal_idp.framework */,
-				EC0816652D4A65AF00F1AD02 /* Browser.framework */,
+				ECB7C6912D5A27840006F1C8 /* PingBrowser.framework */,
+				ECB7C67F2D5A24780006F1C8 /* External_idp.framework */,
 				A507A2622CEBED9F007F5C16 /* PingDavinci.framework */,
 				A507A2632CEBED9F007F5C16 /* PingLogger.framework */,
 				A507A2642CEBED9F007F5C16 /* PingOidc.framework */,

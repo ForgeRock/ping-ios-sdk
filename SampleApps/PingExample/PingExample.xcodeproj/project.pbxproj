@@ -154,12 +154,12 @@
 			remoteGlobalIDString = EC0815B72D49377500F1AD02;
 			remoteInfo = "External-idp";
 		};
-		ECBF05F72D50D7A50066A3BD /* PBXContainerItemProxy */ = {
+		ECB7C6842D5A24B70006F1C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = ECBF05EB2D50D7A50066A3BD /* Centralized.xcodeproj */;
+			containerPortal = EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = ECBF05D22D50D7960066A3BD;
-			remoteInfo = Centralized;
+			remoteGlobalIDString = ECB7C6692D5A1FAB0006F1C8;
+			remoteInfo = PingBrowserTests;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -227,7 +227,6 @@
 		EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewModel.swift; sourceTree = "<group>"; };
 		EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
 		ECB7C5D02D562FAC0006F1C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		ECBF05EB2D50D7A50066A3BD /* Centralized.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Centralized.xcodeproj; path = ../../Centralized/Centralized.xcodeproj; sourceTree = SOURCE_ROOT; };
 		ECBF06A32D5391610066A3BD /* SocialButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialButtonView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -265,7 +264,6 @@
 		3A5441242BCDF10900385131 = {
 			isa = PBXGroup;
 			children = (
-				ECBF05EB2D50D7A50066A3BD /* Centralized.xcodeproj */,
 				EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */,
 				EC0815CB2D49382A00F1AD02 /* External-idp.xcodeproj */,
 				A588CFEA2BF69F1A00F9052A /* Logger.xcodeproj */,
@@ -419,6 +417,7 @@
 			isa = PBXGroup;
 			children = (
 				EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */,
+				ECB7C6852D5A24B70006F1C8 /* PingBrowserTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -427,14 +426,6 @@
 			isa = PBXGroup;
 			children = (
 				ECB7C6482D5686020006F1C8 /* External_idp.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		ECBF05F22D50D7A50066A3BD /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				ECBF05F82D50D7A50066A3BD /* PingCentralized.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -534,10 +525,6 @@
 				{
 					ProductGroup = EC0816A62D4A692900F1AD02 /* Products */;
 					ProjectRef = EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */;
-				},
-				{
-					ProductGroup = ECBF05F22D50D7A50066A3BD /* Products */;
-					ProjectRef = ECBF05EB2D50D7A50066A3BD /* Centralized.xcodeproj */;
 				},
 				{
 					ProductGroup = A57A09152CE511E7006F0CBB /* Products */;
@@ -658,11 +645,11 @@
 			remoteRef = ECB7C6472D5686020006F1C8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		ECBF05F82D50D7A50066A3BD /* PingCentralized.framework */ = {
+		ECB7C6852D5A24B70006F1C8 /* PingBrowserTests.xctest */ = {
 			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = PingCentralized.framework;
-			remoteRef = ECBF05F72D50D7A50066A3BD /* PBXContainerItemProxy */;
+			fileType = wrapper.cfbundle;
+			path = PingBrowserTests.xctest;
+			remoteRef = ECB7C6842D5A24B70006F1C8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
