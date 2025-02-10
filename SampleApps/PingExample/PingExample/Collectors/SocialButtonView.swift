@@ -12,7 +12,7 @@
 import SwiftUI
 import PingDavinci
 import PingBrowser
-import Extrernal_idp
+import External_idp
 
 public struct SocialButtonView: View {
     
@@ -52,7 +52,7 @@ public class SocialButtonViewModel: ObservableObject {
     }
     
     public func startSocialAuthentication() async -> Result<Bool, IdpExceptions> {
-        return await idpCollector.authorize(callbackURLScheme: "myAppScheme")
+        return await idpCollector.authorize()
     }
     
     public func socialButtonText() -> some View {
