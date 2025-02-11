@@ -229,6 +229,16 @@ case is FailureNode:
     (node as! FailureNode).cause //Retrieve the cause of the Failure
 case is ErrorNode:
     (node as! ErrorNode).message //Retrieve the error message
+    // Retrieve the details of the error
+    (node as! ErrorNode).details.forEach { detail in
+        detail.rawResponse.details?.forEach { detail in
+            let msg = detail.message
+            
+            detail.innerError?.errors.forEach { key, value in
+                let innerError = "\(key): \(value)"
+            }
+        }
+    }
 case is SuccessNode: do {}
 }
 ```

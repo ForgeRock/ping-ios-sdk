@@ -51,10 +51,11 @@ struct DavinciView: View {
                   ConnectorView(davinciViewModel: davinciViewModel, node: nextNode)
                 }
             case let errorNode as ErrorNode:
-                ErrorView(message: "\(errorNode.message)")
+                ErrorNodeView(node: errorNode)
               if let nextNode = davinciViewModel.state.previous as? ContinueNode {
                 ConnectorView(davinciViewModel: davinciViewModel, node: nextNode)
               }
+                
                 
             default:
               // Show an empty view for unhandled cases.
@@ -106,27 +107,4 @@ struct ConnectorView: View {
   }
 }
 
-/// A view for displaying error messages.
-struct ErrorView: View {
-  var message: String = ""
-  
-  var body: some View {
-      HStack {
-          Image(systemName: "exclamationmark.triangle.fill")
-              .foregroundStyle(Color.red)
-              .padding(.trailing, 8)
-          Text(message)
-              .font(.headline)
-              .multilineTextAlignment(.leading)
-              .foregroundStyle(Color.red)
-          Spacer()
-      }
-      .padding()
-      .background(
-        RoundedRectangle(cornerRadius: 8)
-            .fill(Color(.systemBackground))
-            .shadow(color: .gray, radius: 1, x: 0, y: 1)
-      )
-      .padding(.horizontal, 16)
-  }
-}
+

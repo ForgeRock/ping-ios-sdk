@@ -66,4 +66,10 @@ enum Constants {
   static let validation = "validation"
   static let regex = "regex"
   static let errorMessage = "errorMessage"
+  static let details = "details"
+  static let target = "target"
+  static let innerError = "innerError"
+  static let statusCode = "statusCode"
+  static let rawResponse = "rawResponse"
+  static let unsatisfiedRequirements = "unsatisfiedRequirements"
 }
