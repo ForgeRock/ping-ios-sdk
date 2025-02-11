@@ -13,7 +13,7 @@ final class PingBrowserTests: XCTestCase {
     func testCurrentBrowser() throws {
         let browser = BrowserLauncher.currentBrowser
         XCTAssertNotNil(browser)
-        XCTAssertFalse(browser!.isInProgress)
+        XCTAssertFalse(browser.isInProgress)
     }
 
 }
