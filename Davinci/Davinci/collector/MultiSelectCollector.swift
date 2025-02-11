@@ -30,6 +30,14 @@ open class MultiSelectCollector: FieldCollector {
         options = Option.parseOptions(from: json)
     }
     
+    /// Initializes the `MultiSelectCollector` with the given value.
+    /// - Parameter input: The value to initialize the collector with.
+    public override func initialize(with value: Any) {
+        if let arrayValue = value as? [String], !arrayValue.isEmpty {
+            self.value.append(contentsOf: arrayValue)
+        }
+    }
+    
     /// Validates this collector, returning a list of validation errors if any.
     /// - Returns: An array of `ValidationError`.
     open func validate() -> [ValidationError] {

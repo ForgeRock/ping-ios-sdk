@@ -2,7 +2,7 @@
 //  Form.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -26,6 +26,17 @@ class Form {
            let fields = components[Constants.fields] as? [[String: Any]] {
             collectors = CollectorFactory().collector(from: fields)
         }
+        
+        // Populate default values for collectors
+        if let formData = json[Constants.formData] as? [String: Any],
+           let value = formData[Constants.value] as? [String: Any] {
+            collectors.compactMap { $0 as? FieldCollector }.compactMap{ $0 }.forEach { collector in
+                if let fieldValue = value[collector.key] {
+                    collector.initialize(with: fieldValue)
+                }
+            }
+        }
+        
         return collectors
     }
 }

@@ -44,7 +44,7 @@ final class SingleSelectCollectorTests: XCTestCase {
     func testInitializesValueWithProvidedJsonElement() {
         let input = "Selected Option"
         let collector = SingleSelectCollector(with: [:])
-        collector.value = input
+        collector.initialize(with: input)
         
         XCTAssertEqual(collector.value, "Selected Option")
     }

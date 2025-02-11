@@ -38,4 +38,12 @@ final class TextCollectorTests: XCTestCase {
        
        XCTAssertEqual(textCollector.value, "test")
    }
+    
+    func testShouldInitializeDefaultValue() {
+        let input = "test"
+        let textCollector = TextCollector(with: [:])
+        textCollector.initialize(with: input)
+        
+        XCTAssertEqual(textCollector.value, "test")
+    }
 }
