@@ -12,6 +12,8 @@
 import Foundation
 import PingOrchestrate
 
+/// A protocol for request interceptor. To be implemented by classes that need to override the request.
 public protocol RequestInterceptor {
+    /// Intercepts the request before it is sent. Implement this method to override the request.
     func intercept(context: FlowContext, request: Request) -> Request
 }
