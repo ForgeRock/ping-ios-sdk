@@ -30,6 +30,10 @@ public final class CollectorFactory {
         register(type: Constants.LABEL, collector: LabelCollector.self)//
         register(type: Constants.SINGLE_SELECT, collector: SingleSelectCollector.self)
         register(type: Constants.MULTI_SELECT, collector: MultiSelectCollector.self)
+        
+        // TODO: Remove `FLOW_BUTTON` and `FLOW_LINK` once the server is updated
+        register(type: Constants.FLOW_BUTTON, collector: FlowCollector.self)
+        register(type: Constants.FLOW_LINK, collector: FlowCollector.self)
     }
     
     /// Registers a new type of Collector.

@@ -44,6 +44,7 @@ jobs:
           title: "Test Results ${{ matrix.os }} - ${{ env.CHIP_TYPE }}"
           path: TestResults.xcresult
           show-passed-tests: false
+          upload-bundles: never
         if: success() || failure()
  
       # Send slack notification with result status
