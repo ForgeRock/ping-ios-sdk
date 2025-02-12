@@ -27,6 +27,8 @@ struct TextView: View {
                     field.required ? "\(field.label)*" : field.label,
                     text: $text
                 )
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 8)
