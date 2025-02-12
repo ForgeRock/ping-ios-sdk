@@ -8,6 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
+
 import SwiftUI
 
 /// A view that displays the access token.

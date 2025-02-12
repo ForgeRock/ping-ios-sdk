@@ -8,6 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
+
 import Foundation
 import SwiftUI
 import PingOrchestrate
@@ -106,5 +107,3 @@ struct ConnectorView: View {
       
   }
 }
-
-

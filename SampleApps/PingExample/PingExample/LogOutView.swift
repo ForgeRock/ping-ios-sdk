@@ -24,7 +24,7 @@ struct LogOutView: View {
       Task {
         await logoutViewModel.logout()
         path.removeLast()
-        path.append("Davinci")
+        path.append("DaVinci")
       }
     }
     .navigationTitle("Logout")

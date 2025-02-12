@@ -31,8 +31,8 @@ struct ContentView: View {
     var body: some View {
         NavigationStack(path: $path) {
             List {
-                NavigationLink(value: "Davinci") {
-                    Text("Launch Davinci")
+                NavigationLink(value: "DaVinci") {
+                    Text("Launch DaVinci")
                 }
                 NavigationLink(value: "Token") {
                     Text("Access Token")
@@ -51,7 +51,7 @@ struct ContentView: View {
                 }
             }.navigationDestination(for: String.self) { item in
                 switch item {
-                case "Davinci":
+                case "DaVinci":
                     DavinciView(path: $path)
                 case "Token":
                     AccessTokenView()
@@ -66,7 +66,7 @@ struct ContentView: View {
                 default:
                     EmptyView()
                 }
-            }.navigationBarTitle("Ping Davinci")
+            }.navigationBarTitle("DaVinci")
                 .accentColor(.themeButtonBackground)
             Spacer()
             Image("Logo").resizable().scaledToFill().frame(width: 100, height: 100)
