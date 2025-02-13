@@ -11,6 +11,7 @@
 import XCTest
 @testable import PingDavinci
 @testable import External_idp
+@testable import PingOrchestrate
 
 final class External_idpTests: XCTestCase {
 
@@ -46,5 +47,58 @@ final class External_idpTests: XCTestCase {
         XCTAssertEqual(idpCollector.idpId, "c3e6a164bde107954e93f5c09f0c8bce")
         XCTAssertEqual(idpCollector.idpEnabled, true)
     }
-
+    
+    func testBrowserHandlerInitialization() async {
+        let mockWorkflow = WorkflowMock(config: WorkflowConfig())
+        let mockContext = FlowContextMock(flowContext: SharedContext())
+        let mockNode = NodeMock()
+        
+        mockWorkflow.nextReturnValue = mockNode
+        
+        let connector = TestContinueNode(context: mockContext, workflow: mockWorkflow, input: [:], actions: [])
+        
+        let browserHandler = BrowserHandler(continueNode: connector, tokenType: "code", callbackURLScheme: "myApp")
+        XCTAssertNotNil(browserHandler)
+        XCTAssertEqual(browserHandler.callbackURLScheme, "myApp")
+        XCTAssertEqual(browserHandler.tokenType, "code")
+    }
+    
+    func testIdpHandlerAuthorizeThrow() async throws {
+        let mockWorkflow = WorkflowMock(config: WorkflowConfig())
+        let mockContext = FlowContextMock(flowContext: SharedContext())
+        let mockNode = NodeMock()
+        
+        mockWorkflow.nextReturnValue = mockNode
+        
+        let connector = TestContinueNode(context: mockContext, workflow: mockWorkflow, input: [:], actions: [])
+        
+        let browserHandler = BrowserHandler(continueNode: connector, tokenType: "code", callbackURLScheme: "myApp")
+        
+        do {
+            let _ = try await browserHandler.authorize(url: nil)
+            XCTAssertFalse(true)
+        } catch IdpExceptions.illegalArgumentException(let errorResponse) {
+            XCTAssertTrue(errorResponse == "continueUrl not found")
+        }
+    }
 }
+
+// Supporting Test Classes
+class WorkflowMock: Workflow {
+    var nextReturnValue: Node?
+  override func next(_ context: FlowContext, _ current: ContinueNode) async -> Node {
+        return NodeMock()
+    }
+}
+
+class FlowContextMock: FlowContext {}
+
+class NodeMock: Node {}
+
+class TestContinueNode: ContinueNode {
+    override func asRequest() -> Request {
+        return RequestMock(urlString: "https://openam.example.com")
+    }
+}
+
+class RequestMock: Request {}
