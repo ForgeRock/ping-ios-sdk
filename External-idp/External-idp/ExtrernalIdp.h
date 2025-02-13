@@ -1,6 +1,6 @@
 //
-//  Extrernal_idp.h
-//  Extrernal-idp
+//  External_idp.h
+//  External-idp
 //
 //  Copyright (c) 2025 Ping Identity. All rights reserved.
 //
@@ -10,12 +10,12 @@
 
 #import <Foundation/Foundation.h>
 
-//! Project version number for ExtrernalIdp.
-FOUNDATION_EXPORT double ExtrernalIdpVersionNumber;
+//! Project version number for ExternalIdp.
+FOUNDATION_EXPORT double ExternalIdpVersionNumber;
 
-//! Project version string for ExtrernalIdp.
-FOUNDATION_EXPORT const unsigned char ExtrernalIdpVersionString[];
+//! Project version string for ExternalIdp.
+FOUNDATION_EXPORT const unsigned char ExternalIdpVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <ExtrernalIdp/PublicHeader.h>
+// In this header, you should import all the public headers of your framework using statements like #import <ExternalIdp/PublicHeader.h>
 
 

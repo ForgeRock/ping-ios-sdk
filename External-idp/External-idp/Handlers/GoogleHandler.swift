@@ -1,6 +1,6 @@
 //
 //  GoogleHandler.swift
-//  Extrernal-idp
+//  External-idp
 //
 //  Copyright (c) 2025 Ping Identity. All rights reserved.
 //
@@ -19,7 +19,7 @@ class GoogleHandler: IdpHandler {
     /// Credentials type for Google credentials
     var tokenType: String = "id_token"
     
-    func authorize(url: URL?) async throws -> Request {
+    func authorize(url: URL?) async throws -> IdpResult {
         throw IdpExceptions.unsupportedIdpException(message: "Facebook is not implemented yet")
     }
     

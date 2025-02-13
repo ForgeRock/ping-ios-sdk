@@ -1,6 +1,6 @@
 //
 //  BrowserHandler.swift
-//  Extrernal-idp
+//  External-idp
 //
 //  Copyright (c) 2025 Ping Identity. All rights reserved.
 //
@@ -13,7 +13,7 @@ import PingBrowser
 import PingOrchestrate
 
 /// A handler class for managing browser-based Identity Provider (IdP) authorization.
-public class BrowserHandler: IdpHandler {
+public class BrowserHandler: IdpRequestHandler {
     public var tokenType: String
     public var continueNode: ContinueNode
     public var callbackURLScheme: String

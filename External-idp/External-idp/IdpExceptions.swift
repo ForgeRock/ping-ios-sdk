@@ -1,6 +1,6 @@
 //
 //  IdpExceptions.swift
-//  Extrernal-idp
+//  External-idp
 //
 //  Copyright (c) 2025 Ping Identity. All rights reserved.
 //
