@@ -14,5 +14,5 @@ import Foundation
 public protocol IdpHandler {
     var tokenType: String { get set }
     
-    func authorize(url: URL?) async throws -> IdpResult
+    func authorize(url: IdpClient) async throws -> IdpResult
 }

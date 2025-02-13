@@ -19,7 +19,7 @@ class GoogleHandler: IdpHandler {
     /// Credentials type for Google credentials
     var tokenType: String = "id_token"
     
-    func authorize(url: URL?) async throws -> IdpResult {
+    func authorize(url: IdpClient) async throws -> IdpResult {
         throw IdpExceptions.unsupportedIdpException(message: "Facebook is not implemented yet")
     }
     
