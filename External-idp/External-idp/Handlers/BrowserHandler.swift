@@ -12,6 +12,7 @@ import Foundation
 import PingBrowser
 import PingOrchestrate
 
+/// A handler class for managing browser-based Identity Provider (IdP) authorization.
 public class BrowserHandler: IdpHandler {
     public var tokenType: String
     public var continueNode: ContinueNode
@@ -23,6 +24,11 @@ public class BrowserHandler: IdpHandler {
         self.continueNode = continueNode
     }
     
+    /// Authorizes a user by making a request to the given URL.
+    ///  This function takes a JSON object and extracts the "form" field. It then iterates over the "fields" array in the "components" object,
+    ///  parsing each field into a collector and adding it to a list.
+    ///  - Parameter url :he URL to which the authorization request is made.
+    ///  - Returns:  A [Request] object that can be used to continue the DaVinci flow.
     public func authorize(url: URL?) async throws -> Request {
         guard let continueUrl = url else {
             throw IdpExceptions.illegalArgumentException(message: "continueUrl not found")

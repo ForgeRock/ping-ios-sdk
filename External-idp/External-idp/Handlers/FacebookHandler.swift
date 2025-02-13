@@ -10,6 +10,7 @@
 import Foundation
 import PingOrchestrate
 
+/// A handler class for managing Facebook authorization.
 class FacebookHandler: IdpHandler {
     
     //  MARK: - Properties

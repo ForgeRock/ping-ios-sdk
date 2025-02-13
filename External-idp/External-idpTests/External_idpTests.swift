@@ -2,7 +2,10 @@
 //  External_idpTests.swift
 //  External-idpTests
 //
-//  Created by george bafaloukas on 10/02/2025.
+//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
 //
 
 import XCTest

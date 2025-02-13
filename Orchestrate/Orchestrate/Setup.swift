@@ -2,7 +2,7 @@
 //  Setup.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024-2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -83,11 +83,5 @@ public struct Setup<ModuleConfig> {
     /// - Parameter block: The block to be added.
     public func signOff(block: @escaping (Request) async -> Request) {
         workflow.signOffHandlers.append(block)
-    }
-    
-    /// Sets the browser block of the workflow.
-    /// - Parameter block: The block to be set.
-    public func browser(block: @escaping (FlowContext, Request) async throws -> String) {
-        workflow.browserHandler = block
     }
 }

@@ -2,7 +2,7 @@
 //  Workflow.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024-2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -61,8 +61,6 @@ public class Workflow {
     internal var signOffHandlers = [(Request) async throws -> Request]()
     // Transform response to Node, we can only have one transform
     internal var transformHandler: (FlowContext, Response) async throws -> Node = { _, _ in EmptyNode() }
-    // Browser handlers to make the OIDC flow
-    internal var browserHandler: (FlowContext, Request) async throws -> String = { _, _ in String() }
     
     ///  Initializes the workflow.
     /// - Parameter config: The configuration for the workflow.
@@ -115,32 +113,6 @@ public class Workflow {
         return try await next(context, initialNode)
     }
     
-    /// Starts the browser workflow
-    /// - Returns: The resulting `Node` after processing the workflow.
-    public func startCentralized(request: Request = Request()) async throws -> Node {
-        do {
-            // Before we start, make sure all the module init has been completed
-            try await initialize()
-            config.logger.i("Starting...")
-            let context = FlowContext(flowContext: SharedContext())
-            var currentRequest = request
-            for handler in startHandlers {
-                currentRequest = try await handler(context, currentRequest)
-            }
-            let code = try await browserHandler(context, currentRequest)
-            var emptySession = EmptySession()
-            emptySession.value = code
-            var successNode = SuccessNode(session: emptySession)
-            for handler in successHandlers {
-                successNode = try await handler(context, successNode)
-            }
-            
-            return successNode
-        }
-        catch {
-          return FailureNode(cause: error)
-        }
-    }
     
     /// Starts the workflow with a default request.
     /// - Returns: The resulting `Node` after processing the workflow.

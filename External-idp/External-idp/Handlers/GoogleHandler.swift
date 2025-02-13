@@ -11,6 +11,7 @@
 import Foundation
 import PingOrchestrate
 
+/// A handler class for managing Google authorization.
 class GoogleHandler: IdpHandler {
     
     //  MARK: - Properties

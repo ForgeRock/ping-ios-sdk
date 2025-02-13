@@ -11,6 +11,7 @@
 import Foundation
 import PingOrchestrate
 
+//IdpHandler for Apple
 class AppleHandler: IdpHandler {
     
     //  MARK: - Properties

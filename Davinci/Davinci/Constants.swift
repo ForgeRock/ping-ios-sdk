@@ -8,7 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
-
+/// Represents various constants used in Davinci requests and flows.
 public enum Constants {
     public static let actionKey = "actionKey"
     public static let formData = "formData"

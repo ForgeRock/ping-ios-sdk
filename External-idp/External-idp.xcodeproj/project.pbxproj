@@ -76,7 +76,7 @@
 		EC0815AD2D49377500F1AD02 = {
 			isa = PBXGroup;
 			children = (
-				EC0815E32D49387A00F1AD02 /* Extrernal-idp */,
+				EC0815E32D49387A00F1AD02 /* External-idp */,
 				ECB7C6992D5A2C1F0006F1C8 /* External-idpTests */,
 				ECBF06432D50EBF60066A3BD /* Frameworks */,
 				EC0815B82D49377500F1AD02 /* Products */,
@@ -92,7 +92,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		EC0815E32D49387A00F1AD02 /* Extrernal-idp */ = {
+		EC0815E32D49387A00F1AD02 /* External-idp */ = {
 			isa = PBXGroup;
 			children = (
 				ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */,
@@ -102,7 +102,7 @@
 				EC0815E22D49387A00F1AD02 /* PrivacyInfo.xcprivacy */,
 				EC0815EE2D493DC900F1AD02 /* IdpExceptions.swift */,
 			);
-			path = "Extrernal-idp";
+			path = "External-idp";
 			sourceTree = "<group>";
 		};
 		ECBF06402D50E99E0066A3BD /* Handlers */ = {

@@ -10,6 +10,7 @@
 
 import Foundation
 
+/// A class representing IdpExceptions
 public enum IdpExceptions: LocalizedError {
     
     /// An unsupportedIdpException

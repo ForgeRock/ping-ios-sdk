@@ -125,6 +125,16 @@
                ReferencedContainer = "container:../Extrernal-idp/External-idp.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ECB7C6972D5A2C1F0006F1C8"
+               BuildableName = "External-idpTests.xctest"
+               BlueprintName = "External-idpTests"
+               ReferencedContainer = "container:../External-idp/External-idp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

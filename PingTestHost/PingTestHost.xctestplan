@@ -71,6 +71,13 @@
         "identifier" : "ECB7C6972D5A2C1F0006F1C8",
         "name" : "External-idpTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/External-idp\/External-idp.xcodeproj",
+        "identifier" : "ECB7C6972D5A2C1F0006F1C8",
+        "name" : "External-idpTests"
+      }
     }
   ],
   "version" : 1

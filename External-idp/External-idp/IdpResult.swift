@@ -10,6 +10,9 @@
 
 import Foundation
 
+/// Data class representing the result of an IDP authorization.
+/// - Parameter token: The token returned by the IDP.
+/// - Parameter additionalParameters: The additionalParameters.
 public struct IdpResult {
     public let token: String
     public let additionalParameters: [String: String]?

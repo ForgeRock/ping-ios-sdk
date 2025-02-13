@@ -12,6 +12,7 @@ import Foundation
 import PingOrchestrate
 import PingDavinci
 
+/// A collector class for handling Identity Provider (IdP) authorization.
 @objc
 public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterceptor {
     
