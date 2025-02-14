@@ -18,6 +18,11 @@ public class BrowserHandler: IdpRequestHandler {
     public var continueNode: ContinueNode
     public var callbackURLScheme: String
     
+    /// Initializes a new instance of `BrowserHandler`.
+    /// - Parameters:
+    ///     - continueNode: The `ContinueNode` to use.
+    ///     - tokenType: The token type to use.
+    ///     - callbackURLScheme: The callback URL scheme to use.
     public init(continueNode: ContinueNode, tokenType: String, callbackURLScheme: String) {
         self.tokenType = tokenType
         self.callbackURLScheme = callbackURLScheme

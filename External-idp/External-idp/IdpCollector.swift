@@ -13,43 +13,39 @@ import PingOrchestrate
 import PingDavinci
 
 /// A collector class for handling Identity Provider (IdP) authorization.
+/// - property continueNode: The continue node.
+/// - property id: The unique identifier for the collector.
+/// - property idpType: The type of IdP.
+/// - property label: The label for the IdP.
+/// - property link: The URL link for IdP authentication.
 @objc
 public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterceptor {
     
+    /// ContinueNode property
     public var continueNode: PingOrchestrate.ContinueNode?
     
+    /// The unique identifier for the collector.
     public var id: UUID = UUID()
     
-    /**
-     * Indicates whether the IdP is enabled.
-     */
+    /// Indicates whether the IdP is enabled.
     var idpEnabled = true
     
-    /**
-     * The IdP identifier.
-     */
+    ///  The IdP identifier.
     var idpId: String
     
-    /**
-     * The type of IdP.
-     */
+    /// The type of IdP.
     public var idpType: String
     
-    /**
-     * The label for the IdP.
-     */
+    ///  The label for the IdP.
     public var label: String
     
-    /**
-     * The URL link for IdP authentication.
-     */
+    ///  The URL link for IdP authentication.
     public var link: URL?
     
-    /**
-     * The request to resume the DaVinci flow.
-     */
+    ///  The request to resume the DaVinci flow.
     private var resumeRequest: Request?
     
+    /// Initializes the `IdpCollector` with the given JSON input.
     public required init(with json: [String : Any]) {
         idpEnabled = json[Constants.idpEnabled] as? Bool ?? true
         idpId = json[Constants.idpId] as? String ?? ""
@@ -62,11 +58,14 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
         }
     }
     
+    /// Registers the IdpCollector with the collector factory
     @objc
     public static func registerCollector() {
         CollectorFactory.shared.register(type: Constants.SOCIAL_LOGIN_BUTTON, collector: IdpCollector.self)
     }
     
+    /// Authorizes the IdP.
+    /// - Parameter callbackURLScheme: The callback URL scheme.
     public func authorize(callbackURLScheme: String? = nil) async -> Result<Bool, IdpExceptions> {
         do {
             
@@ -90,16 +89,20 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
             
             return .success(true)
         } catch {
-            print("ERROR...")
             return .failure(.idpCanceledException(message: "IDP Cancelled"))
         }
     }
     
     //MARK: RequestInterceptor
+    /// Intercepts the request.
+    ///  - Parameters:
+    ///     - context: The flow context.
+    ///     - request: The request to intercept.
     public func intercept(context: FlowContext, request: Request) -> Request {
         return resumeRequest ?? request
     }
     
+    /// Gets the CustomURLSchemes for the Xcode project.
     private func getCustomURLSchemes() -> [String]? {
         if let urlTypes = Bundle.main.infoDictionary?["CFBundleURLTypes"] as? [[String: Any]] {
             for urlType in urlTypes {

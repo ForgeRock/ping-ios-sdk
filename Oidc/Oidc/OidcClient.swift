@@ -14,6 +14,7 @@ import PingLogger
 import PingOrchestrate
 
 /// Class representing an OpenID Connect client.
+/// - Property pkce: PKCE  object used for the Authroization call.
 public class OidcClient {
     public var pkce: Pkce?
     private let config: OidcClientConfig
@@ -26,7 +27,8 @@ public class OidcClient {
         self.logger = config.logger
     }
     
-    
+    /// OidcClient generateAuthorizeUrl.
+    /// - Parameter customParams: Custom parameters to include in the authorization request.
     public func generateAuthorizeUrl(customParams: [String: String]? = nil) throws -> URL {
         var request = Request()
         self.pkce = Pkce.generate()
@@ -43,6 +45,8 @@ public class OidcClient {
         return url
     }
     
+    /// Extracts the code from the URL and exchanges it for an access token.
+    ///  - Parameter url: The URL to extract the code from.
     public func extractCodeAndGetToken(from url: URL) async throws -> Token {
         if let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true), let code = components.queryItems?.filter({$0.name == "code"}).first?.value, let pcke = self.pkce {
             let authCode = AuthCode(code: code, codeVerifier: pcke.codeVerifier)
@@ -52,12 +56,14 @@ public class OidcClient {
         }
     }
     
+    /// Extract the Redirect URI scheme from the configuration
     public func redirectURIScheme() -> String? {
         if let redirectURI = URL(string: config.redirectUri), let callbackURLScheme = redirectURI.scheme {
             return callbackURLScheme
         }
         return nil
     }
+    
     /// Retrieves an access token. If a cached token is available and not expired, it is returned.
     /// Otherwise, a new token is fetched with refresh token if refresh grant is available.
     /// - Returns: A Result containing the access token or an error.

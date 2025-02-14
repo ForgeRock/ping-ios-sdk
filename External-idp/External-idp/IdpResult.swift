@@ -17,6 +17,10 @@ public struct IdpResult {
     public let token: String
     public let additionalParameters: [String: String]?
     
+    /// Initializes a new instance of `IdpResult`.
+    /// - Parameters:
+    ///     - token: The token returned by the IDP.
+    ///     - additionalParameters: The additional parameters.
     public init(token: String, additionalParameters: [String : String]?) {
         self.token = token
         self.additionalParameters = additionalParameters

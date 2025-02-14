@@ -12,10 +12,13 @@ import Foundation
 import PingOrchestrate
 
 /// Interface representing an Identity Provider (IdP) handler.
-
 public protocol IdpRequestHandler {
+    /// The type of token to use for the IdP.
     var tokenType: String { get set }
     
+    /// Authorizes the user with the IdP.
+    /// - Parameter url: The URL to use for authorization.
+    /// - Returns: A `Request` object containing the result of the authorization
     func authorize(url: URL?) async throws -> Request
 }
 

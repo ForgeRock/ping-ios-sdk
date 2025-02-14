@@ -21,7 +21,7 @@ You can add the dependency using Cocoapods or Swift Package manager
 
 ## Usage
 
-To use the `enternal-idp` with `IdpCollector`, you need to integrate with `DaVinci` module.
+To use the `external-idp` with `IdpCollector`, you need to integrate with `DaVinci` module.
 Setup `PingOne` with `External IDPs` and a `DaVinci` flow.
 
 For Browser experience either setup the External IDPs with `PingOne External IDPs` or use the `DaVinci Connector`.

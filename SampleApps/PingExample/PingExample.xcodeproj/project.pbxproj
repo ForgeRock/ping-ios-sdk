@@ -147,6 +147,20 @@
 			remoteGlobalIDString = EC0816962D4A68FB00F1AD02;
 			remoteInfo = Browser;
 		};
+		EC9FA0022D5F4EB300E2A31D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC0815B72D49377500F1AD02;
+			remoteInfo = "External-idp";
+		};
+		EC9FA0042D5F4EB300E2A31D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = ECB7C6982D5A2C1F0006F1C8;
+			remoteInfo = "External-idpTests";
+		};
 		ECB7C6842D5A24B70006F1C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */;
@@ -415,6 +429,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		EC9F9FFA2D5F4EB200E2A31D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EC9FA0032D5F4EB300E2A31D /* External_idp.framework */,
+				EC9FA0052D5F4EB300E2A31D /* External-idpTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -514,6 +537,10 @@
 				{
 					ProductGroup = A57A09152CE511E7006F0CBB /* Products */;
 					ProjectRef = 3A54420F2BCE1F2900385131 /* Davinci.xcodeproj */;
+				},
+				{
+					ProductGroup = EC9F9FFA2D5F4EB200E2A31D /* Products */;
+					ProjectRef = EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */;
 				},
 				{
 					ProductGroup = A57A08F52CE50D51006F0CBB /* Products */;
@@ -617,6 +644,20 @@
 			fileType = wrapper.framework;
 			path = PingBrowser.framework;
 			remoteRef = EC0816A92D4A692900F1AD02 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		EC9FA0032D5F4EB300E2A31D /* External_idp.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = External_idp.framework;
+			remoteRef = EC9FA0022D5F4EB300E2A31D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		EC9FA0052D5F4EB300E2A31D /* External-idpTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "External-idpTests.xctest";
+			remoteRef = EC9FA0042D5F4EB300E2A31D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		ECB7C6852D5A24B70006F1C8 /* PingBrowserTests.xctest */ = {

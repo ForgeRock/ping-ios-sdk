@@ -14,5 +14,8 @@ import Foundation
 public protocol IdpHandler {
     var tokenType: String { get set }
     
-    func authorize(url: IdpClient) async throws -> IdpResult
+    /// Authorizes the user with the IDP.
+    /// - Parameter idpClient: The IDP client to authorize.
+    /// - Returns: A `Result` object containing either the `IdpResult` or an `IdpError`.
+    func authorize(idpClient: IdpClient) async throws -> IdpResult
 }

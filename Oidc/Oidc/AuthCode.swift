@@ -12,6 +12,8 @@
 import Foundation
 
 /// Struct representing an authorization code.
+///  - Property code: code used for authorization.
+///  - Property codeVerifier: code verifier associated with the authorization code.
 public struct AuthCode: Codable {
     public let code: String
     public let codeVerifier: String?

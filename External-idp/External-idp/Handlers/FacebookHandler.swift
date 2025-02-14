@@ -18,13 +18,10 @@ class FacebookHandler: IdpHandler {
     /// Credentials type for Facebook credentials
     var tokenType: String = "access_token"
     
-    /// `LoginManager` instance for Facebook SDK
-//    var loginManager: LoginManager = LoginManager()
-    
-    // Authorization call
-    func authorize(url: IdpClient) async throws -> IdpResult {
+    /// Authorizes the user with the IDP.
+    /// - Parameter idpClient: The `IdpClient` to use for authorization.
+    /// - Returns: An `IdpResult` object containing the result of the authorization.
+    func authorize(idpClient: IdpClient) async throws -> IdpResult {
         throw IdpExceptions.unsupportedIdpException(message: "Facebook is not implemented yet")
     }
-    
-    
 }

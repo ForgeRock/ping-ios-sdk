@@ -37,13 +37,20 @@ public enum BrowserMode {
     case custom
 }
 
+/// A protocol to abstract the BrowserLauncher functionality (if not already provided).
+/// (If your project already has a protocol that BrowserLauncher conforms to, you can use it.)
+public protocol BrowserLauncherProtocol {
+    var isInProgress: Bool { get set }
+    func launch(url: URL, browserType: BrowserType, callbackURLScheme: String) async throws -> URL
+}
+
 /// BrowserLauncher class to launch external user-agent for web requests
-public class BrowserLauncher: NSObject, @unchecked Sendable {
+public class BrowserLauncher: NSObject, BrowserLauncherProtocol, @unchecked Sendable {
     
     // MARK: Properties
     
     /// Static shared instance of current Browser object
-    public static var currentBrowser: BrowserLauncher = BrowserLauncher()
+    public static var currentBrowser: BrowserLauncherProtocol = BrowserLauncher()
     /// Boolean indicator whether or not current Browser object is in progress
     public var isInProgress: Bool = false
     /// Custom URL query parameter for /authorize request
@@ -71,11 +78,23 @@ public class BrowserLauncher: NSObject, @unchecked Sendable {
     
     /// Launches external user-agent for web requests
     /// - Parameters:
+    ///  - url: URL to follow for the external user-agent
+    ///  - browserType: BrowserType enum to specify the type of external user-agent
+    ///  - callbackURLScheme: The callbackURLScheme to be used for returning to the app. Used in ASWebAuthenticationSession modes
+    ///  - Returns: URL of the external user-agent
+    public func launch(url: URL, browserType: BrowserType, callbackURLScheme: String) async throws -> URL {
+        return try await launch(url: url, browserType: browserType, browserMode: .login, callbackURLScheme: callbackURLScheme)
+    }
+    
+    /// Launches external user-agent for web requests
+    /// - Parameters:
     ///   - url: URL to follow for the external user-agent
     ///   - customParams: Any custom URL query parameters to be passed as URL parametes in the request
     ///   - browserType: BrowserType enum to specify the type of external user-agent
     ///   - browserMode: BrowserMode enum to specify the mode of the browser; login, logout, or custom
     ///   - callbackURLScheme: The callbackURLScheme to be used for returning to the app. Used in ASWebAuthenticationSession modes
+    ///   - Returns: URL of the external user-agent
+    ///   - Throws: BrowserError
     public func launch(url: URL, customParams: [String: String]? = nil,
                        browserType: BrowserType = .authSession, browserMode: BrowserMode = .login, callbackURLScheme: String) async throws -> URL {
         
