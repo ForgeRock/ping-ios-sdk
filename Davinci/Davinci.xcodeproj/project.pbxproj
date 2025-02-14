@@ -190,15 +190,15 @@
 		3A5441A32BCDF20700385131 /* Davinci */ = {
 			isa = PBXGroup;
 			children = (
-				ECB7C5BF2D53D4390006F1C8 /* RequestInterceptor.swift */,
 				A5A712472CAC527200B7DD58 /* PrivacyInfo.xcprivacy */,
 				3A5441A42BCDF20700385131 /* Davinci.h */,
-				A5CCE5E62C85E96B00349A5E /* Constants.swift */,
 				A51D4CE02C62C4BF00FE09E0 /* collector */,
 				A51D4CE12C62C53400FE09E0 /* module */,
+				A5CCE5E62C85E96B00349A5E /* Constants.swift */,
 				3A292C812BF58462006977EF /* Agent.swift */,
 				3A203D7E2BDB136C0020C995 /* DaVinci.swift */,
 				3A57CB612C44D688001EC9A0 /* User.swift */,
+				ECB7C5BF2D53D4390006F1C8 /* RequestInterceptor.swift */,
 			);
 			path = Davinci;
 			sourceTree = "<group>";

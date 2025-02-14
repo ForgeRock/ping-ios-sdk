@@ -99,13 +99,13 @@
 		EC0815E32D49387A00F1AD02 /* External-idp */ = {
 			isa = PBXGroup;
 			children = (
+				EC0815E22D49387A00F1AD02 /* PrivacyInfo.xcprivacy */,
+				EC0815E12D49387A00F1AD02 /* ExtrernalIdp.h */,
+				ECBF06402D50E99E0066A3BD /* Handlers */,
 				EC9F9FC52D5E1E2800E2A31D /* IdpClient.swift */,
 				ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */,
-				ECBF06402D50E99E0066A3BD /* Handlers */,
-				EC0815EC2D493A1E00F1AD02 /* IdpResult.swift */,
-				EC0815E12D49387A00F1AD02 /* ExtrernalIdp.h */,
-				EC0815E22D49387A00F1AD02 /* PrivacyInfo.xcprivacy */,
 				EC0815EE2D493DC900F1AD02 /* IdpExceptions.swift */,
+				EC0815EC2D493A1E00F1AD02 /* IdpResult.swift */,
 			);
 			path = "External-idp";
 			sourceTree = "<group>";
@@ -113,12 +113,12 @@
 		ECBF06402D50E99E0066A3BD /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
-				EC9F9FC32D5E1B1900E2A31D /* IdpRequestHandler.swift */,
-				ECBF06482D50ED750066A3BD /* BrowserHandler.swift */,
-				EC0815E82D4939E400F1AD02 /* IdpHandler.swift */,
 				EC08161D2D49429500F1AD02 /* AppleHandler.swift */,
-				EC08161B2D49428C00F1AD02 /* GoogleHandler.swift */,
+				ECBF06482D50ED750066A3BD /* BrowserHandler.swift */,
 				EC0815F02D493FEA00F1AD02 /* FacebookHandler.swift */,
+				EC08161B2D49428C00F1AD02 /* GoogleHandler.swift */,
+				EC0815E82D4939E400F1AD02 /* IdpHandler.swift */,
+				EC9F9FC32D5E1B1900E2A31D /* IdpRequestHandler.swift */,
 			);
 			path = Handlers;
 			sourceTree = "<group>";
