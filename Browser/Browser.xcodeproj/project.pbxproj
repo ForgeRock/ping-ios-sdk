@@ -10,6 +10,7 @@
 		EC0816AD2D4A692E00F1AD02 /* Browser.h in Headers */ = {isa = PBXBuildFile; fileRef = EC0816AB2D4A692E00F1AD02 /* Browser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EC0816B12D4A696F00F1AD02 /* BrowserLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816AE2D4A696F00F1AD02 /* BrowserLauncher.swift */; };
 		ECA53F982D635CFA002B35D4 /* PingBrowserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA53F962D635CFA002B35D4 /* PingBrowserTests.swift */; };
+		ECA53F9A2D6368AF002B35D4 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = ECA53F992D6368AF002B35D4 /* PrivacyInfo.xcprivacy */; };
 		ECB7C66D2D5A1FAB0006F1C8 /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816962D4A68FB00F1AD02 /* PingBrowser.framework */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +31,7 @@
 		EC0816B52D4A805800F1AD02 /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC0816B92D4A805D00F1AD02 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA53F962D635CFA002B35D4 /* PingBrowserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingBrowserTests.swift; sourceTree = "<group>"; };
+		ECA53F992D6368AF002B35D4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ECB7C6692D5A1FAB0006F1C8 /* PingBrowserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingBrowserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -74,8 +76,9 @@
 		EC0816AC2D4A692E00F1AD02 /* Browser */ = {
 			isa = PBXGroup;
 			children = (
-				EC0816AE2D4A696F00F1AD02 /* BrowserLauncher.swift */,
+				ECA53F992D6368AF002B35D4 /* PrivacyInfo.xcprivacy */,
 				EC0816AB2D4A692E00F1AD02 /* Browser.h */,
+				EC0816AE2D4A696F00F1AD02 /* BrowserLauncher.swift */,
 			);
 			path = Browser;
 			sourceTree = "<group>";
@@ -195,6 +198,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECA53F9A2D6368AF002B35D4 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
