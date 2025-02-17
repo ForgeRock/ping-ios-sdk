@@ -50,6 +50,8 @@
 		EC0816BF2D4A832C00F1AD02 /* ConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */; };
 		EC0816C12D4A833400F1AD02 /* ConfigurationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */; };
 		EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */; };
+		ECA53F812D635C10002B35D4 /* External_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC9FA0032D5F4EB300E2A31D /* External_idp.framework */; };
+		ECA53F822D635C10002B35D4 /* External_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC9FA0032D5F4EB300E2A31D /* External_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECBF06732D5229BC0066A3BD /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; };
 		ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECBF06A42D5391690066A3BD /* SocialButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06A32D5391610066A3BD /* SocialButtonView.swift */; };
@@ -183,6 +185,7 @@
 				A5560CA12CFE4EDA0076CA8D /* PingDavinci.framework in Embed Frameworks */,
 				A5560CA92CFE4EDA0076CA8D /* PingStorage.framework in Embed Frameworks */,
 				A5560CA72CFE4EDA0076CA8D /* PingOrchestrate.framework in Embed Frameworks */,
+				ECA53F822D635C10002B35D4 /* External_idp.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -248,6 +251,7 @@
 				A5560CA02CFE4EDA0076CA8D /* PingDavinci.framework in Frameworks */,
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
 				A5560CA62CFE4EDA0076CA8D /* PingOrchestrate.framework in Frameworks */,
+				ECA53F812D635C10002B35D4 /* External_idp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

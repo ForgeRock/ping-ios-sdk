@@ -23,7 +23,7 @@ class GoogleHandler: IdpHandler {
     /// - Parameter idpClient: The `IdpClient` to use for authorization.
     /// - Returns: An `IdpResult` object containing the result of the authorization.
     func authorize(idpClient: IdpClient) async throws -> IdpResult {
-        throw IdpExceptions.unsupportedIdpException(message: "Facebook is not implemented yet")
+        throw IdpExceptions.unsupportedIdpException(message: "Google is not implemented yet")
     }
     
     

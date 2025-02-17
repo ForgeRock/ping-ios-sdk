@@ -16,7 +16,7 @@ class AppleHandler: IdpHandler {
     
     //  MARK: - Properties
     
-    /// Credentials type for Google credentials
+    /// Credentials type for Apple credentials
     var tokenType: String = "id_token"
     
     /// Authorizes the user with the IDP.

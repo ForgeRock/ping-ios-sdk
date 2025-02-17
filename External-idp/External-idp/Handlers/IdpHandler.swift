@@ -10,7 +10,7 @@
 
 import Foundation
 
-/// Logger protocol that provides methods for logging different levels of information.
+/// Idp handler protocol.
 public protocol IdpHandler {
     var tokenType: String { get set }
     
