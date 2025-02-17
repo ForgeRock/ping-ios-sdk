@@ -32,6 +32,14 @@ open class FieldCollector: Collector {
         key = json[Constants.key] as? String ?? ""
         label = json[Constants.label] as? String ?? ""
     }
+    
+    /// Initializes `FieldCollector` with the given value.
+    /// This implementation does nothing.
+    /// Subclasses should override this method as needed.
+    /// - Parameter input: The value to initialize with.
+    public func initialize(with value: Any) {
+        // To be implemented by subclasses
+    }
 }
 
 

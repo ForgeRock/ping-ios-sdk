@@ -35,6 +35,8 @@ struct PasswordView: View {
                         field.value = value
                         isValid = field.validate().isEmpty
                         onNodeUpdated()
+                    }, onAppear: {
+                        text = field.value
                     },
                     isError: !isValid,
                     errorMessages: field.validate().map { $0.errorMessage }.sorted()
@@ -55,6 +57,7 @@ struct PasswordView: View {
                     onValueChange: { value in
                         verify = value
                     },
+                    onAppear: {},
                     isError: verify != field.value,
                     errorMessages: verify != field.value ? ["Password does not match"] : [""]
                 )
@@ -69,6 +72,7 @@ struct SecureFieldView: View {
     @Binding var value: String
     @Binding var isPasswordVisible: Bool
     var onValueChange: (String) -> Void
+    var onAppear: () -> Void
     var isError: Bool
     var errorMessages: [String]
     
@@ -86,6 +90,7 @@ struct SecureFieldView: View {
                         .frame(width: 20, height: 20)
                 }
             }
+            .onAppear(perform: onAppear)
             .onChange(of: value) { newValue in
                 onValueChange(value)
             }

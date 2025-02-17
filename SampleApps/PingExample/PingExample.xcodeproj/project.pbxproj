@@ -29,6 +29,7 @@
 		A5560CA92CFE4EDA0076CA8D /* PingStorage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A57A09022CE50EF1006F0CBB /* PingStorage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A588D0062BF6A0E500F9052A /* StorageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A588D0042BF6A0E500F9052A /* StorageViewModel.swift */; };
 		A588D0072BF6A0E500F9052A /* LoggerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A588D0052BF6A0E500F9052A /* LoggerViewModel.swift */; };
+		A5A5F80A2D4C644E0053BF24 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A5F7FF2D4C64490053BF24 /* ErrorView.swift */; };
 		A5E9AECC2D303428000533ED /* LogOutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEC12D30341E000533ED /* LogOutView.swift */; };
 		A5E9AECE2D3037BE000533ED /* AccessTokenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AECD2D3037BC000533ED /* AccessTokenViewModel.swift */; };
 		A5E9AED02D3037E0000533ED /* UserInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AECF2D3037DF000533ED /* UserInfoView.swift */; };
@@ -213,6 +214,7 @@
 		A588CFF92BF69F3300F9052A /* Storage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Storage.xcodeproj; path = ../../Storage/Storage.xcodeproj; sourceTree = "<group>"; };
 		A588D0042BF6A0E500F9052A /* StorageViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageViewModel.swift; sourceTree = "<group>"; };
 		A588D0052BF6A0E500F9052A /* LoggerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoggerViewModel.swift; sourceTree = "<group>"; };
+		A5A5F7FF2D4C64490053BF24 /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		A5E9AEC12D30341E000533ED /* LogOutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogOutView.swift; sourceTree = "<group>"; };
 		A5E9AECD2D3037BC000533ED /* AccessTokenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenViewModel.swift; sourceTree = "<group>"; };
 		A5E9AECF2D3037DF000533ED /* UserInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoView.swift; sourceTree = "<group>"; };
@@ -312,6 +314,7 @@
 				3A8092F32BE99F0F00AD667F /* CustomViews.swift */,
 				3A8532322BE2D5D800F8619D /* DavinciView.swift */,
 				3ACD90E02BE586BC00DABCE6 /* DavinciViewModel.swift */,
+				A5A5F7FF2D4C64490053BF24 /* ErrorView.swift */,
 				A5E9AED52D30393B000533ED /* LoggerView.swift */,
 				A588D0052BF6A0E500F9052A /* LoggerViewModel.swift */,
 				A5E9AEC12D30341E000533ED /* LogOutView.swift */,
@@ -725,6 +728,7 @@
 				A5E9AEDF2D30CA34000533ED /* ErrorMessageView.swift in Sources */,
 				A5E9AED22D30380B000533ED /* UserInfoViewModel.swift in Sources */,
 				A5EFA97D2D35F78800F771FE /* ComboBoxView.swift in Sources */,
+				A5A5F80A2D4C644E0053BF24 /* ErrorView.swift in Sources */,
 				A5E9AEE12D30D304000533ED /* SubmitButtonView.swift in Sources */,
 				3A8092F42BE99F0F00AD667F /* CustomViews.swift in Sources */,
 				A5EFA97F2D35F88D00F771FE /* PasswordView.swift in Sources */,

@@ -50,24 +50,6 @@ struct ConfigurationView: View {
                         .autocapitalization(.none)
                 }
             }
-            Section(header: Text("Environment details")) {
-                Section {
-                    Picker("Environment: ", selection: $selectedEnvironment) {
-                        ForEach(environments, id: \.self) { env in
-                            Text(env)
-                        }
-                    }.onChange(of: selectedEnvironment) { env in
-                        configurationViewModel.environment = env
-                    }
-                    .pickerStyle(.menu)
-                }
-                Section {
-                    Text("Cookie Name (Optional):")
-                    TextField("Cookie Name:", text: $configurationViewModel.cookieName.toUnwrapped(defaultValue: ""))
-                        .disableAutocorrection(true)
-                        .autocapitalization(.none)
-                }
-            }
             Section(header: Text("Browser Configuration")) {
                 Button(action: {
                     Task {

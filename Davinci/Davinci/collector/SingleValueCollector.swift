@@ -26,4 +26,12 @@ open class SingleValueCollector: FieldCollector {
             value = stringValue
         }
     }
+    
+    /// Initializes the `SingleValueCollector` with the given value.
+    /// - Parameter value: The value to initialize the collector with.
+    public override func initialize(with value: Any) {
+        if let stringValue = value as? String {
+            self.value = stringValue
+        }
+    }
 }

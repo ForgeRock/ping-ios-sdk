@@ -32,14 +32,14 @@ final class CollectorRegistryTests: XCTestCase {
             ["type": "TEXT"],
             ["type": "PASSWORD"],
             ["type": "SUBMIT_BUTTON"],
-            ["type": "FLOW_BUTTON"],
+            ["inputType": "ACTION"],
             ["type": "PASSWORD_VERIFY"],
-            ["type": "FLOW_LINK"],
+            ["inputType": "ACTION"],
             ["type": "LABEL"],
-            ["type": "DROPDOWN"],
-            ["type": "RADIO"],
-            ["type": "COMBOBOX"],
-            ["type": "CHECKBOX"],
+            ["inputType": "SINGLE_SELECT"],
+            ["inputType": "SINGLE_SELECT"],
+            ["inputType": "MULTI_SELECT"],
+            ["inputType": "MULTI_SELECT"],
         ]
         
         let collectors = collectorFactory.collector(from: jsonArray)
@@ -61,7 +61,7 @@ final class CollectorRegistryTests: XCTestCase {
             ["type": "TEXT"],
             ["type": "PASSWORD"],
             ["type": "SUBMIT_BUTTON"],
-            ["type": "FLOW_BUTTON"],
+            ["inputType": "ACTION"],
             ["type": "UNKNOWN"]
         ]
         

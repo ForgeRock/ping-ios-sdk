@@ -27,11 +27,16 @@ struct TextView: View {
                     field.required ? "\(field.label)*" : field.label,
                     text: $text
                 )
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(isValid ? Color.gray : Color.red, lineWidth: 1)
                 )
+                .onAppear(perform: {
+                    text = field.value
+                })
                 .onChange(of: text) { newValue in
                     field.value = newValue
                     isValid = field.validate().isEmpty

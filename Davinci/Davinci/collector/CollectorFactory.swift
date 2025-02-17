@@ -29,9 +29,14 @@ public final class CollectorFactory {
         register(type: Constants.PASSWORD, collector: PasswordCollector.self)
         register(type: Constants.PASSWORD_VERIFY, collector: PasswordCollector.self)
         register(type: Constants.SUBMIT_BUTTON, collector: SubmitCollector.self)//
+        register(type: Constants.ACTION, collector: FlowCollector.self)
+        register(type: Constants.LABEL, collector: LabelCollector.self)//
+        register(type: Constants.SINGLE_SELECT, collector: SingleSelectCollector.self)
+        register(type: Constants.MULTI_SELECT, collector: MultiSelectCollector.self)
+        
+        // TODO: Remove `FLOW_BUTTON` and `FLOW_LINK` once the server is updated
         register(type: Constants.FLOW_BUTTON, collector: FlowCollector.self)
         register(type: Constants.FLOW_LINK, collector: FlowCollector.self)
-        register(type: Constants.LABEL, collector: LabelCollector.self)//
         register(type: Constants.DROPDOWN, collector: SingleSelectCollector.self)
         register(type: Constants.RADIO, collector: SingleSelectCollector.self)
         register(type: Constants.COMBOBOX, collector: MultiSelectCollector.self)
@@ -56,7 +61,7 @@ public final class CollectorFactory {
     public func collector(from array: [[String: Any]]) -> Collectors {
         var list: [any Collector] = []
         for item in array {
-            if let type = item[Constants.type] as? String, let collectorType = collectors[type] {
+            if let type = item[Constants.inputType] as? String ?? item[Constants.type] as? String, let collectorType = collectors[type] {
                 list.append(collectorType.init(with: item))
             }
         }

@@ -122,12 +122,14 @@ struct MockResponse {
                         {
                             "type": "FLOW_BUTTON",
                             "key": "TROUBLE",
-                            "label": "Having trouble signing on?"
+                            "label": "Having trouble signing on?",
+                            "inputType": "ACTION"
                         },
                         {
                             "type": "FLOW_BUTTON",
                             "key": "REGISTER",
-                            "label": "No account? Register now!"
+                            "label": "No account? Register now!",
+                            "inputType": "ACTION"
                         }
                     ]
                 }
@@ -322,12 +324,14 @@ struct MockResponse {
                 {
                   "type": "FLOW_LINK",
                   "key": "register",
-                  "label": "No account? Register now!"
+                  "label": "No account? Register now!",
+                  "inputType": "ACTION"
                 },
                 {
                   "type": "FLOW_LINK",
                   "key": "trouble",
-                  "label": "Having trouble signing on?"
+                  "label": "Having trouble signing on?",
+                  "inputType": "ACTION"
                 },
                 {
                   "type": "DROPDOWN",
@@ -413,9 +417,9 @@ struct MockResponse {
               "user.username": "default-username",
               "password": "default-password",
               "dropdown-field": "default-dropdown",
-              "combobox-field": "default-combobox",
+              "combobox-field": ["default-combobox"],
               "radio-field": "default-radio",
-              "checkbox-field": "default-checkbox"
+              "checkbox-field": ["default-checkbox"]
             }
           },
           "returnUrl": "",

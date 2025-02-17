@@ -10,7 +10,7 @@
 
 
 import SwiftUI
-//import PingCentralized
+
 /// The main application entry point.
 @main
 struct MyApp: App {
@@ -36,11 +36,8 @@ struct ContentView: View {
                 NavigationLink(value: "Configuration") {
                     Text("Edit configuration")
                 }
-//                NavigationLink(value: "OIDC") {
-//                    Text("Launch OIDC")
-//                }
-                NavigationLink(value: "Davinci") {
-                    Text("Launch Davinci")
+                NavigationLink(value: "DaVinci") {
+                    Text("Launch DaVinci")
                 }
                 NavigationLink(value: "Token") {
                     Text("Access Token")
@@ -61,10 +58,8 @@ struct ContentView: View {
                 switch item {
                 case "Configuration":
                     ConfigurationView(configurationViewModel: $configurationViewModel)
-                case "Davinci":
+                case "DaVinci":
                     DavinciView(path: $path)
-//                case "OIDC":
-//                    CentralizedView(path: $path)
                 case "Token":
                     AccessTokenView(accessTokenViewModel: AccessTokenViewModel())
                 case "User":
@@ -78,7 +73,7 @@ struct ContentView: View {
                 default:
                     EmptyView()
                 }
-            }.navigationBarTitle("Ping Davinci")
+            }.navigationBarTitle("DaVinci")
                 .accentColor(.themeButtonBackground)
             Spacer()
             Image("Logo").resizable().scaledToFill().frame(width: 100, height: 100)
