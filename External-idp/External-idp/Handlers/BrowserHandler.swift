@@ -41,6 +41,7 @@ public class BrowserHandler: IdpRequestHandler {
         
         do {
             let result = try await BrowserLauncher.currentBrowser.launch(url: continueUrl, browserType: .ephemeralAuthSession, callbackURLScheme: callbackURLScheme)
+            
             guard let components = URLComponents(url: result, resolvingAgainstBaseURL: false),
                   let queryItems = components.queryItems else {
                 throw IdpExceptions.illegalStateException(message: "Could not read response URL")
@@ -60,8 +61,8 @@ public class BrowserHandler: IdpRequestHandler {
             request.header(name: Request.Constants.authorization, value: "Bearer \(continueToken)")
             request.body(body: [String: Any]())
             return request
-        } catch {
-            throw IdpExceptions.illegalStateException(message: "BrowserLauncher failed")
+        } catch let error {
+            throw error
         }
     }
 }

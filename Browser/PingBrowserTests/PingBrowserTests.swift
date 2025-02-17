@@ -106,7 +106,7 @@ final class PingBrowserTests: XCTestCase {
     func testAuthorizeBrowserLauncherFailure() async {
         // Arrange
         mockBrowser.launchHandler = { url, browserType, callbackURLScheme in
-            throw NSError(domain: "TestError", code: 1, userInfo: nil)
+            throw BrowserError.externalUserAgentFailure
         }
         
         let handler = BrowserHandler(continueNode: connector, tokenType: "Bearer", callbackURLScheme: "myapp")
@@ -117,7 +117,9 @@ final class PingBrowserTests: XCTestCase {
             _ = try await handler.authorize(url: url)
             XCTFail("Expected an exception due to BrowserLauncher failure.")
         } catch let error as IdpExceptions {
-            XCTAssertEqual(error.errorMessage, "illegalStateException Idp Exception: BrowserLauncher failed")
+            XCTFail("Unexpected error type: \(error)")
+        } catch  let error as BrowserError {
+            XCTAssertEqual(error, BrowserError.externalUserAgentFailure)
         } catch {
             XCTFail("Unexpected error type: \(error)")
         }
@@ -139,7 +141,7 @@ final class PingBrowserTests: XCTestCase {
             _ = try await handler.authorize(url: url)
             XCTFail("Expected an exception due to missing query items in the response URL.")
         } catch let error as IdpExceptions {
-            XCTAssertEqual(error.errorMessage, "illegalStateException Idp Exception: BrowserLauncher failed")
+            XCTAssertEqual(error.errorMessage, "illegalStateException Idp Exception: Could not read response URL")
         } catch {
             XCTFail("Unexpected error type: \(error)")
         }
@@ -161,7 +163,7 @@ final class PingBrowserTests: XCTestCase {
             _ = try await handler.authorize(url: url)
             XCTFail("Expected an exception due to missing continueToken in the URL query items.")
         } catch let error as IdpExceptions {
-            XCTAssertEqual(error.errorMessage, "illegalStateException Idp Exception: BrowserLauncher failed")
+            XCTAssertEqual(error.errorMessage, "illegalStateException Idp Exception: Could not read continueToken")
         } catch {
             XCTFail("Unexpected error type: \(error)")
         }
