@@ -46,7 +46,7 @@ public class WorkflowConfig {
     ///   - mode: The mode of the module registration. Default is `override`. If the mode is `override`, the module will be overridden if it is already registered.
     ///   - config: The configuration for the module.
     public func module<T: Any>(_ module: Module<T>,
-                               _ priority: Int = 10,
+                               priority: Int = 10,
                                mode: OverrideMode = .override,
                                _ config: @escaping (T) -> (Void) = { _ in })  {
         

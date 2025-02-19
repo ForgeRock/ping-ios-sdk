@@ -95,16 +95,16 @@ class WorkflowTest: XCTestCase {
         let workflow = Workflow.createWorkflow { config in
             config.timeout = 10
             
-            config.module(forceAuth, 1)
+            config.module(forceAuth, priority: 1)
             
-            config.module(customHeader, 2) { header in
+            config.module(customHeader, priority: 2) { header in
                 header.headerName = "header-name1"
                 header.headerValue = "Android-SDK"
             }
             
-            config.module(nosession, 3)
+            config.module(nosession, priority: 3)
             
-            config.module(customHeader, 10) { header in
+            config.module(customHeader, priority: 10) { header in
                 header.headerName = "header-name2"
                 header.headerValue = "iOS-SDK"
             }
@@ -208,10 +208,10 @@ class WorkflowTest: XCTestCase {
         let workflow = Workflow.createWorkflow { config in
             config.timeout = 10
             
-            config.module(forceAuth, 2)
-            config.module(nosession, 3)
+            config.module(forceAuth, priority: 2)
+            config.module(nosession, priority: 3)
             
-            config.module(customHeader, 1) { header in
+            config.module(customHeader, priority: 1) { header in
                 header.headerName = "header-name2"
                 header.headerValue = "iOS-SDK"
             }
@@ -227,10 +227,10 @@ class WorkflowTest: XCTestCase {
         let workflow = Workflow.createWorkflow { config in
             config.timeout = 10
             
-            config.module(forceAuth, 2)
-            config.module(nosession, 2)
+            config.module(forceAuth, priority: 2)
+            config.module(nosession, priority: 2)
             
-            config.module(customHeader, 1) { header in
+            config.module(customHeader, priority: 1) { header in
                 header.headerName = "header-name2"
                 header.headerValue = "iOS-SDK"
             }

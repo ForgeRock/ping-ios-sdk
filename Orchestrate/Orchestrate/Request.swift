@@ -57,7 +57,7 @@ public class Request {
     ///   - name: The name of the header.
     ///   - value: The value of the header.
     public func header(name: String, value: String) {
-        self.urlRequest.setValue(value, forHTTPHeaderField: name)
+        self.urlRequest.addValue(value, forHTTPHeaderField: name)
     }
     
     /// Adds cookies to the request.
