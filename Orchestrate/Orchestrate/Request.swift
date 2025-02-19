@@ -118,5 +118,6 @@ public class Request {
         public static let ios = "ios"
         public static let stCookie = "ST"
         public static let stNoSsCookie = "ST-NO-SS"
+        public static let acceptLanguage = "Accept-Language"
     }
 }

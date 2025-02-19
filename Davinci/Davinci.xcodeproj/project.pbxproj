@@ -40,6 +40,8 @@
 		A5A61E032D4A92BF00767C2D /* ErrorNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A61E022D4A92B000767C2D /* ErrorNode.swift */; };
 		A5A712482CAC527200B7DD58 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5A712472CAC527200B7DD58 /* PrivacyInfo.xcprivacy */; };
 		A5CCE5E72C85E96B00349A5E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5CCE5E62C85E96B00349A5E /* Constants.swift */; };
+		A5E646CE2D6573A60042D17E /* LocaleExtentionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E646CD2D6573990042D17E /* LocaleExtentionsTests.swift */; };
+		A5E646D02D657B130042D17E /* LocaleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E646CF2D657B080042D17E /* LocaleExtensions.swift */; };
 		A5E9AEB22D2F1F93000533ED /* SingleValueCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */; };
 		A5E9AEB42D2F2256000533ED /* LabelCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEB32D2F2252000533ED /* LabelCollector.swift */; };
 		A5E9AEB62D2F243E000533ED /* SingleSelectCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEB52D2F243C000533ED /* SingleSelectCollector.swift */; };
@@ -118,6 +120,8 @@
 		A5A61E022D4A92B000767C2D /* ErrorNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorNode.swift; sourceTree = "<group>"; };
 		A5A712472CAC527200B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A5CCE5E62C85E96B00349A5E /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		A5E646CD2D6573990042D17E /* LocaleExtentionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleExtentionsTests.swift; sourceTree = "<group>"; };
+		A5E646CF2D657B080042D17E /* LocaleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleExtensions.swift; sourceTree = "<group>"; };
 		A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleValueCollector.swift; sourceTree = "<group>"; };
 		A5E9AEB32D2F2252000533ED /* LabelCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelCollector.swift; sourceTree = "<group>"; };
 		A5E9AEB52D2F243C000533ED /* SingleSelectCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSelectCollector.swift; sourceTree = "<group>"; };
@@ -195,6 +199,7 @@
 				A51D4CE12C62C53400FE09E0 /* module */,
 				3A292C812BF58462006977EF /* Agent.swift */,
 				3A203D7E2BDB136C0020C995 /* DaVinci.swift */,
+				A5E646CF2D657B080042D17E /* LocaleExtensions.swift */,
 				3A57CB612C44D688001EC9A0 /* User.swift */,
 			);
 			path = Davinci;
@@ -212,6 +217,7 @@
 				A51D4CED2C656EE100FE09E0 /* FieldCollectorTests.swift */,
 				A5EFAA052D3F303900F771FE /* FlowCollectorTests.swift */,
 				A5EFAA072D3F30E200F771FE /* LabelCollectorTests.swift */,
+				A5E646CD2D6573990042D17E /* LocaleExtentionsTests.swift */,
 				A5EFAA092D3F325800F771FE /* MultiSelectCollectorTests.swift */,
 				A5EFAA0B2D3F441200F771FE /* PasswordCollectorTests.swift */,
 				A5EFAA0D2D3F483900F771FE /* PasswordPolicyTests.swift */,
@@ -394,6 +400,7 @@
 				A5A61E032D4A92BF00767C2D /* ErrorNode.swift in Sources */,
 				A51D4CD12C585B4500FE09E0 /* FieldCollector.swift in Sources */,
 				A5E9AEB82D2F2689000533ED /* ValidationError.swift in Sources */,
+				A5E646D02D657B130042D17E /* LocaleExtensions.swift in Sources */,
 				A5E9AEC02D2F44CD000533ED /* PasswordPolicy.swift in Sources */,
 				A51D4CDF2C599BFF00FE09E0 /* Request.swift in Sources */,
 				A51D4CD32C585D7C00FE09E0 /* FlowCollector.swift in Sources */,
@@ -425,6 +432,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A51D4CEE2C656EE100FE09E0 /* FieldCollectorTests.swift in Sources */,
+				A5E646CE2D6573A60042D17E /* LocaleExtentionsTests.swift in Sources */,
 				A51D4CFA2C6BA75000FE09E0 /* CallbackFactoryTests.swift in Sources */,
 				A5EFAA082D3F30E600F771FE /* LabelCollectorTests.swift in Sources */,
 				959249A92D405A4600A6DA9C /* FormFieldsTests.swift in Sources */,
