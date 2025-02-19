@@ -92,7 +92,7 @@ class Connector: ContinueNode {
     /// Function to convert the connector to a Request.
     /// - Returns: The connector as a Request.
     override func asRequest() -> Request {
-        let request = Request()
+        var request = Request()
         
         let links: [String: Any]? = input[Constants._links] as? [String: Any]
         let next = links?[Constants.next] as? [String: Any]
@@ -101,6 +101,12 @@ class Connector: ContinueNode {
         request.url(href)
         request.header(name: Request.Constants.contentType, value: Request.ContentType.json.rawValue)
         request.body(body: asJson())
+        
+        for collector in actions {
+            if let interceptor = collector as? RequestInterceptor {
+                request = interceptor.intercept(context: context, request: request)
+            }
+        }
         return request
     }
 }

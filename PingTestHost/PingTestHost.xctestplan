@@ -57,6 +57,27 @@
         "identifier" : "3A5441A82BCDF20700385131",
         "name" : "DavinciTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Browser\/Browser.xcodeproj",
+        "identifier" : "ECB7C6682D5A1FAB0006F1C8",
+        "name" : "PingBrowserTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Extrernal-idp\/External-idp.xcodeproj",
+        "identifier" : "ECB7C6972D5A2C1F0006F1C8",
+        "name" : "External-idpTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/External-idp\/External-idp.xcodeproj",
+        "identifier" : "ECB7C6972D5A2C1F0006F1C8",
+        "name" : "External-idpTests"
+      }
     }
   ],
   "version" : 1

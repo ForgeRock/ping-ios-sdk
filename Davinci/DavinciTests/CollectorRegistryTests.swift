@@ -20,6 +20,7 @@ final class CollectorRegistryTests: XCTestCase {
     override func setUp() {
         super.setUp()
         collectorFactory = CollectorFactory()
+        collectorFactory.registerDefaultCollectors()
     }
     
     override func tearDown() {

@@ -48,6 +48,14 @@
 		A5EFA97D2D35F78800F771FE /* ComboBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA97C2D35F78700F771FE /* ComboBoxView.swift */; };
 		A5EFA97F2D35F88D00F771FE /* PasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA97E2D35F88C00F771FE /* PasswordView.swift */; };
 		A5EFA9812D360ACC00F771FE /* ContinueNodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA9802D360AC800F771FE /* ContinueNodeView.swift */; };
+		EC0816BF2D4A832C00F1AD02 /* ConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */; };
+		EC0816C12D4A833400F1AD02 /* ConfigurationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */; };
+		EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */; };
+		ECA53F812D635C10002B35D4 /* External_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC9FA0032D5F4EB300E2A31D /* External_idp.framework */; };
+		ECA53F822D635C10002B35D4 /* External_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC9FA0032D5F4EB300E2A31D /* External_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECBF06732D5229BC0066A3BD /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; };
+		ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECBF06A42D5391690066A3BD /* SocialButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06A32D5391610066A3BD /* SocialButtonView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -135,6 +143,34 @@
 			remoteGlobalIDString = 3A5441A92BCDF20700385131;
 			remoteInfo = DavinciTests;
 		};
+		EC0816A92D4A692900F1AD02 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC0816962D4A68FB00F1AD02;
+			remoteInfo = Browser;
+		};
+		EC9FA0022D5F4EB300E2A31D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC0815B72D49377500F1AD02;
+			remoteInfo = "External-idp";
+		};
+		EC9FA0042D5F4EB300E2A31D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = ECB7C6982D5A2C1F0006F1C8;
+			remoteInfo = "External-idpTests";
+		};
+		ECB7C6842D5A24B70006F1C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = ECB7C6692D5A1FAB0006F1C8;
+			remoteInfo = PingBrowserTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -144,11 +180,13 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */,
 				A5560CA32CFE4EDA0076CA8D /* PingLogger.framework in Embed Frameworks */,
 				A5560CA52CFE4EDA0076CA8D /* PingOidc.framework in Embed Frameworks */,
 				A5560CA12CFE4EDA0076CA8D /* PingDavinci.framework in Embed Frameworks */,
 				A5560CA92CFE4EDA0076CA8D /* PingStorage.framework in Embed Frameworks */,
 				A5560CA72CFE4EDA0076CA8D /* PingOrchestrate.framework in Embed Frameworks */,
+				ECA53F822D635C10002B35D4 /* External_idp.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -195,6 +233,13 @@
 		A5EFA97C2D35F78700F771FE /* ComboBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComboBoxView.swift; sourceTree = "<group>"; };
 		A5EFA97E2D35F88C00F771FE /* PasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordView.swift; sourceTree = "<group>"; };
 		A5EFA9802D360AC800F771FE /* ContinueNodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueNodeView.swift; sourceTree = "<group>"; };
+		EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Browser.xcodeproj; path = ../../Browser/Browser.xcodeproj; sourceTree = SOURCE_ROOT; };
+		EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationView.swift; sourceTree = "<group>"; };
+		EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewModel.swift; sourceTree = "<group>"; };
+		EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
+		EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "External-idp.xcodeproj"; path = "../../External-idp/External-idp.xcodeproj"; sourceTree = SOURCE_ROOT; };
+		ECB7C5D02D562FAC0006F1C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		ECBF06A32D5391610066A3BD /* SocialButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialButtonView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -202,11 +247,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECBF06732D5229BC0066A3BD /* PingBrowser.framework in Frameworks */,
 				A5560CA22CFE4EDA0076CA8D /* PingLogger.framework in Frameworks */,
 				A5560CA42CFE4EDA0076CA8D /* PingOidc.framework in Frameworks */,
 				A5560CA02CFE4EDA0076CA8D /* PingDavinci.framework in Frameworks */,
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
 				A5560CA62CFE4EDA0076CA8D /* PingOrchestrate.framework in Frameworks */,
+				ECA53F812D635C10002B35D4 /* External_idp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -230,6 +277,8 @@
 		3A5441242BCDF10900385131 = {
 			isa = PBXGroup;
 			children = (
+				EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */,
+				EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */,
 				A588CFEA2BF69F1A00F9052A /* Logger.xcodeproj */,
 				A588CFF92BF69F3300F9052A /* Storage.xcodeproj */,
 				3A5442212BCE1F3800385131 /* Orchestrate.xcodeproj */,
@@ -256,6 +305,7 @@
 		3A54412F2BCDF10900385131 /* PingExample */ = {
 			isa = PBXGroup;
 			children = (
+				ECB7C5D02D562FAC0006F1C8 /* Info.plist */,
 				A5E9AED92D309FEF000533ED /* Collectors */,
 				3A3709952BEB038200AA7B51 /* AccessTokenView.swift */,
 				A5E9AECD2D3037BC000533ED /* AccessTokenViewModel.swift */,
@@ -273,6 +323,9 @@
 				A588D0042BF6A0E500F9052A /* StorageViewModel.swift */,
 				A5E9AECF2D3037DF000533ED /* UserInfoView.swift */,
 				A5E9AED12D303804000533ED /* UserInfoViewModel.swift */,
+				EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */,
+				EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */,
+				EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */,
 				3A5441342BCDF10B00385131 /* Assets.xcassets */,
 				3A5441362BCDF10B00385131 /* Preview Content */,
 			);
@@ -359,6 +412,7 @@
 		A5E9AED92D309FEF000533ED /* Collectors */ = {
 			isa = PBXGroup;
 			children = (
+				ECBF06A32D5391610066A3BD /* SocialButtonView.swift */,
 				A5EFA96C2D35F2F800F771FE /* CheckBoxView.swift */,
 				A5EFA97C2D35F78700F771FE /* ComboBoxView.swift */,
 				A5EFA97A2D35F6D500F771FE /* DropdownView.swift */,
@@ -371,6 +425,24 @@
 				A5E9AEDC2D30A226000533ED /* TextView.swift */,
 			);
 			path = Collectors;
+			sourceTree = "<group>";
+		};
+		EC0816A62D4A692900F1AD02 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */,
+				ECB7C6852D5A24B70006F1C8 /* PingBrowserTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EC9F9FFA2D5F4EB200E2A31D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EC9FA0032D5F4EB300E2A31D /* External_idp.framework */,
+				EC9FA0052D5F4EB300E2A31D /* External-idpTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -466,8 +538,16 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = EC0816A62D4A692900F1AD02 /* Products */;
+					ProjectRef = EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */;
+				},
+				{
 					ProductGroup = A57A09152CE511E7006F0CBB /* Products */;
 					ProjectRef = 3A54420F2BCE1F2900385131 /* Davinci.xcodeproj */;
+				},
+				{
+					ProductGroup = EC9F9FFA2D5F4EB200E2A31D /* Products */;
+					ProjectRef = EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */;
 				},
 				{
 					ProductGroup = A57A08F52CE50D51006F0CBB /* Products */;
@@ -566,6 +646,34 @@
 			remoteRef = A57A091B2CE511E7006F0CBB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingBrowser.framework;
+			remoteRef = EC0816A92D4A692900F1AD02 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		EC9FA0032D5F4EB300E2A31D /* External_idp.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = External_idp.framework;
+			remoteRef = EC9FA0022D5F4EB300E2A31D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		EC9FA0052D5F4EB300E2A31D /* External-idpTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "External-idpTests.xctest";
+			remoteRef = EC9FA0042D5F4EB300E2A31D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		ECB7C6852D5A24B70006F1C8 /* PingBrowserTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = PingBrowserTests.xctest;
+			remoteRef = ECB7C6842D5A24B70006F1C8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -609,10 +717,13 @@
 				A5E9AEE32D318524000533ED /* FlowButtonView.swift in Sources */,
 				3A8532332BE2D5D800F8619D /* DavinciView.swift in Sources */,
 				A5EFA9812D360ACC00F771FE /* ContinueNodeView.swift in Sources */,
+				EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */,
+				EC0816BF2D4A832C00F1AD02 /* ConfigurationView.swift in Sources */,
 				3A5441332BCDF10900385131 /* ContentView.swift in Sources */,
 				A5EFA9792D35F62E00F771FE /* RadioButtonView.swift in Sources */,
 				A5E9AED42D30385D000533ED /* LogOutViewModel.swift in Sources */,
 				A5E9AEDD2D30A22A000533ED /* TextView.swift in Sources */,
+				EC0816C12D4A833400F1AD02 /* ConfigurationViewModel.swift in Sources */,
 				A5EFA9772D35F2FA00F771FE /* CheckBoxView.swift in Sources */,
 				A5E9AEDF2D30CA34000533ED /* ErrorMessageView.swift in Sources */,
 				A5E9AED22D30380B000533ED /* UserInfoViewModel.swift in Sources */,
@@ -622,6 +733,7 @@
 				3A8092F42BE99F0F00AD667F /* CustomViews.swift in Sources */,
 				A5EFA97F2D35F88D00F771FE /* PasswordView.swift in Sources */,
 				A5E9AED02D3037E0000533ED /* UserInfoView.swift in Sources */,
+				ECBF06A42D5391690066A3BD /* SocialButtonView.swift in Sources */,
 				A5E9AED82D303962000533ED /* StorageView.swift in Sources */,
 				3A3709962BEB038200AA7B51 /* AccessTokenView.swift in Sources */,
 				A5E9AEDB2D30A020000533ED /* LabelView.swift in Sources */,
@@ -793,6 +905,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PingExample/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Davinci;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -824,6 +937,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PingExample/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Davinci;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

@@ -12,6 +12,6 @@ import PingOrchestrate
 
 /// An interface that should be implemented by classes that need to be aware of the ContinueNode.
 /// The continueNode will be injected to the classes that implement this interface.
-protocol ContinueNodeAware {
+public protocol ContinueNodeAware {
     var continueNode: ContinueNode? { get set }
 }

@@ -12,6 +12,7 @@
 import SwiftUI
 import PingOrchestrate
 import PingDavinci
+import External_idp
 
 struct ContinueNodeView: View {
     var continueNode: ContinueNode
@@ -72,6 +73,11 @@ struct ContinueNodeView: View {
                         } else {
                             RadioButtonView(field: singleSelectCollector, onNodeUpdated: onNodeUpdated)
                         }
+                    }
+                case is IdpCollector:
+                    if let idpCollector = collector as? IdpCollector {
+                        let viewModel = SocialButtonViewModel(idpCollector: idpCollector)
+                        SocialButtonView(socialButtonViewModel: viewModel, onNext: onNext, onStart: onStart)
                     }
                 default:
                     EmptyView()
