@@ -22,6 +22,7 @@
 		ECA53F952D635CF8002B35D4 /* External_idpTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA53F932D635CF8002B35D4 /* External_idpTests.swift */; };
 		ECA53FD52D63A48A002B35D4 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53FD42D63A48A002B35D4 /* PingDavinci.framework */; };
 		ECA53FD62D63A48A002B35D4 /* PingDavinci.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53FD42D63A48A002B35D4 /* PingDavinci.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECA540082D64EE8B002B35D4 /* AppleRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA540072D64EE84002B35D4 /* AppleRequestHandler.swift */; };
 		ECB7C5C22D54D9100006F1C8 /* IdpCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */; };
 		ECB7C69C2D5A2C1F0006F1C8 /* External_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0815B72D49377500F1AD02 /* External_idp.framework */; };
 		ECBF06492D50ED7A0066A3BD /* BrowserHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06482D50ED750066A3BD /* BrowserHandler.swift */; };
@@ -67,6 +68,7 @@
 		ECA53F8F2D635C53002B35D4 /* PingBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA53F932D635CF8002B35D4 /* External_idpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = External_idpTests.swift; sourceTree = "<group>"; };
 		ECA53FD42D63A48A002B35D4 /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECA540072D64EE84002B35D4 /* AppleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleRequestHandler.swift; sourceTree = "<group>"; };
 		ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpCollector.swift; sourceTree = "<group>"; };
 		ECB7C6982D5A2C1F0006F1C8 /* External-idpTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "External-idpTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF06442D50EBF60066A3BD /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -139,6 +141,7 @@
 			isa = PBXGroup;
 			children = (
 				EC08161D2D49429500F1AD02 /* AppleHandler.swift */,
+				ECA540072D64EE84002B35D4 /* AppleRequestHandler.swift */,
 				ECBF06482D50ED750066A3BD /* BrowserHandler.swift */,
 				EC0815F02D493FEA00F1AD02 /* FacebookHandler.swift */,
 				EC08161B2D49428C00F1AD02 /* GoogleHandler.swift */,
@@ -278,6 +281,7 @@
 				EC0815F12D493FF200F1AD02 /* FacebookHandler.swift in Sources */,
 				EC9F9FC42D5E1B2100E2A31D /* IdpRequestHandler.swift in Sources */,
 				ECB7C5C22D54D9100006F1C8 /* IdpCollector.swift in Sources */,
+				ECA540082D64EE8B002B35D4 /* AppleRequestHandler.swift in Sources */,
 				EC0815EF2D493DC900F1AD02 /* IdpExceptions.swift in Sources */,
 				EC9F9FC62D5E1E2C00E2A31D /* IdpClient.swift in Sources */,
 				EC08161E2D49429B00F1AD02 /* AppleHandler.swift in Sources */,

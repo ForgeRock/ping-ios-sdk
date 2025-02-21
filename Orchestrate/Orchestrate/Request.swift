@@ -122,5 +122,6 @@ public class Request {
         public static let _links = "_links"
         public static let _continue = "continue"
         public static let href = "href"
+        public static let idToken = "idToken"
     }
 }

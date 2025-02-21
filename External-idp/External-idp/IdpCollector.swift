@@ -68,28 +68,36 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     /// - Parameter callbackURLScheme: The callback URL scheme.
     public func authorize(callbackURLScheme: String? = nil) async -> Result<Bool, IdpExceptions> {
         do {
-            
             guard let url = link else {
                 return .failure(.illegalArgumentException(message: "Missing link URL"))
             }
-            
-            let urlScheme: String
-            if let customScheme = callbackURLScheme {
-                urlScheme = customScheme
-            } else {
-                guard let urlSchemes = getCustomURLSchemes(), let scheme = urlSchemes.first else {
-                    return .failure(.illegalArgumentException(message: "Missing custom URL schemes"))
+            let workflow = continueNode?.workflow
+            if idpType == "APPLE", let httpClient = workflow?.config.httpClient {
+                let handler = AppleRequestHandler(httpClient: httpClient)
+                do {
+                    let request = try await handler.authorize(url: url)
+                    self.resumeRequest = request
+                    return .success(true)
+                } catch let error as IdpExceptions {
+                    switch error {
+                    case .unsupportedIdpException:
+                        return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
+                    default:
+                        return .failure(error)
+                    }
                 }
-                urlScheme = scheme
             }
-            
-            
-            let request = try await BrowserHandler(continueNode: continueNode!, tokenType: "code", callbackURLScheme: urlScheme).authorize(url: url)
-            self.resumeRequest = request
-            
-            return .success(true)
+            if idpType == "GOOGLE", let httpClient = workflow?.config.httpClient {
+                return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
+            }
+            if idpType == "FACEBOOK", let httpClient = workflow?.config.httpClient {
+                return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
+            }
+            else {
+                return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
+            }
         } catch {
-            return .failure(.idpCanceledException(message: "IDP Cancelled"))
+            return .failure(.idpCanceledException(message: error.localizedDescription))
         }
     }
     
@@ -100,6 +108,25 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     ///     - request: The request to intercept.
     public func intercept(context: FlowContext, request: Request) -> Request {
         return resumeRequest ?? request
+    }
+    
+    private func fallbackToBrowserHandler(callbackURLScheme: String? = nil, url: URL) async -> Result<Bool, IdpExceptions> {
+        let urlScheme: String
+        if let customScheme = callbackURLScheme {
+            urlScheme = customScheme
+        } else {
+            guard let urlSchemes = getCustomURLSchemes(), let scheme = urlSchemes.first else {
+                return .failure(.illegalArgumentException(message: "Missing custom URL schemes"))
+            }
+            urlScheme = scheme
+        }
+        do {
+            let request = try await BrowserHandler(continueNode: continueNode!, tokenType: "code", callbackURLScheme: urlScheme).authorize(url: url)
+            self.resumeRequest = request
+            return .success(true)
+        } catch {
+            return .failure(.idpCanceledException(message: error.localizedDescription))
+        }
     }
     
     /// Gets the CustomURLSchemes for the Xcode project.
@@ -114,3 +141,20 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
         return nil
     }
 }
+
+/*
+ private class IdpRequestHandlerDelegate(
+     val idpRequestHandler: IdpRequestHandler,
+     val fallback: IdpRequestHandler
+ ) : IdpRequestHandler by idpRequestHandler {
+     override suspend fun authorize(url: String): Request {
+         try {
+             return idpRequestHandler.authorize(url)
+         } catch (e: UnsupportedIdPException) {
+             // Fallback to use browser
+             return fallback.authorize(url)
+         }
+     }
+
+ }
+ */
