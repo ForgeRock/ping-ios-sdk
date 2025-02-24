@@ -536,6 +536,8 @@
 				Base,
 			);
 			mainGroup = 3A5441242BCDF10900385131;
+			packageReferences = (
+			);
 			productRefGroup = 3A54412E2BCDF10900385131 /* Products */;
 			projectDirPath = "";
 			projectReferences = (

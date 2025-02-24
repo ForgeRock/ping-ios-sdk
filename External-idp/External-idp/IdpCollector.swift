@@ -74,30 +74,19 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
             let workflow = continueNode?.workflow
             if idpType == "APPLE", let httpClient = workflow?.config.httpClient {
                 let handler = AppleRequestHandler(httpClient: httpClient)
-                do {
-                    let request = try await handler.authorize(url: url)
-                    self.resumeRequest = request
-                    return .success(true)
-                } catch let error as IdpExceptions {
-                    switch error {
-                    case .unsupportedIdpException:
-                        return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
-                    default:
-                        return .failure(error)
-                    }
-                }
+                return await self.authorize(handler: handler, url: url, callbackURLScheme: callbackURLScheme)
             }
             if idpType == "GOOGLE", let httpClient = workflow?.config.httpClient {
-                return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
+                let handler = GoogleRequestHandler(httpClient: httpClient)
+                return await self.authorize(handler: handler, url: url, callbackURLScheme: callbackURLScheme)
             }
             if idpType == "FACEBOOK", let httpClient = workflow?.config.httpClient {
-                return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
+                let handler = FacebookRequestHandler(httpClient: httpClient)
+                return await self.authorize(handler: handler, url: url, callbackURLScheme: callbackURLScheme)
             }
             else {
                 return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
             }
-        } catch {
-            return .failure(.idpCanceledException(message: error.localizedDescription))
         }
     }
     
@@ -110,6 +99,11 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
         return resumeRequest ?? request
     }
     
+    /// Fallback to the browser handler.
+    /// - Parameters:
+    ///  - callbackURLScheme: The callback URL scheme.
+    ///  - url: The URL for the IdP authentication.
+    /// - Returns: A Result of type Bool or An IdpExceptions error.
     private func fallbackToBrowserHandler(callbackURLScheme: String? = nil, url: URL) async -> Result<Bool, IdpExceptions> {
         let urlScheme: String
         if let customScheme = callbackURLScheme {
@@ -129,7 +123,31 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
         }
     }
     
+    /// Authorizes the IdP
+    ///  - Parameters:
+    ///    - handler: The IdpRequestHandler.
+    ///    - url: The URL for the IdP authentication.
+    ///    - callbackURLScheme: The callback URL scheme.
+    ///  - Returns: A Result of type Bool or An IdpExceptions error.
+    private func authorize(handler: IdpRequestHandler, url: URL, callbackURLScheme: String? = nil) async -> Result<Bool, IdpExceptions> {
+        do {
+            let request = try await handler.authorize(url: url)
+            self.resumeRequest = request
+            return .success(true)
+        } catch let error as IdpExceptions {
+            switch error {
+            case .unsupportedIdpException:
+                return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
+            default:
+                return .failure(error)
+            }
+        } catch {
+            return .failure(.idpCanceledException(message: error.localizedDescription))
+        }
+    }
+    
     /// Gets the CustomURLSchemes for the Xcode project.
+    /// - Returns: An array of custom URL schemes.
     private func getCustomURLSchemes() -> [String]? {
         if let urlTypes = Bundle.main.infoDictionary?["CFBundleURLTypes"] as? [[String: Any]] {
             for urlType in urlTypes {
@@ -141,20 +159,3 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
         return nil
     }
 }
-
-/*
- private class IdpRequestHandlerDelegate(
-     val idpRequestHandler: IdpRequestHandler,
-     val fallback: IdpRequestHandler
- ) : IdpRequestHandler by idpRequestHandler {
-     override suspend fun authorize(url: String): Request {
-         try {
-             return idpRequestHandler.authorize(url)
-         } catch (e: UnsupportedIdPException) {
-             // Fallback to use browser
-             return fallback.authorize(url)
-         }
-     }
-
- }
- */
