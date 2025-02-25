@@ -57,10 +57,9 @@ final class External_idpTests: XCTestCase {
         
         let connector = TestContinueNode(context: mockContext, workflow: mockWorkflow, input: [:], actions: [])
         
-        let browserHandler = BrowserHandler(continueNode: connector, tokenType: "code", callbackURLScheme: "myApp")
+        let browserHandler = BrowserHandler(continueNode: connector, callbackURLScheme: "myApp")
         XCTAssertNotNil(browserHandler)
         XCTAssertEqual(browserHandler.callbackURLScheme, "myApp")
-        XCTAssertEqual(browserHandler.tokenType, "code")
     }
     
     func testIdpHandlerAuthorizeThrow() async throws {
@@ -72,7 +71,7 @@ final class External_idpTests: XCTestCase {
         
         let connector = TestContinueNode(context: mockContext, workflow: mockWorkflow, input: [:], actions: [])
         
-        let browserHandler = BrowserHandler(continueNode: connector, tokenType: "code", callbackURLScheme: "myApp")
+        let browserHandler = BrowserHandler(continueNode: connector, callbackURLScheme: "myApp")
         
         do {
             let _ = try await browserHandler.authorize(url: nil)

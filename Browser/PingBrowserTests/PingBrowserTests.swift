@@ -73,7 +73,7 @@ final class PingBrowserTests: XCTestCase {
             return browserReturnURL
         }
         
-        let handler = BrowserHandler(continueNode: connector, tokenType: "Bearer", callbackURLScheme: "myapp")
+        let handler = BrowserHandler(continueNode: connector, callbackURLScheme: "myapp")
         let url = URL(string: "https://auth.example.com")!
         
         // Act
@@ -89,7 +89,7 @@ final class PingBrowserTests: XCTestCase {
     /// Tests that calling authorize with a nil URL throws an illegalArgumentException.
     func testAuthorizeNilURL() async {
         // Arrange
-        let handler = BrowserHandler(continueNode: connector, tokenType: "Bearer", callbackURLScheme: "myapp")
+        let handler = BrowserHandler(continueNode: connector, callbackURLScheme: "myapp")
         // Act & Assert
         do {
             let url: URL? = nil
@@ -109,7 +109,7 @@ final class PingBrowserTests: XCTestCase {
             throw BrowserError.externalUserAgentFailure
         }
         
-        let handler = BrowserHandler(continueNode: connector, tokenType: "Bearer", callbackURLScheme: "myapp")
+        let handler = BrowserHandler(continueNode: connector, callbackURLScheme: "myapp")
         let url = URL(string: "https://auth.example.com")!
         
         // Act & Assert
@@ -133,7 +133,7 @@ final class PingBrowserTests: XCTestCase {
             return browserReturnURL
         }
         
-        let handler = BrowserHandler(continueNode: connector, tokenType: "Bearer", callbackURLScheme: "myapp")
+        let handler = BrowserHandler(continueNode: connector, callbackURLScheme: "myapp")
         let url = URL(string: "https://auth.example.com")!
         
         // Act & Assert
@@ -155,7 +155,7 @@ final class PingBrowserTests: XCTestCase {
             return browserReturnURL
         }
         
-        let handler = BrowserHandler(continueNode: connector, tokenType: "Bearer", callbackURLScheme: "myapp")
+        let handler = BrowserHandler(continueNode: connector, callbackURLScheme: "myapp")
         let url = URL(string: "https://auth.example.com")!
         
         // Act & Assert

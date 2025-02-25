@@ -15,8 +15,6 @@ import UIKit
 
 /// A handler class for managing Facebook Identity Provider (IdP) authorization.
 class FacebookRequestHandler: IdpRequestHandler {
-    /// Credentials type for Google credentials
-    var tokenType: String = "access_token"
     /// `LoginManager` instance for Facebook SDK
     private var manager: LoginManager
     /// The HTTP client to use for requests.

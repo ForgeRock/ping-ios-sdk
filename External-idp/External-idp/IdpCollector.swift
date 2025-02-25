@@ -22,7 +22,7 @@ import PingDavinci
 public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterceptor {
     
     /// ContinueNode property
-    public var continueNode: PingOrchestrate.ContinueNode?
+    public var continueNode: ContinueNode?
     
     /// The unique identifier for the collector.
     public var id: UUID = UUID()
@@ -41,6 +41,9 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     
     ///  The URL link for IdP authentication.
     public var link: URL?
+    
+    /// The native handler for the IdP request.
+    public var nativeHandler: IdpRequestHandler?
     
     ///  The request to resume the DaVinci flow.
     private var resumeRequest: Request?
@@ -72,21 +75,30 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
                 return .failure(.illegalArgumentException(message: "Missing link URL"))
             }
             let workflow = continueNode?.workflow
-            if idpType == "APPLE", let httpClient = workflow?.config.httpClient {
-                let handler = AppleRequestHandler(httpClient: httpClient)
-                return await self.authorize(handler: handler, url: url, callbackURLScheme: callbackURLScheme)
-            }
-            if idpType == "GOOGLE", let httpClient = workflow?.config.httpClient {
-                let handler = GoogleRequestHandler(httpClient: httpClient)
-                return await self.authorize(handler: handler, url: url, callbackURLScheme: callbackURLScheme)
-            }
-            if idpType == "FACEBOOK", let httpClient = workflow?.config.httpClient {
-                let handler = FacebookRequestHandler(httpClient: httpClient)
+            if let httpClient = workflow?.config.httpClient, let handler = getDefaultIdpHandler(httpClient: httpClient) {
+                nativeHandler = handler
                 return await self.authorize(handler: handler, url: url, callbackURLScheme: callbackURLScheme)
             }
             else {
                 return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
             }
+        }
+    }
+    
+    /// Gets the default IdP handler for the Provider. It will either be AppleRequestHandler, GoogleRequestHandler, FacebookRequestHandler
+    /// - Parameters:
+    ///  - httpClient: The HTTP client.
+    ///  - Returns: The IdpRequestHandler.
+    public func getDefaultIdpHandler(httpClient: HttpClient) -> IdpRequestHandler? {
+        switch idpType {
+        case "APPLE":
+            return AppleRequestHandler(httpClient: httpClient)
+        case "GOOGLE":
+            return GoogleRequestHandler(httpClient: httpClient)
+        case "FACEBOOK":
+            return FacebookRequestHandler(httpClient: httpClient)
+        default:
+            return nil
         }
     }
     
@@ -115,7 +127,10 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
             urlScheme = scheme
         }
         do {
-            let request = try await BrowserHandler(continueNode: continueNode!, tokenType: "code", callbackURLScheme: urlScheme).authorize(url: url)
+            guard let continueNode = continueNode else {
+                return .failure(.illegalArgumentException(message: "Missing continue node"))
+            }
+            let request = try await BrowserHandler(continueNode: continueNode, callbackURLScheme: urlScheme).authorize(url: url)
             self.resumeRequest = request
             return .success(true)
         } catch {

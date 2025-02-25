@@ -28,6 +28,7 @@
 		ECA540822D6C815C002B35D4 /* FacebookRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA540812D6C814B002B35D4 /* FacebookRequestHandler.swift */; };
 		ECA540902D6C9044002B35D4 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = ECA5408F2D6C9044002B35D4 /* FacebookCore */; };
 		ECA540922D6C9044002B35D4 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = ECA540912D6C9044002B35D4 /* FacebookLogin */; };
+		ECA540C12D6DE9D7002B35D4 /* NativeHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA540C02D6DE9CD002B35D4 /* NativeHandlerTests.swift */; };
 		ECB7C5C22D54D9100006F1C8 /* IdpCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */; };
 		ECB7C69C2D5A2C1F0006F1C8 /* External_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0815B72D49377500F1AD02 /* External_idp.framework */; };
 		ECBF06492D50ED7A0066A3BD /* BrowserHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06482D50ED750066A3BD /* BrowserHandler.swift */; };
@@ -76,6 +77,7 @@
 		ECA540072D64EE84002B35D4 /* AppleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleRequestHandler.swift; sourceTree = "<group>"; };
 		ECA5406D2D68A401002B35D4 /* GoogleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleRequestHandler.swift; sourceTree = "<group>"; };
 		ECA540812D6C814B002B35D4 /* FacebookRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookRequestHandler.swift; sourceTree = "<group>"; };
+		ECA540C02D6DE9CD002B35D4 /* NativeHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeHandlerTests.swift; sourceTree = "<group>"; };
 		ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpCollector.swift; sourceTree = "<group>"; };
 		ECB7C6982D5A2C1F0006F1C8 /* External-idpTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "External-idpTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF06442D50EBF60066A3BD /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -142,6 +144,7 @@
 		ECA53F942D635CF8002B35D4 /* External-idpTests */ = {
 			isa = PBXGroup;
 			children = (
+				ECA540C02D6DE9CD002B35D4 /* NativeHandlerTests.swift */,
 				ECA53F932D635CF8002B35D4 /* External_idpTests.swift */,
 			);
 			path = "External-idpTests";
@@ -317,6 +320,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECA540C12D6DE9D7002B35D4 /* NativeHandlerTests.swift in Sources */,
 				ECA53F952D635CF8002B35D4 /* External_idpTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

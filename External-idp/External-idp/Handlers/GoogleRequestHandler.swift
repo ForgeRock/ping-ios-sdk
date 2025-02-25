@@ -15,9 +15,6 @@ import UIKit
 
 /// A handler class for managing Google Identity Provider (IdP) authorization.
 class GoogleRequestHandler: IdpRequestHandler {
-    /// Credentials type for Google credentials
-    var tokenType: String = "id_token"
-    
     /// The HTTP client to use for requests.
     private let httpClient: HttpClient
     /// The IdpClient to use for requests.
