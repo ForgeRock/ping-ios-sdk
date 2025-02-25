@@ -14,10 +14,6 @@ import AuthenticationServices
 
 //IdpHandler for Apple
 class AppleRequestHandler: IdpRequestHandler {
-    
-    /// The tokenType for Apple credentials
-    var tokenType: String = "id_token"
-    
     /// The HTTP client to use for requests.
     private let httpClient: HttpClient
     /// The IdpClient to use for requests.
