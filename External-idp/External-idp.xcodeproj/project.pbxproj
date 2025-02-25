@@ -599,8 +599,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 8.0.0;
+				kind = exactVersion;
+				version = "8.1.0-vwg-eap-1.0.0";
 			};
 		};
 		ECA5408E2D6C9044002B35D4 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {

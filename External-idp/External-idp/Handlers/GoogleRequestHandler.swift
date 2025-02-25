@@ -66,7 +66,7 @@ class GoogleRequestHandler: IdpRequestHandler {
         }
         
         return try await withCheckedThrowingContinuation { continuation in
-            GIDSignIn.sharedInstance.signIn(withPresenting: topVC) { result, error in
+            GIDSignIn.sharedInstance.signIn(withPresenting: topVC, hint: nil, additionalScopes: idpClient.scopes, nonce: idpClient.nonce) { result, error in
                 if let error = error {
                     continuation.resume(throwing: error)
                 }
