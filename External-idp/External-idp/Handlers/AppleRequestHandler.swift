@@ -257,7 +257,7 @@ extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
 }
 
 //MARK: ASAuthorizationControllerPresentationContextProviding
-extension UIViewController: @retroactive ASAuthorizationControllerPresentationContextProviding {
+extension UIViewController: ASAuthorizationControllerPresentationContextProviding {
     public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         return self.view.window!
     }
