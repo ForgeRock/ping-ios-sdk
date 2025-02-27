@@ -17,6 +17,7 @@ public protocol IdpRequestHandler {
     /// - Parameter url: The URL to use for authorization.
     /// - Returns: A `Request` object containing the result of the authorization
     func authorize(url: URL?) async throws -> Request
+    
     /// Fetch the IdP client information from the server
     /// - Parameters:
     ///  - httpClient: The `HttpClient` to use for the request.

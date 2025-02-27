@@ -61,22 +61,21 @@ class FacebookRequestHandler: IdpRequestHandler {
     /// - Returns: A `Request` object containing the result of the authorization.
     func authorize(url: URL?) async throws -> Request {
         do {
-            do {
-                self.idpClient = try await self.fetch(httpClient: self.httpClient, url: url)
-            } catch {
-                throw IdpExceptions.unsupportedIdpException(message: "IdpClient fetch failed")
-            }
-            guard let idpClient = self.idpClient else {
-                throw IdpExceptions.unsupportedIdpException(message: "IdpClient is nil")
-            }
-            let result = try await self.authorize(idpClient: idpClient)
-            let request = Request(urlString: idpClient.continueUrl ?? "")
-            request.header(name: Request.Constants.accept, value: Request.ContentType.json.rawValue)
-            request.body(body: [Request.Constants.accessToken: result.token])
-            return request
+            self.idpClient = try await self.fetch(httpClient: self.httpClient, url: url)
         } catch {
-            throw error
+            throw IdpExceptions.unsupportedIdpException(message: "IdpClient fetch failed: \(error.localizedDescription)")
         }
+        guard let idpClient = self.idpClient else {
+            throw IdpExceptions.unsupportedIdpException(message: "IdpClient is nil")
+        }
+        let result = try await self.authorize(idpClient: idpClient)
+        guard let continueUrl = idpClient.continueUrl, !continueUrl.isEmpty else {
+            throw IdpExceptions.illegalStateException(message: "continueUrl is missing or empty")
+        }
+        let request = Request(urlString: continueUrl)
+        request.header(name: Request.Constants.accept, value: Request.ContentType.json.rawValue)
+        request.body(body: [Request.Constants.accessToken: result.token])
+        return request
     }
     
     /// Authorizes the user with the IDP, based on the IdpClient.
@@ -84,7 +83,7 @@ class FacebookRequestHandler: IdpRequestHandler {
     /// - Returns: An `IdpResult` object containing the result of the authorization.
     @MainActor
     private func authorize(idpClient: IdpClient) async throws -> IdpResult {
-        guard let topVC = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first?.rootViewController else {
+        guard let topVC = IdpClient.getTopViewController() else {
             throw IdpExceptions.illegalStateException(message: "Top view controller is required")
         }
         

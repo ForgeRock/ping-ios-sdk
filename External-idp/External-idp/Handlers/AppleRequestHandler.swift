@@ -30,22 +30,21 @@ class AppleRequestHandler: IdpRequestHandler {
     /// - Returns: A `Request` object containing the result of the authorization.
     func authorize(url: URL?) async throws -> Request {
         do {
-            do {
-                self.idpClient = try await self.fetch(httpClient: self.httpClient, url: url)
-            } catch {
-                throw IdpExceptions.unsupportedIdpException(message: "IdpClient fetch failed")
-            }
-            guard let idpClient = self.idpClient else {
-                throw IdpExceptions.unsupportedIdpException(message: "IdpClient is nil")
-            }
-            let result = try await self.authorize(idpClient: idpClient)
-            let request = Request(urlString: idpClient.continueUrl ?? "")
-            request.header(name: Request.Constants.accept, value: Request.ContentType.json.rawValue)
-            request.body(body: [Request.Constants.idToken: result.token])
-            return request
+            self.idpClient = try await self.fetch(httpClient: self.httpClient, url: url)
         } catch {
-            throw error
+            throw IdpExceptions.unsupportedIdpException(message: "IdpClient fetch failed: \(error.localizedDescription)")
         }
+        guard let idpClient = self.idpClient else {
+            throw IdpExceptions.unsupportedIdpException(message: "IdpClient is nil")
+        }
+        let result = try await self.authorize(idpClient: idpClient)
+        guard let continueUrl = idpClient.continueUrl, !continueUrl.isEmpty else {
+            throw IdpExceptions.illegalStateException(message: "continueUrl is missing or empty")
+        }
+        let request = Request(urlString: continueUrl)
+        request.header(name: Request.Constants.accept, value: Request.ContentType.json.rawValue)
+        request.body(body: [Request.Constants.idToken: result.token])
+        return request
     }
     
     /// Authorizes the user with the IDP, based on the IdpClient.
@@ -62,8 +61,9 @@ class AppleRequestHandler: IdpRequestHandler {
             let displayName = appleResponse.displayName ?? ""
             let firstName = appleResponse.firstName ?? ""
             let lastName = appleResponse.lastName ?? ""
+            let email = appleResponse.email ?? ""
 
-            return IdpResult(token: token, additionalParameters: ["name": displayName, "firstName": firstName, "lastName": lastName, "nonce": nonce])
+            return IdpResult(token: token, additionalParameters: ["name": displayName, "firstName": firstName, "lastName": lastName, "nonce": nonce, email: email])
         }
         throw IdpExceptions.illegalStateException(message: "Apple Sign In failed")
     }
@@ -179,7 +179,7 @@ final class SignInWithAppleHelper: NSObject {
     /// - Parameter completion: The completion handler for the request.
     @MainActor
     private func startSignInWithAppleFlow(nonce: String?, scopes: [ASAuthorization.Scope], viewController: UIViewController? = nil, completion: @escaping (Result<SignInWithAppleResult, Error>) -> Void) {
-        guard let topVC = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first?.rootViewController else {
+        guard let topVC = IdpClient.getTopViewController() else {
             completion(.failure(SignInWithAppleError.noViewController))
             return
         }
