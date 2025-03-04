@@ -2,7 +2,7 @@
 //  MemoryStorage.swift
 //  PingStorage
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,7 +12,7 @@
 import Foundation
 
 /// A storage for storing objects in memory, where `T` is the type of the object to be stored.
-public class Memory<T: Codable>: Storage {
+public actor Memory<T: Codable & Sendable>: Storage {
   private var data: T?
   
   /// Saves the given item in memory.
@@ -41,7 +41,7 @@ public class Memory<T: Codable>: Storage {
 /// The generic type `T` must conform to `Codable` to ensure that objects can be encoded and decoded when written to and read from memory, respectively.
 ///
 /// - Parameter T: The type of the objects to be stored. Must conform to `Codable`.
-public class MemoryStorage<T: Codable>: StorageDelegate<T> {
+public class MemoryStorage<T: Codable & Sendable>: StorageDelegate<T>, @unchecked Sendable {
   /// Initializes a new instance of `MemoryStorage`.
   ///
   /// This initializer creates a `MemoryStorage` instance that acts as a delegate for an in-memory storage
