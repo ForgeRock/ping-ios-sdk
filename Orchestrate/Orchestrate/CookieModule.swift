@@ -182,7 +182,7 @@ extension Workflow {
 }
 
 /// A storage class for managing in-memory cookies.
-public actor InMemoryCookieStorage {
+public final actor InMemoryCookieStorage {
     private var cookieStore: [HTTPCookie] = []
     
     /// Adds or updates a cookie in the storage.

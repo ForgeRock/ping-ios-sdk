@@ -13,10 +13,10 @@ import Foundation
 import PingLogger
 
 /// `HttpClient` is responsible for handling HTTP requests and logging the details of those requests and responses.
-public final class HttpClient: Sendable {
+open class HttpClient: @unchecked Sendable {
     let session: URLSession
     /// The timeout interval for HTTP requests.
-    nonisolated(unsafe) public var timeoutIntervalForRequest: TimeInterval = 60.0
+    public var timeoutIntervalForRequest: TimeInterval = 60.0
     
     /// Initializes a new instance of `HttpClient`.
     /// - Parameter session: The URLSession instance to be used for HTTP requests. Defaults to a session with `RedirectPreventer` delegate.
