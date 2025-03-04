@@ -2,7 +2,7 @@
 //  CookieModule.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -29,7 +29,7 @@ public class CookieModule {
         setup.start { context, request in
             let cookies = try? await setup.config.cookieStorage.get()
             if let url = request.urlRequest.url, let cookies = cookies {
-                CookieModule.inject(url: url,
+                await CookieModule.inject(url: url,
                                     cookies: cookies,
                                     inMemoryStorage: setup.config.inMemoryStorage,
                                     request: request)
@@ -44,7 +44,7 @@ public class CookieModule {
                     request.cookies(cookies: allCookies)
                 }
                 if let cookies = try? await setup.config.cookieStorage.get() {
-                    CookieModule.inject(url: url, cookies: cookies, inMemoryStorage: setup.config.inMemoryStorage, request: request)
+                    await CookieModule.inject(url: url, cookies: cookies, inMemoryStorage: setup.config.inMemoryStorage, request: request)
                 }
             }
             return request
@@ -64,7 +64,7 @@ public class CookieModule {
         setup.signOff { request in
             if let url = request.urlRequest.url {
                 if let cookies = try? await setup.config.cookieStorage.get() {
-                    CookieModule.inject(url: url, cookies: cookies,  inMemoryStorage: setup.config.inMemoryStorage, request: request)
+                    await CookieModule.inject(url: url, cookies: cookies,  inMemoryStorage: setup.config.inMemoryStorage, request: request)
                 }
                 try? await setup.config.cookieStorage.delete()
                 setup.config.inMemoryStorage.deleteCookies(url: url)
@@ -82,14 +82,16 @@ public class CookieModule {
     static func inject(url: URL,
                        cookies: [CustomHTTPCookie],
                        inMemoryStorage: InMemoryCookieStorage?,
-                       request: Request) {
+                       request: Request) async {
         
-        inMemoryStorage?.deleteCookies(url: url)
+        await inMemoryStorage?.deleteCookies(url: url)
         
-        cookies.compactMap { $0.toHTTPCookie() }
-            .forEach { inMemoryStorage?.setCookie($0) }
+        let httpCookies = cookies.compactMap { $0.toHTTPCookie() }
+        for cookie in httpCookies {
+            await inMemoryStorage?.setCookie(cookie)
+        }
         
-        if let cookie = inMemoryStorage?.cookies(for: url) {
+        if let cookie = await inMemoryStorage?.cookies(for: url) {
             request.cookies(cookies: cookie)
         }
     }
@@ -110,25 +112,28 @@ public class CookieModule {
         let persistCookies = cookies.filter { cookieConfig.persist.contains($0.name) }
         let otherCookies = cookies.filter { !cookieConfig.persist.contains($0.name) }
         
-        storage?.deleteCookies(url: url)
+        await storage?.deleteCookies(url: url)
         
         if !persistCookies.isEmpty {
             
             // Add existing cookies to cookie storage
-            try? await cookieConfig.cookieStorage.get()?.compactMap { $0.toHTTPCookie() }.forEach {
-                storage?.setCookie($0)
+            if let httpCookies = try? await cookieConfig.cookieStorage.get()?.compactMap({ $0.toHTTPCookie() }) {
+                for cookie in httpCookies {
+                    await storage?.setCookie(cookie)
+                }
             }
             
             // Clear existing cookies from keychain
             try? await cookieConfig.cookieStorage.delete()
             
             // Add new cookies to temp cookie storage
-            persistCookies.forEach {
-                storage?.setCookie($0)
+            for cookie in persistCookies {
+                await storage?.setCookie(cookie)
             }
+                
             
             // Persist only the required cookies to keychain
-            let cookieData = storage?.cookies(for: url)?
+            let cookieData = await storage?.cookies(for: url)?
                 .filter { cookieConfig.persist.contains($0.name) }
                 .compactMap { value in
                     CustomHTTPCookie(from: value)
@@ -140,13 +145,15 @@ public class CookieModule {
         }
         
         // Persist non-persist cookies to cookie storage
-        otherCookies.forEach { storage?.setCookie($0) }
+        for cookie in otherCookies {
+            await storage?.setCookie(cookie)
+        }
     }
 }
 
 
 /// Configuration for managing cookies in the application.
-public class CookieConfig {
+public final class CookieConfig: @unchecked Sendable {
     typealias Cookies = [String]
     
     /// A list of Cookies name that should be persisted to the storage. For cookies that should not be persisted, do not add the cookie name to this list.
@@ -175,19 +182,19 @@ extension Workflow {
 }
 
 /// A storage class for managing in-memory cookies.
-public final class InMemoryCookieStorage: HTTPCookieStorage {
+public actor InMemoryCookieStorage {
     private var cookieStore: [HTTPCookie] = []
     
     /// Adds or updates a cookie in the storage.
     /// - Parameter cookie: The cookie to add or update.
-    public override func setCookie(_ cookie: HTTPCookie) {
+    public func setCookie(_ cookie: HTTPCookie) {
         cookieStore.removeAll { $0.name == cookie.name && $0.domain == cookie.domain && $0.path == cookie.path }
         cookieStore.append(cookie)
     }
     
     /// Deletes a specific cookie from the storage.
     /// - Parameter cookie: The cookie to delete.
-    public override func deleteCookie(_ cookie: HTTPCookie) {
+    public func deleteCookie(_ cookie: HTTPCookie) {
         cookieStore.removeAll { $0 == cookie }
     }
     
@@ -200,13 +207,13 @@ public final class InMemoryCookieStorage: HTTPCookieStorage {
     }
     
     /// Retrieves all cookies currently stored.
-    public override var cookies: [HTTPCookie]? {
+    public var cookies: [HTTPCookie]? {
         return cookieStore
     }
     
     /// Retrieves cookies associated with a specific URL.
     /// - Parameter url: The URL to fetch cookies for.
-    public override func cookies(for url: URL) -> [HTTPCookie]? {
+    public func cookies(for url: URL) -> [HTTPCookie]? {
         return cookieStore.filter {!$0.isExpired && $0.validateURL(url)  }
     }
     
@@ -215,7 +222,7 @@ public final class InMemoryCookieStorage: HTTPCookieStorage {
     ///   - cookies: The cookies to add.
     ///   - url: The URL associated with the cookies (optional).
     ///   - mainDocumentURL: The main document URL (optional).
-    public override func setCookies(_ cookies: [HTTPCookie], for url: URL?, mainDocumentURL: URL?) {
+    public func setCookies(_ cookies: [HTTPCookie], for url: URL?, mainDocumentURL: URL?) {
         for cookie in cookies {
             setCookie(cookie)
         }
