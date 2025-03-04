@@ -26,5 +26,4 @@ class AppleHandler: IdpHandler {
         throw IdpExceptions.unsupportedIdpException(message: "Apple is not implemented yet")
     }
     
-    
 }

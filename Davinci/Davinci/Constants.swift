@@ -78,4 +78,7 @@ public enum Constants {
     public static let statusCode = "statusCode"
     public static let rawResponse = "rawResponse"
     public static let unsatisfiedRequirements = "unsatisfiedRequirements"
+    public static let GOOGLE = "GOOGLE"
+    public static let FACEBOOK = "FACEBOOK"
+    public static let APPLE = "APPLE"
 }

@@ -22,6 +22,13 @@
 		ECA53F952D635CF8002B35D4 /* External_idpTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA53F932D635CF8002B35D4 /* External_idpTests.swift */; };
 		ECA53FD52D63A48A002B35D4 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53FD42D63A48A002B35D4 /* PingDavinci.framework */; };
 		ECA53FD62D63A48A002B35D4 /* PingDavinci.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53FD42D63A48A002B35D4 /* PingDavinci.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECA540082D64EE8B002B35D4 /* AppleRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA540072D64EE84002B35D4 /* AppleRequestHandler.swift */; };
+		ECA5406E2D68A409002B35D4 /* GoogleRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA5406D2D68A401002B35D4 /* GoogleRequestHandler.swift */; };
+		ECA5407B2D68B65E002B35D4 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = ECA5407A2D68B65E002B35D4 /* GoogleSignIn */; };
+		ECA540822D6C815C002B35D4 /* FacebookRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA540812D6C814B002B35D4 /* FacebookRequestHandler.swift */; };
+		ECA540902D6C9044002B35D4 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = ECA5408F2D6C9044002B35D4 /* FacebookCore */; };
+		ECA540922D6C9044002B35D4 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = ECA540912D6C9044002B35D4 /* FacebookLogin */; };
+		ECA540C12D6DE9D7002B35D4 /* NativeHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA540C02D6DE9CD002B35D4 /* NativeHandlerTests.swift */; };
 		ECB7C5C22D54D9100006F1C8 /* IdpCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */; };
 		ECB7C69C2D5A2C1F0006F1C8 /* External_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0815B72D49377500F1AD02 /* External_idp.framework */; };
 		ECBF06492D50ED7A0066A3BD /* BrowserHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06482D50ED750066A3BD /* BrowserHandler.swift */; };
@@ -67,6 +74,10 @@
 		ECA53F8F2D635C53002B35D4 /* PingBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA53F932D635CF8002B35D4 /* External_idpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = External_idpTests.swift; sourceTree = "<group>"; };
 		ECA53FD42D63A48A002B35D4 /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECA540072D64EE84002B35D4 /* AppleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleRequestHandler.swift; sourceTree = "<group>"; };
+		ECA5406D2D68A401002B35D4 /* GoogleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleRequestHandler.swift; sourceTree = "<group>"; };
+		ECA540812D6C814B002B35D4 /* FacebookRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookRequestHandler.swift; sourceTree = "<group>"; };
+		ECA540C02D6DE9CD002B35D4 /* NativeHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeHandlerTests.swift; sourceTree = "<group>"; };
 		ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpCollector.swift; sourceTree = "<group>"; };
 		ECB7C6982D5A2C1F0006F1C8 /* External-idpTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "External-idpTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF06442D50EBF60066A3BD /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -78,8 +89,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECA540922D6C9044002B35D4 /* FacebookLogin in Frameworks */,
 				ECA53F902D635C53002B35D4 /* PingBrowser.framework in Frameworks */,
 				ECA53FD52D63A48A002B35D4 /* PingDavinci.framework in Frameworks */,
+				ECA5407B2D68B65E002B35D4 /* GoogleSignIn in Frameworks */,
+				ECA540902D6C9044002B35D4 /* FacebookCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,6 +144,7 @@
 		ECA53F942D635CF8002B35D4 /* External-idpTests */ = {
 			isa = PBXGroup;
 			children = (
+				ECA540C02D6DE9CD002B35D4 /* NativeHandlerTests.swift */,
 				ECA53F932D635CF8002B35D4 /* External_idpTests.swift */,
 			);
 			path = "External-idpTests";
@@ -139,9 +154,12 @@
 			isa = PBXGroup;
 			children = (
 				EC08161D2D49429500F1AD02 /* AppleHandler.swift */,
+				ECA540072D64EE84002B35D4 /* AppleRequestHandler.swift */,
 				ECBF06482D50ED750066A3BD /* BrowserHandler.swift */,
 				EC0815F02D493FEA00F1AD02 /* FacebookHandler.swift */,
+				ECA540812D6C814B002B35D4 /* FacebookRequestHandler.swift */,
 				EC08161B2D49428C00F1AD02 /* GoogleHandler.swift */,
+				ECA5406D2D68A401002B35D4 /* GoogleRequestHandler.swift */,
 				EC0815E82D4939E400F1AD02 /* IdpHandler.swift */,
 				EC9F9FC32D5E1B1900E2A31D /* IdpRequestHandler.swift */,
 			);
@@ -188,6 +206,9 @@
 			);
 			name = "External-idp";
 			packageProductDependencies = (
+				ECA5407A2D68B65E002B35D4 /* GoogleSignIn */,
+				ECA5408F2D6C9044002B35D4 /* FacebookCore */,
+				ECA540912D6C9044002B35D4 /* FacebookLogin */,
 			);
 			productName = "Extrernal-idp";
 			productReference = EC0815B72D49377500F1AD02 /* External_idp.framework */;
@@ -241,6 +262,10 @@
 			);
 			mainGroup = EC0815AD2D49377500F1AD02;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				ECA540792D68B65E002B35D4 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				ECA5408E2D6C9044002B35D4 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EC0815B82D49377500F1AD02 /* Products */;
 			projectDirPath = "";
@@ -278,11 +303,14 @@
 				EC0815F12D493FF200F1AD02 /* FacebookHandler.swift in Sources */,
 				EC9F9FC42D5E1B2100E2A31D /* IdpRequestHandler.swift in Sources */,
 				ECB7C5C22D54D9100006F1C8 /* IdpCollector.swift in Sources */,
+				ECA540082D64EE8B002B35D4 /* AppleRequestHandler.swift in Sources */,
 				EC0815EF2D493DC900F1AD02 /* IdpExceptions.swift in Sources */,
 				EC9F9FC62D5E1E2C00E2A31D /* IdpClient.swift in Sources */,
 				EC08161E2D49429B00F1AD02 /* AppleHandler.swift in Sources */,
+				ECA540822D6C815C002B35D4 /* FacebookRequestHandler.swift in Sources */,
 				ECBF06492D50ED7A0066A3BD /* BrowserHandler.swift in Sources */,
 				EC08161C2D49429000F1AD02 /* GoogleHandler.swift in Sources */,
+				ECA5406E2D68A409002B35D4 /* GoogleRequestHandler.swift in Sources */,
 				EC0815E92D4939EB00F1AD02 /* IdpHandler.swift in Sources */,
 				EC0815ED2D493A1F00F1AD02 /* IdpResult.swift in Sources */,
 			);
@@ -292,6 +320,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECA540C12D6DE9D7002B35D4 /* NativeHandlerTests.swift in Sources */,
 				ECA53F952D635CF8002B35D4 /* External_idpTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -568,6 +597,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		ECA540792D68B65E002B35D4 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = exactVersion;
+				version = "8.1.0-vwg-eap-1.0.0";
+			};
+		};
+		ECA5408E2D6C9044002B35D4 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
+			requirement = {
+				kind = exactVersion;
+				version = 16.3.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		ECA5407A2D68B65E002B35D4 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ECA540792D68B65E002B35D4 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		ECA5408F2D6C9044002B35D4 /* FacebookCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ECA5408E2D6C9044002B35D4 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookCore;
+		};
+		ECA540912D6C9044002B35D4 /* FacebookLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ECA5408E2D6C9044002B35D4 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookLogin;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EC0815AE2D49377500F1AD02 /* Project object */;
 }

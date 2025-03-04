@@ -14,7 +14,6 @@ import PingOrchestrate
 
 /// A handler class for managing browser-based Identity Provider (IdP) authorization.
 public class BrowserHandler: IdpRequestHandler {
-    public var tokenType: String
     public var continueNode: ContinueNode
     public var callbackURLScheme: String
     
@@ -23,8 +22,7 @@ public class BrowserHandler: IdpRequestHandler {
     ///     - continueNode: The `ContinueNode` to use.
     ///     - tokenType: The token type to use.
     ///     - callbackURLScheme: The callback URL scheme to use.
-    public init(continueNode: ContinueNode, tokenType: String, callbackURLScheme: String) {
-        self.tokenType = tokenType
+    public init(continueNode: ContinueNode, callbackURLScheme: String) {
         self.callbackURLScheme = callbackURLScheme
         self.continueNode = continueNode
     }

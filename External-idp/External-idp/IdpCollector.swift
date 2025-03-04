@@ -22,7 +22,7 @@ import PingDavinci
 public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterceptor {
     
     /// ContinueNode property
-    public var continueNode: PingOrchestrate.ContinueNode?
+    public var continueNode: ContinueNode?
     
     /// The unique identifier for the collector.
     public var id: UUID = UUID()
@@ -41,6 +41,9 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     
     ///  The URL link for IdP authentication.
     public var link: URL?
+    
+    /// The native handler for the IdP request.
+    public var nativeHandler: IdpRequestHandler?
     
     ///  The request to resume the DaVinci flow.
     private var resumeRequest: Request?
@@ -68,28 +71,34 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     /// - Parameter callbackURLScheme: The callback URL scheme.
     public func authorize(callbackURLScheme: String? = nil) async -> Result<Bool, IdpExceptions> {
         do {
-            
             guard let url = link else {
                 return .failure(.illegalArgumentException(message: "Missing link URL"))
             }
-            
-            let urlScheme: String
-            if let customScheme = callbackURLScheme {
-                urlScheme = customScheme
-            } else {
-                guard let urlSchemes = getCustomURLSchemes(), let scheme = urlSchemes.first else {
-                    return .failure(.illegalArgumentException(message: "Missing custom URL schemes"))
-                }
-                urlScheme = scheme
+            let workflow = continueNode?.workflow
+            if let httpClient = workflow?.config.httpClient, let handler = getDefaultIdpHandler(httpClient: httpClient) {
+                nativeHandler = handler
+                return await self.authorize(handler: handler, url: url, callbackURLScheme: callbackURLScheme)
             }
-            
-            
-            let request = try await BrowserHandler(continueNode: continueNode!, tokenType: "code", callbackURLScheme: urlScheme).authorize(url: url)
-            self.resumeRequest = request
-            
-            return .success(true)
-        } catch {
-            return .failure(.idpCanceledException(message: "IDP Cancelled"))
+            else {
+                return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
+            }
+        }
+    }
+    
+    /// Gets the default IdP handler for the Provider. It will either be AppleRequestHandler, GoogleRequestHandler, FacebookRequestHandler
+    /// - Parameters:
+    ///  - httpClient: The HTTP client.
+    ///  - Returns: The IdpRequestHandler.
+    public func getDefaultIdpHandler(httpClient: HttpClient) -> IdpRequestHandler? {
+        switch idpType {
+        case Constants.APPLE:
+            return AppleRequestHandler(httpClient: httpClient)
+        case Constants.GOOGLE:
+            return GoogleRequestHandler(httpClient: httpClient)
+        case Constants.FACEBOOK:
+            return FacebookRequestHandler(httpClient: httpClient)
+        default:
+            return nil
         }
     }
     
@@ -102,7 +111,58 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
         return resumeRequest ?? request
     }
     
+    /// Fallback to the browser handler.
+    /// - Parameters:
+    ///  - callbackURLScheme: The callback URL scheme.
+    ///  - url: The URL for the IdP authentication.
+    /// - Returns: A Result of type Bool or An IdpExceptions error.
+    private func fallbackToBrowserHandler(callbackURLScheme: String? = nil, url: URL) async -> Result<Bool, IdpExceptions> {
+        let urlScheme: String
+        if let customScheme = callbackURLScheme {
+            urlScheme = customScheme
+        } else {
+            guard let urlSchemes = getCustomURLSchemes(), let scheme = urlSchemes.first else {
+                return .failure(.illegalArgumentException(message: "Missing custom URL schemes"))
+            }
+            urlScheme = scheme
+        }
+        do {
+            guard let continueNode = continueNode else {
+                return .failure(.illegalArgumentException(message: "Missing continue node"))
+            }
+            let request = try await BrowserHandler(continueNode: continueNode, callbackURLScheme: urlScheme).authorize(url: url)
+            self.resumeRequest = request
+            return .success(true)
+        } catch {
+            return .failure(.idpCanceledException(message: error.localizedDescription))
+        }
+    }
+    
+    /// Authorizes the IdP
+    ///  - Parameters:
+    ///    - handler: The IdpRequestHandler.
+    ///    - url: The URL for the IdP authentication.
+    ///    - callbackURLScheme: The callback URL scheme.
+    ///  - Returns: A Result of type Bool or An IdpExceptions error.
+    private func authorize(handler: IdpRequestHandler, url: URL, callbackURLScheme: String? = nil) async -> Result<Bool, IdpExceptions> {
+        do {
+            let request = try await handler.authorize(url: url)
+            self.resumeRequest = request
+            return .success(true)
+        } catch let error as IdpExceptions {
+            switch error {
+            case .unsupportedIdpException:
+                return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
+            default:
+                return .failure(error)
+            }
+        } catch {
+            return .failure(.idpCanceledException(message: error.localizedDescription))
+        }
+    }
+    
     /// Gets the CustomURLSchemes for the Xcode project.
+    /// - Returns: An array of custom URL schemes.
     private func getCustomURLSchemes() -> [String]? {
         if let urlTypes = Bundle.main.infoDictionary?["CFBundleURLTypes"] as? [[String: Any]] {
             for urlType in urlTypes {
