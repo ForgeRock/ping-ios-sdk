@@ -2,7 +2,7 @@
 //  NoneLogger.swift
 //  PingLogger
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -13,7 +13,7 @@ import Foundation
 
 /// The NoneLogger class is an implementation of the Logger interface that performs no operations.
 /// This can be used as a default or placeholder logger.
-public class NoneLogger: Logger {
+public class NoneLogger: Logger, @unchecked Sendable {
   /// Logs a debug message.
   /// - Parameter message: The debug message to be logged.
   public func d(_ message: String) {}
