@@ -34,7 +34,7 @@ on:
         required: true
 jobs:
   prepare-device-farm-artifacts:
-    runs-on: macos-14
+    runs-on: macos-15
 
     steps:
       # Clone the repo
@@ -75,10 +75,10 @@ jobs:
       # Set target Xcode version. For more details and options see:
       # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md
       - name: Select Xcode
-        run: sudo xcode-select -switch /Applications/Xcode_15.4.app && /usr/bin/xcodebuild -version
+        run: sudo xcode-select -switch /Applications/Xcode_16.2.app && /usr/bin/xcodebuild -version
 
       - name: build-for-testing and sign
-        run: xcodebuild -scheme PingTestHost -sdk iphoneos17.5 -workspace SampleApps/Ping.xcworkspace -configuration Debug clean build BUILD_DIR=/tmp/build/ DEVELOPMENT_TEAM=9QSE66762D -allowProvisioningUpdates -destination generic/platform=iOS -derivedDataPath /tmp/build/derivedData/ build-for-testing
+        run: xcodebuild -scheme PingTestHost -sdk iphoneos18.2 -workspace SampleApps/Ping.xcworkspace -configuration Debug clean build BUILD_DIR=/tmp/build/ DEVELOPMENT_TEAM=9QSE66762D -allowProvisioningUpdates -destination generic/platform=iOS -derivedDataPath /tmp/build/derivedData/ build-for-testing
 
       # Prepare BitBar artifacts:
       - name: Prepare BitBar artifacts
