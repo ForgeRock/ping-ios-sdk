@@ -2,7 +2,7 @@
 //  KeychainStorage.swift
 //  PingStorage
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,8 +12,8 @@
 import Foundation
 
 /// A storage for storing `Codable` objects in the Keychain
-public class Keychain<T: Codable>: Storage {
-  private var account: String
+public actor Keychain<T: Codable & Sendable>: Storage {
+  private let account: String
   private let service: String = "com.pingidentity.keychainService"
   private let encryptor: Encryptor
   
@@ -94,11 +94,11 @@ public enum KeychainError: LocalizedError {
   public var errorMessage: String {
     switch self {
     case .unableToSave:
-      return "Uanble to save to the keychain"
+      return "Unable to save to the keychain"
     case .unableToRetrieve:
-      return "Uanble to retrieve from the keychain"
+      return "Unable to retrieve from the keychain"
     case .unableToDelete:
-      return "Unable to delete from the kechain"
+      return "Unable to delete from the keychain"
     }
   }
 }
@@ -108,7 +108,7 @@ public enum KeychainError: LocalizedError {
 /// It is designed to store, retrieve, and manage objects of type `T`, where `T` must conform to the `Codable` protocol. This requirement ensures that the objects can be easily encoded and decoded for secure storage in the keychain.
 ///
 /// - Parameter T: The type of the objects to be stored in the keychain. Must conform to `Codable`.
-public class KeychainStorage<T: Codable>: StorageDelegate<T> {
+public class KeychainStorage<T: Codable & Sendable>: StorageDelegate<T>, @unchecked Sendable {
   /// Initializes a new instance of `KeychainStorage`.
   ///
   /// This initializer configures a `KeychainStorage` instance with a specified account and security settings.

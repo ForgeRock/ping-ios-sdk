@@ -30,7 +30,7 @@ class StorageViewModel {
             let keychainStorage = KeychainStorage<String>(account: "token", encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
             try await keychainStorage.save(item: "Jey")
             let storedValue = try await keychainStorage.get()
-            LogManager.standard.i("Kechain Storage value: \(storedValue!)")
+            LogManager.standard.i("Keychain Storage value: \(storedValue!)")
         } catch {
             LogManager.standard.e("", error: error)
         }

@@ -2,7 +2,7 @@
 //  CustomHeader.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -13,8 +13,8 @@ import Foundation
 
 /// Configuration class for CustomHeader.
 /// Allows adding custom headers to be injected into requests.
-public class CustomHeaderConfig {
-    internal var headers = [(String, String)]()
+public class CustomHeaderConfig: @unchecked Sendable  {
+    internal private(set) var headers = [(String, String)]()
     
     /// Adds a custom header to the configuration.
     /// - Parameters:

@@ -2,7 +2,7 @@
 //  WorkflowConfig.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -21,7 +21,7 @@ public enum OverrideMode {
 
 
 /// Workflow configuration
-public class WorkflowConfig {
+public class WorkflowConfig: @unchecked Sendable {
     /// Use a list instead of a map to allow registering a module twice with different configurations
     public private(set) var modules: [any ModuleRegistryProtocol] = []
     /// Timeout for the HTTP client, default is 15 seconds
@@ -45,10 +45,10 @@ public class WorkflowConfig {
     ///   - priority: The priority of the module in the registry. Default is 10.
     ///   - mode: The mode of the module registration. Default is `override`. If the mode is `override`, the module will be overridden if it is already registered.
     ///   - config: The configuration for the module.
-    public func module<T: Any>(_ module: Module<T>,
+    public func module<T: Sendable>(_ module: Module<T>,
                                priority: Int = 10,
                                mode: OverrideMode = .override,
-                               _ config: @escaping (T) -> (Void) = { _ in })  {
+                               _ config: @escaping @Sendable (T) -> (Void) = { _ in })  {
         
         switch mode {
         case .override:
@@ -75,7 +75,7 @@ public class WorkflowConfig {
         }
     }
     
-    private func configValue<T>(initalValue: @escaping () -> (T), nextValue: @escaping (T) -> (Void)) -> T {
+    private func configValue<T>(initalValue: @escaping @Sendable () -> (T), nextValue: @escaping @Sendable (T) -> (Void)) -> T {
         let initConfig = initalValue()
         nextValue(initConfig)
         return initConfig

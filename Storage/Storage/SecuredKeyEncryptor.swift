@@ -2,7 +2,7 @@
 //  SecuredKeyEncryptor.swift
 //  PingStorage
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -14,7 +14,7 @@ import Foundation
 /// A struct that provides encryption and decryption functionalities using `SecuredKey`.
 public struct SecuredKeyEncryptor: Encryptor {
   private let securedKeyTag: String = "com.pingidentity.securedKey.identifier"
-  private var securedKey: SecuredKey
+  private let securedKey: SecuredKey
   
   /// Initializes a new instance of `SecuredKeyEncryptor`.
   ///

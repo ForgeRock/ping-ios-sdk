@@ -2,7 +2,7 @@
 //  Node.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -10,17 +10,17 @@
 
 
 /// Protocol for actions
-public protocol Action {}
+public protocol Action: Sendable {}
 
 
 /// Protocol for closeable resources
-public protocol Closeable {
+public protocol Closeable: Sendable {
   func close()
 }
 
 
 /// Protocol for Node. Represents a node in the workflow.
-public protocol Node {}
+public protocol Node: Sendable {}
 
 
 /// Represents an EmptyNode node in the workflow.
@@ -49,7 +49,7 @@ public struct FailureNode: Node {
 /// - property input: The input for the error.
 /// - property message: The message for the error.
 public struct ErrorNode: Node {
-  public let input: [String: Any]
+  nonisolated(unsafe) public let input: [String: Any]
   public let message: String
   public let status: Int?
   
@@ -72,7 +72,7 @@ public struct ErrorNode: Node {
 /// - property input: The input for the success.
 /// - property session: The session for the success.
 public struct SuccessNode: Node {
-  public let input: [String: Any]
+  nonisolated(unsafe) public let input: [String: Any]
   public let session: Session
   
   /// Initializes a new instance of `SuccessNode`.
@@ -91,7 +91,7 @@ public struct SuccessNode: Node {
 /// - property workflow: The workflow for the node.
 /// - property input: The input for the node.
 /// - property actions: The actions for the node.
-open class ContinueNode: Node, Closeable {
+open class ContinueNode: Node, Closeable, @unchecked Sendable {
   public let context: FlowContext
   public let workflow: Workflow
   public let input: [String: Any]
@@ -130,7 +130,7 @@ open class ContinueNode: Node, Closeable {
 
 
 /// Protocol for a Session. A Session represents a user's session in the application.
-public protocol Session {
+public protocol Session: Sendable {
   /// Returns the value of the session as a String.
   var value: String { get }
 }
