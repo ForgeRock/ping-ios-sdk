@@ -11,7 +11,7 @@
 	<key>GIDServerClientID</key>
 	<string>[Enter Google Server Client ID]</string>
 	<key>FacebookAppID</key>
-	<string>609903515015289</string>
+	<string>[Enter Facebook App ID]</string>
 	<key>FacebookDisplayName</key>
 	<string>PingExample</string>
 	<key>FacebookClientToken</key>

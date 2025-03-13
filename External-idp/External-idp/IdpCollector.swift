@@ -28,7 +28,7 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     public var id: UUID = UUID()
     
     /// Indicates whether the IdP is enabled.
-    var idpEnabled = true
+    public var idpEnabled = true
     
     ///  The IdP identifier.
     var idpId: String
