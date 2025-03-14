@@ -12,7 +12,7 @@
 import Foundation
 
 /// Open class representing a validated collector.
-open class ValidatedCollector: SingleValueCollector {
+open class ValidatedCollector: SingleValueCollector, @unchecked Sendable {
     /// Holds a validation object. Only writable within this class.
     public private(set) var validation: Validation?
     /// Flag indicating whether the field is required. Only writable within this class.

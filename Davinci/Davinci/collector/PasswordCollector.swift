@@ -15,7 +15,7 @@ import PingOrchestrate
 /// Class representing a PASSWORD Type.
 /// This class inherits from the `ValidatedCollector` class and implements the `Closeable` and `Collector` protocols.
 /// It is used to collect password data.
-public class PasswordCollector: ValidatedCollector, ContinueNodeAware, Closeable {
+public class PasswordCollector: ValidatedCollector, ContinueNodeAware, Closeable, @unchecked Sendable {
     /// The continue node for the DaVinci flow.
     public var continueNode: ContinueNode?
     /// Caches the decoded password policy so it’s only decoded once.

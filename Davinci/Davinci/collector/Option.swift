@@ -15,7 +15,7 @@ import Foundation
 /// - Parameters:
 ///   - label: The label of the option.
 ///   - value: The value of the option.
-public struct Option {
+public struct Option: Sendable {
     public let label: String
     public let value: String
     
