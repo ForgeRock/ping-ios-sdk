@@ -15,6 +15,7 @@ import XCTest
 
 
 /// Tests for the BrowserHandler class.
+@MainActor
 final class PingBrowserTests: XCTestCase {
     
     // Hold a reference to the original browser so that we can restore it in tearDown.
@@ -23,8 +24,10 @@ final class PingBrowserTests: XCTestCase {
     var connector: TestContinueNode!
     let continueURL = "https://example.com/continue"
     
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        Task {
+            try await super.setUp()
+        }
         // Save the original BrowserLauncher and replace it with our mock.
         // (Assumes that BrowserLauncher.currentBrowser is mutable and of type BrowserLauncherProtocol.)
         originalBrowser = BrowserLauncher.currentBrowser
@@ -48,13 +51,15 @@ final class PingBrowserTests: XCTestCase {
         ], actions: [])
     }
     
-    override func tearDown() {
+    override func tearDown() async throws {
         // Restore the original BrowserLauncher.
         BrowserLauncher.currentBrowser = originalBrowser
         originalBrowser = nil
         mockBrowser = nil
         connector =  nil
-        super.tearDown()
+        Task {
+            try await super.tearDown()
+        }
     }
     
     func testCurrentBrowser() throws {
@@ -171,7 +176,7 @@ final class PingBrowserTests: XCTestCase {
 }
 
 /// Supporting Test Classes
-class WorkflowMock: Workflow {
+class WorkflowMock: Workflow, @unchecked Sendable {
     var nextReturnValue: Node?
     override func next(_ context: FlowContext, _ current: ContinueNode) async -> Node {
         return NodeMock()
@@ -180,18 +185,22 @@ class WorkflowMock: Workflow {
 
 class FlowContextMock: FlowContext {}
 
-class NodeMock: Node {}
+final class NodeMock: Node {}
 
-class TestContinueNode: ContinueNode {
+class TestContinueNode: ContinueNode, @unchecked Sendable {
     override func asRequest() -> Request {
         return RequestMock(urlString: "https://openam.example.com")
     }
 }
 
-class RequestMock: Request {}
+class RequestMock: Request, @unchecked Sendable {}
 
 /// A mock BrowserLauncher that you can control in tests.
 class MockBrowserLauncher: BrowserLauncherProtocol {
+    func reset() async {
+        self.isInProgress = false
+    }
+    
     var isInProgress: Bool = false
     
     /// A closure that will be called when `launch` is invoked.
