@@ -30,8 +30,7 @@ import PingOidc
         startSDK(): Starts the SDK.
         resetConfiguration(): Resets the configuration for the SDK.
  */
-
-class ConfigurationViewModel: ObservableObject {
+class ConfigurationViewModel: ObservableObject, @unchecked Sendable {
     
     @Published public var clientId: String
     @Published public var scopes: [String]
@@ -64,7 +63,7 @@ class ConfigurationViewModel: ObservableObject {
     }
 }
 
-struct Configuration: Codable {
+struct Configuration: Codable, Sendable {
     var clientId: String
     var scopes: [String]
     var redirectUri: String

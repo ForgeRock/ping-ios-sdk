@@ -41,6 +41,7 @@ public let davinci = DaVinci.createDaVinci { config in
 ///   - Progressing to the next node in the flow
 ///   - Maintaining the current and previous flow state
 ///   - Handling loading states
+@MainActor
 class DavinciViewModel: ObservableObject {
     /// Published property that holds the current state node data.
     @Published public var state: DavinciState = DavinciState()
@@ -119,7 +120,7 @@ class DavinciState {
     }
 }
 
-
+@MainActor
 public class ValidationViewModel: ObservableObject {
     @Published var shouldValidate = false
 }

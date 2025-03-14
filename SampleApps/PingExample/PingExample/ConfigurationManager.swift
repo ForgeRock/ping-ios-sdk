@@ -23,8 +23,7 @@ import PingOidc
        - Provide the default configuration
        - Start the SDK with the current configuration
  */
- 
-class ConfigurationManager: ObservableObject {
+class ConfigurationManager: ObservableObject, @unchecked Sendable {
     static let shared = ConfigurationManager()
     public var currentConfigurationViewModel: ConfigurationViewModel?
     public var currentUser: User?
@@ -79,6 +78,7 @@ class ConfigurationManager: ObservableObject {
 
 //Extensions
 extension ObservableObject {
+    @MainActor
     var topViewController: UIViewController? {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }),
@@ -93,7 +93,7 @@ extension ObservableObject {
 }
 
 extension Binding {
-     func toUnwrapped<T>(defaultValue: T) -> Binding<T> where Value == Optional<T>  {
+    func toUnwrapped<T: Sendable>(defaultValue: T) -> Binding<T> where Value == Optional<T>  {
         Binding<T>(get: { self.wrappedValue ?? defaultValue }, set: { self.wrappedValue = $0 })
     }
 }

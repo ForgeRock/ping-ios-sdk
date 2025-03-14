@@ -12,6 +12,7 @@ import Foundation
 import PingStorage
 import PingLogger
 
+@MainActor
 class StorageViewModel {
     func setupMemoryStorage() async {
         do {

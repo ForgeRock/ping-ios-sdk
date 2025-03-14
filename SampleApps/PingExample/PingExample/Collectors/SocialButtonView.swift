@@ -43,6 +43,7 @@ public struct SocialButtonView: View {
     }
 }
 
+@MainActor
 public class SocialButtonViewModel: ObservableObject {
     @Published public var isComplete: Bool = false
     public let idpCollector: IdpCollector
