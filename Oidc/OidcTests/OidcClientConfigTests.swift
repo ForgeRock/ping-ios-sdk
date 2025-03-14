@@ -2,7 +2,7 @@
 //  OidcClientConfigTests.swift
 //  OidcTests
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -180,7 +180,7 @@ final class OidcClientConfigTests: XCTestCase {
 }
 
 // Mock classes for AgentDelegateProtocol, Agent, HttpClient, etc.
-class MockAgent: Agent {
+class MockAgent: Agent, @unchecked Sendable {
     func config() -> () -> T {
         return {}
     }

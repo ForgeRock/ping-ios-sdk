@@ -2,7 +2,7 @@
 //  OidcClient.swift
 //  PingOidc
 //
-//  Copyright (c) 2024-2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -76,34 +76,33 @@ public class OidcClient {
         }
         
         config.logger.i("Getting access token")
-        if let cached = try? await config.storage.get() {
-            if !cached.isExpired(threshold: config.refreshThreshold) {
-                config.logger.i("Token is not expired. Returning cached token.")
-                return .success(cached)
-            }
-            config.logger.i("Token is expired. Attempting to refresh.")
-            if let cachedefreshToken = cached.refreshToken {
-                do {
-                    let refreshedToken = try await refreshToken(cachedefreshToken)
-                    return .success(refreshedToken)
-                } catch {
-                    config.logger.e("Failed to refresh token. Revoking token and re-authenticating.", error: error)
-                    await revoke(cached)
+        do {
+            if let cached = try await config.storage.get() {
+                if !cached.isExpired(threshold: config.refreshThreshold) {
+                    config.logger.i("Token is not expired. Returning cached token.")
+                    return .success(cached)
+                }
+                config.logger.i("Token is expired. Attempting to refresh.")
+                if let cachedefreshToken = cached.refreshToken {
+                    do {
+                        let refreshedToken = try await refreshToken(cachedefreshToken)
+                        return .success(refreshedToken)
+                    } catch {
+                        config.logger.e("Failed to refresh token. Revoking token and re-authenticating.", error: error)
+                        await revoke(cached)
+                    }
                 }
             }
-        }
-        
-        // Authenticate the user
-        do {
-            let code = try await config.agent?.authenticate()
-            if let unWrappedcode = code {
-                let token = try await exchangeToken(unWrappedcode)
-                try await config.storage.save(item: token)
-                return .success(token)
-            } else {
-                return .failure(OidcError.authorizeError(message: "Authorization code not found"))
+            
+            // Authenticate the user
+            guard let agent = config.agent else {
+                return .failure(OidcError.authorizeError(message: "Agent not configured"))
             }
             
+            let code = try await agent.authenticate()
+            let token = try await exchangeToken(code)  
+            try await config.storage.save(item: token)
+            return .success(token)
         } catch {
             return .failure((error as? OidcError) ?? (OidcError.authorizeError(cause: error)))
         }
@@ -196,6 +195,7 @@ public class OidcClient {
     /// Ends the session. Best effort to end the session.
     /// The stored token is removed regardless of the result.
     /// - Returns:  A boolean indicating whether the session was ended successfully.
+    @discardableResult
     public func endSession() async -> Bool {
         return await endSession { idToken in
             return try await self.config.agent?.endSession(idToken: idToken) ?? false
@@ -205,10 +205,11 @@ public class OidcClient {
     /// Ends the session with a custom sign-off procedure.
     /// - Parameter signOff: A suspend function to perform the sign-off.
     /// - Returns: A boolean indicating whether the session was ended successfully.
+    @discardableResult
     public func endSession(signOff: @escaping (String) async throws -> Bool) async -> Bool {
         do {
             try await config.oidcInitialize()
-            if let accessToken =  try await config.storage.get() {
+            if let accessToken = try await config.storage.get() {
                 await revoke(accessToken)
                 if let idToken = accessToken.idToken {
                     return try await signOff(idToken)
@@ -228,7 +229,8 @@ public class OidcClient {
             try await config.oidcInitialize()
             
             guard let httpClient = config.httpClient else {
-                throw OidcError.networkError(message: "HTTP client not found")            }
+                throw OidcError.networkError(message: "HTTP client not found")
+            }
             
             guard let openId = config.openId else {
                 throw OidcError.unknown(message: "OpenID configuration not found")

@@ -2,7 +2,7 @@
 //  OidcClientConfig.swift
 //  PingOidc
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -15,7 +15,7 @@ import PingLogger
 import PingStorage
 
 /// Configuration class for OIDC client.
-public class OidcClientConfig {
+public class OidcClientConfig: @unchecked Sendable {
     /// OpenID configuration.
     public var openId: OpenIdConfiguration?
     /// Token refresh threshold in seconds.
@@ -71,11 +71,10 @@ public class OidcClientConfig {
     ///   - config: The configuration block for the agent.
     public func updateAgent<T: Any>(_ agent: any Agent<T>, config: (T) -> Void = {_ in }) {
         self.agent = AgentDelegate<T>(agent: agent, agentConfig: agent.config()(), oidcClientConfig: self)
-        
     }
     
     /// Initializes the lazy properties to their default values.
-    public func oidcInitialize() async throws   {
+    public func oidcInitialize() async throws {
         if httpClient == nil {
             httpClient = HttpClient()
         }
@@ -89,7 +88,7 @@ public class OidcClientConfig {
   
     /// Discovers the OpenID configuration from the discovery endpoint.
     /// - Returns: The discovered OpenID configuration.
-    private func discover() async throws -> OpenIdConfiguration?  {
+    private func discover() async throws -> OpenIdConfiguration? {
         guard URL(string: discoveryEndpoint) != nil else {
             logger.e("Invalid Discovery URL", error: nil)
             return nil
