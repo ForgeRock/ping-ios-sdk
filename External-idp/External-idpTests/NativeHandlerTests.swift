@@ -13,9 +13,12 @@ import XCTest
 @testable import External_idp
 @testable import PingOrchestrate
 
+@MainActor
 final class NativeHandlerTests: XCTestCase {
     override func setUpWithError() throws {
-        CollectorFactory.shared.registerDefaultCollectors()
+        Task {
+            await CollectorFactory.shared.registerDefaultCollectors()
+        }
     }
     
     func testidpCollectorParsingFacebook() throws {
