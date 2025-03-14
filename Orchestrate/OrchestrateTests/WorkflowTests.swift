@@ -2,7 +2,7 @@
 //  WorkflowTests.swift
 //  OrchestrateTests
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,7 +12,7 @@
 import XCTest
 @testable import PingOrchestrate
 
-class CustomHeaderConfig {
+class CustomHeaderConfig: @unchecked Sendable {
     var enable = true
     var headerValue = "iOS-SDK"
     var headerName = "header-name"
@@ -296,147 +296,154 @@ class WorkflowTest: XCTestCase {
     }
     
     func testModuleExecution() async {
-        var initializeCnt = 0
-        var startCnt = 0
-        var nextCnt = 0
-        var responseCnt = 0
-        var transformCnt = 0
-        var nodeReceivedCnt = 0
-        var successCnt = 0
-        var success = false
         
+        let testState = TestState()
         let json: [String: Bool] = ["booleanKey": true]
         
         MockURLProtocol.requestHandler = { request in
             return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, Data())
         }
         
-        var workflow = Workflow.createWorkflow { config in
+        // Initialize with a temporary workflow
+        let initialWorkflow = Workflow.createWorkflow { config in
             config.httpClient = HttpClient(session: .shared)
         }
+        let workflowContainer = WorkflowContainer(workflow: initialWorkflow)
         
         let dummy = Module.of({CustomHeaderConfig()}) { module in
             module.initialize  {
-                initializeCnt += 1
+                await testState.incrementInitialize()
             }
             module.start { _, request  in
-                startCnt += 1
+                await testState.incrementStart()
                 return request
             }
             module.next { _,_, request in
-                nextCnt += 1
+                await testState.incrementNext()
                 return request
             }
             module.response {_,_ in
-                responseCnt += 1
-                // Handle response
+                await testState.incrementResponse()
             }
             module.node { _, node in
-                nodeReceivedCnt += 1
+                await testState.incrementNodeReceived()
                 return node
             }
             module.success { _, success1  in
-                successCnt += 1
+                await testState.incrementSuccess()
                 return success1
             }
             module.transform { flowContext,_ in
-                transformCnt += 1
-                if success {
+                await testState.incrementTransform()
+                if await testState.isSuccess() {
                     return SuccessNode(session: EmptySession())
                 } else {
-                    success = true
-                    return TestContinueNode(context: flowContext, workflow: workflow, input: json, actions: [])
+                    await testState.setSuccess(value: true)
+                    return TestContinueNode(context: flowContext, workflow: workflowContainer.workflow, input: json, actions: [])
                 }
             }
         }
         
-        workflow = Workflow.createWorkflow { config in
+        // Create the final workflow and update the container
+        workflowContainer.workflow = Workflow.createWorkflow { config in
             config.httpClient = HttpClient(session: .shared)
             config.module(dummy)
         }
         
-        let node = await workflow.start()
+        let node = await workflowContainer.workflow.start()
         let connector = node as! ContinueNode
-        XCTAssertTrue(workflow === connector.workflow)
+        XCTAssertTrue(workflowContainer.workflow === connector.workflow)
         XCTAssertEqual(json, connector.input as? [String: Bool])
         XCTAssertTrue(connector.actions.isEmpty)
         let isEmpty = connector.context.flowContext.isEmpty
         XCTAssertTrue(isEmpty)
         _ = await connector.next()
-        XCTAssertEqual(1, initializeCnt)
-        XCTAssertEqual(1, startCnt)
-        XCTAssertEqual(1, nextCnt)
-        XCTAssertEqual(2, responseCnt)
-        XCTAssertEqual(2, transformCnt)
-        XCTAssertEqual(2, nodeReceivedCnt)
-        XCTAssertEqual(1, successCnt)
+        
+        // Get the final values from the actor for assertions
+        let initializeCount = await testState.initializeCnt
+        let startCount = await testState.startCnt
+        let nextCount = await testState.nextCnt
+        let responseCount = await testState.responseCnt
+        let transformCount = await testState.transformCnt
+        let nodeReceivedCount = await testState.nodeReceivedCnt
+        let successCount = await testState.successCnt
+        
+        XCTAssertEqual(1, initializeCount)
+        XCTAssertEqual(1, startCount)
+        XCTAssertEqual(1, nextCount)
+        XCTAssertEqual(2, responseCount)
+        XCTAssertEqual(2, transformCount)
+        XCTAssertEqual(2, nodeReceivedCount)
+        XCTAssertEqual(1, successCount)
     }
     
     func testAccessToWorkflowContext() async {
-        let json: [String: Any] = ["booleanKey": true]
-        var success = false
+        let json: [String: Bool] = ["booleanKey": true]
+        let testState = TestState()
         
         MockURLProtocol.requestHandler = { request in
             return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, Data())
         }
         
-        var workflow = Workflow.createWorkflow { config in
+        // Initialize with a temporary workflow
+        let initialWorkflow = Workflow.createWorkflow { config in
             config.httpClient = HttpClient(session: .shared)
         }
+        let workflowContainer = WorkflowContainer(workflow: initialWorkflow)
         
         let dummy = Module.of({CustomHeaderConfig()}) { module in
             module.initialize  {
-                let count = (workflow.sharedContext.get(key: "count") as! Int) + 1
-                workflow.sharedContext.set(key: "count", value: count)
+                let count = (workflowContainer.workflow.sharedContext.get(key: "count") as! Int) + 1
+                workflowContainer.workflow.sharedContext.set(key: "count", value: count)
             }
             module.start { _, request  in
-                let count = (workflow.sharedContext.get(key: "count")as! Int) + 1
-                workflow.sharedContext.set(key: "count", value: count)
+                let count = (workflowContainer.workflow.sharedContext.get(key: "count")as! Int) + 1
+                workflowContainer.workflow.sharedContext.set(key: "count", value: count)
                 return request
             }
             module.next { _,_, request in
-                let count = (workflow.sharedContext.get(key: "count")as! Int) + 1
-                workflow.sharedContext.set(key: "count", value: count)
+                let count = (workflowContainer.workflow.sharedContext.get(key: "count")as! Int) + 1
+                workflowContainer.workflow.sharedContext.set(key: "count", value: count)
                 return request
             }
             module.response {_,_ in
-                let count = (workflow.sharedContext.get(key: "count")as! Int) + 1
-                workflow.sharedContext.set(key: "count", value: count)
+                let count = (workflowContainer.workflow.sharedContext.get(key: "count")as! Int) + 1
+                workflowContainer.workflow.sharedContext.set(key: "count", value: count)
                 // Handle response
             }
             module.node { _, node in
-                let count = (workflow.sharedContext.get(key: "count")as! Int) + 1
-                workflow.sharedContext.set(key: "count", value: count)
+                let count = (workflowContainer.workflow.sharedContext.get(key: "count")as! Int) + 1
+                workflowContainer.workflow.sharedContext.set(key: "count", value: count)
                 return node
             }
             module.success { _, success1  in
-                let count = (workflow.sharedContext.get(key: "count")as! Int) + 1
-                workflow.sharedContext.set(key: "count", value: count)
+                let count = (workflowContainer.workflow.sharedContext.get(key: "count")as! Int) + 1
+                workflowContainer.workflow.sharedContext.set(key: "count", value: count)
                 return success1
             }
             module.transform { flowContext,_ in
-                let count = (workflow.sharedContext.get(key: "count")as! Int) + 1
-                workflow.sharedContext.set(key: "count", value: count)
-                if success {
+                let count = (workflowContainer.workflow.sharedContext.get(key: "count")as! Int) + 1
+                workflowContainer.workflow.sharedContext.set(key: "count", value: count)
+                if await testState.isSuccess() {
                     return SuccessNode(session: EmptySession())
                 } else {
-                    success = true
-                    return TestContinueNode(context: flowContext, workflow: workflow, input: json, actions: [])
+                    await testState.setSuccess(value: true)
+                    return TestContinueNode(context: flowContext, workflow: workflowContainer.workflow, input: json, actions: [])
                 }
             }
         }
         
-        workflow = Workflow.createWorkflow { config in
+        workflowContainer.workflow = Workflow.createWorkflow { config in
             config.httpClient = HttpClient(session: .shared)
             config.module(dummy)
         }
         
-        workflow.sharedContext.set(key: "count", value: 0)
+        workflowContainer.workflow.sharedContext.set(key: "count", value: 0)
         
-        let node = await workflow.start()
+        let node = await workflowContainer.workflow.start()
         _ = await (node as! ContinueNode).next()
         
-        let count = (workflow.sharedContext.get(key: "count")as! Int)
+        let count = (workflowContainer.workflow.sharedContext.get(key: "count")as! Int)
         XCTAssertEqual(10, count)
     }
     
@@ -517,9 +524,11 @@ class WorkflowTest: XCTestCase {
         MockURLProtocol.requestHandler = { request in
             return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, Data())
         }
-        var workflow = Workflow.createWorkflow { config in
+        // Initialize with a temporary workflow
+        let initialWorkflow = Workflow.createWorkflow { config in
             config.httpClient = HttpClient(session: .shared)
         }
+        let workflowContainer = WorkflowContainer(workflow: initialWorkflow)
         
         let nextFailed = Module.of({CustomHeaderConfig()}) { module in
             module.next { _,_, _ in
@@ -527,16 +536,16 @@ class WorkflowTest: XCTestCase {
             }
             
             module.transform { flowContext,_ in
-              TestContinueNode(context: flowContext, workflow: workflow, input: json, actions: [])
+                TestContinueNode(context: flowContext, workflow: workflowContainer.workflow, input: json, actions: [])
             }
         }
         
-        workflow = Workflow.createWorkflow { config in
+        workflowContainer.workflow = Workflow.createWorkflow { config in
             config.httpClient = HttpClient(session: .shared)
             config.module(nextFailed)
         }
         
-        let node = await workflow.start()
+        let node = await workflowContainer.workflow.start()
         let next = await (node as? ContinueNode)?.next()
         XCTAssertTrue(next is FailureNode)
         XCTAssertEqual((next as! FailureNode).cause.localizedDescription, "Failed to initialize")
@@ -547,9 +556,11 @@ class WorkflowTest: XCTestCase {
         MockURLProtocol.requestHandler = { request in
             return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, Data())
         }
-        var workflow = Workflow.createWorkflow { config in
+        // Initialize with a temporary workflow
+        let initialWorkflow = Workflow.createWorkflow { config in
             config.httpClient = HttpClient(session: .shared)
         }
+        let workflowContainer = WorkflowContainer(workflow: initialWorkflow)
         
         let nodeFailed = Module.of({CustomHeaderConfig()}) { module in
             module.node { _, _ in
@@ -557,16 +568,16 @@ class WorkflowTest: XCTestCase {
             }
             
             module.transform { flowContext,_ in
-              TestContinueNode(context: flowContext, workflow: workflow, input: json, actions: [])
+                TestContinueNode(context: flowContext, workflow: workflowContainer.workflow, input: json, actions: [])
             }
         }
         
-        workflow = Workflow.createWorkflow { config in
+        workflowContainer.workflow = Workflow.createWorkflow { config in
             config.httpClient = HttpClient(session: .shared)
             config.module(nodeFailed)
         }
         
-        let node = await workflow.start()
+        let node = await workflowContainer.workflow.start()
         XCTAssertTrue(node is FailureNode)
         XCTAssertEqual((node as! FailureNode).cause.localizedDescription, "Failed to initialize")
     }
@@ -662,5 +673,62 @@ class WorkflowTest: XCTestCase {
         default:
             XCTFail("Expected failure result")
         }
+    }
+}
+
+// Create a thread-safe container for the counters and success
+actor TestState {
+    var initializeCnt = 0
+    var startCnt = 0
+    var nextCnt = 0
+    var responseCnt = 0
+    var transformCnt = 0
+    var nodeReceivedCnt = 0
+    var successCnt = 0
+    var success = false
+    
+    func incrementInitialize() {
+        initializeCnt += 1
+    }
+    
+    func incrementStart() {
+        startCnt += 1
+    }
+    
+    func incrementNext() {
+        nextCnt += 1
+    }
+    
+    func incrementResponse() {
+        responseCnt += 1
+    }
+    
+    func incrementTransform() {
+        transformCnt += 1
+    }
+    
+    func incrementNodeReceived() {
+        nodeReceivedCnt += 1
+    }
+    
+    func incrementSuccess() {
+        successCnt += 1
+    }
+    
+    func isSuccess() -> Bool {
+        return success
+    }
+    
+    func setSuccess(value: Bool) {
+        success = value
+    }
+}
+
+// Create a container class to hold workflow reference
+final class WorkflowContainer: @unchecked Sendable {
+    var workflow: Workflow
+    
+    init(workflow: Workflow) {
+        self.workflow = workflow
     }
 }
