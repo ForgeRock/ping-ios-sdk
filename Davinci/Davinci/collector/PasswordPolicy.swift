@@ -13,7 +13,7 @@ import Foundation
 
 /// A struct representing a password policy
 /// Conforms to `Codable` for JSON encoding/decoding.
-public struct PasswordPolicy: Codable {
+public struct PasswordPolicy: Codable, Sendable {
     /// A name identifying this password policy.
     public let name: String
     /// A human-readable description of the policy.
@@ -83,7 +83,7 @@ public struct PasswordPolicy: Codable {
 
 /// A struct representing the password policy history.
 /// Conforms to `Codable` for JSON encoding/decoding.
-public struct History: Codable {
+public struct History: Codable, Sendable {
     /// The number of recent passwords to keep in history to disallow reuse.
     public let count: Int
     /// The retention period (in days) for password history entries.
@@ -104,7 +104,7 @@ public struct History: Codable {
 
 /// A struct representing the password policy lockout rules.
 /// Conforms to `Codable` for JSON encoding/decoding.
-public struct Lockout: Codable {
+public struct Lockout: Codable, Sendable {
     /// The number of failed login attempts that trigger a lockout.
     public let failureCount: Int
     /// The lockout duration in seconds once the failure threshold is reached.
@@ -125,7 +125,7 @@ public struct Lockout: Codable {
 
 /// A struct representing the min/max length constraints.
 /// Conforms to `Codable` for JSON encoding/decoding.
-public struct Length: Codable {
+public struct Length: Codable, Sendable {
     /// The minimum required length for a password.
     public let min: Int
     /// The maximum allowed length for a password.

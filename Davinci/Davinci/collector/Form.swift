@@ -13,18 +13,18 @@ import Foundation
 
 /// Class that handles the parsing and JSON representation of collectors.
 /// This class provides functions to parse a JSON object into a list of collectors and to represent a list of collectors as a JSON object.
-class Form {
+struct Form {
     /// Parses a JSON object into a list of collectors.
     ///  This function takes a JSON object and extracts the "form" field. It then iterates over the "fields" array in the "components" object,
     ///  parsing each field into a collector and adding it to a list.
     ///  - Parameter json :The JSON object to parse.
     ///  - Returns:  A list of collectors parsed from the JSON object.
-    static func parse(json: [String: Any]) -> Collectors {
+    static func parse(json: [String: Any]) async -> Collectors {
         var collectors = Collectors()
         if let form = json[Constants.form] as? [String: Any],
            let components = form[Constants.components] as? [String: Any],
-           let fields = components[Constants.fields] as? [[String: Any]] {
-            collectors = CollectorFactory.shared.collector(from: fields)
+           let fields = components[Constants.fields] as? [[String: any Sendable]] {
+            collectors = await CollectorFactory.shared.collector(from: fields)
         }
         
         // Populate default values for collectors

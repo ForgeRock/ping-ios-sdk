@@ -16,7 +16,7 @@ import Foundation
 /// - property key: The key of the field collector.
 /// - property label: The label of the field collector.
 /// - property id The UUID of the field collector.
-open class FieldCollector: Collector {
+open class FieldCollector: Collector, @unchecked Sendable {
     public private(set) var type: String = ""
     public private(set) var key: String = ""
     public private(set) var label: String = ""

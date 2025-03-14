@@ -17,18 +17,18 @@ final class CollectorRegistryTests: XCTestCase {
     
     private var collectorFactory: CollectorFactory!
     
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         collectorFactory = CollectorFactory()
-        collectorFactory.registerDefaultCollectors()
+        await collectorFactory.registerDefaultCollectors()
     }
     
-    override func tearDown() {
-        super.tearDown()
-        collectorFactory.reset()
+    override func tearDown() async throws {
+        try await super.tearDown()
+        await collectorFactory.reset()
     }
     
-    func testShouldRegisterCollector() {
+    func testShouldRegisterCollector() async {
         let jsonArray: [[String: Any]] = [
             ["type": "TEXT"],
             ["type": "PASSWORD"],
@@ -43,7 +43,7 @@ final class CollectorRegistryTests: XCTestCase {
             ["inputType": "MULTI_SELECT"],
         ]
         
-        let collectors = collectorFactory.collector(from: jsonArray)
+        let collectors = await collectorFactory.collector(from: jsonArray)
         XCTAssertTrue(collectors[0] is TextCollector)
         XCTAssertTrue(collectors[1] is PasswordCollector)
         XCTAssertTrue(collectors[2] is SubmitCollector)
@@ -57,7 +57,7 @@ final class CollectorRegistryTests: XCTestCase {
         XCTAssertTrue(collectors[10] is MultiSelectCollector)
     }
     
-    func testShouldIgnoreUnknownCollector() {
+    func testShouldIgnoreUnknownCollector() async  {
         let jsonArray: [[String: Any]] = [
             ["type": "TEXT"],
             ["type": "PASSWORD"],
@@ -66,7 +66,7 @@ final class CollectorRegistryTests: XCTestCase {
             ["type": "UNKNOWN"]
         ]
         
-        let collectors = collectorFactory.collector(from: jsonArray)
+        let collectors = await collectorFactory.collector(from: jsonArray)
         XCTAssertEqual(collectors.count, 4)
     }
 }

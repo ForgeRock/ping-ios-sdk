@@ -13,7 +13,7 @@ import Foundation
 
 /// A class representing a DROPDOWN or RADIO type with SINGLE_SELECT inputType.
 /// Inherits from `ValidatedCollector` and is used to collect multiple values from a list of options.
-public class SingleSelectCollector: ValidatedCollector {
+public class SingleSelectCollector: ValidatedCollector, @unchecked Sendable {
     /// Holds a list of `Option` objects. The setter is private, so it can only be assigned within this class.
     public private(set) var options: [Option] = []
 
