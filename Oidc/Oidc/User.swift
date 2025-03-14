@@ -2,7 +2,7 @@
 //  User.swift
 //  PingOidc
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,7 +11,7 @@
 
 /// Protocol for a User.
 /// Provides methods for token management, user information retrieval, and logout.
-public protocol User {
+public protocol User: Sendable {
     /// Retrieves the token for the user.
     /// - Returns: A `Result` object containing either the `Token` or an `OidcError`.
     func token() async -> Result<Token, OidcError>
@@ -30,4 +30,4 @@ public protocol User {
 
 
 /// A type alias representing user information as a dictionary.
-public typealias UserInfo = [String: Any]
+public typealias UserInfo = [String: Sendable]
