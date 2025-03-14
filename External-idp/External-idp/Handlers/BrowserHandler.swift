@@ -13,6 +13,7 @@ import PingBrowser
 import PingOrchestrate
 
 /// A handler class for managing browser-based Identity Provider (IdP) authorization.
+@MainActor
 public class BrowserHandler: IdpRequestHandler {
     public var continueNode: ContinueNode
     public var callbackURLScheme: String

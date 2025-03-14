@@ -13,14 +13,17 @@ import XCTest
 @testable import External_idp
 @testable import PingOrchestrate
 
+@MainActor
 final class External_idpTests: XCTestCase {
 
     override func setUpWithError() throws {
-        CollectorFactory.shared.registerDefaultCollectors()
+        Task {
+            await CollectorFactory.shared.registerDefaultCollectors()
+        }
     }
     
-    func testidpCollectorRegistration() throws {
-        let idpCollector = CollectorFactory.shared.collectors[Constants.SOCIAL_LOGIN_BUTTON]
+    func testidpCollectorRegistration() async throws {
+        let idpCollector = await CollectorFactory.shared.collectors[Constants.SOCIAL_LOGIN_BUTTON]
         XCTAssertNotNil(idpCollector)
     }
 
@@ -57,7 +60,7 @@ final class External_idpTests: XCTestCase {
         
         let connector = TestContinueNode(context: mockContext, workflow: mockWorkflow, input: [:], actions: [])
         
-        let browserHandler = BrowserHandler(continueNode: connector, callbackURLScheme: "myApp")
+        let browserHandler =  BrowserHandler(continueNode: connector, callbackURLScheme: "myApp")
         XCTAssertNotNil(browserHandler)
         XCTAssertEqual(browserHandler.callbackURLScheme, "myApp")
     }
@@ -83,7 +86,7 @@ final class External_idpTests: XCTestCase {
 }
 
 // Supporting Test Classes
-class WorkflowMock: Workflow {
+class WorkflowMock: Workflow, @unchecked Sendable {
     var nextReturnValue: Node?
   override func next(_ context: FlowContext, _ current: ContinueNode) async -> Node {
         return NodeMock()
@@ -92,12 +95,12 @@ class WorkflowMock: Workflow {
 
 class FlowContextMock: FlowContext {}
 
-class NodeMock: Node {}
+class NodeMock: Node, @unchecked Sendable {}
 
-class TestContinueNode: ContinueNode {
+class TestContinueNode: ContinueNode, @unchecked Sendable {
     override func asRequest() -> Request {
         return RequestMock(urlString: "https://openam.example.com")
     }
 }
 
-class RequestMock: Request {}
+class RequestMock: Request, @unchecked Sendable {}

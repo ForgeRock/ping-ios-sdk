@@ -19,7 +19,7 @@ import PingDavinci
 /// - property label: The label for the IdP.
 /// - property link: The URL link for IdP authentication.
 @objc
-public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterceptor {
+public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterceptor, @unchecked Sendable {
     
     /// ContinueNode property
     public var continueNode: ContinueNode?
@@ -64,7 +64,9 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     /// Registers the IdpCollector with the collector factory
     @objc
     public static func registerCollector() {
-        CollectorFactory.shared.register(type: Constants.SOCIAL_LOGIN_BUTTON, collector: IdpCollector.self)
+        Task {
+            await CollectorFactory.shared.register(type: Constants.SOCIAL_LOGIN_BUTTON, collector: IdpCollector.self)
+        }
     }
     
     /// Authorizes the IdP.
@@ -75,7 +77,7 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
                 return .failure(.illegalArgumentException(message: "Missing link URL"))
             }
             let workflow = continueNode?.workflow
-            if let httpClient = workflow?.config.httpClient, let handler = getDefaultIdpHandler(httpClient: httpClient) {
+            if let httpClient = workflow?.config.httpClient, let handler = await getDefaultIdpHandler(httpClient: httpClient) {
                 nativeHandler = handler
                 return await self.authorize(handler: handler, url: url, callbackURLScheme: callbackURLScheme)
             }
@@ -89,7 +91,7 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     /// - Parameters:
     ///  - httpClient: The HTTP client.
     ///  - Returns: The IdpRequestHandler.
-    public func getDefaultIdpHandler(httpClient: HttpClient) -> IdpRequestHandler? {
+    @MainActor public func getDefaultIdpHandler(httpClient: HttpClient) -> IdpRequestHandler? {
         switch idpType {
         case Constants.APPLE:
             return AppleRequestHandler(httpClient: httpClient)
