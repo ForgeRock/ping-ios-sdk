@@ -18,6 +18,8 @@ import PingDavinci
 /// - property idpType: The type of IdP.
 /// - property label: The label for the IdP.
 /// - property link: The URL link for IdP authentication.
+/// - property nativeHandler: The native handler for the IdP request.
+/// - property resumeRequest: The request to resume the DaVinci flow.
 @objc
 public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterceptor {
     
@@ -46,7 +48,7 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     public var nativeHandler: IdpRequestHandler?
     
     ///  The request to resume the DaVinci flow.
-    private var resumeRequest: Request?
+    public var resumeRequest: Request?
     
     /// Initializes the `IdpCollector` with the given JSON input.
     public required init(with json: [String : Any]) {

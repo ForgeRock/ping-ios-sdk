@@ -94,6 +94,14 @@ class DavinciViewModel: ObservableObject {
     public func shouldValidate(node: ContinueNode) -> Bool {
         var shouldValidate = false
         for collector in node.collectors {
+            // Check if the collector is a social collector and if it has a resume request.
+            // In that case, we should not validate the collectors and continue with the submition of the flow.
+            if let socialCollector = collector as? IdpCollector {
+                if socialCollector.resumeRequest != nil {
+                    shouldValidate = false
+                    return shouldValidate
+                }
+            }
             if let collector = collector as? ValidatedCollector {
                 if collector.validate().count > 0 {
                     shouldValidate = true
