@@ -32,7 +32,7 @@ class FormFieldValidationTest: XCTestCase {
         }
     }
     
-    // TestRailCase(26028, 26030)
+    // TestRailCase(26028, 26030, 26031)
     func testTextFieldValidation() async throws {
         // Go to the "Form Fields Validation" form
         var node = await daVinci.start() as! ContinueNode
@@ -45,9 +45,13 @@ class FormFieldValidationTest: XCTestCase {
         
         XCTAssertEqual("Username", username.label)
         XCTAssertEqual("user.username", username.key)
+        XCTAssertEqual("default username", username.value)
         XCTAssertEqual(true, username.required)
         XCTAssertEqual("^[a-zA-Z0-9]+$", username.validation?.regex?.pattern)
         XCTAssertEqual("Must be alphanumeric", username.validation?.errorMessage)
+        
+        // Change the value of the username field to empty
+        username.value = ""
         
         // Validate should return list with 2 validation errors since the value is empty
         // and does not match the configured regex
@@ -66,9 +70,13 @@ class FormFieldValidationTest: XCTestCase {
         
         XCTAssertEqual("Email Address", email.label)
         XCTAssertEqual("user.email", email.key)
+        XCTAssertEqual("default email", email.value)
         XCTAssertEqual(true, email.required)
         XCTAssertEqual("^[^@]+@[^@]+\\.[^@]+$", email.validation?.regex?.pattern)
         XCTAssertEqual("Not a valid email", email.validation?.errorMessage)
+        
+        // Change the value of the email field to empty
+        email.value = ""
         
         // Validate should return list with 2 validation errors since the value is empty
         // and does not match the configured regex
@@ -87,7 +95,7 @@ class FormFieldValidationTest: XCTestCase {
         XCTAssertTrue(emailValidationResult.isEmpty)
     }
     
-    // TestRailCase(26034)
+    // TestRailCase(26034, 26031)
     func testPasswordValidation() async throws {
         // Go to the "Form Fields Validation" form
         var node = await daVinci.start() as! ContinueNode
@@ -118,7 +126,11 @@ class FormFieldValidationTest: XCTestCase {
         XCTAssertEqual("PASSWORD_VERIFY", password.type)
         XCTAssertEqual("Password", password.label)
         XCTAssertEqual("user.password", password.key)
+        XCTAssertEqual("default password", password.value)
         XCTAssertEqual(true, password.required)
+        
+        // Clear the password field
+        password.value = ""
         
         // Validate should return list of all the faling password policy items
         var passwordValidationResult = password.validate()
@@ -145,5 +157,16 @@ class FormFieldValidationTest: XCTestCase {
         passwordValidationResult = password.validate()
         
         XCTAssertTrue(passwordValidationResult.isEmpty)
+    }
+    
+    // TestRailCase(27507)
+    func testErrorNode() async throws {
+        // Go to the "Error Node" form
+        let node = await daVinci.start() as! ContinueNode
+        (node.collectors[2] as? FlowCollector)?.value = "click"
+        let errorNode = await node.next() as! ErrorNode
+        
+        XCTAssertEqual("400", String(describing: errorNode.input["code"]!))
+        XCTAssertEqual("Error message from error node", errorNode.message)
     }
 }
