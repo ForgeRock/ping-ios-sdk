@@ -197,7 +197,7 @@ class RequestMock: Request, @unchecked Sendable {}
 
 /// A mock BrowserLauncher that you can control in tests.
 class MockBrowserLauncher: BrowserLauncherProtocol {
-    func reset() async {
+    func reset() {
         self.isInProgress = false
     }
     

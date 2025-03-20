@@ -60,7 +60,7 @@ final class External_idpTests: XCTestCase {
         
         let connector = TestContinueNode(context: mockContext, workflow: mockWorkflow, input: [:], actions: [])
         
-        let browserHandler =  BrowserHandler(continueNode: connector, callbackURLScheme: "myApp")
+        let browserHandler = BrowserHandler(continueNode: connector, callbackURLScheme: "myApp")
         XCTAssertNotNil(browserHandler)
         XCTAssertEqual(browserHandler.callbackURLScheme, "myApp")
     }

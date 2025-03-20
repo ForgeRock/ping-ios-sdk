@@ -66,6 +66,7 @@ class GoogleRequestHandler: IdpRequestHandler {
                 GIDSignIn.sharedInstance.signIn(withPresenting: topVC, hint: nil, additionalScopes: idpClient.scopes, nonce: idpClient.nonce) { result, error in
                     if let error = error {
                         continuation.resume(throwing: error)
+                        return
                     }
                     guard let result = result else {
                         continuation.resume(throwing: IdpExceptions.illegalStateException(message: "Result is nil"))

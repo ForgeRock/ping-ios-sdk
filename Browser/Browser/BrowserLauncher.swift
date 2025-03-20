@@ -43,7 +43,7 @@ public enum BrowserMode: Sendable {
 public protocol BrowserLauncherProtocol: Sendable {
     var isInProgress: Bool { get }
     func launch(url: URL, browserType: BrowserType, callbackURLScheme: String) async throws -> URL
-    func reset() async
+    func reset()
 }
 
 /// BrowserLauncher class to launch external user-agent for web requests
@@ -81,7 +81,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     // MARK: Public Methods
     
     /// Resets the browser state
-    public func reset() async {
+    public func reset() {
         // Reset the browser
         self.isInProgress = false
         self.currentSession = nil
@@ -121,7 +121,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
         switch browserType {
         case .nativeBrowserApp:
             guard await UIApplication.shared.open(url) else {
-                await reset()
+                reset()
                 throw BrowserError.externalUserAgentFailure
             }
             logger.i("BrowserLauncher: Native Browser launched successfully")
