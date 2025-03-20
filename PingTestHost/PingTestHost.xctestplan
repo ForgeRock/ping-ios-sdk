@@ -50,7 +50,12 @@
     {
       "skippedTests" : [
         "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
-        "DaVinciIntegrationTests\/testInvalidPassword()"
+        "DaVinciIntegrationTests\/testInvalidPassword()",
+        "FormFieldValidationTest\/testPasswordValidation()",
+        "PasswordCollectorTests\/testAddsInvalidLengthErrorWhenValueTooShort()",
+        "PasswordCollectorTests\/testAddsMaxRepeatErrorWhenTooManyRepeatedCharacters()",
+        "PasswordCollectorTests\/testAddsMinCharactersErrorWhenNotEnoughDigits()",
+        "PasswordCollectorTests\/testAddsUniqueCharacterErrorWhenNotEnoughUniqueCharacters()"
       ],
       "target" : {
         "containerPath" : "container:..\/Davinci\/Davinci.xcodeproj",

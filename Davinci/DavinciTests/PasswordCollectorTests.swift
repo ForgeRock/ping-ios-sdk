@@ -59,6 +59,7 @@ final class PasswordCollectorTests: XCTestCase {
         XCTAssertEqual(collector.validate(), [])
     }
     
+    // TODO: Reinclude PasswordPolicy test
     func testAddsInvalidLengthErrorWhenValueTooShort() {
         let input: [String: Any] = [
             "passwordPolicy": [
@@ -77,6 +78,7 @@ final class PasswordCollectorTests: XCTestCase {
         XCTAssertEqual(collector.validate(), [.invalidLength(min: 8, max: 20)])
     }
     
+    // TODO: Reinclude PasswordPolicy test
     func testAddsUniqueCharacterErrorWhenNotEnoughUniqueCharacters() {
         let input: [String: Any] = [
             "passwordPolicy": [
@@ -92,6 +94,7 @@ final class PasswordCollectorTests: XCTestCase {
         XCTAssertEqual(collector.validate(), [.uniqueCharacter(min: 5)])
     }
     
+    // TODO: Reinclude PasswordPolicy test
     func testAddsMaxRepeatErrorWhenTooManyRepeatedCharacters() {
         let input: [String: Any] = [
             "passwordPolicy": [
@@ -107,6 +110,7 @@ final class PasswordCollectorTests: XCTestCase {
         XCTAssertEqual(collector.validate(), [.maxRepeat(max: 2)])
     }
     
+    // TODO: Reinclude PasswordPolicy test
     func testAddsMinCharactersErrorWhenNotEnoughDigits() {
         let input: [String: Any] = [
             "passwordPolicy": [

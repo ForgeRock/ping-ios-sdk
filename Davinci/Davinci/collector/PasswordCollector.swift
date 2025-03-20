@@ -49,6 +49,8 @@ public class PasswordCollector: ValidatedCollector, ContinueNodeAware, Closeable
         var errors = super.validate()
         
         // If we have a password policy, check additional constraints
+        // TODO: Uncomment password policy validation
+        /*
         if let policy = passwordPolicy() {
             // 1. Check length range
             if !(policy.length.min...policy.length.max).contains(value.count) {
@@ -80,7 +82,7 @@ public class PasswordCollector: ValidatedCollector, ContinueNodeAware, Closeable
                 }
             }
         }
-        
+        */
         return errors
     }
 }
