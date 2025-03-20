@@ -50,7 +50,7 @@ class FormFieldsTests: XCTestCase {
         XCTAssertEqual("Translatable Rich Text produce LABELs too!\n\n", labelCollector2.content)
     }
     
-    // TestRailCase(26032)
+    // TestRailCase(26032, 26031)
     func testTextCollector() async throws {
         // Go to the "Form Fields" form
         var node = await daVinci.start() as! ContinueNode
@@ -64,7 +64,11 @@ class FormFieldsTests: XCTestCase {
         XCTAssertEqual("TEXT", textCollector.type)
         XCTAssertEqual("Text Input Label", textCollector.label)
         XCTAssertEqual("text-input-key", textCollector.key)
+        XCTAssertEqual("default text", textCollector.value)
         XCTAssertEqual(true, textCollector.required)
+        
+        // Clear the text field
+        textCollector.value = ""
         
         XCTAssertNil(textCollector.validation?.regex)
         XCTAssertNil(textCollector.validation?.errorMessage)
@@ -79,7 +83,7 @@ class FormFieldsTests: XCTestCase {
         XCTAssertTrue(validationResult2.isEmpty)
     }
     
-    // TestRailCase(26024)
+    // TestRailCase(26024, 26031)
     func testCheckboxCollector() async throws {
         // Go to the "Form Fields" form
         var node = await daVinci.start() as! ContinueNode
@@ -100,6 +104,14 @@ class FormFieldsTests: XCTestCase {
         XCTAssertEqual("option2 value", checkbox.options[1].value)
         XCTAssertEqual(true, checkbox.required)
         
+        // Make sure that the correct checkbox values are set (default values)
+        XCTAssertEqual(2, checkbox.value.count)
+        XCTAssertTrue(checkbox.value.contains("option1 value"))
+        XCTAssertTrue(checkbox.value.contains("option2 value"))
+        
+        // Remove the values from the checkbox
+        checkbox.value.removeAll()
+        
         // validate() should fail since value is empty but required
         let validationResult = checkbox.validate()
         XCTAssertFalse(validationResult.isEmpty)
@@ -110,7 +122,7 @@ class FormFieldsTests: XCTestCase {
         XCTAssertTrue(validationResult2.isEmpty)
     }
     
-    // TestRailCase(26025)
+    // TestRailCase(26025, 26031)
     func testDropdownCollector() async throws {
         // Go to the "Form Fields" form
         var node = await daVinci.start() as! ContinueNode
@@ -133,6 +145,12 @@ class FormFieldsTests: XCTestCase {
         XCTAssertEqual("dropdown-option3-value", dropdown.options[2].value)
         XCTAssertEqual(true, dropdown.required)
         
+        // Make sure that dropdown default value is set
+        XCTAssertEqual("dropdown-option2-value", dropdown.value)
+
+        // Clear the value of the dropdown
+        dropdown.value = ""
+        
         // validate() should fail since value is empty but required
         let validationResult = dropdown.validate()
         XCTAssertFalse(validationResult.isEmpty)
@@ -143,7 +161,7 @@ class FormFieldsTests: XCTestCase {
         XCTAssertTrue(validationResult2.isEmpty)
     }
     
-    // TestRailCase(26026)
+    // TestRailCase(26026, 26031)
     func testRadioCollector() async throws {
         // Go to the "Form Fields" form
         var node = await daVinci.start() as! ContinueNode
@@ -166,6 +184,12 @@ class FormFieldsTests: XCTestCase {
         XCTAssertEqual("option3 value", radio.options[2].value)
         XCTAssertEqual(true, radio.required)
         
+        // Make sure that radio default value is set
+        XCTAssertEqual("option2 value", radio.value)
+
+        // Clear the value of the radio
+        radio.value = ""
+        
         // validate() should fail since value is empty but required
         let validationResult = radio.validate()
         XCTAssertFalse(validationResult.isEmpty)
@@ -176,7 +200,7 @@ class FormFieldsTests: XCTestCase {
         XCTAssertTrue(validationResult2.isEmpty)
     }
     
-    // TestRailCase(26027)
+    // TestRailCase(26027, 26031)
     func testComboboxCollector() async throws {
         // Go to the "Form Fields" form
         var node = await daVinci.start() as! ContinueNode
@@ -198,6 +222,14 @@ class FormFieldsTests: XCTestCase {
         XCTAssertEqual("option3 label", combobox.options[2].label)
         XCTAssertEqual("option3 value", combobox.options[2].value)
         XCTAssertEqual(true, combobox.required)
+        
+        // Make sure that default values are set
+        XCTAssertEqual(2, combobox.value.count)
+        XCTAssertEqual("option1 value", combobox.value[0])
+        XCTAssertEqual("option3 value", combobox.value[1])
+
+        // Clear the values of the combobox
+        combobox.value.removeAll()
         
         // validate() should fail since value is empty but required
         let validationResult = combobox.validate()
