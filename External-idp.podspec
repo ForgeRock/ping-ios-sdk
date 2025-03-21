@@ -33,7 +33,9 @@ Pod::Spec.new do |s|
     'External-idp' => [base_dir + '/*.xcprivacy']
   }
 
-  s.ios.dependency 'PingOrchestrate', '~> 1.0.0'
+  s.ios.dependency 'PingDavinci', '~> 1.0.0'
   s.ios.dependency 'PingBrowser', '~> 1.0.0'
+  s.ios.dependency 'FBSDKLoginKit', '~> 16.3.1'
+  s.ios.dependency 'GoogleSignIn', '~> 8.1.0-vwg-eap-1.0.0'
     
 end

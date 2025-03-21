@@ -16,6 +16,8 @@ let package = Package (
         .library(name: "External-idp", targets: ["External-idp"])
     ],
     dependencies: [
+        .package(name: "Facebook", url: "https://github.com/facebook/facebook-ios-sdk.git", .upToNextMinor(from: "16.3.1")),
+        .package(name: "GoogleSignIn", url: "https://github.com/google/GoogleSignIn-iOS.git", .upToNextMinor(from: "8.1.0-vwg-eap-1.0.0"))
     ],
     targets: [
         .target(name: "PingLogger", dependencies: [], path: "Logger/Logger", exclude: ["Logger.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
@@ -23,7 +25,7 @@ let package = Package (
         .target(name: "PingOrchestrate", dependencies: [.target(name: "PingLogger"), .target(name: "PingStorage")], path: "Orchestrate/Orchestrate", exclude: ["Orchestrate.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingOidc", dependencies: [.target(name: "PingOrchestrate")], path: "Oidc/Oidc", exclude: ["Oidc.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingDavinci", dependencies: [.target(name: "PingOidc"),], path: "Davinci/Davinci", exclude: ["Davinci.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingBrowser", dependencies: [.target(name: "PingBrowser"),], path: "Browser/Browser", exclude: ["Browser.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "External-idp", dependencies: [.target(name: "External-idp"),], path: "External-idp/External-idp", exclude: ["ExtrernalIdp.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
+        .target(name: "PingBrowser", dependencies: [.target(name: "PingLogger"),], path: "Browser/Browser", exclude: ["Browser.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "External-idp", dependencies: [.target(name: "PingDavinci"), .target(name: "PingBrowser"), .product(name: "FacebookLogin", package: "Facebook"), .product(name: "GoogleSignIn", package: "GoogleSignIn")], path: "External-idp/External-idp", exclude: ["ExtrernalIdp.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
     ]
 )
