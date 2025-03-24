@@ -27,7 +27,11 @@ import PingOidc
 class ConfigurationManager: ObservableObject {
     static let shared = ConfigurationManager()
     public var currentConfigurationViewModel: ConfigurationViewModel?
-    public var currentUser: User?
+    public var currentUser: User? {
+        get async throws {
+            return await davinci.user()
+        }
+    }
     
     public func loadConfigurationViewModel() -> ConfigurationViewModel {
         if self.currentConfigurationViewModel == nil {

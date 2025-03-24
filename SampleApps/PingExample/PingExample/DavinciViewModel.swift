@@ -63,9 +63,6 @@ class DavinciViewModel: ObservableObject {
         
         // Starts the DaVinci orchestration process and retrieves the first node.
         let next = await davinci.start()
-        if let successNode = next as? SuccessNode {
-            ConfigurationManager.shared.currentUser = successNode.user
-        }
         await MainActor.run {
             self.state = DavinciState(previous: next , node: next)
             isLoading = false
@@ -81,9 +78,6 @@ class DavinciViewModel: ObservableObject {
         if let current = node as? ContinueNode {
             // Retrieves the next node in the flow.
             let next = await current.next()
-            if let successNode = next as? SuccessNode {
-                ConfigurationManager.shared.currentUser = successNode.user
-            }
             await MainActor.run {
                 self.state = DavinciState(previous: current, node: next)
                 isLoading = false
