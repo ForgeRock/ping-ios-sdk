@@ -16,7 +16,7 @@ import SafariServices
 /// BrowserType enum to specify the type of external user-agent;
 /// ASWebAuthenticationSession, Native Browser App,  SFSafariViewController,
 /// or ASWebAuthenticationSession with prefersEphemeralWebBrowserSession set to true
-public enum BrowserType: Int {
+public enum BrowserType: Int, Sendable {
     case authSession = 0
     case nativeBrowserApp = 1
     case sfViewController = 2
@@ -24,14 +24,14 @@ public enum BrowserType: Int {
 }
 
 /// BrowserError enum to specify the error that may occur during external user-agent process
-public enum BrowserError: Error {
+public enum BrowserError: Error, Sendable {
     case externalUserAgentFailure
     case externalUserAgentAuthenticationInProgress
     case externalUserAgentCancelled
 }
 
 /// BrowserMode enum to specify the mode of the browser; login, logout, or custom
-public enum BrowserMode {
+public enum BrowserMode: Sendable {
     case login
     case logout
     case custom
@@ -39,28 +39,37 @@ public enum BrowserMode {
 
 /// A protocol to abstract the BrowserLauncher functionality (if not already provided).
 /// (If your project already has a protocol that BrowserLauncher conforms to, you can use it.)
-public protocol BrowserLauncherProtocol {
-    var isInProgress: Bool { get set }
+@MainActor
+public protocol BrowserLauncherProtocol: Sendable {
+    var isInProgress: Bool { get }
     func launch(url: URL, browserType: BrowserType, callbackURLScheme: String) async throws -> URL
+    func reset()
 }
 
 /// BrowserLauncher class to launch external user-agent for web requests
-public class BrowserLauncher: NSObject, BrowserLauncherProtocol, @unchecked Sendable {
+@MainActor
+public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     
     // MARK: Properties
     
     /// Static shared instance of current Browser object
     public static var currentBrowser: BrowserLauncherProtocol = BrowserLauncher()
+    
     /// Boolean indicator whether or not current Browser object is in progress
-    public var isInProgress: Bool = false
+    private(set) public var isInProgress: Bool = false
+    
     /// Custom URL query parameter for /authorize request
-    var customParams: [String: String] = [:]
+    private var customParams: [String: String] = [:]
+    
     /// Type of external user-agent; Authentication Service, Native Browser App, or SFSafariViewController
-    var browserType: BrowserType = .authSession
+    private var browserType: BrowserType = .authSession
+    
     /// Current external user-agent instance
-    var currentSession: Any?
+    private var currentSession: Any?
+    
     /// Browser mode (either login, logout or custom)
-    var browserMode: BrowserMode = .login
+    private var browserMode: BrowserMode = .login
+    
     /// Logger instance
     var logger: Logger = LogManager.logger {
         didSet {
@@ -70,6 +79,8 @@ public class BrowserLauncher: NSObject, BrowserLauncherProtocol, @unchecked Send
     }
     
     // MARK: Public Methods
+    
+    /// Resets the browser state
     public func reset() {
         // Reset the browser
         self.isInProgress = false
@@ -98,63 +109,32 @@ public class BrowserLauncher: NSObject, BrowserLauncherProtocol, @unchecked Send
     public func launch(url: URL, customParams: [String: String]? = nil,
                        browserType: BrowserType = .authSession, browserMode: BrowserMode = .login, callbackURLScheme: String) async throws -> URL {
         
-        //  Or make sure that either same Browser instance or other Browser instance is currently running
-        if BrowserLauncher.currentBrowser.isInProgress == true {
+        // Make sure that no Browser instance is currently running
+        if let currentBrowser = BrowserLauncher.currentBrowser as? BrowserLauncher,
+           currentBrowser.isInProgress {
             throw BrowserError.externalUserAgentAuthenticationInProgress
         }
         
         self.isInProgress = true
-        // Launch the browser
-        return try await withCheckedThrowingContinuation { continuation in
-            switch browserType {
-            case .nativeBrowserApp:
-                DispatchQueue.main.async {
-                    UIApplication.shared.open(url, options: [:]) { [weak self] (result) in
-                        if result {
-                            self?.logger.i("BrowserLauncher: Native Browser launched successfully")
-                            continuation.resume(returning: url)
-                        }
-                        else {
-                            continuation.resume(throwing: BrowserError.externalUserAgentFailure)
-                            self?.close()
-                            self?.reset()
-                        }
-                    }
-                }
-            case .sfViewController:
-                loginWithSFViewController(url: url) { [weak self] result in
-                    switch result {
-                    case .success(let url):
-                        continuation.resume(returning: url)
-                    case .failure(let error):
-                        self?.close()
-                        self?.reset()
-                        continuation.resume(throwing: error)
-                    }
-                }
-            case .authSession:
-                asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: false) { [weak self] result in
-                    switch result {
-                    case .success(let url):
-                        self?.reset()
-                        continuation.resume(returning: url)
-                    case .failure(let error):
-                        self?.reset()
-                        continuation.resume(throwing: error)
-                    }
-                }
-            case .ephemeralAuthSession:
-                asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: true) { [weak self] result in
-                    switch result {
-                    case .success(let url):
-                        self?.reset()
-                        continuation.resume(returning: url)
-                    case .failure(let error):
-                        self?.reset()
-                        continuation.resume(throwing: error)
-                    }
-                }
+        
+        // Launch the browser based on type
+        switch browserType {
+        case .nativeBrowserApp:
+            guard await UIApplication.shared.open(url) else {
+                reset()
+                throw BrowserError.externalUserAgentFailure
             }
+            logger.i("BrowserLauncher: Native Browser launched successfully")
+            return url
+            
+        case .sfViewController:
+            return try await loginWithSFViewController(url: url)
+            
+        case .authSession:
+            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: false)
+            
+        case .ephemeralAuthSession:
+            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: true)
         }
     }
     
@@ -163,24 +143,24 @@ public class BrowserLauncher: NSObject, BrowserLauncherProtocol, @unchecked Send
     /// Performs authentication through /authorize endpoint using SFSafariViewController
     /// - Parameters:
     ///   - url: URL of /authorize including all URL query parameter
-    ///   - completion: Completion callback to nofiy the result
-    /// - Returns: Boolean indicator whether or not launching external user-agent was successful
-    private func loginWithSFViewController(url: URL,
-                                           completion: @escaping (Result<URL, Error>) -> Void) {
-        var viewController: SFSafariViewController?
-        viewController = SFSafariViewController(url: url, configuration: SFSafariViewController.Configuration())
-        viewController?.delegate = self
-        self.currentSession = viewController
-        DispatchQueue.main.async {
-            let presentingViewController = UIApplication.shared.windows.filter { $0.isKeyWindow }.first?.rootViewController
-            if let currentViewController = presentingViewController, let sfVC = viewController {
-                currentViewController.present(sfVC, animated: true)
-                completion(.success(url))
-            }
-            else {
+    /// - Returns: URL after authentication is complete
+    /// - Throws: BrowserError if the view controller cannot be presented
+    private func loginWithSFViewController(url: URL) async throws -> URL {
+        return try await withCheckedThrowingContinuation { continuation in
+            let viewController = SFSafariViewController(url: url, configuration: SFSafariViewController.Configuration())
+            viewController.delegate = self
+            self.currentSession = viewController
+            
+            let scenes = UIApplication.shared.connectedScenes
+            let windowScene = scenes.first as? UIWindowScene
+            guard let presentingViewController = windowScene?.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
                 self.logger.e("Fail to launch SFSafariViewController; missing presenting ViewController", error: nil)
-                completion(.failure(BrowserError.externalUserAgentFailure))
+                continuation.resume(throwing: BrowserError.externalUserAgentFailure)
+                return
             }
+            
+            presentingViewController.present(viewController, animated: true)
+            continuation.resume(returning: url)
         }
     }
     
@@ -189,46 +169,44 @@ public class BrowserLauncher: NSObject, BrowserLauncherProtocol, @unchecked Send
     ///   - url: URL of /authorize including all URL query parameter
     ///   - callbackURLScheme: Callback URL Scheme to return to the app
     ///   - prefersEphemeralWebBrowserSession: Set to true to use ephemeral web browser session
-    ///   - completion: Completion callback to nofiy the result
-    /// - Returns: Boolean indicator whether or not launching external user-agent was successful
+    /// - Returns: URL after authentication is complete
+    /// - Throws: BrowserError if authentication fails
     private func asWebAuthenticationSession(url: URL, callbackURLScheme: String,
-                                            prefersEphemeralWebBrowserSession: Bool,
-                                            completion: @escaping (Result<URL, Error>) -> Void) {
-        let authSession = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme) { (url, error) in
-            if let error = error {
-                completion(.failure(error))
-            } else if let url = url {
-                completion(.success(url))
-            } else {
-                completion(.failure(BrowserError.externalUserAgentFailure))
+                                           prefersEphemeralWebBrowserSession: Bool) async throws -> URL {
+        return try await withCheckedThrowingContinuation { continuation in
+            let authSession = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme) { (url, error) in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                } else if let url = url {
+                    continuation.resume(returning: url)
+                } else {
+                    continuation.resume(throwing: BrowserError.externalUserAgentFailure)
+                }
             }
-        }
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else{
-                return
-            }
+            
             authSession.presentationContextProvider = self
             authSession.prefersEphemeralWebBrowserSession = prefersEphemeralWebBrowserSession
             self.currentSession = authSession
-            authSession.start()
+            
+            if !authSession.start() {
+                continuation.resume(throwing: BrowserError.externalUserAgentFailure)
+            }
         }
     }
     
     /// Closes currently presenting ViewController
-    private func close() {
+    private func close() async {
         if let sfViewController = self.currentSession as? SFSafariViewController {
             self.logger.i("Close called with SFSafariViewController: \(String(describing: self.currentSession))")
-            DispatchQueue.main.async {
-                sfViewController.dismiss(animated: true, completion: nil)
-            }
+            sfViewController.dismiss(animated: true)
         }
         
         if let asAuthSession = self.currentSession as? ASWebAuthenticationSession {
-            self.logger.i("Close called with iOS 12 or above: \(String(describing: self.currentSession))")
-            DispatchQueue.main.async {
-                asAuthSession.cancel()
-            }
+            self.logger.i("Close called with ASWebAuthenticationSession: \(String(describing: self.currentSession))")
+            asAuthSession.cancel()
         }
+        
+        await reset()
     }
 }
 
@@ -241,10 +219,12 @@ extension BrowserLauncher: ASWebAuthenticationPresentationContextProviding {
 
 // MARK: SFSafariViewControllerDelegate
 extension BrowserLauncher: SFSafariViewControllerDelegate {
-    public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-        self.logger.i("User cancelled the authorization process by closing the window")
-        self.reset()
+    nonisolated public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+        Task { @MainActor in
+            self.logger.i("User cancelled the authorization process by closing the window")
+            await self.reset()
+        }
     }
     
-    public func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {}
+    nonisolated public func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {}
 }

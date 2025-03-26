@@ -2,7 +2,7 @@
 //  CustomStorageTests.swift
 //  StorageTests
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -53,7 +53,7 @@ final class CustomStorageTests: XCTestCase {
 
 }
 
-public class CustomStorage<T: Codable>: Storage {
+public actor CustomStorage<T: Codable & Sendable>: Storage {
   private var data: T?
 
   public func save(item: T) async throws {
@@ -70,7 +70,7 @@ public class CustomStorage<T: Codable>: Storage {
 
 }
 
-public class CustomStorageDelegate<T: Codable>: StorageDelegate<T> {
+public class CustomStorageDelegate<T: Codable & Sendable>: StorageDelegate<T>, @unchecked Sendable {
   public init(cacheable: Bool = false) {
     super.init(delegate: CustomStorage<T>(), cacheable: cacheable)
   }

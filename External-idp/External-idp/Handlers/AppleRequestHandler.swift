@@ -12,7 +12,8 @@ import Foundation
 import PingOrchestrate
 import AuthenticationServices
 
-//IdpHandler for Apple
+///IdpHandler for Apple
+@MainActor
 class AppleRequestHandler: IdpRequestHandler {
     /// The HTTP client to use for requests.
     private let httpClient: HttpClient
@@ -54,7 +55,7 @@ class AppleRequestHandler: IdpRequestHandler {
         let helper = SignInWithAppleHelper(idpClient: idpClient)
         
         // Sign in to Apple account
-        for try await appleResponse in await helper.startSignInWithAppleFlow() {
+        for try await appleResponse in helper.startSignInWithAppleFlow() {
             let token = appleResponse.token
 
             let nonce = appleResponse.nonce
@@ -63,14 +64,14 @@ class AppleRequestHandler: IdpRequestHandler {
             let lastName = appleResponse.lastName ?? ""
             let email = appleResponse.email ?? ""
 
-            return IdpResult(token: token, additionalParameters: ["name": displayName, "firstName": firstName, "lastName": lastName, "nonce": nonce, email: email])
+            return IdpResult(token: token, additionalParameters: ["name": displayName, "firstName": firstName, "lastName": lastName, "nonce": nonce, "email": email])
         }
         throw IdpExceptions.illegalStateException(message: "Apple Sign In failed")
     }
 }
 
 /// Represents the result of a Sign In With Apple request.
-struct SignInWithAppleResult {
+struct SignInWithAppleResult: Sendable {
     /// The token returned by Apple.
     let token: String
     /// The nonce used for the request.
@@ -125,6 +126,7 @@ struct SignInWithAppleResult {
 }
 
 /// Helper class to handle Sign In With Apple requests.
+@MainActor
 final class SignInWithAppleHelper: NSObject {
         
     /// The IdpClient used for the request.
@@ -146,7 +148,6 @@ final class SignInWithAppleHelper: NSObject {
     /// Start Sign In With Apple and present OS modal.
     /// - Parameter viewController: ViewController to present OS modal on. If nil, function will attempt to find the top-most ViewController. Throws an error if no ViewController is found.
     /// - Returns: A stream of `SignInWithAppleResult` objects.
-    @MainActor
     func startSignInWithAppleFlow(viewController: UIViewController? = nil) -> AsyncThrowingStream<SignInWithAppleResult, Error> {
         var requestedScopes: [ASAuthorization.Scope] = []
         for scope in idpClient.scopes {
@@ -177,7 +178,6 @@ final class SignInWithAppleHelper: NSObject {
     /// - Parameter scopes: The scopes to request from Apple.
     /// - Parameter viewController: ViewController to present OS modal on. If nil, function will attempt to find the top-most ViewController. Throws an error if no ViewController is found.
     /// - Parameter completion: The completion handler for the request.
-    @MainActor
     private func startSignInWithAppleFlow(nonce: String?, scopes: [ASAuthorization.Scope], viewController: UIViewController? = nil, completion: @escaping (Result<SignInWithAppleResult, Error>) -> Void) {
         guard let topVC = IdpClient.getTopViewController() else {
             completion(.failure(SignInWithAppleError.noViewController))
@@ -211,7 +211,7 @@ private extension SignInWithAppleHelper {
     /// - invalidCredential: Invalid sign in credential.
     /// - badResponse: Apple Sign In had a bad response.
     /// - unableToFindNonce: Apple Sign In token
-    private enum SignInWithAppleError: LocalizedError {
+    private enum SignInWithAppleError: LocalizedError, Sendable {
         case noViewController
         case invalidCredential
         case badResponse
@@ -257,7 +257,8 @@ extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
 }
 
 //MARK: ASAuthorizationControllerPresentationContextProviding
-extension UIViewController: ASAuthorizationControllerPresentationContextProviding {
+@MainActor
+extension UIViewController: @retroactive ASAuthorizationControllerPresentationContextProviding {
     public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         return self.view.window!
     }

@@ -14,6 +14,7 @@ import FacebookLogin
 import UIKit
 
 /// A handler class for managing Facebook Identity Provider (IdP) authorization.
+@MainActor
 class FacebookRequestHandler: IdpRequestHandler {
     /// `LoginManager` instance for Facebook SDK
     private var manager: LoginManager
@@ -81,7 +82,6 @@ class FacebookRequestHandler: IdpRequestHandler {
     /// Authorizes the user with the IDP, based on the IdpClient.
     /// - Parameter idpClient: The `IdpClient` to use for authorization.
     /// - Returns: An `IdpResult` object containing the result of the authorization.
-    @MainActor
     private func authorize(idpClient: IdpClient) async throws -> IdpResult {
         guard let topVC = IdpClient.getTopViewController() else {
             throw IdpExceptions.illegalStateException(message: "Top view controller is required")
@@ -91,19 +91,26 @@ class FacebookRequestHandler: IdpRequestHandler {
             throw IdpExceptions.illegalStateException(message: "Invalid configuration")
         }
         
-        return try await withCheckedThrowingContinuation { continuation in
-            self.manager.logIn(viewController: topVC, configuration: validConfiguration) { result in
-                switch result {
-                case .cancelled:
-                    continuation.resume(throwing: IdpExceptions.idpCanceledException(message: "User cancelled login"))
-                case .failed(let error):
-                    continuation.resume(throwing: error)
-                case .success(_, _, let token):
-                    guard let accessToken = token?.tokenString else {
-                        continuation.resume(throwing: IdpExceptions.illegalStateException(message: "Access Token is required and not found on result"))
-                        return
+        return try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<IdpResult, Error>) in
+            guard let self = self else {
+                continuation.resume(throwing: IdpExceptions.illegalStateException(message: "Self was deallocated"))
+                return
+            }
+            
+            Task { @MainActor in
+                self.manager.logIn(viewController: topVC, configuration: validConfiguration) { result in
+                    switch result {
+                    case .cancelled:
+                        continuation.resume(throwing: IdpExceptions.idpCanceledException(message: "User cancelled login"))
+                    case .failed(let error):
+                        continuation.resume(throwing: error)
+                    case .success(_, _, let token):
+                        guard let accessToken = token?.tokenString else {
+                            continuation.resume(throwing: IdpExceptions.illegalStateException(message: "Access Token is required and not found on result"))
+                            return
+                        }
+                        continuation.resume(returning: IdpResult(token: accessToken, additionalParameters: nil))
                     }
-                    continuation.resume(returning: IdpResult(token: accessToken, additionalParameters: nil))
                 }
             }
         }

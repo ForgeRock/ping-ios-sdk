@@ -13,7 +13,7 @@ import Foundation
 
 /// Class representing a LABEL type.
 /// It conforms to the `Collector` protocol and displays a label on the form.
-public class LabelCollector: Collector {
+public class LabelCollector: Collector, @unchecked Sendable {
     /// The UUID of the field collector.
     public let id = UUID()
     /// The label content.

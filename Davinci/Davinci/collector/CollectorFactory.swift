@@ -14,7 +14,7 @@ import PingOrchestrate
 /// The CollectorFactory singleton is responsible for creating and managing Collector instances.
 /// It maintains a dictionary of collector creation functions, keyed by type.
 /// It also provides functions to register new types of collectors and to create collectors from a JSON array.
-public final class CollectorFactory {
+public actor CollectorFactory {
     // A dictionary to hold the collector creation functions.
     var collectors: [String: any Collector.Type] = [:]
   

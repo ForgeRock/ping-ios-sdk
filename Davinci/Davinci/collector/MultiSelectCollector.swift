@@ -13,7 +13,7 @@ import Foundation
 
 /// Class representing CHECKBOX, COMBOBOX type with MULTI_SELECT inputType.
 /// Inherits from  `FieldCollector` and is used to collect multiple values from a list of options.
-open class MultiSelectCollector: FieldCollector {
+open class MultiSelectCollector: FieldCollector, @unchecked Sendable {
     /// A list of available `Option`s. Only writable inside this class.
     public private(set) var options: [Option] = []
     /// Indicates whether this field is required. Only writable inside this class.

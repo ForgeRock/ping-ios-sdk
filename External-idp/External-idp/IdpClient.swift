@@ -18,7 +18,7 @@ import UIKit
 /// - property nonce: The nonce.
 /// - property continueUrl: The continue URL.
 ///
-public struct IdpClient {
+public struct IdpClient: Sendable {
     public var clientId: String? = nil
     public var redirectUri: String? = nil
     public var scopes: [String] = []

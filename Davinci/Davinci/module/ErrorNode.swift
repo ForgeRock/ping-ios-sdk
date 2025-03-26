@@ -27,7 +27,7 @@ extension ErrorNode {
 }
 
 /// Represents a detailed error response.
-public struct Detail: Codable {
+public struct Detail: Codable, Sendable {
     /// The raw response associated with the error.
     public let rawResponse: RawResponse
     
@@ -50,7 +50,7 @@ public struct Detail: Codable {
 }
 
 /// Represents the raw response of an error.
-public struct RawResponse: Codable {
+public struct RawResponse: Codable, Sendable {
     /// The unique identifier of the error.
     public let id: String?
     
@@ -81,7 +81,7 @@ public struct RawResponse: Codable {
 }
 
 /// Represents a specific error detail.
-public struct ErrorDetail: Codable {
+public struct ErrorDetail: Codable, Sendable {
     /// The error code.
     public let code: String?
     
@@ -112,7 +112,7 @@ public struct ErrorDetail: Codable {
 }
 
 /// Represents additional inner error details.
-public struct InnerError: Codable {
+public struct InnerError: Codable, Sendable {
     /// A dictionary mapping unsatisfied requirements to their respective messages.
     public let errors: [String: String]
 

@@ -2,7 +2,7 @@
 //  OIDC.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -26,7 +26,7 @@ public class OidcModule {
         let daVinciFlow: DaVinci = setup.workflow
         
         // Initializes the module.
-        setup.initialize {
+        setup.initialize {  @Sendable in
             // propagate the configuration from workflow to the module
             config.httpClient = daVinciFlow.config.httpClient
             config.logger = daVinciFlow.config.logger
@@ -38,7 +38,7 @@ public class OidcModule {
         }
         
         // Starts the module.
-        setup.start { context, request in
+        setup.start { @Sendable context, request in
             // When user starts the flow again, revoke previous token if exists
             await daVinciFlow.user()?.revoke()
             
@@ -48,7 +48,7 @@ public class OidcModule {
         }
         
         // Handles success of the module.
-        setup.success { context, success in
+        setup.success { @Sendable context, success in
             let cloneConfig: OidcClientConfig = config.clone()
             
             let flowPkce = context.flowContext.get(key: SharedContext.Keys.pkceKey) as? Pkce
@@ -63,7 +63,7 @@ public class OidcModule {
         }
         
         // Handles sign off of the module.
-        setup.signOff { request in
+        setup.signOff { @Sendable request in
             request.url(config.openId?.endSessionEndpoint ?? "")
             
             _ = await OidcClient(config: config).endSession { idToken in

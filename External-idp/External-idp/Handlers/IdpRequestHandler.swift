@@ -12,7 +12,7 @@ import Foundation
 import PingOrchestrate
 
 /// Interface representing an Identity Provider (IdP) handler.
-public protocol IdpRequestHandler {
+public protocol IdpRequestHandler: Sendable {
     /// Authorizes the user with the IdP.
     /// - Parameter url: The URL to use for authorization.
     /// - Returns: A `Request` object containing the result of the authorization
