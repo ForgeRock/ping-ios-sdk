@@ -2,7 +2,7 @@
 //  WorkflowTests.swift
 //  OrchestrateTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -466,7 +466,7 @@ class WorkflowTest: XCTestCase {
     func testStartStateFunctionThrowsException() async throws {
         let startFailed = Module.of({CustomHeaderConfig()}) { module in
             module.start { _,_ in
-                throw NSError(domain: "InitializationError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to initialize"])
+                throw NSError(domain: "StartError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to start"])
             }
         }
         let workflow = Workflow.createWorkflow { config in
@@ -475,7 +475,7 @@ class WorkflowTest: XCTestCase {
         
         let node = await workflow.start()
         XCTAssertTrue(node is FailureNode)
-        XCTAssertEqual((node as! FailureNode).cause.localizedDescription, "Failed to initialize")
+        XCTAssertEqual((node as! FailureNode).cause.localizedDescription, "Failed to start")
     }
     
     func testResponseStateFunctionThrowsException() async throws {
@@ -485,7 +485,7 @@ class WorkflowTest: XCTestCase {
         
         let responseFailed = Module.of({CustomHeaderConfig()}) { module in
             module.response { _,_ in
-                throw NSError(domain: "InitializationError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to initialize"])
+                throw NSError(domain: "ResponseError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to process response"])
             }
         }
         let workflow = Workflow.createWorkflow { config in
@@ -495,7 +495,7 @@ class WorkflowTest: XCTestCase {
         
         let node = await workflow.start()
         XCTAssertTrue(node is FailureNode)
-        XCTAssertEqual((node as! FailureNode).cause.localizedDescription, "Failed to initialize")
+        XCTAssertEqual((node as! FailureNode).cause.localizedDescription, "Failed to process response")
     }
     
     func testTransformStateFunctionThrowsException() async throws {
@@ -506,7 +506,7 @@ class WorkflowTest: XCTestCase {
         
         let transformFailed = Module.of({CustomHeaderConfig()}) { module in
             module.transform { _,_ in
-                throw NSError(domain: "InitializationError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to initialize"])
+                throw NSError(domain: "TransformError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to transform"])
             }
         }
         let workflow = Workflow.createWorkflow { config in
@@ -516,7 +516,7 @@ class WorkflowTest: XCTestCase {
         
         let node = await workflow.start()
         XCTAssertTrue(node is FailureNode)
-        XCTAssertEqual((node as! FailureNode).cause.localizedDescription, "Failed to initialize")
+        XCTAssertEqual((node as! FailureNode).cause.localizedDescription, "Failed to transform")
     }
     
     func testNextStateFunctionThrowsException() async throws {
@@ -532,7 +532,7 @@ class WorkflowTest: XCTestCase {
         
         let nextFailed = Module.of({CustomHeaderConfig()}) { module in
             module.next { _,_, _ in
-                throw NSError(domain: "InitializationError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to initialize"])
+                throw NSError(domain: "NextError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to move to next state"])
             }
             
             module.transform { flowContext,_ in
@@ -548,7 +548,7 @@ class WorkflowTest: XCTestCase {
         let node = await workflowContainer.workflow.start()
         let next = await (node as? ContinueNode)?.next()
         XCTAssertTrue(next is FailureNode)
-        XCTAssertEqual((next as! FailureNode).cause.localizedDescription, "Failed to initialize")
+        XCTAssertEqual((next as! FailureNode).cause.localizedDescription, "Failed to move to next state")
     }
     
     func testNodeStateFunctionThrowsException() async throws {
@@ -564,7 +564,7 @@ class WorkflowTest: XCTestCase {
         
         let nodeFailed = Module.of({CustomHeaderConfig()}) { module in
             module.node { _, _ in
-                throw NSError(domain: "InitializationError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to initialize"])
+                throw NSError(domain: "NodeError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to process node"])
             }
             
             module.transform { flowContext,_ in
@@ -579,7 +579,7 @@ class WorkflowTest: XCTestCase {
         
         let node = await workflowContainer.workflow.start()
         XCTAssertTrue(node is FailureNode)
-        XCTAssertEqual((node as! FailureNode).cause.localizedDescription, "Failed to initialize")
+        XCTAssertEqual((node as! FailureNode).cause.localizedDescription, "Failed to process node")
     }
     
     func testSuccessStateFunctionThrowsException() async throws {
@@ -592,7 +592,7 @@ class WorkflowTest: XCTestCase {
         
         let successFailed = Module.of({CustomHeaderConfig()}) { module in
             module.success { _, _ in
-                throw NSError(domain: "InitializationError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to initialize"])
+                throw NSError(domain: "SuccessError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to handle success"])
             }
             
             module.transform { flowContext,_ in
@@ -606,8 +606,8 @@ class WorkflowTest: XCTestCase {
         }
         
         let node = await workflow.start()
-      XCTAssertTrue(node is FailureNode)
-        XCTAssertEqual((node as! FailureNode).cause.localizedDescription, "Failed to initialize")
+        XCTAssertTrue(node is FailureNode)
+        XCTAssertEqual((node as! FailureNode).cause.localizedDescription, "Failed to handle success")
     }
     
     func testExecutionFailure() async {
@@ -617,7 +617,7 @@ class WorkflowTest: XCTestCase {
         
         let dummy = Module.of({CustomHeaderConfig()}) { module in
             module.transform {_,_ in
-              return ErrorNode(input: [:], message: "Invalid request")
+                return ErrorNode(input: [:], message: "Invalid request")
             }
         }
         

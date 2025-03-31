@@ -48,7 +48,7 @@ Information can be shared across state, there are 2 contexts
 
 ## Integrating the SDK into your project
 
-Use Cocoapods or Swift Package Manger
+Use Cocoapods or Swift Package Manager
 
 ## Usage
 

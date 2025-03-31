@@ -2,7 +2,7 @@
 //  Browser.swift
 //  Browser
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -100,7 +100,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     /// Launches external user-agent for web requests
     /// - Parameters:
     ///   - url: URL to follow for the external user-agent
-    ///   - customParams: Any custom URL query parameters to be passed as URL parametes in the request
+    ///   - customParams: Any custom URL query parameters to be passed as URL parameters in the request
     ///   - browserType: BrowserType enum to specify the type of external user-agent
     ///   - browserMode: BrowserMode enum to specify the mode of the browser; login, logout, or custom
     ///   - callbackURLScheme: The callbackURLScheme to be used for returning to the app. Used in ASWebAuthenticationSession modes
@@ -172,7 +172,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     /// - Returns: URL after authentication is complete
     /// - Throws: BrowserError if authentication fails
     private func asWebAuthenticationSession(url: URL, callbackURLScheme: String,
-                                           prefersEphemeralWebBrowserSession: Bool) async throws -> URL {
+                                            prefersEphemeralWebBrowserSession: Bool) async throws -> URL {
         return try await withCheckedThrowingContinuation { continuation in
             let authSession = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme) { (url, error) in
                 if let error = error {
@@ -206,7 +206,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
             asAuthSession.cancel()
         }
         
-        await reset()
+        reset()
     }
 }
 
@@ -222,7 +222,7 @@ extension BrowserLauncher: SFSafariViewControllerDelegate {
     nonisolated public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
         Task { @MainActor in
             self.logger.i("User cancelled the authorization process by closing the window")
-            await self.reset()
+            self.reset()
         }
     }
     

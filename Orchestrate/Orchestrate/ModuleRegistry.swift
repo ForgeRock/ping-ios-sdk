@@ -2,7 +2,7 @@
 //  ModuleRegistry.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -67,7 +67,7 @@ extension ModuleRegistry: Comparable {
     public static func < (lhs: ModuleRegistry, rhs: ModuleRegistry) -> Bool {
         return lhs.priority < rhs.priority
     }
-  
+    
     /// Compares two ModuleRegistry instances for equality.
     /// - Parameters:
     ///   - lhs: The left-hand side ModuleRegistry instance

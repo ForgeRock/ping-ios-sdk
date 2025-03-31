@@ -2,7 +2,7 @@
 //  BrowserHandler.swift
 //  External-idp
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -45,7 +45,7 @@ public class BrowserHandler: IdpRequestHandler {
                   let queryItems = components.queryItems else {
                 throw IdpExceptions.illegalStateException(message: "Could not read response URL")
             }
-                
+            
             guard let continueToken = queryItems.first(where: { $0.name == "continueToken" })?.value else {
                 throw IdpExceptions.illegalStateException(message: "Could not read continueToken")
             }

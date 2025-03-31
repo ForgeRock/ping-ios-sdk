@@ -2,7 +2,7 @@
 //  NodeTests.swift
 //  OrchestrateTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -22,7 +22,7 @@ final class NodeTests: XCTestCase {
         
         mockWorkflow.nextReturnValue = mockNode
         
-       let connector = TestContinueNode(context: mockContext, workflow: mockWorkflow, input: [:], actions: [])
+        let connector = TestContinueNode(context: mockContext, workflow: mockWorkflow, input: [:], actions: [])
         
         let continueNode = await connector.next()
         XCTAssertTrue(continueNode as? NodeMock === mockNode)
@@ -41,7 +41,7 @@ final class NodeTests: XCTestCase {
 // Supporting Test Classes
 class WorkflowMock: Workflow, @unchecked Sendable {
     var nextReturnValue: Node?
-  override func next(_ context: FlowContext, _ current: ContinueNode) async -> Node {
+    override func next(_ context: FlowContext, _ current: ContinueNode) async -> Node {
         return nextReturnValue ?? NodeMock()
     }
 }

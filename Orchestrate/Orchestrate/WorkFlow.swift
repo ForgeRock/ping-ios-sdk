@@ -2,7 +2,7 @@
 //  Workflow.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -121,7 +121,7 @@ public class Workflow: @unchecked Sendable {
             return try await start(request: Request())
         }
         catch {
-          return FailureNode(cause: error)
+            return FailureNode(cause: error)
         }
     }
     
@@ -187,7 +187,7 @@ public class Workflow: @unchecked Sendable {
             return try await next(context, node)
         }
         catch {
-          return FailureNode(cause: error)
+            return FailureNode(cause: error)
         }
     }
     

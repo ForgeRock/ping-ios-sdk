@@ -11,7 +11,7 @@ The PingStorage SDK provides a flexible storage interface and a set of common st
 
 ## Integrating the SDK into your project
 
-Use Cocoapods or Swift Package Manger
+Use Cocoapods or Swift Package Manager
 
 ## How to Use the SDK
 

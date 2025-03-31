@@ -2,7 +2,7 @@
 //  CollectorFactory.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -15,9 +15,9 @@ import PingOrchestrate
 /// It maintains a dictionary of collector creation functions, keyed by type.
 /// It also provides functions to register new types of collectors and to create collectors from a JSON array.
 public actor CollectorFactory {
-    // A dictionary to hold the collector creation functions.
+    /// A dictionary to hold the collector creation functions.
     var collectors: [String: any Collector.Type] = [:]
-  
+    
     /// The shared instance of the CollectorFactory.
     public static let shared = CollectorFactory()
     
@@ -48,8 +48,8 @@ public actor CollectorFactory {
     
     /// Registers a new type of Collector.
     /// - Parameters:
-    ///   - type:  The type of the Collector.
-    ///   - block: A function    that creates a new instance of the Collector.
+    ///   - type: The type of the Collector.
+    ///   - block: A function that creates a new instance of the Collector.
     public func register(type: String, collector: any Collector.Type) {
         collectors[type] = collector
     }

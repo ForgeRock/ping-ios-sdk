@@ -52,6 +52,7 @@
         "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
         "DaVinciIntegrationTests\/testInvalidPassword()",
         "FormFieldValidationTest\/testPasswordValidation()",
+        "FormFieldValidationTests\/testPasswordValidation()",
         "PasswordCollectorTests\/testAddsInvalidLengthErrorWhenValueTooShort()",
         "PasswordCollectorTests\/testAddsMaxRepeatErrorWhenTooManyRepeatedCharacters()",
         "PasswordCollectorTests\/testAddsMinCharactersErrorWhenNotEnoughDigits()",

@@ -2,7 +2,7 @@
 //  FlowCollector.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -31,8 +31,8 @@ public typealias Collectors = [any Collector]
 
 extension Collectors {
     /// Finds the event type from a list of collectors.
-    ///This function iterates over the list of collectors and returns the value if the collector's value is not empty.
-    /// - Returns:  The event type as a String if found, otherwise nil.
+    /// This function iterates over the list of collectors and returns the value if the collector's value is not empty.
+    /// - Returns: The event type as a String if found, otherwise nil.
     func eventType() -> String? {
         for collector in self {
             if let submitCollector = collector as? SubmitCollector, !submitCollector.value.isEmpty {
@@ -80,5 +80,5 @@ extension Collectors {
         jsonObject[Constants.formData] = formData
         return jsonObject
     }
-        
+    
 }

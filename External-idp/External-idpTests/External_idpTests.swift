@@ -2,7 +2,7 @@
 //  External_idpTests.swift
 //  External-idpTests
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -22,12 +22,12 @@ final class External_idpTests: XCTestCase {
         }
     }
     
-    func testidpCollectorRegistration() async throws {
+    func testIdpCollectorRegistration() async throws {
         let idpCollector = await CollectorFactory.shared.collectors[Constants.SOCIAL_LOGIN_BUTTON]
         XCTAssertNotNil(idpCollector)
     }
 
-    func testidpCollectorParsing() throws {
+    func testIdpCollectorParsing() throws {
         
         let jsonObject: [String: Any] = [
             "idpId" : "c3e6a164bde107954e93f5c09f0c8bce",

@@ -2,7 +2,7 @@
 //  FieldCollector.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -21,10 +21,10 @@ open class FieldCollector: Collector, @unchecked Sendable {
     public private(set) var key: String = ""
     public private(set) var label: String = ""
     public let id = UUID()
-  
+    
     /// Initializes a new instance of `FieldCollector`.
     public init() {}
-  
+    
     /// Initializes a new instance of `FieldCollector`.
     /// - Parameter json: The json to initialize from.
     required public init(with json: [String: Any]) {

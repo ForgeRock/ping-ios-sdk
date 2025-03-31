@@ -2,7 +2,7 @@
 //  DaVinciTests.swift
 //  DavinciTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -321,42 +321,42 @@ final class DaVinciTests: XCTestCase {
         }
         
         let daVinci = DaVinci.createDaVinci { config in
-                config.httpClient = HttpClient(session: .shared)
-                
-                config.module(OidcModule.config) { oidcValue in
-                  oidcValue.clientId = "test"
-                  oidcValue.scopes = ["openid", "email", "address"]
-                  oidcValue.redirectUri = "http://localhost:8080"
-                  oidcValue.discoveryEndpoint = "http://localhost/.well-known/openid-configuration"
-                  oidcValue.storage = MemoryStorage()
-                  oidcValue.logger = LogManager.standard
-                }
-                
-                config.module(CookieModule.config) { cookieValue in
-                  cookieValue.cookieStorage = MemoryStorage()
-                  cookieValue.persist = ["ST"]
-                }
-              }
-              
+            config.httpClient = HttpClient(session: .shared)
+            
+            config.module(OidcModule.config) { oidcValue in
+                oidcValue.clientId = "test"
+                oidcValue.scopes = ["openid", "email", "address"]
+                oidcValue.redirectUri = "http://localhost:8080"
+                oidcValue.discoveryEndpoint = "http://localhost/.well-known/openid-configuration"
+                oidcValue.storage = MemoryStorage()
+                oidcValue.logger = LogManager.standard
+            }
+            
+            config.module(CookieModule.config) { cookieValue in
+                cookieValue.cookieStorage = MemoryStorage()
+                cookieValue.persist = ["ST"]
+            }
+        }
+        
         let node = await daVinci.start()
         XCTAssertTrue(node is ContinueNode)
         let continueNode = node as! ContinueNode
         XCTAssertEqual(continueNode.collectors.count, 11)
         
         guard let collector1 = (continueNode.collectors[0] as? LabelCollector) else {
-             XCTFail("LabelCollector is nil")
+            XCTFail("LabelCollector is nil")
             return
         }
         XCTAssertEqual(collector1.content, "Sign On")
         
         guard let collector2 = (continueNode.collectors[1] as? LabelCollector) else {
-             XCTFail("LabelCollector is nil")
+            XCTFail("LabelCollector is nil")
             return
         }
         XCTAssertEqual(collector2.content, "Welcome to Ping Identity")
         
         guard let collector3 = (continueNode.collectors[2] as? TextCollector) else {
-             XCTFail("TextCollector is nil")
+            XCTFail("TextCollector is nil")
             return
         }
         XCTAssertEqual(collector3.type, "TEXT")
@@ -368,7 +368,7 @@ final class DaVinciTests: XCTestCase {
         XCTAssertEqual(collector3.value, "default-username")
         
         guard let collector4 = (continueNode.collectors[3] as? PasswordCollector) else {
-             XCTFail("PasswordCollector is nil")
+            XCTFail("PasswordCollector is nil")
             return
         }
         XCTAssertEqual(collector4.type, "PASSWORD")
@@ -378,7 +378,7 @@ final class DaVinciTests: XCTestCase {
         XCTAssertEqual(collector4.value, "default-password")
         
         guard let collector5 = (continueNode.collectors[4] as? SubmitCollector) else {
-             XCTFail("SubmitCollector is nil")
+            XCTFail("SubmitCollector is nil")
             return
         }
         XCTAssertEqual(collector5.type, "SUBMIT_BUTTON")
@@ -386,7 +386,7 @@ final class DaVinciTests: XCTestCase {
         XCTAssertEqual(collector5.label, "Sign On")
         
         guard let collector6 = (continueNode.collectors[5] as? FlowCollector) else {
-             XCTFail("FlowCollector is nil")
+            XCTFail("FlowCollector is nil")
             return
         }
         XCTAssertEqual(collector6.type, "FLOW_LINK")
@@ -394,7 +394,7 @@ final class DaVinciTests: XCTestCase {
         XCTAssertEqual(collector6.label, "No account? Register now!")
         
         guard let collector7 = (continueNode.collectors[6] as? FlowCollector) else {
-             XCTFail("FlowCollector is nil")
+            XCTFail("FlowCollector is nil")
             return
         }
         XCTAssertEqual(collector7.type, "FLOW_LINK")
@@ -402,7 +402,7 @@ final class DaVinciTests: XCTestCase {
         XCTAssertEqual(collector7.label, "Having trouble signing on?")
         
         guard let collector8 = (continueNode.collectors[7] as? SingleSelectCollector) else {
-             XCTFail("SingleSelectCollector is nil")
+            XCTFail("SingleSelectCollector is nil")
             return
         }
         XCTAssertEqual(collector8.type, "DROPDOWN")
@@ -413,7 +413,7 @@ final class DaVinciTests: XCTestCase {
         XCTAssertEqual(collector8.value, "default-dropdown")
         
         guard let collector9 = (continueNode.collectors[8] as? MultiSelectCollector) else {
-             XCTFail("MultiSelectCollector is nil")
+            XCTFail("MultiSelectCollector is nil")
             return
         }
         XCTAssertEqual(collector9.type, "COMBOBOX")
@@ -424,7 +424,7 @@ final class DaVinciTests: XCTestCase {
         XCTAssertEqual(collector9.value, ["default-combobox"])
         
         guard let collector10 = (continueNode.collectors[9] as? SingleSelectCollector) else {
-             XCTFail("MultiSelectCollector is nil")
+            XCTFail("MultiSelectCollector is nil")
             return
         }
         XCTAssertEqual(collector10.type, "RADIO")
@@ -435,7 +435,7 @@ final class DaVinciTests: XCTestCase {
         XCTAssertEqual(collector10.value, "default-radio")
         
         guard let collector11 = (continueNode.collectors[10] as? MultiSelectCollector) else {
-             XCTFail("SingleSelectCollector is nil")
+            XCTFail("SingleSelectCollector is nil")
             return
         }
         XCTAssertEqual(collector11.type, "CHECKBOX")
