@@ -1,8 +1,8 @@
 //
-//  SampleRequest.swift
+//  Request.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -14,7 +14,7 @@ import UIKit
 
 /// Class for a Request. A Request represents a request to be sent over the network.
 public class Request: @unchecked Sendable {
-  
+    
     /// The URL request.
     public private(set) var urlRequest: URLRequest = URLRequest(url: URL(string: "https://")!)
     
@@ -92,7 +92,7 @@ public class Request: @unchecked Sendable {
         self.urlRequest.setValue(ContentType.urlEncoded.rawValue, forHTTPHeaderField: Constants.contentType)
         self.urlRequest.httpBody = formString.data(using: .utf8)
     }
-  
+    
     /// Represents various content types used in HTTP requests.
     public enum ContentType: String {
         case plainText = "text/plain"

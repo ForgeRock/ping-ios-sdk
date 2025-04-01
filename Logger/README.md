@@ -12,7 +12,7 @@ SDKs.
 
 ## Integrating the SDK into your project
 
-Use Cocoapods or Swift Package Manger
+Use Cocoapods or Swift Package Manager
 
 ## How to Use the SDK
 
@@ -91,7 +91,7 @@ logger.i("Hello World") // This message will not be logged
 
 ## Shared Logger
 
-LogManager also provides a global shared logger: `LogManager.logger`. Default value for the `LogManager.logger` is `none`, however any type conforming to `Logger` protocol can be assigned to it, inluding the `standard` and `warning` loggers and any custom logger.
+LogManager also provides a global shared logger: `LogManager.logger`. Default value for the `LogManager.logger` is `none`, however any type conforming to `Logger` protocol can be assigned to it, including the `standard` and `warning` loggers and any custom logger.
 
 ## Available Loggers
 

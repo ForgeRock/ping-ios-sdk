@@ -2,7 +2,7 @@
 //  AppleRequestHandler.swift
 //  External-idp
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -25,7 +25,7 @@ class AppleRequestHandler: IdpRequestHandler {
     init(httpClient: HttpClient) {
         self.httpClient = httpClient
     }
-        
+    
     /// Authorizes the user with the IDP.
     /// - Parameter url: The URL for the IDP.
     /// - Returns: A `Request` object containing the result of the authorization.
@@ -57,13 +57,13 @@ class AppleRequestHandler: IdpRequestHandler {
         // Sign in to Apple account
         for try await appleResponse in helper.startSignInWithAppleFlow() {
             let token = appleResponse.token
-
+            
             let nonce = appleResponse.nonce
             let displayName = appleResponse.displayName ?? ""
             let firstName = appleResponse.firstName ?? ""
             let lastName = appleResponse.lastName ?? ""
             let email = appleResponse.email ?? ""
-
+            
             return IdpResult(token: token, additionalParameters: ["name": displayName, "firstName": firstName, "lastName": lastName, "nonce": nonce, "email": email])
         }
         throw IdpExceptions.illegalStateException(message: "Apple Sign In failed")
@@ -84,8 +84,8 @@ struct SignInWithAppleResult: Sendable {
     let lastName: String?
     /// The nickName returned by Apple. Optional
     let nickName: String?
-
-    /// Full name cumputed property, combining first and last name.
+    
+    /// Full name computed property, combining first and last name.
     var fullName: String? {
         if let firstName, let lastName {
             return firstName + " " + lastName
@@ -101,7 +101,7 @@ struct SignInWithAppleResult: Sendable {
     var displayName: String? {
         fullName ?? nickName
     }
-
+    
     /// Initialize a new `SignInWithAppleResult` object.
     /// - Parameters:
     ///  - authorization : The authorization object returned by Apple.
@@ -115,7 +115,7 @@ struct SignInWithAppleResult: Sendable {
         else {
             return nil
         }
-
+        
         self.token = token
         self.nonce = nonce
         self.email = appleIDCredential.email
@@ -128,7 +128,7 @@ struct SignInWithAppleResult: Sendable {
 /// Helper class to handle Sign In With Apple requests.
 @MainActor
 final class SignInWithAppleHelper: NSObject {
-        
+    
     /// The IdpClient used for the request.
     let idpClient: IdpClient
     /// The completion handler for the request
@@ -202,7 +202,7 @@ private extension SignInWithAppleHelper {
         let authorizationController = ASAuthorizationController(authorizationRequests: [request])
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = viewController
-
+        
         authorizationController.performRequests()
     }
     

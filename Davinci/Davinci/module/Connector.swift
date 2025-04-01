@@ -2,7 +2,7 @@
 //  Connector.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -39,7 +39,7 @@ extension ContinueNode {
 ///- property input: The input JsonObject of the ContinueNode.
 ///- property collectors: The collectors of the ContinueNode.
 class Connector: ContinueNode {
-  
+    
     /// Initializer to create a new instance of Connector.
     /// - Parameters:
     ///   - context: The FlowContext of the ContinueNode.
@@ -47,8 +47,8 @@ class Connector: ContinueNode {
     ///   - input: The input JsonObject of the ContinueNode.
     ///   - collectors: The collectors of the ContinueNode.
     init(context: FlowContext, davinci: DaVinci, input: [String: Any], collectors: Collectors) {
-      super.init(context: context, workflow: davinci, input: input, actions: collectors)
-      }
+        super.init(context: context, workflow: davinci, input: input, actions: collectors)
+    }
     
     /// Function to convert the connector to a dictionary.
     /// - returns: The connector as a JsonObject.

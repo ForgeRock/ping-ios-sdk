@@ -2,7 +2,7 @@
 //  ErrorNode.swift
 //  Davinci
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -33,7 +33,7 @@ public struct Detail: Codable, Sendable {
     
     /// The HTTP status code of the error response.
     public let statusCode: Int
-
+    
     /// Initializes a `Detail` object from a dictionary.
     ///
     /// - Parameter dictionary: A dictionary containing the error details.
@@ -62,7 +62,7 @@ public struct RawResponse: Codable, Sendable {
     
     /// Additional error details.
     public let details: [ErrorDetail]?
-
+    
     /// Initializes a `RawResponse` object from a dictionary.
     ///
     /// - Parameter dictionary: A dictionary containing the raw response data.
@@ -93,7 +93,7 @@ public struct ErrorDetail: Codable, Sendable {
     
     /// Additional inner error details, if available.
     public let innerError: InnerError?
-
+    
     /// Initializes an `ErrorDetail` object from a dictionary.
     ///
     /// - Parameter dictionary: A dictionary containing the error detail data.
@@ -115,7 +115,7 @@ public struct ErrorDetail: Codable, Sendable {
 public struct InnerError: Codable, Sendable {
     /// A dictionary mapping unsatisfied requirements to their respective messages.
     public let errors: [String: String]
-
+    
     /// Initializes an `InnerError` object from a dictionary.
     ///
     /// - Parameter dictionary: A dictionary containing inner error details.

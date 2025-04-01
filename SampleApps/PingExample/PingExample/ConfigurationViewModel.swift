@@ -1,8 +1,8 @@
-// 
+//
 //  ConfigurationViewModel.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,24 +12,24 @@
 import Foundation
 import PingBrowser
 import PingOidc
- /*
-    The ConfigurationViewModel class is an ObservableObject that contains the configuration properties for the SDK. The class has the following properties:
-    
-        clientId: The client ID for the SDK.
-        scopes: The scopes for the SDK.
-        redirectUri: The redirect URI for the SDK.
-        signOutUri: The sign-out URI for the SDK.
-        discoveryEndpoint: The discovery endpoint for the SDK.
-        environment: The environment for the SDK.
-        cookieName: The cookie name for the SDK.
-        browserSeletorType: The browser selector type for the SDK.
-  
-    The class has the following methods:
-        getBrowserType(): Returns the browser type for the SDK.
-        saveConfiguration(): Saves the configuration for the SDK.
-        startSDK(): Starts the SDK.
-        resetConfiguration(): Resets the configuration for the SDK.
- */
+
+//    The ConfigurationViewModel class is an ObservableObject that contains the configuration properties for the SDK. The class has the following properties:
+//
+//        clientId: The client ID for the SDK.
+//        scopes: The scopes for the SDK.
+//        redirectUri: The redirect URI for the SDK.
+//        signOutUri: The sign-out URI for the SDK.
+//        discoveryEndpoint: The discovery endpoint for the SDK.
+//        environment: The environment for the SDK.
+//        cookieName: The cookie name for the SDK.
+//        browserSeletorType: The browser selector type for the SDK.
+//
+//    The class has the following methods:
+//        getBrowserType(): Returns the browser type for the SDK.
+//        saveConfiguration(): Saves the configuration for the SDK.
+//        startSDK(): Starts the SDK.
+//        resetConfiguration(): Resets the configuration for the SDK.
+
 class ConfigurationViewModel: ObservableObject, @unchecked Sendable {
     
     @Published public var clientId: String
@@ -49,7 +49,7 @@ class ConfigurationViewModel: ObservableObject, @unchecked Sendable {
         self.environment = environment
         self.cookieName = cookieName
     }
-        
+    
     public func saveConfiguration() {
         ConfigurationManager.shared.saveConfiguration()
     }

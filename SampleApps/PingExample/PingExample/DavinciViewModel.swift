@@ -2,7 +2,7 @@
 //  DavinciViewModel.swift
 //  PingExample
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -90,7 +90,7 @@ class DavinciViewModel: ObservableObject {
         var shouldValidate = false
         for collector in node.collectors {
             // Check if the collector is a social collector and if it has a resume request.
-            // In that case, we should not validate the collectors and continue with the submition of the flow.
+            // In that case, we should not validate the collectors and continue with the submission of the flow.
             if let socialCollector = collector as? IdpCollector {
                 if socialCollector.resumeRequest != nil {
                     shouldValidate = false

@@ -1,8 +1,8 @@
 // 
-//  LocaleExtentionsTests.swift
-//  Davinci
+//  LocaleExtensionsTests.swift
+//  DavinciTests
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,23 +11,23 @@
 
 import XCTest
 
-class LocaleExtentionsTests: XCTestCase {
-
+class LocaleExtensionsTests: XCTestCase {
+    
     func testEmptyLocaleListReturnsEmptyString() {
         let emptyLocaleList: [Locale] = []
         XCTAssertEqual("", emptyLocaleList.toAcceptLanguage())
     }
-
+    
     func testSingleLocaleWithoutScriptReturnsLanguageTag() {
         let localeList = [Locale(identifier: "en-US")]
         XCTAssertEqual("en-US, en;q=0.9", localeList.toAcceptLanguage())
     }
-
+    
     func testSingleLocaleWithDifferentLanguageTagAddsBothVersions() {
         let localeList = [Locale(identifier: "zh-Hant-TW")]
         XCTAssertEqual("zh-Hant-TW, zh;q=0.9", localeList.toAcceptLanguage())
     }
-
+    
     func testMultipleLocalesAreOrderedWithDecreasingQValues() {
         let localeList = [
             Locale(identifier: "en-US"),
@@ -39,7 +39,7 @@ class LocaleExtentionsTests: XCTestCase {
             localeList.toAcceptLanguage()
         )
     }
-
+    
     func testComplexLocaleListWithScriptsHandledCorrectly() {
         let localeList = [
             Locale(identifier: "zh-Hant-TW"),
@@ -51,7 +51,7 @@ class LocaleExtentionsTests: XCTestCase {
             localeList.toAcceptLanguage()
         )
     }
-
+    
     func testQValuesDecreaseCorrectlyForLongLists() {
         let localeList = [
             Locale(identifier: "en-US"),

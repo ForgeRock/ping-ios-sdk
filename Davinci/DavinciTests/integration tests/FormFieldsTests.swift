@@ -1,8 +1,8 @@
 //
-//  DaVinciIntegrationTests.swift
+//  FormFieldsTests.swift
 //  DavinciTests
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -77,7 +77,7 @@ class FormFieldsTests: XCTestCase {
         let validationResult = textCollector.validate()
         XCTAssertEqual(1, validationResult.count)
         XCTAssertEqual("This field cannot be empty.", validationResult[0].errorMessage)
-
+        
         textCollector.value = "Sometext123"
         let validationResult2 = textCollector.validate() // Should return empty list this time
         XCTAssertTrue(validationResult2.isEmpty)
@@ -116,7 +116,7 @@ class FormFieldsTests: XCTestCase {
         let validationResult = checkbox.validate()
         XCTAssertFalse(validationResult.isEmpty)
         XCTAssertEqual("This field cannot be empty.", validationResult[0].errorMessage)
-
+        
         checkbox.value.append("value1")
         let validationResult2 = checkbox.validate() // Should return empty list this time
         XCTAssertTrue(validationResult2.isEmpty)
@@ -147,7 +147,7 @@ class FormFieldsTests: XCTestCase {
         
         // Make sure that dropdown default value is set
         XCTAssertEqual("dropdown-option2-value", dropdown.value)
-
+        
         // Clear the value of the dropdown
         dropdown.value = ""
         
@@ -155,7 +155,7 @@ class FormFieldsTests: XCTestCase {
         let validationResult = dropdown.validate()
         XCTAssertFalse(validationResult.isEmpty)
         XCTAssertEqual("This field cannot be empty.", validationResult[0].errorMessage)
-
+        
         dropdown.value = "value1"
         let validationResult2 = dropdown.validate() // Should return empty list this time
         XCTAssertTrue(validationResult2.isEmpty)
@@ -186,7 +186,7 @@ class FormFieldsTests: XCTestCase {
         
         // Make sure that radio default value is set
         XCTAssertEqual("option2 value", radio.value)
-
+        
         // Clear the value of the radio
         radio.value = ""
         
@@ -194,7 +194,7 @@ class FormFieldsTests: XCTestCase {
         let validationResult = radio.validate()
         XCTAssertFalse(validationResult.isEmpty)
         XCTAssertEqual("This field cannot be empty.", validationResult[0].errorMessage)
-
+        
         radio.value = "value1"
         let validationResult2 = radio.validate() // Should return empty list this time
         XCTAssertTrue(validationResult2.isEmpty)
@@ -227,7 +227,7 @@ class FormFieldsTests: XCTestCase {
         XCTAssertEqual(2, combobox.value.count)
         XCTAssertEqual("option1 value", combobox.value[0])
         XCTAssertEqual("option3 value", combobox.value[1])
-
+        
         // Clear the values of the combobox
         combobox.value.removeAll()
         
@@ -235,7 +235,7 @@ class FormFieldsTests: XCTestCase {
         let validationResult = combobox.validate()
         XCTAssertFalse(validationResult.isEmpty)
         XCTAssertEqual("This field cannot be empty.", validationResult[0].errorMessage)
-
+        
         combobox.value.append("value1")
         combobox.value.append("value2")
         let validationResult2 = combobox.validate() // Should return empty list this time

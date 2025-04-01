@@ -2,7 +2,7 @@
 //  OidcClientConfig.swift
 //  PingOidc
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -52,19 +52,19 @@ public class OidcClientConfig: @unchecked Sendable {
     public var additionalParameters = [String: String]()
     /// HTTP client for making network requests.
     public var httpClient: HttpClient?
-  
+    
     /// Initializes a new `OidcClientConfig` instance.
     public init() {
         logger = LogManager.none
         storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE", encryptor: SecuredKeyEncryptor() ?? NoEncryptor(), cacheable: true)
     }
-  
+    
     ///  Adds a scope to the set of scopes.
     /// - Parameter scope: The scope to add.
     public func scope(_ scope: String) {
         scopes.insert(scope)
     }
-  
+    
     /// Updates the agent with the provided configuration.
     /// - Parameters:
     ///   - agent: The agent to update.
@@ -78,14 +78,14 @@ public class OidcClientConfig: @unchecked Sendable {
         if httpClient == nil {
             httpClient = HttpClient()
         }
-    
+        
         if openId != nil {
             return
         }
         
         openId = try await discover()
     }
-  
+    
     /// Discovers the OpenID configuration from the discovery endpoint.
     /// - Returns: The discovered OpenID configuration.
     private func discover() async throws -> OpenIdConfiguration? {
@@ -108,7 +108,7 @@ public class OidcClientConfig: @unchecked Sendable {
         let configuration = try JSONDecoder().decode(OpenIdConfiguration.self, from: data)
         return configuration
     }
-  
+    
     /// Clones the current configuration.
     /// - Returns: A new instance of OidcClientConfig with the same properties.
     public func clone() -> OidcClientConfig {
@@ -116,7 +116,7 @@ public class OidcClientConfig: @unchecked Sendable {
         cloned.update(with: self)
         return cloned
     }
-  
+    
     /// Merges another configuration into this one.
     /// - Parameter other: The other configuration to merge.
     func update(with other: OidcClientConfig) {
