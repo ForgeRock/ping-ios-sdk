@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EC0815B62D49377500F1AD02"
-               BuildableName = "External_idp.framework"
-               BlueprintName = "External-idp"
+               BuildableName = "PingExternal_idp.framework"
+               BlueprintName = "PingExternal-idp"
                ReferencedContainer = "container:External-idp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EC0815B62D49377500F1AD02"
-            BuildableName = "External_idp.framework"
-            BlueprintName = "External-idp"
+            BuildableName = "PingExternal_idp.framework"
+            BlueprintName = "PingExternal-idp"
             ReferencedContainer = "container:External-idp.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

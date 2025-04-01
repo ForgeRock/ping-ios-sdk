@@ -12,7 +12,7 @@
 import SwiftUI
 import PingDavinci
 import PingBrowser
-import External_idp
+import PingExternal_idp
 
 public struct SocialButtonView: View {
     

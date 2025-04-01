@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint External-idp.podspec' to ensure this is a
+# Be sure to run `pod lib lint PingExternal-idp.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -7,9 +7,9 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'External-idp'
+  s.name             = 'PingExternal-idp'
   s.version          = '1.0.0'
-  s.summary          = 'External-idp module for the Ping iOS SDK'
+  s.summary          = 'PingExternal-idp module for the Ping iOS SDK'
   s.description      = <<-DESC
   The External-idp module for the Ping iOS SDK is a library for Authentication with external IDPs when using the Ping iOS SDK.
                        DESC
@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
       :tag => s.version.to_s
   }
 
-  s.module_name   = 'External_idp'
+  s.module_name   = 'PingExternal-idp'
   s.swift_versions = ['5.0', '5.1']
 
   s.ios.deployment_target = '13.0'

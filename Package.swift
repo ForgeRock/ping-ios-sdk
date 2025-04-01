@@ -13,7 +13,7 @@ let package = Package (
         .library(name: "PingOidc", targets: ["PingOidc"]),
         .library(name: "PingDavinci", targets: ["PingDavinci"]),
         .library(name: "PingBrowser", targets: ["PingBrowser"]),
-        .library(name: "External-idp", targets: ["External-idp"])
+        .library(name: "PingExternal-idp", targets: ["PingExternal-idp"])
     ],
     dependencies: [
         .package(name: "Facebook", url: "https://github.com/facebook/facebook-ios-sdk.git", .upToNextMinor(from: "16.3.1")),
@@ -26,6 +26,6 @@ let package = Package (
         .target(name: "PingOidc", dependencies: [.target(name: "PingOrchestrate")], path: "Oidc/Oidc", exclude: ["Oidc.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingDavinci", dependencies: [.target(name: "PingOidc"),], path: "Davinci/Davinci", exclude: ["Davinci.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingBrowser", dependencies: [.target(name: "PingLogger"),], path: "Browser/Browser", exclude: ["Browser.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "External-idp", dependencies: [.target(name: "PingDavinci"), .target(name: "PingBrowser"), .product(name: "FacebookLogin", package: "Facebook"), .product(name: "GoogleSignIn", package: "GoogleSignIn")], path: "External-idp/External-idp", exclude: ["ExtrernalIdp.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
+        .target(name: "PingExternal-idp", dependencies: [.target(name: "PingDavinci"), .target(name: "PingBrowser"), .product(name: "FacebookLogin", package: "Facebook"), .product(name: "GoogleSignIn", package: "GoogleSignIn")], path: "External-idp/External-idp", exclude: ["ExtrernalIdp.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
     ]
 )
