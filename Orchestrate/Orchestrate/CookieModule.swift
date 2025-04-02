@@ -39,7 +39,7 @@ public class CookieModule {
         
         setup.next { context, _, request in
             if let url = request.urlRequest.url {
-                let allCookies = setup.config.inMemoryStorage.cookies(for: url)
+                let allCookies = await setup.config.inMemoryStorage.cookies(for: url)
                 if let allCookies = allCookies {
                     request.cookies(cookies: allCookies)
                 }
@@ -67,7 +67,7 @@ public class CookieModule {
                     await CookieModule.inject(url: url, cookies: cookies,  inMemoryStorage: setup.config.inMemoryStorage, request: request)
                 }
                 try? await setup.config.cookieStorage.delete()
-                setup.config.inMemoryStorage.deleteCookies(url: url)
+                await setup.config.inMemoryStorage.deleteCookies(url: url)
             }
             return request
         }
