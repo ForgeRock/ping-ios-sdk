@@ -10,7 +10,7 @@
 
 import XCTest
 @testable import PingBrowser
-@testable import External_idp
+@testable import PingExternal_idp
 @testable import PingOrchestrate
 
 
