@@ -16,10 +16,11 @@ import Foundation
 /// - property key: The key of the field collector.
 /// - property label: The label of the field collector.
 /// - property id The UUID of the field collector.
-open class FieldCollector: Collector, @unchecked Sendable {
+open class FieldCollector<T>: Collector, Validator, @unchecked Sendable {
     public private(set) var type: String = ""
     public private(set) var key: String = ""
     public private(set) var label: String = ""
+    public private(set) var required: Bool = false
     public let id = UUID()
   
     /// Initializes a new instance of `FieldCollector`.
@@ -31,6 +32,7 @@ open class FieldCollector: Collector, @unchecked Sendable {
         type = json[Constants.type] as? String ?? ""
         key = json[Constants.key] as? String ?? ""
         label = json[Constants.label] as? String ?? ""
+        required = json[Constants.required] as? Bool ?? false
     }
     
     /// Initializes `FieldCollector` with the given value.
@@ -39,6 +41,18 @@ open class FieldCollector: Collector, @unchecked Sendable {
     /// - Parameter input: The value to initialize with.
     public func initialize(with value: Any) {
         // To be implemented by subclasses
+    }
+    
+    public func validate() -> [ValidationError] {
+        var errors = [ValidationError]()
+        if (required && payload() == nil) {
+            errors.append(.required)
+        }
+        return errors
+    }
+    
+    open func payload() -> T? {
+        fatalError("Subclasses need to override the payload() method.")
     }
 }
 

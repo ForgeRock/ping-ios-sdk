@@ -17,6 +17,9 @@ public protocol Collector: Action, Identifiable, Sendable {
     init(with json: [String: Any])
 }
 
+public protocol Validator {
+    func validate() -> [ValidationError]
+}
 
 extension ContinueNode {
     /// Returns the list of collectors from the actions.

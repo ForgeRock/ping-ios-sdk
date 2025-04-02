@@ -81,4 +81,8 @@ public enum Constants {
     public static let GOOGLE = "GOOGLE"
     public static let FACEBOOK = "FACEBOOK"
     public static let APPLE = "APPLE"
+    public static let devices = "devices"
+    public static let DEVICE_REGISTRATION = "DEVICE_REGISTRATION"
+    public static let DEVICE_AUTHENTICATION = "DEVICE_AUTHENTICATION"
+    public static let PHONE_NUMBER = "PHONE_NUMBER"
 }

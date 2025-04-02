@@ -38,7 +38,7 @@ extension ContinueNode {
 ///- property davinci: The Davinci Flow of the ContinueNode.
 ///- property input: The input JsonObject of the ContinueNode.
 ///- property collectors: The collectors of the ContinueNode.
-class Connector: ContinueNode {
+class Connector: ContinueNode, @unchecked Sendable {
   
     /// Initializer to create a new instance of Connector.
     /// - Parameters:
