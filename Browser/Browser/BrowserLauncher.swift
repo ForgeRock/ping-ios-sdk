@@ -191,6 +191,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
             if !authSession.start() {
                 continuation.resume(throwing: BrowserError.externalUserAgentFailure)
             }
+            reset()
         }
     }
     
