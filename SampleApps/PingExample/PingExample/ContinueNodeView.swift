@@ -79,6 +79,9 @@ struct ContinueNodeView: View {
                         let viewModel = SocialButtonViewModel(idpCollector: idpCollector)
                         SocialButtonView(socialButtonViewModel: viewModel, onNext: onNext, onStart: onStart)
                     }
+                case is DeviceRegistrationCollector:
+                    // TODO: Add support for DeviceRegistrationCollector
+                    EmptyView()
                 default:
                     EmptyView()
                 }

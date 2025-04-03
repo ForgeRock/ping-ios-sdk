@@ -25,7 +25,8 @@ open class DeviceRegistrationCollector: FieldCollector<String>, @unchecked Senda
     /// Initializes a new instance of `DeviceRegistrationCollector`.
     public required init(with json: [String : Any]) {
         super.init(with: json)
-        if let jsonData = try? JSONSerialization.data(withJSONObject: json, options: []) {
+        let devicesJson = json[Constants.devices] as? [[String: Any]] ?? [[:]]
+        if let jsonData = try? JSONSerialization.data(withJSONObject: devicesJson, options: []) {
             devices = Device.populateDevices(from: jsonData)
         }
     }

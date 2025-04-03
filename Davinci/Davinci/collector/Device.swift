@@ -27,7 +27,7 @@ public struct Device: Codable, @unchecked Sendable {
     var title: String
     var description: String
     var iconSrc: URL
-    var isDefault: Bool = false
+    var isDefault: Bool? = false
     var value: String?
     
     /// Enum representing the coding keys.

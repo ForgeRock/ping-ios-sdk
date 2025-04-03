@@ -63,6 +63,8 @@
 		ECB7C5C02D53D4440006F1C8 /* RequestInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7C5BF2D53D4390006F1C8 /* RequestInterceptor.swift */; };
 		ECF053222D9C31A3004C9AAE /* DeviceRegistrationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */; };
 		ECF053242D9C4275004C9AAE /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF053232D9C4273004C9AAE /* Device.swift */; };
+		ECF0532D2D9D9966004C9AAE /* Collectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF0532C2D9D9962004C9AAE /* Collectors.swift */; };
+		ECF0532F2D9D99D4004C9AAE /* Validator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF0532E2D9D99D0004C9AAE /* Validator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -147,6 +149,8 @@
 		ECBF06752D525BE20066A3BD /* Extrernal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Extrernal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationCollector.swift; sourceTree = "<group>"; };
 		ECF053232D9C4273004C9AAE /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		ECF0532C2D9D9962004C9AAE /* Collectors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collectors.swift; sourceTree = "<group>"; };
+		ECF0532E2D9D99D0004C9AAE /* Validator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -262,6 +266,7 @@
 			isa = PBXGroup;
 			children = (
 				3AC13E302C3FFF1000DEF23A /* Collector.swift */,
+				ECF0532C2D9D9962004C9AAE /* Collectors.swift */,
 				3AC13E2F2C3FFF1000DEF23A /* CollectorFactory.swift */,
 				A5EFA9D02D38B4C900F771FE /* ContinueNodeAware.swift */,
 				ECF053232D9C4273004C9AAE /* Device.swift */,
@@ -278,6 +283,7 @@
 				A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */,
 				A51D4CD62C585E2D00FE09E0 /* SubmitCollector.swift */,
 				A51D4CD82C585E5700FE09E0 /* TextCollector.swift */,
+				ECF0532E2D9D99D0004C9AAE /* Validator.swift */,
 				A5E9AEB92D2F272F000533ED /* ValidatedCollector.swift */,
 				A5E9AEB72D2F2687000533ED /* ValidationError.swift */,
 			);
@@ -411,6 +417,7 @@
 				A5A61E032D4A92BF00767C2D /* ErrorNode.swift in Sources */,
 				A51D4CD12C585B4500FE09E0 /* FieldCollector.swift in Sources */,
 				ECB7C5C02D53D4440006F1C8 /* RequestInterceptor.swift in Sources */,
+				ECF0532D2D9D9966004C9AAE /* Collectors.swift in Sources */,
 				A5E9AEB82D2F2689000533ED /* ValidationError.swift in Sources */,
 				A5E9AEC02D2F44CD000533ED /* PasswordPolicy.swift in Sources */,
 				A5E646E22D665A080042D17E /* LocaleExtensions.swift in Sources */,
@@ -423,6 +430,7 @@
 				ECF053222D9C31A3004C9AAE /* DeviceRegistrationCollector.swift in Sources */,
 				A5E9AEB62D2F243E000533ED /* SingleSelectCollector.swift in Sources */,
 				3A203D972BDB2CD70020C995 /* Oidc.swift in Sources */,
+				ECF0532F2D9D99D4004C9AAE /* Validator.swift in Sources */,
 				3A203D9B2BDE155D0020C995 /* Transform.swift in Sources */,
 				A5CCE5E72C85E96B00349A5E /* Constants.swift in Sources */,
 				3AC13E332C3FFF1000DEF23A /* CollectorFactory.swift in Sources */,
