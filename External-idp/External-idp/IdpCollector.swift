@@ -94,7 +94,6 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     ///  - httpClient: The HTTP client.
     ///  - Returns: The IdpRequestHandler.
     @MainActor public func getDefaultIdpHandler(httpClient: HttpClient) -> IdpRequestHandler? {
-        return nil
         switch idpType {
         case Constants.APPLE:
             return AppleRequestHandler(httpClient: httpClient)

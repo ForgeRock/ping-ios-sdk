@@ -79,7 +79,7 @@
 		ECA540812D6C814B002B35D4 /* FacebookRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookRequestHandler.swift; sourceTree = "<group>"; };
 		ECA540C02D6DE9CD002B35D4 /* NativeHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeHandlerTests.swift; sourceTree = "<group>"; };
 		ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpCollector.swift; sourceTree = "<group>"; };
-		ECB7C6982D5A2C1F0006F1C8 /* External-idpTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "External-idpTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECB7C6982D5A2C1F0006F1C8 /* PingExternal-idpTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "PingExternal-idpTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF06442D50EBF60066A3BD /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF06482D50ED750066A3BD /* BrowserHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserHandler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -122,7 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				EC0815B72D49377500F1AD02 /* PingExternal_idp.framework */,
-				ECB7C6982D5A2C1F0006F1C8 /* External-idpTests.xctest */,
+				ECB7C6982D5A2C1F0006F1C8 /* PingExternal-idpTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -214,9 +214,9 @@
 			productReference = EC0815B72D49377500F1AD02 /* PingExternal_idp.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		ECB7C6972D5A2C1F0006F1C8 /* External-idpTests */ = {
+		ECB7C6972D5A2C1F0006F1C8 /* PingExternal-idpTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = ECB7C6A12D5A2C1F0006F1C8 /* Build configuration list for PBXNativeTarget "External-idpTests" */;
+			buildConfigurationList = ECB7C6A12D5A2C1F0006F1C8 /* Build configuration list for PBXNativeTarget "PingExternal-idpTests" */;
 			buildPhases = (
 				ECB7C6942D5A2C1F0006F1C8 /* Sources */,
 				ECB7C6952D5A2C1F0006F1C8 /* Frameworks */,
@@ -227,11 +227,11 @@
 			dependencies = (
 				ECB7C69E2D5A2C1F0006F1C8 /* PBXTargetDependency */,
 			);
-			name = "External-idpTests";
+			name = "PingExternal-idpTests";
 			packageProductDependencies = (
 			);
 			productName = "External-idpTests";
-			productReference = ECB7C6982D5A2C1F0006F1C8 /* External-idpTests.xctest */;
+			productReference = ECB7C6982D5A2C1F0006F1C8 /* PingExternal-idpTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -272,7 +272,7 @@
 			projectRoot = "";
 			targets = (
 				EC0815B62D49377500F1AD02 /* PingExternal-idp */,
-				ECB7C6972D5A2C1F0006F1C8 /* External-idpTests */,
+				ECB7C6972D5A2C1F0006F1C8 /* PingExternal-idpTests */,
 			);
 		};
 /* End PBXProject section */
@@ -358,7 +358,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.Extrernal-idp";
@@ -394,7 +394,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.Extrernal-idp";
@@ -542,12 +542,13 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.External-idpTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
 			};
 			name = Debug;
 		};
@@ -559,12 +560,13 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.External-idpTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
 			};
 			name = Release;
 		};
@@ -589,7 +591,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		ECB7C6A12D5A2C1F0006F1C8 /* Build configuration list for PBXNativeTarget "External-idpTests" */ = {
+		ECB7C6A12D5A2C1F0006F1C8 /* Build configuration list for PBXNativeTarget "PingExternal-idpTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				ECB7C69F2D5A2C1F0006F1C8 /* Debug */,

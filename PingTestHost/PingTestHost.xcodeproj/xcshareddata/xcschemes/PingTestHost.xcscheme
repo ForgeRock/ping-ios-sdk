@@ -130,8 +130,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "ECB7C6972D5A2C1F0006F1C8"
-               BuildableName = "External-idpTests.xctest"
-               BlueprintName = "External-idpTests"
+               BuildableName = "PingExternal-idpTests.xctest"
+               BlueprintName = "PingExternal-idpTests"
                ReferencedContainer = "container:../External-idp/External-idp.xcodeproj">
             </BuildableReference>
          </TestableReference>
