@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
       :tag => s.version.to_s
   }
 
-  s.module_name   = 'PingExternal-idp'
+  s.module_name = 'PingExternal_idp'
   s.swift_versions = ['5.0', '5.1']
 
   s.ios.deployment_target = '13.0'

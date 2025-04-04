@@ -10,7 +10,7 @@
 
 import Foundation
 import PingOrchestrate
-import FacebookLogin
+import FBSDKLoginKit
 import UIKit
 
 /// A handler class for managing Facebook Identity Provider (IdP) authorization.
