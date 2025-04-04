@@ -1,4 +1,4 @@
-## [1.1.0]
+## [1.1.0-beta1]
 
 #### Added
 - Support for PingOne Forms field types LABEL, CHECKBOX, DROPDOWN, COMBOBOX, RADIO, PASSWORD, PASSWORD_VERIFY, FLOWLINK [SDKS-3671, SDKS-3672]
