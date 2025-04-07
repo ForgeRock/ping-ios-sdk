@@ -2,7 +2,7 @@
 //  Constants.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -85,4 +85,8 @@ public enum Constants {
     public static let DEVICE_REGISTRATION = "DEVICE_REGISTRATION"
     public static let DEVICE_AUTHENTICATION = "DEVICE_AUTHENTICATION"
     public static let PHONE_NUMBER = "PHONE_NUMBER"
+    public static let submit = "submit"
+    public static let countryCode = "countryCode"
+    public static let phoneNumber = "phoneNumber"
+    public static let defaultCountryCode = "defaultCountryCode"
 }

@@ -11,12 +11,20 @@
 
 import Foundation
 
+protocol AnyFieldCollector: Collector, Validator, Sendable {
+    var id: String { get }
+    /// Returns the payload as `Any?`.
+    func anyPayload() -> Any?
+    /// Initializes the field collector with the given value.
+    func initialize(with value: Any)
+}
+
 /// Abstract class representing a field collector.
 /// - property type: The type of the field collector.
 /// - property key: The key of the field collector.
 /// - property label: The label of the field collector.
 /// - property id The UUID of the field collector.
-open class FieldCollector<T>: Collector, Validator, @unchecked Sendable {
+open class FieldCollector<T>: Collector, AnyFieldCollector, Validator, @unchecked Sendable {
     public private(set) var type: String = ""
     public private(set) var key: String = ""
     public private(set) var label: String = ""
@@ -24,10 +32,10 @@ open class FieldCollector<T>: Collector, Validator, @unchecked Sendable {
     public var id: String {
         return key
     }
-  
+    
     /// Initializes a new instance of `FieldCollector`.
     public init() {}
-  
+    
     /// Initializes a new instance of `FieldCollector`.
     /// - Parameter json: The json to initialize from.
     required public init(with json: [String: Any]) {
@@ -55,6 +63,11 @@ open class FieldCollector<T>: Collector, Validator, @unchecked Sendable {
     
     open func payload() -> T? {
         fatalError("Subclasses need to override the payload() method.")
+    }
+    
+    /// Type-erased version of payload()
+    public func anyPayload() -> Any? {
+        return payload()
     }
 }
 

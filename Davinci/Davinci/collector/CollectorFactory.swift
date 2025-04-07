@@ -45,6 +45,7 @@ public actor CollectorFactory {
             c.perform(Selector(("registerCollector")))
         }
         register(type: Constants.DEVICE_REGISTRATION, collector: DeviceRegistrationCollector.self)
+        register(type: Constants.DEVICE_AUTHENTICATION, collector: DeviceAuthenticationCollector.self)
     }
     
     /// Registers a new type of Collector.

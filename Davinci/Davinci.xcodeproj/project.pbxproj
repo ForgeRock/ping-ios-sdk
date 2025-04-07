@@ -60,6 +60,9 @@
 		A5EFAA122D3F518B00F771FE /* SubmitCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA112D3F518800F771FE /* SubmitCollectorTests.swift */; };
 		A5EFAA142D3F51CC00F771FE /* TextCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA132D3F51CA00F771FE /* TextCollectorTests.swift */; };
 		A5EFAA162D3F52F500F771FE /* ValidatedCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA152D3F52F300F771FE /* ValidatedCollectorTests.swift */; };
+		EC92B3742D9FF67F00E4246D /* DeviceAuthenticationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3732D9FF67E00E4246D /* DeviceAuthenticationCollector.swift */; };
+		EC92B3762D9FF6CD00E4246D /* Submittable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3752D9FF6C800E4246D /* Submittable.swift */; };
+		EC92B3782DA0132100E4246D /* PhoneNumberCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */; };
 		ECB7C5C02D53D4440006F1C8 /* RequestInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7C5BF2D53D4390006F1C8 /* RequestInterceptor.swift */; };
 		ECF053222D9C31A3004C9AAE /* DeviceRegistrationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */; };
 		ECF053242D9C4275004C9AAE /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF053232D9C4273004C9AAE /* Device.swift */; };
@@ -145,6 +148,9 @@
 		A5EFAA112D3F518800F771FE /* SubmitCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitCollectorTests.swift; sourceTree = "<group>"; };
 		A5EFAA132D3F51CA00F771FE /* TextCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextCollectorTests.swift; sourceTree = "<group>"; };
 		A5EFAA152D3F52F300F771FE /* ValidatedCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedCollectorTests.swift; sourceTree = "<group>"; };
+		EC92B3732D9FF67E00E4246D /* DeviceAuthenticationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticationCollector.swift; sourceTree = "<group>"; };
+		EC92B3752D9FF6C800E4246D /* Submittable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Submittable.swift; sourceTree = "<group>"; };
+		EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberCollector.swift; sourceTree = "<group>"; };
 		ECB7C5BF2D53D4390006F1C8 /* RequestInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestInterceptor.swift; sourceTree = "<group>"; };
 		ECBF06752D525BE20066A3BD /* Extrernal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Extrernal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationCollector.swift; sourceTree = "<group>"; };
@@ -270,6 +276,7 @@
 				3AC13E2F2C3FFF1000DEF23A /* CollectorFactory.swift */,
 				A5EFA9D02D38B4C900F771FE /* ContinueNodeAware.swift */,
 				ECF053232D9C4273004C9AAE /* Device.swift */,
+				EC92B3732D9FF67E00E4246D /* DeviceAuthenticationCollector.swift */,
 				ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */,
 				A51D4CD02C585B4500FE09E0 /* FieldCollector.swift */,
 				A51D4CD22C585D7C00FE09E0 /* FlowCollector.swift */,
@@ -279,8 +286,10 @@
 				A5E9AEBB2D2F2B23000533ED /* Option.swift */,
 				A51D4CD42C585DCD00FE09E0 /* PasswordCollector.swift */,
 				A5E9AEBF2D2F44CB000533ED /* PasswordPolicy.swift */,
+				EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */,
 				A5E9AEB52D2F243C000533ED /* SingleSelectCollector.swift */,
 				A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */,
+				EC92B3752D9FF6C800E4246D /* Submittable.swift */,
 				A51D4CD62C585E2D00FE09E0 /* SubmitCollector.swift */,
 				A51D4CD82C585E5700FE09E0 /* TextCollector.swift */,
 				ECF0532E2D9D99D0004C9AAE /* Validator.swift */,
@@ -419,6 +428,7 @@
 				ECB7C5C02D53D4440006F1C8 /* RequestInterceptor.swift in Sources */,
 				ECF0532D2D9D9966004C9AAE /* Collectors.swift in Sources */,
 				A5E9AEB82D2F2689000533ED /* ValidationError.swift in Sources */,
+				EC92B3782DA0132100E4246D /* PhoneNumberCollector.swift in Sources */,
 				A5E9AEC02D2F44CD000533ED /* PasswordPolicy.swift in Sources */,
 				A5E646E22D665A080042D17E /* LocaleExtensions.swift in Sources */,
 				A51D4CDF2C599BFF00FE09E0 /* Request.swift in Sources */,
@@ -432,6 +442,7 @@
 				3A203D972BDB2CD70020C995 /* Oidc.swift in Sources */,
 				ECF0532F2D9D99D4004C9AAE /* Validator.swift in Sources */,
 				3A203D9B2BDE155D0020C995 /* Transform.swift in Sources */,
+				EC92B3742D9FF67F00E4246D /* DeviceAuthenticationCollector.swift in Sources */,
 				A5CCE5E72C85E96B00349A5E /* Constants.swift in Sources */,
 				3AC13E332C3FFF1000DEF23A /* CollectorFactory.swift in Sources */,
 				3AC13E342C3FFF1000DEF23A /* Collector.swift in Sources */,
@@ -445,6 +456,7 @@
 				A5E9AEB42D2F2256000533ED /* LabelCollector.swift in Sources */,
 				A5EFA9D12D38B4CF00F771FE /* ContinueNodeAware.swift in Sources */,
 				A5E9AEBA2D2F2731000533ED /* ValidatedCollector.swift in Sources */,
+				EC92B3762D9FF6CD00E4246D /* Submittable.swift in Sources */,
 				3A203D7F2BDB136C0020C995 /* DaVinci.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

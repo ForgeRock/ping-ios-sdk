@@ -2,7 +2,7 @@
 //  SingleValueCollector.swift
 //  PingDavinci
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,7 +11,7 @@
 
 /// A class representing a single value collector,
 /// Inheriting from `FieldCollector` and conforming to `Collector`.
-open class SingleValueCollector: FieldCollector<String?>, @unchecked Sendable {
+open class SingleValueCollector: FieldCollector<String>, @unchecked Sendable {
     /// The single value to collect.
     public var value: String = ""
 
@@ -33,5 +33,9 @@ open class SingleValueCollector: FieldCollector<String?>, @unchecked Sendable {
         if let stringValue = value as? String {
             self.value = stringValue
         }
+    }
+    
+    public override func payload() -> String? {
+        return value.isEmpty ? nil : value
     }
 }

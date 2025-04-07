@@ -20,11 +20,8 @@ extension Collectors {
     /// - Returns:  The event type as a String if found, otherwise nil.
     func eventType() -> String? {
         for collector in self {
-            if let submitCollector = collector as? SubmitCollector, !submitCollector.value.isEmpty {
-                return submitCollector.value
-            }
-            if let flowCollector = collector as? FlowCollector, !flowCollector.value.isEmpty {
-                return flowCollector.value
+            if let _ = collector as? Submittable {
+                return Constants.submit
             }
         }
         return nil
@@ -36,29 +33,17 @@ extension Collectors {
     /// - Returns: JSON object representing the list of collectors.
     func asJson() -> [String: Any] {
         var jsonObject: [String: Any] = [:]
-        
-        for collector in self {
-            if let submitCollector = collector as? SubmitCollector, !submitCollector.value.isEmpty {
-                jsonObject[Constants.actionKey] = submitCollector.key
-            }
-            if let flowCollector = collector as? FlowCollector, !flowCollector.value.isEmpty {
-                jsonObject[Constants.actionKey] = flowCollector.key
-            }
-        }
-        
         var formData: [String: Any] = [:]
         for collector in self {
-            if let textCollector = collector as? TextCollector, !textCollector.value.isEmpty {
-                formData[textCollector.key] = textCollector.value
-            }
-            if let passwordCollector = collector as? PasswordCollector, !passwordCollector.value.isEmpty {
-                formData[passwordCollector.key] = passwordCollector.value
-            }
-            if let singleSelectCollector = collector as? SingleSelectCollector, !singleSelectCollector.value.isEmpty {
-                formData[singleSelectCollector.key] = singleSelectCollector.value
-            }
-            if let multiSelectCollector = collector as? MultiSelectCollector, !multiSelectCollector.value.isEmpty {
-                formData[multiSelectCollector.key] = multiSelectCollector.value
+            switch collector {
+            case let collector as SubmitCollector:
+                jsonObject[Constants.actionKey] = collector.id
+            case let collector as FlowCollector:
+                jsonObject[Constants.actionKey] = collector.id
+            default:
+                if let fieldCollector = collector as? (any AnyFieldCollector), fieldCollector.anyPayload() != nil {
+                    formData[fieldCollector.id] = fieldCollector.anyPayload()
+                }
             }
         }
         

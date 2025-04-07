@@ -2,7 +2,7 @@
 //  Form.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -30,8 +30,8 @@ struct Form {
         // Populate default values for collectors
         if let formData = json[Constants.formData] as? [String: Any],
            let value = formData[Constants.value] as? [String: Any] {
-            collectors.compactMap { $0 as? FieldCollector<Any> }.compactMap{ $0 }.forEach { collector in
-                if let fieldValue = value[collector.key] {
+            collectors.compactMap { $0 as? (any AnyFieldCollector) }.compactMap{ $0 }.forEach { collector in
+                if let fieldValue = value[collector.id] {
                     collector.initialize(with: fieldValue)
                 }
             }

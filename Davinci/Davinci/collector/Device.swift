@@ -22,13 +22,13 @@ import Foundation
 /// - method populateDevices: Populates a list of devices from the JSON data.
 ///
 public struct Device: Codable, @unchecked Sendable {
-    var id: String?
-    var type: String
-    var title: String
-    var description: String
-    var iconSrc: URL
-    var isDefault: Bool? = false
-    var value: String?
+    public var id: String?
+    public var type: String
+    public var title: String
+    public var description: String?
+    public var iconSrc: URL
+    public var isDefault: Bool? = false
+    public var value: String?
     
     /// Enum representing the coding keys.
     enum CodingKeys: String, CodingKey {

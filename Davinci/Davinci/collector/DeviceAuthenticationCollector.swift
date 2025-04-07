@@ -1,5 +1,5 @@
-//
-//  DeviceRegistrationCollector.swift
+// 
+//  DeviceAuthenticationCollector.swift
 //  Davinci
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
@@ -9,14 +9,7 @@
 //
 import Foundation
 
-/// Class representing a device registration collector.
-/// Inherits from `FieldCollector` and is used to collect device information.
-/// - property devices: The list of devices.
-/// - property selectedDevice: The selected device.
-/// - method value: Returns the selected device type.
-/// - method init: Initializes a new instance of `DeviceRegistrationCollector`.
-///
-open class DeviceRegistrationCollector: FieldCollector<String>, Submittable, @unchecked Sendable {
+open class DeviceAuthenticationCollector: FieldCollector<[String: Any]>, Submittable, @unchecked Sendable {
     /// The list of devices.
     public private(set) var devices: [Device] = []
     /// The selected device.
@@ -32,7 +25,11 @@ open class DeviceRegistrationCollector: FieldCollector<String>, Submittable, @un
     }
     
     /// Returns the selected device type.
-    override open func payload() -> String? {
-        return value?.type
+    override open func payload() -> [String: Any]? {
+        var deviceDictionary = [:] as [String: Any]
+        deviceDictionary[Constants.type] = value?.type
+        deviceDictionary[Constants.id] = value?.id
+        deviceDictionary[Constants.value] = value?.value
+        return deviceDictionary
     }
 }

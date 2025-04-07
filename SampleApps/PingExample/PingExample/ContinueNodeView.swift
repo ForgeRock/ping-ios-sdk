@@ -2,7 +2,7 @@
 //  ContinueNodeView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -80,15 +80,20 @@ struct ContinueNodeView: View {
                         SocialButtonView(socialButtonViewModel: viewModel, onNext: onNext, onStart: onStart)
                     }
                 case is DeviceRegistrationCollector:
-                    // TODO: Add support for DeviceRegistrationCollector
-                    EmptyView()
+                    if let deviceRegistrationCollector = collector as? DeviceRegistrationCollector {
+                        DeviceRegistrationView(field: deviceRegistrationCollector, onNext: onNext)
+                    }
+                case is DeviceAuthenticationCollector:
+                    if let deviceAuthenticationCollector = collector as? DeviceAuthenticationCollector {
+                        DeviceAuthenticationView(field: deviceAuthenticationCollector, onNext: onNext)
+                    }
                 default:
                     EmptyView()
                 }
             }
             
             // Fallback Next Button
-            if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector }) {
+            if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector || $0 is DeviceRegistrationCollector || $0 is DeviceAuthenticationCollector }) {
                 Button(action: { onNext(false) }) {
                     Text("Next")
                         .frame(maxWidth: .infinity)
