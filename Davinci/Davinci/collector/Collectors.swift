@@ -37,9 +37,13 @@ extension Collectors {
         for collector in self {
             switch collector {
             case let collector as SubmitCollector:
-                jsonObject[Constants.actionKey] = collector.id
+                if collector.value.isEmpty == false {
+                    jsonObject[Constants.actionKey] = collector.id
+                }
             case let collector as FlowCollector:
-                jsonObject[Constants.actionKey] = collector.id
+                if collector.value.isEmpty == false {
+                    jsonObject[Constants.actionKey] = collector.id
+                }
             default:
                 if let fieldCollector = collector as? (any AnyFieldCollector), fieldCollector.anyPayload() != nil {
                     formData[fieldCollector.id] = fieldCollector.anyPayload()
