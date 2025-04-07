@@ -2,7 +2,7 @@
 //  CookieModuleTests.swift
 //  OrchestrateTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -149,8 +149,8 @@ final class CookieModuleTests: XCTestCase {
             XCTFail("Should have succeeded")
         }
         
-//        XCTAssertTrue(MockURLProtocol.requestHistory[2].allHTTPHeaderFields!["Cookie"]!.contains("interactionId=178ce234-afd2-4207-984e-bda28bd7042c"))
-//        XCTAssertFalse(MockURLProtocol.requestHistory[2].allHTTPHeaderFields!["Cookie"]!.contains("interactionToken=abc"))
+        //        XCTAssertTrue(MockURLProtocol.requestHistory[2].allHTTPHeaderFields!["Cookie"]!.contains("interactionId=178ce234-afd2-4207-984e-bda28bd7042c"))
+        //        XCTAssertFalse(MockURLProtocol.requestHistory[2].allHTTPHeaderFields!["Cookie"]!.contains("interactionToken=abc"))
         let cookies2 = try? await memory.get()
         XCTAssertNil(cookies2)
         
@@ -197,8 +197,8 @@ final class CookieModuleTests: XCTestCase {
         }
         XCTAssertTrue(cookie.isExpired)
     }
-
-
+    
+    
     func testCookieIsExpiredValidationNotExpired() {
         let setCookie: [String: String] = ["Set-Cookie":"iPlanetDirectoryPro=token; Expires=Wed, 21 Oct 2032 01:00:00 GMT; Domain=openam.example.com"]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: setCookie, for: URL(string: "https://openam.example.com")!)

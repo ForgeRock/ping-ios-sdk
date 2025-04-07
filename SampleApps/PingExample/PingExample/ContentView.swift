@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  PingExample
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -33,7 +33,7 @@ struct MyApp: App {
 /// The main view of the application, displaying navigation options and a logo.
 struct ContentView: View {
     /// State variable to track if Davinci has started.
-    @State private var startDavinici = false
+    @State private var startDavinci = false
     /// State variable for managing the navigation stack path.
     @State private var path: [String] = []
     /// State variable for managing the configuration view model.

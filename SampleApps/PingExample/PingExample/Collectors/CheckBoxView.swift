@@ -2,7 +2,7 @@
 //  CheckBoxView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -28,7 +28,7 @@ struct CheckBoxView: View {
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(field.options, id: \.value) { option in
                     let isSelected = selectedOptions.contains(option.value)
-        
+                    
                     Button(action: {
                         if isSelected {
                             selectedOptions.removeAll { $0 == option.value }

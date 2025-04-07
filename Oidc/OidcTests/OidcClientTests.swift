@@ -2,7 +2,7 @@
 //  OidcClientTests.swift
 //  OidcTests
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -285,7 +285,7 @@ final class OidcClientTests: XCTestCase {
             case MockAPIEndpoint.discovery.url.path:
                 return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfiguration)
             case MockAPIEndpoint.token.url.path:
-               // as httpBody is not available her (it is nil), we will check the `Content-Length` header value to see if the `grant_type` is `refresh_token'
+                // as httpBody is not available here (it is nil), we will check the `Content-Length` header value to see if the `grant_type` is `refresh_token'
                 if Int(request.value(forHTTPHeaderField: "Content-Length")!) == "grant_type=refresh_token&refresh_token=Dummy RefreshToken&client_id=test-client-id".count {
                     return (HTTPURLResponse(url: MockAPIEndpoint.token.url, statusCode: 400, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.tokenErrorResponse)
                 } else {

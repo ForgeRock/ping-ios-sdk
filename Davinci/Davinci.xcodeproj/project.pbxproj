@@ -19,7 +19,7 @@
 		3AC13E342C3FFF1000DEF23A /* Collector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E302C3FFF1000DEF23A /* Collector.swift */; };
 		3AC13E352C3FFF1000DEF23A /* Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E322C3FFF1000DEF23A /* Form.swift */; };
 		3AC13E362C3FFF1000DEF23A /* Connector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E312C3FFF1000DEF23A /* Connector.swift */; };
-		959249A72D405A1C00A6DA9C /* FormFieldValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959249A62D405A1C00A6DA9C /* FormFieldValidationTest.swift */; };
+		959249A72D405A1C00A6DA9C /* FormFieldValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959249A62D405A1C00A6DA9C /* FormFieldValidationTests.swift */; };
 		959249A92D405A4600A6DA9C /* FormFieldsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959249A82D405A4600A6DA9C /* FormFieldsTests.swift */; };
 		A50981C22CEBDF2600F4B487 /* PingOidc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50981C12CEBDF2600F4B487 /* PingOidc.framework */; };
 		A50981C32CEBDF2600F4B487 /* PingOidc.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A50981C12CEBDF2600F4B487 /* PingOidc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -41,7 +41,7 @@
 		A5A712482CAC527200B7DD58 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5A712472CAC527200B7DD58 /* PrivacyInfo.xcprivacy */; };
 		A5CCE5E72C85E96B00349A5E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5CCE5E62C85E96B00349A5E /* Constants.swift */; };
 		A5E646E22D665A080042D17E /* LocaleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E646E12D665A050042D17E /* LocaleExtensions.swift */; };
-		A5E646E42D665B0F0042D17E /* LocaleExtentionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E646E32D665B0D0042D17E /* LocaleExtentionsTests.swift */; };
+		A5E646E42D665B0F0042D17E /* LocaleExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E646E32D665B0D0042D17E /* LocaleExtensionsTests.swift */; };
 		A5E9AEB22D2F1F93000533ED /* SingleValueCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */; };
 		A5E9AEB42D2F2256000533ED /* LabelCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEB32D2F2252000533ED /* LabelCollector.swift */; };
 		A5E9AEB62D2F243E000533ED /* SingleSelectCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEB52D2F243C000533ED /* SingleSelectCollector.swift */; };
@@ -108,7 +108,7 @@
 		3AC13E302C3FFF1000DEF23A /* Collector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collector.swift; sourceTree = "<group>"; };
 		3AC13E312C3FFF1000DEF23A /* Connector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connector.swift; sourceTree = "<group>"; };
 		3AC13E322C3FFF1000DEF23A /* Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form.swift; sourceTree = "<group>"; };
-		959249A62D405A1C00A6DA9C /* FormFieldValidationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFieldValidationTest.swift; sourceTree = "<group>"; };
+		959249A62D405A1C00A6DA9C /* FormFieldValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFieldValidationTests.swift; sourceTree = "<group>"; };
 		959249A82D405A4600A6DA9C /* FormFieldsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFieldsTests.swift; sourceTree = "<group>"; };
 		A50981C12CEBDF2600F4B487 /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A51D4CD02C585B4500FE09E0 /* FieldCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FieldCollector.swift; sourceTree = "<group>"; };
@@ -129,7 +129,7 @@
 		A5A712472CAC527200B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A5CCE5E62C85E96B00349A5E /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		A5E646E12D665A050042D17E /* LocaleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleExtensions.swift; sourceTree = "<group>"; };
-		A5E646E32D665B0D0042D17E /* LocaleExtentionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleExtentionsTests.swift; sourceTree = "<group>"; };
+		A5E646E32D665B0D0042D17E /* LocaleExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocaleExtensionsTests.swift; sourceTree = "<group>"; };
 		A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleValueCollector.swift; sourceTree = "<group>"; };
 		A5E9AEB32D2F2252000533ED /* LabelCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelCollector.swift; sourceTree = "<group>"; };
 		A5E9AEB52D2F243C000533ED /* SingleSelectCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleSelectCollector.swift; sourceTree = "<group>"; };
@@ -236,7 +236,7 @@
 				A51D4CED2C656EE100FE09E0 /* FieldCollectorTests.swift */,
 				A5EFAA052D3F303900F771FE /* FlowCollectorTests.swift */,
 				A5EFAA072D3F30E200F771FE /* LabelCollectorTests.swift */,
-				A5E646E32D665B0D0042D17E /* LocaleExtentionsTests.swift */,
+				A5E646E32D665B0D0042D17E /* LocaleExtensionsTests.swift */,
 				A5EFAA092D3F325800F771FE /* MultiSelectCollectorTests.swift */,
 				A5EFAA0B2D3F441200F771FE /* PasswordCollectorTests.swift */,
 				A5EFAA0D2D3F483900F771FE /* PasswordPolicyTests.swift */,
@@ -262,7 +262,7 @@
 			isa = PBXGroup;
 			children = (
 				A51D4CF72C65978300FE09E0 /* DaVinciIntegrationTests.swift */,
-				959249A62D405A1C00A6DA9C /* FormFieldValidationTest.swift */,
+				959249A62D405A1C00A6DA9C /* FormFieldValidationTests.swift */,
 				959249A82D405A4600A6DA9C /* FormFieldsTests.swift */,
 			);
 			path = "integration tests";
@@ -470,7 +470,7 @@
 				A5EFAA082D3F30E600F771FE /* LabelCollectorTests.swift in Sources */,
 				959249A92D405A4600A6DA9C /* FormFieldsTests.swift in Sources */,
 				A5EFAA142D3F51CC00F771FE /* TextCollectorTests.swift in Sources */,
-				A5E646E42D665B0F0042D17E /* LocaleExtentionsTests.swift in Sources */,
+				A5E646E42D665B0F0042D17E /* LocaleExtensionsTests.swift in Sources */,
 				A5EFAA122D3F518B00F771FE /* SubmitCollectorTests.swift in Sources */,
 				A51D4CF62C65743100FE09E0 /* MockAPIEndpoint.swift in Sources */,
 				A5EFAA0E2D3F484100F771FE /* PasswordPolicyTests.swift in Sources */,
@@ -485,7 +485,7 @@
 				3A5441AF2BCDF20700385131 /* DaVinciTests.swift in Sources */,
 				A51D4CF22C65729A00FE09E0 /* DaVinciErrorTests.swift in Sources */,
 				A5EFAA102D3F50A700F771FE /* SingleSelectCollectorTests.swift in Sources */,
-				959249A72D405A1C00A6DA9C /* FormFieldValidationTest.swift in Sources */,
+				959249A72D405A1C00A6DA9C /* FormFieldValidationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

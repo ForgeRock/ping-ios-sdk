@@ -2,7 +2,7 @@
 //  LoggerViewModel.swift
 //  PingExample
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,7 +12,7 @@ import Foundation
 import PingLogger
 
 class LoggerViewModel {
-
+    
     func setupLogger() {
         // shared logger - by default is "none"
         var sharedLogger = LogManager.logger
@@ -20,14 +20,14 @@ class LoggerViewModel {
         sharedLogger.i("sharedLogger Info")
         sharedLogger.w("sharedLogger Warning", error: TestError.success)
         sharedLogger.e("sharedLogger Error", error: TestError.failure)
-
+        
         // standard logger - messages of all levels should be displayed in the console...
         let standardLogger = LogManager.standard
         standardLogger.d("standardLogger Debug")
         standardLogger.i("standardLogger Info")
         standardLogger.w("standardLogger Warning", error: TestError.success)
         standardLogger.e("standardLogger Error", error: TestError.failure)
-
+        
         // warning logger - only warning and error messages should be displayed...
         let warningLogger = LogManager.warning
         warningLogger.d("warningLogger Debug")
@@ -56,43 +56,43 @@ class LoggerViewModel {
         customLogger.w("customLogger Warning", error: TestError.success)
         customLogger.e("customLogger Error", error: TestError.failure)
     }
-
-  enum TestError: Error {
-    case success
-    case failure
-  }
+    
+    enum TestError: Error {
+        case success
+        case failure
+    }
 }
 
 
 struct CustomLogger: Logger {
-
-  func i(_ message: String) {
-      print("\(message) (CustomLogger)")
-  }
-
-  func d(_ message: String) {
-      print("\(message) (CustomLogger)")
-  }
-
-  func w(_ message: String, error: Error?) {
-      if let error = error {
-        print("\(message): \(error) (CustomLogger)")
-      } else {
+    
+    func i(_ message: String) {
         print("\(message) (CustomLogger)")
-      }
-  }
-
-  func e(_ message: String, error: Error?) {
-      if let error = error {
-        print("\(message): \(error) (CustomLogger)")
-      } else {
+    }
+    
+    func d(_ message: String) {
         print("\(message) (CustomLogger)")
-      }
-  }
+    }
+    
+    func w(_ message: String, error: Error?) {
+        if let error = error {
+            print("\(message): \(error) (CustomLogger)")
+        } else {
+            print("\(message) (CustomLogger)")
+        }
+    }
+    
+    func e(_ message: String, error: Error?) {
+        if let error = error {
+            print("\(message): \(error) (CustomLogger)")
+        } else {
+            print("\(message) (CustomLogger)")
+        }
+    }
 }
 
 extension LogManager {
-  static var customLogger: Logger {
-      return CustomLogger()
-  }
+    static var customLogger: Logger {
+        return CustomLogger()
+    }
 }

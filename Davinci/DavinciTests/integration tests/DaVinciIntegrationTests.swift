@@ -2,7 +2,7 @@
 //  DaVinciIntegrationTests.swift
 //  DavinciTests
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -61,7 +61,7 @@ class DaVinciIntegrationTests: XCTestCase {
         XCTAssertTrue(continueNode.collectors[2] is SubmitCollector)
         XCTAssertTrue(continueNode.collectors[3] is FlowCollector)
         XCTAssertTrue(continueNode.collectors[4] is FlowCollector)
-
+        
         XCTAssertEqual("E2E Login Form", continueNode.name)
         XCTAssertEqual("Enter your username and password", continueNode.description)
         
@@ -77,7 +77,7 @@ class DaVinciIntegrationTests: XCTestCase {
         XCTAssertTrue(continueNode.collectors[0] is SubmitCollector)
         XCTAssertTrue(continueNode.collectors[1] is FlowCollector)
         XCTAssertTrue(continueNode.collectors[2] is FlowCollector)
-
+        
         XCTAssertEqual("Successful login", continueNode.name)
         XCTAssertEqual("Successfully logged in to DaVinci", continueNode.description)
         XCTAssertEqual("Continue", (continueNode.collectors[0] as! SubmitCollector).label)
@@ -86,7 +86,7 @@ class DaVinciIntegrationTests: XCTestCase {
         
         // Click continue
         (continueNode.collectors[0] as! SubmitCollector).value = "Continue"
-
+        
         node = await continueNode.next()
         XCTAssertTrue(node is SuccessNode)
         let successNode = node as! SuccessNode
@@ -150,10 +150,10 @@ class DaVinciIntegrationTests: XCTestCase {
         
         // Verify the user was successfully logged in
         XCTAssertEqual("Successful login", continueNode.name)
-
+        
         // Click continue
         (continueNode.collectors[0] as! SubmitCollector).value = "Continue"
-
+        
         node = await continueNode.next()
         XCTAssertTrue(node is SuccessNode)
         var successNode = node as! SuccessNode
@@ -241,7 +241,7 @@ class DaVinciIntegrationTests: XCTestCase {
         
         // Click continue
         (continueNode.collectors[4] as! SubmitCollector).value = "Save"
-
+        
         node = await continueNode.next()
         continueNode = node as! ContinueNode
         
@@ -250,7 +250,7 @@ class DaVinciIntegrationTests: XCTestCase {
         XCTAssertTrue(continueNode.collectors[0] is TextCollector)
         XCTAssertTrue(continueNode.collectors[1] is SubmitCollector)
         XCTAssertTrue(continueNode.collectors[2] is FlowCollector)
-
+        
         XCTAssertEqual("Enter verification code", continueNode.name)
         XCTAssertEqual("Hint: The verification code is 1234", continueNode.description)
         XCTAssertEqual("Verification Code", (continueNode.collectors[0] as! TextCollector).label)
@@ -262,7 +262,7 @@ class DaVinciIntegrationTests: XCTestCase {
         (continueNode.collectors[1] as? SubmitCollector)?.value = "Verify"
         node = await continueNode.next()
         continueNode = node as! ContinueNode
-
+        
         // User should be navigated to the "Successful user creation" screen...
         XCTAssertTrue(continueNode.collectors.count == 1 )
         XCTAssertTrue(continueNode.collectors[0] is SubmitCollector)
@@ -270,7 +270,7 @@ class DaVinciIntegrationTests: XCTestCase {
         XCTAssertEqual("Registration Complete", continueNode.name)
         XCTAssertEqual("Notify User Account Is Successfully Created", continueNode.description)
         XCTAssertEqual("Continue", (continueNode.collectors[0] as! SubmitCollector).label)
-
+        
         // Click "Continue" to finish the registration process
         (continueNode.collectors[0] as? SubmitCollector)?.value = "Continue"
         node = await continueNode.next()
@@ -297,7 +297,7 @@ class DaVinciIntegrationTests: XCTestCase {
         // Delete the user from PingOne
         try await deleteUser(userName: newUser, pass: password)
     }
-
+    
     // TestRailCase(21269)
     func testUserRegistrationFailureUserAlreadyExists() async throws {
         var node = await daVinci.start()
@@ -325,7 +325,7 @@ class DaVinciIntegrationTests: XCTestCase {
         
         // Click continue
         (continueNode.collectors[4] as! SubmitCollector).value = "Save"
-
+        
         node = await continueNode.next()
         let errorNode = node as! ErrorNode
         
@@ -365,7 +365,7 @@ class DaVinciIntegrationTests: XCTestCase {
         
         // Click continue
         (continueNode.collectors[4] as! SubmitCollector).value = "Save"
-
+        
         node = await continueNode.next()
         let errorNode = node as! ErrorNode
         
@@ -412,7 +412,7 @@ class DaVinciIntegrationTests: XCTestCase {
         
         // Click continue
         (continueNode.collectors[4] as! SubmitCollector).value = "Save"
-
+        
         node = await continueNode.next()
         let errorNode = node as! ErrorNode
         
@@ -458,7 +458,7 @@ class DaVinciIntegrationTests: XCTestCase {
         
         // Click continue
         (continueNode.collectors[4] as! SubmitCollector).value = "Save"
-
+        
         node = await continueNode.next()
         continueNode = node as! ContinueNode
         
@@ -643,13 +643,13 @@ class DaVinciIntegrationTests: XCTestCase {
         
         node = await continueNode.next()
         continueNode = node as! ContinueNode
-
+        
         // At the "Password Reset Success" screen...
         XCTAssertTrue(continueNode.collectors.count == 1)
         XCTAssertEqual("Password Reset Success", continueNode.name)
         XCTAssertEqual("Success Message With Animated Checkmark", continueNode.description)
         XCTAssertTrue(continueNode.collectors[0] is SubmitCollector)    // Continue button
-
+        
         // Click "Continue" to finish the password reset process
         (continueNode.collectors[0] as? SubmitCollector)?.value = "Continue"
         
@@ -725,7 +725,7 @@ class DaVinciIntegrationTests: XCTestCase {
         XCTAssertEqual("Notify when account will unlock", continueNode.description)
         XCTAssertTrue(continueNode.collectors[0] is FlowCollector)  // Back to sign on (link)
         XCTAssertEqual("Back to sign on", (continueNode.collectors[0] as! FlowCollector).label)
-
+        
         // Click "back" to return to the login page
         (continueNode.collectors[0] as? SubmitCollector)?.value = "Back"
         node = await continueNode.next()
@@ -749,7 +749,7 @@ class DaVinciIntegrationTests: XCTestCase {
         
         // Verify that the login was successful
         XCTAssertEqual("Successful login", continueNode.name)
-
+        
         // Click continue
         (continueNode.collectors[0] as! SubmitCollector).value = "Continue"
         node = await continueNode.next()
@@ -777,7 +777,7 @@ class DaVinciIntegrationTests: XCTestCase {
         try await deleteUser(userName: newUser, pass: password)
         
     }
-
+    
     /// Helper function to register a user
     private func registerUser(userName: String, password: String) async throws {
         var node = await daVinci.start()
@@ -793,7 +793,7 @@ class DaVinciIntegrationTests: XCTestCase {
         
         // Make sure that we are at the registration form
         XCTAssertEqual("Registration Form", continueNode.name)
-
+        
         // Fill in the registration form
         (continueNode.collectors[0] as? TextCollector)?.value = userName
         (continueNode.collectors[1] as? PasswordCollector)?.value = password
@@ -803,7 +803,7 @@ class DaVinciIntegrationTests: XCTestCase {
         
         // Click continue
         (continueNode.collectors[4] as! SubmitCollector).value = "Save"
-
+        
         node = await continueNode.next()
         continueNode = node as! ContinueNode
         
@@ -815,10 +815,10 @@ class DaVinciIntegrationTests: XCTestCase {
         (continueNode.collectors[1] as? SubmitCollector)?.value = "Verify"
         node = await continueNode.next()
         continueNode = node as! ContinueNode
-
+        
         // User should be navigated to the "Successful user creation" screen...
         XCTAssertEqual("Registration Complete", continueNode.name)
-
+        
         // Click "Continue" to finish the registration process
         (continueNode.collectors[0] as? SubmitCollector)?.value = "Continue"
         node = await continueNode.next()
@@ -834,7 +834,7 @@ class DaVinciIntegrationTests: XCTestCase {
         var node = await daVinci.start()
         var continueNode = node as! ContinueNode
         
-        // // Make sure that we are at the Login form...
+        // Make sure that we are at the Login form...
         XCTAssertEqual("E2E Login Form", continueNode.name)
         
         (continueNode.collectors[0] as? TextCollector)?.value = userName

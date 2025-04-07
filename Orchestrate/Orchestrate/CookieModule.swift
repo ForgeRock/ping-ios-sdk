@@ -2,7 +2,7 @@
 //  CookieModule.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -14,10 +14,10 @@ import PingStorage
 
 /// A module that manages cookies.
 public class CookieModule {
-  
+    
     /// Initializes a new instance of `CookieModule`.
     public init() {}
-  
+    
     /// The module configuration for managing cookies.
     public static let config: Module<CookieConfig> = Module.of({ CookieConfig() }) {
         setup in
@@ -30,9 +30,9 @@ public class CookieModule {
             let cookies = try? await setup.config.cookieStorage.get()
             if let url = request.urlRequest.url, let cookies = cookies {
                 await CookieModule.inject(url: url,
-                                    cookies: cookies,
-                                    inMemoryStorage: setup.config.inMemoryStorage,
-                                    request: request)
+                                          cookies: cookies,
+                                          inMemoryStorage: setup.config.inMemoryStorage,
+                                          request: request)
             }
             return request
         }
@@ -130,7 +130,7 @@ public class CookieModule {
             for cookie in persistCookies {
                 await storage?.setCookie(cookie)
             }
-                
+            
             
             // Persist only the required cookies to keychain
             let cookieData = await storage?.cookies(for: url)?
@@ -217,7 +217,7 @@ public final actor InMemoryCookieStorage {
         return cookieStore.filter {!$0.isExpired && $0.validateURL(url)  }
     }
     
-    /// Deletes all cookies from the storage./// Adds multiple cookies to the storage.
+    /// Adds multiple cookies to the storage.
     /// - Parameters:
     ///   - cookies: The cookies to add.
     ///   - url: The URL associated with the cookies (optional).

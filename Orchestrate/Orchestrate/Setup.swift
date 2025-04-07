@@ -2,7 +2,7 @@
 //  Setup.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -24,7 +24,7 @@ public struct Setup<ModuleConfig: Sendable>: Sendable {
     public let logger: Logger
     public let httpClient: HttpClient
     public let config: ModuleConfig
-  
+    
     /// Initializes a new Setup instance.
     /// - Parameters:
     ///   - workflow: The workflow of the application.

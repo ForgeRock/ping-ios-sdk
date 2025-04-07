@@ -13,7 +13,7 @@ access token, revoke the token, and sign out from the OIDC server.
 
 ## Integrating the SDK into your project
 
-Use Cocoapods or Swift Package Manger
+Use Cocoapods or Swift Package Manager
 
 ## Oidc Client Configuration
 

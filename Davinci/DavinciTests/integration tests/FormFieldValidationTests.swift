@@ -1,8 +1,8 @@
 //
-//  DaVinciIntegrationTests.swift
+//  FormFieldValidationTests.swift
 //  DavinciTests
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -15,7 +15,7 @@ import XCTest
 @testable import PingStorage
 @testable import PingDavinci
 
-class FormFieldValidationTest: XCTestCase {
+class FormFieldValidationTests: XCTestCase {
     private var daVinci: DaVinci!
     
     override func setUp() async throws {
@@ -39,7 +39,7 @@ class FormFieldValidationTest: XCTestCase {
         (node.collectors[1] as? FlowCollector)?.value = "click"
         node = await node.next() as! ContinueNode
         
-        // Username filed...
+        // Username field...
         XCTAssertTrue(node.collectors[1] is TextCollector)
         let username = node.collectors[1] as! TextCollector
         
@@ -103,7 +103,7 @@ class FormFieldValidationTest: XCTestCase {
         (node.collectors[1] as? FlowCollector)?.value = "click"
         node = await node.next() as! ContinueNode
         
-        // Password filed...
+        // Password field...
         XCTAssertTrue(node.collectors[3] is PasswordCollector)
         let password = node.collectors[3] as! PasswordCollector
         guard let passwordPolicy = password.passwordPolicy() else {
@@ -133,7 +133,7 @@ class FormFieldValidationTest: XCTestCase {
         // Clear the password field
         password.value = ""
         
-        // Validate should return list of all the faling password policy items
+        // Validate should return list of all the failing password policy items
         var passwordValidationResult = password.validate()
         
         XCTAssertEqual(7, passwordValidationResult.count)
@@ -144,7 +144,7 @@ class FormFieldValidationTest: XCTestCase {
         XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'abcdefghijklmnopqrstuvwxyz\'."))
         XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'~!@#$%^&*()-_=+[]{}|;:,.<>/?\'."))
         XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'0123456789\'."))
-
+        
         // Set password that meets some of the policy requirements
         password.value = "password123"
         passwordValidationResult = password.validate()

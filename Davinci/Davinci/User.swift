@@ -2,7 +2,7 @@
 //  User.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -59,7 +59,7 @@ extension DaVinci {
 
 
 extension SuccessNode {
-  /// Extension property for SuccessNode to cast the `SuccessNode.session` to a User.
+    /// Extension property for SuccessNode to cast the `SuccessNode.session` to a User.
     public var user: User? {
         return session as? User
     }
@@ -73,40 +73,40 @@ extension SuccessNode {
 /// - property user: The user.
 /// - property session: The session.
 struct UserDelegate: User, Session, Sendable {
-  private let daVinci: DaVinci
-  private let user: User
-  private let session: Session
-  
-  init(daVinci: DaVinci, user: User, session: Session) {
-    self.daVinci = daVinci
-    self.user = user
-    self.session = session
-  }
-  
-  /// Method to log out the user.
-  /// This method removes the cached user from the context and signs off the user.
-  func logout() async {
-    // remove the cached user from the context
-    _ = daVinci.sharedContext.removeValue(forKey: SharedContext.Keys.userKey)
-    // instead of calling `OidcClient.endSession` directly, we call `DaVinci.signOff` to sign off the user
-    _ = await daVinci.signOff()
-  }
-  
-  func token() async -> Result<Token, OidcError> {
-    return await user.token()
-  }
-  
-  func revoke() async {
-    await user.revoke()
-  }
-  
-  func userinfo(cache: Bool) async -> Result<UserInfo, OidcError> {
-    await user.userinfo(cache: cache)
-  }
-  
-  var value: String {
-    get {
-      return session.value
+    private let daVinci: DaVinci
+    private let user: User
+    private let session: Session
+    
+    init(daVinci: DaVinci, user: User, session: Session) {
+        self.daVinci = daVinci
+        self.user = user
+        self.session = session
     }
-  }
+    
+    /// Method to log out the user.
+    /// This method removes the cached user from the context and signs off the user.
+    func logout() async {
+        // remove the cached user from the context
+        _ = daVinci.sharedContext.removeValue(forKey: SharedContext.Keys.userKey)
+        // instead of calling `OidcClient.endSession` directly, we call `DaVinci.signOff` to sign off the user
+        _ = await daVinci.signOff()
+    }
+    
+    func token() async -> Result<Token, OidcError> {
+        return await user.token()
+    }
+    
+    func revoke() async {
+        await user.revoke()
+    }
+    
+    func userinfo(cache: Bool) async -> Result<UserInfo, OidcError> {
+        await user.userinfo(cache: cache)
+    }
+    
+    var value: String {
+        get {
+            return session.value
+        }
+    }
 }

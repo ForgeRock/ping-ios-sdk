@@ -2,7 +2,7 @@
 //  ErrorView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -65,15 +65,15 @@ struct ErrorNodeView: View {
     
     var body: some View {
         ErrorView(message: node.message)
-        .onTapGesture {
-            showDetails = true
-        }
-        .alert("Error Details", isPresented: $showDetails) {
-            Button("OK") {
-                showDetails = false
+            .onTapGesture {
+                showDetails = true
             }
-        } message: {
-            Text(errorText)
-        }
+            .alert("Error Details", isPresented: $showDetails) {
+                Button("OK") {
+                    showDetails = false
+                }
+            } message: {
+                Text(errorText)
+            }
     }
 }

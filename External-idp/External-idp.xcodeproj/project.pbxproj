@@ -30,7 +30,7 @@
 		ECA540922D6C9044002B35D4 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = ECA540912D6C9044002B35D4 /* FacebookLogin */; };
 		ECA540C12D6DE9D7002B35D4 /* NativeHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA540C02D6DE9CD002B35D4 /* NativeHandlerTests.swift */; };
 		ECB7C5C22D54D9100006F1C8 /* IdpCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */; };
-		ECB7C69C2D5A2C1F0006F1C8 /* External_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0815B72D49377500F1AD02 /* External_idp.framework */; };
+		ECB7C69C2D5A2C1F0006F1C8 /* PingExternal_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0815B72D49377500F1AD02 /* PingExternal_idp.framework */; };
 		ECBF06492D50ED7A0066A3BD /* BrowserHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06482D50ED750066A3BD /* BrowserHandler.swift */; };
 /* End PBXBuildFile section */
 
@@ -60,7 +60,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		EC0815B72D49377500F1AD02 /* External_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = External_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC0815B72D49377500F1AD02 /* PingExternal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingExternal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC0815E12D49387A00F1AD02 /* ExtrernalIdp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtrernalIdp.h; sourceTree = "<group>"; };
 		EC0815E22D49387A00F1AD02 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		EC0815E82D4939E400F1AD02 /* IdpHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpHandler.swift; sourceTree = "<group>"; };
@@ -101,7 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECB7C69C2D5A2C1F0006F1C8 /* External_idp.framework in Frameworks */,
+				ECB7C69C2D5A2C1F0006F1C8 /* PingExternal_idp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,7 +121,7 @@
 		EC0815B82D49377500F1AD02 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EC0815B72D49377500F1AD02 /* External_idp.framework */,
+				EC0815B72D49377500F1AD02 /* PingExternal_idp.framework */,
 				ECB7C6982D5A2C1F0006F1C8 /* External-idpTests.xctest */,
 			);
 			name = Products;
@@ -190,9 +190,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		EC0815B62D49377500F1AD02 /* External-idp */ = {
+		EC0815B62D49377500F1AD02 /* PingExternal-idp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EC0815BF2D49377500F1AD02 /* Build configuration list for PBXNativeTarget "External-idp" */;
+			buildConfigurationList = EC0815BF2D49377500F1AD02 /* Build configuration list for PBXNativeTarget "PingExternal-idp" */;
 			buildPhases = (
 				EC0815B22D49377500F1AD02 /* Headers */,
 				EC0815B32D49377500F1AD02 /* Sources */,
@@ -204,14 +204,14 @@
 			);
 			dependencies = (
 			);
-			name = "External-idp";
+			name = "PingExternal-idp";
 			packageProductDependencies = (
 				ECA5407A2D68B65E002B35D4 /* GoogleSignIn */,
 				ECA5408F2D6C9044002B35D4 /* FacebookCore */,
 				ECA540912D6C9044002B35D4 /* FacebookLogin */,
 			);
 			productName = "Extrernal-idp";
-			productReference = EC0815B72D49377500F1AD02 /* External_idp.framework */;
+			productReference = EC0815B72D49377500F1AD02 /* PingExternal_idp.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		ECB7C6972D5A2C1F0006F1C8 /* External-idpTests */ = {
@@ -271,7 +271,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				EC0815B62D49377500F1AD02 /* External-idp */,
+				EC0815B62D49377500F1AD02 /* PingExternal-idp */,
 				ECB7C6972D5A2C1F0006F1C8 /* External-idpTests */,
 			);
 		};
@@ -330,7 +330,7 @@
 /* Begin PBXTargetDependency section */
 		ECB7C69E2D5A2C1F0006F1C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EC0815B62D49377500F1AD02 /* External-idp */;
+			target = EC0815B62D49377500F1AD02 /* PingExternal-idp */;
 			targetProxy = ECB7C69D2D5A2C1F0006F1C8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -580,7 +580,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EC0815BF2D49377500F1AD02 /* Build configuration list for PBXNativeTarget "External-idp" */ = {
+		EC0815BF2D49377500F1AD02 /* Build configuration list for PBXNativeTarget "PingExternal-idp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EC0815C02D49377500F1AD02 /* Debug */,

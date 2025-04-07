@@ -9,7 +9,7 @@
 
 ## Overview
 
-Ping Browser is a library that allows you to instanciate and use an in-app browser for performing OIDC flows. 
+Ping Browser is a library that allows you to instantiate and use an in-app browser for performing OIDC flows. 
 This library act as a plugin to the `External_idp` library,
 and it provides the necessary configuration to launch the browser to authenticate with the External IDP.
 

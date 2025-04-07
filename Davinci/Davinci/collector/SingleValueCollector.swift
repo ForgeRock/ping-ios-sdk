@@ -14,7 +14,7 @@
 open class SingleValueCollector: FieldCollector<String>, @unchecked Sendable {
     /// The single value to collect.
     public var value: String = ""
-
+    
     /// Initializes the single value collector with the given input.
     /// - Parameter json: A dictionary representing the JSON element to parse.
     public required init(with json: [String: Any]) {

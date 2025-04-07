@@ -2,7 +2,7 @@
 //  CustomHeader.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -28,10 +28,10 @@ public class CustomHeaderConfig: @unchecked Sendable  {
 
 /// Module for injecting custom headers into requests.
 public class CustomHeader {
-  
+    
     /// Initializes a new instance of `CustomHeader`.
     public init() {}
-  
+    
     /// The module configuration.
     public static let config: Module<CustomHeaderConfig> = Module.of({ CustomHeaderConfig() }) { setup in
         setup.start { flowContext, request in

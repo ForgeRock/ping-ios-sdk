@@ -14,15 +14,15 @@ import SwiftUI
 import UIKit
 import PingOidc
 
-/*
-    The ConfigurationManager class is used to manage the configuration settings for the SDK.
-    The class provides the following functionality:
-       - Load the current configuration
-       - Save the current configuration
-       - Delete the saved configuration
-       - Provide the default configuration
-       - Start the SDK with the current configuration
- */
+
+//The ConfigurationManager class is used to manage the configuration settings for the SDK.
+//The class provides the following functionality:
+//   - Load the current configuration
+//   - Save the current configuration
+//   - Delete the saved configuration
+//   - Provide the default configuration
+//   - Start the SDK with the current configuration
+
 class ConfigurationManager: ObservableObject, @unchecked Sendable {
     static let shared = ConfigurationManager()
     public var currentConfigurationViewModel: ConfigurationViewModel?

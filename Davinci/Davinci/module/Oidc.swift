@@ -2,7 +2,7 @@
 //  OIDC.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -80,10 +80,10 @@ public class OidcModule {
 extension SharedContext.Keys {
     /// The key used to store the PKCE value in the shared context.
     public static let pkceKey = "com.pingidentity.davinci.PKCE"
-  
+    
     /// The key used to store the user in the shared context.
     public static let userKey = "com.pingidentity.davinci.User"
-  
+    
     /// The key used to store the OIDC client configuration in the shared context.
     public static let oidcClientConfigKey = "com.pingidentity.davinci.OidcClientConfig"
 }

@@ -2,7 +2,7 @@
 //  MockResponse.swift
 //  DavinciTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -14,7 +14,7 @@ import Foundation
 struct MockResponse {
     static let headers = ["Content-Type": "application/json"]
     
-    // Freturn the OpenID configuration response as Data
+    // Return the OpenID configuration response as Data
     static var openIdConfigurationResponse: Data {
         return """
         {
@@ -66,12 +66,12 @@ struct MockResponse {
         "Set-Cookie": """
         interactionId=038e8128-272a-4a15-b97b-379aa1447149; Max-Age=3600; Path=/; Expires=Wed, 27 Mar 9999 05:06:30 GMT; HttpOnly
         """,
-//        "Set-Cookie": """
-//        interactionToken=71c65504463355679fd247900441c36afb6be6c00d45aa169500b7cd753894d46d68feb4952ff0843ff4b287220a66cb3d58a3bc41e71724f111b034d0458aac8a5153859ed96825ef8c6a6400e7ae9de82a7353fc3c9886ba835853db8c0957ea4cd0a52d20d4fb50b4419dc9df33a53889f52abeb04f517b6c7c8efb0b58f0; Max-Age=3600; Path=/; Expires=Wed, 27 Mar 9999 05:06:30 GMT; HttpOnly
-//        """,
-//        "Set-Cookie": """
-//        skProxyApiEnvironmentId=us-west-2; Max-Age=900; Path=/; Expires=Wed, 27 Mar 9999 04:21:30 GMT; HttpOnly
-//        """
+        //        "Set-Cookie": """
+        //        interactionToken=71c65504463355679fd247900441c36afb6be6c00d45aa169500b7cd753894d46d68feb4952ff0843ff4b287220a66cb3d58a3bc41e71724f111b034d0458aac8a5153859ed96825ef8c6a6400e7ae9de82a7353fc3c9886ba835853db8c0957ea4cd0a52d20d4fb50b4419dc9df33a53889f52abeb04f517b6c7c8efb0b58f0; Max-Age=3600; Path=/; Expires=Wed, 27 Mar 9999 05:06:30 GMT; HttpOnly
+        //        """,
+        //        "Set-Cookie": """
+        //        skProxyApiEnvironmentId=us-west-2; Max-Age=900; Path=/; Expires=Wed, 27 Mar 9999 04:21:30 GMT; HttpOnly
+        //        """
     ]
     
     // return the authorize response as Data

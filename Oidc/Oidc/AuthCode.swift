@@ -2,7 +2,7 @@
 //  AuthCode.swift
 //  PingOidc
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -17,7 +17,7 @@ import Foundation
 public struct AuthCode: Codable, Sendable {
     public let code: String
     public let codeVerifier: String?
-  
+    
     /// Initializes a new instance of `AuthCode`.
     /// - Parameters:
     ///   - code: The authorization code as a string. Default is an empty string.

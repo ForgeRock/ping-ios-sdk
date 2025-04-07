@@ -2,7 +2,7 @@
 //  WorkflowConfig.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 - 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -26,7 +26,7 @@ public class WorkflowConfig: @unchecked Sendable {
     public private(set) var modules: [any ModuleRegistryProtocol] = []
     /// Timeout for the HTTP client, default is 15 seconds
     public var timeout: TimeInterval = 15.0
-    /// Logger for the log, default is NoneLogger
+    /// Logger for the workflow, default is NoneLogger
     public var logger: Logger = LogManager.logger {
         didSet {
             // Propagate the logger to Modules
@@ -35,10 +35,10 @@ public class WorkflowConfig: @unchecked Sendable {
     }
     /// HTTP client for the engine
     public internal(set) var httpClient: HttpClient = HttpClient()
-  
+    
     /// Initializes a new WorkflowConfig instance.
     public init() {}
-  
+    
     /// Register a module.
     /// - Parameters:
     ///   - module: The module to be registered.
@@ -46,9 +46,9 @@ public class WorkflowConfig: @unchecked Sendable {
     ///   - mode: The mode of the module registration. Default is `override`. If the mode is `override`, the module will be overridden if it is already registered.
     ///   - config: The configuration for the module.
     public func module<T: Sendable>(_ module: Module<T>,
-                               priority: Int = 10,
-                               mode: OverrideMode = .override,
-                               _ config: @escaping @Sendable (T) -> (Void) = { _ in })  {
+                                    priority: Int = 10,
+                                    mode: OverrideMode = .override,
+                                    _ config: @escaping @Sendable (T) -> (Void) = { _ in })  {
         
         switch mode {
         case .override:
@@ -80,7 +80,7 @@ public class WorkflowConfig: @unchecked Sendable {
         nextValue(initConfig)
         return initConfig
     }
-  
+    
     /// Registers the workflow
     /// - Parameter workflow: The workflow to be registered.
     public func register(workflow: Workflow) {

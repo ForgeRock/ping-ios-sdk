@@ -15,9 +15,9 @@ import PingOrchestrate
 /// It maintains a dictionary of collector creation functions, keyed by type.
 /// It also provides functions to register new types of collectors and to create collectors from a JSON array.
 public actor CollectorFactory {
-    // A dictionary to hold the collector creation functions.
+    /// A dictionary to hold the collector creation functions.
     var collectors: [String: any Collector.Type] = [:]
-  
+    
     /// The shared instance of the CollectorFactory.
     public static let shared = CollectorFactory()
     
@@ -41,7 +41,7 @@ public actor CollectorFactory {
         register(type: Constants.RADIO, collector: SingleSelectCollector.self)
         register(type: Constants.COMBOBOX, collector: MultiSelectCollector.self)
         register(type: Constants.CHECKBOX, collector: MultiSelectCollector.self)
-        if let c: NSObject.Type = NSClassFromString("External_idp.IdpCollector") as? NSObject.Type {
+        if let c: NSObject.Type = NSClassFromString("PingExternal_idp.IdpCollector") as? NSObject.Type {
             c.perform(Selector(("registerCollector")))
         }
         register(type: Constants.DEVICE_REGISTRATION, collector: DeviceRegistrationCollector.self)
@@ -50,8 +50,8 @@ public actor CollectorFactory {
     
     /// Registers a new type of Collector.
     /// - Parameters:
-    ///   - type:  The type of the Collector.
-    ///   - block: A function    that creates a new instance of the Collector.
+    ///   - type: The type of the Collector.
+    ///   - block: A function that creates a new instance of the Collector.
     public func register(type: String, collector: any Collector.Type) {
         collectors[type] = collector
     }
