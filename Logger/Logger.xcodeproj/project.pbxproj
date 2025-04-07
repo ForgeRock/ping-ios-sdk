@@ -378,7 +378,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = "1.1.0-beta3";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "-no-verify-emitted-module-interface";
@@ -415,7 +415,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = "1.1.0-beta3";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "-no-verify-emitted-module-interface";
@@ -438,7 +438,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = "1.1.0-beta3";
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.LoggerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -457,7 +457,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = "1.1.0-beta3";
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.LoggerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

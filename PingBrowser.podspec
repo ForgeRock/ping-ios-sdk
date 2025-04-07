@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingBrowser'
-  s.version          = '1.1.0'
+  s.version          = '1.1.0-beta3'
   s.summary          = 'PingBrowser module for the Ping iOS SDK'
   s.description      = <<-DESC
   The PingBrowser module for the Ping iOS SDK is a library for using in-app browsers for the Ping iOS SDK.
@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   }
 
   s.module_name   = 'PingBrowser'
-  s.swift_versions = ['5.0', '5.1']
+  s.swift_versions = ['5.0', '5.1', '6.0']
 
   s.ios.deployment_target = '13.0'
 
@@ -33,6 +33,6 @@ Pod::Spec.new do |s|
     'Browser' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingLogger', '~> 1.1.0'
+  s.ios.dependency 'PingLogger', '~> 1.1.0-beta3'
     
 end
