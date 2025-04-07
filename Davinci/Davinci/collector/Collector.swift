@@ -18,3 +18,9 @@ public protocol Collector<T>: Action, Identifiable, Sendable {
     init(with json: [String: Any])
     func payload() -> T?
 }
+
+extension Collector {
+    func payload() -> T? {
+        return nil
+    }
+}
