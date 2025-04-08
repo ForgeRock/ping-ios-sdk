@@ -65,6 +65,9 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
         }
     }
     
+    /// Initializes the IdpCollector with a value. 
+    public func initialize(with value: Any) { }
+    
     /// Registers the IdpCollector with the collector factory
     @objc
     public static func registerCollector() {

@@ -20,8 +20,10 @@ extension Collectors {
     /// - Returns:  The event type as a String if found, otherwise nil.
     func eventType() -> String? {
         for collector in self {
-            if let _ = collector as? Submittable {
-                return Constants.submit
+            if let submittable = collector as? Submittable {
+                if collector.payload() != nil {
+                    return submittable.eventType()
+                }
             }
         }
         return nil
@@ -45,8 +47,8 @@ extension Collectors {
                     jsonObject[Constants.actionKey] = collector.id
                 }
             default:
-                if let fieldCollector = collector as? (any AnyFieldCollector), fieldCollector.anyPayload() != nil {
-                    formData[fieldCollector.id] = fieldCollector.anyPayload()
+                if let fieldCollector = collector as? (any AnyFieldCollector), let payload = fieldCollector.anyPayload() {
+                    formData[fieldCollector.id] = payload
                 }
             }
         }

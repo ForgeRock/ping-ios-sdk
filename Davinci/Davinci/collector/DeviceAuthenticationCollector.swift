@@ -24,6 +24,11 @@ open class DeviceAuthenticationCollector: FieldCollector<[String: Any]>, Submitt
         }
     }
     
+    /// Return event type
+    func eventType() -> String {
+        return Constants.submit
+    }
+    
     /// Returns the selected device type.
     override open func payload() -> [String: Any]? {
         var deviceDictionary = [:] as [String: Any]

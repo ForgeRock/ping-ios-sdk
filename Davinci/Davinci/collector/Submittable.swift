@@ -9,4 +9,7 @@
 //
 
 /// A protocol representing a self submittable [Collector].
-protocol Submittable { }
+protocol Submittable {
+    /// A method returning the eventType of the submittable object.
+    func eventType() -> String
+}

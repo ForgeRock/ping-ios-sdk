@@ -17,6 +17,7 @@ import Foundation
 /// - method init: Initializes a new instance of `DeviceRegistrationCollector`.
 ///
 open class DeviceRegistrationCollector: FieldCollector<String>, Submittable, @unchecked Sendable {
+    
     /// The list of devices.
     public private(set) var devices: [Device] = []
     /// The selected device.
@@ -29,6 +30,11 @@ open class DeviceRegistrationCollector: FieldCollector<String>, Submittable, @un
         if let jsonData = try? JSONSerialization.data(withJSONObject: devicesJson, options: []) {
             devices = Device.populateDevices(from: jsonData)
         }
+    }
+    
+    /// Return event type
+    func eventType() -> String {
+        return Constants.submit
     }
     
     /// Returns the selected device type.

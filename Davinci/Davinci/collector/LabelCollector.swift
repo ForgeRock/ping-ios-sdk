@@ -13,7 +13,8 @@ import Foundation
 
 /// Class representing a LABEL type.
 /// It conforms to the `Collector` protocol and displays a label on the form.
-public class LabelCollector: Collector, @unchecked Sendable {    
+public class LabelCollector: Collector, @unchecked Sendable {
+    
     /// The UUID of the field collector.
     public var id: String {
         return UUID().uuidString
@@ -26,6 +27,10 @@ public class LabelCollector: Collector, @unchecked Sendable {
     public required init(with json: [String : Any]) {
         content = json[Constants.content] as? String ?? ""
     }
+    
+    /// Initializes the `LabelCollector` with the given value. The `LabelCollector` does not hold any value.
+    /// - Parameter input: The value to initialize the collector with.
+    public func initialize(with value: Any) {}
     
     public func payload() -> Never? {
         return nil

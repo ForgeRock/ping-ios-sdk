@@ -52,27 +52,39 @@ class CallbackFactoryTests: XCTestCase {
 }
 
 public class DummyCallback: Collector, @unchecked Sendable {
+    
     public typealias T = String
     
     public var id: String {
         return UUID().uuidString
     }
-    let value: String?
+    
+    var value: String?
     
     required public init(with json: [String: Any]) {
         value = "dummy"
     }
+    
+    public func initialize(with value: Any) {
+        self.value = value as? String
+    }
 }
 
-final class Dummy2Callback: Collector {
+final class Dummy2Callback: Collector, @unchecked Sendable {
+    
     public typealias T = String
     
     public var id: String {
         return UUID().uuidString
     }
-    let value: String?
+    
+    var value: String?
     
     required public init(with json: [String: Any]) {
         value = "dummy2"
+    }
+    
+    func initialize(with value: Any) {
+        self.value = value as? String
     }
 }

@@ -23,6 +23,11 @@ open class PhoneNumberCollector: FieldCollector<[String: Any]>, Submittable, @un
         super.init(with: json)
     }
     
+    /// Return event type
+    func eventType() -> String {
+        return Constants.submit
+    }
+    
     /// Returns the selected device type.
     override open func payload() -> [String: Any]? {
         if countryCode == nil || phoneNumber == nil {

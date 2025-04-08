@@ -47,7 +47,6 @@ public struct Device: Codable, @unchecked Sendable {
             let devices = try decoder.decode([Device].self, from: jsonData)
             return devices
         } catch {
-            print("Error decoding devices: \(error)")
             return []
         }
     }
