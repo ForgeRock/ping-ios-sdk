@@ -24,7 +24,7 @@ occur during the authentication process.
   }
 
   s.module_name   = 'PingDavinci'
-  s.swift_versions = ['5.0', '5.1']
+  s.swift_versions = ['5.0', '5.1', '6.0']
 
   s.ios.deployment_target = '13.0'
 
