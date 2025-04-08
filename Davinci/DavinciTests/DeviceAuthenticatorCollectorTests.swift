@@ -11,24 +11,6 @@
 import XCTest
 @testable import PingDavinci
 
-/*
- {
-           "type": "DEVICE_AUTHENTICATION",
-           "key": "device-authentication",
-           "label": "MFA Device Selection - Authentication",
-           "required": true,
-           "devices": [
-             {
-               "type": "EMAIL",
-               "iconSrc": "https://assets.pingone.com/ux/end-user/2.10.0/images/icon-outline-mail.svg",
-               "title": "Email",
-               "id": "e00e00a2-e0c9-409a-9944-f6c282d6da60",
-               "default": true,
-               "value": "d******l@gmail.com"
-             }
-           ]
-         }
- */
 class DeviceAuthenticationCollectorTests: XCTestCase {
     
     func testInitializesOptionsWithProvidedValue() {
