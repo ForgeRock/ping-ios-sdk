@@ -18,6 +18,7 @@ open class PhoneNumberCollector: FieldCollector<[String: Any]>, Submittable, @un
     /// phone number
     public  var phoneNumber: String?
 
+    /// Initializes a new instance of `PhoneNumberCollector` with the given JSON input.
     public required init(with json: [String : Any]) {
         self.defaultCountryCode = json[Constants.defaultCountryCode] as? String ?? ""
         super.init(with: json)

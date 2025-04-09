@@ -11,6 +11,10 @@
 
 import Foundation
 
+/// Protocol representing a collector. Inherits from `Sendable`, `Collector`, `Validator`.
+/// - property id: The collector id.
+/// - function anyPayload: The payload of the collector as `Any`
+/// - function initialize: Initializes the collector with the given value.
 protocol AnyFieldCollector: Collector, Validator, Sendable {
     var id: String { get }
     /// Returns the payload as `Any?`.
@@ -53,6 +57,7 @@ open class FieldCollector<T>: Collector, AnyFieldCollector, Validator, @unchecke
         // To be implemented by subclasses
     }
     
+    /// Validates the field collector. Returns an array of validation errors.
     public func validate() -> [ValidationError] {
         var errors = [ValidationError]()
         if (required && payload() == nil) {
@@ -61,6 +66,7 @@ open class FieldCollector<T>: Collector, AnyFieldCollector, Validator, @unchecke
         return errors
     }
     
+    /// Function returning the `Payload` of the FieldCollector.
     open func payload() -> T? {
         fatalError("Subclasses need to override the payload() method.")
     }

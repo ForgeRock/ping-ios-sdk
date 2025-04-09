@@ -16,8 +16,8 @@ public typealias Collectors = [any Collector]
 
 extension Collectors {
     /// Finds the event type from a list of collectors.
-    ///This function iterates over the list of collectors and returns the value if the collector's value is not empty.
-    /// - Returns:  The event type as a String if found, otherwise nil.
+    /// This function iterates over the list of collectors and returns the value if the collector's value is not empty.
+    /// - Returns: The event type as a String if found, otherwise nil.
     func eventType() -> String? {
         for collector in self {
             if let submittable = collector as? Submittable {

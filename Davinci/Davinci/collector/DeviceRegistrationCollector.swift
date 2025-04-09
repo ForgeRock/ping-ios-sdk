@@ -12,8 +12,9 @@ import Foundation
 /// Class representing a device registration collector.
 /// Inherits from `FieldCollector` and is used to collect device information.
 /// - property devices: The list of devices.
-/// - property selectedDevice: The selected device.
-/// - method value: Returns the selected device type.
+/// - property value: The selected device.
+/// - method eventType: Returns the event type.
+/// - method payload: Returns the selected device type.
 /// - method init: Initializes a new instance of `DeviceRegistrationCollector`.
 ///
 open class DeviceRegistrationCollector: FieldCollector<String>, Submittable, @unchecked Sendable {
@@ -23,7 +24,7 @@ open class DeviceRegistrationCollector: FieldCollector<String>, Submittable, @un
     /// The selected device.
     public var value: Device? = nil
     
-    /// Initializes a new instance of `DeviceRegistrationCollector`.
+    /// Initializes a new instance of `DeviceRegistrationCollector` with the given JSON input.
     public required init(with json: [String : Any]) {
         super.init(with: json)
         let devicesJson = json[Constants.devices] as? [[String: Any]] ?? [[:]]

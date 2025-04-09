@@ -120,6 +120,7 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
         return resumeRequest ?? request
     }
     
+    /// Function returning the `Payload` of the IdP collector. This is a function that returns `Never` as a _nonreturning_ function as the IDPCollector has no payload to return.
     public func payload() -> Never? {
         return nil
     }

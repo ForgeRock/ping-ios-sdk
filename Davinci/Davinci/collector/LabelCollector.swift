@@ -32,6 +32,7 @@ public class LabelCollector: Collector, @unchecked Sendable {
     /// - Parameter input: The value to initialize the collector with.
     public func initialize(with value: Any) {}
     
+    /// Function returning the `Payload` of the LabelCollector. This is a function that returns `Never` as a _nonreturning_ function as the LabelCollector has no payload to return.
     public func payload() -> Never? {
         return nil
     }
