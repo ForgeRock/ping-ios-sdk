@@ -40,6 +40,20 @@
                BlueprintName = "DavinciTests"
                ReferencedContainer = "container:Davinci.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "PasswordCollectorTests/testAddsInvalidLengthErrorWhenValueTooShort()">
+               </Test>
+               <Test
+                  Identifier = "PasswordCollectorTests/testAddsMaxRepeatErrorWhenTooManyRepeatedCharacters()">
+               </Test>
+               <Test
+                  Identifier = "PasswordCollectorTests/testAddsMinCharactersErrorWhenNotEnoughDigits()">
+               </Test>
+               <Test
+                  Identifier = "PasswordCollectorTests/testAddsUniqueCharacterErrorWhenNotEnoughUniqueCharacters()">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>

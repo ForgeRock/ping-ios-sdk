@@ -39,7 +39,7 @@ extension ContinueNode {
 ///- property input: The input JsonObject of the ContinueNode.
 ///- property collectors: The collectors of the ContinueNode.
 class Connector: ContinueNode, @unchecked Sendable {
-    
+  
     /// Initializer to create a new instance of Connector.
     /// - Parameters:
     ///   - context: The FlowContext of the ContinueNode.

@@ -27,7 +27,9 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     public var continueNode: ContinueNode?
     
     /// The unique identifier for the collector.
-    public var id: UUID = UUID()
+    public var id: String {
+        return UUID().uuidString
+    }
     
     /// Indicates whether the IdP is enabled.
     public var idpEnabled = true
@@ -62,6 +64,9 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
             link = URL(string: href)
         }
     }
+    
+    /// Initializes the IdpCollector with a value. 
+    public func initialize(with value: Any) { }
     
     /// Registers the IdpCollector with the collector factory
     @objc
@@ -113,6 +118,11 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     ///     - request: The request to intercept.
     public func intercept(context: FlowContext, request: Request) -> Request {
         return resumeRequest ?? request
+    }
+    
+    /// Function returning the `Payload` of the IdP collector. This is a function that returns `Never` as a _nonreturning_ function as the IDPCollector has no payload to return.
+    public func payload() -> Never? {
+        return nil
     }
     
     /// Fallback to the browser handler.

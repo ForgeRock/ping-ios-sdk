@@ -11,16 +11,31 @@
 
 import Foundation
 
+/// Protocol representing a collector. Inherits from `Sendable`, `Collector`, `Validator`.
+/// - property id: The collector id.
+/// - function anyPayload: The payload of the collector as `Any`
+/// - function initialize: Initializes the collector with the given value.
+protocol AnyFieldCollector: Collector, Validator, Sendable {
+    var id: String { get }
+    /// Returns the payload as `Any?`.
+    func anyPayload() -> Any?
+    /// Initializes the field collector with the given value.
+    func initialize(with value: Any)
+}
+
 /// Abstract class representing a field collector.
 /// - property type: The type of the field collector.
 /// - property key: The key of the field collector.
 /// - property label: The label of the field collector.
 /// - property id The UUID of the field collector.
-open class FieldCollector: Collector, @unchecked Sendable {
+open class FieldCollector<T>: Collector, AnyFieldCollector, Validator, @unchecked Sendable {
     public private(set) var type: String = ""
     public private(set) var key: String = ""
     public private(set) var label: String = ""
-    public let id = UUID()
+    public private(set) var required: Bool = false
+    public var id: String {
+        return key
+    }
     
     /// Initializes a new instance of `FieldCollector`.
     public init() {}
@@ -31,6 +46,7 @@ open class FieldCollector: Collector, @unchecked Sendable {
         type = json[Constants.type] as? String ?? ""
         key = json[Constants.key] as? String ?? ""
         label = json[Constants.label] as? String ?? ""
+        required = json[Constants.required] as? Bool ?? false
     }
     
     /// Initializes `FieldCollector` with the given value.
@@ -39,6 +55,25 @@ open class FieldCollector: Collector, @unchecked Sendable {
     /// - Parameter input: The value to initialize with.
     public func initialize(with value: Any) {
         // To be implemented by subclasses
+    }
+    
+    /// Validates the field collector. Returns an array of validation errors.
+    public func validate() -> [ValidationError] {
+        var errors = [ValidationError]()
+        if (required && payload() == nil) {
+            errors.append(.required)
+        }
+        return errors
+    }
+    
+    /// Function returning the `Payload` of the FieldCollector.
+    open func payload() -> T? {
+        fatalError("Subclasses need to override the payload() method.")
+    }
+    
+    /// Type-erased version of payload()
+    public func anyPayload() -> Any? {
+        return payload()
     }
 }
 

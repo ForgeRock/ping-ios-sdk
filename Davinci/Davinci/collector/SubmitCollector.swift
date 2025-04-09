@@ -14,4 +14,9 @@ import Foundation
 /// Class representing a SUBMIT_BUTTON Type.
 /// This class inherits from the SingleValueCollector class and implements the Collector protocol.
 /// It is used to collect data when a form is submitted.
-public class SubmitCollector: SingleValueCollector, @unchecked Sendable {}
+public class SubmitCollector: SingleValueCollector, Submittable, @unchecked Sendable {
+    /// Return event type
+    func eventType() -> String {
+        return Constants.submit
+    }
+}

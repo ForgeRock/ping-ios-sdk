@@ -12,73 +12,24 @@ import PingOrchestrate
 import Foundation
 
 /// Protocol representing a Collector.
-public protocol Collector: Action, Identifiable, Sendable {
-    var id: UUID { get }
+/// It is a generic protocol that defines the structure for creating different types of collectors.
+/// It inherits from the Action protocol and conforms to Identifiable and Sendable protocols.
+/// - Parameters:
+///   - T: The type of the payload that the collector will handle.
+///   - id: A unique identifier for the collector.
+///   - init(with json: [String: Any]): Initializes the collector with a JSON object.
+///   - payload(): Returns the payload of type T. When payload returns nil, the field will not be posted to server.
+public protocol Collector<T>: Action, Identifiable, Sendable {
+    associatedtype T
+    var id: String { get }
     init(with json: [String: Any])
+    func initialize(with value: Any)
+    func payload() -> T?
 }
 
-
-extension ContinueNode {
-    /// Returns the list of collectors from the actions.
-    public var collectors: [any Collector] {
-        return actions.compactMap { $0 as? (any Collector) }
-    }
-}
-
-///  Type alias for a list of collectors.
-public typealias Collectors = [any Collector]
-
-
-extension Collectors {
-    /// Finds the event type from a list of collectors.
-    /// This function iterates over the list of collectors and returns the value if the collector's value is not empty.
-    /// - Returns: The event type as a String if found, otherwise nil.
-    func eventType() -> String? {
-        for collector in self {
-            if let submitCollector = collector as? SubmitCollector, !submitCollector.value.isEmpty {
-                return submitCollector.value
-            }
-            if let flowCollector = collector as? FlowCollector, !flowCollector.value.isEmpty {
-                return flowCollector.value
-            }
-        }
+extension Collector {
+    /// Default implementation of the payload method.
+    func payload() -> T? {
         return nil
     }
-    
-    /// Represents a list of collectors as a JSON object for posting to the server.
-    /// This function takes a list of collectors and represents it as a JSON object. It iterates over the list of collectors,
-    /// adding each collector's key and value to the JSON object if the collector's value is not empty.
-    /// - Returns: JSON object representing the list of collectors.
-    func asJson() -> [String: Any] {
-        var jsonObject: [String: Any] = [:]
-        
-        for collector in self {
-            if let submitCollector = collector as? SubmitCollector, !submitCollector.value.isEmpty {
-                jsonObject[Constants.actionKey] = submitCollector.key
-            }
-            if let flowCollector = collector as? FlowCollector, !flowCollector.value.isEmpty {
-                jsonObject[Constants.actionKey] = flowCollector.key
-            }
-        }
-        
-        var formData: [String: Any] = [:]
-        for collector in self {
-            if let textCollector = collector as? TextCollector, !textCollector.value.isEmpty {
-                formData[textCollector.key] = textCollector.value
-            }
-            if let passwordCollector = collector as? PasswordCollector, !passwordCollector.value.isEmpty {
-                formData[passwordCollector.key] = passwordCollector.value
-            }
-            if let singleSelectCollector = collector as? SingleSelectCollector, !singleSelectCollector.value.isEmpty {
-                formData[singleSelectCollector.key] = singleSelectCollector.value
-            }
-            if let multiSelectCollector = collector as? MultiSelectCollector, !multiSelectCollector.value.isEmpty {
-                formData[multiSelectCollector.key] = multiSelectCollector.value
-            }
-        }
-        
-        jsonObject[Constants.formData] = formData
-        return jsonObject
-    }
-    
 }

@@ -14,4 +14,9 @@ import Foundation
 /// Representing a FLOW_BUTTON, FLOW_LINK Type.
 /// This class inherits from the `SingleValueCollector` class and implements the `Collector` protocol.
 /// It is used to collect data in a flow.
-public class FlowCollector: SingleValueCollector, @unchecked Sendable {}
+public class FlowCollector: SingleValueCollector, Submittable, @unchecked Sendable {
+    /// Return event type
+    func eventType() -> String {
+        return Constants.ACTION.lowercased()
+    }
+}

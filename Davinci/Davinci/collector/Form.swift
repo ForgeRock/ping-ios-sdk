@@ -30,8 +30,8 @@ struct Form {
         // Populate default values for collectors
         if let formData = json[Constants.formData] as? [String: Any],
            let value = formData[Constants.value] as? [String: Any] {
-            collectors.compactMap { $0 as? FieldCollector }.compactMap{ $0 }.forEach { collector in
-                if let fieldValue = value[collector.key] {
+            collectors.compactMap { $0 as? (any AnyFieldCollector) }.compactMap{ $0 }.forEach { collector in
+                if let fieldValue = value[collector.id] {
                     collector.initialize(with: fieldValue)
                 }
             }

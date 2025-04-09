@@ -15,16 +15,11 @@ import Foundation
 open class ValidatedCollector: SingleValueCollector, @unchecked Sendable {
     /// Holds a validation object. Only writable within this class.
     public private(set) var validation: Validation?
-    /// Flag indicating whether the field is required. Only writable within this class.
-    public private(set) var required: Bool = false
     
     /// Initializes the `ValidatedCollector` with the given input.
     /// - Parameter json: A dictionary representing the JSON element to parse.
     public required init(with json: [String : Any]) {
         super.init(with :json)
-        
-        // Parse the "required" field
-        required = json[Constants.required] as? Bool ?? false
         
         // Parse the validation object
         if let validationDict = json[Constants.validation] as? [String: Any],
@@ -39,7 +34,7 @@ open class ValidatedCollector: SingleValueCollector, @unchecked Sendable {
     
     /// Validates the collector’s value and returns a list of validation errors, if any.
     /// - Returns: An array of `ValidationError`.
-    open func validate() -> [ValidationError] {
+    open override func validate() -> [ValidationError] {
         var errors = [ValidationError]()
         
         // Check if the field is required but empty

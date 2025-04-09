@@ -23,7 +23,7 @@ class FieldCollectorTests: XCTestCase {
             "label": "testLabel"
         ]
         
-        let fieldCollector = FieldCollector(with: jsonObject)
+        let fieldCollector = FieldCollector<String>(with: jsonObject)
         
         XCTAssertEqual("testType", fieldCollector.type)
         XCTAssertEqual("testKey", fieldCollector.key)
