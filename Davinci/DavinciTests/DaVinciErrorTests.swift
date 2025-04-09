@@ -542,6 +542,7 @@ class DaVinciErrorTests: XCTestCase {
         
         XCTAssertTrue(next is ErrorNode)
         let errorNode = next as! ErrorNode
+        XCTAssertTrue(errorNode.continueNode === connector)
         XCTAssertEqual(errorNode.message, "Invalid username and/or password")
         XCTAssertTrue(errorNode.input.description.contains("The provided password did not match provisioned password"))
     }

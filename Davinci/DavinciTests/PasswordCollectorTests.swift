@@ -154,4 +154,4 @@ final class PasswordCollectorTests: XCTestCase {
     
 }
 
-class MockContinueNode: ContinueNode { }
+class MockContinueNode: ContinueNode, @unchecked Sendable { }

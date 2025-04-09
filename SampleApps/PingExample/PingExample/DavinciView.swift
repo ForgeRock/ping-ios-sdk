@@ -47,13 +47,9 @@ struct DavinciView: View {
                             // Show a default error message.
                             ErrorView(message: "unknown error")
                         }
-                        // Handle failure node scenarios.
-                        if let nextNode = davinciViewModel.state.previous as? ContinueNode {
-                            ConnectorView(davinciViewModel: davinciViewModel, node: nextNode)
-                        }
                     case let errorNode as ErrorNode:
                         ErrorNodeView(node: errorNode)
-                        if let nextNode = davinciViewModel.state.previous as? ContinueNode {
+                        if let nextNode = errorNode.continueNode {
                             ConnectorView(davinciViewModel: davinciViewModel, node: nextNode)
                         }
                         
