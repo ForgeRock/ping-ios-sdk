@@ -2,7 +2,7 @@
 //  ModuleRegistry.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,16 +12,16 @@
 import Foundation
 
 /// Represents a ModuleRegistry protocol. A ModuleRegistry represents a registry of modules in the application.
-public protocol ModuleRegistryProtocol<Config> {
-    associatedtype Config: Any
+public protocol ModuleRegistryProtocol<Config>: Sendable where Config: Sendable {
+    associatedtype Config: Sendable
     /// The UUID of the module
-    var id: UUID { get set }
+    var id: UUID { get }
     /// The priority of the module in the registry.
     var priority: Int { get }
     /// The configuration for the module.
     var config: Config { get }
     /// The function that sets up the module.
-    var setup: (Setup<Config>) -> (Void) { get }
+    var setup: @Sendable (Setup<Config>) -> (Void) { get }
     
     /// Registers the module to the workflow.
     func register(workflow: Workflow)
@@ -33,13 +33,13 @@ public protocol ModuleRegistryProtocol<Config> {
 ///  - property priority: The priority of the module in the registry.
 ///  - property config: The configuration for the module.
 ///  - property setup: The function that sets up the module.
-public class ModuleRegistry<Config>: ModuleRegistryProtocol {
-    public var id: UUID = UUID()
+public final class ModuleRegistry<Config>: ModuleRegistryProtocol where Config: Sendable {
+    public let id: UUID
     public let priority: Int
     public let config: Config
-    public let setup: (Setup<Config>) -> Void
+    public let setup: @Sendable (Setup<Config>) -> Void
     
-    public init(setup: @escaping (Setup<Config>) -> (Void),
+    public init(setup: @escaping @Sendable (Setup<Config>) -> (Void),
                 priority: Int,
                 id: UUID,
                 config: Config) {
@@ -67,7 +67,7 @@ extension ModuleRegistry: Comparable {
     public static func < (lhs: ModuleRegistry, rhs: ModuleRegistry) -> Bool {
         return lhs.priority < rhs.priority
     }
-  
+    
     /// Compares two ModuleRegistry instances for equality.
     /// - Parameters:
     ///   - lhs: The left-hand side ModuleRegistry instance

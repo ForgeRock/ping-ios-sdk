@@ -2,7 +2,7 @@
 //  OrchestrateTests.swift
 //  OrchestrateTests
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -80,8 +80,8 @@
 //    
 //  }
 //  
-//  @Test("This validates customer can be overridate later") func testWorkFlowOverridable1() async throws {
-//    
+//  @Test("This validates customer can be overridden later") func testWorkFlowOverridable1() async throws {
+//
 //    class CustomHeaderConfig {
 //      var enable = true
 //      var headerValue = "iOS-SDK"
@@ -163,8 +163,8 @@
 //    
 //  }
 //
-////  @Test("This validates customer can be overridate later") func testWorkFlowOverridable2() async throws {
-////    
+////  @Test("This validates customer can be overridden later") func testWorkFlowOverridable2() async throws {
+////
 ////    class CustomHeaderConfig {
 ////      var enable = true
 ////      var headerValue = "iOS-SDK"

@@ -2,7 +2,7 @@
 //  HttpClient.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -13,8 +13,8 @@ import Foundation
 import PingLogger
 
 /// `HttpClient` is responsible for handling HTTP requests and logging the details of those requests and responses.
-public class HttpClient {
-    var session: URLSession
+open class HttpClient: @unchecked Sendable {
+    let session: URLSession
     /// The timeout interval for HTTP requests.
     public var timeoutIntervalForRequest: TimeInterval = 60.0
     
@@ -28,7 +28,7 @@ public class HttpClient {
     /// Logs the details of an HTTP request.
     /// - Parameter request: The URLRequest to be logged.
     public func logRequest(request: URLRequest?) {
-      if let request = request {
+        if let request = request {
             var log = "⬆\n"
             log += "Request URL: \(request.url?.absoluteString ?? "")\n"
             log += "Request Method: \(request.httpMethod ?? "")\n"
@@ -38,7 +38,7 @@ public class HttpClient {
             if let bodyData = request.httpBody, let bodyString = String(data: bodyData, encoding: .utf8) {
                 log += "Request Body: \(bodyString)\n"
             }
-          log += "Request Timeout: \(request.timeoutInterval)\n"
+            log += "Request Timeout: \(request.timeoutInterval)\n"
             LogManager.standard.d(log)
         }
     }

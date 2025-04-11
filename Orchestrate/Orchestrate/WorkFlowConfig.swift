@@ -2,7 +2,7 @@
 //  WorkflowConfig.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -21,12 +21,12 @@ public enum OverrideMode {
 
 
 /// Workflow configuration
-public class WorkflowConfig {
+public class WorkflowConfig: @unchecked Sendable {
     /// Use a list instead of a map to allow registering a module twice with different configurations
     public private(set) var modules: [any ModuleRegistryProtocol] = []
     /// Timeout for the HTTP client, default is 15 seconds
     public var timeout: TimeInterval = 15.0
-    /// Logger for the log, default is NoneLogger
+    /// Logger for the workflow, default is NoneLogger
     public var logger: Logger = LogManager.logger {
         didSet {
             // Propagate the logger to Modules
@@ -35,20 +35,20 @@ public class WorkflowConfig {
     }
     /// HTTP client for the engine
     public internal(set) var httpClient: HttpClient = HttpClient()
-  
+    
     /// Initializes a new WorkflowConfig instance.
     public init() {}
-  
+    
     /// Register a module.
     /// - Parameters:
     ///   - module: The module to be registered.
     ///   - priority: The priority of the module in the registry. Default is 10.
     ///   - mode: The mode of the module registration. Default is `override`. If the mode is `override`, the module will be overridden if it is already registered.
     ///   - config: The configuration for the module.
-    public func module<T: Any>(_ module: Module<T>,
-                               _ priority: Int = 10,
-                               mode: OverrideMode = .override,
-                               _ config: @escaping (T) -> (Void) = { _ in })  {
+    public func module<T: Sendable>(_ module: Module<T>,
+                                    priority: Int = 10,
+                                    mode: OverrideMode = .override,
+                                    _ config: @escaping @Sendable (T) -> (Void) = { _ in })  {
         
         switch mode {
         case .override:
@@ -75,12 +75,12 @@ public class WorkflowConfig {
         }
     }
     
-    private func configValue<T>(initalValue: @escaping () -> (T), nextValue: @escaping (T) -> (Void)) -> T {
+    private func configValue<T>(initalValue: @escaping @Sendable () -> (T), nextValue: @escaping @Sendable (T) -> (Void)) -> T {
         let initConfig = initalValue()
         nextValue(initConfig)
         return initConfig
     }
-  
+    
     /// Registers the workflow
     /// - Parameter workflow: The workflow to be registered.
     public func register(workflow: Workflow) {

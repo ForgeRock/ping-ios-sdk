@@ -2,7 +2,7 @@
 //  PKCE.swift
 //  PingOidc
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -16,7 +16,7 @@ import CryptoKit
 /// - property codeVerifier: The code verifier for the PKCE.
 /// - property codeChallenge: The code challenge for the PKCE.
 /// - property codeChallengeMethod: The code challenge method for the PKCE.
-public struct Pkce {
+public struct Pkce: Sendable {
     public let codeVerifier: String
     public let codeChallenge: String
     public let codeChallengeMethod: String

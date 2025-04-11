@@ -2,7 +2,7 @@
 //  MockURLProtocol.swift
 //  DavinciTests
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,10 +12,10 @@
 import Foundation
 import XCTest
 
-class MockURLProtocol: URLProtocol {
-    public static var requestHistory: [URLRequest] = [URLRequest]()
+class MockURLProtocol: URLProtocol, @unchecked Sendable {
+    nonisolated(unsafe) public static var requestHistory: [URLRequest] = [URLRequest]()
     
-    static var requestHandler: ((URLRequest) throws -> (HTTPURLResponse, Data))?
+    nonisolated(unsafe) static var requestHandler: ((URLRequest) throws -> (HTTPURLResponse, Data))?
     
     static func startInterceptingRequests() {
         URLProtocol.registerClass(MockURLProtocol.self)

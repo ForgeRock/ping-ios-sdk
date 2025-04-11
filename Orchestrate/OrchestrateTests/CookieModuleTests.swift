@@ -2,7 +2,7 @@
 //  CookieModuleTests.swift
 //  OrchestrateTests
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -87,8 +87,8 @@ final class CookieModuleTests: XCTestCase {
     }
     
     func testCookieInjectToRequestAndSignoff() async {
-        var success = false
-        let json: [String: Any] = ["booleanKey": true]
+        let testState = TestState()
+        let json: [String: Sendable] = ["booleanKey": true]
         
         MockURLProtocol.requestHandler = { request in
             return (HTTPURLResponse(url: URL(string: "http://openam.example.com")!, statusCode: 200, httpVersion: nil, headerFields: [
@@ -97,22 +97,30 @@ final class CookieModuleTests: XCTestCase {
             ])!, Data())
         }
         
-        var workflow = Workflow.createWorkflow { config in
+        // Create initial workflow
+        let initialWorkflow = Workflow.createWorkflow { config in
             config.httpClient = HttpClient(session: .shared)
         }
         
+        // Create state container
+        let workflowContainer = WorkflowContainer(workflow: initialWorkflow)
+        
+        // Create the dummy module with access to the state
         let dummy = Module.of({CustomHeaderConfig()}) { module in
             module.transform { flowContext, _ in
-                if success {
+                if await testState.isSuccess() {
                     return SuccessNode(session: EmptySession())
                 } else {
-                    success = true
-                    return TestContinueNode(context: flowContext, workflow: workflow, input: json, actions: [])
+                    await testState.setSuccess(value: true)
+                    return TestContinueNode(context: flowContext, workflow: workflowContainer.workflow, input: json, actions: [])
                 }
             }
         }
+        
         let memory = MemoryStorage<[CustomHTTPCookie]>()
-        workflow = Workflow.createWorkflow { config in
+        
+        // Update the workflow in the shared state
+        workflowContainer.workflow = Workflow.createWorkflow { config in
             config.httpClient = HttpClient(session: .shared)
             config.module(dummy)
             
@@ -122,7 +130,8 @@ final class CookieModuleTests: XCTestCase {
             }
         }
         
-        let node = await workflow.start()
+        // Use the workflow from the state container
+        let node = await workflowContainer.workflow.start()
         _ = await (node as? ContinueNode)?.next()
         
         XCTAssertTrue(MockURLProtocol.requestHistory[1].allHTTPHeaderFields!["Cookie"]!.contains("interactionId=178ce234-afd2-4207-984e-bda28bd7042c"))
@@ -132,7 +141,7 @@ final class CookieModuleTests: XCTestCase {
         XCTAssertNotNil(cookies)
         XCTAssertEqual(cookies?.count, 1)
         
-        let result = await workflow.signOff()
+        let result = await workflowContainer.workflow.signOff()
         switch result {
         case .success:
             break
@@ -140,8 +149,8 @@ final class CookieModuleTests: XCTestCase {
             XCTFail("Should have succeeded")
         }
         
-//        XCTAssertTrue(MockURLProtocol.requestHistory[2].allHTTPHeaderFields!["Cookie"]!.contains("interactionId=178ce234-afd2-4207-984e-bda28bd7042c"))
-//        XCTAssertFalse(MockURLProtocol.requestHistory[2].allHTTPHeaderFields!["Cookie"]!.contains("interactionToken=abc"))
+        //        XCTAssertTrue(MockURLProtocol.requestHistory[2].allHTTPHeaderFields!["Cookie"]!.contains("interactionId=178ce234-afd2-4207-984e-bda28bd7042c"))
+        //        XCTAssertFalse(MockURLProtocol.requestHistory[2].allHTTPHeaderFields!["Cookie"]!.contains("interactionToken=abc"))
         let cookies2 = try? await memory.get()
         XCTAssertNil(cookies2)
         
@@ -188,8 +197,8 @@ final class CookieModuleTests: XCTestCase {
         }
         XCTAssertTrue(cookie.isExpired)
     }
-
-
+    
+    
     func testCookieIsExpiredValidationNotExpired() {
         let setCookie: [String: String] = ["Set-Cookie":"iPlanetDirectoryPro=token; Expires=Wed, 21 Oct 2032 01:00:00 GMT; Domain=openam.example.com"]
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: setCookie, for: URL(string: "https://openam.example.com")!)

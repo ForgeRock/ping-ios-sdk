@@ -2,11 +2,12 @@
 //  DavinciViewModel.swift
 //  PingExample
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
+
 
 import Foundation
 import PingDavinci
@@ -14,90 +15,114 @@ import PingOidc
 import PingOrchestrate
 import PingLogger
 import PingStorage
+import PingExternal_idp
 
-public let davinciStage = DaVinci.createDaVinci { config in
-  //config.debug = true
-  
-  config.module(OidcModule.config) { oidcValue in
-    oidcValue.clientId = "2dde00e2-3dd5-42b1-96e9-ad17e29f4bbd"
-    oidcValue.scopes = ["openid", "email", "address", "phone", "profile", "ttl"]
-    oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
-    oidcValue.discoveryEndpoint = "https://auth.test-one-pingone.com/0c6851ed-0f12-4c9a-a174-9b1bf8b438ae/as/.well-known/openid-configuration"
-  }
+/// Configures and initializes the DaVinci instance with the PingOne server and OAuth 2.0 client details.
+/// - This configuration includes:
+///   - Client ID
+///   - Scopes
+///   - Redirect URI
+///   - Discovery Endpoint
+///   - Other optional fields
+public let davinci = DaVinci.createDaVinci { config in
+    let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
+    config.module(OidcModule.config) { oidcValue in
+        oidcValue.clientId = currentConfig?.clientId ?? ""
+        oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
+        oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
+        oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
+    }
+    
 }
 
-public let davinciTest = DaVinci.createDaVinci { config in
-  //config.debug = true
-  config.module(OidcModule.config) { oidcValue in
-    oidcValue.clientId = "c12743f9-08e8-4420-a624-71bbb08e9fe1"
-    oidcValue.scopes = ["openid", "email", "address", "phone", "profile"]
-    oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
-    oidcValue.discoveryEndpoint = "https://auth.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/as/.well-known/openid-configuration"
-  }
-}
-
-public let davinciProd = DaVinci.createDaVinci { config in
-  //config.debug = true
-  config.module(OidcModule.config) { oidcValue in
-    oidcValue.clientId = "2dde00e2-3dd5-42b1-96e9-ad17e29f4bbd"
-    oidcValue.scopes = ["openid", "email", "address", "phone", "profile", "ttl"]
-    oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
-    oidcValue.discoveryEndpoint = "https://auth.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/as/.well-known/openid-configuration"
-  }
-}
-
-// Change this to Prod/Stage
-public let davinci = davinciProd
-
+// A view model that manages the flow and state of the DaVinci orchestration process.
+/// - Responsible for:
+///   - Starting the DaVinci flow
+///   - Progressing to the next node in the flow
+///   - Maintaining the current and previous flow state
+///   - Handling loading states
+@MainActor
 class DavinciViewModel: ObservableObject {
-  
-  @Published public var data: StateNode = StateNode()
-  
-  @Published public var isLoading: Bool = false
-  
-  init() {
+    /// Published property that holds the current state node data.
+    @Published public var state: DavinciState = DavinciState()
+    /// Published property to track whether the view is currently loading.
+    @Published public var isLoading: Bool = false
     
-    Task {
-      await startDavinci()
-    }
-  }
-  
-  
-  private func startDavinci() async {
-    
-    await MainActor.run {
-      isLoading = true
+    /// Initializes the view model and starts the DaVinci orchestration process.
+    init() {
+        Task {
+            await startDavinci()
+        }
     }
     
-    let node = await davinci.start()
-    
-    await MainActor.run {
-      self.data = StateNode(currentNode: node, previousNode: node)
-      isLoading = false
+    /// Starts the DaVinci orchestration process.
+    /// - Sets the initial node and updates the `data` property with the starting node.
+    public func startDavinci() async {
+        await MainActor.run {
+            isLoading = true
+        }
+        
+        // Starts the DaVinci orchestration process and retrieves the first node.
+        let next = await davinci.start()
+        await MainActor.run {
+            self.state = DavinciState(previous: next , node: next)
+            isLoading = false
+        }
     }
     
-  }
-  
-  public func next(node: Node) async {
-    await MainActor.run {
-      isLoading = true
+    /// Advances to the next node in the orchestration process.
+    /// - Parameter node: The current node to progress from.
+    public func next(node: Node) async {
+        await MainActor.run {
+            isLoading = true
+        }
+        if let current = node as? ContinueNode {
+            // Retrieves the next node in the flow.
+            let next = await current.next()
+            await MainActor.run {
+                self.state = DavinciState(previous: current, node: next)
+                isLoading = false
+            }
+        }
     }
-    if let nextNode = node as? ContinueNode {
-      let next = await nextNode.next()
-      await MainActor.run {
-        self.data = StateNode(currentNode: next, previousNode: node)
-        isLoading = false
-      }
+    
+    public func shouldValidate(node: ContinueNode) -> Bool {
+        var shouldValidate = false
+        for collector in node.collectors {
+            // Check if the collector is a social collector and if it has a resume request.
+            // In that case, we should not validate the collectors and continue with the submission of the flow.
+            if let socialCollector = collector as? IdpCollector {
+                if socialCollector.resumeRequest != nil {
+                    shouldValidate = false
+                    return shouldValidate
+                }
+            }
+            if let collector = collector as? ValidatedCollector {
+                if collector.validate().count > 0 {
+                    shouldValidate = true
+                }
+            }
+        }
+        return shouldValidate
     }
-  }
+    
+    public func refresh() {
+        state = DavinciState(previous: state.previous, node: state.node)
+    }
 }
 
-class StateNode {
-  var currentNode: Node? = nil
-  var previousNode: Node? = nil
-  
-  init(currentNode: Node?  = nil, previousNode: Node? = nil) {
-    self.currentNode = currentNode
-    self.previousNode = previousNode
-  }
+/// A model class that represents the state of the current and previous nodes in the DaVinci flow.
+class DavinciState {
+    var previous: Node? = nil
+    var node: Node? = nil
+    
+    init(previous: Node?  = nil, node: Node? = nil) {
+        self.previous = previous
+        self.node = node
+    }
+}
+
+@MainActor
+public class ValidationViewModel: ObservableObject {
+    @Published var shouldValidate = false
 }

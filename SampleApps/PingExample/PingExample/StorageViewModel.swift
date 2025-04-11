@@ -2,7 +2,7 @@
 //  StorageViewModel.swift
 //  PingExample
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,8 +12,8 @@ import Foundation
 import PingStorage
 import PingLogger
 
+@MainActor
 class StorageViewModel {
-    
     func setupMemoryStorage() async {
         do {
             let memoryStorage1 = MemoryStorage<String>()
@@ -26,13 +26,12 @@ class StorageViewModel {
         
     }
     
-    
     func setupKeychainStorage() async {
         do {
             let keychainStorage = KeychainStorage<String>(account: "token", encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
             try await keychainStorage.save(item: "Jey")
             let storedValue = try await keychainStorage.get()
-            LogManager.standard.i("Kechain Storage value: \(storedValue!)")
+            LogManager.standard.i("Keychain Storage value: \(storedValue!)")
         } catch {
             LogManager.standard.e("", error: error)
         }

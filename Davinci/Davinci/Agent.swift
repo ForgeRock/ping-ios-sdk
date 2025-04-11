@@ -2,7 +2,7 @@
 //  Agent.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -13,12 +13,12 @@ import Foundation
 import PingOidc
 import PingOrchestrate
 
-internal class CreateAgent: Agent {
+internal final class CreateAgent: Agent, Sendable {
     typealias T = Void
     
     let session: Session
     let pkce: Pkce?
-    var used = false
+    nonisolated(unsafe) var used = false
     
     init(session: Session, pkce: Pkce?) {
         self.session = session

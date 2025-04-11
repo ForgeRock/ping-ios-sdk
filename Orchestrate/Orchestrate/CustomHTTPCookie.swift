@@ -2,7 +2,7 @@
 //  CustomHTTPCookie.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,7 +12,7 @@
 import Foundation
 
 /// A struct that represents a custom HTTP cookie.
-public struct CustomHTTPCookie: Codable {
+public struct CustomHTTPCookie: Codable, Sendable {
     var version: Int
     var name: String?
     var value: String?
@@ -42,7 +42,7 @@ public struct CustomHTTPCookie: Codable {
         case portList
         case sameSitePolicy
     }
-  
+    
     /// Initializes a `CustomHTTPCookie` from an `HTTPCookie`.
     /// - Parameter cookie: The `HTTPCookie` to initialize from.
     public init(from cookie: HTTPCookie) {
@@ -60,7 +60,7 @@ public struct CustomHTTPCookie: Codable {
         self.portList = cookie.portList?.map { $0.intValue }
         self.sameSitePolicy = cookie.sameSitePolicy?.rawValue
     }
-  
+    
     /// Converts the `CustomHTTPCookie` to an `HTTPCookie`.
     /// - Returns: An `HTTPCookie` instance.
     public func toHTTPCookie() -> HTTPCookie? {

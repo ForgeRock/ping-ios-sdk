@@ -2,7 +2,7 @@
 //  Agent.swift
 //  PingOidc
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -13,7 +13,7 @@ import Foundation
 
 /// The `Agent` is a protocol that is used to authenticate and end a session with an OpenID Connect provider.
 /// `T` is the configuration object that is used to configure the `Agent`.
-public protocol Agent<T> {
+public protocol Agent<T>: Sendable {
      associatedtype T
      
      /// Provides the configuration object for the `Agent`.
@@ -50,7 +50,7 @@ public class OidcConfig<T> {
 
 
 /// Default implementation of the  `Agent` interface.
-public class DefaultAgent: Agent {
+public final class DefaultAgent: Agent {
      
      public typealias T = Void
      
@@ -68,7 +68,8 @@ public class DefaultAgent: Agent {
      ///   - oidcConfig: The configuration for the OpenID Connect client.
      ///   - idToken: The ID token used to end the session.
      /// - Returns: Always returns false.
-     public func endSession(oidcConfig: OidcConfig<Void>, idToken: String) async -> Bool {
+     @discardableResult
+     public func endSession(oidcConfig: OidcConfig<Void>, idToken: String) async throws -> Bool {
           return false
      }
      
@@ -99,7 +100,7 @@ public class AgentDelegate<T: Any>: AgentDelegateProtocol  {
      /// - Parameters:
      ///   - agent: The `Agent` instance.
      ///   - agentConfig: The configuration object for the `Agent`.
-     ///   - oidcClientConfig: The `OidcClientConfig` instance .
+     ///   - oidcClientConfig: The `OidcClientConfig` instance.
      init(agent: any Agent<T>, agentConfig: T, oidcClientConfig: OidcClientConfig) {
           self.agent = agent
           self.oidcConfig = OidcConfig(oidcClientConfig: oidcClientConfig, config: agentConfig)
@@ -111,9 +112,10 @@ public class AgentDelegate<T: Any>: AgentDelegateProtocol  {
           return try await self.agent.authorize(oidcConfig: oidcConfig)
      }
      
-     ///  End the session with the OpenID Connect provider.
+     /// End the session with the OpenID Connect provider.
      /// - Parameter idToken: The ID token used to end the session.
      /// - Returns: A boolean indicating whether the session was successfully ended.
+     @discardableResult
      public func endSession(idToken: String) async throws -> Bool {
           return try await agent.endSession(oidcConfig: oidcConfig, idToken: idToken)
      }

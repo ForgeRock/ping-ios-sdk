@@ -1,8 +1,8 @@
 //
-//  SampleRequest.swift
+//  Response.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -17,6 +17,15 @@ import Foundation
 public struct Response {
     public let data: Data
     public let response: URLResponse
+    
+    /// Initializes a new instance of `Response`.
+    /// - Parameters:
+    ///  - data: The data received from the network request.
+    ///  - response: The URLResponse received from the network request.
+    public init(data: Data, response: URLResponse) {
+        self.data = data
+        self.response = response
+    }
     
     /// Returns the body of the response.
     /// - Returns: The body of the response as a String.
@@ -54,5 +63,17 @@ public struct Response {
             return cookies
         }
         return []
+    }
+    
+    /// Constants used in the Response
+    public enum Constants {
+        public static let clientId = "clientId"
+        public static let scopes = "scopes"
+        public static let nonce = "nonce"
+        public static let redirectUri = "redirectUri"
+        public static let href = "href"
+        public static let _links = "_links"
+        public static let next = "next"
+        public static let idp = "idp"
     }
 }

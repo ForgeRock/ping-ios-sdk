@@ -9,11 +9,29 @@
 
 ## Overview
 
-PingDavinci is a powerful and flexible library for Authentication and Authorization. It is designed to be easy to use and
-extensible. It provides a simple API for navigating the authentication flow and handling the various states that can
-occur during the authentication process.
+PingDavinci is a powerful and flexible library for Authentication and Authorization. It is designed to be easy to use and extensible. It provides a simple API for navigating the authentication flow and handling the various states that can occur during the authentication process.
 
-<img src="images/davinciSequence.png" width="500">
+```mermaid
+sequenceDiagram
+    Developer ->> DaVinci: Create DaVinci instance
+    DaVinci ->> Developer: DaVinci
+    Developer ->> DaVinci: start()
+    DaVinci ->> PingOne DaVinci Server: /authorize
+    PingOne DaVinci Server ->> PingOne DaVinci Server: Launch DaVinci Flow
+    PingOne DaVinci Server ->> DaVinci: Node with Form
+    DaVinci ->> Developer: Node
+    Developer ->> Developer: Gather credentials
+    Developer ->> DaVinci: next()
+    DaVinci ->> PingOne DaVinci Server: /continue
+    PingOne DaVinci Server ->> DaVinci: authorization code
+    DaVinci ->> PingOne DaVinci Server: /token
+    PingOne DaVinci Server ->> DaVinci: access token
+    DaVinci ->> DaVinci: persist access token
+    DaVinci ->> Developer: Access Token
+```
+
+You can find more information about PingOne
+DaVinci [here](https://docs.pingidentity.com/davinci/davinci_introduction.html).
 
 ## Integrating the SDK into your project
 
@@ -21,8 +39,7 @@ Use Cocoapods or Swift Package Manger
 
 ## Usage
 
-To use the `DaVinci` class, you need to create an instance of it by passing a configuration block to the `createDaVinci` method. The
-configuration block allows you to customize various aspects of the `DaVinci` instance, such as the timeout and logging.
+To use the `DaVinci` class, you need to create an instance of it by passing a configuration block to the `createDaVinci` method. The configuration block allows you to customize various aspects of the `DaVinci` instance, such as the timeout and logging.
 
 Here's an example of how to create a `DaVinci` instance:
 
@@ -42,8 +59,7 @@ node = await (node as! ContinueNode).next()
 
 The `PingDavinci` depends on `PingOidc` module. It discovers the OIDC endpoints with `discoveryEndpoint` attribute.
 
-The `start` method returns a `Node` instance. The `Node` class represents the current state of the application. You can
-use the `next` method to transition to the next state.
+The `start` method returns a `Node` instance. The `Node` class represents the current state of the application. You can use the `next` method to transition to the next state.
 
 ## More DaVinci Configuration
 ```swift
@@ -74,16 +90,13 @@ case is SuccessNode: do {}
 
 | Node Type  | Description                                                                                               |
 |------------|:----------------------------------------------------------------------------------------------------------|
-| ContinueNode  | In the middle of the flow, call ```node.next``` to move to next Node in the flow                          |
-| FailureNode  | Unexpected Error, e.g Network, parsing ```node.cause``` to retrieve the cause of the error                |
-| ErrorNode| Bad Request from the server, e.g Invalid Password, OTP, username ```node.message``` for the error message |
-| SuccessNode| Authentication successful ```node.session``` to retrieve the session                                      |
+| ContinueNode  | In the middle of the flow, call ```node.next``` to move to next Node in the flow.                          |
+| FailureNode  | Unexpected error, e.g., network issues. Use  ```node.cause``` to retrieve the cause of the error.                |
+| ErrorNode| Bad request from the server, e.g., invalid password, OTP or username. Use ```node.message``` for the error message. |
+| SuccessNode| Successful authentication. Use ```node.session``` to retrieve the session.                                      |
 
 ### Provide input
-For `ContinueNode` Node, you can access list of Collector with `node.collectors` and provide input to
-the `Collector`.
-Currently, there are, `TextCollector`, `PasswordCollector`, `SubmitCollector`, `FlowCollector`, but more will be added in the future, such as `Fido`,
-`SocialLoginCollector`, etc...
+For a `ContinueNode`, you can access the list of collectors using `node.collectors` and and provide input to the desired `Collector`. Currently, the available collectors include `TextCollector`, `PasswordCollector`, `SubmitCollector`, `FlowCollector`, `LabelCollector`, `MultiSelectCollector`, and `SingleSelectCollector`. Additional collectors, such as `Fido` and `IdpCollector`, will be added in the future.
 
 To access the collectors, you can use the following code:
 ```swift
@@ -97,6 +110,7 @@ node.collectors.forEach { item in
         (item as! SubmitCollector).value = "click me"
     case is FlowCollector:
         (item as! FlowCollector).value = "Forgot Password"
+    ...
     }
 }
 
@@ -104,16 +118,107 @@ node.collectors.forEach { item in
 let next = node.next()
 ```
 
+Each `Collector` has its own function.
+
+#### TextCollector (TEXT)
+
+```swift
+textCollector.label //To access the label
+textCollector.key //To access the key attribute
+textCollector.type //To access the type attribute
+textCollector.required //To access the required attribute
+textCollector.validation //To access the validation attribute
+
+textCollector.validate() //To validate the field's input value using both required and regex constraints.
+textCollector.value = "My First Name" //To set the value
+```
+
+#### PasswordCollector (PASSWORD, PASSWORD_VERIFY)
+
+`PasswordCollector` has the same attributes as `TextCollector`, plus the following functions
+
+```swift
+passwordCollector.passwordPolicy() //Retrieve the password policy
+passwordCollector.validate() //To validate the field input value against the password policy
+
+passwordCollector.type == "PASSWORD_VERIFY" // Check if the type is "PASSWORD_VERIFY".
+```
+
+#### SubmitCollector (SUBMIT_BUTTON)
+
+```swift
+submitCollector.label //To access the label
+submitCollector.key //To access the key attribute
+submitCollector.type //To access the type attribute
+submitCollector.value = "submit" //To set the value
+```
+
+#### FlowCollector (FLOW_BUTTON, FLOW_LINK)
+
+`FlowCollector` has the same attributes as `SubmitCollector`
+
+```swift
+flowCollector.type == "FLOW_LINK" // Check if the type is "FLOW_LINK". Note that developers may choose to display flow collectors as link or button. 
+```
+
+#### LabelCollector (LABEL)
+
+```swift
+labelCollector.content //To access the Content
+```
+
+#### MultiSelectCollector (COMBOBOX, CHECKBOX)
+
+```swift
+multiSelectCollector.label //To access the label
+multiSelectCollector.key //To access the key attribute
+multiSelectCollector.type //To access the type attribute
+multiSelectCollector.required //To access the required attribute
+multiSelectCollector.options //To access the options attribute
+
+multiSelectCollector.value.append("option1") //To add the value
+```
+
+#### SingleSelectCollector (DROPDOWN, RADIO)
+
+```swift
+singleSelectCollector.label //To access the label
+singleSelectCollector.key //To access the key attribute
+singleSelectCollector.type //To access the type attribute
+singleSelectCollector.required //To access the required attribute
+singleSelectCollector.options //To access the options attribute
+
+singleSelectCollector.value = "option1" //To set the value
+```
+
+### Collector Validation
+
+Collectors have a `validate()` method to validate the input value. The `validate()` method will return array of `ValidationError`
+
+For example, to validate the `TextCollector` input value, you can use the following code:
+
+```swift
+var result: [ValidationError] = = textCollector.validate()
+```
+
+| ValidationError | Description                                                                                                                                                                                               |
+|-----------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| .invalidLength   | Indicates that the password length is outside the valid range. The InvalidLength error includes the required minimum and maximum lengths.                                                                 |
+| .uniqueCharacter | Indicates that the number of unique characters is less than the required minUniqueCharacters specified in the the policy. The UniqueCharacter error contains the required minimum unique character count. |
+| .maxRepeat       | Indicates that the maxRepeatedCharacters policy requirement is not met. The MaxRepeat error specifies the maximum allowed repetitions of a character.                                                     |
+| .minCharacters   | Indicates that the minCharacters password policy requirement is not met.                                                                                                                                  |
+| .required        | Indicates that the input value has not been supplied, but is required.                                                                                                                                    |
+| .regex           | Indicates that the input value does not match the required pattern. The Regex error contains the required regular expression.                                                                             |
+
 ### Error Handling
 
-For `FailureNode` Node, you can retrieve the cause of the error by using `node.cause`. The `cause` is an `Error` instance,
-when receiving an error, you cannot continue the Flow, you may want to display a generic message to the user, and report
-the issue to the Support team.
-The Error may include Network issue, parsing issue, API Error (Server response other that 2xx and 400) and other unexpected issues.
+`FailureNode` and `ErrorNode` handle errors differently in the flow. A `FailureNode` represents an unrecoverable error that prevents the flow from continuing, whereas an `ErrorNode` allows the flow to continue and provides an error message for the user.
 
-For `ErrorNode` Node, you can retrieve the error message by using `node.message`. The `message` is a `String` object,
-when receiving a failure, you can continue the Flow with previous `ContinueNode` Node, but you may want to display the error message to the user.
-e.g "Username/Password is incorrect", "OTP is invalid", etc...
+For a `FailureNode` Node, you can retrieve the cause of the error using `node.cause`. The `cause` is an `Error` instance. When an error occurs, the flow cannot continue, and you may want to display a generic message to the user and report the issue to the support team. Possible errors include network issues, parsing problems, API errors (e.g., server responses in the 5xx range), and other unexpected issues.
+
+For an `ErrorNode` Node, you can retrieve the error message using `node.message` and access the raw JSON response with
+`node.input`. 
+The `message` is a `String` object. When a failure occurs, you can continue the flow with the previous `ContinueNode`, but you may want to display the error message to the user (e.g., "Username/Password is incorrect", "OTP is invalid", etc.).
 ```swift
 let node = await daVinci.start() //Start the flow
 
@@ -124,6 +229,16 @@ case is FailureNode:
     (node as! FailureNode).cause //Retrieve the cause of the Failure
 case is ErrorNode:
     (node as! ErrorNode).message //Retrieve the error message
+    // Retrieve the details of the error
+    (node as! ErrorNode).details.forEach { detail in
+        detail.rawResponse.details?.forEach { detail in
+            let msg = detail.message
+            
+            detail.innerError?.errors.forEach { key, value in
+                let innerError = "\(key): \(value)"
+            }
+        }
+    }
 case is SuccessNode: do {}
 }
 ```

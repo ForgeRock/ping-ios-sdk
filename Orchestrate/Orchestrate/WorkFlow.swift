@@ -2,7 +2,7 @@
 //  Workflow.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -44,7 +44,7 @@ public enum ModuleKeys: String {
 
 
 /// Class representing a workflow.
-public class Workflow {
+public class Workflow: @unchecked Sendable {
     /// The configuration for the workflow.
     public let config: WorkflowConfig
     ///  Global SharedContext
@@ -52,15 +52,15 @@ public class Workflow {
     
     private var started = false
     
-    internal var initHandlers =  [() async throws -> Void]()
-    internal var startHandlers = [(FlowContext, Request) async throws -> Request]()
-    internal var nextHandlers = [(FlowContext, ContinueNode, Request) async throws -> Request]()
-    internal var responseHandlers = [(FlowContext, Response) async throws -> Void]()
-    internal var nodeHandlers = [(FlowContext, Node) async throws -> Node]()
-    internal var successHandlers = [(FlowContext, SuccessNode) async throws -> SuccessNode]()
-    internal var signOffHandlers = [(Request) async throws -> Request]()
+    internal var initHandlers = [@Sendable () async throws -> Void]()
+    internal var startHandlers = [@Sendable (FlowContext, Request) async throws -> Request]()
+    internal var nextHandlers = [@Sendable (FlowContext, ContinueNode, Request) async throws -> Request]()
+    internal var responseHandlers = [@Sendable (FlowContext, Response) async throws -> Void]()
+    internal var nodeHandlers = [@Sendable (FlowContext, Node) async throws -> Node]()
+    internal var successHandlers = [@Sendable (FlowContext, SuccessNode) async throws -> SuccessNode]()
+    internal var signOffHandlers = [@Sendable (Request) async throws -> Request]()
     // Transform response to Node, we can only have one transform
-    internal var transformHandler: (FlowContext, Response) async throws -> Node = { _, _ in EmptyNode() }
+    internal var transformHandler: @Sendable (FlowContext, Response) async throws -> Node = { _, _ in EmptyNode() }
     
     ///  Initializes the workflow.
     /// - Parameter config: The configuration for the workflow.
@@ -113,6 +113,7 @@ public class Workflow {
         return try await next(context, initialNode)
     }
     
+    
     /// Starts the workflow with a default request.
     /// - Returns: The resulting `Node` after processing the workflow.
     public func start() async -> Node {
@@ -120,7 +121,7 @@ public class Workflow {
             return try await start(request: Request())
         }
         catch {
-          return FailureNode(cause: error)
+            return FailureNode(cause: error)
         }
     }
     
@@ -186,7 +187,7 @@ public class Workflow {
             return try await next(context, node)
         }
         catch {
-          return FailureNode(cause: error)
+            return FailureNode(cause: error)
         }
     }
     

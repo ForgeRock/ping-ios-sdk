@@ -1,8 +1,8 @@
 //
-//  KeychainStorageTests.swift
+//  EncryptedKeychainStorageTests.swift
 //  StorageTests
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -14,21 +14,21 @@ import XCTest
 
 final class EncryptedKeychainStorageTests: XCTestCase {
     private var keychainStorage: KeychainStorage<TestItem>!
-
+    
     override func setUp() {
         super.setUp()
         // Test KeychainStorage with the SecuredKeyEncryptor - the OOTB encryptor provided by the SDK
         keychainStorage = KeychainStorage(account: "testAccount", encryptor: SecuredKeyEncryptor()!)
     }
-
-    override func tearDown() {
-      Task {
+    
+    override func tearDown() async throws {
+        
         try? await keychainStorage.delete()
         keychainStorage = nil
-      }
-      super.tearDown()
+        
+        try await super.tearDown()
     }
-
+    
     // TestRailCase(24706)
     func testSaveItem() async throws {
         let item = TestItem(id: 1, name: "Test")
@@ -36,7 +36,7 @@ final class EncryptedKeychainStorageTests: XCTestCase {
         let retrievedItem = try await keychainStorage.get()
         XCTAssertEqual(retrievedItem, item)
     }
-
+    
     // TestRailCase(24707)
     func testGetItem() async throws {
         let item = TestItem(id: 1, name: "Test")
@@ -44,7 +44,7 @@ final class EncryptedKeychainStorageTests: XCTestCase {
         let retrievedItem = try await keychainStorage.get()
         XCTAssertEqual(retrievedItem, item)
     }
-
+    
     // TestRailCase(24708)
     func testDeleteItem() async throws {
         let item = TestItem(id: 1, name: "Test")

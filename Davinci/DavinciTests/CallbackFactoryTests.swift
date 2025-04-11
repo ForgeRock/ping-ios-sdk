@@ -2,7 +2,7 @@
 //  CallbackFactoryTests.swift
 //  DavinciTests
 //
-//  Copyright (c) 2024 Ping Identity. All rights reserved.
+//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -14,57 +14,77 @@ import XCTest
 @testable import PingDavinci
 
 class CallbackFactoryTests: XCTestCase {
-    override func setUp() {
-        CollectorFactory.shared.register(type: "type1", collector: DummyCallback.self)
-        CollectorFactory.shared.register(type: "type2", collector: Dummy2Callback.self)
+    override func setUp() async throws{
+        await CollectorFactory.shared.register(type: "type1", collector: DummyCallback.self)
+        await CollectorFactory.shared.register(type: "type2", collector: Dummy2Callback.self)
     }
     
-    func testShouldReturnListOfCollectorsWhenValidTypesAreProvided() {
+    func testShouldReturnListOfCollectorsWhenValidTypesAreProvided() async {
         let jsonArray: [[String: Any]] = [
             ["type": "type1"],
             ["type": "type2"]
         ]
         
-        let callbacks = CollectorFactory.shared.collector(from: jsonArray)
+        let callbacks = await CollectorFactory.shared.collector(from: jsonArray)
         XCTAssertEqual((callbacks[0] as? DummyCallback)?.value, "dummy")
         XCTAssertEqual((callbacks[1] as? Dummy2Callback)?.value, "dummy2")
         
         XCTAssertEqual(callbacks.count, 2)
     }
     
-    func testShouldReturnEmptyListWhenNoValidTypesAreProvided() {
+    func testShouldReturnEmptyListWhenNoValidTypesAreProvided() async {
         let jsonArray: [[String: Any]] = [
             ["type": "invalidType"]
         ]
         
-        let callbacks = CollectorFactory.shared.collector(from: jsonArray)
+        let callbacks = await CollectorFactory.shared.collector(from: jsonArray)
         
         XCTAssertTrue(callbacks.isEmpty)
     }
     
-    func testShouldReturnEmptyListWhenJsonArrayIsEmpty() {
+    func testShouldReturnEmptyListWhenJsonArrayIsEmpty() async {
         let jsonArray: [[String: Any]] = []
         
-        let callbacks = CollectorFactory.shared.collector(from: jsonArray)
+        let callbacks = await CollectorFactory.shared.collector(from: jsonArray)
         
         XCTAssertTrue(callbacks.isEmpty)
     }
 }
 
-class DummyCallback: Collector {
-    var id: UUID = UUID()
+public class DummyCallback: Collector, @unchecked Sendable {
+    
+    public typealias T = String
+    
+    public var id: String {
+        return UUID().uuidString
+    }
+    
     var value: String?
     
     required public init(with json: [String: Any]) {
         value = "dummy"
     }
+    
+    public func initialize(with value: Any) {
+        self.value = value as? String
+    }
 }
 
-class Dummy2Callback: Collector {
-    var id: UUID = UUID()
+final class Dummy2Callback: Collector, @unchecked Sendable {
+    
+    public typealias T = String
+    
+    public var id: String {
+        return UUID().uuidString
+    }
+    
     var value: String?
     
     required public init(with json: [String: Any]) {
         value = "dummy2"
+    }
+    
+    func initialize(with value: Any) {
+        self.value = value as? String
     }
 }

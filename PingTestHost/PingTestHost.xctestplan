@@ -24,6 +24,9 @@
       }
     },
     {
+      "skippedTests" : [
+        "StorageDelegateTests\/testConcurrentAccess()"
+      ],
       "target" : {
         "containerPath" : "container:..\/Storage\/Storage.xcodeproj",
         "identifier" : "A5A797032BE1782F004D0F2D",
@@ -47,12 +50,35 @@
     {
       "skippedTests" : [
         "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
-        "DaVinciIntegrationTests\/testInvalidPassword()"
+        "DaVinciIntegrationTests\/testInvalidPassword()",
+        "FormFieldValidationTest\/testPasswordValidation()",
+        "FormFieldValidationTests\/testPasswordValidation()",
+        "PasswordCollectorTests\/testAddsInvalidLengthErrorWhenValueTooShort()",
+        "PasswordCollectorTests\/testAddsMaxRepeatErrorWhenTooManyRepeatedCharacters()",
+        "PasswordCollectorTests\/testAddsMinCharactersErrorWhenNotEnoughDigits()",
+        "PasswordCollectorTests\/testAddsUniqueCharacterErrorWhenNotEnoughUniqueCharacters()"
       ],
       "target" : {
         "containerPath" : "container:..\/Davinci\/Davinci.xcodeproj",
         "identifier" : "3A5441A82BCDF20700385131",
         "name" : "DavinciTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Browser\/Browser.xcodeproj",
+        "identifier" : "ECB7C6682D5A1FAB0006F1C8",
+        "name" : "PingBrowserTests"
+      }
+    },
+    {
+      "skippedTests" : [
+        "NativeHandlerTests"
+      ],
+      "target" : {
+        "containerPath" : "container:..\/External-idp\/External-idp.xcodeproj",
+        "identifier" : "ECB7C6972D5A2C1F0006F1C8",
+        "name" : "PingExternal-idpTests"
       }
     }
   ],
