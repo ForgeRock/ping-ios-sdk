@@ -52,6 +52,7 @@ public struct ErrorNode: Node {
     nonisolated(unsafe) public let input: [String: Any]
     public let message: String
     public let status: Int?
+    public let context: FlowContext
     
     /// Initializes a new instance of `ErrorNode`.
     /// - Parameters:
@@ -60,10 +61,12 @@ public struct ErrorNode: Node {
     ///   - message: The message for the error.
     public init(status: Int? = nil,
                 input: [String : Any] = [:],
-                message: String = "") {
+                message: String = "",
+                context: FlowContext) {
         self.input = input
         self.message = message
         self.status = status
+        self.context = context
     }
 }
 

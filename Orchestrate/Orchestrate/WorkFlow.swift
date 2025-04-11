@@ -14,7 +14,7 @@ import PingLogger
 
 /// Class representing the context of a flow.
 /// - property flowContext: The shared context of the flow.
-public class FlowContext {
+public class FlowContext: @unchecked Sendable {
     public let flowContext: SharedContext
     
     public init(flowContext: SharedContext) {

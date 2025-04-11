@@ -110,3 +110,24 @@ class Connector: ContinueNode, @unchecked Sendable {
         return request
     }
 }
+
+/// A module to set the `ContinueNode` in the `FlowContex`.
+public class ContinueNodeModule {
+    /// Initializes a new instance of `ContinueNodeModule`.
+    public init() {}
+    
+    /// The configuration for the ContinueNodeModule.
+    public static let config: Module<Void> = Module.of(setup: { setup in
+        setup.node { @Sendable context, node in
+            if let continueNode = node as? ContinueNode {
+                context.flowContext.set(key: SharedContext.Keys.continueNode, value: continueNode)
+            }
+            return node
+        }
+    })
+}
+
+extension SharedContext.Keys {
+    /// The key used to store the Continue Node value in the shared context.
+    public static let continueNode = "com.pingidentity.davinci.CONTINUE_NODE"
+}

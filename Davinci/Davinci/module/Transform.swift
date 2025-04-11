@@ -41,7 +41,7 @@ public class NodeTransformModule {
                 }
                 
                 // If we're still here, we have a 4XX failure that should be recoverable
-                return ErrorNode(status: status, input: json, message: message)
+                return ErrorNode(status: status, input: json, message: message, context: flowContext)
             }
             
             // Handle success (2XX) responses

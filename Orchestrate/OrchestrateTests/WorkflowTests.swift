@@ -616,8 +616,8 @@ class WorkflowTest: XCTestCase {
         }
         
         let dummy = Module.of({CustomHeaderConfig()}) { module in
-            module.transform {_,_ in
-                return ErrorNode(input: [:], message: "Invalid request")
+            module.transform {context,_ in
+                return ErrorNode(input: [:], message: "Invalid request", context: context)
             }
         }
         

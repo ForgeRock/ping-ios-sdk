@@ -61,10 +61,10 @@ final class DaVinciTests: XCTestCase {
             }
         }
         
-        XCTAssertEqual(davinci.config.modules.count, 4)
+        XCTAssertEqual(davinci.config.modules.count, 5)
         XCTAssertEqual(davinci.initHandlers.count, 2)
         XCTAssertEqual(davinci.nextHandlers.count, 2)
-        XCTAssertEqual(davinci.nodeHandlers.count, 0)
+        XCTAssertEqual(davinci.nodeHandlers.count, 1)
         XCTAssertEqual(davinci.responseHandlers.count, 1)
         XCTAssertEqual(davinci.signOffHandlers.count, 2)
         XCTAssertEqual(davinci.successHandlers.count, 1)
@@ -87,10 +87,10 @@ final class DaVinciTests: XCTestCase {
             config.module(nosession)
         }
         
-        XCTAssertEqual(davinci1.config.modules.count, 5)
+        XCTAssertEqual(davinci1.config.modules.count, 6)
         XCTAssertEqual(davinci1.initHandlers.count, 2)
         XCTAssertEqual(davinci1.nextHandlers.count, 3)
-        XCTAssertEqual(davinci1.nodeHandlers.count, 0)
+        XCTAssertEqual(davinci1.nodeHandlers.count, 1)
         XCTAssertEqual(davinci1.responseHandlers.count, 1)
         XCTAssertEqual(davinci1.signOffHandlers.count, 2)
         XCTAssertEqual(davinci1.successHandlers.count, 1)
@@ -116,12 +116,13 @@ final class DaVinciTests: XCTestCase {
             }
         }
         
-        XCTAssertEqual(4, daVinci.config.modules.count)
+        XCTAssertEqual(5, daVinci.config.modules.count)
         let list = daVinci.config.modules
         XCTAssertTrue(list[0].config is CustomHeaderConfig)
         XCTAssertTrue(list[1].config is Void)
-        XCTAssertTrue(list[2].config is OidcClientConfig)
-        XCTAssertTrue(list[3].config is CookieConfig)
+        XCTAssertTrue(list[2].config is Void)
+        XCTAssertTrue(list[3].config is OidcClientConfig)
+        XCTAssertTrue(list[4].config is CookieConfig)
         
     }
     
@@ -313,7 +314,7 @@ final class DaVinciTests: XCTestCase {
             case MockAPIEndpoint.discovery.url.path:
                 return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfigurationResponse)
             case MockAPIEndpoint.authorization.url.path:
-                var headers = MockResponse.authorizeResponseHeaders
+                let headers = MockResponse.authorizeResponseHeaders
                 return (HTTPURLResponse(url: MockAPIEndpoint.authorization.url, statusCode: 200, httpVersion: nil, headerFields: headers)!, MockResponse.responseWithBasicTypes)
             default:
                 return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())

@@ -24,6 +24,12 @@ extension ErrorNode {
         }
         return detailsArray.compactMap { try? Detail(dictionary: $0) }
     }
+    
+    /// Get the `ContinueNode` from an `ErrorNode`.
+    /// - Returns: The `ContinueNode` from the `ErrorNode`.
+    public var continueNode: ContinueNode? {
+        return context.flowContext.get(key: SharedContext.Keys.continueNode) as? ContinueNode
+    }
 }
 
 /// Represents a detailed error response.
