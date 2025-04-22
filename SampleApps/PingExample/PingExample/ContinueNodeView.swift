@@ -87,6 +87,10 @@ struct ContinueNodeView: View {
                     if let deviceAuthenticationCollector = collector as? DeviceAuthenticationCollector {
                         DeviceAuthenticationView(field: deviceAuthenticationCollector, onNext: onNext)
                     }
+                case is PhoneNumberCollector:
+                    if let phoneNumberCollector = collector as? PhoneNumberCollector {
+                        PhoneNumberView(field: phoneNumberCollector, onNodeUpdated: onNodeUpdated)
+                    }
                 default:
                     EmptyView()
                 }

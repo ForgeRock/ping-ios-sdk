@@ -46,6 +46,7 @@ public actor CollectorFactory {
         }
         register(type: Constants.DEVICE_REGISTRATION, collector: DeviceRegistrationCollector.self)
         register(type: Constants.DEVICE_AUTHENTICATION, collector: DeviceAuthenticationCollector.self)
+        register(type: Constants.PHONE_NUMBER, collector: PhoneNumberCollector.self)
     }
     
     /// Registers a new type of Collector.

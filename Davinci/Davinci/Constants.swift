@@ -89,4 +89,5 @@ public enum Constants {
     public static let countryCode = "countryCode"
     public static let phoneNumber = "phoneNumber"
     public static let defaultCountryCode = "defaultCountryCode"
+    public static let validatePhoneNumber = "validatePhoneNumber"
 }
