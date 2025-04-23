@@ -12,11 +12,35 @@
 import SwiftUI
 import PingDavinci
 
+/// A Struct representing a Country
+/// - `countryCode`: The country code for the country.
+/// - `name`: The name of the country.
+/// - `countryCodeNumber`: The country code number for the country.
+/// This struct conforms to the `Identifiable` protocol, allowing it to be used in SwiftUI views that require unique identifiers for each item.
+/// It also provides static methods to retrieve the country code and country code number based on the provided values.
 struct Country: Identifiable {
     var id: String { countryCode }
     var countryCode: String
     var name: String
     var countryCodeNumber: String
+    
+    static func countryCodeForCountryCodeNumber(_ countryCodeNumber: String, listOfCountries: [Country]) -> String? {
+        for country in listOfCountries {
+            if country.countryCodeNumber == countryCodeNumber {
+                return country.countryCode
+            }
+        }
+        return nil
+    }
+    
+    static func countryCodeNumberForCountryCode(_ countryCode: String, listOfCountries: [Country]) -> String? {
+        for country in listOfCountries {
+            if country.countryCode == countryCode {
+                return country.countryCodeNumber
+            }
+        }
+        return nil
+    }
 }
 
 struct PhoneNumberView: View {
@@ -67,7 +91,18 @@ struct PhoneNumberView: View {
                 }
             } label: {
                 HStack {
-                    Text((selectedCountry?.countryCodeNumber ?? "").isEmpty ? "Select an option" : "+" + selectedCountry!.countryCodeNumber)
+                    Text({
+                        var selectedCountryCode: String?
+                        if let selectedCountry = selectedCountry {
+                            selectedCountryCode = Country.countryCodeForCountryCodeNumber(selectedCountry.countryCodeNumber, listOfCountries: listOfCountries)
+                        }
+                        let code = selectedCountryCode ?? field.defaultCountryCode
+                        let codeNumber = Country.countryCodeNumberForCountryCode(code, listOfCountries: listOfCountries)
+                        if !code.isEmpty {
+                            field.countryCode = code
+                        }
+                        return (codeNumber == nil) ? "Select an option" : "+" + codeNumber!
+                    }())
                         .foregroundColor((selectedCountry?.countryCodeNumber ?? "").isEmpty ? .gray : .primary)
                     Spacer()
                     Image(systemName: "chevron.down")

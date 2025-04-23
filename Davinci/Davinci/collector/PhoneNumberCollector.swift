@@ -13,7 +13,7 @@ open class PhoneNumberCollector: FieldCollector<[String: Any]>, @unchecked Senda
     
     /// default country code
     public private(set) var defaultCountryCode: String
-    
+    /// validate phone number
     public private(set) var validatePhoneNumber: Bool
     /// country code
     public var countryCode: String?
@@ -25,6 +25,14 @@ open class PhoneNumberCollector: FieldCollector<[String: Any]>, @unchecked Senda
         self.defaultCountryCode = json[Constants.defaultCountryCode] as? String ?? ""
         self.validatePhoneNumber = json[Constants.validatePhoneNumber] as? Bool ?? false
         super.init(with: json)
+    }
+    
+    /// Initializes the `PhoneNumberCollector` with the given phone number  .
+    /// - Parameter phoneNumber: The phone number to initialize the collector with.
+    public override func initialize(with phoneNumber: Any) {
+        if let stringValue = phoneNumber as? String {
+            self.phoneNumber = stringValue
+        }
     }
     
     /// Returns the selected device type.

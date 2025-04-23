@@ -59,4 +59,12 @@ class PhoneNumberCollectorTests: XCTestCase {
         XCTAssertEqual(collector.validatePhoneNumber, false)
         XCTAssertEqual(collector.defaultCountryCode, "GB")
     }
+    
+    func testdefaultWithPhoneNumber() {
+        let input = "1234567"
+        let collector = PhoneNumberCollector(with: [:])
+        collector.initialize(with: input)
+        
+        XCTAssertEqual(collector.phoneNumber, "1234567")
+    }
 }
