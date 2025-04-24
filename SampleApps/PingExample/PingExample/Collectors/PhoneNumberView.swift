@@ -79,7 +79,7 @@ struct PhoneNumberView: View {
                 ForEach(listOfCountries) { country in
                     Button(action: {
                         selectedCountry = country
-                        field.countryCode = selectedCountry?.countryCode
+                        field.countryCode = selectedCountry?.countryCode ?? ""
                         expanded = false
                         isValid = field.validate().isEmpty
                         onNodeUpdated()
@@ -128,7 +128,7 @@ struct PhoneNumberView: View {
                     .stroke(isValid ? Color.gray : Color.red, lineWidth: 1)
             )
             .onAppear(perform: {
-                text = field.phoneNumber ?? ""
+                text = field.phoneNumber
             })
             .onChange(of: text) { newValue in
                 field.phoneNumber = newValue

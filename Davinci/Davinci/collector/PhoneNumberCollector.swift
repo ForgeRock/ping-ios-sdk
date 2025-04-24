@@ -16,9 +16,9 @@ open class PhoneNumberCollector: FieldCollector<[String: Any]>, @unchecked Senda
     /// validate phone number
     public private(set) var validatePhoneNumber: Bool
     /// country code
-    public var countryCode: String?
+    public var countryCode: String = ""
     /// phone number
-    public var phoneNumber: String?
+    public var phoneNumber: String = ""
 
     /// Initializes a new instance of `PhoneNumberCollector` with the given JSON input.
     public required init(with json: [String : Any]) {
@@ -37,7 +37,7 @@ open class PhoneNumberCollector: FieldCollector<[String: Any]>, @unchecked Senda
     
     /// Returns the selected device type.
     override open func payload() -> [String: Any]? {
-        if countryCode == nil || phoneNumber == nil {
+        if countryCode.isEmpty || phoneNumber.isEmpty{
             return nil
         }
         var payload: [String: Any] = [:]
