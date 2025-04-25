@@ -169,5 +169,10 @@ class FormFieldValidationTests: XCTestCase {
         
         XCTAssertEqual("400", String(describing: errorNode.input["code"]!))
         XCTAssertEqual("Error message from error node", errorNode.message)
+        
+        // SDKS-3891 Access Previous Continue Node from ErrorNode
+        XCTAssertNotNil(errorNode.continueNode)
+        XCTAssertEqual(errorNode.continueNode?.name, "Select Test Form")
+        XCTAssertEqual(errorNode.continueNode?.description, "Select form for testing")
     }
 }
