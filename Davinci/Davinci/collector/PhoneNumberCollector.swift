@@ -27,7 +27,7 @@ open class PhoneNumberCollector: FieldCollector<[String: Any]>, @unchecked Senda
         super.init(with: json)
     }
     
-    /// Initializes the `PhoneNumberCollector` with the given phone number  .
+    /// Initializes the `PhoneNumberCollector` with the given phone number.
     /// - Parameter phoneNumber: The phone number to initialize the collector with.
     public override func initialize(with phoneNumber: Any) {
         if let stringValue = phoneNumber as? String {
