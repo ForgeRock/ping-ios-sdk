@@ -66,6 +66,7 @@
 		EC92B3A32DA52DAB00E4246D /* DeviceAuthenticatorCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3A22DA52DA200E4246D /* DeviceAuthenticatorCollectorTests.swift */; };
 		EC92B3A52DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3A42DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift */; };
 		ECB7C5C02D53D4440006F1C8 /* RequestInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7C5BF2D53D4390006F1C8 /* RequestInterceptor.swift */; };
+		ECE2B8712DB7C36800E2C51E /* PhoneNumberCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2B8702DB7C35400E2C51E /* PhoneNumberCollectorTests.swift */; };
 		ECF053222D9C31A3004C9AAE /* DeviceRegistrationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */; };
 		ECF053242D9C4275004C9AAE /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF053232D9C4273004C9AAE /* Device.swift */; };
 		ECF0532D2D9D9966004C9AAE /* Collectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF0532C2D9D9962004C9AAE /* Collectors.swift */; };
@@ -157,6 +158,7 @@
 		EC92B3A42DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationCollectorTests.swift; sourceTree = "<group>"; };
 		ECB7C5BF2D53D4390006F1C8 /* RequestInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestInterceptor.swift; sourceTree = "<group>"; };
 		ECBF06752D525BE20066A3BD /* Extrernal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Extrernal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECE2B8702DB7C35400E2C51E /* PhoneNumberCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberCollectorTests.swift; sourceTree = "<group>"; };
 		ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationCollector.swift; sourceTree = "<group>"; };
 		ECF053232D9C4273004C9AAE /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		ECF0532C2D9D9962004C9AAE /* Collectors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collectors.swift; sourceTree = "<group>"; };
@@ -246,6 +248,7 @@
 				A5EFAA092D3F325800F771FE /* MultiSelectCollectorTests.swift */,
 				A5EFAA0B2D3F441200F771FE /* PasswordCollectorTests.swift */,
 				A5EFAA0D2D3F483900F771FE /* PasswordPolicyTests.swift */,
+				ECE2B8702DB7C35400E2C51E /* PhoneNumberCollectorTests.swift */,
 				A5EFAA0F2D3F50A500F771FE /* SingleSelectCollectorTests.swift */,
 				A5EFAA112D3F518800F771FE /* SubmitCollectorTests.swift */,
 				A5EFAA132D3F51CA00F771FE /* TextCollectorTests.swift */,
@@ -494,6 +497,7 @@
 				A51D4CF22C65729A00FE09E0 /* DaVinciErrorTests.swift in Sources */,
 				A5EFAA102D3F50A700F771FE /* SingleSelectCollectorTests.swift in Sources */,
 				959249A72D405A1C00A6DA9C /* FormFieldValidationTests.swift in Sources */,
+				ECE2B8712DB7C36800E2C51E /* PhoneNumberCollectorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,29 +9,35 @@
 //
 
 /// A collector for phone number.
-open class PhoneNumberCollector: FieldCollector<[String: Any]>, Submittable, @unchecked Sendable {
+open class PhoneNumberCollector: FieldCollector<[String: Any]>, @unchecked Sendable {
     
     /// default country code
     public private(set) var defaultCountryCode: String
+    /// validate phone number
+    public private(set) var validatePhoneNumber: Bool
     /// country code
-    public  var countryCode: String?
+    public var countryCode: String = ""
     /// phone number
-    public  var phoneNumber: String?
+    public var phoneNumber: String = ""
 
     /// Initializes a new instance of `PhoneNumberCollector` with the given JSON input.
     public required init(with json: [String : Any]) {
         self.defaultCountryCode = json[Constants.defaultCountryCode] as? String ?? ""
+        self.validatePhoneNumber = json[Constants.validatePhoneNumber] as? Bool ?? false
         super.init(with: json)
     }
     
-    /// Return event type
-    func eventType() -> String {
-        return Constants.submit
+    /// Initializes the `PhoneNumberCollector` with the given phone number.
+    /// - Parameter phoneNumber: The phone number to initialize the collector with.
+    public override func initialize(with phoneNumber: Any) {
+        if let stringValue = phoneNumber as? String {
+            self.phoneNumber = stringValue
+        }
     }
     
     /// Returns the selected device type.
     override open func payload() -> [String: Any]? {
-        if countryCode == nil || phoneNumber == nil {
+        if countryCode.isEmpty || phoneNumber.isEmpty{
             return nil
         }
         var payload: [String: Any] = [:]
