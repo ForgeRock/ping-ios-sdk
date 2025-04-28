@@ -64,6 +64,8 @@
 		ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECBF06A42D5391690066A3BD /* SocialButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06A32D5391610066A3BD /* SocialButtonView.swift */; };
 		ECE2B8812DB7DBEC00E2C51E /* PhoneNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */; };
+		ECED51192DBFE00100FA39A7 /* External_idp_native_handlers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECED50C72DBBC6CD00FA39A7 /* External_idp_native_handlers.framework */; };
+		ECED511A2DBFE00100FA39A7 /* External_idp_native_handlers.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECED50C72DBBC6CD00FA39A7 /* External_idp_native_handlers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -186,6 +188,13 @@
 			remoteGlobalIDString = ECED50B62DBBC6CC00FA39A7;
 			remoteInfo = "External-idp-native-handlers";
 		};
+		ECED51172DBFE00100FA39A7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ECED50C02DBBC6CD00FA39A7 /* External-idp-native-handlers.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = ECED51002DBFD7EB00FA39A7;
+			remoteInfo = PingExternal_idp_native_handlersTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -196,6 +205,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */,
+				ECED511A2DBFE00100FA39A7 /* External_idp_native_handlers.framework in Embed Frameworks */,
 				A5560CA32CFE4EDA0076CA8D /* PingLogger.framework in Embed Frameworks */,
 				A5560CA52CFE4EDA0076CA8D /* PingOidc.framework in Embed Frameworks */,
 				A5560CA12CFE4EDA0076CA8D /* PingDavinci.framework in Embed Frameworks */,
@@ -275,6 +285,7 @@
 				EC92B3912DA03E0700E4246D /* SVGKitSwift in Frameworks */,
 				A5560CA22CFE4EDA0076CA8D /* PingLogger.framework in Frameworks */,
 				A5560CA42CFE4EDA0076CA8D /* PingOidc.framework in Frameworks */,
+				ECED51192DBFE00100FA39A7 /* External_idp_native_handlers.framework in Frameworks */,
 				A5560CA02CFE4EDA0076CA8D /* PingDavinci.framework in Frameworks */,
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
 				EC92B38F2DA03E0700E4246D /* SVGKit in Frameworks */,
@@ -483,6 +494,7 @@
 			isa = PBXGroup;
 			children = (
 				ECED50C72DBBC6CD00FA39A7 /* External_idp_native_handlers.framework */,
+				ECED51182DBFE00100FA39A7 /* PingExternal_idp_native_handlersTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -728,6 +740,13 @@
 			fileType = wrapper.framework;
 			path = External_idp_native_handlers.framework;
 			remoteRef = ECED50C62DBBC6CD00FA39A7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		ECED51182DBFE00100FA39A7 /* PingExternal_idp_native_handlersTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = PingExternal_idp_native_handlersTests.xctest;
+			remoteRef = ECED51172DBFE00100FA39A7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

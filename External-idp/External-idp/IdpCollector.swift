@@ -12,38 +12,6 @@ import Foundation
 import PingOrchestrate
 import PingDavinci
 
-/*
-public protocol IdpCollector: NSObject, Sendable {
-    /// ContinueNode property
-    var continueNode: ContinueNode? { get set }
-    
-    /// The unique identifier for the collector.
-    var id: String { get }
-    
-    /// Indicates whether the IdP is enabled.
-    var idpEnabled: Bool { get set }
-    
-    ///  The IdP identifier.
-    var idpId: String { get set }
-    
-    /// The type of IdP.
-    var idpType: String { get set }
-    
-    ///  The label for the IdP.
-    var label: String { get set }
-    
-    ///  The URL link for IdP authentication.
-    var link: URL? { get set }
-    
-    /// The native handler for the IdP request.
-    var nativeHandler: IdpRequestHandler? { get set }
-    
-    ///  The request to resume the DaVinci flow.
-    var resumeRequest: Request? { get set }
-    
-    func authorize(callbackURLScheme: String?) async -> Result<Bool, IdpExceptions> 
-}
-*/
 /// A collector class for handling Identity Provider (IdP) authorization.
 /// - property continueNode: The continue node.
 /// - property id: The unique identifier for the collector.

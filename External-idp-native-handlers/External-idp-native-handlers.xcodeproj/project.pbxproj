@@ -17,11 +17,11 @@
 		ECED50ED2DBBDCBC00FA39A7 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = ECED50EC2DBBDCBC00FA39A7 /* FacebookCore */; };
 		ECED50EF2DBBDCBC00FA39A7 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = ECED50EE2DBBDCBC00FA39A7 /* FacebookLogin */; };
 		ECED50F12DBBE51B00FA39A7 /* NativeIdpCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED50F02DBBE51200FA39A7 /* NativeIdpCollector.swift */; };
-		ECED50FB2DBF969900FA39A7 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = ECED50FA2DBF969900FA39A7 /* GoogleSignIn */; };
 		ECED51042DBFD7EB00FA39A7 /* PingExternal_idp_native_handlers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECED50B62DBBC6CC00FA39A7 /* PingExternal_idp_native_handlers.framework */; platformFilter = ios; };
 		ECED510E2DBFD7FF00FA39A7 /* NativeHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED510D2DBFD7FF00FA39A7 /* NativeHandlerTests.swift */; };
 		ECED51102DBFD89500FA39A7 /* PingExternal_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECED510F2DBFD89500FA39A7 /* PingExternal_idp.framework */; };
 		ECED51112DBFD89500FA39A7 /* PingExternal_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECED510F2DBFD89500FA39A7 /* PingExternal_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECED51202DBFE27900FA39A7 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = ECED511F2DBFE27900FA39A7 /* GoogleSignIn */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,7 +79,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECED50EF2DBBDCBC00FA39A7 /* FacebookLogin in Frameworks */,
-				ECED50FB2DBF969900FA39A7 /* GoogleSignIn in Frameworks */,
+				ECED51202DBFE27900FA39A7 /* GoogleSignIn in Frameworks */,
 				ECED50E22DBBCA1B00FA39A7 /* PingExternal_idp.framework in Frameworks */,
 				ECED50ED2DBBDCBC00FA39A7 /* FacebookCore in Frameworks */,
 			);
@@ -186,7 +186,7 @@
 			packageProductDependencies = (
 				ECED50EC2DBBDCBC00FA39A7 /* FacebookCore */,
 				ECED50EE2DBBDCBC00FA39A7 /* FacebookLogin */,
-				ECED50FA2DBF969900FA39A7 /* GoogleSignIn */,
+				ECED511F2DBFE27900FA39A7 /* GoogleSignIn */,
 			);
 			productName = "External-idp-native-handlers";
 			productReference = ECED50B62DBBC6CC00FA39A7 /* PingExternal_idp_native_handlers.framework */;
@@ -242,7 +242,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				ECED50EB2DBBDCBC00FA39A7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
-				ECED50F92DBF969900FA39A7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				ECED511E2DBFE27900FA39A7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = ECED50B72DBBC6CC00FA39A7 /* Products */;
@@ -583,7 +583,7 @@
 				version = 16.3.1;
 			};
 		};
-		ECED50F92DBF969900FA39A7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+		ECED511E2DBFE27900FA39A7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
 			requirement = {
@@ -604,9 +604,9 @@
 			package = ECED50EB2DBBDCBC00FA39A7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
 			productName = FacebookLogin;
 		};
-		ECED50FA2DBF969900FA39A7 /* GoogleSignIn */ = {
+		ECED511F2DBFE27900FA39A7 /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = ECED50F92DBF969900FA39A7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			package = ECED511E2DBFE27900FA39A7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
 		};
 /* End XCSwiftPackageProductDependency section */
