@@ -27,6 +27,8 @@
 		A54BF4752BF2E34000CD24D4 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = A54BF4742BF2E34000CD24D4 /* Base */; };
 		ECB7C6922D5A27840006F1C8 /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECB7C6912D5A27840006F1C8 /* PingBrowser.framework */; };
 		ECB7C6932D5A27840006F1C8 /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECB7C6912D5A27840006F1C8 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECED51142DBFD8BF00FA39A7 /* PingExternal_idp_native_handlers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECED51132DBFD8BF00FA39A7 /* PingExternal_idp_native_handlers.framework */; };
+		ECED51152DBFD8BF00FA39A7 /* PingExternal_idp_native_handlers.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECED51132DBFD8BF00FA39A7 /* PingExternal_idp_native_handlers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,6 +39,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				ECB7C6932D5A27840006F1C8 /* PingBrowser.framework in Embed Frameworks */,
+				ECED51152DBFD8BF00FA39A7 /* PingExternal_idp_native_handlers.framework in Embed Frameworks */,
 				A507A26A2CEBED9F007F5C16 /* PingLogger.framework in Embed Frameworks */,
 				A51313CA2D9C6AC50086F846 /* PingExternal_idp.framework in Embed Frameworks */,
 				A507A26C2CEBED9F007F5C16 /* PingOidc.framework in Embed Frameworks */,
@@ -77,6 +80,7 @@
 		A5D1CD5E2BF504E400D1C83E /* PingStorage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingStorage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECB7C67F2D5A24780006F1C8 /* External_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = External_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECB7C6912D5A27840006F1C8 /* PingBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECED51132DBFD8BF00FA39A7 /* PingExternal_idp_native_handlers.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp_native_handlers.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +89,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECB7C6922D5A27840006F1C8 /* PingBrowser.framework in Frameworks */,
+				ECED51142DBFD8BF00FA39A7 /* PingExternal_idp_native_handlers.framework in Frameworks */,
 				A507A2692CEBED9F007F5C16 /* PingLogger.framework in Frameworks */,
 				A51313C92D9C6AC50086F846 /* PingExternal_idp.framework in Frameworks */,
 				A507A26B2CEBED9F007F5C16 /* PingOidc.framework in Frameworks */,
@@ -131,6 +136,7 @@
 		A54BF4822BF2E5B800CD24D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				ECED51132DBFD8BF00FA39A7 /* PingExternal_idp_native_handlers.framework */,
 				A51313C82D9C6AC50086F846 /* PingExternal_idp.framework */,
 				ECB7C6912D5A27840006F1C8 /* PingBrowser.framework */,
 				ECB7C67F2D5A24780006F1C8 /* External_idp.framework */,

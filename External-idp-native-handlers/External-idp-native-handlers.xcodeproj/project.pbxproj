@@ -18,7 +18,21 @@
 		ECED50EF2DBBDCBC00FA39A7 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = ECED50EE2DBBDCBC00FA39A7 /* FacebookLogin */; };
 		ECED50F12DBBE51B00FA39A7 /* NativeIdpCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED50F02DBBE51200FA39A7 /* NativeIdpCollector.swift */; };
 		ECED50FB2DBF969900FA39A7 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = ECED50FA2DBF969900FA39A7 /* GoogleSignIn */; };
+		ECED51042DBFD7EB00FA39A7 /* PingExternal_idp_native_handlers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECED50B62DBBC6CC00FA39A7 /* PingExternal_idp_native_handlers.framework */; platformFilter = ios; };
+		ECED510E2DBFD7FF00FA39A7 /* NativeHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED510D2DBFD7FF00FA39A7 /* NativeHandlerTests.swift */; };
+		ECED51102DBFD89500FA39A7 /* PingExternal_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECED510F2DBFD89500FA39A7 /* PingExternal_idp.framework */; };
+		ECED51112DBFD89500FA39A7 /* PingExternal_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECED510F2DBFD89500FA39A7 /* PingExternal_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		ECED51052DBFD7EB00FA39A7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ECED50AD2DBBC6CC00FA39A7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ECED50B52DBBC6CC00FA39A7;
+			remoteInfo = "PingExternal-idp-native-handlers";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		ECED50E42DBBCA1B00FA39A7 /* Embed Frameworks */ = {
@@ -28,6 +42,17 @@
 			dstSubfolderSpec = 10;
 			files = (
 				ECED50E32DBBCA1B00FA39A7 /* PingExternal_idp.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ECED51122DBFD89600FA39A7 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				ECED51112DBFD89500FA39A7 /* PingExternal_idp.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -43,6 +68,9 @@
 		ECED50DE2DBBC90700FA39A7 /* GoogleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleRequestHandler.swift; sourceTree = "<group>"; };
 		ECED50E12DBBCA1B00FA39A7 /* PingExternal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECED50F02DBBE51200FA39A7 /* NativeIdpCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeIdpCollector.swift; sourceTree = "<group>"; };
+		ECED51002DBFD7EB00FA39A7 /* PingExternal_idp_native_handlersTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingExternal_idp_native_handlersTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECED510D2DBFD7FF00FA39A7 /* NativeHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeHandlerTests.swift; sourceTree = "<group>"; };
+		ECED510F2DBFD89500FA39A7 /* PingExternal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +85,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ECED50FD2DBFD7EB00FA39A7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ECED51042DBFD7EB00FA39A7 /* PingExternal_idp_native_handlers.framework in Frameworks */,
+				ECED51102DBFD89500FA39A7 /* PingExternal_idp.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -64,6 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				ECED50C92DBBC6D500FA39A7 /* External-idp-native-handlers */,
+				ECED510B2DBFD7F100FA39A7 /* PingExternal_idp_native_handlersTests */,
 				ECED50E02DBBCA1B00FA39A7 /* Frameworks */,
 				ECED50B72DBBC6CC00FA39A7 /* Products */,
 			);
@@ -73,6 +111,7 @@
 			isa = PBXGroup;
 			children = (
 				ECED50B62DBBC6CC00FA39A7 /* PingExternal_idp_native_handlers.framework */,
+				ECED51002DBFD7EB00FA39A7 /* PingExternal_idp_native_handlersTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,9 +140,18 @@
 		ECED50E02DBBCA1B00FA39A7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				ECED510F2DBFD89500FA39A7 /* PingExternal_idp.framework */,
 				ECED50E12DBBCA1B00FA39A7 /* PingExternal_idp.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		ECED510B2DBFD7F100FA39A7 /* PingExternal_idp_native_handlersTests */ = {
+			isa = PBXGroup;
+			children = (
+				ECED510D2DBFD7FF00FA39A7 /* NativeHandlerTests.swift */,
+			);
+			path = PingExternal_idp_native_handlersTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -144,6 +192,27 @@
 			productReference = ECED50B62DBBC6CC00FA39A7 /* PingExternal_idp_native_handlers.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		ECED50FF2DBFD7EB00FA39A7 /* PingExternal_idp_native_handlersTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ECED51072DBFD7EB00FA39A7 /* Build configuration list for PBXNativeTarget "PingExternal_idp_native_handlersTests" */;
+			buildPhases = (
+				ECED50FC2DBFD7EB00FA39A7 /* Sources */,
+				ECED50FD2DBFD7EB00FA39A7 /* Frameworks */,
+				ECED50FE2DBFD7EB00FA39A7 /* Resources */,
+				ECED51122DBFD89600FA39A7 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				ECED51062DBFD7EB00FA39A7 /* PBXTargetDependency */,
+			);
+			name = PingExternal_idp_native_handlersTests;
+			packageProductDependencies = (
+			);
+			productName = PingExternal_idp_native_handlersTests;
+			productReference = ECED51002DBFD7EB00FA39A7 /* PingExternal_idp_native_handlersTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -155,6 +224,9 @@
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
 					ECED50B52DBBC6CC00FA39A7 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					ECED50FF2DBFD7EB00FA39A7 = {
 						CreatedOnToolsVersion = 16.3;
 					};
 				};
@@ -178,6 +250,7 @@
 			projectRoot = "";
 			targets = (
 				ECED50B52DBBC6CC00FA39A7 /* PingExternal-idp-native-handlers */,
+				ECED50FF2DBFD7EB00FA39A7 /* PingExternal_idp_native_handlersTests */,
 			);
 		};
 /* End PBXProject section */
@@ -188,6 +261,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECED50CC2DBBC6DE00FA39A7 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ECED50FE2DBFD7EB00FA39A7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,7 +285,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ECED50FC2DBFD7EB00FA39A7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ECED510E2DBFD7FF00FA39A7 /* NativeHandlerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		ECED51062DBFD7EB00FA39A7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = ECED50B52DBBC6CC00FA39A7 /* PingExternal-idp-native-handlers */;
+			targetProxy = ECED51052DBFD7EB00FA39A7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		ECED50BB2DBBC6CC00FA39A7 /* Debug */ = {
@@ -411,6 +508,40 @@
 			};
 			name = Release;
 		};
+		ECED51082DBFD7EB00FA39A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.PingExternal-idp-native-handlersTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		ECED51092DBFD7EB00FA39A7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.PingExternal-idp-native-handlersTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -428,6 +559,15 @@
 			buildConfigurations = (
 				ECED50BE2DBBC6CC00FA39A7 /* Debug */,
 				ECED50BF2DBBC6CC00FA39A7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ECED51072DBFD7EB00FA39A7 /* Build configuration list for PBXNativeTarget "PingExternal_idp_native_handlersTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ECED51082DBFD7EB00FA39A7 /* Debug */,
+				ECED51092DBFD7EB00FA39A7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
