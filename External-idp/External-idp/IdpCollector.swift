@@ -12,6 +12,38 @@ import Foundation
 import PingOrchestrate
 import PingDavinci
 
+/*
+public protocol IdpCollector: NSObject, Sendable {
+    /// ContinueNode property
+    var continueNode: ContinueNode? { get set }
+    
+    /// The unique identifier for the collector.
+    var id: String { get }
+    
+    /// Indicates whether the IdP is enabled.
+    var idpEnabled: Bool { get set }
+    
+    ///  The IdP identifier.
+    var idpId: String { get set }
+    
+    /// The type of IdP.
+    var idpType: String { get set }
+    
+    ///  The label for the IdP.
+    var label: String { get set }
+    
+    ///  The URL link for IdP authentication.
+    var link: URL? { get set }
+    
+    /// The native handler for the IdP request.
+    var nativeHandler: IdpRequestHandler? { get set }
+    
+    ///  The request to resume the DaVinci flow.
+    var resumeRequest: Request? { get set }
+    
+    func authorize(callbackURLScheme: String?) async -> Result<Bool, IdpExceptions> 
+}
+*/
 /// A collector class for handling Identity Provider (IdP) authorization.
 /// - property continueNode: The continue node.
 /// - property id: The unique identifier for the collector.
@@ -21,7 +53,7 @@ import PingDavinci
 /// - property nativeHandler: The native handler for the IdP request.
 /// - property resumeRequest: The request to resume the DaVinci flow.
 @objc
-public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterceptor, @unchecked Sendable {
+open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterceptor, @unchecked Sendable {
     
     /// ContinueNode property
     public var continueNode: ContinueNode?
@@ -35,7 +67,7 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     public var idpEnabled = true
     
     ///  The IdP identifier.
-    var idpId: String
+    public var idpId: String
     
     /// The type of IdP.
     public var idpType: String
@@ -78,36 +110,12 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     
     /// Authorizes the IdP.
     /// - Parameter callbackURLScheme: The callback URL scheme.
-    public func authorize(callbackURLScheme: String? = nil) async -> Result<Bool, IdpExceptions> {
+    open func authorize(callbackURLScheme: String? = nil) async -> Result<Bool, IdpExceptions> {
         do {
             guard let url = link else {
                 return .failure(.illegalArgumentException(message: "Missing link URL"))
             }
-            let workflow = continueNode?.workflow
-            if let httpClient = workflow?.config.httpClient, let handler = await getDefaultIdpHandler(httpClient: httpClient) {
-                nativeHandler = handler
-                return await self.authorize(handler: handler, url: url, callbackURLScheme: callbackURLScheme)
-            }
-            else {
-                return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
-            }
-        }
-    }
-    
-    /// Gets the default IdP handler for the Provider. It will either be AppleRequestHandler, GoogleRequestHandler, FacebookRequestHandler
-    /// - Parameters:
-    ///  - httpClient: The HTTP client.
-    ///  - Returns: The IdpRequestHandler.
-    @MainActor public func getDefaultIdpHandler(httpClient: HttpClient) -> IdpRequestHandler? {
-        switch idpType {
-//        case Constants.APPLE:
-//            return AppleRequestHandler(httpClient: httpClient)
-//        case Constants.GOOGLE:
-//            return GoogleRequestHandler(httpClient: httpClient)
-//        case Constants.FACEBOOK:
-//            return FacebookRequestHandler(httpClient: httpClient)
-        default:
-            return nil
+            return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
         }
     }
     
@@ -130,7 +138,7 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     ///  - callbackURLScheme: The callback URL scheme.
     ///  - url: The URL for the IdP authentication.
     /// - Returns: A Result of type Bool or An IdpExceptions error.
-    private func fallbackToBrowserHandler(callbackURLScheme: String? = nil, url: URL) async -> Result<Bool, IdpExceptions> {
+    public func fallbackToBrowserHandler(callbackURLScheme: String? = nil, url: URL) async -> Result<Bool, IdpExceptions> {
         let urlScheme: String
         if let customScheme = callbackURLScheme {
             urlScheme = customScheme
@@ -147,29 +155,6 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
             let request = try await BrowserHandler(continueNode: continueNode, callbackURLScheme: urlScheme).authorize(url: url)
             self.resumeRequest = request
             return .success(true)
-        } catch {
-            return .failure(.idpCanceledException(message: error.localizedDescription))
-        }
-    }
-    
-    /// Authorizes the IdP
-    ///  - Parameters:
-    ///    - handler: The IdpRequestHandler.
-    ///    - url: The URL for the IdP authentication.
-    ///    - callbackURLScheme: The callback URL scheme.
-    ///  - Returns: A Result of type Bool or An IdpExceptions error.
-    private func authorize(handler: IdpRequestHandler, url: URL, callbackURLScheme: String? = nil) async -> Result<Bool, IdpExceptions> {
-        do {
-            let request = try await handler.authorize(url: url)
-            self.resumeRequest = request
-            return .success(true)
-        } catch let error as IdpExceptions {
-            switch error {
-            case .unsupportedIdpException:
-                return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
-            default:
-                return .failure(error)
-            }
         } catch {
             return .failure(.idpCanceledException(message: error.localizedDescription))
         }

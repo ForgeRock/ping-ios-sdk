@@ -44,6 +44,9 @@ public actor CollectorFactory {
         if let c: NSObject.Type = NSClassFromString("PingExternal_idp.IdpCollector") as? NSObject.Type {
             c.perform(Selector(("registerCollector")))
         }
+        if let c: NSObject.Type = NSClassFromString("PingExternal_idp_native_handlers.NativeIdpCollector") as? NSObject.Type {
+            c.perform(Selector(("registerNativeCollector")))
+        }
         register(type: Constants.DEVICE_REGISTRATION, collector: DeviceRegistrationCollector.self)
         register(type: Constants.DEVICE_AUTHENTICATION, collector: DeviceAuthenticationCollector.self)
         register(type: Constants.PHONE_NUMBER, collector: PhoneNumberCollector.self)

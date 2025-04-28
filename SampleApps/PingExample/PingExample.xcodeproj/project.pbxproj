@@ -179,6 +179,13 @@
 			remoteGlobalIDString = ECB7C6692D5A1FAB0006F1C8;
 			remoteInfo = PingBrowserTests;
 		};
+		ECED50C62DBBC6CD00FA39A7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ECED50C02DBBC6CD00FA39A7 /* External-idp-native-handlers.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = ECED50B62DBBC6CC00FA39A7;
+			remoteInfo = "External-idp-native-handlers";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -255,6 +262,7 @@
 		ECB7C5D02D562FAC0006F1C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		ECBF06A32D5391610066A3BD /* SocialButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialButtonView.swift; sourceTree = "<group>"; };
 		ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberView.swift; sourceTree = "<group>"; };
+		ECED50C02DBBC6CD00FA39A7 /* External-idp-native-handlers.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "External-idp-native-handlers.xcodeproj"; path = "../../External-idp-native-handlers/External-idp-native-handlers.xcodeproj"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -295,6 +303,7 @@
 		3A5441242BCDF10900385131 = {
 			isa = PBXGroup;
 			children = (
+				ECED50C02DBBC6CD00FA39A7 /* External-idp-native-handlers.xcodeproj */,
 				EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */,
 				EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */,
 				A588CFEA2BF69F1A00F9052A /* Logger.xcodeproj */,
@@ -470,6 +479,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		ECED50C32DBBC6CD00FA39A7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ECED50C72DBBC6CD00FA39A7 /* External_idp_native_handlers.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -572,6 +589,10 @@
 				{
 					ProductGroup = A57A09152CE511E7006F0CBB /* Products */;
 					ProjectRef = 3A54420F2BCE1F2900385131 /* Davinci.xcodeproj */;
+				},
+				{
+					ProductGroup = ECED50C32DBBC6CD00FA39A7 /* Products */;
+					ProjectRef = ECED50C02DBBC6CD00FA39A7 /* External-idp-native-handlers.xcodeproj */;
 				},
 				{
 					ProductGroup = EC9F9FFA2D5F4EB200E2A31D /* Products */;
@@ -700,6 +721,13 @@
 			fileType = wrapper.cfbundle;
 			path = PingBrowserTests.xctest;
 			remoteRef = ECB7C6842D5A24B70006F1C8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		ECED50C72DBBC6CD00FA39A7 /* External_idp_native_handlers.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = External_idp_native_handlers.framework;
+			remoteRef = ECED50C62DBBC6CD00FA39A7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
