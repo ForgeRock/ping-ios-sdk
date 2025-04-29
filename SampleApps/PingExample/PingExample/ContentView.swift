@@ -26,17 +26,13 @@ struct MyApp: App {
                     }
                 }
                 .onOpenURL { url in
-                    FacebookRequestHandler.handleOpenURL(UIApplication.shared, url: url, options: nil)
+                    let handled = GoogleRequestHandler.handleOpenURL(UIApplication.shared, url: url, options: nil)
+                    if !handled {
+                        FacebookRequestHandler.handleOpenURL(UIApplication.shared, url: url, options: nil)
+                    }
                 }
         }
     }
-    
-    //    class AppDelegate: NSObject, UIApplicationDelegate {
-    //        func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    //            return FacebookRequestHandler.application(application, didFinishLaunchingWithOptions: launchOptions)
-    //        }
-    //    }
-    
 }
 
 /// The main view of the application, displaying navigation options and a logo.

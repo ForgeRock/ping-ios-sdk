@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EC5EA5302DC119D1000C2737 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = EC5EA52F2DC119D1000C2737 /* GoogleSignIn */; };
 		ECED50CC2DBBC6DE00FA39A7 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = ECED50CB2DBBC6DE00FA39A7 /* PrivacyInfo.xcprivacy */; };
 		ECED50CE2DBBC6EA00FA39A7 /* ExternalIdpNativeHandlers.h in Headers */ = {isa = PBXBuildFile; fileRef = ECED50CD2DBBC6EA00FA39A7 /* ExternalIdpNativeHandlers.h */; };
 		ECED50DB2DBBC8FA00FA39A7 /* AppleRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED50DA2DBBC8FA00FA39A7 /* AppleRequestHandler.swift */; };
@@ -19,7 +20,6 @@
 		ECED510E2DBFD7FF00FA39A7 /* NativeHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECED510D2DBFD7FF00FA39A7 /* NativeHandlerTests.swift */; };
 		ECED51102DBFD89500FA39A7 /* PingExternal_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECED510F2DBFD89500FA39A7 /* PingExternal_idp.framework */; };
 		ECED51112DBFD89500FA39A7 /* PingExternal_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECED510F2DBFD89500FA39A7 /* PingExternal_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		ECED51202DBFE27900FA39A7 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = ECED511F2DBFE27900FA39A7 /* GoogleSignIn */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,8 +76,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECED51202DBFE27900FA39A7 /* GoogleSignIn in Frameworks */,
 				ECED50E22DBBCA1B00FA39A7 /* PingExternal_idp.framework in Frameworks */,
+				EC5EA5302DC119D1000C2737 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,7 +180,7 @@
 			);
 			name = "PingExternal-idp-native-handlers";
 			packageProductDependencies = (
-				ECED511F2DBFE27900FA39A7 /* GoogleSignIn */,
+				EC5EA52F2DC119D1000C2737 /* GoogleSignIn */,
 			);
 			productName = "External-idp-native-handlers";
 			productReference = ECED50B62DBBC6CC00FA39A7 /* PingExternal_idp_native_handlers.framework */;
@@ -235,7 +235,7 @@
 			mainGroup = ECED50AC2DBBC6CC00FA39A7;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				ECED511E2DBFE27900FA39A7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				EC5EA52E2DC119D1000C2737 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = ECED50B72DBBC6CC00FA39A7 /* Products */;
@@ -568,20 +568,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		ECED511E2DBFE27900FA39A7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+		EC5EA52E2DC119D1000C2737 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
 			requirement = {
 				kind = exactVersion;
-				version = "8.1.0-vwg-eap-1.0.0";
+				version = "8.1.0-vwg-eap-1.1.0";
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		ECED511F2DBFE27900FA39A7 /* GoogleSignIn */ = {
+		EC5EA52F2DC119D1000C2737 /* GoogleSignIn */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = ECED511E2DBFE27900FA39A7 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			package = EC5EA52E2DC119D1000C2737 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignIn;
 		};
 /* End XCSwiftPackageProductDependency section */

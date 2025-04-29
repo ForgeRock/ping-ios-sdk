@@ -16,7 +16,7 @@ import GoogleSignIn
 
 /// A handler class for managing Google Identity Provider (IdP) authorization.
 @MainActor
-class GoogleRequestHandler: IdpRequestHandler {
+public class GoogleRequestHandler: IdpRequestHandler {
     /// The HTTP client to use for requests.
     private let httpClient: HttpClient
     /// The IdpClient to use for requests.
@@ -30,10 +30,15 @@ class GoogleRequestHandler: IdpRequestHandler {
         self.httpClient = httpClient
     }
     
+    @discardableResult
+    public static func handleOpenURL(_ app: UIApplication, url: URL, options: [UIApplication.OpenURLOptionsKey:Any]?) -> Bool {
+        return GIDSignIn.sharedInstance.handle(url)
+    }
+    
     // Authorizes the user with the IDP.
     /// - Parameter url: The URL for the IDP.
     /// - Returns: A `Request` object containing the result of the authorization.
-    func authorize(url: URL?) async throws -> Request {
+    public func authorize(url: URL?) async throws -> Request {
         do {
             self.idpClient = try await self.fetch(httpClient: self.httpClient, url: url)
         } catch {
