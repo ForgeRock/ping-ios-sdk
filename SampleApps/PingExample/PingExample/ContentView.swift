@@ -11,23 +11,32 @@
 
 import SwiftUI
 import AppTrackingTransparency
-
+import PingExternal_idp_native_handlers
 /// The main application entry point.
 @main
 struct MyApp: App {
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .onAppear{
-                    ATTrackingManager.requestTrackingAuthorization { status in
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                    Task {
+                        let status = await ATTrackingManager.requestTrackingAuthorization()
                         print("status \(status)", status.rawValue)
                     }
                 }
-                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
-                    ATTrackingManager.requestTrackingAuthorization(completionHandler: { status in })
+                .onOpenURL { url in
+                    FacebookRequestHandler.handleOpenURL(UIApplication.shared, url: url, options: nil)
                 }
         }
     }
+    
+    //    class AppDelegate: NSObject, UIApplicationDelegate {
+    //        func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    //            return FacebookRequestHandler.application(application, didFinishLaunchingWithOptions: launchOptions)
+    //        }
+    //    }
+    
 }
 
 /// The main view of the application, displaying navigation options and a logo.

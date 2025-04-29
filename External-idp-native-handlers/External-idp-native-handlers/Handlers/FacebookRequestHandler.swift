@@ -11,12 +11,13 @@
 import Foundation
 import PingOrchestrate
 import FBSDKLoginKit
+import FBSDKCoreKit
 import UIKit
 import PingExternal_idp
 
 /// A handler class for managing Facebook Identity Provider (IdP) authorization.
 @MainActor
-class FacebookRequestHandler: IdpRequestHandler {
+public class FacebookRequestHandler: IdpRequestHandler {
     /// `LoginManager` instance for Facebook SDK
     private var manager: LoginManager
     /// The HTTP client to use for requests.
@@ -33,12 +34,14 @@ class FacebookRequestHandler: IdpRequestHandler {
         if let nonce = idpClient?.nonce, !nonce.isEmpty {
             return LoginConfiguration(
                 permissions: scopes,
+                tracking: .enabled,
                 nonce: nonce
             )
         }
         else {
             return LoginConfiguration(
-                permissions: scopes
+                permissions: scopes,
+                tracking: .enabled
             )
         }
     }
@@ -48,6 +51,9 @@ class FacebookRequestHandler: IdpRequestHandler {
     init(httpClient: HttpClient) {
         DispatchQueue.main.async {
             /// Initialize Facebook SDK
+            Settings.shared.isAdvertiserIDCollectionEnabled = true
+            Settings.shared.isAutoLogAppEventsEnabled = true
+            
             ApplicationDelegate.shared.initializeSDK()
         }
         //  Initialize Facebook LoginManager instance
@@ -58,10 +64,21 @@ class FacebookRequestHandler: IdpRequestHandler {
         self.httpClient = httpClient
     }
     
+    @discardableResult
+      public static func handleOpenURL(_ app: UIApplication, url: URL, options: [UIApplication.OpenURLOptionsKey:Any]?) -> Bool {
+          ApplicationDelegate.shared.application(
+                      app,
+                      open: url,
+                      sourceApplication: options?[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+                      annotation: options?[UIApplication.OpenURLOptionsKey.annotation]
+                  )
+          return true
+      }
+    
     // Authorizes the user with the IDP.
     /// - Parameter url: The URL for the IDP.
     /// - Returns: A `Request` object containing the result of the authorization.
-    func authorize(url: URL?) async throws -> Request {
+    public func authorize(url: URL?) async throws -> Request {
         do {
             self.idpClient = try await self.fetch(httpClient: self.httpClient, url: url)
         } catch {
