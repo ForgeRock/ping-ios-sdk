@@ -12,7 +12,7 @@
 		EC5EA5632DC2298D000C2737 /* PingExternal_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5EA5612DC2298D000C2737 /* PingExternal_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC5EA5672DC229A8000C2737 /* FacebookRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EA5652DC229A8000C2737 /* FacebookRequestHandler.swift */; };
 		EC5EA56A2DC229A8000C2737 /* External_idp_FacebookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EA5682DC229A8000C2737 /* External_idp_FacebookTests.swift */; };
-		EC5EA5712DC23516000C2737 /* ExternalIdpFacebook.h in Headers */ = {isa = PBXBuildFile; fileRef = EC5EA5702DC23516000C2737 /* ExternalIdpFacebook.h */; };
+		EC5EA5712DC23516000C2737 /* External_idp_Facebook.h in Headers */ = {isa = PBXBuildFile; fileRef = EC5EA5702DC23516000C2737 /* External_idp_Facebook.h */; };
 		EC5EA5A82DC23B38000C2737 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC5EA5A72DC23B38000C2737 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
@@ -46,7 +46,7 @@
 		EC5EA5612DC2298D000C2737 /* PingExternal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5EA5652DC229A8000C2737 /* FacebookRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookRequestHandler.swift; sourceTree = "<group>"; };
 		EC5EA5682DC229A8000C2737 /* External_idp_FacebookTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = External_idp_FacebookTests.swift; sourceTree = "<group>"; };
-		EC5EA5702DC23516000C2737 /* ExternalIdpFacebook.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalIdpFacebook.h; sourceTree = "<group>"; };
+		EC5EA5702DC23516000C2737 /* External_idp_Facebook.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = External_idp_Facebook.h; sourceTree = "<group>"; };
 		EC5EA5A72DC23B38000C2737 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -102,7 +102,7 @@
 			children = (
 				EC5EA56D2DC22C98000C2737 /* Handlers */,
 				EC5EA5A72DC23B38000C2737 /* PrivacyInfo.xcprivacy */,
-				EC5EA5702DC23516000C2737 /* ExternalIdpFacebook.h */,
+				EC5EA5702DC23516000C2737 /* External_idp_Facebook.h */,
 			);
 			path = "External-idp-Facebook";
 			sourceTree = "<group>";
@@ -130,7 +130,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC5EA5712DC23516000C2737 /* ExternalIdpFacebook.h in Headers */,
+				EC5EA5712DC23516000C2737 /* External_idp_Facebook.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -25,7 +25,7 @@ To use the `external-idp` with `IdpCollector`, you need to integrate with `DaVin
 Setup `PingOne` with `External IDPs` and a `DaVinci` flow.
 
 For Browser experience either setup the External IDPs with `PingOne External IDPs` or use the `DaVinci Connector`.
-For Native experiences you can implement the External-Idp-Apple, External-Idp-Facebook and External-Idp-Google modules, alongside the External-idp module shown here.
+For Native experience the only option is to use the `DaVinci Connector`. (Not implemented yet)
 
 ### PingOne External IDPs Setup
 
@@ -118,8 +118,4 @@ The value needs to match with the configuration of the Social Provider.
 
 ## Native External Identity Providers (IDP) Integration with Google and Facebook and Apple for iOS
 
-For implementing Native Signin with Apple see the `External-idp-Apple` module.
-
-For implementing Native Signin with Google see the `External-idp-Google` module.
-
-For implementing Native Signin with Google see the `External-idp-Google` module.
+Not implemented yet

@@ -12,7 +12,7 @@
 		ECA7A2CB2DC24C580011E59C /* External_idp_AppleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A2C92DC24C580011E59C /* External_idp_AppleTests.swift */; };
 		ECA7A2CE2DC24C5F0011E59C /* PingExternal_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2CD2DC24C5F0011E59C /* PingExternal_idp.framework */; };
 		ECA7A2CF2DC24C5F0011E59C /* PingExternal_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2CD2DC24C5F0011E59C /* PingExternal_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		ECA7A2D22DC24C7D0011E59C /* ExternalIdpFacebook.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA7A2D12DC24C7D0011E59C /* ExternalIdpFacebook.h */; };
+		ECA7A2D22DC24C7D0011E59C /* External_idp_Apple.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA7A2D12DC24C7D0011E59C /* External_idp_Apple.h */; };
 		ECA7A2D42DC24CA00011E59C /* AppleRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A2D32DC24CA00011E59C /* AppleRequestHandler.swift */; };
 		ECA7A2D72DC24CB80011E59C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = ECA7A2D62DC24CB80011E59C /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
@@ -47,7 +47,7 @@
 		ECA7A2C62DC24C540011E59C /* External_idp_Apple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = External_idp_Apple.swift; sourceTree = "<group>"; };
 		ECA7A2C92DC24C580011E59C /* External_idp_AppleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = External_idp_AppleTests.swift; sourceTree = "<group>"; };
 		ECA7A2CD2DC24C5F0011E59C /* PingExternal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		ECA7A2D12DC24C7D0011E59C /* ExternalIdpFacebook.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalIdpFacebook.h; sourceTree = "<group>"; };
+		ECA7A2D12DC24C7D0011E59C /* External_idp_Apple.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = External_idp_Apple.h; sourceTree = "<group>"; };
 		ECA7A2D32DC24CA00011E59C /* AppleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleRequestHandler.swift; sourceTree = "<group>"; };
 		ECA7A2D62DC24CB80011E59C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -95,7 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				ECA7A2D52DC24CA50011E59C /* Handlers */,
-				ECA7A2D12DC24C7D0011E59C /* ExternalIdpFacebook.h */,
+				ECA7A2D12DC24C7D0011E59C /* External_idp_Apple.h */,
 				ECA7A2D62DC24CB80011E59C /* PrivacyInfo.xcprivacy */,
 				ECA7A2C62DC24C540011E59C /* External_idp_Apple.swift */,
 			);
@@ -133,7 +133,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECA7A2D22DC24C7D0011E59C /* ExternalIdpFacebook.h in Headers */,
+				ECA7A2D22DC24C7D0011E59C /* External_idp_Apple.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

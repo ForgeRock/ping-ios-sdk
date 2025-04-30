@@ -14,7 +14,7 @@
 		ECA7A3172DC252590011E59C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = ECA7A3162DC252590011E59C /* GoogleSignIn */; };
 		ECA7A3192DC252BD0011E59C /* GoogleRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A3182DC252BD0011E59C /* GoogleRequestHandler.swift */; };
 		ECA7A31F2DC253710011E59C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = ECA7A31E2DC253710011E59C /* PrivacyInfo.xcprivacy */; };
-		ECA7A3202DC253710011E59C /* ExternalIdpGoogle.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA7A31D2DC253710011E59C /* ExternalIdpGoogle.h */; };
+		ECA7A3202DC253710011E59C /* External_idp_Google.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA7A31D2DC253710011E59C /* External_idp_Google.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,7 +47,7 @@
 		ECA7A30B2DC251A40011E59C /* PingExternal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A3122DC251F10011E59C /* External_idp_GoogleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = External_idp_GoogleTests.swift; sourceTree = "<group>"; };
 		ECA7A3182DC252BD0011E59C /* GoogleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleRequestHandler.swift; sourceTree = "<group>"; };
-		ECA7A31D2DC253710011E59C /* ExternalIdpGoogle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalIdpGoogle.h; sourceTree = "<group>"; };
+		ECA7A31D2DC253710011E59C /* External_idp_Google.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = External_idp_Google.h; sourceTree = "<group>"; };
 		ECA7A31E2DC253710011E59C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -103,7 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				ECA7A31A2DC252C40011E59C /* Handlers */,
-				ECA7A31D2DC253710011E59C /* ExternalIdpGoogle.h */,
+				ECA7A31D2DC253710011E59C /* External_idp_Google.h */,
 				ECA7A31E2DC253710011E59C /* PrivacyInfo.xcprivacy */,
 			);
 			path = "External-idp-Google";
@@ -132,7 +132,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECA7A3202DC253710011E59C /* ExternalIdpGoogle.h in Headers */,
+				ECA7A3202DC253710011E59C /* External_idp_Google.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		EC0815E42D49387A00F1AD02 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC0815E22D49387A00F1AD02 /* PrivacyInfo.xcprivacy */; };
-		EC0815E52D49387A00F1AD02 /* ExtrernalIdp.h in Headers */ = {isa = PBXBuildFile; fileRef = EC0815E12D49387A00F1AD02 /* ExtrernalIdp.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		EC0815E52D49387A00F1AD02 /* External_idp.h in Headers */ = {isa = PBXBuildFile; fileRef = EC0815E12D49387A00F1AD02 /* External_idp.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EC0815E92D4939EB00F1AD02 /* IdpHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0815E82D4939E400F1AD02 /* IdpHandler.swift */; };
 		EC0815ED2D493A1F00F1AD02 /* IdpResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0815EC2D493A1E00F1AD02 /* IdpResult.swift */; };
 		EC0815EF2D493DC900F1AD02 /* IdpExceptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0815EE2D493DC900F1AD02 /* IdpExceptions.swift */; };
@@ -51,7 +51,7 @@
 
 /* Begin PBXFileReference section */
 		EC0815B72D49377500F1AD02 /* PingExternal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingExternal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC0815E12D49387A00F1AD02 /* ExtrernalIdp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtrernalIdp.h; sourceTree = "<group>"; };
+		EC0815E12D49387A00F1AD02 /* External_idp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = External_idp.h; sourceTree = "<group>"; };
 		EC0815E22D49387A00F1AD02 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		EC0815E82D4939E400F1AD02 /* IdpHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpHandler.swift; sourceTree = "<group>"; };
 		EC0815EC2D493A1E00F1AD02 /* IdpResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpResult.swift; sourceTree = "<group>"; };
@@ -111,7 +111,7 @@
 			isa = PBXGroup;
 			children = (
 				EC0815E22D49387A00F1AD02 /* PrivacyInfo.xcprivacy */,
-				EC0815E12D49387A00F1AD02 /* ExtrernalIdp.h */,
+				EC0815E12D49387A00F1AD02 /* External_idp.h */,
 				ECBF06402D50E99E0066A3BD /* Handlers */,
 				EC9F9FC52D5E1E2800E2A31D /* IdpClient.swift */,
 				ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */,
@@ -156,7 +156,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC0815E52D49387A00F1AD02 /* ExtrernalIdp.h in Headers */,
+				EC0815E52D49387A00F1AD02 /* External_idp.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
