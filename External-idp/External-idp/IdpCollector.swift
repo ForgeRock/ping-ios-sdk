@@ -21,7 +21,7 @@ import PingDavinci
 /// - property nativeHandler: The native handler for the IdP request.
 /// - property resumeRequest: The request to resume the DaVinci flow.
 @objc
-public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterceptor, @unchecked Sendable {
+open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterceptor, @unchecked Sendable {
     
     /// ContinueNode property
     public var continueNode: ContinueNode?
@@ -35,7 +35,7 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     public var idpEnabled = true
     
     ///  The IdP identifier.
-    var idpId: String
+    public var idpId: String
     
     /// The type of IdP.
     public var idpType: String
@@ -65,7 +65,7 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
         }
     }
     
-    /// Initializes the IdpCollector with a value. 
+    /// Initializes the IdpCollector with a value.
     public func initialize(with value: Any) { }
     
     /// Registers the IdpCollector with the collector factory
@@ -78,7 +78,7 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
     
     /// Authorizes the IdP.
     /// - Parameter callbackURLScheme: The callback URL scheme.
-    public func authorize(callbackURLScheme: String? = nil) async -> Result<Bool, IdpExceptions> {
+    open func authorize(callbackURLScheme: String? = nil) async -> Result<Bool, IdpExceptions> {
         do {
             guard let url = link else {
                 return .failure(.illegalArgumentException(message: "Missing link URL"))
@@ -89,25 +89,8 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
                 return await self.authorize(handler: handler, url: url, callbackURLScheme: callbackURLScheme)
             }
             else {
-                return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
+                return await fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
             }
-        }
-    }
-    
-    /// Gets the default IdP handler for the Provider. It will either be AppleRequestHandler, GoogleRequestHandler, FacebookRequestHandler
-    /// - Parameters:
-    ///  - httpClient: The HTTP client.
-    ///  - Returns: The IdpRequestHandler.
-    @MainActor public func getDefaultIdpHandler(httpClient: HttpClient) -> IdpRequestHandler? {
-        switch idpType {
-//        case Constants.APPLE:
-//            return AppleRequestHandler(httpClient: httpClient)
-//        case Constants.GOOGLE:
-//            return GoogleRequestHandler(httpClient: httpClient)
-//        case Constants.FACEBOOK:
-//            return FacebookRequestHandler(httpClient: httpClient)
-        default:
-            return nil
         }
     }
     
@@ -125,12 +108,76 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
         return nil
     }
     
+    /// Gets the default IdP handler for the Provider. It will either be AppleRequestHandler, GoogleRequestHandler, FacebookRequestHandler
+    /// - Parameters:
+    ///  - httpClient: The HTTP client.
+    ///  - Returns: The IdpRequestHandler.
+    @MainActor public func getDefaultIdpHandler(httpClient: HttpClient) -> IdpRequestHandler? {
+        switch idpType {
+        case Constants.APPLE:
+            if let c: NSObject.Type = NSClassFromString("PingExternal_idp_Apple.AppleRequestHandler") as? NSObject.Type {
+                return makeNativeRequestHandler(from: c, httpClient: httpClient)
+            } else {
+                return nil
+            }
+        case Constants.GOOGLE:
+            if let c: NSObject.Type = NSClassFromString("PingExternal_idp_Google.GoogleRequestHandler") as? NSObject.Type {
+                return makeNativeRequestHandler(from: c, httpClient: httpClient)
+            } else {
+                return nil
+            }
+        case Constants.FACEBOOK:
+            if let c: NSObject.Type = NSClassFromString("PingExternal_idp_Facebook.FacebookRequestHandler") as? NSObject.Type {
+                return makeNativeRequestHandler(from: c, httpClient: httpClient)
+            } else {
+                return nil
+            }
+        default:
+            return nil
+        }
+    }
+    
+    /// Creates a native request handler from the specified class.
+    /// - Parameters:
+    ///     - c: The class to create the handler from.
+    ///     - httpClient: The HTTP client to use.
+    /// - Returns: The IdpRequestHandler.
+    private func makeNativeRequestHandler(from c: AnyClass, httpClient: HttpClient) -> IdpRequestHandler? {
+        // 1) Cast the class object to NSObject.Type so we can call `perform(_:)` on it
+        guard let nsObjcClass = c as? NSObject.Type else {
+            // This is not an NSObject subclass
+            return nil
+        }
+        
+        // 2) Call +alloc
+        let allocSel = NSSelectorFromString("alloc")
+        guard
+            let allocUnmanaged = nsObjcClass.perform(allocSel),
+            let allocated = allocUnmanaged.takeUnretainedValue() as? NSObject
+        else {
+            // Couldn’t alloc
+            return nil
+        }
+        
+        // 3) Call -initWithHttpClient:
+        let initSel = NSSelectorFromString("initWithHttpClient:")
+        guard
+            let initUnmanaged = allocated.perform(initSel, with: httpClient),
+            let initialized = initUnmanaged.takeUnretainedValue() as? IdpRequestHandler
+        else {
+            // Couldn’t init \(c) with httpClient
+            return nil
+        }
+        
+        return initialized
+    }
+    
     /// Fallback to the browser handler.
     /// - Parameters:
     ///  - callbackURLScheme: The callback URL scheme.
     ///  - url: The URL for the IdP authentication.
     /// - Returns: A Result of type Bool or An IdpExceptions error.
-    private func fallbackToBrowserHandler(callbackURLScheme: String? = nil, url: URL) async -> Result<Bool, IdpExceptions> {
+    public func fallbackToBrowserHandler(callbackURLScheme: String? = nil, url: URL) async -> Result<Bool, IdpExceptions> {
         let urlScheme: String
         if let customScheme = callbackURLScheme {
             urlScheme = customScheme
@@ -166,7 +213,7 @@ public class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestInterc
         } catch let error as IdpExceptions {
             switch error {
             case .unsupportedIdpException:
-                return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
+                return .failure(.unsupportedIdpException(message: "No Supported IdP handler found"))
             default:
                 return .failure(error)
             }

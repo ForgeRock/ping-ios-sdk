@@ -11,20 +11,26 @@
 
 import SwiftUI
 import AppTrackingTransparency
-
+import PingExternal_idp_Facebook
+import PingExternal_idp_Google
 /// The main application entry point.
 @main
 struct MyApp: App {
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .onAppear{
-                    ATTrackingManager.requestTrackingAuthorization { status in
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                    Task {
+                        let status = await ATTrackingManager.requestTrackingAuthorization()
                         print("status \(status)", status.rawValue)
                     }
                 }
-                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
-                    ATTrackingManager.requestTrackingAuthorization(completionHandler: { status in })
+                .onOpenURL { url in
+                    let handled = GoogleRequestHandler.handleOpenURL(UIApplication.shared, url: url, options: nil)
+                    if !handled {
+                        FacebookRequestHandler.handleOpenURL(UIApplication.shared, url: url, options: nil)
+                    }
                 }
         }
     }

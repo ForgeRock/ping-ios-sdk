@@ -28,7 +28,7 @@ public struct IdpClient: Sendable {
 
 extension IdpClient {
     @MainActor
-    static func getTopViewController() -> UIViewController? {
+    public static func getTopViewController() -> UIViewController? {
         // Get the active scene
         let scenes = UIApplication.shared.connectedScenes
         let windowScene = scenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene
