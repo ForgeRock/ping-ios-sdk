@@ -11,30 +11,42 @@
 
 import XCTest
 @testable import PingExternal_idp_Google
+@testable import PingExternal_idp
+@testable import PingOrchestrate
+@testable import PingDavinci
 
 final class External_idp_GoogleTests: XCTestCase {
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+            Task {
+                await CollectorFactory.shared.registerDefaultCollectors()
+            }
         }
-    }
+        
+        
+        
+    @MainActor func testidpCollectorParsingGoogle() throws {
+            let jsonObject: [String: Any] = [
+                "idpId" : "539aedb9bb8617786b7343eb83439e51",
+                "idpType" : "GOOGLE",
+                "type" : "SOCIAL_LOGIN_BUTTON",
+                "label" : "Sign in with Google",
+                "idpEnabled" : true,
+                "links" : [
+                  "authenticate" : [
+                    "href" : "https://auth.pingone.com/c2a669c0-c396-4544-994d-9c6eb3fb1602/davinci/connections/539aedb9bb8617786b7343eb83439e51/capabilities/loginFirstFactor?interactionId=009ddda1-0c65-493a-bf77-2d270a495280&interactionToken=1deb3916f674f28004e642ff53f91e4474b1561b1281e62a9a15133f118795ddfbaf3889eea8e7cbbe689b1c7f419b1306af9b0b4432a809b3a983f2dee7406857502a2592df3d2adbd88103fa1d078bfe5480f66c84b71c2d8fce065284a5708e8194689f92f4bbdc66bd683c6bfa0c35c2b43711dfbdd8ba94b083919ea1bf&skRefreshToken=true"
+                  ]
+                ]
+            ]
+            
+            let idpCollector = IdpCollector(with: jsonObject)
+            let handler = idpCollector.getDefaultIdpHandler(httpClient: HttpClient.init(session: .shared))
+            XCTAssertTrue(idpCollector.idpType == "GOOGLE")
+            XCTAssertTrue(idpCollector.link?.absoluteString == "https://auth.pingone.com/c2a669c0-c396-4544-994d-9c6eb3fb1602/davinci/connections/539aedb9bb8617786b7343eb83439e51/capabilities/loginFirstFactor?interactionId=009ddda1-0c65-493a-bf77-2d270a495280&interactionToken=1deb3916f674f28004e642ff53f91e4474b1561b1281e62a9a15133f118795ddfbaf3889eea8e7cbbe689b1c7f419b1306af9b0b4432a809b3a983f2dee7406857502a2592df3d2adbd88103fa1d078bfe5480f66c84b71c2d8fce065284a5708e8194689f92f4bbdc66bd683c6bfa0c35c2b43711dfbdd8ba94b083919ea1bf&skRefreshToken=true")
+            XCTAssertNotNil(handler)
+            XCTAssertNotNil(handler as? GoogleRequestHandler)
+        }
+        
+    
 
 }

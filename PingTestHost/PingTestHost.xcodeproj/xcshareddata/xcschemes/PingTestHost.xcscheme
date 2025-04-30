@@ -135,6 +135,36 @@
                ReferencedContainer = "container:../External-idp/External-idp.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ECA7A2AB2DC24BC60011E59C"
+               BuildableName = "External-idp-AppleTests.xctest"
+               BlueprintName = "External-idp-AppleTests"
+               ReferencedContainer = "container:../External-idp-Apple/External-idp-Apple.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EC5EA5432DC2295E000C2737"
+               BuildableName = "External-idp-FacebookTests.xctest"
+               BlueprintName = "External-idp-FacebookTests"
+               ReferencedContainer = "container:../External-idp-Facebook/External-idp-Facebook.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ECA7A2EF2DC251870011E59C"
+               BuildableName = "External-idp-GoogleTests.xctest"
+               BlueprintName = "External-idp-GoogleTests"
+               ReferencedContainer = "container:../External-idp-Google/External-idp-Google.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

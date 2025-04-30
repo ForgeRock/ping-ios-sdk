@@ -87,6 +87,27 @@
         "identifier" : "ECED50FF2DBFD7EB00FA39A7",
         "name" : "PingExternal_idp_native_handlersTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/External-idp-Apple\/External-idp-Apple.xcodeproj",
+        "identifier" : "ECA7A2AB2DC24BC60011E59C",
+        "name" : "External-idp-AppleTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/External-idp-Facebook\/External-idp-Facebook.xcodeproj",
+        "identifier" : "EC5EA5432DC2295E000C2737",
+        "name" : "External-idp-FacebookTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/External-idp-Google\/External-idp-Google.xcodeproj",
+        "identifier" : "ECA7A2EF2DC251870011E59C",
+        "name" : "External-idp-GoogleTests"
+      }
     }
   ],
   "version" : 1
