@@ -10,7 +10,7 @@
 
 
 import XCTest
-@testable import External_idp_Apple
+@testable import PingExternal_idp_Apple
 
 final class External_idp_AppleTests: XCTestCase {
 

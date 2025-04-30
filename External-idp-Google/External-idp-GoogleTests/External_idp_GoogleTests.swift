@@ -1,6 +1,6 @@
 // 
-//  External_idp_FacebookTests.swift
-//  External-idp-FacebookTests
+//  External_idp_GoogleTests.swift
+//  External-idp-GoogleTests
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -10,9 +10,9 @@
 
 
 import XCTest
-@testable import PingExternal_idp_Facebook
+@testable import PingExternal_idp_Google
 
-final class External_idp_FacebookTests: XCTestCase {
+final class External_idp_GoogleTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

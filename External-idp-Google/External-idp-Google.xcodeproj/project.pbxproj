@@ -7,34 +7,34 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		ECA7A2AD2DC24BC60011E59C /* PingExternal_idp_Apple.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2A32DC24BC60011E59C /* PingExternal_idp_Apple.framework */; };
-		ECA7A2C82DC24C540011E59C /* External_idp_Apple.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A2C62DC24C540011E59C /* External_idp_Apple.swift */; };
-		ECA7A2CB2DC24C580011E59C /* External_idp_AppleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A2C92DC24C580011E59C /* External_idp_AppleTests.swift */; };
-		ECA7A2CE2DC24C5F0011E59C /* PingExternal_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2CD2DC24C5F0011E59C /* PingExternal_idp.framework */; };
-		ECA7A2CF2DC24C5F0011E59C /* PingExternal_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2CD2DC24C5F0011E59C /* PingExternal_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		ECA7A2D22DC24C7D0011E59C /* ExternalIdpFacebook.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA7A2D12DC24C7D0011E59C /* ExternalIdpFacebook.h */; };
-		ECA7A2D42DC24CA00011E59C /* AppleRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A2D32DC24CA00011E59C /* AppleRequestHandler.swift */; };
-		ECA7A2D72DC24CB80011E59C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = ECA7A2D62DC24CB80011E59C /* PrivacyInfo.xcprivacy */; };
+		ECA7A2F12DC251870011E59C /* PingExternal_idp_Google.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2E72DC251860011E59C /* PingExternal_idp_Google.framework */; };
+		ECA7A30C2DC251A40011E59C /* PingExternal_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A30B2DC251A40011E59C /* PingExternal_idp.framework */; };
+		ECA7A30D2DC251A40011E59C /* PingExternal_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A30B2DC251A40011E59C /* PingExternal_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECA7A3142DC251F10011E59C /* External_idp_GoogleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A3122DC251F10011E59C /* External_idp_GoogleTests.swift */; };
+		ECA7A3172DC252590011E59C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = ECA7A3162DC252590011E59C /* GoogleSignIn */; };
+		ECA7A3192DC252BD0011E59C /* GoogleRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A3182DC252BD0011E59C /* GoogleRequestHandler.swift */; };
+		ECA7A31F2DC253710011E59C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = ECA7A31E2DC253710011E59C /* PrivacyInfo.xcprivacy */; };
+		ECA7A3202DC253710011E59C /* ExternalIdpGoogle.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA7A31D2DC253710011E59C /* ExternalIdpGoogle.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		ECA7A2AE2DC24BC60011E59C /* PBXContainerItemProxy */ = {
+		ECA7A2F22DC251870011E59C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = ECA7A29A2DC24BC60011E59C /* Project object */;
+			containerPortal = ECA7A2DE2DC251860011E59C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = ECA7A2A22DC24BC60011E59C;
-			remoteInfo = "External-idp-Apple";
+			remoteGlobalIDString = ECA7A2E62DC251860011E59C;
+			remoteInfo = "External-idp-Google";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		ECA7A2D02DC24C5F0011E59C /* Embed Frameworks */ = {
+		ECA7A30E2DC251A40011E59C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				ECA7A2CF2DC24C5F0011E59C /* PingExternal_idp.framework in Embed Frameworks */,
+				ECA7A30D2DC251A40011E59C /* PingExternal_idp.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -42,86 +42,85 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		ECA7A2A32DC24BC60011E59C /* PingExternal_idp_Apple.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingExternal_idp_Apple.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		ECA7A2AC2DC24BC60011E59C /* External-idp-AppleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "External-idp-AppleTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		ECA7A2C62DC24C540011E59C /* External_idp_Apple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = External_idp_Apple.swift; sourceTree = "<group>"; };
-		ECA7A2C92DC24C580011E59C /* External_idp_AppleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = External_idp_AppleTests.swift; sourceTree = "<group>"; };
-		ECA7A2CD2DC24C5F0011E59C /* PingExternal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		ECA7A2D12DC24C7D0011E59C /* ExternalIdpFacebook.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalIdpFacebook.h; sourceTree = "<group>"; };
-		ECA7A2D32DC24CA00011E59C /* AppleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleRequestHandler.swift; sourceTree = "<group>"; };
-		ECA7A2D62DC24CB80011E59C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		ECA7A2E72DC251860011E59C /* PingExternal_idp_Google.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingExternal_idp_Google.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECA7A2F02DC251870011E59C /* External-idp-GoogleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "External-idp-GoogleTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECA7A30B2DC251A40011E59C /* PingExternal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECA7A3122DC251F10011E59C /* External_idp_GoogleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = External_idp_GoogleTests.swift; sourceTree = "<group>"; };
+		ECA7A3182DC252BD0011E59C /* GoogleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleRequestHandler.swift; sourceTree = "<group>"; };
+		ECA7A31D2DC253710011E59C /* ExternalIdpGoogle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalIdpGoogle.h; sourceTree = "<group>"; };
+		ECA7A31E2DC253710011E59C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		ECA7A2A02DC24BC60011E59C /* Frameworks */ = {
+		ECA7A2E42DC251860011E59C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECA7A2CE2DC24C5F0011E59C /* PingExternal_idp.framework in Frameworks */,
+				ECA7A30C2DC251A40011E59C /* PingExternal_idp.framework in Frameworks */,
+				ECA7A3172DC252590011E59C /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		ECA7A2A92DC24BC60011E59C /* Frameworks */ = {
+		ECA7A2ED2DC251870011E59C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECA7A2AD2DC24BC60011E59C /* PingExternal_idp_Apple.framework in Frameworks */,
+				ECA7A2F12DC251870011E59C /* PingExternal_idp_Google.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		ECA7A2992DC24BC60011E59C = {
+		ECA7A2DD2DC251860011E59C = {
 			isa = PBXGroup;
 			children = (
-				ECA7A2C72DC24C540011E59C /* External-idp-Apple */,
-				ECA7A2CA2DC24C580011E59C /* External-idp-AppleTests */,
-				ECA7A2CC2DC24C5F0011E59C /* Frameworks */,
-				ECA7A2A42DC24BC60011E59C /* Products */,
+				ECA7A3102DC251EF0011E59C /* External-idp-Google */,
+				ECA7A3132DC251F10011E59C /* External-idp-GoogleTests */,
+				ECA7A30A2DC251A40011E59C /* Frameworks */,
+				ECA7A2E82DC251860011E59C /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		ECA7A2A42DC24BC60011E59C /* Products */ = {
+		ECA7A2E82DC251860011E59C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				ECA7A2A32DC24BC60011E59C /* PingExternal_idp_Apple.framework */,
-				ECA7A2AC2DC24BC60011E59C /* External-idp-AppleTests.xctest */,
+				ECA7A2E72DC251860011E59C /* PingExternal_idp_Google.framework */,
+				ECA7A2F02DC251870011E59C /* External-idp-GoogleTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		ECA7A2C72DC24C540011E59C /* External-idp-Apple */ = {
+		ECA7A30A2DC251A40011E59C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				ECA7A2D52DC24CA50011E59C /* Handlers */,
-				ECA7A2D12DC24C7D0011E59C /* ExternalIdpFacebook.h */,
-				ECA7A2D62DC24CB80011E59C /* PrivacyInfo.xcprivacy */,
-				ECA7A2C62DC24C540011E59C /* External_idp_Apple.swift */,
-			);
-			path = "External-idp-Apple";
-			sourceTree = "<group>";
-		};
-		ECA7A2CA2DC24C580011E59C /* External-idp-AppleTests */ = {
-			isa = PBXGroup;
-			children = (
-				ECA7A2C92DC24C580011E59C /* External_idp_AppleTests.swift */,
-			);
-			path = "External-idp-AppleTests";
-			sourceTree = "<group>";
-		};
-		ECA7A2CC2DC24C5F0011E59C /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				ECA7A2CD2DC24C5F0011E59C /* PingExternal_idp.framework */,
+				ECA7A30B2DC251A40011E59C /* PingExternal_idp.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		ECA7A2D52DC24CA50011E59C /* Handlers */ = {
+		ECA7A3102DC251EF0011E59C /* External-idp-Google */ = {
 			isa = PBXGroup;
 			children = (
-				ECA7A2D32DC24CA00011E59C /* AppleRequestHandler.swift */,
+				ECA7A31A2DC252C40011E59C /* Handlers */,
+				ECA7A31D2DC253710011E59C /* ExternalIdpGoogle.h */,
+				ECA7A31E2DC253710011E59C /* PrivacyInfo.xcprivacy */,
+			);
+			path = "External-idp-Google";
+			sourceTree = "<group>";
+		};
+		ECA7A3132DC251F10011E59C /* External-idp-GoogleTests */ = {
+			isa = PBXGroup;
+			children = (
+				ECA7A3122DC251F10011E59C /* External_idp_GoogleTests.swift */,
+			);
+			path = "External-idp-GoogleTests";
+			sourceTree = "<group>";
+		};
+		ECA7A31A2DC252C40011E59C /* Handlers */ = {
+			isa = PBXGroup;
+			children = (
+				ECA7A3182DC252BD0011E59C /* GoogleRequestHandler.swift */,
 			);
 			path = Handlers;
 			sourceTree = "<group>";
@@ -129,106 +128,110 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		ECA7A29E2DC24BC60011E59C /* Headers */ = {
+		ECA7A2E22DC251860011E59C /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECA7A2D22DC24C7D0011E59C /* ExternalIdpFacebook.h in Headers */,
+				ECA7A3202DC253710011E59C /* ExternalIdpGoogle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		ECA7A2A22DC24BC60011E59C /* PingExternal-idp-Apple */ = {
+		ECA7A2E62DC251860011E59C /* PingExternal-idp-Google */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = ECA7A2B52DC24BC60011E59C /* Build configuration list for PBXNativeTarget "PingExternal-idp-Apple" */;
+			buildConfigurationList = ECA7A2F92DC251870011E59C /* Build configuration list for PBXNativeTarget "PingExternal-idp-Google" */;
 			buildPhases = (
-				ECA7A29E2DC24BC60011E59C /* Headers */,
-				ECA7A29F2DC24BC60011E59C /* Sources */,
-				ECA7A2A02DC24BC60011E59C /* Frameworks */,
-				ECA7A2A12DC24BC60011E59C /* Resources */,
-				ECA7A2D02DC24C5F0011E59C /* Embed Frameworks */,
+				ECA7A2E22DC251860011E59C /* Headers */,
+				ECA7A2E32DC251860011E59C /* Sources */,
+				ECA7A2E42DC251860011E59C /* Frameworks */,
+				ECA7A2E52DC251860011E59C /* Resources */,
+				ECA7A30E2DC251A40011E59C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "PingExternal-idp-Apple";
+			name = "PingExternal-idp-Google";
 			packageProductDependencies = (
+				ECA7A3162DC252590011E59C /* GoogleSignIn */,
 			);
-			productName = "External-idp-Apple";
-			productReference = ECA7A2A32DC24BC60011E59C /* PingExternal_idp_Apple.framework */;
+			productName = "External-idp-Google";
+			productReference = ECA7A2E72DC251860011E59C /* PingExternal_idp_Google.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		ECA7A2AB2DC24BC60011E59C /* External-idp-AppleTests */ = {
+		ECA7A2EF2DC251870011E59C /* External-idp-GoogleTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = ECA7A2B82DC24BC60011E59C /* Build configuration list for PBXNativeTarget "External-idp-AppleTests" */;
+			buildConfigurationList = ECA7A2FC2DC251870011E59C /* Build configuration list for PBXNativeTarget "External-idp-GoogleTests" */;
 			buildPhases = (
-				ECA7A2A82DC24BC60011E59C /* Sources */,
-				ECA7A2A92DC24BC60011E59C /* Frameworks */,
-				ECA7A2AA2DC24BC60011E59C /* Resources */,
+				ECA7A2EC2DC251870011E59C /* Sources */,
+				ECA7A2ED2DC251870011E59C /* Frameworks */,
+				ECA7A2EE2DC251870011E59C /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				ECA7A2AF2DC24BC60011E59C /* PBXTargetDependency */,
+				ECA7A2F32DC251870011E59C /* PBXTargetDependency */,
 			);
-			name = "External-idp-AppleTests";
+			name = "External-idp-GoogleTests";
 			packageProductDependencies = (
 			);
-			productName = "External-idp-AppleTests";
-			productReference = ECA7A2AC2DC24BC60011E59C /* External-idp-AppleTests.xctest */;
+			productName = "External-idp-GoogleTests";
+			productReference = ECA7A2F02DC251870011E59C /* External-idp-GoogleTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		ECA7A29A2DC24BC60011E59C /* Project object */ = {
+		ECA7A2DE2DC251860011E59C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
-					ECA7A2A22DC24BC60011E59C = {
+					ECA7A2E62DC251860011E59C = {
 						CreatedOnToolsVersion = 16.3;
 					};
-					ECA7A2AB2DC24BC60011E59C = {
+					ECA7A2EF2DC251870011E59C = {
 						CreatedOnToolsVersion = 16.3;
 					};
 				};
 			};
-			buildConfigurationList = ECA7A29D2DC24BC60011E59C /* Build configuration list for PBXProject "External-idp-Apple" */;
+			buildConfigurationList = ECA7A2E12DC251860011E59C /* Build configuration list for PBXProject "External-idp-Google" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = ECA7A2992DC24BC60011E59C;
+			mainGroup = ECA7A2DD2DC251860011E59C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				ECA7A3152DC252590011E59C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = ECA7A2A42DC24BC60011E59C /* Products */;
+			productRefGroup = ECA7A2E82DC251860011E59C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				ECA7A2A22DC24BC60011E59C /* PingExternal-idp-Apple */,
-				ECA7A2AB2DC24BC60011E59C /* External-idp-AppleTests */,
+				ECA7A2E62DC251860011E59C /* PingExternal-idp-Google */,
+				ECA7A2EF2DC251870011E59C /* External-idp-GoogleTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		ECA7A2A12DC24BC60011E59C /* Resources */ = {
+		ECA7A2E52DC251860011E59C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECA7A2D72DC24CB80011E59C /* PrivacyInfo.xcprivacy in Resources */,
+				ECA7A31F2DC253710011E59C /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		ECA7A2AA2DC24BC60011E59C /* Resources */ = {
+		ECA7A2EE2DC251870011E59C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -238,35 +241,34 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		ECA7A29F2DC24BC60011E59C /* Sources */ = {
+		ECA7A2E32DC251860011E59C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECA7A2C82DC24C540011E59C /* External_idp_Apple.swift in Sources */,
-				ECA7A2D42DC24CA00011E59C /* AppleRequestHandler.swift in Sources */,
+				ECA7A3192DC252BD0011E59C /* GoogleRequestHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		ECA7A2A82DC24BC60011E59C /* Sources */ = {
+		ECA7A2EC2DC251870011E59C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECA7A2CB2DC24C580011E59C /* External_idp_AppleTests.swift in Sources */,
+				ECA7A3142DC251F10011E59C /* External_idp_GoogleTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		ECA7A2AF2DC24BC60011E59C /* PBXTargetDependency */ = {
+		ECA7A2F32DC251870011E59C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = ECA7A2A22DC24BC60011E59C /* PingExternal-idp-Apple */;
-			targetProxy = ECA7A2AE2DC24BC60011E59C /* PBXContainerItemProxy */;
+			target = ECA7A2E62DC251860011E59C /* PingExternal-idp-Google */;
+			targetProxy = ECA7A2F22DC251870011E59C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		ECA7A2B32DC24BC60011E59C /* Debug */ = {
+		ECA7A2F72DC251870011E59C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -333,7 +335,7 @@
 			};
 			name = Debug;
 		};
-		ECA7A2B42DC24BC60011E59C /* Release */ = {
+		ECA7A2F82DC251870011E59C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -393,7 +395,7 @@
 			};
 			name = Release;
 		};
-		ECA7A2B62DC24BC60011E59C /* Debug */ = {
+		ECA7A2FA2DC251870011E59C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
@@ -416,7 +418,7 @@
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.External-idp-Apple";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.External-idp-Google";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -427,7 +429,7 @@
 			};
 			name = Debug;
 		};
-		ECA7A2B72DC24BC60011E59C /* Release */ = {
+		ECA7A2FB2DC251870011E59C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
@@ -450,7 +452,7 @@
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.External-idp-Apple";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.External-idp-Google";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -461,15 +463,16 @@
 			};
 			name = Release;
 		};
-		ECA7A2B92DC24BC60011E59C /* Debug */ = {
+		ECA7A2FD2DC251870011E59C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 24J8Y2KTAV;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.External-idp-AppleTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.External-idp-GoogleTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -477,15 +480,16 @@
 			};
 			name = Debug;
 		};
-		ECA7A2BA2DC24BC60011E59C /* Release */ = {
+		ECA7A2FE2DC251870011E59C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 24J8Y2KTAV;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.External-idp-AppleTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pingidentity.External-idp-GoogleTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -496,34 +500,53 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		ECA7A29D2DC24BC60011E59C /* Build configuration list for PBXProject "External-idp-Apple" */ = {
+		ECA7A2E12DC251860011E59C /* Build configuration list for PBXProject "External-idp-Google" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				ECA7A2B32DC24BC60011E59C /* Debug */,
-				ECA7A2B42DC24BC60011E59C /* Release */,
+				ECA7A2F72DC251870011E59C /* Debug */,
+				ECA7A2F82DC251870011E59C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		ECA7A2B52DC24BC60011E59C /* Build configuration list for PBXNativeTarget "PingExternal-idp-Apple" */ = {
+		ECA7A2F92DC251870011E59C /* Build configuration list for PBXNativeTarget "PingExternal-idp-Google" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				ECA7A2B62DC24BC60011E59C /* Debug */,
-				ECA7A2B72DC24BC60011E59C /* Release */,
+				ECA7A2FA2DC251870011E59C /* Debug */,
+				ECA7A2FB2DC251870011E59C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		ECA7A2B82DC24BC60011E59C /* Build configuration list for PBXNativeTarget "External-idp-AppleTests" */ = {
+		ECA7A2FC2DC251870011E59C /* Build configuration list for PBXNativeTarget "External-idp-GoogleTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				ECA7A2B92DC24BC60011E59C /* Debug */,
-				ECA7A2BA2DC24BC60011E59C /* Release */,
+				ECA7A2FD2DC251870011E59C /* Debug */,
+				ECA7A2FE2DC251870011E59C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		ECA7A3152DC252590011E59C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = exactVersion;
+				version = "8.1.0-vwg-eap-1.1.0";
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		ECA7A3162DC252590011E59C /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ECA7A3152DC252590011E59C /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = ECA7A29A2DC24BC60011E59C /* Project object */;
+	rootObject = ECA7A2DE2DC251860011E59C /* Project object */;
 }
