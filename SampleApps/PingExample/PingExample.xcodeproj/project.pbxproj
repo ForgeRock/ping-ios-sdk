@@ -51,23 +51,23 @@
 		EC0816BF2D4A832C00F1AD02 /* ConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */; };
 		EC0816C12D4A833400F1AD02 /* ConfigurationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */; };
 		EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */; };
+		EC5EA56B2DC22BE3000C2737 /* PingExternal_idp_Facebook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5EA55B2DC2295F000C2737 /* PingExternal_idp_Facebook.framework */; };
+		EC5EA56C2DC22BE3000C2737 /* PingExternal_idp_Facebook.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5EA55B2DC2295F000C2737 /* PingExternal_idp_Facebook.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC92B3882DA02D7400E4246D /* DeviceAuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */; };
 		EC92B38A2DA02D7F00E4246D /* DeviceRegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */; };
 		EC92B38C2DA039C000E4246D /* AsyncSVGImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */; };
 		EC92B38F2DA03E0700E4246D /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = EC92B38E2DA03E0700E4246D /* SVGKit */; };
 		EC92B3912DA03E0700E4246D /* SVGKitSwift in Frameworks */ = {isa = PBXBuildFile; productRef = EC92B3902DA03E0700E4246D /* SVGKitSwift */; };
 		EC92B3932DA0422700E4246D /* DeviceCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3922DA0422200E4246D /* DeviceCardView.swift */; };
-		EC9591032DC116DF005633A1 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = EC9591022DC116DF005633A1 /* GoogleSignIn */; };
 		ECA53F812D635C10002B35D4 /* PingExternal_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC9FA0032D5F4EB300E2A31D /* PingExternal_idp.framework */; };
 		ECA53F822D635C10002B35D4 /* PingExternal_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC9FA0032D5F4EB300E2A31D /* PingExternal_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECA540BD2D6DD7D6002B35D4 /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA540BC2D6DD7D6002B35D4 /* AppTrackingTransparency.framework */; };
-		ECA851222DC1191A00E5B55F /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = ECA851212DC1191A00E5B55F /* GoogleSignInSwift */; };
+		ECA7A2D82DC24D210011E59C /* External_idp_Apple.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2C32DC24BC70011E59C /* External_idp_Apple.framework */; };
+		ECA7A2D92DC24D210011E59C /* External_idp_Apple.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2C32DC24BC70011E59C /* External_idp_Apple.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECBF06732D5229BC0066A3BD /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; };
 		ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECBF06A42D5391690066A3BD /* SocialButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06A32D5391610066A3BD /* SocialButtonView.swift */; };
 		ECE2B8812DB7DBEC00E2C51E /* PhoneNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */; };
-		ECED51192DBFE00100FA39A7 /* PingExternal_idp_native_handlers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECED50C72DBBC6CD00FA39A7 /* PingExternal_idp_native_handlers.framework */; };
-		ECED511A2DBFE00100FA39A7 /* PingExternal_idp_native_handlers.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECED50C72DBBC6CD00FA39A7 /* PingExternal_idp_native_handlers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECED51232DC10B6A00FA39A7 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = ECED51222DC10B6A00FA39A7 /* FacebookCore */; };
 		ECED51252DC10B6A00FA39A7 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = ECED51242DC10B6A00FA39A7 /* FacebookLogin */; };
 /* End PBXBuildFile section */
@@ -164,6 +164,20 @@
 			remoteGlobalIDString = EC0816962D4A68FB00F1AD02;
 			remoteInfo = Browser;
 		};
+		EC5EA55A2DC2295F000C2737 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC5EA5532DC2295E000C2737 /* External-idp-Facebook.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC5EA53B2DC2295E000C2737;
+			remoteInfo = "External-idp-Facebook";
+		};
+		EC5EA55C2DC2295F000C2737 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC5EA5532DC2295E000C2737 /* External-idp-Facebook.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC5EA5442DC2295E000C2737;
+			remoteInfo = "External-idp-FacebookTests";
+		};
 		EC9FA0022D5F4EB300E2A31D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */;
@@ -178,26 +192,26 @@
 			remoteGlobalIDString = ECB7C6982D5A2C1F0006F1C8;
 			remoteInfo = "External-idpTests";
 		};
+		ECA7A2C22DC24BC70011E59C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ECA7A2BB2DC24BC60011E59C /* External-idp-Apple.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = ECA7A2A32DC24BC60011E59C;
+			remoteInfo = "External-idp-Apple";
+		};
+		ECA7A2C42DC24BC70011E59C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ECA7A2BB2DC24BC60011E59C /* External-idp-Apple.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = ECA7A2AC2DC24BC60011E59C;
+			remoteInfo = "External-idp-AppleTests";
+		};
 		ECB7C6842D5A24B70006F1C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = ECB7C6692D5A1FAB0006F1C8;
 			remoteInfo = PingBrowserTests;
-		};
-		ECED50C62DBBC6CD00FA39A7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = ECED50C02DBBC6CD00FA39A7 /* External-idp-native-handlers.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = ECED50B62DBBC6CC00FA39A7;
-			remoteInfo = "External-idp-native-handlers";
-		};
-		ECED51172DBFE00100FA39A7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = ECED50C02DBBC6CD00FA39A7 /* External-idp-native-handlers.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = ECED51002DBFD7EB00FA39A7;
-			remoteInfo = PingExternal_idp_native_handlersTests;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -209,8 +223,9 @@
 			dstSubfolderSpec = 10;
 			files = (
 				ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */,
-				ECED511A2DBFE00100FA39A7 /* PingExternal_idp_native_handlers.framework in Embed Frameworks */,
+				ECA7A2D92DC24D210011E59C /* External_idp_Apple.framework in Embed Frameworks */,
 				A5560CA32CFE4EDA0076CA8D /* PingLogger.framework in Embed Frameworks */,
+				EC5EA56C2DC22BE3000C2737 /* PingExternal_idp_Facebook.framework in Embed Frameworks */,
 				A5560CA52CFE4EDA0076CA8D /* PingOidc.framework in Embed Frameworks */,
 				A5560CA12CFE4EDA0076CA8D /* PingDavinci.framework in Embed Frameworks */,
 				A5560CA92CFE4EDA0076CA8D /* PingStorage.framework in Embed Frameworks */,
@@ -266,6 +281,7 @@
 		EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationView.swift; sourceTree = "<group>"; };
 		EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewModel.swift; sourceTree = "<group>"; };
 		EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
+		EC5EA5532DC2295E000C2737 /* External-idp-Facebook.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "External-idp-Facebook.xcodeproj"; path = "../../External-idp-Facebook/External-idp-Facebook.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticationView.swift; sourceTree = "<group>"; };
 		EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationView.swift; sourceTree = "<group>"; };
 		EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncSVGImage.swift; sourceTree = "<group>"; };
@@ -273,10 +289,10 @@
 		EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "External-idp.xcodeproj"; path = "../../External-idp/External-idp.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		ECA540222D660859002B35D4 /* PingExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PingExample.entitlements; sourceTree = "<group>"; };
 		ECA540BC2D6DD7D6002B35D4 /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = SDKROOT; };
+		ECA7A2BB2DC24BC60011E59C /* External-idp-Apple.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "External-idp-Apple.xcodeproj"; path = "../../External-idp-Apple/External-idp-Apple.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		ECB7C5D02D562FAC0006F1C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		ECBF06A32D5391610066A3BD /* SocialButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialButtonView.swift; sourceTree = "<group>"; };
 		ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberView.swift; sourceTree = "<group>"; };
-		ECED50C02DBBC6CD00FA39A7 /* External-idp-native-handlers.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "External-idp-native-handlers.xcodeproj"; path = "../../External-idp-native-handlers/External-idp-native-handlers.xcodeproj"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -284,21 +300,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECA851222DC1191A00E5B55F /* GoogleSignInSwift in Frameworks */,
 				ECBF06732D5229BC0066A3BD /* PingBrowser.framework in Frameworks */,
 				ECA540BD2D6DD7D6002B35D4 /* AppTrackingTransparency.framework in Frameworks */,
+				ECA7A2D82DC24D210011E59C /* External_idp_Apple.framework in Frameworks */,
 				EC92B3912DA03E0700E4246D /* SVGKitSwift in Frameworks */,
 				A5560CA22CFE4EDA0076CA8D /* PingLogger.framework in Frameworks */,
 				A5560CA42CFE4EDA0076CA8D /* PingOidc.framework in Frameworks */,
-				ECED51192DBFE00100FA39A7 /* PingExternal_idp_native_handlers.framework in Frameworks */,
 				A5560CA02CFE4EDA0076CA8D /* PingDavinci.framework in Frameworks */,
 				ECED51252DC10B6A00FA39A7 /* FacebookLogin in Frameworks */,
 				ECED51232DC10B6A00FA39A7 /* FacebookCore in Frameworks */,
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
 				EC92B38F2DA03E0700E4246D /* SVGKit in Frameworks */,
 				A5560CA62CFE4EDA0076CA8D /* PingOrchestrate.framework in Frameworks */,
+				EC5EA56B2DC22BE3000C2737 /* PingExternal_idp_Facebook.framework in Frameworks */,
 				ECA53F812D635C10002B35D4 /* PingExternal_idp.framework in Frameworks */,
-				EC9591032DC116DF005633A1 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -322,7 +337,8 @@
 		3A5441242BCDF10900385131 = {
 			isa = PBXGroup;
 			children = (
-				ECED50C02DBBC6CD00FA39A7 /* External-idp-native-handlers.xcodeproj */,
+				ECA7A2BB2DC24BC60011E59C /* External-idp-Apple.xcodeproj */,
+				EC5EA5532DC2295E000C2737 /* External-idp-Facebook.xcodeproj */,
 				EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */,
 				EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */,
 				A588CFEA2BF69F1A00F9052A /* Logger.xcodeproj */,
@@ -489,6 +505,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		EC5EA5562DC2295F000C2737 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EC5EA55B2DC2295F000C2737 /* PingExternal_idp_Facebook.framework */,
+				EC5EA55D2DC2295F000C2737 /* External-idp-FacebookTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		EC9F9FFA2D5F4EB200E2A31D /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -498,11 +523,11 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		ECED50C32DBBC6CD00FA39A7 /* Products */ = {
+		ECA7A2BE2DC24BC70011E59C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				ECED50C72DBBC6CD00FA39A7 /* PingExternal_idp_native_handlers.framework */,
-				ECED51182DBFE00100FA39A7 /* PingExternal_idp_native_handlersTests.xctest */,
+				ECA7A2C32DC24BC70011E59C /* External_idp_Apple.framework */,
+				ECA7A2C52DC24BC70011E59C /* External-idp-AppleTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -612,8 +637,12 @@
 					ProjectRef = 3A54420F2BCE1F2900385131 /* Davinci.xcodeproj */;
 				},
 				{
-					ProductGroup = ECED50C32DBBC6CD00FA39A7 /* Products */;
-					ProjectRef = ECED50C02DBBC6CD00FA39A7 /* External-idp-native-handlers.xcodeproj */;
+					ProductGroup = ECA7A2BE2DC24BC70011E59C /* Products */;
+					ProjectRef = ECA7A2BB2DC24BC60011E59C /* External-idp-Apple.xcodeproj */;
+				},
+				{
+					ProductGroup = EC5EA5562DC2295F000C2737 /* Products */;
+					ProjectRef = EC5EA5532DC2295E000C2737 /* External-idp-Facebook.xcodeproj */;
 				},
 				{
 					ProductGroup = EC9F9FFA2D5F4EB200E2A31D /* Products */;
@@ -723,6 +752,20 @@
 			remoteRef = EC0816A92D4A692900F1AD02 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		EC5EA55B2DC2295F000C2737 /* PingExternal_idp_Facebook.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingExternal_idp_Facebook.framework;
+			remoteRef = EC5EA55A2DC2295F000C2737 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		EC5EA55D2DC2295F000C2737 /* External-idp-FacebookTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "External-idp-FacebookTests.xctest";
+			remoteRef = EC5EA55C2DC2295F000C2737 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		EC9FA0032D5F4EB300E2A31D /* PingExternal_idp.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -737,25 +780,25 @@
 			remoteRef = EC9FA0042D5F4EB300E2A31D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		ECA7A2C32DC24BC70011E59C /* External_idp_Apple.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = External_idp_Apple.framework;
+			remoteRef = ECA7A2C22DC24BC70011E59C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		ECA7A2C52DC24BC70011E59C /* External-idp-AppleTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "External-idp-AppleTests.xctest";
+			remoteRef = ECA7A2C42DC24BC70011E59C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		ECB7C6852D5A24B70006F1C8 /* PingBrowserTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = PingBrowserTests.xctest;
 			remoteRef = ECB7C6842D5A24B70006F1C8 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		ECED50C72DBBC6CD00FA39A7 /* PingExternal_idp_native_handlers.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = PingExternal_idp_native_handlers.framework;
-			remoteRef = ECED50C62DBBC6CD00FA39A7 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		ECED51182DBFE00100FA39A7 /* PingExternal_idp_native_handlersTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = PingExternal_idp_native_handlersTests.xctest;
-			remoteRef = ECED51172DBFE00100FA39A7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1179,22 +1222,6 @@
 				minimumVersion = 3.0.0;
 			};
 		};
-		EC9591012DC116DF005633A1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
-			requirement = {
-				kind = exactVersion;
-				version = "8.1.0-vwg-eap-1.0.0";
-			};
-		};
-		ECA851202DC1191A00E5B55F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
-			requirement = {
-				kind = exactVersion;
-				version = 1.0.0;
-			};
-		};
 		ECED51212DC10B6A00FA39A7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
@@ -1215,16 +1242,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EC92B38D2DA03E0700E4246D /* XCRemoteSwiftPackageReference "SVGKit" */;
 			productName = SVGKitSwift;
-		};
-		EC9591022DC116DF005633A1 /* GoogleSignIn */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = EC9591012DC116DF005633A1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
-			productName = GoogleSignIn;
-		};
-		ECA851212DC1191A00E5B55F /* GoogleSignInSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = ECA851202DC1191A00E5B55F /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
-			productName = GoogleSignInSwift;
 		};
 		ECED51222DC10B6A00FA39A7 /* FacebookCore */ = {
 			isa = XCSwiftPackageProductDependency;

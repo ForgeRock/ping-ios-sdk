@@ -65,7 +65,7 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
         }
     }
     
-    /// Initializes the IdpCollector with a value. 
+    /// Initializes the IdpCollector with a value.
     public func initialize(with value: Any) { }
     
     /// Registers the IdpCollector with the collector factory
@@ -83,7 +83,14 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
             guard let url = link else {
                 return .failure(.illegalArgumentException(message: "Missing link URL"))
             }
-            return await self.fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
+            let workflow = continueNode?.workflow
+            if let httpClient = workflow?.config.httpClient, let handler = await getDefaultIdpHandler(httpClient: httpClient) {
+                nativeHandler = handler
+                return await self.authorize(handler: handler, url: url, callbackURLScheme: callbackURLScheme)
+            }
+            else {
+                return await fallbackToBrowserHandler(callbackURLScheme: callbackURLScheme, url: url)
+            }
         }
     }
     
@@ -99,6 +106,70 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
     /// Function returning the `Payload` of the IdP collector. This is a function that returns `Never` as a _nonreturning_ function as the IDPCollector has no payload to return.
     public func payload() -> Never? {
         return nil
+    }
+    
+    /// Gets the default IdP handler for the Provider. It will either be AppleRequestHandler, GoogleRequestHandler, FacebookRequestHandler
+    /// - Parameters:
+    ///  - httpClient: The HTTP client.
+    ///  - Returns: The IdpRequestHandler.
+    @MainActor public func getDefaultIdpHandler(httpClient: HttpClient) -> IdpRequestHandler? {
+        switch idpType {
+        case Constants.APPLE:
+            if let c: NSObject.Type = NSClassFromString("PingExternal_idp_Apple.AppleRequestHandler") as? NSObject.Type {
+                return makeNativeRequestHandler(from: c, httpClient: httpClient)
+            } else {
+                return nil
+            }
+        case Constants.GOOGLE:
+            if let c: NSObject.Type = NSClassFromString("PingExternal_idp_Google.GoogleRequestHandler") as? NSObject.Type {
+                return makeNativeRequestHandler(from: c, httpClient: httpClient)
+            } else {
+                return nil
+            }
+        case Constants.FACEBOOK:
+            if let c: NSObject.Type = NSClassFromString("PingExternal_idp_Facebook.FacebookRequestHandler") as? NSObject.Type {
+                return makeNativeRequestHandler(from: c, httpClient: httpClient)
+            } else {
+                return nil
+            }
+        default:
+            return nil
+        }
+    }
+    
+    /// Creates a native request handler from the specified class.
+    /// - Parameters:
+    ///     - c: The class to create the handler from.
+    ///     - httpClient: The HTTP client to use.
+    /// - Returns: The IdpRequestHandler.
+    private func makeNativeRequestHandler(from c: AnyClass, httpClient: HttpClient) -> IdpRequestHandler? {
+        // 1) Cast the class object to NSObject.Type so we can call `perform(_:)` on it
+        guard let nsObjcClass = c as? NSObject.Type else {
+            // This is not an NSObject subclass
+            return nil
+        }
+        
+        // 2) Call +alloc
+        let allocSel = NSSelectorFromString("alloc")
+        guard
+            let allocUnmanaged = nsObjcClass.perform(allocSel),
+            let allocated = allocUnmanaged.takeUnretainedValue() as? NSObject
+        else {
+            // Couldn’t alloc
+            return nil
+        }
+        
+        // 3) Call -initWithHttpClient:
+        let initSel = NSSelectorFromString("initWithHttpClient:")
+        guard
+            let initUnmanaged = allocated.perform(initSel, with: httpClient),
+            let initialized = initUnmanaged.takeUnretainedValue() as? IdpRequestHandler
+        else {
+            // Couldn’t init \(c) with httpClient
+            return nil
+        }
+        
+        return initialized
     }
     
     /// Fallback to the browser handler.
@@ -123,6 +194,29 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
             let request = try await BrowserHandler(continueNode: continueNode, callbackURLScheme: urlScheme).authorize(url: url)
             self.resumeRequest = request
             return .success(true)
+        } catch {
+            return .failure(.idpCanceledException(message: error.localizedDescription))
+        }
+    }
+    
+    /// Authorizes the IdP
+    ///  - Parameters:
+    ///    - handler: The IdpRequestHandler.
+    ///    - url: The URL for the IdP authentication.
+    ///    - callbackURLScheme: The callback URL scheme.
+    ///  - Returns: A Result of type Bool or An IdpExceptions error.
+    private func authorize(handler: IdpRequestHandler, url: URL, callbackURLScheme: String? = nil) async -> Result<Bool, IdpExceptions> {
+        do {
+            let request = try await handler.authorize(url: url)
+            self.resumeRequest = request
+            return .success(true)
+        } catch let error as IdpExceptions {
+            switch error {
+            case .unsupportedIdpException:
+                return .failure(.unsupportedIdpException(message: "No Supported IdP handler found"))
+            default:
+                return .failure(error)
+            }
         } catch {
             return .failure(.idpCanceledException(message: error.localizedDescription))
         }

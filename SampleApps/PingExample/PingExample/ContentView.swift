@@ -11,7 +11,8 @@
 
 import SwiftUI
 import AppTrackingTransparency
-import PingExternal_idp_native_handlers
+import PingExternal_idp_Facebook
+
 /// The main application entry point.
 @main
 struct MyApp: App {
@@ -26,10 +27,10 @@ struct MyApp: App {
                     }
                 }
                 .onOpenURL { url in
-                    let handled = GoogleRequestHandler.handleOpenURL(UIApplication.shared, url: url, options: nil)
-                    if !handled {
-                        FacebookRequestHandler.handleOpenURL(UIApplication.shared, url: url, options: nil)
-                    }
+//                    let handled = GoogleRequestHandler.handleOpenURL(UIApplication.shared, url: url, options: nil)
+//                    if !handled {
+//                        FacebookRequestHandler.handleOpenURL(UIApplication.shared, url: url, options: nil)
+//                    }
                 }
         }
     }
