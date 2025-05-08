@@ -226,7 +226,6 @@
 			);
 			mainGroup = A54BF45C2BF2E33C00CD24D4;
 			packageReferences = (
-				ECED512A2DC1111800FA39A7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
 			);
 			productRefGroup = A54BF4662BF2E33C00CD24D4 /* Products */;
 			projectDirPath = "";

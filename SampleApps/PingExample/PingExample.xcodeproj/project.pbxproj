@@ -62,16 +62,14 @@
 		ECA53F812D635C10002B35D4 /* PingExternal_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC9FA0032D5F4EB300E2A31D /* PingExternal_idp.framework */; };
 		ECA53F822D635C10002B35D4 /* PingExternal_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC9FA0032D5F4EB300E2A31D /* PingExternal_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECA540BD2D6DD7D6002B35D4 /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA540BC2D6DD7D6002B35D4 /* AppTrackingTransparency.framework */; };
-		ECA7A2D82DC24D210011E59C /* External_idp_Apple.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2C32DC24BC70011E59C /* External_idp_Apple.framework */; };
-		ECA7A2D92DC24D210011E59C /* External_idp_Apple.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2C32DC24BC70011E59C /* External_idp_Apple.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		ECA7A31B2DC253160011E59C /* External_idp_Google.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A3072DC251880011E59C /* External_idp_Google.framework */; };
-		ECA7A31C2DC253160011E59C /* External_idp_Google.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A3072DC251880011E59C /* External_idp_Google.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECA7A2D82DC24D210011E59C /* PingExternal_idp_Apple.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2C32DC24BC70011E59C /* PingExternal_idp_Apple.framework */; };
+		ECA7A2D92DC24D210011E59C /* PingExternal_idp_Apple.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2C32DC24BC70011E59C /* PingExternal_idp_Apple.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECA7A31B2DC253160011E59C /* PingExternal_idp_Google.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A3072DC251880011E59C /* PingExternal_idp_Google.framework */; };
+		ECA7A31C2DC253160011E59C /* PingExternal_idp_Google.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A3072DC251880011E59C /* PingExternal_idp_Google.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECBF06732D5229BC0066A3BD /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; };
 		ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECBF06A42D5391690066A3BD /* SocialButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06A32D5391610066A3BD /* SocialButtonView.swift */; };
 		ECE2B8812DB7DBEC00E2C51E /* PhoneNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */; };
-		ECED51232DC10B6A00FA39A7 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = ECED51222DC10B6A00FA39A7 /* FacebookCore */; };
-		ECED51252DC10B6A00FA39A7 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = ECED51242DC10B6A00FA39A7 /* FacebookLogin */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -239,10 +237,10 @@
 			dstSubfolderSpec = 10;
 			files = (
 				ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */,
-				ECA7A2D92DC24D210011E59C /* External_idp_Apple.framework in Embed Frameworks */,
+				ECA7A2D92DC24D210011E59C /* PingExternal_idp_Apple.framework in Embed Frameworks */,
 				A5560CA32CFE4EDA0076CA8D /* PingLogger.framework in Embed Frameworks */,
 				EC5EA56C2DC22BE3000C2737 /* PingExternal_idp_Facebook.framework in Embed Frameworks */,
-				ECA7A31C2DC253160011E59C /* External_idp_Google.framework in Embed Frameworks */,
+				ECA7A31C2DC253160011E59C /* PingExternal_idp_Google.framework in Embed Frameworks */,
 				A5560CA52CFE4EDA0076CA8D /* PingOidc.framework in Embed Frameworks */,
 				A5560CA12CFE4EDA0076CA8D /* PingDavinci.framework in Embed Frameworks */,
 				A5560CA92CFE4EDA0076CA8D /* PingStorage.framework in Embed Frameworks */,
@@ -320,14 +318,12 @@
 			files = (
 				ECBF06732D5229BC0066A3BD /* PingBrowser.framework in Frameworks */,
 				ECA540BD2D6DD7D6002B35D4 /* AppTrackingTransparency.framework in Frameworks */,
-				ECA7A2D82DC24D210011E59C /* External_idp_Apple.framework in Frameworks */,
+				ECA7A2D82DC24D210011E59C /* PingExternal_idp_Apple.framework in Frameworks */,
 				EC92B3912DA03E0700E4246D /* SVGKitSwift in Frameworks */,
-				ECA7A31B2DC253160011E59C /* External_idp_Google.framework in Frameworks */,
+				ECA7A31B2DC253160011E59C /* PingExternal_idp_Google.framework in Frameworks */,
 				A5560CA22CFE4EDA0076CA8D /* PingLogger.framework in Frameworks */,
 				A5560CA42CFE4EDA0076CA8D /* PingOidc.framework in Frameworks */,
 				A5560CA02CFE4EDA0076CA8D /* PingDavinci.framework in Frameworks */,
-				ECED51252DC10B6A00FA39A7 /* FacebookLogin in Frameworks */,
-				ECED51232DC10B6A00FA39A7 /* FacebookCore in Frameworks */,
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
 				EC92B38F2DA03E0700E4246D /* SVGKit in Frameworks */,
 				A5560CA62CFE4EDA0076CA8D /* PingOrchestrate.framework in Frameworks */,
@@ -546,7 +542,7 @@
 		ECA7A2BE2DC24BC70011E59C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				ECA7A2C32DC24BC70011E59C /* External_idp_Apple.framework */,
+				ECA7A2C32DC24BC70011E59C /* PingExternal_idp_Apple.framework */,
 				ECA7A2C52DC24BC70011E59C /* External-idp-AppleTests.xctest */,
 			);
 			name = Products;
@@ -555,7 +551,7 @@
 		ECA7A3022DC251870011E59C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				ECA7A3072DC251880011E59C /* External_idp_Google.framework */,
+				ECA7A3072DC251880011E59C /* PingExternal_idp_Google.framework */,
 				ECA7A3092DC251880011E59C /* External-idp-GoogleTests.xctest */,
 			);
 			name = Products;
@@ -652,7 +648,6 @@
 			mainGroup = 3A5441242BCDF10900385131;
 			packageReferences = (
 				EC92B38D2DA03E0700E4246D /* XCRemoteSwiftPackageReference "SVGKit" */,
-				ECED51212DC10B6A00FA39A7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
 			);
 			productRefGroup = 3A54412E2BCDF10900385131 /* Products */;
 			projectDirPath = "";
@@ -813,10 +808,10 @@
 			remoteRef = EC9FA0042D5F4EB300E2A31D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		ECA7A2C32DC24BC70011E59C /* External_idp_Apple.framework */ = {
+		ECA7A2C32DC24BC70011E59C /* PingExternal_idp_Apple.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = External_idp_Apple.framework;
+			path = PingExternal_idp_Apple.framework;
 			remoteRef = ECA7A2C22DC24BC70011E59C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -827,10 +822,10 @@
 			remoteRef = ECA7A2C42DC24BC70011E59C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		ECA7A3072DC251880011E59C /* External_idp_Google.framework */ = {
+		ECA7A3072DC251880011E59C /* PingExternal_idp_Google.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = External_idp_Google.framework;
+			path = PingExternal_idp_Google.framework;
 			remoteRef = ECA7A3062DC251880011E59C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1269,14 +1264,6 @@
 				minimumVersion = 3.0.0;
 			};
 		};
-		ECED51212DC10B6A00FA39A7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
-			requirement = {
-				kind = exactVersion;
-				version = 18.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1289,16 +1276,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = EC92B38D2DA03E0700E4246D /* XCRemoteSwiftPackageReference "SVGKit" */;
 			productName = SVGKitSwift;
-		};
-		ECED51222DC10B6A00FA39A7 /* FacebookCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = ECED51212DC10B6A00FA39A7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
-			productName = FacebookCore;
-		};
-		ECED51242DC10B6A00FA39A7 /* FacebookLogin */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = ECED51212DC10B6A00FA39A7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
-			productName = FacebookLogin;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A5F086CE2DCA5A4D00AA6919 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = A5F086CD2DCA5A4D00AA6919 /* FacebookCore */; };
+		A5F086D02DCA5A4D00AA6919 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = A5F086CF2DCA5A4D00AA6919 /* FacebookLogin */; };
 		EC5EA5452DC2295E000C2737 /* PingExternal_idp_Facebook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5EA53B2DC2295E000C2737 /* PingExternal_idp_Facebook.framework */; };
 		EC5EA5622DC2298D000C2737 /* PingExternal_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5EA5612DC2298D000C2737 /* PingExternal_idp.framework */; };
 		EC5EA5632DC2298D000C2737 /* PingExternal_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5EA5612DC2298D000C2737 /* PingExternal_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -56,6 +58,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC5EA5622DC2298D000C2737 /* PingExternal_idp.framework in Frameworks */,
+				A5F086CE2DCA5A4D00AA6919 /* FacebookCore in Frameworks */,
+				A5F086D02DCA5A4D00AA6919 /* FacebookLogin in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,6 +157,8 @@
 			);
 			name = "PingExternal-idp-Facebook";
 			packageProductDependencies = (
+				A5F086CD2DCA5A4D00AA6919 /* FacebookCore */,
+				A5F086CF2DCA5A4D00AA6919 /* FacebookLogin */,
 			);
 			productName = "External-idp-Facebook";
 			productReference = EC5EA53B2DC2295E000C2737 /* PingExternal_idp_Facebook.framework */;
@@ -205,6 +211,9 @@
 			);
 			mainGroup = EC5EA5312DC2295E000C2737;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A5F086CC2DCA5A4D00AA6919 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EC5EA53C2DC2295E000C2737 /* Products */;
 			projectDirPath = "";
@@ -395,7 +404,7 @@
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				DEVELOPMENT_TEAM = 9QSE66762D;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -429,7 +438,7 @@
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				DEVELOPMENT_TEAM = 9QSE66762D;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -522,6 +531,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A5F086CC2DCA5A4D00AA6919 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 16.3.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A5F086CD2DCA5A4D00AA6919 /* FacebookCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A5F086CC2DCA5A4D00AA6919 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookCore;
+		};
+		A5F086CF2DCA5A4D00AA6919 /* FacebookLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A5F086CC2DCA5A4D00AA6919 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookLogin;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = EC5EA5322DC2295E000C2737 /* Project object */;
 }
