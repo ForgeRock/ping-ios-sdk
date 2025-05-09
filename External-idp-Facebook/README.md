@@ -5,117 +5,96 @@
   <hr/>
 </p>
 
-# Ping External IDP
+# Ping External IDP Facebook
 
 ## Overview
 
-Ping External IDP is a library that allows you to authenticate with External IDP, for example, Google, Facebook, Apple, etc...
-This library act as a plugin to the `PingDavinci` library,
-and it provides the necessary configuration to authenticate with the External IDP.
+Ping External IDP Faceboiok is a library that allows you to authenticate with External IDP for Facebook using the [facebook-ios-sdk](hhttps://github.com/facebook/facebook-ios-sdk) for Native iOS experience.
+This library acts as a plugin to the `PingExternal-idp` library, and it provides the necessary configuration to authenticate with Facebook Login natively.
 
-<img src="images/socialLogin.png" width="250">
+<img src="images/FacebookLogin-step1.png" width="250"> <img src="images/FacebookLogin-step2.png" width="250">
 
 ## Add dependency to your project
 
-You can add the dependency using Cocoapods or Swift Package manager
+You can add the dependency using Cocoapods or Swift Package Manager
+Make sure the `PingExternal-idp-Facebook` is included in the `Frameworks and Libraries` section of the `General` configuration pane in Xcode
 
 ## Usage
 
-To use the `external-idp` with `IdpCollector`, you need to integrate with `DaVinci` module.
-Setup `PingOne` with `External IDPs` and a `DaVinci` flow.
+To use the `PingExternal-idp-Facebook` with `IdpCollector`, you need to integrate with `PingDavinci` module.
+Read more about Configuration and Usage in [PingExternal-idp](/External-idp/README.md)
 
-For Browser experience either setup the External IDPs with `PingOne External IDPs` or use the `DaVinci Connector`.
-For Native experience the only option is to use the `DaVinci Connector`. (Not implemented yet)
+If the library is present in the project, calling `IdpCollector.authorize()` will use the Facebook iOS SDK to perform the authentication.
 
-### PingOne External IDPs Setup
+## Facebook Developer Console Configuration for Native Integration
 
-<img src="images/externalIdps.png" width="500">
+Follow the official documentation provided by
+the [Facebook Developer Console](https://developers.facebook.com/docs/facebook-login/ios) to set up your Facebook
+app and integrate the Facebook SDK. This involves:
 
-### DaVinci Connector Setup
+1. **Creating a Facebook App:** Register your application on the Facebook for Developers platform.
+2. **Adding Facebook Login Product:** Enable the Facebook Login product for your app.
+3. **Configuring iOS Platform:** Add your iOS platform details, including your app's Bundle ID.
 
-<img src="images/DaVinciConnectorGoogle.png" width="250">
+Ensure that you have added the necessary permissions, such as `email` and `public_profile`, to your Facebook app
+settings. These permissions will be requested from the user during the login process.
 
-### DaVinci Flow Setup
+<img src="images/FacebookScope.png" width="500">
 
-<img src="images/htmlTemplate.png" width="500">
+#### Configuring `Info.plist`
 
-For the `skIDP`, ensure the `Application Return to Url` configure with the `Custom URL Scheme` that you setup in the App.
-for example:
-```swift
-myapp://callback
+Add the following strings to your app's Info file, replacing the placeholders with your
+actual Facebook App ID and Client Token:
+
+```xml
+
+    <key>FacebookAppID</key>
+	<string>[your_facebook_app_id]</string>
+	<key>FacebookClientToken</key>
+	<string>[your_client_token]</string>
+
+    <array>
+    		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb[your_facebook_app_id]</string>
+			</array>
+		</dict>
+	</array>
+
 ```
 
-### App Redirect Uri Setup
+## Handle the authentication redirect URL
 
-In the App project file go to `Info -> URL Types` file, add the following `url scheme` to the project. The IdpCollector will use the first scheme as it appears on the list:
-
-<img src="images/urlScheme.png" width="700">
-
-
-Here's an example of how to use the `IdpCollector` instance:
+### UIKit: UIApplicationDelegate
 
 ```swift
-public class SocialButtonViewModel: ObservableObject {
-    @Published public var isComplete: Bool = false
-    public let idpCollector: IdpCollector
-    
-    public init(idpCollector: IdpCollector) {
-        self.idpCollector = idpCollector
-    }
-    
-    public func startSocialAuthentication() async -> Result<Bool, IdpExceptions> {
-        return await idpCollector.authorize()
-    }
-    
-    public func socialButtonText() -> some View {
-        let bgColor: Color
-        switch idpCollector.idpType {
-        case "APPLE":
-            bgColor = Color.appleButtonBackground
-        case "GOOGLE":
-            bgColor = Color.googleButtonBackground
-        case "FACEBOOK":
-            bgColor = Color.facebookButtonBackground
-        default:
-            bgColor = Color.themeButtonBackground
+func application(
+  _ app: UIApplication,
+  open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+) -> Bool {
+  FacebookRequestHandler.handleOpenURL(UIApplication.shared, url: url, options: nil)
+...
+}
+```
+
+### SwiftUI
+
+```swift
+@main
+struct MyApp: App {
+
+  var body: some Scene {
+    WindowGroup {
+      ContentView()
+        // ...
+        .onOpenURL { url in
+          FacebookRequestHandler.handleOpenURL(UIApplication.shared, url: url, options: nil)
         }
-        let text = Text(idpCollector.label)
-            .font(.headline)
-            .foregroundColor(.white)
-            .padding()
-            .frame(width: 300, height: 50)
-            .background(bgColor)
-            .cornerRadius(15.0)
-        
-        return text
     }
+  }
+}
 }
 ```
-
-Simply call `idpCollector.authorize()` method to start the authentication flow with the External IDP,
-the `authorize()` will launch an `In-App Browser` to authenticate with the External IDP,
-once the authentication is successful, it will return a `Success` result,
-otherwise, it will return a `Failue`  with `IdpExceptions` which shows the root cause of the issue.
-
-```swift
-Task {
-    let result = await socialButtonViewModel.startSocialAuthentication()            
-    switch result {
-    case .success(_):
-        onNext(true)
-    case .failure(let error): //<- Exception
-        onStart()
-    }
-}
-```
-### More IdpCollector configuration
-
-When calling `await idpCollector.authorize()` developers can optionally pass a `callbackURLScheme` to override the configuration used by the collector. Example:
-```swift
-await idpCollector.authorize(callbackURLScheme: "myAppScheme")
-``` 
-The value needs to match with the configuration of the Social Provider.
-
-## Native External Identity Providers (IDP) Integration with Google and Facebook and Apple for iOS
-
-Not implemented yet
