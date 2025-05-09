@@ -16,6 +16,6 @@ FOUNDATION_EXPORT double ExternalIdpVersionNumber;
 //! Project version string for ExternalIdp.
 FOUNDATION_EXPORT const unsigned char ExternalIdpVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <ExternalIdp/PublicHeader.h>
+// In this header, you should import all the public headers of your framework using statements like #import <External_idp/PublicHeader.h>
 
 
