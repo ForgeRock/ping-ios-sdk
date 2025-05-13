@@ -35,7 +35,7 @@ DaVinci [here](https://docs.pingidentity.com/davinci/davinci_introduction.html).
 
 ## Integrating the SDK into your project
 
-Use Cocoapods or Swift Package Manger
+Use Cocoapods or Swift Package Manager
 
 ## Usage
 
