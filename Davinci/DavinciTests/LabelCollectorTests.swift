@@ -18,11 +18,13 @@ class LabelCollectorTests: XCTestCase {
         
         let jsonObject: [String: String] = [
             "content": "Test Content",
+            "key": "Test Key",
         ]
         
         let labelCollector = LabelCollector(with: jsonObject)
         
         XCTAssertEqual("Test Content", labelCollector.content)
+        XCTAssertEqual("Test Key", labelCollector.key)
     }
     
     func testInitializesContentWithEmptyStringWhenNoValueProvided() {

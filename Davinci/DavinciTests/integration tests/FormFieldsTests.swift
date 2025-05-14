@@ -48,6 +48,11 @@ class FormFieldsTests: XCTestCase {
         
         XCTAssertTrue(labelCollector1.content.contains("Rich Text fields produce LABELs"))
         XCTAssertEqual("Translatable Rich Text produce LABELs too!\n\n", labelCollector2.content)
+        
+        // SDKS-3956 Add support for key attribute in Label Collectors
+        XCTAssertEqual("translatable-rich-text-key", labelCollector2.key)
+        // Note that the Rich Text component has been deprecated, so the key is not set
+        XCTAssertEqual("", labelCollector1.key)
     }
     
     // TestRailCase(26032, 26031)
