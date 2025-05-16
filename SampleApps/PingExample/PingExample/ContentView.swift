@@ -10,8 +10,8 @@
 
 
 import SwiftUI
-import PingExternal_idp_Facebook
-import PingExternal_idp_Google
+import PingExternalIdPFacebook
+import PingExternalIdPGoogle
 /// The main application entry point.
 @main
 struct MyApp: App {

@@ -17,6 +17,14 @@
 		3A8092F42BE99F0F00AD667F /* CustomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8092F32BE99F0F00AD667F /* CustomViews.swift */; };
 		3A8532332BE2D5D800F8619D /* DavinciView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8532322BE2D5D800F8619D /* DavinciView.swift */; };
 		3ACD90E12BE586BC00DABCE6 /* DavinciViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACD90E02BE586BC00DABCE6 /* DavinciViewModel.swift */; };
+		A525E7B32DD7647200B02C17 /* PingExternalIdP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7AF2DD7647200B02C17 /* PingExternalIdP.framework */; };
+		A525E7B42DD7647200B02C17 /* PingExternalIdP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7AF2DD7647200B02C17 /* PingExternalIdP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A525E7B52DD7647200B02C17 /* PingExternalIdPApple.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B02DD7647200B02C17 /* PingExternalIdPApple.framework */; };
+		A525E7B62DD7647200B02C17 /* PingExternalIdPApple.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B02DD7647200B02C17 /* PingExternalIdPApple.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A525E7B72DD7647200B02C17 /* PingExternalIdPFacebook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B12DD7647200B02C17 /* PingExternalIdPFacebook.framework */; };
+		A525E7B82DD7647200B02C17 /* PingExternalIdPFacebook.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B12DD7647200B02C17 /* PingExternalIdPFacebook.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A525E7B92DD7647200B02C17 /* PingExternalIdPGoogle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B22DD7647200B02C17 /* PingExternalIdPGoogle.framework */; };
+		A525E7BA2DD7647200B02C17 /* PingExternalIdPGoogle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B22DD7647200B02C17 /* PingExternalIdPGoogle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5560CA02CFE4EDA0076CA8D /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A57A091A2CE511E7006F0CBB /* PingDavinci.framework */; };
 		A5560CA12CFE4EDA0076CA8D /* PingDavinci.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A57A091A2CE511E7006F0CBB /* PingDavinci.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5560CA22CFE4EDA0076CA8D /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A57A08FA2CE50D51006F0CBB /* PingLogger.framework */; };
@@ -51,21 +59,13 @@
 		EC0816BF2D4A832C00F1AD02 /* ConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */; };
 		EC0816C12D4A833400F1AD02 /* ConfigurationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */; };
 		EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */; };
-		EC5EA56B2DC22BE3000C2737 /* PingExternal_idp_Facebook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5EA55B2DC2295F000C2737 /* PingExternal_idp_Facebook.framework */; };
-		EC5EA56C2DC22BE3000C2737 /* PingExternal_idp_Facebook.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5EA55B2DC2295F000C2737 /* PingExternal_idp_Facebook.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC92B3882DA02D7400E4246D /* DeviceAuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */; };
 		EC92B38A2DA02D7F00E4246D /* DeviceRegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */; };
 		EC92B38C2DA039C000E4246D /* AsyncSVGImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */; };
 		EC92B38F2DA03E0700E4246D /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = EC92B38E2DA03E0700E4246D /* SVGKit */; };
 		EC92B3912DA03E0700E4246D /* SVGKitSwift in Frameworks */ = {isa = PBXBuildFile; productRef = EC92B3902DA03E0700E4246D /* SVGKitSwift */; };
 		EC92B3932DA0422700E4246D /* DeviceCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3922DA0422200E4246D /* DeviceCardView.swift */; };
-		ECA53F812D635C10002B35D4 /* PingExternal_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC9FA0032D5F4EB300E2A31D /* PingExternal_idp.framework */; };
-		ECA53F822D635C10002B35D4 /* PingExternal_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC9FA0032D5F4EB300E2A31D /* PingExternal_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECA540BD2D6DD7D6002B35D4 /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA540BC2D6DD7D6002B35D4 /* AppTrackingTransparency.framework */; };
-		ECA7A2D82DC24D210011E59C /* PingExternal_idp_Apple.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2C32DC24BC70011E59C /* PingExternal_idp_Apple.framework */; };
-		ECA7A2D92DC24D210011E59C /* PingExternal_idp_Apple.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2C32DC24BC70011E59C /* PingExternal_idp_Apple.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		ECA7A31B2DC253160011E59C /* PingExternal_idp_Google.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A3072DC251880011E59C /* PingExternal_idp_Google.framework */; };
-		ECA7A31C2DC253160011E59C /* PingExternal_idp_Google.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A3072DC251880011E59C /* PingExternal_idp_Google.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECBF06732D5229BC0066A3BD /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; };
 		ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECBF06A42D5391690066A3BD /* SocialButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06A32D5391610066A3BD /* SocialButtonView.swift */; };
@@ -86,6 +86,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3A54412C2BCDF10900385131;
 			remoteInfo = PingExample;
+		};
+		A525E7D82DD7685800B02C17 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A525E7D12DD7685800B02C17 /* ExternalIdPFacebook.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC5EA53B2DC2295E000C2737;
+			remoteInfo = PingExternalIdPFacebook;
+		};
+		A525E7DA2DD7685800B02C17 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A525E7D12DD7685800B02C17 /* ExternalIdPFacebook.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC5EA5442DC2295E000C2737;
+			remoteInfo = ExternalIdPFacebookTests;
+		};
+		A525E7E32DD7687800B02C17 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A525E7DC2DD7687800B02C17 /* ExternalIdPApple.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = ECA7A2A32DC24BC60011E59C;
+			remoteInfo = PingExternalIdPApple;
+		};
+		A525E7E52DD7687800B02C17 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A525E7DC2DD7687800B02C17 /* ExternalIdPApple.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = ECA7A2AC2DC24BC60011E59C;
+			remoteInfo = ExternalIdPAppleTests;
 		};
 		A57A08F92CE50D51006F0CBB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -164,62 +192,6 @@
 			remoteGlobalIDString = EC0816962D4A68FB00F1AD02;
 			remoteInfo = Browser;
 		};
-		EC5EA55A2DC2295F000C2737 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = EC5EA5532DC2295E000C2737 /* External-idp-Facebook.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EC5EA53B2DC2295E000C2737;
-			remoteInfo = "External-idp-Facebook";
-		};
-		EC5EA55C2DC2295F000C2737 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = EC5EA5532DC2295E000C2737 /* External-idp-Facebook.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EC5EA5442DC2295E000C2737;
-			remoteInfo = "External-idp-FacebookTests";
-		};
-		EC9FA0022D5F4EB300E2A31D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EC0815B72D49377500F1AD02;
-			remoteInfo = "External-idp";
-		};
-		EC9FA0042D5F4EB300E2A31D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = ECB7C6982D5A2C1F0006F1C8;
-			remoteInfo = "External-idpTests";
-		};
-		ECA7A2C22DC24BC70011E59C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = ECA7A2BB2DC24BC60011E59C /* External-idp-Apple.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = ECA7A2A32DC24BC60011E59C;
-			remoteInfo = "External-idp-Apple";
-		};
-		ECA7A2C42DC24BC70011E59C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = ECA7A2BB2DC24BC60011E59C /* External-idp-Apple.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = ECA7A2AC2DC24BC60011E59C;
-			remoteInfo = "External-idp-AppleTests";
-		};
-		ECA7A3062DC251880011E59C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = ECA7A2FF2DC251870011E59C /* External-idp-Google.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = ECA7A2E72DC251860011E59C;
-			remoteInfo = "External-idp-Google";
-		};
-		ECA7A3082DC251880011E59C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = ECA7A2FF2DC251870011E59C /* External-idp-Google.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = ECA7A2F02DC251870011E59C;
-			remoteInfo = "External-idp-GoogleTests";
-		};
 		ECB7C6842D5A24B70006F1C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */;
@@ -237,15 +209,15 @@
 			dstSubfolderSpec = 10;
 			files = (
 				ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */,
-				ECA7A2D92DC24D210011E59C /* PingExternal_idp_Apple.framework in Embed Frameworks */,
 				A5560CA32CFE4EDA0076CA8D /* PingLogger.framework in Embed Frameworks */,
-				EC5EA56C2DC22BE3000C2737 /* PingExternal_idp_Facebook.framework in Embed Frameworks */,
-				ECA7A31C2DC253160011E59C /* PingExternal_idp_Google.framework in Embed Frameworks */,
+				A525E7B62DD7647200B02C17 /* PingExternalIdPApple.framework in Embed Frameworks */,
 				A5560CA52CFE4EDA0076CA8D /* PingOidc.framework in Embed Frameworks */,
 				A5560CA12CFE4EDA0076CA8D /* PingDavinci.framework in Embed Frameworks */,
 				A5560CA92CFE4EDA0076CA8D /* PingStorage.framework in Embed Frameworks */,
 				A5560CA72CFE4EDA0076CA8D /* PingOrchestrate.framework in Embed Frameworks */,
-				ECA53F822D635C10002B35D4 /* PingExternal_idp.framework in Embed Frameworks */,
+				A525E7B82DD7647200B02C17 /* PingExternalIdPFacebook.framework in Embed Frameworks */,
+				A525E7BA2DD7647200B02C17 /* PingExternalIdPGoogle.framework in Embed Frameworks */,
+				A525E7B42DD7647200B02C17 /* PingExternalIdP.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -269,6 +241,14 @@
 		3A8532322BE2D5D800F8619D /* DavinciView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DavinciView.swift; sourceTree = "<group>"; };
 		3AB1CA1F2BD6F9AD003FCE3C /* Oidc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Oidc.xcodeproj; path = ../../Oidc/Oidc.xcodeproj; sourceTree = "<group>"; };
 		3ACD90E02BE586BC00DABCE6 /* DavinciViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DavinciViewModel.swift; sourceTree = "<group>"; };
+		A525E7AF2DD7647200B02C17 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A525E7B02DD7647200B02C17 /* PingExternalIdPApple.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdPApple.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A525E7B12DD7647200B02C17 /* PingExternalIdPFacebook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdPFacebook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A525E7B22DD7647200B02C17 /* PingExternalIdPGoogle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdPGoogle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A525E7BB2DD7680900B02C17 /* ExternalIdP.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdP.xcodeproj; path = ../../ExternalIdP/ExternalIdP.xcodeproj; sourceTree = SOURCE_ROOT; };
+		A525E7C62DD7683500B02C17 /* ExternalIdPGoogle.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdPGoogle.xcodeproj; path = ../../ExternalIdPGoogle/ExternalIdPGoogle.xcodeproj; sourceTree = SOURCE_ROOT; };
+		A525E7D12DD7685800B02C17 /* ExternalIdPFacebook.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdPFacebook.xcodeproj; path = ../../ExternalFacebook/ExternalIdPFacebook.xcodeproj; sourceTree = SOURCE_ROOT; };
+		A525E7DC2DD7687800B02C17 /* ExternalIdPApple.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdPApple.xcodeproj; path = ../../ExternalIdPApple/ExternalIdPApple.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A588CFEA2BF69F1A00F9052A /* Logger.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Logger.xcodeproj; path = ../../Logger/Logger.xcodeproj; sourceTree = "<group>"; };
 		A588CFF92BF69F3300F9052A /* Storage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Storage.xcodeproj; path = ../../Storage/Storage.xcodeproj; sourceTree = "<group>"; };
 		A588D0042BF6A0E500F9052A /* StorageViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageViewModel.swift; sourceTree = "<group>"; };
@@ -296,16 +276,12 @@
 		EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationView.swift; sourceTree = "<group>"; };
 		EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewModel.swift; sourceTree = "<group>"; };
 		EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
-		EC5EA5532DC2295E000C2737 /* External-idp-Facebook.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "External-idp-Facebook.xcodeproj"; path = "../../External-idp-Facebook/External-idp-Facebook.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticationView.swift; sourceTree = "<group>"; };
 		EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationView.swift; sourceTree = "<group>"; };
 		EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncSVGImage.swift; sourceTree = "<group>"; };
 		EC92B3922DA0422200E4246D /* DeviceCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCardView.swift; sourceTree = "<group>"; };
-		EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "External-idp.xcodeproj"; path = "../../External-idp/External-idp.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		ECA540222D660859002B35D4 /* PingExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PingExample.entitlements; sourceTree = "<group>"; };
 		ECA540BC2D6DD7D6002B35D4 /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = SDKROOT; };
-		ECA7A2BB2DC24BC60011E59C /* External-idp-Apple.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "External-idp-Apple.xcodeproj"; path = "../../External-idp-Apple/External-idp-Apple.xcodeproj"; sourceTree = SOURCE_ROOT; };
-		ECA7A2FF2DC251870011E59C /* External-idp-Google.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "External-idp-Google.xcodeproj"; path = "../../External-idp-Google/External-idp-Google.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		ECB7C5D02D562FAC0006F1C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		ECBF06A32D5391610066A3BD /* SocialButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialButtonView.swift; sourceTree = "<group>"; };
 		ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberView.swift; sourceTree = "<group>"; };
@@ -317,18 +293,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECBF06732D5229BC0066A3BD /* PingBrowser.framework in Frameworks */,
+				A525E7B92DD7647200B02C17 /* PingExternalIdPGoogle.framework in Frameworks */,
 				ECA540BD2D6DD7D6002B35D4 /* AppTrackingTransparency.framework in Frameworks */,
-				ECA7A2D82DC24D210011E59C /* PingExternal_idp_Apple.framework in Frameworks */,
+				A525E7B52DD7647200B02C17 /* PingExternalIdPApple.framework in Frameworks */,
 				EC92B3912DA03E0700E4246D /* SVGKitSwift in Frameworks */,
-				ECA7A31B2DC253160011E59C /* PingExternal_idp_Google.framework in Frameworks */,
 				A5560CA22CFE4EDA0076CA8D /* PingLogger.framework in Frameworks */,
 				A5560CA42CFE4EDA0076CA8D /* PingOidc.framework in Frameworks */,
+				A525E7B32DD7647200B02C17 /* PingExternalIdP.framework in Frameworks */,
+				A525E7B72DD7647200B02C17 /* PingExternalIdPFacebook.framework in Frameworks */,
 				A5560CA02CFE4EDA0076CA8D /* PingDavinci.framework in Frameworks */,
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
 				EC92B38F2DA03E0700E4246D /* SVGKit in Frameworks */,
 				A5560CA62CFE4EDA0076CA8D /* PingOrchestrate.framework in Frameworks */,
-				EC5EA56B2DC22BE3000C2737 /* PingExternal_idp_Facebook.framework in Frameworks */,
-				ECA53F812D635C10002B35D4 /* PingExternal_idp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -352,10 +328,10 @@
 		3A5441242BCDF10900385131 = {
 			isa = PBXGroup;
 			children = (
-				ECA7A2FF2DC251870011E59C /* External-idp-Google.xcodeproj */,
-				ECA7A2BB2DC24BC60011E59C /* External-idp-Apple.xcodeproj */,
-				EC5EA5532DC2295E000C2737 /* External-idp-Facebook.xcodeproj */,
-				EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */,
+				A525E7C62DD7683500B02C17 /* ExternalIdPGoogle.xcodeproj */,
+				A525E7DC2DD7687800B02C17 /* ExternalIdPApple.xcodeproj */,
+				A525E7D12DD7685800B02C17 /* ExternalIdPFacebook.xcodeproj */,
+				A525E7BB2DD7680900B02C17 /* ExternalIdP.xcodeproj */,
 				EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */,
 				A588CFEA2BF69F1A00F9052A /* Logger.xcodeproj */,
 				A588CFF92BF69F3300F9052A /* Storage.xcodeproj */,
@@ -440,9 +416,31 @@
 		3A5441642BCDF17600385131 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A525E7AF2DD7647200B02C17 /* PingExternalIdP.framework */,
+				A525E7B02DD7647200B02C17 /* PingExternalIdPApple.framework */,
+				A525E7B12DD7647200B02C17 /* PingExternalIdPFacebook.framework */,
+				A525E7B22DD7647200B02C17 /* PingExternalIdPGoogle.framework */,
 				ECA540BC2D6DD7D6002B35D4 /* AppTrackingTransparency.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A525E7D42DD7685800B02C17 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A525E7D92DD7685800B02C17 /* PingExternalIdPFacebook.framework */,
+				A525E7DB2DD7685800B02C17 /* ExternalIdPFacebookTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A525E7DF2DD7687800B02C17 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A525E7E42DD7687800B02C17 /* PingExternalIdPApple.framework */,
+				A525E7E62DD7687800B02C17 /* ExternalIdPAppleTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		A57A08F52CE50D51006F0CBB /* Products */ = {
@@ -517,42 +515,6 @@
 			children = (
 				EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */,
 				ECB7C6852D5A24B70006F1C8 /* PingBrowserTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		EC5EA5562DC2295F000C2737 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				EC5EA55B2DC2295F000C2737 /* PingExternal_idp_Facebook.framework */,
-				EC5EA55D2DC2295F000C2737 /* External-idp-FacebookTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		EC9F9FFA2D5F4EB200E2A31D /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				EC9FA0032D5F4EB300E2A31D /* PingExternal_idp.framework */,
-				EC9FA0052D5F4EB300E2A31D /* PingExternal-idpTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		ECA7A2BE2DC24BC70011E59C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				ECA7A2C32DC24BC70011E59C /* PingExternal_idp_Apple.framework */,
-				ECA7A2C52DC24BC70011E59C /* External-idp-AppleTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		ECA7A3022DC251870011E59C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				ECA7A3072DC251880011E59C /* PingExternal_idp_Google.framework */,
-				ECA7A3092DC251880011E59C /* External-idp-GoogleTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -661,20 +623,12 @@
 					ProjectRef = 3A54420F2BCE1F2900385131 /* Davinci.xcodeproj */;
 				},
 				{
-					ProductGroup = ECA7A2BE2DC24BC70011E59C /* Products */;
-					ProjectRef = ECA7A2BB2DC24BC60011E59C /* External-idp-Apple.xcodeproj */;
+					ProductGroup = A525E7DF2DD7687800B02C17 /* Products */;
+					ProjectRef = A525E7DC2DD7687800B02C17 /* ExternalIdPApple.xcodeproj */;
 				},
 				{
-					ProductGroup = EC5EA5562DC2295F000C2737 /* Products */;
-					ProjectRef = EC5EA5532DC2295E000C2737 /* External-idp-Facebook.xcodeproj */;
-				},
-				{
-					ProductGroup = ECA7A3022DC251870011E59C /* Products */;
-					ProjectRef = ECA7A2FF2DC251870011E59C /* External-idp-Google.xcodeproj */;
-				},
-				{
-					ProductGroup = EC9F9FFA2D5F4EB200E2A31D /* Products */;
-					ProjectRef = EC9F9FB62D5E157600E2A31D /* External-idp.xcodeproj */;
+					ProductGroup = A525E7D42DD7685800B02C17 /* Products */;
+					ProjectRef = A525E7D12DD7685800B02C17 /* ExternalIdPFacebook.xcodeproj */;
 				},
 				{
 					ProductGroup = A57A08F52CE50D51006F0CBB /* Products */;
@@ -703,6 +657,34 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		A525E7D92DD7685800B02C17 /* PingExternalIdPFacebook.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingExternalIdPFacebook.framework;
+			remoteRef = A525E7D82DD7685800B02C17 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A525E7DB2DD7685800B02C17 /* ExternalIdPFacebookTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ExternalIdPFacebookTests.xctest;
+			remoteRef = A525E7DA2DD7685800B02C17 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A525E7E42DD7687800B02C17 /* PingExternalIdPApple.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingExternalIdPApple.framework;
+			remoteRef = A525E7E32DD7687800B02C17 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A525E7E62DD7687800B02C17 /* ExternalIdPAppleTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ExternalIdPAppleTests.xctest;
+			remoteRef = A525E7E52DD7687800B02C17 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		A57A08FA2CE50D51006F0CBB /* PingLogger.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -778,62 +760,6 @@
 			fileType = wrapper.framework;
 			path = PingBrowser.framework;
 			remoteRef = EC0816A92D4A692900F1AD02 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		EC5EA55B2DC2295F000C2737 /* PingExternal_idp_Facebook.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = PingExternal_idp_Facebook.framework;
-			remoteRef = EC5EA55A2DC2295F000C2737 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		EC5EA55D2DC2295F000C2737 /* External-idp-FacebookTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "External-idp-FacebookTests.xctest";
-			remoteRef = EC5EA55C2DC2295F000C2737 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		EC9FA0032D5F4EB300E2A31D /* PingExternal_idp.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = PingExternal_idp.framework;
-			remoteRef = EC9FA0022D5F4EB300E2A31D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		EC9FA0052D5F4EB300E2A31D /* PingExternal-idpTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "PingExternal-idpTests.xctest";
-			remoteRef = EC9FA0042D5F4EB300E2A31D /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		ECA7A2C32DC24BC70011E59C /* PingExternal_idp_Apple.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = PingExternal_idp_Apple.framework;
-			remoteRef = ECA7A2C22DC24BC70011E59C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		ECA7A2C52DC24BC70011E59C /* External-idp-AppleTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "External-idp-AppleTests.xctest";
-			remoteRef = ECA7A2C42DC24BC70011E59C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		ECA7A3072DC251880011E59C /* PingExternal_idp_Google.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = PingExternal_idp_Google.framework;
-			remoteRef = ECA7A3062DC251880011E59C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		ECA7A3092DC251880011E59C /* External-idp-GoogleTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "External-idp-GoogleTests.xctest";
-			remoteRef = ECA7A3082DC251880011E59C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		ECB7C6852D5A24B70006F1C8 /* PingBrowserTests.xctest */ = {

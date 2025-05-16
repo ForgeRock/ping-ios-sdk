@@ -12,10 +12,10 @@
 import SwiftUI
 import PingDavinci
 import PingBrowser
-import PingExternal_idp
-import PingExternal_idp_Facebook
-import PingExternal_idp_Apple
-import PingExternal_idp_Google
+import PingExternalIdP
+import PingExternalIdPFacebook
+import PingExternalIdPApple
+import PingExternalIdPGoogle
 
 public struct SocialButtonView: View {
     

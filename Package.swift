@@ -13,10 +13,10 @@ let package = Package (
         .library(name: "PingOidc", targets: ["PingOidc"]),
         .library(name: "PingDavinci", targets: ["PingDavinci"]),
         .library(name: "PingBrowser", targets: ["PingBrowser"]),
-        .library(name: "PingExternal-idp", targets: ["PingExternal-idp"]),
-        .library(name: "PingExternal-idp-Apple", targets: ["PingExternal-idp-Apple"]),
-        .library(name: "PingExternal-idp-Google", targets: ["PingExternal-idp-Google"]),
-        .library(name: "PingExternal-idp-Facebook", targets: ["PingExternal-idp-Facebook"])
+        .library(name: "PingExternalIdP", targets: ["PingExternalIdP"]),
+        .library(name: "PingExternalIdPApple", targets: ["PingExternalIdPApple"]),
+        .library(name: "PingExternalIdPGoogle", targets: ["PingExternalIdPGoogle"]),
+        .library(name: "PingExternalIdPFacebook", targets: ["PingExternalIdPFacebook"])
     ],
     dependencies: [
         .package(url: "https://github.com/facebook/facebook-ios-sdk.git", "16.3.1" ..< "16.4.0"),
@@ -29,9 +29,9 @@ let package = Package (
         .target(name: "PingOidc", dependencies: [.target(name: "PingOrchestrate")], path: "Oidc/Oidc", exclude: ["Oidc.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingDavinci", dependencies: [.target(name: "PingOidc"),], path: "Davinci/Davinci", exclude: ["Davinci.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingBrowser", dependencies: [.target(name: "PingLogger"),], path: "Browser/Browser", exclude: ["Browser.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingExternal-idp", dependencies: [.target(name: "PingDavinci"), .target(name: "PingBrowser")], path: "External-idp/External-idp", exclude: ["Extrernal_idp.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingExternal-idp-Apple", dependencies: [.target(name: "PingExternal-idp")], path: "External-idp-Apple/External-idp-Apple", exclude: ["Extrernal_idp_Apple.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-         .target(name: "PingExternal-idp-Google", dependencies: [.target(name: "PingExternal-idp"), .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")], path: "External-idp-Google/External-idp-Google", exclude: ["Extrernal_idp_Google.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-          .target(name: "PingExternal-idp-Facebook", dependencies: [.target(name: "PingExternal-idp"), .product(name: "FacebookLogin", package: "facebook-ios-sdk")], path: "External-idp-Facebook/External-idp-Facebook", exclude: ["Extrernal_idp_Facebook.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
+        .target(name: "PingExternal-idp", dependencies: [.target(name: "PingDavinci"), .target(name: "PingBrowser")], path: "ExternalIdP/ExternalIdP", exclude: ["ExtrernalIdP.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingExternalIdPApple", dependencies: [.target(name: "PingExternalIdP")], path: "ExternalIdPApple/ExternalIdPApple", exclude: ["ExtrernalIdPApple.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+         .target(name: "PingExternalIdPGoogle", dependencies: [.target(name: "PingExternal-idp"), .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")], path: "ExternalIdPGoogle/ExternalIdPGoogle", exclude: ["ExtrernalIdPGoogle.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+          .target(name: "PingExternalIdPFacebook", dependencies: [.target(name: "PingExternal-idp"), .product(name: "FacebookLogin", package: "facebook-ios-sdk")], path: "ExternalIdPFacebook/ExternalIdPFacebook", exclude: ["ExtrernalIdPFacebook.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
     ]
 )
