@@ -12,7 +12,7 @@
 import SwiftUI
 import PingOrchestrate
 import PingDavinci
-import PingExternal_idp
+import PingExternalIdP
 
 struct ContinueNodeView: View {
     var continueNode: ContinueNode
