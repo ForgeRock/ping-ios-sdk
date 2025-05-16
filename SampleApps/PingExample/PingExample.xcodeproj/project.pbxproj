@@ -199,6 +199,20 @@
 			remoteGlobalIDString = ECB7C6982D5A2C1F0006F1C8;
 			remoteInfo = PingExternalIdPTests;
 		};
+		A5A74E012DD7C92C00C6FF31 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A5A74DC72DD7B31C00C6FF31 /* ExternalIdPFacebook.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC5EA53B2DC2295E000C2737;
+			remoteInfo = PingExternalIdPFacebook;
+		};
+		A5A74E032DD7C92C00C6FF31 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A5A74DC72DD7B31C00C6FF31 /* ExternalIdPFacebook.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC5EA5442DC2295E000C2737;
+			remoteInfo = ExternalIdPFacebookTests;
+		};
 		EC0816A92D4A692900F1AD02 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */;
@@ -511,6 +525,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		A5A74DF52DD7C92C00C6FF31 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A5A74E022DD7C92C00C6FF31 /* PingExternalIdPFacebook.framework */,
+				A5A74E042DD7C92C00C6FF31 /* ExternalIdPFacebookTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		A5E9AED92D309FEF000533ED /* Collectors */ = {
 			isa = PBXGroup;
 			children = (
@@ -654,6 +677,10 @@
 					ProjectRef = A525E7DC2DD7687800B02C17 /* ExternalIdPApple.xcodeproj */;
 				},
 				{
+					ProductGroup = A5A74DF52DD7C92C00C6FF31 /* Products */;
+					ProjectRef = A5A74DC72DD7B31C00C6FF31 /* ExternalIdPFacebook.xcodeproj */;
+				},
+				{
 					ProductGroup = A5A74DA92DD7B30800C6FF31 /* Products */;
 					ProjectRef = A525E7C62DD7683500B02C17 /* ExternalIdPGoogle.xcodeproj */;
 				},
@@ -794,6 +821,20 @@
 			fileType = wrapper.cfbundle;
 			path = PingExternalIdPTests.xctest;
 			remoteRef = A5A74DC52DD7B30800C6FF31 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A5A74E022DD7C92C00C6FF31 /* PingExternalIdPFacebook.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingExternalIdPFacebook.framework;
+			remoteRef = A5A74E012DD7C92C00C6FF31 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A5A74E042DD7C92C00C6FF31 /* ExternalIdPFacebookTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ExternalIdPFacebookTests.xctest;
+			remoteRef = A5A74E032DD7C92C00C6FF31 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */ = {

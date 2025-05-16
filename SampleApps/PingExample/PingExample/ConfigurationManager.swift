@@ -69,11 +69,11 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
         
         //TODO: Provide here the Server configuration. Add the PingOne server Discovery Endpoint and the OAuth2.0 client details
         return ConfigurationViewModel(
-            clientId: "8ea9ab51-bdc4-4f4d-a815-f4dd0416bb3c",
-            scopes: ["openid", "email", "address", "phone", "profile"], // Alter the scopes based on your clients configuration
-            redirectUri: "org.forgerock.demo://oauth2redirect",
-            signOutUri: "org.forgerock.demo://oauth2redirect",
-            discoveryEndpoint: "https://auth.pingone.com/c2a669c0-c396-4544-994d-9c6eb3fb1602/as/.well-known/openid-configuration",
+            clientId: <#"Client ID"#>,
+            scopes: [<#"scope1"#>, <#"scope2"#>, <#"scope3"#>], // Alter the scopes based on your clients configuration
+            redirectUri: <#"Redirect URI"#>,
+            signOutUri: <#"Redirect URI"#>,
+            discoveryEndpoint: <#"Discovery Endpoint"#>,
             environment: "PingOne",
             cookieName: nil
         )
