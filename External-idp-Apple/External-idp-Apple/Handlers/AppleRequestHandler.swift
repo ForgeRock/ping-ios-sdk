@@ -11,10 +11,11 @@
 import Foundation
 import PingOrchestrate
 import AuthenticationServices
+import PingExternal_idp
 
 ///IdpHandler for Apple
 @MainActor
-class AppleRequestHandler: IdpRequestHandler {
+@objc class AppleRequestHandler: NSObject, IdpRequestHandler {
     /// The HTTP client to use for requests.
     private let httpClient: HttpClient
     /// The IdpClient to use for requests.
@@ -22,6 +23,7 @@ class AppleRequestHandler: IdpRequestHandler {
     
     /// Initializes a new instance of `AppleRequestHandler`.
     /// - Parameter httpClient: The HTTP client to use for requests.
+    @objc(initWithHttpClient:)
     init(httpClient: HttpClient) {
         self.httpClient = httpClient
     }

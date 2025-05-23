@@ -13,7 +13,8 @@ import Foundation
 import PingLogger
 
 /// `HttpClient` is responsible for handling HTTP requests and logging the details of those requests and responses.
-open class HttpClient: @unchecked Sendable {
+@objc
+open class HttpClient: NSObject, @unchecked Sendable {
     let session: URLSession
     /// The timeout interval for HTTP requests.
     public var timeoutIntervalForRequest: TimeInterval = 60.0
