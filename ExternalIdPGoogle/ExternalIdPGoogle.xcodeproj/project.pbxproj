@@ -45,7 +45,6 @@
 		A525E7AB2DD7640D00B02C17 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A2E72DC251860011E59C /* PingExternalIdPGoogle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingExternalIdPGoogle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A2F02DC251870011E59C /* ExternalIdPGoogleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExternalIdPGoogleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		ECA7A30B2DC251A40011E59C /* PingExternal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A3122DC251F10011E59C /* ExternalIdPGoogleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalIdPGoogleTests.swift; sourceTree = "<group>"; };
 		ECA7A3182DC252BD0011E59C /* GoogleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleRequestHandler.swift; sourceTree = "<group>"; };
 		ECA7A31D2DC253710011E59C /* ExternalIdPGoogle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalIdPGoogle.h; sourceTree = "<group>"; };
@@ -96,7 +95,6 @@
 			isa = PBXGroup;
 			children = (
 				A525E7AB2DD7640D00B02C17 /* PingExternalIdP.framework */,
-				ECA7A30B2DC251A40011E59C /* PingExternal_idp.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

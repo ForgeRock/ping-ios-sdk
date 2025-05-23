@@ -46,7 +46,6 @@
 		A525E7A32DD763F900B02C17 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5EA53B2DC2295E000C2737 /* PingExternalIdPFacebook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingExternalIdPFacebook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5EA5442DC2295E000C2737 /* ExternalIdPFacebookTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExternalIdPFacebookTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC5EA5612DC2298D000C2737 /* PingExternal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5EA5652DC229A8000C2737 /* FacebookRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookRequestHandler.swift; sourceTree = "<group>"; };
 		EC5EA5682DC229A8000C2737 /* ExternalIdPFacebookTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalIdPFacebookTests.swift; sourceTree = "<group>"; };
 		EC5EA5702DC23516000C2737 /* ExternalIdPFacebook.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalIdPFacebook.h; sourceTree = "<group>"; };
@@ -98,7 +97,6 @@
 			isa = PBXGroup;
 			children = (
 				A525E7A32DD763F900B02C17 /* PingExternalIdP.framework */,
-				EC5EA5612DC2298D000C2737 /* PingExternal_idp.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

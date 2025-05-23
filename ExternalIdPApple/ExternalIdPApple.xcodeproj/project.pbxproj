@@ -47,7 +47,6 @@
 		ECA7A2AC2DC24BC60011E59C /* ExternalIdPAppleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExternalIdPAppleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A2C62DC24C540011E59C /* ExternalIdPApple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalIdPApple.swift; sourceTree = "<group>"; };
 		ECA7A2C92DC24C580011E59C /* ExternalIdPAppleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalIdPAppleTests.swift; sourceTree = "<group>"; };
-		ECA7A2CD2DC24C5F0011E59C /* PingExternal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A2D12DC24C7D0011E59C /* ExternalIdPApple.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalIdPApple.h; sourceTree = "<group>"; };
 		ECA7A2D32DC24CA00011E59C /* AppleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleRequestHandler.swift; sourceTree = "<group>"; };
 		ECA7A2D62DC24CB80011E59C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -115,7 +114,6 @@
 			isa = PBXGroup;
 			children = (
 				A525E7A72DD7640400B02C17 /* PingExternalIdP.framework */,
-				ECA7A2CD2DC24C5F0011E59C /* PingExternal_idp.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
