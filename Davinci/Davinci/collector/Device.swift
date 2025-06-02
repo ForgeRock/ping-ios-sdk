@@ -28,7 +28,6 @@ public struct Device: Codable, @unchecked Sendable {
     public var description: String?
     public var iconSrc: URL
     public var isDefault: Bool? = false
-    public var value: String?
     
     /// Enum representing the coding keys.
     enum CodingKeys: String, CodingKey {
@@ -38,7 +37,6 @@ public struct Device: Codable, @unchecked Sendable {
         case description
         case iconSrc
         case isDefault = "default"
-        case value
     }
     
     static func populateDevices(from jsonData: Data) -> [Device] {

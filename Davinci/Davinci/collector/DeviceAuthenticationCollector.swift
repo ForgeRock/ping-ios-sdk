@@ -26,7 +26,7 @@ open class DeviceAuthenticationCollector: FieldCollector<[String: Any]>, Submitt
     /// Initializes a new instance of `DeviceRegistrationCollector` with the given JSON input.
     public required init(with json: [String : Any]) {
         super.init(with: json)
-        let devicesJson = json[Constants.devices] as? [[String: Any]] ?? [[:]]
+        let devicesJson = json[Constants.options] as? [[String: Any]] ?? [[:]]
         if let jsonData = try? JSONSerialization.data(withJSONObject: devicesJson, options: []) {
             devices = Device.populateDevices(from: jsonData)
         }
@@ -42,7 +42,7 @@ open class DeviceAuthenticationCollector: FieldCollector<[String: Any]>, Submitt
         var deviceDictionary: [String: Any] = [:]
         deviceDictionary[Constants.type] = value?.type
         deviceDictionary[Constants.id] = value?.id
-        deviceDictionary[Constants.value] = value?.value
+        deviceDictionary[Constants.description] = value?.description
         return deviceDictionary
     }
 }
