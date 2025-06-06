@@ -20,7 +20,7 @@ class DeviceRegistrationCollectorTests: XCTestCase {
             "key": "device-registration",
             "label": "MFA Device Selection - Registration",
             "required": true,
-            "devices": [
+            "options": [
                 [
                     "type": "EMAIL",
                     "title": "Email",

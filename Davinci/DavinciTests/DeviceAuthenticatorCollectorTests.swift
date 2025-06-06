@@ -19,14 +19,14 @@ class DeviceAuthenticationCollectorTests: XCTestCase {
             "key": "device-authentication",
             "label": "MFA Device Selection - Authentication",
             "required": true,
-            "devices": [
+            "options": [
                 [
                     "type": "EMAIL",
                     "iconSrc": "https://assets.pingone.com/ux/end-user/2.10.0/images/icon-outline-mail.svg",
                     "title": "Email",
                     "id": "e00e00a2-e0c9-409a-9944-f6c282d6da60",
                     "default": true,
-                    "value": "d******l@gmail.com"
+                    "description": "d******l@gmail.com"
                 ],
                 [
                     "type": "EMAIL",
@@ -34,7 +34,7 @@ class DeviceAuthenticationCollectorTests: XCTestCase {
                     "title": "Email",
                     "id": "e00e00a2-e0c9-409a-9945-f6c282d6da61",
                     "default": true,
-                    "value": "b******l@gmail.com"
+                    "description": "b******l@gmail.com"
                 ]
             ]
         ]
@@ -51,7 +51,7 @@ class DeviceAuthenticationCollectorTests: XCTestCase {
             ["e00e00a2-e0c9-409a-9944-f6c282d6da60", "e00e00a2-e0c9-409a-9945-f6c282d6da61"]
         )
         XCTAssertEqual(
-            collector.devices.map { $0.value },
+            collector.devices.map { $0.description },
             ["d******l@gmail.com", "b******l@gmail.com"]
         )
     }
