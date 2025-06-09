@@ -25,7 +25,7 @@ public struct DeviceAuthenticationView: View {
             
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    ForEach(field.devices, id: \.title) { device in
+                    ForEach(field.devices, id: \.id) { device in
                         DeviceCardView(device: device, isSelected: selectedType == device.type)
                             .frame(maxWidth: .infinity)
                             .contentShape(Rectangle()) // Ensures the tap gesture covers the full width.

@@ -23,7 +23,7 @@ struct DeviceCardView: View {
                 .frame(width: 80)
             Text(device.title)
                 .font(.headline)
-            Text(device.description ?? device.value ?? "")
+            Text(device.description ?? "")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
