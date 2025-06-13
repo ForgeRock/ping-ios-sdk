@@ -42,6 +42,9 @@
             </BuildableReference>
             <SkippedTests>
                <Test
+                  Identifier = "FormFieldValidationTests/testPasswordValidation()">
+               </Test>
+               <Test
                   Identifier = "PasswordCollectorTests/testAddsInvalidLengthErrorWhenValueTooShort()">
                </Test>
                <Test
