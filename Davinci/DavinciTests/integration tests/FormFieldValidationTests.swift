@@ -19,6 +19,7 @@ class FormFieldValidationTests: DaVinciBaseTests, @unchecked Sendable {
     private var daVinci: DaVinci!
     
     override func setUp() async throws {
+        self.configFileName = "Config"
         try await super.setUp()
         
         self.config.acrValues = "210f6b876da11c836ffc1c5fb38f3938"

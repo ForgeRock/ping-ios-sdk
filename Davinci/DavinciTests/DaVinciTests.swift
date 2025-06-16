@@ -25,6 +25,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
     let testDiscoveryEndpoint = "http://localhost/.well-known/openid-configuration"
     
     override func setUp() {
+        self.configFileName = "Config"
         super.setUp()
         
         self.davinci = DaVinci.createDaVinci { config in

@@ -18,8 +18,9 @@ import XCTest
 class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
     private var daVinci: DaVinci!
     
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        self.configFileName = "Config"
+        super.setUp()
         
         self.config.acrValues = "210f6b876da11c836ffc1c5fb38f3938"
         

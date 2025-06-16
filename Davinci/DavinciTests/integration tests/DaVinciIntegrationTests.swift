@@ -25,6 +25,7 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
     private var verificationCode: String!
     
     override func setUp() async throws {
+        self.configFileName = "Config"
         try await super.setUp()
         
         username = self.config.username
@@ -33,7 +34,7 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
         password = self.config.password
         newPassword = self.config.newPassword
         verificationCode = self.config.verificationCode
-        
+                
         daVinci = DaVinci.createDaVinci { config in
             config.logger = LogManager.standard
             config.module(OidcModule.config) { oidcValue in

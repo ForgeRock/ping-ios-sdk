@@ -20,6 +20,7 @@ import XCTest
 class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
     
     override func setUp() {
+        self.configFileName = "Config"
         super.setUp()
         
         self.config.clientId = "test"

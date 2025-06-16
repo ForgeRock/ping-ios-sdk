@@ -36,18 +36,18 @@ class Config: NSObject {
     var configJSON: [String: Any]?
     
     override init() {
-        username = "e2euser@example.com"
-        userFname = "E2E"
-        userLname = "iOS"
-        password = "Demo1234#1"
-        newPassword = "New1234#1"
-        verificationCode = "1234"
+        username = ""
+        userFname = ""
+        userLname = ""
+        password = ""
+        newPassword = ""
+        verificationCode = ""
         
-        clientId = "021b83ce-a9b1-4ad4-8c1d-79e576eeab76"
-        discoveryEndpoint = "https://auth.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/as/.well-known/openid-configuration"
-        scopes = ["openid", "email", "address", "phone", "profile"]
-        redirectUri = "org.forgerock.demo://oauth2redirect"
-        acrValues = "79220c5e3a217a3d9b6739585cb160aa"
+        clientId = ""
+        discoveryEndpoint = ""
+        scopes = []
+        redirectUri = ""
+        acrValues = ""
     }
     
     
