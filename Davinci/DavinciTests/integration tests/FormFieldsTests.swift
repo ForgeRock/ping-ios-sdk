@@ -15,19 +15,23 @@ import XCTest
 @testable import PingStorage
 @testable import PingDavinci
 
-class FormFieldsTests: XCTestCase {
+class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
     private var daVinci: DaVinci!
     
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        self.configFileName = "Config"
+        super.setUp()
+        
+        self.config.acrValues = "210f6b876da11c836ffc1c5fb38f3938"
         
         daVinci = DaVinci.createDaVinci { config in
             config.logger = LogManager.standard
             config.module(OidcModule.config) { oidcValue in
-                oidcValue.clientId = "60de77d5-dd2c-41ef-8c40-f8bb2381a359"
-                oidcValue.scopes = ["openid", "email", "address", "phone", "profile"]
-                oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
-                oidcValue.discoveryEndpoint = "https://auth.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/as/.well-known/openid-configuration"
+                oidcValue.clientId = self.config.clientId
+                oidcValue.scopes = Set(self.config.scopes)
+                oidcValue.redirectUri = self.config.redirectUri
+                oidcValue.acrValues = self.config.acrValues
+                oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
             }
         }
     }
