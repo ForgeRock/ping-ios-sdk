@@ -1,3 +1,11 @@
+## [1.2.0]
+
+#### Added
+- Support for native social login with Apple, Google and Facebook [SDKS-3450]
+- Support for PingOne Forms MFA OTP components `DEVICE_REGISTRATION`, `DEVICE_AUTHENTICATION`, and `PHONE_NUMBER` [SDKS-3563]
+- Support for accessing the previous `ContinueNode` from `ErrorNode` [SDKS-3891]
+- Support for accessing the `key` attribute of `LabelCollector` [SDKS-3956]
+
 ## [1.1.0]
 
 #### Added
