@@ -69,9 +69,13 @@ open class HttpClient: NSObject, @unchecked Sendable {
         var request = request
         request.timeoutInterval = timeoutIntervalForRequest
         logRequest(request: request)
-        let (data, response) = try await session.data(for: request)
-        logResponse(responseData: data, response: response)
-        return (data, response)
+        do {
+            let (data, response) = try await session.data(for: request)
+            logResponse(responseData: data, response: response)
+            return (data, response)
+        } catch {
+            throw error
+        }
     }
     
     /// Sends an HTTP request and returns the response data and metadata.

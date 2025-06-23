@@ -18,6 +18,26 @@ struct ConfigurationView: View {
     
     var body: some View {
         Form {
+            Section(header: Text("AIC Server details")) {
+                Section {
+                    Text("Server URL:")
+                    TextField("Server URL", text: $configurationViewModel.serverUrl.toUnwrapped(defaultValue: ""))
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
+                }
+                Section {
+                    Text("Realm name:")
+                    TextField("Realm name", text: $configurationViewModel.realm.toUnwrapped(defaultValue: ""))
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
+                }
+                Section {
+                    Text("Cookie name:")
+                    TextField("Cookie name", text: $configurationViewModel.cookieName.toUnwrapped(defaultValue: ""))
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
+                }
+            }
             Section(header: Text("OAuth 2.0 details")) {
                 Section {
                     Text("Client Id:")

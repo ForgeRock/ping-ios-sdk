@@ -49,7 +49,7 @@ To integrate Journey into your iOS project, add the following dependency to your
 `Podfile` or `Package.swift` file:
 
 ```ruby
-pod 'PingIdentityJourney', '<version>'
+pod 'PingJourney', '<version>'
 ```
 or for Swift Package Manager:
 ```swift
@@ -70,11 +70,13 @@ preferences.
 Here's a basic example of creating a `Journey` instance and initiating the authentication flow:
 
 ```swift
-let journey = Journey {
-    serverUrl = "https://openam-sdks.forgeblocks.com/am"
+let journey = Journey.createJourney { config in
+              config.serverUrl = "https://openam-sdks.forgeblocks.com/am"
+          }
+var node = journey.start("login") // Start the login authentication flow. Pass the Journey name
+if let current = node as? ContinueNode {
+    let next = await current.next() // Continue to the next step
 }
-var node = journey.start("login") // Start the login authentication flow
-node = node.next()
 ```
 
 ### Integrating the OIDC Module
@@ -84,16 +86,16 @@ discovery of OpenID
 Connect (OIDC) endpoints using the `discoveryEndpoint` attribute.
 
 ```swift
-let journey = Journey {
-    module(Oidc) {
-        clientId = "your_client_id"
-        discoveryEndpoint =
-            "https://your_openam_domain/am/oauth2/alpha/.well-known/openid-configuration"
-        scopes = ["openid", "email", "address", "profile", "phone"]
-        redirectUri = "org.forgerock.demo:/oauth2redirect"
-        // Add other OIDC configurations as needed
-    }
-}
+let journey = Journey.createJourney { config in
+            // Oidc as module
+            config.module(PingJourney.OidcModule.config) { oidcValue in
+                oidcValue.clientId = "test"
+                oidcValue.discoveryEndpoint = "https://your_openam_domain/am/oauth2/alpha/.well-known/openid-configuration"
+                oidcValue.scopes = ["openid", "email", "address"]
+                oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
+                // Add other OIDC configurations as needed
+            }
+          }
 ```
 
 ### Advanced Journey Configuration
@@ -101,18 +103,19 @@ let journey = Journey {
 The `Journey` configuration block offers further customization options:
 
 ```swift
-let journey = Journey {
-    timeout = 30 // Network request timeout in seconds (default: 30s)
-    logger = Logger.standard // Use the standard logger for output
-    realm = "<realm_name>" // Specify the realm for authentication
-    cookie = "<cookie_name>" // Specify the cookie name for session management
-    module(Oidc) {
-        clientId = "your_client_id"
-        discoveryEndpoint =
-                "https://your_openam_domain/am/oauth2/alpha/.well-known/openid-configuration"
-        // ... other OIDC configurations
-    }
-}
+let journey = Journey.createJourney { config in
+            config.timeout = 30 // Network request timeout in seconds (default: 30s)
+            config.logger = LogManager.standard // Use the standard logger for output
+            config.realm = "<realm_name>" // Specify the realm for authentication
+            config.cookie = "<cookie_name>" // Specify the cookie name for session management
+            config.module(PingJourney.OidcModule.config) { oidcValue in
+                oidcValue.clientId = "test"
+                oidcValue.discoveryEndpoint = "https://your_openam_domain/am/oauth2/alpha/.well-known/openid-configuration"
+                oidcValue.scopes = ["openid", "email", "address"]
+                oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
+                // Add other OIDC configurations as needed
+            }
+          }
 ```
 
 ### Navigating the Authentication Flow
@@ -130,9 +133,15 @@ instance, through an Email Suspend Node.
 Optionally, you can provide options when starting the journey, such as `forceAuth` and `noSession`
 
 ```swift
-var node = journey.start("myLogin") {
-    forceAuth = true
-    noSession = true
+let journey = Journey.createJourney { config in
+              config.serverUrl = "https://openam-sdks.forgeblocks.com/am"
+              config.realm = "alpha" 
+              config.cookie = "386c0d288Bac4b9"
+          }
+
+var node = await journey.start("myLogin") {
+    $0.forceAuth = true
+    $0.noSession = true
 } // Initiate the authentication journey
 
 // Determine the type of the current Node

@@ -12,6 +12,24 @@
 		EC727A602E019258005D9E28 /* JourneyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727A5E2E019258005D9E28 /* JourneyTests.swift */; };
 		EC727A652E0192FA005D9E28 /* Journey.h in Headers */ = {isa = PBXBuildFile; fileRef = EC727A642E0192FA005D9E28 /* Journey.h */; };
 		EC727A662E0192FA005D9E28 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC727A632E0192FA005D9E28 /* PrivacyInfo.xcprivacy */; };
+		EC727A922E02DCA9005D9E28 /* PingOidc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A912E02DCA9005D9E28 /* PingOidc.framework */; };
+		EC727A932E02DCA9005D9E28 /* PingOidc.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A912E02DCA9005D9E28 /* PingOidc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC727A962E02DCAF005D9E28 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A952E02DCAF005D9E28 /* PingOrchestrate.framework */; };
+		EC727A972E02DCAF005D9E28 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A952E02DCAF005D9E28 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC727A9A2E02DD04005D9E28 /* Oidc.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727A992E02DCFF005D9E28 /* Oidc.swift */; };
+		EC727AC92E031C8A005D9E28 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727AC82E031C86005D9E28 /* Request.swift */; };
+		EC727ACB2E042A49005D9E28 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727ACA2E042A22005D9E28 /* Session.swift */; };
+		EC727ACD2E042B13005D9E28 /* SessionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727ACC2E042B0E005D9E28 /* SessionConfig.swift */; };
+		EC727ACF2E042DC0005D9E28 /* SSOToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727ACE2E042DBB005D9E28 /* SSOToken.swift */; };
+		EC727AD12E044AA2005D9E28 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727AD02E044A9F005D9E28 /* Transform.swift */; };
+		EC727AD32E044C02005D9E28 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727AD22E044BFC005D9E28 /* Constants.swift */; };
+		EC727AD62E045274005D9E28 /* CallbackRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727AD52E045267005D9E28 /* CallbackRegistry.swift */; };
+		EC727AD82E0455D4005D9E28 /* Callbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727AD72E0455D1005D9E28 /* Callbacks.swift */; };
+		EC727B032E046FB9005D9E28 /* AbstractCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727B022E046FB3005D9E28 /* AbstractCallback.swift */; };
+		EC727B052E047079005D9E28 /* NameCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727B042E047076005D9E28 /* NameCallback.swift */; };
+		EC727B072E04713A005D9E28 /* PasswordCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727B062E047133005D9E28 /* PasswordCallback.swift */; };
+		EC727B092E059BB9005D9E28 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727B082E059BB5005D9E28 /* User.swift */; };
+		EC727B0B2E05A20D005D9E28 /* Agent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727B0A2E05A20B005D9E28 /* Agent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,6 +42,21 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		EC727A942E02DCA9005D9E28 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EC727A932E02DCA9005D9E28 /* PingOidc.framework in Embed Frameworks */,
+				EC727A972E02DCAF005D9E28 /* PingOrchestrate.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		EC727A242E019243005D9E28 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC727A2D2E019243005D9E28 /* JourneyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JourneyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -31,6 +64,22 @@
 		EC727A5E2E019258005D9E28 /* JourneyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyTests.swift; sourceTree = "<group>"; };
 		EC727A632E0192FA005D9E28 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		EC727A642E0192FA005D9E28 /* Journey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Journey.h; sourceTree = "<group>"; };
+		EC727A912E02DCA9005D9E28 /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC727A952E02DCAF005D9E28 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC727A992E02DCFF005D9E28 /* Oidc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Oidc.swift; sourceTree = "<group>"; };
+		EC727AC82E031C86005D9E28 /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
+		EC727ACA2E042A22005D9E28 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		EC727ACC2E042B0E005D9E28 /* SessionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionConfig.swift; sourceTree = "<group>"; };
+		EC727ACE2E042DBB005D9E28 /* SSOToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSOToken.swift; sourceTree = "<group>"; };
+		EC727AD02E044A9F005D9E28 /* Transform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
+		EC727AD22E044BFC005D9E28 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		EC727AD52E045267005D9E28 /* CallbackRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackRegistry.swift; sourceTree = "<group>"; };
+		EC727AD72E0455D1005D9E28 /* Callbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Callbacks.swift; sourceTree = "<group>"; };
+		EC727B022E046FB3005D9E28 /* AbstractCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractCallback.swift; sourceTree = "<group>"; };
+		EC727B042E047076005D9E28 /* NameCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameCallback.swift; sourceTree = "<group>"; };
+		EC727B062E047133005D9E28 /* PasswordCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordCallback.swift; sourceTree = "<group>"; };
+		EC727B082E059BB5005D9E28 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		EC727B0A2E05A20B005D9E28 /* Agent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Agent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +87,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC727A922E02DCA9005D9E28 /* PingOidc.framework in Frameworks */,
+				EC727A962E02DCAF005D9E28 /* PingOrchestrate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,6 +108,7 @@
 			children = (
 				EC727A5C2E019254005D9E28 /* Journey */,
 				EC727A5F2E019258005D9E28 /* JourneyTests */,
+				EC727A902E02DCA9005D9E28 /* Frameworks */,
 				EC727A252E019243005D9E28 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -75,7 +127,11 @@
 			children = (
 				EC727A632E0192FA005D9E28 /* PrivacyInfo.xcprivacy */,
 				EC727A642E0192FA005D9E28 /* Journey.h */,
+				EC727AD42E04525C005D9E28 /* Callbacks */,
+				EC727A982E02DCF6005D9E28 /* Module */,
 				EC727A5B2E019254005D9E28 /* Journey.swift */,
+				EC727B082E059BB5005D9E28 /* User.swift */,
+				EC727AD22E044BFC005D9E28 /* Constants.swift */,
 			);
 			path = Journey;
 			sourceTree = "<group>";
@@ -86,6 +142,41 @@
 				EC727A5E2E019258005D9E28 /* JourneyTests.swift */,
 			);
 			path = JourneyTests;
+			sourceTree = "<group>";
+		};
+		EC727A902E02DCA9005D9E28 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EC727A952E02DCAF005D9E28 /* PingOrchestrate.framework */,
+				EC727A912E02DCA9005D9E28 /* PingOidc.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EC727A982E02DCF6005D9E28 /* Module */ = {
+			isa = PBXGroup;
+			children = (
+				EC727B0A2E05A20B005D9E28 /* Agent.swift */,
+				EC727AD02E044A9F005D9E28 /* Transform.swift */,
+				EC727ACE2E042DBB005D9E28 /* SSOToken.swift */,
+				EC727ACC2E042B0E005D9E28 /* SessionConfig.swift */,
+				EC727ACA2E042A22005D9E28 /* Session.swift */,
+				EC727AC82E031C86005D9E28 /* Request.swift */,
+				EC727A992E02DCFF005D9E28 /* Oidc.swift */,
+			);
+			path = Module;
+			sourceTree = "<group>";
+		};
+		EC727AD42E04525C005D9E28 /* Callbacks */ = {
+			isa = PBXGroup;
+			children = (
+				EC727B042E047076005D9E28 /* NameCallback.swift */,
+				EC727B062E047133005D9E28 /* PasswordCallback.swift */,
+				EC727B022E046FB3005D9E28 /* AbstractCallback.swift */,
+				EC727AD72E0455D1005D9E28 /* Callbacks.swift */,
+				EC727AD52E045267005D9E28 /* CallbackRegistry.swift */,
+			);
+			path = Callbacks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -110,6 +201,7 @@
 				EC727A202E019243005D9E28 /* Sources */,
 				EC727A212E019243005D9E28 /* Frameworks */,
 				EC727A222E019243005D9E28 /* Resources */,
+				EC727A942E02DCA9005D9E28 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -203,7 +295,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC727AD62E045274005D9E28 /* CallbackRegistry.swift in Sources */,
+				EC727ACD2E042B13005D9E28 /* SessionConfig.swift in Sources */,
+				EC727B072E04713A005D9E28 /* PasswordCallback.swift in Sources */,
+				EC727B092E059BB9005D9E28 /* User.swift in Sources */,
+				EC727ACF2E042DC0005D9E28 /* SSOToken.swift in Sources */,
+				EC727A9A2E02DD04005D9E28 /* Oidc.swift in Sources */,
+				EC727B0B2E05A20D005D9E28 /* Agent.swift in Sources */,
+				EC727B032E046FB9005D9E28 /* AbstractCallback.swift in Sources */,
+				EC727AD12E044AA2005D9E28 /* Transform.swift in Sources */,
+				EC727B052E047079005D9E28 /* NameCallback.swift in Sources */,
+				EC727AC92E031C8A005D9E28 /* Request.swift in Sources */,
+				EC727AD82E0455D4005D9E28 /* Callbacks.swift in Sources */,
+				EC727ACB2E042A49005D9E28 /* Session.swift in Sources */,
 				EC727A5D2E019254005D9E28 /* Journey.swift in Sources */,
+				EC727AD32E044C02005D9E28 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,9 +462,10 @@
 		EC727A372E019243005D9E28 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -367,12 +474,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Journey;
@@ -380,8 +488,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -389,9 +497,10 @@
 		EC727A382E019243005D9E28 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -400,12 +509,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Journey;
@@ -413,8 +523,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

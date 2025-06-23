@@ -61,6 +61,8 @@
 		EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */; };
 		EC727A612E0192E6005D9E28 /* Journey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A582E019245005D9E28 /* Journey.framework */; };
 		EC727A622E0192E6005D9E28 /* Journey.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A582E019245005D9E28 /* Journey.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC727A9C2E03051A005D9E28 /* JourneyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727A9B2E030513005D9E28 /* JourneyViewModel.swift */; };
+		EC727A9E2E030C50005D9E28 /* JourneyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727A9D2E030C4B005D9E28 /* JourneyView.swift */; };
 		EC92B3882DA02D7400E4246D /* DeviceAuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */; };
 		EC92B38A2DA02D7F00E4246D /* DeviceRegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */; };
 		EC92B38C2DA039C000E4246D /* AsyncSVGImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */; };
@@ -322,6 +324,8 @@
 		EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewModel.swift; sourceTree = "<group>"; };
 		EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
 		EC727A3C2E019244005D9E28 /* Journey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Journey.xcodeproj; path = ../../Journey/Journey.xcodeproj; sourceTree = SOURCE_ROOT; };
+		EC727A9B2E030513005D9E28 /* JourneyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyViewModel.swift; sourceTree = "<group>"; };
+		EC727A9D2E030C4B005D9E28 /* JourneyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyView.swift; sourceTree = "<group>"; };
 		EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticationView.swift; sourceTree = "<group>"; };
 		EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationView.swift; sourceTree = "<group>"; };
 		EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncSVGImage.swift; sourceTree = "<group>"; };
@@ -409,16 +413,21 @@
 			children = (
 				ECA540222D660859002B35D4 /* PingExample.entitlements */,
 				ECB7C5D02D562FAC0006F1C8 /* Info.plist */,
+				EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */,
 				A5E9AED92D309FEF000533ED /* Collectors */,
 				3A3709952BEB038200AA7B51 /* AccessTokenView.swift */,
 				A5E9AECD2D3037BC000533ED /* AccessTokenViewModel.swift */,
 				3A5441322BCDF10900385131 /* ContentView.swift */,
-				EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */,
+				EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */,
+				EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */,
+				EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */,
 				A5EFA9802D360AC800F771FE /* ContinueNodeView.swift */,
 				3A8092F32BE99F0F00AD667F /* CustomViews.swift */,
 				3A8532322BE2D5D800F8619D /* DavinciView.swift */,
 				3ACD90E02BE586BC00DABCE6 /* DavinciViewModel.swift */,
 				A5A5F7FF2D4C64490053BF24 /* ErrorView.swift */,
+				EC727A9D2E030C4B005D9E28 /* JourneyView.swift */,
+				EC727A9B2E030513005D9E28 /* JourneyViewModel.swift */,
 				A5E9AED52D30393B000533ED /* LoggerView.swift */,
 				A588D0052BF6A0E500F9052A /* LoggerViewModel.swift */,
 				A5E9AEC12D30341E000533ED /* LogOutView.swift */,
@@ -427,9 +436,6 @@
 				A588D0042BF6A0E500F9052A /* StorageViewModel.swift */,
 				A5E9AECF2D3037DF000533ED /* UserInfoView.swift */,
 				A5E9AED12D303804000533ED /* UserInfoViewModel.swift */,
-				EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */,
-				EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */,
-				EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */,
 				3A5441342BCDF10B00385131 /* Assets.xcassets */,
 				3A5441362BCDF10B00385131 /* Preview Content */,
 			);
@@ -942,8 +948,10 @@
 				3A8532332BE2D5D800F8619D /* DavinciView.swift in Sources */,
 				A5EFA9812D360ACC00F771FE /* ContinueNodeView.swift in Sources */,
 				EC92B3882DA02D7400E4246D /* DeviceAuthenticationView.swift in Sources */,
+				EC727A9E2E030C50005D9E28 /* JourneyView.swift in Sources */,
 				EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */,
 				EC0816BF2D4A832C00F1AD02 /* ConfigurationView.swift in Sources */,
+				EC727A9C2E03051A005D9E28 /* JourneyViewModel.swift in Sources */,
 				3A5441332BCDF10900385131 /* ContentView.swift in Sources */,
 				A5EFA9792D35F62E00F771FE /* RadioButtonView.swift in Sources */,
 				A5E9AED42D30385D000533ED /* LogOutViewModel.swift in Sources */,

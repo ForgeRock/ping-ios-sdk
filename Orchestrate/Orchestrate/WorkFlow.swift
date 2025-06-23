@@ -92,7 +92,7 @@ public class Workflow: @unchecked Sendable {
     /// Starts the workflow with the provided request.
     /// - Parameter request: The request to start the workflow with.
     /// - Returns: The resulting `Node` after processing the workflow.
-    private func start(request: Request) async throws -> Node {
+    public func start(request: Request) async throws -> Node {
         // Before we start, make sure all the module init has been completed
         try await initialize()
         config.logger.i("Starting...")

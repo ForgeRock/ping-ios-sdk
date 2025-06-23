@@ -1,0 +1,38 @@
+//
+//  Journey.swift
+//  Journey
+//
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
+//
+
+/// The Request module is responsible for initiating the authentication journey.
+/// It sets the URL for the authentication request and includes any necessary parameters.
+
+import Foundation
+import PingOrchestrate
+
+extension Request {
+    
+    internal func populateRequest(
+        authIndexValue: String,
+        authIndexType: String = "service",
+        journeyConfig: JourneyConfig
+    ) {
+        let authenticateEndpoint = "\(journeyConfig.serverUrl ?? "")/json/realms/\(journeyConfig.realm)/authenticate"
+        self.url(authenticateEndpoint)
+        self.header(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource21Protocol10)
+        self.header(name: JourneyConstants.contentType, value: JourneyConstants.applicationJson)
+        self.parameter(name: JourneyConstants.authIndexValue, value: authIndexValue)
+        self.parameter(name: JourneyConstants.authIndexType, value: authIndexType)
+        if journeyConfig.forceAuth {
+            self.parameter(name: "ForceAuth", value: "true")
+        }
+        if journeyConfig.noSession {
+            self.parameter(name: "noSession", value: "true")
+        }
+        self.body(body: [String: Any]())
+    }
+}

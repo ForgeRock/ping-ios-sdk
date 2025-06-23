@@ -33,7 +33,13 @@ class AccessTokenViewModel: ObservableObject {
     /// - The method checks for a successful token retrieval and updates the `accessToken` property.
     /// - Logs the success or failure result using `PingLogger`.
     func accessToken() async {
-        let token = try? await ConfigurationManager.shared.currentUser?.token()
+        let token: Result<Token, OidcError>?
+        if ConfigurationManager.shared.loadConfigurationViewModel().environment == "AIC" {
+            token = await ConfigurationManager.shared.journeyUser?.token()
+        } else {
+            token = await ConfigurationManager.shared.davinciUser?.token()
+        }
+
         switch token {
         case .success(let accessToken):
             await MainActor.run {

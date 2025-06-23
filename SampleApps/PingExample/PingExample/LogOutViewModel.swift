@@ -21,7 +21,12 @@ class LogOutViewModel: ObservableObject {
     /// - Executes the `logout()` method from the DaVinci user object asynchronously.
     /// - Updates the `logout` property with a completion message upon success.
     func logout() async {
-        try? await ConfigurationManager.shared.currentUser?.logout()
+        if ConfigurationManager.shared.loadConfigurationViewModel().environment == "AIC" {
+            await ConfigurationManager.shared.journeyUser?.logout()
+        } else {
+            await ConfigurationManager.shared.davinciUser?.logout()
+        }
+        
         await MainActor.run {
             logout =  "Logout completed"
         }
