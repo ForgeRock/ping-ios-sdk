@@ -26,28 +26,28 @@ public class SessionModule {
             journeyFlow.sharedContext.set(key: SharedContext.Keys.sessionConfigKey, value: config)
         }
         
-        setup.start { context, request in
+        setup.start { @Sendable context, request in
             if let token = await journeyFlow.session(), let journeyConfig = journeyFlow.config as? JourneyConfig {
                 request.header(name: journeyConfig.cookie, value: token.value)
             }
             return request
         }
         
-        setup.next { context, _, request in
+        setup.next { @Sendable context, _, request in
             if let token = await journeyFlow.session(), let journeyConfig = journeyFlow.config as? JourneyConfig {
                 request.header(name: journeyConfig.cookie, value: token.value)
             }
             return request
         }
         
-        setup.success { context, request in
+        setup.success { @Sendable context, request in
             if !request.session.value.isEmpty, let token = request.session as? SSOTokenImpl {
                 try await config.storage.save(item: token)
             }
             return request
         }
         
-        setup.signOff { request in
+        setup.signOff { @Sendable request in
             if let ssoToken = await journeyFlow.session(), let journeyConfig = journeyFlow.config as? JourneyConfig {
                 request.url("\(journeyConfig.serverUrl ?? "")/json/realms/\(journeyConfig.realm)/sessions")
                 request.parameter(name: "_action", value: "logout")
@@ -66,14 +66,14 @@ public class SessionModule {
 extension Workflow {
     /// Retrieves the SSOToken from the session config in sharedContext
     func session() async -> SSOToken? {
-        let storage = sharedContext.get(key: SharedContext.Keys.sessionConfigKey) as? StorageDelegate<SSOTokenImpl>
-        return try? await storage?.get()
+        let config = sharedContext.get(key: SharedContext.Keys.sessionConfigKey) as? SessionConfig
+        return try? await config?.storage.get()
     }
     
     /// Deletes the stored SSOToken from the session config in sharedContext
     public func deleteSession() async {
-        let storage = sharedContext.get(key: SharedContext.Keys.sessionConfigKey) as? StorageDelegate<SSOTokenImpl>
-        try? await storage?.delete()
+        let config = sharedContext.get(key: SharedContext.Keys.sessionConfigKey) as? SessionConfig
+        try? await config?.storage.delete()
     }
 }
 

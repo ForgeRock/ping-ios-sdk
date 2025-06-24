@@ -17,7 +17,7 @@ extension DaVinci {
     /// If cookies are available, it prepares a new user and returns it.
     /// If no user is found and no cookies are available, it returns nil.
     /// - Returns: The user if found, otherwise nil.
-    public func user() async -> User? {
+    public func daVinciuser() async -> User? {
         try? await initialize()
         
         if let cachedUser = self.sharedContext.get(key: SharedContext.Keys.userKey) as? User {
@@ -32,10 +32,10 @@ extension DaVinci {
         return nil
     }
     
-    /// Alias for the DaVinci.user() method.
+    /// Alias for the DaVinci.daVinciuser() method.
     /// - Returns: The user if found, otherwise nil.
     public func daVinciUser() async -> User? {
-        return await user()
+        return await daVinciuser()
     }
     
     /// Method to prepare the user.

@@ -12,7 +12,7 @@ import PingOidc
 import PingOrchestrate
 
 extension Journey {
-    public func user() async -> User? {
+    public func journeyUser() async -> User? {
         try? await initialize()
         
         if let cachedUser = self.sharedContext.get(key: SharedContext.Keys.userKey) as? User {

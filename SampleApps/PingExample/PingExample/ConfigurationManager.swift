@@ -29,14 +29,14 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
     
     public var journeyUser: User? {
         get async {
-            let journeyUser = await journey.user()
+            let journeyUser = await journey.journeyUser()
             return journeyUser
         }
     }
     
     public var davinciUser: User? {
         get async {
-            let davinciUser = await davinci.user()
+            let davinciUser = await davinci.daVinciUser()
             return davinciUser
         }
     }

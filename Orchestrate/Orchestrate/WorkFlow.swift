@@ -200,8 +200,9 @@ public class Workflow: @unchecked Sendable {
             var request = Request()
             for handler in signOffHandlers {
                 request = try await handler(request)
+                _ = try await send(request)
             }
-            _ = try await send(request)
+            
             return .success(())
         }
         catch {

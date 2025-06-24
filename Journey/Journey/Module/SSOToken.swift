@@ -15,7 +15,7 @@ protocol SSOToken: Session, Codable {
 }
 
 // Define the SSOTokenImpl class
-final class SSOTokenImpl: SSOToken, Sendable {
+final class SSOTokenImpl: SSOToken, Sendable, Codable {
     let value: String
     let successUrl: String
     let realm: String

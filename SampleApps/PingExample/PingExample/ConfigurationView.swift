@@ -18,6 +18,14 @@ struct ConfigurationView: View {
     
     var body: some View {
         Form {
+            Section(header: Text("Selected Environment")) {
+                Section {
+                    Text("Selected Environment (AIC or PingOne):")
+                    TextField("Selected Environment", text: $configurationViewModel.environment)
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
+                }
+            }
             Section(header: Text("AIC Server details")) {
                 Section {
                     Text("Server URL:")

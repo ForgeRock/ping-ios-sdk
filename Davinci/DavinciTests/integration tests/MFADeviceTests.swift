@@ -58,7 +58,7 @@ class MFADeviceTests: XCTestCase {
         phoneNumber2 = "888123457"
         
         // Start with a clean session
-        await daVinci.user()?.logout()
+        await daVinci.daVinciuser()?.logout()
         try await registerUser(username: username, password: password)
     }
     
@@ -277,7 +277,7 @@ class MFADeviceTests: XCTestCase {
         }
         
         // Logout the user
-        guard let u = await daVinci.user() else {
+        guard let u = await daVinci.daVinciuser() else {
             throw NSError(domain: "TestError", code: 1, userInfo: [NSLocalizedDescriptionKey: "User is null"])
         }
         await u.logout()
