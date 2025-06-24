@@ -8,16 +8,17 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingExternalIdPGoogle'
-  s.version          = '1.2.0'
-  s.summary          = 'PingExternalIdPGoogle module for the Ping iOS SDK'
+  s.version          = '1.2.0-beta1'
+  s.summary          = 'Google Sign-In integration for the Ping Identity iOS SDK'
   s.description      = <<-DESC
-  The PingExternalIdPGoogle module for the Ping iOS SDK is a library for Authentication with external IDP Google when using the Ping iOS SDK.
-                       DESC
-  s.homepage         = 'https://www.pingidentity.com/'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = 'Ping Identity'
+PingExternalIdPGoogle enables Google Sign-In authentication in apps using the Ping Identity iOS SDK. Built on top of PingExternalIdP, it integrates the GoogleSignIn SDK and provides a seamless login experience using Google accounts. It supports token exchange and redirects within Ping-authenticated flows.
+DESC
+  s.homepage          = 'https://github.com/ForgeRock/ping-ios-sdk'
+  s.documentation_url = 'https://github.com/ForgeRock/ping-ios-sdk/blob/develop/ExternalIdPGoogle/README.md'
+  s.license           = { :type => 'MIT', :file => 'LICENSE' }
+  s.author            = 'Ping Identity'
 
-  s.source           = {
+  s.source            = {
       :git => 'https://github.com/ForgeRock/ping-ios-sdk.git',
       :tag => s.version.to_s
   }
@@ -33,7 +34,7 @@ Pod::Spec.new do |s|
     'External-idp' => [base_dir + '/*.xcprivacy']
   }
 
-  s.ios.dependency 'PingExternalIdP', '~> 1.2.0'
+  s.ios.dependency 'PingExternalIdP', '~> 1.2.0-beta1'
   s.ios.dependency 'GoogleSignIn', '~> 8.1.0-vwg-eap-1.0.0'
     
 end

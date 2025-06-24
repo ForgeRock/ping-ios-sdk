@@ -8,16 +8,17 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingBrowser'
-  s.version          = '1.2.0'
-  s.summary          = 'PingBrowser module for the Ping iOS SDK'
+  s.version          = '1.2.0-beta1'
+  s.summary          = 'In-app browser integration module for Ping Identity iOS authentication flows'
   s.description      = <<-DESC
-  The PingBrowser module for the Ping iOS SDK is a library for using in-app browsers for the Ping iOS SDK.
-                       DESC
-  s.homepage         = 'https://www.pingidentity.com/'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = 'Ping Identity'
+PingBrowser provides in-app browser support for authentication flows in Ping Identity's iOS SDK. It enables secure and seamless web-based interactions using SFSafariViewController or ASWebAuthenticationSession for login and consent flows. This module integrates with PingLogger for consistent event tracking across authentication journeys.
+DESC
+  s.homepage          = 'https://github.com/ForgeRock/ping-ios-sdk'
+  s.documentation_url = 'https://github.com/ForgeRock/ping-ios-sdk/blob/master/Browser/README.md'
+  s.license           = { :type => 'MIT', :file => 'LICENSE' }
+  s.author            = 'Ping Identity'
 
-  s.source           = {
+  s.source            = {
       :git => 'https://github.com/ForgeRock/ping-ios-sdk.git',
       :tag => s.version.to_s
   }
@@ -33,6 +34,6 @@ Pod::Spec.new do |s|
     'Browser' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingLogger', '~> 1.2.0'
+  s.ios.dependency 'PingLogger', '~> 1.2.0-beta1'
     
 end

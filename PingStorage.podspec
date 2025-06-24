@@ -8,14 +8,17 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingStorage'
-  s.version          = '1.2.0'
-  s.summary          = 'PingStorage SDK for iOS'
+  s.version          = '1.2.0-beta1'
+  s.summary          = 'Lightweight storage SDK for secure and modular data handling in Ping Identity iOS apps'
   s.description      = <<-DESC
-  The PingStorage SDK provides a flexible storage interface and a set of common storage solutions for the Ping SDKs.
-                       DESC
-  s.homepage         = 'https://www.pingidentity.com/'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = 'Ping Identity'
+PingStorage provides a flexible, modular interface for secure data storage on iOS.
+It includes implementations such as in-memory, secure storage using Keychain, and file-based storage.
+Designed to be used with Ping Identity SDKs, PingStorage can also be integrated into standalone iOS apps.
+DESC
+  s.documentation_url = 'https://github.com/ForgeRock/ping-ios-sdk/blob/master/Storage/README.md'
+  s.homepage          = 'https://github.com/ForgeRock/ping-ios-sdk'
+  s.license           = { :type => 'MIT', :file => 'LICENSE' }
+  s.author            = 'Ping Identity'
 
   s.source           = {
       :git => 'https://github.com/ForgeRock/ping-ios-sdk.git',

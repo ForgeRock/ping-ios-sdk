@@ -8,14 +8,15 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingExternalIdP'
-  s.version          = '1.2.0'
-  s.summary          = 'PingExternalIdP module for the Ping iOS SDK'
+  s.version          = '1.2.0-beta1'
+  s.summary          = 'Authentication module for external identity providers using Ping Identity iOS SDK'
   s.description      = <<-DESC
-  The PingExternalIdP module for the Ping iOS SDK is a library for Authentication with external IDPs when using the Ping iOS SDK.
-                       DESC
-  s.homepage         = 'https://www.pingidentity.com/'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = 'Ping Identity'
+PingExternalIdP extends the Ping Identity iOS SDK to support authentication via external identity providers (IdPs) such as Google, Facebook, and enterprise SSO systems. It integrates with PingDavinci to provide a consistent authentication flow and uses PingBrowser for secure web-based redirection and consent handling.
+DESC
+  s.homepage          = 'https://github.com/ForgeRock/ping-ios-sdk'
+  s.documentation_url = 'https://github.com/ForgeRock/ping-ios-sdk/tree/develop/ExternalIdP/README.md'
+  s.license           = { :type => 'MIT', :file => 'LICENSE' }
+  s.author            = 'Ping Identity'
 
   s.source           = {
       :git => 'https://github.com/ForgeRock/ping-ios-sdk.git',
@@ -33,7 +34,7 @@ Pod::Spec.new do |s|
     'External-idp' => [base_dir + '/*.xcprivacy']
   }
 
-  s.ios.dependency 'PingDavinci', '~> 1.2.0'
-  s.ios.dependency 'PingBrowser', '~> 1.2.0'
+  s.ios.dependency 'PingDavinci', '~> 1.2.0-beta1'
+  s.ios.dependency 'PingBrowser', '~> 1.2.0-beta1'
     
 end

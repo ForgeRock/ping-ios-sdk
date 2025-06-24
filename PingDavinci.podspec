@@ -8,17 +8,16 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingDavinci'
-  s.version          = '1.2.0'
-  s.summary          = 'PingDavinci SDK for iOS'
-  s.description      = <<-DESC
-  The PingDavinci SDK is a powerful and flexible library for Authentication and Authorization. It is designed to be easy to use and extensible. It provides a simple API for navigating the authentication flow and handling the various states that can
-occur during the authentication process.
-                       DESC
-  s.homepage         = 'https://www.pingidentity.com/'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = 'Ping Identity'
-
-  s.source           = {
+  s.version          = '1.2.0-beta1'
+  s.summary          = 'iOS SDK for building authentication flows using PingOne DaVinci'
+  s.description = <<-DESC
+PingDavinci is a powerful iOS SDK that enables developers to build and manage flexible authentication and authorization flows using PingOne DaVinci and ForgeRock Journeys. It offers a simple state-based API to navigate authentication steps, handle user interactions, and manage session states securely. Designed to integrate with PingOidc and other Ping SDKs, it provides an extensible architecture for modern mobile identity experiences.
+DESC
+  s.homepage          = 'https://github.com/ForgeRock/ping-ios-sdk'
+  s.documentation_url = 'https://github.com/ForgeRock/ping-ios-sdk/blob/main/Davinci/README.md'
+  s.license           = { :type => 'MIT', :file => 'LICENSE' }
+  s.author            = 'Ping Identity'
+  s.source            = {
       :git => 'https://github.com/ForgeRock/ping-ios-sdk.git',
       :tag => s.version.to_s
   }
@@ -34,6 +33,6 @@ occur during the authentication process.
     'Davinci' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingOidc', '~> 1.2.0'
+  s.ios.dependency 'PingOidc', '~> 1.2.0-beta1'
     
 end

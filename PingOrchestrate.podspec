@@ -8,14 +8,17 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingOrchestrate'
-  s.version          = '1.2.0'
-  s.summary          = 'PingOrchestrate SDK for iOS'
+  s.version          = '1.2.0-beta1'
+  s.summary          = 'SDK for orchestrating authentication journeys using PingOne DaVinci and ForgeRock on iOS'
   s.description      = <<-DESC
-  The PingOrchestrate SDK provides a simple way to build a state machine for ForgeRock Journey and PingOne DaVinci.
-                       DESC
-  s.homepage         = 'https://www.pingidentity.com/'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = 'Ping Identity'
+PingOrchestrate simplifies the creation of authentication flows by providing a state-machine-based orchestration layer 
+compatible with PingOne DaVinci and ForgeRock Journey. Designed for seamless integration with PingLogger and PingStorage,
+this SDK enables building complex, adaptive identity workflows in native iOS apps.
+DESC
+  s.documentation_url = 'https://github.com/ForgeRock/ping-ios-sdk/blob/master/Orchestrate/README.md'
+  s.homepage          = 'https://github.com/ForgeRock/ping-ios-sdk'
+  s.license           = { :type => 'MIT', :file => 'LICENSE' }
+  s.author            = 'Ping Identity'
 
   s.source           = {
       :git => 'https://github.com/ForgeRock/ping-ios-sdk.git',
@@ -33,6 +36,6 @@ Pod::Spec.new do |s|
     'Orchestrate' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingLogger', '~> 1.2.0'
-  s.ios.dependency 'PingStorage', '~> 1.2.0'
+  s.ios.dependency 'PingLogger', '~> 1.2.0-beta1'
+  s.ios.dependency 'PingStorage', '~> 1.2.0-beta1'
 end

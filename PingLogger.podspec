@@ -8,14 +8,17 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingLogger'
-  s.version          = '1.2.0'
-  s.summary          = 'PingLogger SDK for iOS'
+  s.version          = '1.2.0-beta1'
+  s.summary          = 'Versatile logging SDK for Ping Identity mobile frameworks on iOS'
   s.description      = <<-DESC
-  The PingLogger SDK provides a versatile logging interface and a set of common loggers for the Ping SDKs.
-                       DESC
-  s.homepage         = 'https://www.pingidentity.com/'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = 'Ping Identity'
+PingLogger is a lightweight, modular logging SDK for iOS that provides structured logging,
+extensible logger types, and support for logging to multiple destinations. It is used
+across Ping Identity mobile SDKs and can be integrated into custom iOS apps.
+DESC
+  s.documentation_url = 'https://github.com/ForgeRock/ping-ios-sdk/blob/master/Logger/README.md'
+  s.homepage          = 'https://github.com/ForgeRock/ping-ios-sdk'
+  s.license           = { :type => 'MIT', :file => 'LICENSE' }
+  s.author            = 'Ping Identity'
 
   s.source           = {
       :git => 'https://github.com/ForgeRock/ping-ios-sdk.git',

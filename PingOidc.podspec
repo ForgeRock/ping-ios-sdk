@@ -8,14 +8,16 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingOidc'
-  s.version          = '1.2.0'
-  s.summary          = 'PingOidc SDK for iOS'
+  s.version          = '1.2.0-beta1'
+  s.summary          = 'OIDC client SDK for integrating PingOne and ForgeRock authentication on iOS'
   s.description      = <<-DESC
-  The PingOidc SDK provides OIDC client for PingOne and ForgeRock platform.
-                       DESC
-  s.homepage         = 'https://www.pingidentity.com/'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = 'Ping Identity'
+PingOidc provides a complete OpenID Connect (OIDC) client for authenticating users via the PingOne and ForgeRock identity platforms.
+It supports token handling, secure redirect flows, and PKCE, and integrates with PingOrchestrate to enable full authentication journeys in native iOS apps.
+DESC
+  s.documentation_url = 'https://github.com/ForgeRock/ping-ios-sdk/blob/master/Oidc/README.md'
+  s.homepage          = 'https://github.com/ForgeRock/ping-ios-sdk'
+  s.license           = { :type => 'MIT', :file => 'LICENSE' }
+  s.author            = 'Ping Identity'
 
   s.source           = {
       :git => 'https://github.com/ForgeRock/ping-ios-sdk.git',
@@ -33,5 +35,5 @@ Pod::Spec.new do |s|
     'Oidc' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingOrchestrate', '~> 1.2.0'
+  s.ios.dependency 'PingOrchestrate', '~> 1.2.0-beta1'
 end
