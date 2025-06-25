@@ -77,26 +77,16 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
         }
         
         //TODO: Provide here the Server configuration. Add the PingOne server Discovery Endpoint and the OAuth2.0 client details. Or the AIC server URL and Realm, server Discovery Endpoint and the OAuth2.0 client details.
-//        return ConfigurationViewModel(
-//            clientId: "021b83ce-a9b1-4ad4-8c1d-79e576eeab76",
-//            scopes: ["openid", "email", "address", "phone", "profile"], // Alter the scopes based on your clients configuration
-//            redirectUri: "org.forgerock.demo://oauth2redirect",
-//            signOutUri: "org.forgerock.demo://oauth2redirect",
-//            discoveryEndpoint: "https://auth.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/as/.well-known/openid-configuration",
-//            environment: "PingOne",
-//            cookieName: nil
-//        )
-        
         return ConfigurationViewModel(
-            clientId: "iosClient",
-            scopes: ["openid", "email", "address"], // Alter the scopes based on your clients configuration
-            redirectUri: "frauth://com.forgerock.ios.frexample",
-            signOutUri: "",
-            discoveryEndpoint: "https://openam-bafaloukas.forgeblocks.com/am/oauth2/alpha/.well-known/openid-configuration",
-            environment: "AIC",
-            cookieName: "386c0d288cac4b9",
-            serverUrl: "https://openam-bafaloukas.forgeblocks.com/am",
-            realm: "alpha"
+            clientId: <#"Client ID"#>,
+            scopes: [<#"scope1"#>, <#"scope2"#>, <#"scope3"#>], // Alter the scopes based on your clients configuration
+            redirectUri: <#"Redirect URI"#>,
+            signOutUri: <#"Redirect URI"#>,
+            discoveryEndpoint: <#"Discovery Endpoint"#>,
+            environment: "PingOne", // or "AIC" for the AIC server
+            cookieName: <#"Cookie Name"#>, // Optional, can be nil if not used
+            serverUrl: <#"Server URL"#>, // Optional, can be nil if not used
+            realm: <#"Realm"#> // Optional, can be nil if not used
         )
     }
 }
