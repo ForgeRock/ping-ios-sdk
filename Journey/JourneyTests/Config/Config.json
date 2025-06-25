@@ -1,0 +1,19 @@
+{
+    "username" : "e2euser@example.com",
+    "userFname" : "E2E",
+    "userLname" : "iOS",
+    "password" : "Demo1234#1",
+    "newPassword" : "New1234#1",
+    "verificationCode" : "1234",
+    
+    "clientId": "iosClient",
+    "scopes": "openid email address",
+    "redirectUri": "frauth://com.forgerock.ios.frexample",
+    "signOutUri": "",
+    "discoveryEndpoint": "https://openam-bafaloukas.forgeblocks.com/am/oauth2/alpha/.well-known/openid-configuration",
+    "environment": "AIC",
+    "cookieName": "386c0d288cac4b9",
+    "serverUrl": "https://openam-bafaloukas.forgeblocks.com/am",
+    "realm": "alpha",
+    "acrValues" : "79220c5e3a217a3d9b6739585cb160aa"
+}
