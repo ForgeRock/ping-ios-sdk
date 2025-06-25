@@ -12,6 +12,9 @@ import Foundation
 import PingOidc
 import PingOrchestrate
 
+/// An agent that handles the creation of an authentication session.
+/// This agent is used to initiate the authentication process for a user.
+/// It implements the `Agent` protocol and provides methods to configure the agent, end the session, and authorize the user.
 internal final class CreateAgent: Agent, Sendable {
     typealias T = Void
     let cookieName: String
@@ -19,21 +22,32 @@ internal final class CreateAgent: Agent, Sendable {
     let pkce: Pkce?
     nonisolated(unsafe) var used = false
     
+    /// Initializes a new `CreateAgent` instance.
+    /// - Parameters:
+    /// - session: The session to use for authentication.
+    /// - pkce: The PKCE (Proof Key for Code Exchange) object, if available.
+    /// - cookieName: The name of the cookie to use for the session.
     init(session: Session, pkce: Pkce?, cookieName: String) {
         self.session = session
         self.pkce = pkce
         self.cookieName = cookieName
     }
     
+    /// Provides an empty configuration for the `CreateAgent`.
     func config() -> () -> T {
         return {}
     }
     
+    /// Ends the session with the OpenID Connect provider.
     func endSession(oidcConfig: OidcConfig<T>, idToken: String) async throws -> Bool {
         // Since we don't have the Session token, let DaVinci handle the sign-off
         return true
     }
     
+    /// Authorizes the agent with the OpenID Connect provider.
+    /// Before returning the `AuthCode`, the agent should verify the response from the OpenID Connect provider.
+    /// - Parameter oidcConfig: The configuration for the OpenID Connect client.
+    /// - Returns: `AuthCode` instance
     func authorize(oidcConfig: OidcConfig<T>) async throws -> AuthCode {
         // We don't get the state; The state may not be returned since this is primarily for
         // CSRF in redirect-based interactions, and pi.flow doesn't use redirect.
@@ -62,9 +76,6 @@ internal final class CreateAgent: Agent, Sendable {
             JourneyConstants.state: pkce.state,
             JourneyConstants.code_challenge: pkce.codeChallenge,
             JourneyConstants.code_challenge_method: pkce.codeChallengeMethod
-            // Optional extras:
-            // "csrf": session.value,
-            // "decision": "allow"
         ]
 
         let request = Request()
@@ -90,11 +101,15 @@ internal final class CreateAgent: Agent, Sendable {
         used = true
         return session.authCode(pkce: pkce, code: authCode)
     }
-    
 }
 
 
 extension Session {
+    /// Creates an `AuthCode` from the session and PKCE parameters.
+    /// - Parameters:
+    /// - pkce: The PKCE parameters used for the authorization code exchange.
+    /// - code: The authorization code received from the OpenID Connect provider.
+    /// - Returns: An `AuthCode` instance containing the code and code verifier.
     func authCode(pkce: Pkce?, code: String) -> AuthCode {
         // parse the response and return the auth code
         return AuthCode(code: code, codeVerifier: pkce?.codeVerifier)

@@ -1,4 +1,4 @@
-// 
+//
 //  Journey.swift
 //  Journey
 //
@@ -27,6 +27,9 @@ public class JourneyConfig: WorkflowConfig, @unchecked Sendable {
 
 // Define the Journey class
 public extension Journey {
+    /// Method to create a Journey instance.
+    /// - Parameter block: The configuration block.
+    /// - Returns: The Journey instance.
     static func createJourney(block: @Sendable (JourneyConfig) -> Void = {_ in }) -> Journey {
         let config = JourneyConfig()
         config.logger = LogManager.standard
@@ -51,6 +54,11 @@ public extension Journey {
         return Journey(config: config)
     }
     
+    /// Starts the journey with the provided login and configuration block.
+    /// - Parameters:
+    /// - login: The login identifier to start the journey.
+    /// - block: A block to configure the `JourneyConfig`.
+    /// - Returns: A `Node` representing the start of the journey.
     func start(_ login: String, block: @Sendable (JourneyConfig) -> Void = {_ in }) async -> Node {
         let journeyConfig = self.config as! JourneyConfig
         block(journeyConfig)
@@ -63,6 +71,46 @@ public extension Journey {
         } catch {
             return FailureNode(cause: error)
         }
+    }
+    
+    /// Journey sign off method.
+    /// This method executes the sign-off process by invoking all registered sign-off handlers.
+    ///  - Returns: A `Result` indicating success or failure of the sign-off process.
+    func signOff() async -> Result<Void, Error> {
+        self.config.logger.i("SignOff...")
+        do {
+            try await initialize()
+            
+            var requestsArray: [Request] = []
+            
+            for handler in signOffHandlers {
+                let request = Request()
+                let updatedRequest = try await handler(request)
+                requestsArray.append(updatedRequest)
+            }
+            
+            if !requestsArray.isEmpty {
+                for request in requestsArray {
+                    _ = try await send(request)
+                }
+            } else {
+                _ = try await send(Request())
+            }
+            return .success(())
+        }
+        catch {
+            config.logger.e("Error during sign off", error: error)
+            return .failure(error)
+        }
+    }
+    
+    /// Sends a request and returns the response.
+    /// - Parameter request: The request to be sent.
+    /// - Returns: The response received.
+    private func send(_ request: Request) async throws -> Response {
+        // semaphore
+        let (data, urlResponse) = try await config.httpClient.sendRequest(request: request)
+        return Response(data: data, response: urlResponse)
     }
 }
 

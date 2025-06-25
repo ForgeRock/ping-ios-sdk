@@ -10,7 +10,7 @@
 
 
 import XCTest
-@testable import Journey
+@testable import PingJourney
 
 final class JourneyTests: XCTestCase {
 

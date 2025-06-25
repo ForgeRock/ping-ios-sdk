@@ -10,17 +10,21 @@
 
 import Foundation
 
+/// A callback that collects a password input from the user.
 public class PasswordCallback: AbstractCallback<String>, ObservableObject,  @unchecked Sendable {
-
+    /// The prompt message displayed to the user.
     private(set) public var prompt: String = ""
+    /// The password input collected from the user.
     public var password: String = ""
 
+    /// Initializes a new instance of `PasswordCallback` with the provided JSON input.
     public override func initValue(name: String, value: Any) {
         if name == "prompt", let stringValue = value as? String {
             self.prompt = stringValue
         }
     }
-
+    
+    /// Initializes a new instance of `PasswordCallback` with the given JSON input.
     public override func payload() -> [String: Any] {
         return input(password)
     }

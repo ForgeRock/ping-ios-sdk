@@ -22,31 +22,32 @@ public class SessionModule {
         let config: SessionConfig = setup.config
         let journeyFlow: Journey = setup.workflow
         
+        /// Set the session config in the shared context
         setup.initialize { @Sendable in
             journeyFlow.sharedContext.set(key: SharedContext.Keys.sessionConfigKey, value: config)
         }
-        
+        /// Start handler for the session module
         setup.start { @Sendable context, request in
             if let token = await journeyFlow.session(), let journeyConfig = journeyFlow.config as? JourneyConfig {
                 request.header(name: journeyConfig.cookie, value: token.value)
             }
             return request
         }
-        
+        /// Next handler for the session module
         setup.next { @Sendable context, _, request in
             if let token = await journeyFlow.session(), let journeyConfig = journeyFlow.config as? JourneyConfig {
                 request.header(name: journeyConfig.cookie, value: token.value)
             }
             return request
         }
-        
+        /// Success handler for the session module
         setup.success { @Sendable context, request in
             if !request.session.value.isEmpty, let token = request.session as? SSOTokenImpl {
                 try await config.storage.save(item: token)
             }
             return request
         }
-        
+        /// Sign off handler for the session module
         setup.signOff { @Sendable request in
             if let ssoToken = await journeyFlow.session(), let journeyConfig = journeyFlow.config as? JourneyConfig {
                 request.url("\(journeyConfig.serverUrl ?? "")/json/realms/\(journeyConfig.realm)/sessions")

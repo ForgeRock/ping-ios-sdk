@@ -58,7 +58,7 @@ public class Workflow: @unchecked Sendable {
     internal var responseHandlers = [@Sendable (FlowContext, Response) async throws -> Void]()
     internal var nodeHandlers = [@Sendable (FlowContext, Node) async throws -> Node]()
     internal var successHandlers = [@Sendable (FlowContext, SuccessNode) async throws -> SuccessNode]()
-    internal var signOffHandlers = [@Sendable (Request) async throws -> Request]()
+    public var signOffHandlers = [@Sendable (Request) async throws -> Request]()
     // Transform response to Node, we can only have one transform
     internal var transformHandler: @Sendable (FlowContext, Response) async throws -> Node = { _, _ in EmptyNode() }
     
@@ -194,22 +194,21 @@ public class Workflow: @unchecked Sendable {
     /// Signs off the workflow.
     /// - Returns: A Result indicating the success or failure of the sign off.
     public func signOff() async -> Result<Void, Error> {
-        self.config.logger.i("SignOff...")
-        do {
-            try await initialize()
-            var request = Request()
-            for handler in signOffHandlers {
-                request = try await handler(request)
+            self.config.logger.i("SignOff...")
+            do {
+                try await initialize()
+                var request = Request()
+                for handler in signOffHandlers {
+                    request = try await handler(request)
+                }
                 _ = try await send(request)
+                return .success(())
             }
-            
-            return .success(())
+            catch {
+                config.logger.e("Error during sign off", error: error)
+                return .failure(error)
+            }
         }
-        catch {
-            config.logger.e("Error during sign off", error: error)
-            return .failure(error)
-        }
-    }
     
     /// Processes the response.
     /// - Parameters:
@@ -219,5 +218,20 @@ public class Workflow: @unchecked Sendable {
         for handler in responseHandlers {
             try await handler(context, response)
         }
+    }
+}
+
+extension Request: Comparable {
+    
+    public static func == (lhs: Request, rhs: Request) -> Bool {
+        lhs.urlRequest.url?.absoluteString == rhs.urlRequest.url?.absoluteString
+    }
+
+    public static func < (lhs: Request, rhs: Request) -> Bool {
+        guard let lhsURL = lhs.urlRequest.url?.absoluteString,
+              let rhsURL = rhs.urlRequest.url?.absoluteString else {
+            return false
+        }
+        return lhsURL < rhsURL
     }
 }

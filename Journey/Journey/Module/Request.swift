@@ -15,7 +15,12 @@ import Foundation
 import PingOrchestrate
 
 extension Request {
-    
+    /// Initializes a request to the authentication endpoint with the provided parameters.
+    /// - Parameters:
+    ///   - authIndexValue: The value for the authentication index, typically a service name.
+    ///   - authIndexType: The type of the authentication index, defaulting to "service".
+    ///   - journeyConfig: The configuration for the journey, including server URL and realm.
+    /// - Returns: A configured request ready to be sent.
     internal func populateRequest(
         authIndexValue: String,
         authIndexType: String = "service",

@@ -108,6 +108,13 @@
         "identifier" : "ECA7A2EF2DC251870011E59C",
         "name" : "External-idp-GoogleTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Journey\/Journey.xcodeproj",
+        "identifier" : "EC727A2C2E019243005D9E28",
+        "name" : "JourneyTests"
+      }
     }
   ],
   "version" : 1

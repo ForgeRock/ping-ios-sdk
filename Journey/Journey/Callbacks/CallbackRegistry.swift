@@ -19,28 +19,28 @@ public actor CallbackRegistry: @unchecked Sendable {
     /// A dictionary to hold the collector creation functions.
     var callbacks: [String: any Callback.Type] = [:]
     
-    /// The shared instance of the CollectorFactory.
+    /// The shared instance of the CallbackRegistry.
     public static let shared = CallbackRegistry()
     
     init() { }
     
-    /// Registers the default DaVinci Collectors.
+    /// Registers the default Journey Callbacks.
     public func registerDefaultCallbacks() {
         register(type: JourneyConstants.nameCallback, callback: NameCallback.self)
         register(type: JourneyConstants.passwordCallback, callback: PasswordCallback.self)
     }
     
-    /// Registers a new type of Collector.
+    /// Registers a new type of Callback.
     /// - Parameters:
-    ///   - type: The type of the Collector.
-    ///   - block: A function that creates a new instance of the Collector.
+    ///   - type: The type of the Callback.
+    ///   - block: A function that creates a new instance of the Callback.
     public func register(type: String, callback: any Callback.Type) {
         callbacks[type] = callback
     }
     
-    /// Creates a list of Collector instances from an array of dictionaries.
-    /// Each dictionary should have a "type" field that matches a registered Collector type.
-    /// - Parameter array: The array of dictionaries to create the Collectors from.
+    /// Creates a list of Callback instances from an array of dictionaries.
+    /// Each dictionary should have a "type" field that matches a registered Callback type.
+    /// - Parameter array: The array of dictionaries to create the Callbacks from.
     /// - Returns: A list of Collector instances.
     public func callback(from array: [[String: Any]]) -> Callbacks {
         var list = Callbacks()
@@ -62,7 +62,7 @@ public actor CallbackRegistry: @unchecked Sendable {
         }
     }
     
-    /// Resets the CollectorFactory by clearing all registered collectors.
+    /// Resets the CallbackRegistry by clearing all registered collectors.
     public func reset() {
         callbacks.removeAll()
     }

@@ -10,10 +10,13 @@
 
 import Foundation
 
+/// A base class for callbacks that provides a JSON payload and methods to manipulate input values.
+/// This class is designed to be subclassed for specific callback implementations.
 open class AbstractCallback<T>: Callback, @unchecked Sendable {
-    
+    /// The JSON payload for the callback, containing input and output data.
     public var json: [String: Any] = [:]
     
+    /// Initializes a new instance of `AbstractCallback` with the provided JSON.
     public required init(with json: [String: Any]) {
         self.json = json
         if let output = json["output"] as? [[String: Any]] {

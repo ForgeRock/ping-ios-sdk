@@ -12,6 +12,10 @@ import PingOidc
 import PingOrchestrate
 
 extension Journey {
+    /// Retrieves the current user associated with the journey.
+    /// This method checks if a user is already cached in the shared context.
+    /// If not, it attempts to initialize the journey and retrieve the user from the session.
+    /// - Returns: An optional User instance if available, otherwise nil.
     public func journeyUser() async -> User? {
         try? await initialize()
         
@@ -19,7 +23,7 @@ extension Journey {
             return cachedUser
         }
         
-        if await hasCookies() {
+        if ((await session()) != nil) {
             if let oidcClientConfig = self.sharedContext.get(key: SharedContext.Keys.oidcClientConfigKey) as? OidcClientConfig {
                 return await prepareUser(journey: self, user: OidcUser(config: oidcClientConfig))
             }
@@ -27,6 +31,13 @@ extension Journey {
         return nil
     }
     
+    /// Prepares a UserDelegate for the given journey and user.
+    /// This method creates a UserDelegate instance and caches it in the shared context.
+    /// - Parameters:
+    /// - journey: The Journey instance.
+    /// - user: The User instance to be prepared.
+    /// - session: The Session instance, defaulting to an empty session.
+    /// - Returns: A UserDelegate instance that wraps the provided user and session.
     func prepareUser(
         journey: Journey,
         user: User,
@@ -72,18 +83,22 @@ struct UserDelegate: User, Session, Sendable {
         _ = await journey.signOff()
     }
     
+    /// User token retrieval method.
     func token() async -> Result<Token, OidcError> {
         return await user.token()
     }
     
+    /// Method to revoke the user's token.
     func revoke() async {
         await user.revoke()
     }
     
+    /// Method to retrieve user information.
     func userinfo(cache: Bool) async -> Result<UserInfo, OidcError> {
         await user.userinfo(cache: cache)
     }
     
+    /// Getter to retrieve the session value.
     var value: String {
         get {
             return session.value

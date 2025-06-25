@@ -10,6 +10,11 @@
 
 import PingOrchestrate
 
+/// Callback protocol for actions that can be used in a journey.
+/// It conforms to `Action`, `Identifiable`, and `Sendable` protocols.
+/// It defines an associated type `T` and requires an initializer that takes a JSON dictionary.
+/// It also requires a method to return the payload as a dictionary.
+/// The `id` property is used to uniquely identify the callback.
 public protocol Callback<T>: Action, Identifiable, Sendable {
     associatedtype T
     init(with json: [String: Any])
@@ -27,11 +32,23 @@ extension ContinueNode {
     }
 }
 
+/// A class representing a Journey Continue Node.
+/// It inherits from `ContinueNode` and conforms to `Sendable`.
+/// It is used to continue a journey by sending a request with the provided actions.
 final class JourneyContinueNode: ContinueNode, @unchecked Sendable {
+    /// The key used for the authentication ID in the request payload.
     private let authIdKey = JourneyConstants.authId
+    /// A list of callbacks that will be executed in this journey step.
     private let callbacksList: [any Callback]
+    /// The original JSON input that was used to initialize this node.
     private let originalJson: [String: Any]
 
+    /// Initializes a new instance of `JourneyContinueNode`.
+    /// - Parameters:
+    /// - context: The flow context for the journey.
+    /// - workflow: The workflow associated with the journey.
+    /// - input: The input data for the journey, which includes the authentication ID.
+    /// - actions: The list of callbacks to be executed in this journey step.
     init(context: FlowContext, workflow: Workflow, input: [String: Any], actions: [any Callback]) {
         self.callbacksList = actions
         self.originalJson = input

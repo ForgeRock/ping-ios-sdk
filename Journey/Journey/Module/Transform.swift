@@ -15,7 +15,7 @@ public class NodeTransformModule: @unchecked Sendable {
     /// Initializes a new instance of `SessionModule`.
     public init() {}
     
-    /// The module configuration for transforming the response from DaVinci to `Node`.
+    /// The module configuration for transforming the response from Journey to `Node`.
     public static let config: Module<Void> = Module.of(setup: { setup in
         setup.transform { @Sendable flowContext, response in
             let status = response.status()
@@ -47,6 +47,12 @@ public class NodeTransformModule: @unchecked Sendable {
         }
     })
     
+    /// Transforms the response JSON into a `Node` object.
+    /// - Parameters:
+    /// - context: The flow context containing the current state of the journey.
+    /// - journey: The current journey being processed.
+    /// - json: The JSON response data to be transformed.
+    /// - Returns: A `Node` representing the transformed response.
     private static func transform(context: FlowContext, journey: Journey, json: [String: Any]) async -> Node {
         var callbacks: Callbacks = []
         

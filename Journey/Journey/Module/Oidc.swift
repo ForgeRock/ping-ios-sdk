@@ -11,7 +11,7 @@
 import PingOidc
 import PingOrchestrate
 
-/// A module that integrates OIDC capabilities into the DaVinci workflow.
+/// A module that integrates OIDC capabilities into the Journey workflow.
 public class OidcModule {
     
     /// Initializes a new instance of `OidcModule`.
@@ -74,8 +74,4 @@ extension SharedContext.Keys {
     
     /// The key used to store the OIDC client configuration in the shared context.
     public static let oidcClientConfigKey = "com.pingidentity.journey.OidcClientConfig"
-}
-
-public extension OidcClientConfig {
-    
 }

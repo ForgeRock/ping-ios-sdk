@@ -26,7 +26,7 @@ public class CookieModule {
             setup.context.set(key: SharedContext.Keys.cookieStorage, value: setup.config.cookieStorage)
         }
         
-        setup.start { context, request in
+        setup.start { @Sendable context, request in
             let cookies = try? await setup.config.cookieStorage.get()
             if let url = request.urlRequest.url, let cookies = cookies {
                 await CookieModule.inject(url: url,
@@ -37,7 +37,7 @@ public class CookieModule {
             return request
         }
         
-        setup.next { context, _, request in
+        setup.next { @Sendable context, _, request in
             if let url = request.urlRequest.url {
                 let allCookies = await setup.config.inMemoryStorage.cookies(for: url)
                 if let allCookies = allCookies {
@@ -50,7 +50,7 @@ public class CookieModule {
             return request
         }
         
-        setup.response { context, response in
+        setup.response { @Sendable context, response in
             let cookies = response.getCookies()
             if cookies.count > 0, let url = response.response.url {
                 await CookieModule.parseResponseForCookie(context: context,
@@ -61,7 +61,7 @@ public class CookieModule {
             }
         }
         
-        setup.signOff { request in
+        setup.signOff { @Sendable request in
             if let url = request.urlRequest.url {
                 if let cookies = try? await setup.config.cookieStorage.get() {
                     await CookieModule.inject(url: url, cookies: cookies,  inMemoryStorage: setup.config.inMemoryStorage, request: request)
