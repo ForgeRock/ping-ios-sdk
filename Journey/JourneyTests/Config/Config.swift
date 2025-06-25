@@ -1,6 +1,6 @@
 //
 //  Config.swift
-//  Davinci
+//  Journey
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //

@@ -220,18 +220,3 @@ public class Workflow: @unchecked Sendable {
         }
     }
 }
-
-extension Request: Comparable {
-    
-    public static func == (lhs: Request, rhs: Request) -> Bool {
-        lhs.urlRequest.url?.absoluteString == rhs.urlRequest.url?.absoluteString
-    }
-
-    public static func < (lhs: Request, rhs: Request) -> Bool {
-        guard let lhsURL = lhs.urlRequest.url?.absoluteString,
-              let rhsURL = rhs.urlRequest.url?.absoluteString else {
-            return false
-        }
-        return lhsURL < rhsURL
-    }
-}
