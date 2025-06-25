@@ -39,7 +39,7 @@ struct JourneyView: View {
                         }
                     case let failureNode as FailureNode:
                         ErrorView(message: failureNode.cause.localizedDescription)
-                    case let successNode as SuccessNode:
+                    case is SuccessNode:
                         // Authentication successful, retrieve the session
                         VStack{}.onAppear {
                             path.removeLast()

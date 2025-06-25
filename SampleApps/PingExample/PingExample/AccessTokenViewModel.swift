@@ -20,7 +20,7 @@ import PingOidc
 class AccessTokenViewModel: ObservableObject {
     /// Published property to hold the current access token.
     /// - Updates are published to the UI whenever the value changes.
-    @Published var accessToken: String = ""
+    @Published var token: String = ""
     
     /// Initializes the `TokenViewModel` and fetches the access token asynchronously.
     init() {
@@ -41,14 +41,14 @@ class AccessTokenViewModel: ObservableObject {
         }
 
         switch token {
-        case .success(let accessToken):
+        case .success(let token):
             await MainActor.run {
-                self.accessToken = String(describing: accessToken)
+                self.token = String(describing: token)
             }
-            LogManager.standard.i("AccessToken: \(self.accessToken)")
+            LogManager.standard.i("AccessToken: \(self.token)")
         case .failure(let error):
             await MainActor.run {
-                self.accessToken = "Error: \(error.localizedDescription)"
+                self.token = "Error: \(error.localizedDescription)"
             }
             LogManager.standard.e("", error: error)
         case .none:

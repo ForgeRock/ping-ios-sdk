@@ -52,7 +52,7 @@ class JourneyViewModel: ObservableObject {
     /// Published property to track whether the view is currently loading.
     @Published public var isLoading: Bool = false
     
-    /// Initializes the view model and starts the DaVinci orchestration process.
+    /// Initializes the view model and starts the Journey orchestration process.
     init() {
         Task {
             await startJourney()

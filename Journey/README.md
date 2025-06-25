@@ -139,10 +139,10 @@ let journey = Journey.createJourney { config in
               config.cookie = "386c0d288Bac4b9"
           }
 
-var node = await journey.start("myLogin") {
-    $0.forceAuth = true
-    $0.noSession = true
-} // Initiate the authentication journey
+let node = await journey.start("Login") {
+        $0.forceAuth = false
+        $0.noSession = false
+    } // Initiate the authentication journey
 
 // Determine the type of the current Node
 switch node {
@@ -211,20 +211,22 @@ The following Callback will be supported in the Core Journey Module:
 Here's how to access and populate the callbacks:
 
 ```swift
-node.callbacks.forEach { callback in
-    switch callback {
-    case let nameCallback as NameCallback:
-        nameCallback.name = "Your Username"
-    case let passwordCallback as PasswordCallback:
-        passwordCallback.password = "Your Password"
-    // Handle other callback types as they are introduced
-    default:
-        break
-    }
+if let current = node as? ContinueNode {
+      current.callbacks.forEach { callback in
+          switch callback {
+           case let nameCallback as NameCallback:
+              nameCallback.name = "Your Username"
+          case let passwordCallback as PasswordCallback:
+              passwordCallback.password = "Your Password"
+              // Handle other callback types as they are introduced
+          default:
+              break
+          }
+     }
 }
 
 // Proceed to the next Node with the provided input
-let nextNode = node.next()
+let nextNode = current.next()
 ```
 
 Each specific callback type provides its own properties for accessing labels and setting values.
@@ -298,34 +300,74 @@ UI state.
 #### ViewModel
 
 ```swift
-class AuthViewModel: ObservableObject {
-    @Published var state: Node = Empty()
-    private var journey: Journey!
-
-    func initializeJourney() {
-        journey = Journey {
-            // Configure your Journey instance here
-            serverUrl = "YOUR_SERVER_URL"
-            // ... other configurations
+@MainActor
+class JourneyViewModel: ObservableObject {
+    /// Published property that holds the current state node data.
+    @Published public var state: JourneyState = JourneyState()
+    /// Published property to track whether the view is currently loading.
+    @Published public var isLoading: Bool = false
+    
+    var journey: Journey
+    
+    /// Initializes the view model and starts the Journey orchestration process.
+    init() {
+        Task {
+            await startJourney()
         }
     }
-
-    func startJourney(flowName: String = "login") {
-        Task {
-            let nextNode = journey.start(flowName)
-            DispatchQueue.main.async {
-                self.state = nextNode
+    
+    public func initializeJourney() {
+        journey = Journey.createJourney { config in
+            let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
+            config.serverUrl = currentConfig?.serverUrl
+            config.realm = currentConfig?.realm ?? "root"
+            config.cookie = currentConfig?.cookieName ?? ""
+            config.module(PingJourney.OidcModule.config) { oidcValue in
+                oidcValue.clientId = currentConfig?.clientId ?? ""
+                oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
+                oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
+                oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
             }
         }
     }
-
-    func next(node: ContinueNode, input: [String: String] = [:]) {
-        Task {
-            let nextNode = node.next(input)
-            DispatchQueue.main.async {
-                self.state = nextNode
+    
+    /// Starts the Journey orchestration process.
+    /// - Sets the initial node and updates the `data` property with the starting node.
+    public func startJourney() async {
+        
+        await MainActor.run {
+            isLoading = true
+        }
+        
+        let next = await journey.start("Login") {
+            $0.forceAuth = false
+            $0.noSession = false
+        }
+        
+        await MainActor.run {
+            self.state = JourneyState(node: next)
+            isLoading = false
+        }
+    }
+    
+    /// Advances to the next node in the orchestration process.
+    /// - Parameter node: The current node to progress from.
+    public func next(node: Node) async {
+        await MainActor.run {
+            isLoading = true
+        }
+        if let current = node as? ContinueNode {
+            // Retrieves the next node in the flow.
+            let next = await current.next()
+            await MainActor.run {
+                self.state = JourneyState(node: next)
+                isLoading = false
             }
         }
+    }
+    
+    public func refresh() {
+        state = JourneyState(node: state.node)
     }
 }
 ```
@@ -335,36 +377,42 @@ class AuthViewModel: ObservableObject {
 ```swift
 import SwiftUI
 
-struct AuthScreen: View {
-    @StateObject private var viewModel = AuthViewModel()
-
+struct JourneyView: View {
+    /// The view model that manages the Davinci flow logic.
+    @StateObject private var journeyViewModel = JourneyViewModel()
+    /// A binding to the navigation stack path.
+    @Binding var path: [String]
+    
     var body: some View {
-        VStack {
-            switch viewModel.state {
-            case let node as ContinueNode:
-                // Render UI elements based on the callbacks in the node
-                // Example: Display text fields for NameCallback and PasswordCallback
-                let callbacks = node.callbacks
-                // ... UI logic to collect user input and call viewModel.next()
-            case let node as ErrorNode:
-                // Display the error message
-                Text("Authentication Error: \(node.message)")
-            case let node as FailureNode:
-                // Display a generic error message
-                Text("An unexpected error occurred.")
-                // Optionally log the errorCause
-                print("Authentication Failure: \(node.cause)")
-            case is SuccessNode:
-                // Navigate to the main application screen
-                Text("Authentication Successful!")
-                // ... Navigation logic
-            default:
-                EmptyView()
+        ZStack {
+            ScrollView {
+                VStack {
+                    Spacer()
+                    // Handle different types of nodes in the Journey.
+                    switch journeyViewModel.state.node {
+                    case let continueNode as ContinueNode:
+                        // Display the callback view for the next node.
+                        CallbackView(journeyViewModel: journeyViewModel, node: continueNode)
+                    case let errorNode as ErrorNode:
+                        // Handle server-side errors (e.g., invalid credentials)
+                        // Display error to the user
+                        ErrorNodeView(node: errorNode)
+                        if let nextNode = errorNode.continueNode {
+                            CallbackView(journeyViewModel: journeyViewModel, node: nextNode)
+                        }
+                    case let failureNode as FailureNode:
+                        ErrorView(message: failureNode.cause.localizedDescription)
+                    case is SuccessNode:
+                        // Authentication successful, retrieve the session
+                        VStack{}.onAppear {
+                            path.removeLast()
+                            path.append("Token")
+                        }
+                    default:
+                        EmptyView()
+                    }
+                }
             }
-        }
-        .onAppear {
-            viewModel.initializeJourney()
-            viewModel.startJourney()
         }
     }
 }
@@ -377,71 +425,60 @@ stored securely.
 The `Journey` instance provides methods to interact with this stored session.
 
 ```swift
-// Retrieve the existing user session. If an active session cookie (ST) exists, 'user' will not be nil.
+// Retrieve the existing user session. If an active session cookie exists, 'user' will not be nil.
 // Note: Even if a user object is retrieved, the access and refresh tokens within might be expired.
-let user: User? = journey.user()
-let session: SSOToken? = user?.ssoToken() // Retrieve the SSO token if available
-
-if let user = user {
-    let accessToken = user.accessToken() // Retrieve the current access token
-    user.revoke() // Revoke the current access and refresh tokens
-    user.userinfo() // Fetch user information using the access token (if valid)
-    user.logout() // Initiate the logout process, potentially clearing local session data
+func accessToken() async {
+    let token: Result<Token, OidcError>?
+    let journeyUser = await journey.journeyUser()
+    token = journeyUser.token()
+  
+    switch token {
+    case .success(let token):
+        await MainActor.run {
+            self.token = String(describing: token)
+            let accessToken = token.accessToken
+        }
+        LogManager.standard.i("AccessToken: \(self.token.accessToken)")
+    case .failure(let error):
+        await MainActor.run {
+            self.token = "Error: \(error.localizedDescription)"
+        }
+        LogManager.standard.e("", error: error)
+    case .none:
+        break
+    }
 }
+
+journeyUser.revoke() // Revoke the current access and refresh tokens
+journeyUser.userinfo() // Fetch user information using the access token (if valid)
+journeyUser.logout() // Initiate the logout process, potentially clearing local session data
 ```
 
 ### Journey Module Dependencies
 
-The `Journey` module has several dependencies that are essential for its functionality.
+The `Journey` module is composed of several foundational components, each responsible for a specific aspect of the SDK's functionality:
 
 ```mermaid
 C4Context
     title Journey Component Diagram
     Component(journey, "Journey", "Library", "Main Journey Library")
     Component(logger, "Logger", "Library", "Logging Utility")
-    Component(journey_plugin, "Journey Plugin", "Library", "Plugin Support")
-    Component(orchestrate, "Orchestrate", "Library", "Orchestration Logic")
+    Component(plugin, "Plugin", "Library", "Callback & Extension Support")
+    Component(orchestrator, "Orchestrator", "Library", "Orchestration Logic")
     Component(storage, "Storage", "Library", "Data Storage")
-    Component(ios, "iOS", "Library", "iOS Specific Functionality")
+    Component(platform, "Platform", "Library", "Platform Abstraction (iOS)")
     Component(utils, "Utils", "Library", "Utility Functions")
     Rel(journey, logger, "Depends on")
-    Rel(journey, journey_plugin, "Depends on")
-    Rel(journey, orchestrate, "Depends on")
+    Rel(journey, plugin, "Depends on")
+    Rel(journey, orchestrator, "Depends on")
     Rel(journey, storage, "Depends on")
-    Rel(journey, ios, "Depends on")
+    Rel(journey, platform, "Depends on")
     Rel(journey, utils, "Depends on")
-
 ```
 
-* [Logger](https://github.com/ForgeRock/ping-ios-sdk/tree/develop/foundation/logger)
-* [journey-plugin](https://github.com/ForgeRock/ping-ios-sdk/tree/develop/foundation/journey-plugin)
-* [Oidc](https://github.com/ForgeRock/ping-ios-sdk/tree/develop/foundation/oidc)
-* [Orchestrate](https://github.com/ForgeRock/ping-ios-sdk/tree/develop/foundation/orchestrate)
-* [Storage](https://github.com/ForgeRock/ping-ios-sdk/tree/develop/foundation/storage)
-* [Utils](https://github.com/ForgeRock/ping-ios-sdk/tree/develop/foundation/utils)
-* [iOS](https://github.com/ForgeRock/ping-ios-sdk/tree/develop/foundation/ios)
-
-### Journey's Callback Customization & Extension
-
-Please refer to [journey-plugin](https://github.com/ForgeRock/ping-ios-sdk/tree/develop/foundation/journey-plugin)
-for customizing the Journey's callback.
-
-Callback below will be supported by other modules:
-
-| Callback Name                    | Callback Description                                                           |
-|----------------------------------|--------------------------------------------------------------------------------|
-| AppIntegrity                     | Collects a generated token from the client to verify the integrity of the app  |
-| DeviceBinding                    | Cryptographically bind a mobile device to a user account.                      |
-| DeviceProfileCallback            | Collects meta and/or location data about the authenticating device.            |
-| DeviceSigningVerifier            | Verify ownership of a bound device by signing a challenge.                     |
-| PingOneProtectEvaluationCallback | Collects captured contextual data from the client to perform risk evaluations. |
-| PingOneProtectInitializeCallback | Instructs the client to start capturing contextual data for risk evaluations   |
-| ReCaptchaCallback                | Provides data required to use a CAPTCHA in your apps.                          |
-| ReCaptchaEnterpriseCallback      | Provides data required to use reCAPTCHA Enterprise in your apps.               |
-| WebAuthnRegistrationCallback     | WebAuthn Registration.                                                         |
-| WebAuthnAuthenticationCallback   | WebAuthn Authentication.                                                       |
-| SelectIdpCallback                | External Identity provider selection.                                          |
-| IdpCallback                      | External Identity provider authentication.                                     |
-
-
-
+* [Logger](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/logger)
+* [Plugin](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/plugin)
+* [Orchestrator](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/orchestrator)
+* [Storage](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/storage)
+* [Platform (iOS)](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/platform)
+* [Utils](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/utils)
