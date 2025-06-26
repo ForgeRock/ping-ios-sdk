@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EC23269E2E0D5E4E00634A50 /* CallbackRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23269D2E0D5E4700634A50 /* CallbackRegistryTests.swift */; };
+		EC2326A02E0D62ED00634A50 /* NameCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23269F2E0D62E600634A50 /* NameCallbackTests.swift */; };
+		EC2326A22E0D65A800634A50 /* PasswordCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2326A12E0D65A300634A50 /* PasswordCallbackTests.swift */; };
+		EC2326A42E0D671700634A50 /* JourneyContinueNodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2326A32E0D670D00634A50 /* JourneyContinueNodeTests.swift */; };
+		EC2326A62E0D744F00634A50 /* JourneyUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2326A52E0D744A00634A50 /* JourneyUserTests.swift */; };
+		EC2326A82E0D7C7900634A50 /* AgentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2326A72E0D7C7800634A50 /* AgentTests.swift */; };
 		EC727A2E2E019243005D9E28 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A242E019243005D9E28 /* PingJourney.framework */; };
 		EC727A5D2E019254005D9E28 /* Journey.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727A5B2E019254005D9E28 /* Journey.swift */; };
 		EC727A602E019258005D9E28 /* JourneyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727A5E2E019258005D9E28 /* JourneyTests.swift */; };
@@ -63,6 +69,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		EC23269D2E0D5E4700634A50 /* CallbackRegistryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackRegistryTests.swift; sourceTree = "<group>"; };
+		EC23269F2E0D62E600634A50 /* NameCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameCallbackTests.swift; sourceTree = "<group>"; };
+		EC2326A12E0D65A300634A50 /* PasswordCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordCallbackTests.swift; sourceTree = "<group>"; };
+		EC2326A32E0D670D00634A50 /* JourneyContinueNodeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyContinueNodeTests.swift; sourceTree = "<group>"; };
+		EC2326A52E0D744A00634A50 /* JourneyUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyUserTests.swift; sourceTree = "<group>"; };
+		EC2326A72E0D7C7800634A50 /* AgentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentTests.swift; sourceTree = "<group>"; };
 		EC727A242E019243005D9E28 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC727A2D2E019243005D9E28 /* JourneyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JourneyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC727A5B2E019254005D9E28 /* Journey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Journey.swift; sourceTree = "<group>"; };
@@ -150,7 +162,13 @@
 			isa = PBXGroup;
 			children = (
 				ECD562A62E0C45F900F0B5A9 /* Config */,
+				EC2326A72E0D7C7800634A50 /* AgentTests.swift */,
+				EC23269D2E0D5E4700634A50 /* CallbackRegistryTests.swift */,
+				EC2326A32E0D670D00634A50 /* JourneyContinueNodeTests.swift */,
 				EC727A5E2E019258005D9E28 /* JourneyTests.swift */,
+				EC2326A52E0D744A00634A50 /* JourneyUserTests.swift */,
+				EC23269F2E0D62E600634A50 /* NameCallbackTests.swift */,
+				EC2326A12E0D65A300634A50 /* PasswordCallbackTests.swift */,
 				ECD562AD2E0C494B00F0B5A9 /* Mock */,
 			);
 			path = JourneyTests;
@@ -350,9 +368,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECD562A82E0C48A700F0B5A9 /* MockURLProtocol.swift in Sources */,
+				EC2326A22E0D65A800634A50 /* PasswordCallbackTests.swift in Sources */,
 				EC727A602E019258005D9E28 /* JourneyTests.swift in Sources */,
+				EC2326A02E0D62ED00634A50 /* NameCallbackTests.swift in Sources */,
 				ECD562A42E0C45E300F0B5A9 /* Config.swift in Sources */,
+				EC23269E2E0D5E4E00634A50 /* CallbackRegistryTests.swift in Sources */,
+				EC2326A62E0D744F00634A50 /* JourneyUserTests.swift in Sources */,
+				EC2326A82E0D7C7900634A50 /* AgentTests.swift in Sources */,
 				ECD562AB2E0C494200F0B5A9 /* MockAPIEndpoint.swift in Sources */,
+				EC2326A42E0D671700634A50 /* JourneyContinueNodeTests.swift in Sources */,
 				ECD562AC2E0C494200F0B5A9 /* MockResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

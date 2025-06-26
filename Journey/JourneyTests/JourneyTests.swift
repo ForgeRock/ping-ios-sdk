@@ -1,4 +1,4 @@
-// 
+//
 //  JourneyTests.swift
 //  JourneyTests
 //
@@ -46,7 +46,7 @@ class JourneyBaseTests: XCTestCase, @unchecked Sendable {
 
 
 final class JourneyTests: JourneyBaseTests, @unchecked Sendable {
-
+    
     var journey: Journey?
     
     override func setUp() {
@@ -73,16 +73,16 @@ final class JourneyTests: JourneyBaseTests, @unchecked Sendable {
             switch request.url!.path {
             case MockAPIEndpoint.discovery.url.path:
                 return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfigurationResponse)
-//            case MockAPIEndpoint.token.url.path:
-//                return (HTTPURLResponse(url: MockAPIEndpoint.token.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.tokenResponse)
-//            case MockAPIEndpoint.userinfo.url.path:
-//                return (HTTPURLResponse(url: MockAPIEndpoint.userinfo.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.userinfoResponse)
-//            case MockAPIEndpoint.revocation.url.path:
-//                return (HTTPURLResponse(url: MockAPIEndpoint.revocation.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, Data())
-//            case MockAPIEndpoint.endSession.url.path:
-//                return (HTTPURLResponse(url: MockAPIEndpoint.endSession.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, Data())
-//            case MockAPIEndpoint.authorization.url.path:
-//                return (HTTPURLResponse(url: MockAPIEndpoint.authorization.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.authorizeResponseHeaders)!, MockResponse.authorizeResponse)
+                //            case MockAPIEndpoint.token.url.path:
+                //                return (HTTPURLResponse(url: MockAPIEndpoint.token.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.tokenResponse)
+                //            case MockAPIEndpoint.userinfo.url.path:
+                //                return (HTTPURLResponse(url: MockAPIEndpoint.userinfo.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.userinfoResponse)
+                //            case MockAPIEndpoint.revocation.url.path:
+                //                return (HTTPURLResponse(url: MockAPIEndpoint.revocation.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, Data())
+                //            case MockAPIEndpoint.endSession.url.path:
+                //                return (HTTPURLResponse(url: MockAPIEndpoint.endSession.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, Data())
+                //            case MockAPIEndpoint.authorization.url.path:
+                //                return (HTTPURLResponse(url: MockAPIEndpoint.authorization.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.authorizeResponseHeaders)!, MockResponse.authorizeResponse)
             default:
                 return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
             }
@@ -93,7 +93,7 @@ final class JourneyTests: JourneyBaseTests, @unchecked Sendable {
         super.tearDown()
         MockURLProtocol.stopInterceptingRequests()
     }
-
+    
     func testJourney() throws {
         guard let journey = self.journey else {
             XCTFail("Failed to create DaVinci instance")
@@ -103,8 +103,8 @@ final class JourneyTests: JourneyBaseTests, @unchecked Sendable {
         XCTAssertEqual(journey.config.modules.count, 4)
         XCTAssertEqual(journey.initHandlers.count, 2)
         XCTAssertEqual(journey.nextHandlers.count, 2)
-//        XCTAssertEqual(journey.nodeHandlers.count, 1)
-//        XCTAssertEqual(journey.responseHandlers.count, 1)
+        //        XCTAssertEqual(journey.nodeHandlers.count, 1)
+        //        XCTAssertEqual(journey.responseHandlers.count, 1)
         XCTAssertEqual(journey.signOffHandlers.count, 2)
         XCTAssertEqual(journey.successHandlers.count, 2)
         
@@ -136,5 +136,64 @@ final class JourneyTests: JourneyBaseTests, @unchecked Sendable {
         XCTAssertEqual(journey1.responseHandlers.count, 0)
         XCTAssertEqual(journey1.signOffHandlers.count, 2)
         XCTAssertEqual(journey1.successHandlers.count, 2)
+    }
+    
+    func testJourneyModuleRegistration() {
+        let journey = Journey.createJourney { config in
+            config.logger = LogManager.standard
+            config.serverUrl = self.config.serverUrl
+            config.realm = self.config.realm
+            config.cookie = self.config.cookieName
+            config.module(OidcModule.config) { oidcValue in
+                oidcValue.clientId = self.config.clientId
+                oidcValue.scopes = Set(self.config.scopes)
+                oidcValue.redirectUri = self.config.redirectUri
+                oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
+            }
+        }
+        XCTAssertEqual(journey.config.modules.count, 4)
+    }
+    
+    func testJourneyHandlerCounts() {
+        let journey = Journey.createJourney { config in
+            config.logger = LogManager.standard
+            config.serverUrl = self.config.serverUrl
+            config.realm = self.config.realm
+            config.cookie = self.config.cookieName
+            config.module(OidcModule.config) { oidcValue in
+                oidcValue.clientId = self.config.clientId
+                oidcValue.scopes = Set(self.config.scopes)
+                oidcValue.redirectUri = self.config.redirectUri
+                oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
+            }
+        }
+        XCTAssertEqual(journey.initHandlers.count, 2)
+        XCTAssertEqual(journey.nextHandlers.count, 2)
+        XCTAssertEqual(journey.signOffHandlers.count, 2)
+        XCTAssertEqual(journey.successHandlers.count, 2)
+    }
+    
+    func testJourneyWithAdditionalModule() {
+        let nosession = Module.of { setup in
+            setup.next { (context, connector, request) in
+                request.header(name: "nosession", value: "true")
+                return request
+            }
+        }
+        let journey = Journey.createJourney { config in
+            config.logger = LogManager.standard
+            config.serverUrl = self.config.serverUrl
+            config.realm = self.config.realm
+            config.cookie = self.config.cookieName
+            config.module(OidcModule.config) { oidcValue in
+                oidcValue.clientId = self.config.clientId
+                oidcValue.scopes = Set(self.config.scopes)
+                oidcValue.redirectUri = self.config.redirectUri
+                oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
+            }
+            config.module(nosession)
+        }
+        XCTAssertEqual(journey.config.modules.count, 5)
+        XCTAssertEqual(journey.nextHandlers.count, 3)
     }
 }

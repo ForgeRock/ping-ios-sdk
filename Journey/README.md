@@ -480,5 +480,4 @@ C4Context
 * [Plugin](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/plugin)
 * [Orchestrator](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/orchestrator)
 * [Storage](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/storage)
-* [Platform (iOS)](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/platform)
 * [Utils](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/utils)

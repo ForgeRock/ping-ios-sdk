@@ -11,6 +11,9 @@
 
 import Foundation
 import XCTest
+@testable import PingJourney
+@testable import PingOidc
+@testable import PingOrchestrate
 
 class MockURLProtocol: URLProtocol, @unchecked Sendable {
     nonisolated(unsafe) public static var requestHistory: [URLRequest] = [URLRequest]()
@@ -53,5 +56,35 @@ class MockURLProtocol: URLProtocol, @unchecked Sendable {
     
     override func stopLoading() {
         
+    }
+}
+
+// MARK: - Mock Classes
+class MockSession: Session, @unchecked Sendable {
+    let sessionValue: String
+    
+    init(value: String = "test-session") {
+        self.sessionValue = value
+    }
+    
+    var value: String {
+        return sessionValue
+    }
+}
+
+class MockHttpClient: HttpClient, @unchecked Sendable {
+    var mockResponse: (Data, URLResponse)?
+    var mockError: Error?
+    var lastRequest: Request?
+    
+    override func sendRequest(request: Request) async throws -> (Data, URLResponse) {
+        lastRequest = request
+        if let error = mockError {
+            throw error
+        }
+        if let response = mockResponse {
+            return response
+        }
+        throw OidcError.networkError(message: "No mock response set")
     }
 }
