@@ -12,11 +12,13 @@ import Foundation
 import PingOrchestrate
 import PingStorage
 
+/// A module that manages the session configuration and lifecycle within a Journey workflow.
 public class SessionModule {
     
     /// Initializes a new instance of `SessionModule`.
     public init() {}
     
+    /// Creates a module for managing session configuration.
     static let config: Module<SessionConfig> = Module.of ({ SessionConfig() }) { setup in
         
         let config: SessionConfig = setup.config

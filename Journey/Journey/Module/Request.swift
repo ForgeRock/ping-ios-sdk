@@ -30,8 +30,12 @@ extension Request {
         self.url(authenticateEndpoint)
         self.header(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource21Protocol10)
         self.header(name: JourneyConstants.contentType, value: JourneyConstants.applicationJson)
-        self.parameter(name: JourneyConstants.authIndexValue, value: authIndexValue)
-        self.parameter(name: JourneyConstants.authIndexType, value: authIndexType)
+        if !authIndexType.isEmpty {
+            self.parameter(name: JourneyConstants.authIndexType, value: authIndexType)
+        }
+        if !authIndexValue.isEmpty {
+            self.parameter(name: JourneyConstants.authIndexValue, value: authIndexValue)
+        }
         if journeyConfig.forceAuth {
             self.parameter(name: "ForceAuth", value: "true")
         }

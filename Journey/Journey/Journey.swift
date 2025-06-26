@@ -73,6 +73,29 @@ public extension Journey {
         }
     }
     
+    /// Resumes the journey with the provided URI and configuration block.
+    /// - Parameters:
+    /// - uri: The URI to resume the journey.
+    /// - block: A block to configure the `JourneyConfig`.
+    /// - Returns: A `Node` representing the resumed journey.
+    func resume(_ uri: URL, block: @Sendable (JourneyConfig) -> Void = { _ in }) async -> Node {
+        let journeyConfig = self.config as! JourneyConfig
+        block(journeyConfig)
+        if let components = URLComponents(url: uri, resolvingAgainstBaseURL: false),
+           let suspendedId = components.queryItems?.first(where: { $0.name == JourneyConstants.suspendedId })?.value {
+            let request = Request()
+            request.populateRequest(authIndexValue: "", authIndexType: "", journeyConfig: journeyConfig)
+            request.parameter(name: JourneyConstants.suspendedId, value: suspendedId)
+            do {
+                return try await start(request: request)
+            } catch {
+                return FailureNode(cause: error)
+            }
+        } else {
+            return FailureNode(cause: ApiError.error(400, [:], "Invalid URI or missing suspendedId"))
+        }
+    }
+    
     /// Journey sign off method.
     /// This method executes the sign-off process by invoking all registered sign-off handlers.
     ///  - Returns: A `Result` indicating success or failure of the sign-off process.

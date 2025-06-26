@@ -11,13 +11,13 @@
 import Foundation
 import PingOrchestrate
 
-// Define the SSOToken protocol
+/// Define the SSOToken protocol
 protocol SSOToken: Session, Codable {
     var successUrl: String { get }
     var realm: String { get }
 }
 
-// Define the SSOTokenImpl class
+/// Define the SSOTokenImpl class
 final class SSOTokenImpl: SSOToken, Sendable, Codable {
     let value: String
     let successUrl: String
