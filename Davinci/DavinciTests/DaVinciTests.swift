@@ -212,7 +212,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         }
         //            XCTAssertEqual((user?.token() as? Result.Success)?.value.accessToken, "Dummy AccessToken")
         
-        let u = await daVinci.daVinciuser()
+        let u = await daVinci.daVinciUser()
         await u?.logout()
         let revoke = MockURLProtocol.requestHistory[4]
         XCTAssertEqual(revoke.url!.absoluteString, "https://auth.test-one-pingone.com/revoke")
@@ -228,7 +228,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         XCTAssertNil(storedToken)
         let storedCokie = try await cookieStorage.get()
         XCTAssertNil(storedCokie)
-        let storedUser = await daVinci.daVinciuser()
+        let storedUser = await daVinci.daVinciUser()
         XCTAssertNil(storedUser)
     }
     
@@ -312,7 +312,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         node = await connector.next()
         XCTAssertTrue(node is SuccessNode)
         
-        let u = await daVinci.daVinciuser()
+        let u = await daVinci.daVinciUser()
         await u?.revoke()
         let storedToken = try await tokenStorage.get()
         XCTAssertNil(storedToken)

@@ -79,7 +79,7 @@ struct UserDelegate: User, Session, Sendable {
     func logout() async {
         // remove the cached user from the context
         _ = journey.sharedContext.removeValue(forKey: SharedContext.Keys.userKey)
-        // instead of calling `OidcClient.endSession` directly, we call `DaVinci.signOff` to sign off the user
+        // instead of calling `OidcClient.endSession` directly, we call `journey.signOff` to sign off the user
         _ = await journey.signOff()
     }
     

@@ -40,7 +40,7 @@ public class OidcModule {
         // Starts the module.
         setup.start { @Sendable context, request in
             // When user starts the flow again, revoke previous token if exists
-            await daVinciFlow.daVinciuser()?.revoke()
+            await daVinciFlow.daVinciUser()?.revoke()
             
             let pkce = Pkce.generate()
             context.flowContext.set(key: SharedContext.Keys.pkceKey, value: pkce)
