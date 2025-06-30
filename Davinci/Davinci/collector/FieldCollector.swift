@@ -15,7 +15,7 @@ import Foundation
 /// - property id: The collector id.
 /// - function anyPayload: The payload of the collector as `Any`
 /// - function initialize: Initializes the collector with the given value.
-protocol AnyFieldCollector: Collector, Validator, Sendable {
+public protocol AnyFieldCollector: Collector, Validator, Sendable {
     var id: String { get }
     /// Returns the payload as `Any?`.
     func anyPayload() -> Any?

@@ -1,5 +1,5 @@
 {
-  "originHash" : "40d90f0088908c3840b7c2927d1a1e6ce8e695d1a7e08a92df4c9bece422deac",
+  "originHash" : "0e1d44c78ac3df360f3d9e2ef1a63ba618fd95db8c3a77694d4302eb747a9db6",
   "pins" : [
     {
       "identity" : "app-check",
@@ -71,6 +71,15 @@
       "state" : {
         "revision" : "5d7d66f647400952b1758b230e019b07c0b4b22a",
         "version" : "4.1.1"
+      }
+    },
+    {
+      "identity" : "pingone-signals-sdk-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pingidentity/pingone-signals-sdk-ios",
+      "state" : {
+        "revision" : "bf37bd85fa909428d764630c71cf0d4f3d2d7e05",
+        "version" : "5.3.0"
       }
     },
     {

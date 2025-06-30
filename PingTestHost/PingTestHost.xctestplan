@@ -108,6 +108,13 @@
         "identifier" : "ECA7A2EF2DC251870011E59C",
         "name" : "External-idp-GoogleTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Protect\/Protect.xcodeproj",
+        "identifier" : "A5A31CA32E0A37C700ABBEF7",
+        "name" : "ProtectTests"
+      }
     }
   ],
   "version" : 1
