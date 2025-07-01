@@ -15,7 +15,7 @@ import PingOrchestrate
 import PingJourney
 
 struct JourneyView: View {
-    /// The view model that manages the Davinci flow logic.
+    /// The view model that manages the Journey flow logic.
     @StateObject private var journeyViewModel = JourneyViewModel()
     /// A binding to the navigation stack path.
     @Binding var path: [String]
@@ -54,7 +54,7 @@ struct JourneyView: View {
     }
 }
 
-/// A view for displaying the current step in the Davinci flow.
+/// A view for displaying the current step in the Journey flow.
 struct CallbackView: View {
     /// The Journey view model managing the flow.
     @ObservedObject var journeyViewModel: JourneyViewModel

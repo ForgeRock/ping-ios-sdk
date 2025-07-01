@@ -15,6 +15,7 @@ import PingOrchestrate
 /// It defines an associated type `T` and requires an initializer that takes a JSON dictionary.
 /// It also requires a method to return the payload as a dictionary.
 /// The `id` property is used to uniquely identify the callback.
+/// The `payload` method returns a dictionary representation of the callback's data,
 public protocol Callback<T>: Action, Identifiable, Sendable {
     associatedtype T
     init(with json: [String: Any])

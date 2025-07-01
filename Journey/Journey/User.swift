@@ -60,7 +60,7 @@ extension SuccessNode {
 /// Struct representing a UserDelegate.
 /// This struct is a delegate for the User and Session interfaces.
 /// It overrides the logout function to remove the cached user from the context and sign off the user.
-/// - property daVinci: The DaVinci instance.
+/// - property journey: The Journey instance.
 /// - property user: The user.
 /// - property session: The session.
 struct UserDelegate: User, Session, Sendable {

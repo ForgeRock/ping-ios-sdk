@@ -96,7 +96,7 @@ final class JourneyTests: JourneyBaseTests, @unchecked Sendable {
     
     func testJourney() throws {
         guard let journey = self.journey else {
-            XCTFail("Failed to create DaVinci instance")
+            XCTFail("Failed to create Journey instance")
             return
         }
         

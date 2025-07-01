@@ -40,7 +40,7 @@ internal final class CreateAgent: Agent, Sendable {
     
     /// Ends the session with the OpenID Connect provider.
     func endSession(oidcConfig: OidcConfig<T>, idToken: String) async throws -> Bool {
-        // Since we don't have the Session token, let DaVinci handle the sign-off
+        // Since we don't have the Session token, let Journey handle the sign-off
         return true
     }
     
@@ -48,6 +48,7 @@ internal final class CreateAgent: Agent, Sendable {
     /// Before returning the `AuthCode`, the agent should verify the response from the OpenID Connect provider.
     /// - Parameter oidcConfig: The configuration for the OpenID Connect client.
     /// - Returns: `AuthCode` instance
+    /// - Throws: An `OidcError` if the authorization fails.
     func authorize(oidcConfig: OidcConfig<T>) async throws -> AuthCode {
         // We don't get the state; The state may not be returned since this is primarily for
         // CSRF in redirect-based interactions, and pi.flow doesn't use redirect.

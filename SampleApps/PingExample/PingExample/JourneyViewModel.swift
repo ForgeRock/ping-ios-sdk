@@ -59,7 +59,7 @@ class JourneyViewModel: ObservableObject {
         }
     }
     
-    /// Starts the DaVinci orchestration process.
+    /// Starts the Journey orchestration process.
     /// - Sets the initial node and updates the `data` property with the starting node.
     public func startJourney() async {
         
@@ -105,7 +105,7 @@ class JourneyViewModel: ObservableObject {
     }
 }
 
-/// A model class that represents the state of the current and previous nodes in the DaVinci flow.
+/// A model class that represents the state of the current and previous nodes in the Journey flow.
 class JourneyState {
     var node: Node? = nil
     

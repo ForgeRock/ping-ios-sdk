@@ -58,7 +58,6 @@ public class NodeTransformModule: @unchecked Sendable {
         var callbacks: Callbacks = []
         
         if json.keys.contains(JourneyConstants.authId) {
-            print("authId key exists")
             if let callbackArray = json[JourneyConstants.callbacks] as? [[String: any Sendable]] {
                 callbacks.append(contentsOf: await CallbackRegistry.shared.callback(from: callbackArray))
             }

@@ -11,7 +11,7 @@
 
 import Foundation
 
-@testable import PingDavinci
+@testable import PingJourney
 
 public enum ConfigError: Error {
     case emptyConfiguration
