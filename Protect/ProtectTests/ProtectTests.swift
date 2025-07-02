@@ -191,7 +191,7 @@ final class ProtectTests: XCTestCase {
                 group.addTask {
                     await Protect.config {
                         $0.envId = "env\(index)"
-                        con$0fig.isConsoleLogEnabled = index % 2 == 0
+                        $0.isConsoleLogEnabled = index % 2 == 0
                     }
                 }
             }
