@@ -32,7 +32,7 @@ behavioral risk data. It enables real-time risk assessment during DaVinci flows.
 node.collectors.forEach { collector in
     switch collector {
     case let protectCollector as ProtectCollector:
-        let result = protectCollector.collect()
+        let result = await protectCollector.collect()
         switch result {
         case .success:
             // Data collection successful: Proceed to the next node in the DaVinci flow.
@@ -73,7 +73,7 @@ suit various application architectures and requirements.
 For maximum control over SDK configuration, use the `Protect` interface directly:
 
 ```swift
-Protect.config { protectConfig in
+await Protect.config { protectConfig in
     protectConfig.isBehavioralDataCollection = true // Enable behavioral data collection.
     protectConfig.isLazyMetadata = true // Enable lazy loading of device metadata.
     protectConfig.envId = URL(string: "https://api.pingone.com")?.host // Set the PingOne environment ID.
@@ -85,8 +85,8 @@ try await Protect.initialize() // Initialize the Protect SDK with the provided c
 
 print("Protect SDK initialized.")
 
-Protect.pauseBehavioralData() // Temporarily pause behavioral data collection.
-Protect.resumeBehavioralData() // Resume behavioral data collection.
+await Protect.pauseBehavioralData() // Temporarily pause behavioral data collection.
+await Protect.resumeBehavioralData() // Resume behavioral data collection.
 }
 ```
 
@@ -203,8 +203,8 @@ sequenceDiagram
 Control behavioral data collection with the following methods:
 
 ```swift
-Protect.pauseBehavioralData() // Pause data collection.
-Protect.resumeBehavioralData() // Resume data collection.
+await Protect.pauseBehavioralData() // Pause data collection.
+await Protect.resumeBehavioralData() // Resume data collection.
 ```
 
 These methods allow for granular control over data collection, enabling you to pause collection during sensitive

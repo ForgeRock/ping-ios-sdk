@@ -2,7 +2,7 @@
 //  ProtectCollector.swift
 //  Protect
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,11 @@ import Foundation
 import PingDavinci
 
 /// A collector class for handling RISK Component.
+/// This class implements the `AnyFieldCollector` and `Collector` protocols to collect data related to the Protect SDK.
+///
+/// - property key: The unique identifier for the collector.
+/// - property behavioralDataCollection: A boolean indicating whether behavioral data collection is enabled.
+/// - property universalDeviceIdentification: A boolean indicating whether universal device identification is enabled.
 @objc
 public class ProtectCollector: NSObject, AnyFieldCollector, Collector, @unchecked Sendable {
     
