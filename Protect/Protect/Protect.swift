@@ -76,10 +76,6 @@ public class Protect {
     /// - Returns: A string containing the behavioral data.
     /// - Throws: `ProtectError` if data retrieval fails.
     public static func data() async throws -> String {
-        guard isInitialized else {
-            throw ProtectError("SDK is not initialized. Call initialize() first.")
-        }
-
         return try await withCheckedThrowingContinuation { continuation in
             guard let sharedInstance = PingOneSignals.sharedInstance() else {
                 continuation.resume(throwing: ProtectError("PingOneSignals shared instance is not available"))
@@ -101,10 +97,6 @@ public class Protect {
     /// Pause behavioral data collection
     /// - Throws: `ProtectError` if SDK is not initialized
     public static func pauseBehavioralData() throws {
-        guard isInitialized else {
-            throw ProtectError("SDK is not initialized. Call initialize() first.")
-        }
-
         guard let sharedInstance = PingOneSignals.sharedInstance() else {
             throw ProtectError("PingOneSignals shared instance is not available")
         }
@@ -115,10 +107,6 @@ public class Protect {
     /// Resume behavioral data collection
     /// - Throws: `ProtectError` if SDK is not initialized
     public static func resumeBehavioralData() throws {
-        guard isInitialized else {
-            throw ProtectError("SDK is not initialized. Call initialize() first.")
-        }
-
         guard let sharedInstance = PingOneSignals.sharedInstance() else {
             throw ProtectError("PingOneSignals shared instance is not available")
         }

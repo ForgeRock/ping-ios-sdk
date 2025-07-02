@@ -120,17 +120,6 @@ final class ProtectTests: XCTestCase {
 
     // MARK: - Data Retrieval Tests
 
-    func test06_DataThrowsErrorIfNotInitialized() async {
-        do {
-            _ = try await Protect.data()
-            XCTFail("Should have thrown an error")
-        } catch let error as ProtectError {
-            XCTAssertEqual(error.message, "SDK is not initialized. Call initialize() first.")
-        } catch {
-            XCTFail("Wrong error type: \(error)")
-        }
-    }
-
     func test07_DataReturnsSignalsAfterInitialization() async throws {
         // Given
         await Protect.config {
@@ -147,28 +136,6 @@ final class ProtectTests: XCTestCase {
     }
 
     // MARK: - Behavioral Data Control Tests
-
-    func test08_PauseBehavioralDataThrowsErrorIfNotInitialized() async {
-        do {
-            try await Protect.pauseBehavioralData()
-            XCTFail("Should have thrown an error")
-        } catch let error as ProtectError {
-            XCTAssertEqual(error.message, "SDK is not initialized. Call initialize() first.")
-        } catch {
-            XCTFail("Wrong error type: \(error)")
-        }
-    }
-
-    func test09_ResumeBehavioralDataThrowsErrorIfNotInitialized() async {
-        do {
-            try await Protect.resumeBehavioralData()
-            XCTFail("Should have thrown an error")
-        } catch let error as ProtectError {
-            XCTAssertEqual(error.message, "SDK is not initialized. Call initialize() first.")
-        } catch {
-            XCTFail("Wrong error type: \(error)")
-        }
-    }
 
     func test10_PauseAndResumeBehavioralDataAfterInitialization() async throws {
         // Given
@@ -267,28 +234,4 @@ final class ProtectTests: XCTestCase {
     }
 
     // MARK: - Error Message Tests
-
-    func test15_ErrorMessagesAreDescriptive() async {
-        // Test uninitialized data access
-        do {
-            _ = try await Protect.data()
-            XCTFail("Should throw error")
-        } catch let error as ProtectError {
-            XCTAssertTrue(error.message.contains("not initialized"))
-            XCTAssertTrue(error.message.contains("initialize()"))
-        } catch {
-            XCTFail("Unexpected error: \(error)")
-        }
-
-        // Test unconfigured initialization
-        do {
-            try await Protect.initialize()
-            XCTFail("Should throw error")
-        } catch let error as ProtectError {
-            XCTAssertTrue(error.message.contains("not configured"))
-            XCTAssertTrue(error.message.contains("config()"))
-        } catch {
-            XCTFail("Unexpected error: \(error)")
-        }
-    }
 }

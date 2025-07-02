@@ -36,18 +36,18 @@ public class ProtectLifecycleModule {
             try await Protect.initialize()
         }
         
-        setup.start { flowContext, request in
+        setup.start { @Sendable context, request in
             if setupConfig.resumeBehavioralDataOnStart {
                 try await Protect.resumeBehavioralData()
             }
             return request
         }
         
-        setup.next { flowContext, _, request in
+        setup.success { @Sendable context, successNode in
             if setupConfig.pauseBehavioralDataOnSuccess {
                 try await Protect.pauseBehavioralData()
             }
-            return request
+            return successNode
         }
     }
 }
