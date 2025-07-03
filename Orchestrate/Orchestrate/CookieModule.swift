@@ -43,6 +43,7 @@ public class CookieModule {
                 if let allCookies = allCookies {
                     request.cookies(cookies: allCookies)
                 }
+                // Inject persisted cookies from cookie storage if available
                 if let cookies = try? await setup.config.cookieStorage.get() {
                     await CookieModule.inject(url: url, cookies: cookies, inMemoryStorage: setup.config.inMemoryStorage, request: request)
                 }
@@ -83,17 +84,8 @@ public class CookieModule {
                        cookies: [CustomHTTPCookie],
                        inMemoryStorage: InMemoryCookieStorage?,
                        request: Request) async {
-        
-        await inMemoryStorage?.deleteCookies(url: url)
-        
         let httpCookies = cookies.compactMap { $0.toHTTPCookie() }
-        for cookie in httpCookies {
-            await inMemoryStorage?.setCookie(cookie)
-        }
-        
-        if let cookie = await inMemoryStorage?.cookies(for: url) {
-            request.cookies(cookies: cookie)
-        }
+        request.cookies(cookies: httpCookies)
     }
     
     /// Parses cookies from an HTTP response and updates storage.
@@ -111,8 +103,6 @@ public class CookieModule {
         
         let persistCookies = cookies.filter { cookieConfig.persist.contains($0.name) }
         let otherCookies = cookies.filter { !cookieConfig.persist.contains($0.name) }
-        
-        await storage?.deleteCookies(url: url)
         
         if !persistCookies.isEmpty {
             

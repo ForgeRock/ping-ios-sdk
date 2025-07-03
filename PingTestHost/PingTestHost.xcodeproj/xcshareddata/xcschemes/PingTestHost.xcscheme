@@ -165,6 +165,66 @@
                ReferencedContainer = "container:../External-idp-Google/ExternalIdPGoogle.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EC727A2C2E019243005D9E28"
+               BuildableName = "JourneyTests.xctest"
+               BlueprintName = "JourneyTests"
+               ReferencedContainer = "container:../Journey/Journey.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EC5EA5432DC2295E000C2737"
+               BuildableName = "ExternalIdPFacebookTests.xctest"
+               BlueprintName = "ExternalIdPFacebookTests"
+               ReferencedContainer = "container:../ExternalIdPFacebook/ExternalIdPFacebook.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ECA7A2AB2DC24BC60011E59C"
+               BuildableName = "ExternalIdPAppleTests.xctest"
+               BlueprintName = "ExternalIdPAppleTests"
+               ReferencedContainer = "container:../ExternalIdPApple/ExternalIdPApple.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ECA7A2EF2DC251870011E59C"
+               BuildableName = "ExternalIdPGoogleTests.xctest"
+               BlueprintName = "ExternalIdPGoogleTests"
+               ReferencedContainer = "container:../ExternalIdPGoogle/ExternalIdPGoogle.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3A54413C2BCDF10B00385131"
+               BuildableName = "PingExampleTests.xctest"
+               BlueprintName = "PingExampleTests"
+               ReferencedContainer = "container:../SampleApps/PingExample/PingExample.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ECB7C6972D5A2C1F0006F1C8"
+               BuildableName = "PingExternalIdPTests.xctest"
+               BlueprintName = "PingExternalIdPTests"
+               ReferencedContainer = "container:../ExternalIdP/ExternalIdP.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
