@@ -30,7 +30,7 @@ public class CookieModule {
             let cookies = try? await setup.config.cookieStorage.get()
             if let url = request.urlRequest.url, let cookies = cookies {
                 await CookieModule.inject(url: url,
-                                          cookies: cookies, inMemoryStorage: setup.config.inMemoryStorage,
+                                          cookies: cookies,
                                           request: request)
             }
             return request
@@ -44,7 +44,7 @@ public class CookieModule {
                 }
                 // Inject persisted cookies from cookie storage if available
                 if let cookies = try? await setup.config.cookieStorage.get() {
-                    await CookieModule.inject(url: url, cookies: cookies, inMemoryStorage: setup.config.inMemoryStorage, request: request)
+                    await CookieModule.inject(url: url, cookies: cookies, request: request)
                 }
             }
             return request
@@ -64,7 +64,7 @@ public class CookieModule {
         setup.signOff { request in
             if let url = request.urlRequest.url {
                 if let cookies = try? await setup.config.cookieStorage.get() {
-                    await CookieModule.inject(url: url, cookies: cookies, inMemoryStorage: setup.config.inMemoryStorage, request: request)
+                    await CookieModule.inject(url: url, cookies: cookies, request: request)
                 }
                 try? await setup.config.cookieStorage.delete()
                 await setup.config.inMemoryStorage.deleteCookies(url: url)
@@ -77,11 +77,9 @@ public class CookieModule {
     /// - Parameters:
     ///   - url: The URL of the request.
     ///   - cookies: The cookies to be injected.
-    ///   - inMemoryStorage: In-memory cookie storage.
     ///   - request: The HTTP request to modify.
     static func inject(url: URL,
                        cookies: [CustomHTTPCookie],
-                       inMemoryStorage: InMemoryCookieStorage?,
                        request: Request) async {
         
         let persistedTempCookiesStorage = InMemoryCookieStorage()
@@ -252,7 +250,7 @@ extension HTTPCookie {
     }
     
     func validateURL(_ url: URL) -> Bool {
-        return self.validateDomain(url: url) && self.validatePath(url: url) && self.validateIsSecure(url)
+        return self.validateDomain(url: url) && self.validatePath(url: url)
     }
     
     private func validatePath(url: URL) -> Bool {
