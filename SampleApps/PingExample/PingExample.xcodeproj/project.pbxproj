@@ -637,11 +637,9 @@
 					};
 					3A54413C2BCDF10B00385131 = {
 						CreatedOnToolsVersion = 15.0;
-						TestTargetID = 3A54412C2BCDF10900385131;
 					};
 					3A5441462BCDF10B00385131 = {
 						CreatedOnToolsVersion = 15.0;
-						TestTargetID = 3A54412C2BCDF10900385131;
 					};
 				};
 			};
@@ -1150,7 +1148,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
@@ -1162,7 +1159,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PingExample";
 			};
 			name = Debug;
 		};
@@ -1170,7 +1166,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
@@ -1182,7 +1177,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PingExample";
 			};
 			name = Release;
 		};
@@ -1197,10 +1191,10 @@
 				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = PingExample;
 			};
 			name = Debug;
 		};
@@ -1215,10 +1209,10 @@
 				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = PingExample;
 			};
 			name = Release;
 		};

@@ -63,10 +63,24 @@ public class Request: @unchecked Sendable {
     /// Adds cookies to the request.
     /// - Parameter cookies: The cookies to be added.
     public func cookies(cookies: [HTTPCookie]) {
-        let headers = HTTPCookie.requestHeaderFields(with: cookies)
-        for (key, value) in headers {
-            self.urlRequest.addValue(value, forHTTPHeaderField: key)
+        if cookies.isEmpty { return }
+        
+        var cookieString = ""
+        
+        // Get existing cookies from header if any
+        if let existingCookies = self.urlRequest.value(forHTTPHeaderField: "Cookie") {
+            cookieString = existingCookies
         }
+        
+        // Add new cookies
+        for cookie in cookies {
+            if !cookieString.isEmpty {
+                cookieString += "; "
+            }
+            cookieString += "\(cookie.name)=\(cookie.value)"
+        }
+        
+        self.urlRequest.setValue(cookieString, forHTTPHeaderField: "Cookie")
     }
     
     /// Sets the body of the request.

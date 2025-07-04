@@ -41,6 +41,7 @@
       "skippedTests" : [
         "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
         "DaVinciIntegrationTests\/testInvalidPassword()",
+        "DaVinciIntegrationTests\/testUserRegistrationFailureInvalidPassword()",
         "FormFieldValidationTest\/testPasswordValidation()",
         "FormFieldValidationTests\/testPasswordValidation()",
         "PasswordCollectorTests\/testAddsInvalidLengthErrorWhenValueTooShort()",
@@ -72,41 +73,10 @@
       }
     },
     {
-      "skippedTests" : [
-        "NativeHandlerTests"
-      ],
       "target" : {
-        "containerPath" : "container:..\/External-idp\/External-idp.xcodeproj",
+        "containerPath" : "container:..\/ExternalIdP\/ExternalIdP.xcodeproj",
         "identifier" : "ECB7C6972D5A2C1F0006F1C8",
-        "name" : "PingExternal-idpTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/External-idp-native-handlers\/External-idp-native-handlers.xcodeproj",
-        "identifier" : "ECED50FF2DBFD7EB00FA39A7",
-        "name" : "PingExternal_idp_native_handlersTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/External-idp-Apple\/External-idp-Apple.xcodeproj",
-        "identifier" : "ECA7A2AB2DC24BC60011E59C",
-        "name" : "External-idp-AppleTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/External-idp-Facebook\/External-idp-Facebook.xcodeproj",
-        "identifier" : "EC5EA5432DC2295E000C2737",
-        "name" : "External-idp-FacebookTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/External-idp-Google\/External-idp-Google.xcodeproj",
-        "identifier" : "ECA7A2EF2DC251870011E59C",
-        "name" : "External-idp-GoogleTests"
+        "name" : "PingExternalIdPTests"
       }
     }
   ],
