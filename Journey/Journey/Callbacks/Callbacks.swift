@@ -12,12 +12,10 @@ import PingOrchestrate
 
 /// Callback protocol for actions that can be used in a journey.
 /// It conforms to `Action`, `Identifiable`, and `Sendable` protocols.
-/// It defines an associated type `T` and requires an initializer that takes a JSON dictionary.
 /// It also requires a method to return the payload as a dictionary.
 /// The `id` property is used to uniquely identify the callback.
 /// The `payload` method returns a dictionary representation of the callback's data,
-public protocol Callback<T>: Action, Identifiable, Sendable {
-    associatedtype T
+public protocol Callback: Action, Identifiable, Sendable {
     init(with json: [String: Any])
     var id: String { get }
     func payload() -> [String: Any]

@@ -14,6 +14,16 @@ import PingOrchestrate
 
 extension DaVinci {
     /// Retrieve the user.
+    /// This method is now Deprecated. Please call `daVinciUser()` directly
+    /// Calling `user()` instead might cause issues when both DaVinci and the Journey module is used
+    /// If cookies are available, it prepares a new user and returns it.
+    /// If no user is found and no cookies are available, it returns nil.
+    /// - Returns: The user if found, otherwise nil.
+    @available(*, deprecated)
+    public func user() async -> User? {
+        return await daVinciUser()
+    }
+    /// Retrieve the user.
     /// If cookies are available, it prepares a new user and returns it.
     /// If no user is found and no cookies are available, it returns nil.
     /// - Returns: The user if found, otherwise nil.

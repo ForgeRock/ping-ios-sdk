@@ -11,7 +11,7 @@
 import Foundation
 
 /// A callback that collects a password input from the user.
-public class PasswordCallback: AbstractCallback<String>, ObservableObject,  @unchecked Sendable {
+public class PasswordCallback: AbstractCallback, ObservableObject,  @unchecked Sendable {
     /// The prompt message displayed to the user.
     private(set) public var prompt: String = ""
     /// The password input collected from the user.

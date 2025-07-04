@@ -152,6 +152,7 @@
 				EC727AD42E04525C005D9E28 /* Callbacks */,
 				EC727A982E02DCF6005D9E28 /* Module */,
 				EC727A5B2E019254005D9E28 /* Journey.swift */,
+				EC727ACE2E042DBB005D9E28 /* SSOToken.swift */,
 				EC727B082E059BB5005D9E28 /* User.swift */,
 				EC727AD22E044BFC005D9E28 /* Constants.swift */,
 			);
@@ -188,7 +189,6 @@
 			children = (
 				EC727B0A2E05A20B005D9E28 /* Agent.swift */,
 				EC727AD02E044A9F005D9E28 /* Transform.swift */,
-				EC727ACE2E042DBB005D9E28 /* SSOToken.swift */,
 				EC727ACC2E042B0E005D9E28 /* SessionConfig.swift */,
 				EC727ACA2E042A22005D9E28 /* Session.swift */,
 				EC727AC82E031C86005D9E28 /* Request.swift */,

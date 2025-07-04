@@ -12,7 +12,7 @@ import Foundation
 
 /// A base class for callbacks that provides a JSON payload and methods to manipulate input values.
 /// This class is designed to be subclassed for specific callback implementations.
-open class AbstractCallback<T>: Callback, @unchecked Sendable {
+open class AbstractCallback: Callback, @unchecked Sendable {
     /// The JSON payload for the callback, containing input and output data.
     public var json: [String: Any] = [:]
     

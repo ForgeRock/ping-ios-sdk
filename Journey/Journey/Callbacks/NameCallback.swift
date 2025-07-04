@@ -11,7 +11,7 @@
 import Foundation
 
 // A callback that collects a name input from the user.
-public class NameCallback: AbstractCallback<String>, ObservableObject, @unchecked Sendable {
+public class NameCallback: AbstractCallback, ObservableObject, @unchecked Sendable {
     /// The prompt message displayed to the user for input.
     private(set) public var prompt: String = ""
     /// The name of the input field.
