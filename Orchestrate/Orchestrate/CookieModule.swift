@@ -31,7 +31,6 @@ public class CookieModule {
             if let url = request.urlRequest.url, let cookies = cookies {
                 await CookieModule.inject(url: url,
                                           cookies: cookies,
-                                          inMemoryStorage: setup.config.inMemoryStorage,
                                           request: request)
             }
             return request
@@ -43,8 +42,9 @@ public class CookieModule {
                 if let allCookies = allCookies {
                     request.cookies(cookies: allCookies)
                 }
+                // Inject persisted cookies from cookie storage if available
                 if let cookies = try? await setup.config.cookieStorage.get() {
-                    await CookieModule.inject(url: url, cookies: cookies, inMemoryStorage: setup.config.inMemoryStorage, request: request)
+                    await CookieModule.inject(url: url, cookies: cookies, request: request)
                 }
             }
             return request
@@ -64,7 +64,7 @@ public class CookieModule {
         setup.signOff { @Sendable request in
             if let url = request.urlRequest.url {
                 if let cookies = try? await setup.config.cookieStorage.get() {
-                    await CookieModule.inject(url: url, cookies: cookies,  inMemoryStorage: setup.config.inMemoryStorage, request: request)
+                    await CookieModule.inject(url: url, cookies: cookies, request: request)
                 }
                 try? await setup.config.cookieStorage.delete()
                 await setup.config.inMemoryStorage.deleteCookies(url: url)
@@ -77,21 +77,18 @@ public class CookieModule {
     /// - Parameters:
     ///   - url: The URL of the request.
     ///   - cookies: The cookies to be injected.
-    ///   - inMemoryStorage: In-memory cookie storage.
     ///   - request: The HTTP request to modify.
     static func inject(url: URL,
                        cookies: [CustomHTTPCookie],
-                       inMemoryStorage: InMemoryCookieStorage?,
                        request: Request) async {
         
-        await inMemoryStorage?.deleteCookies(url: url)
-        
+        let persistedTempCookiesStorage = InMemoryCookieStorage()
         let httpCookies = cookies.compactMap { $0.toHTTPCookie() }
         for cookie in httpCookies {
-            await inMemoryStorage?.setCookie(cookie)
+            await persistedTempCookiesStorage.setCookie(cookie)
         }
         
-        if let cookie = await inMemoryStorage?.cookies(for: url) {
+        if let cookie = await persistedTempCookiesStorage.cookies(for: url) {
             request.cookies(cookies: cookie)
         }
     }
@@ -112,14 +109,12 @@ public class CookieModule {
         let persistCookies = cookies.filter { cookieConfig.persist.contains($0.name) }
         let otherCookies = cookies.filter { !cookieConfig.persist.contains($0.name) }
         
-        await storage?.deleteCookies(url: url)
-        
         if !persistCookies.isEmpty {
-            
+            let persistedTempCookiesStorage = InMemoryCookieStorage()
             // Add existing cookies to cookie storage
             if let httpCookies = try? await cookieConfig.cookieStorage.get()?.compactMap({ $0.toHTTPCookie() }) {
                 for cookie in httpCookies {
-                    await storage?.setCookie(cookie)
+                    await persistedTempCookiesStorage.setCookie(cookie)
                 }
             }
             
@@ -128,12 +123,11 @@ public class CookieModule {
             
             // Add new cookies to temp cookie storage
             for cookie in persistCookies {
-                await storage?.setCookie(cookie)
+                await persistedTempCookiesStorage.setCookie(cookie)
             }
             
-            
             // Persist only the required cookies to keychain
-            let cookieData = await storage?.cookies(for: url)?
+            let cookieData = await persistedTempCookiesStorage.cookies(for: url)?
                 .filter { cookieConfig.persist.contains($0.name) }
                 .compactMap { value in
                     CustomHTTPCookie(from: value)
