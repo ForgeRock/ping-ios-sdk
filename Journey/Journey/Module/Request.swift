@@ -24,7 +24,8 @@ extension Request {
     internal func populateRequest(
         authIndexValue: String,
         authIndexType: String = "service",
-        journeyConfig: JourneyConfig
+        journeyConfig: JourneyConfig,
+        options: Options? = nil
     ) {
         let authenticateEndpoint = "\(journeyConfig.serverUrl ?? "")/json/realms/\(journeyConfig.realm)/authenticate"
         self.url(authenticateEndpoint)
@@ -36,12 +37,15 @@ extension Request {
         if !authIndexValue.isEmpty {
             self.parameter(name: JourneyConstants.authIndexValue, value: authIndexValue)
         }
-        if journeyConfig.forceAuth {
-            self.parameter(name: "ForceAuth", value: "true")
+        if let options = options {
+            if options.forceAuth == true {
+                self.parameter(name: "ForceAuth", value: "true")
+            }
+            if options.noSession == true {
+                self.parameter(name: "noSession", value: "true")
+            }
         }
-        if journeyConfig.noSession {
-            self.parameter(name: "noSession", value: "true")
-        }
+        
         self.body(body: [String: Any]())
     }
 }

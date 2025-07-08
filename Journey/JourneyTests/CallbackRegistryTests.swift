@@ -11,7 +11,7 @@
 import XCTest
 @testable import PingJourney
 
-class CustomCallback: AbstractCallback<String>, @unchecked Sendable {
+class CustomCallback: AbstractCallback, @unchecked Sendable {
     /// The prompt message displayed to the user for input.
     private(set) public var prompt: String = ""
     /// The name of the input field.
@@ -59,7 +59,7 @@ final class CallbackRegistryTests: XCTestCase {
     
     func testMultipleCallbackTypes() async {
         let registry = CallbackRegistry()
-        class AnotherCallback: AbstractCallback<String>, @unchecked Sendable {
+        class AnotherCallback: AbstractCallback, @unchecked Sendable {
             /// The prompt message displayed to the user for input.
             private(set) public var prompt: String = ""
             /// The name of the input field.

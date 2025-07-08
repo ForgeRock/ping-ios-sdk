@@ -139,10 +139,10 @@ let journey = Journey.createJourney { config in
               config.cookie = "386c0d288Bac4b9"
           }
 
-let node = await journey.start("Login") {
-        $0.forceAuth = false
-        $0.noSession = false
-    } // Initiate the authentication journey
+let node = await journey.start("Login") { options in
+            options.forceAuth = false
+            options.noSession = false
+        } // Initiate the authentication journey
 
 // Determine the type of the current Node
 switch node {
@@ -339,9 +339,9 @@ class JourneyViewModel: ObservableObject {
             isLoading = true
         }
         
-        let next = await journey.start("Login") {
-            $0.forceAuth = false
-            $0.noSession = false
+        let next = await journey.start("Login") { options in
+            options.forceAuth = false
+            options.noSession = false
         }
         
         await MainActor.run {

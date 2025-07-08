@@ -29,6 +29,13 @@ public class JourneyConfig: WorkflowConfig, @unchecked Sendable {
     public var serverUrl: String?
     public var realm: String = JourneyConstants.realm
     public var cookie: String = JourneyConstants.cookie
+}
+
+/// Define a struct to hold options for the journey.
+/// This struct contains two properties:
+/// - `forceAuth`: A boolean indicating whether to force authentication.
+/// - `noSession`: A boolean indicating whether to allow the journey to complete without generating a session.
+public struct Options: Sendable {
     public var forceAuth: Bool = false
     public var noSession: Bool = false
 }
@@ -65,44 +72,39 @@ public extension Journey {
     /// Starts the journey with the provided login and configuration block.
     /// - Parameters:
     /// - login: The login identifier to start the journey.
-    /// - block: A block to configure the `JourneyConfig`.
+    /// - block:  A block to configure the `Options` struct.
     /// - Returns: A `Node` representing the start of the journey.
-    func start(_ login: String, block: @Sendable (JourneyConfig) -> Void = {_ in }) async -> Node {
+    func start(_ journeyName: String, configure: @Sendable (inout Options) -> Void = { _ in }) async -> Node {
+        var options = Options()
+        configure(&options)
         guard let journeyConfig = self.config as? JourneyConfig else {
             return FailureNode(cause: ApiError.error(400, [:], "JourneyConfig missing"))
         }
-        block(journeyConfig)
         
         let request = Request()
-        request.populateRequest(authIndexValue: login, journeyConfig: journeyConfig)
+        request.populateRequest(authIndexValue: journeyName, journeyConfig: journeyConfig, options: options)
         
-        do {
-            return try await start(request: request)
-        } catch {
-            return FailureNode(cause: error)
-        }
+        return await start(request)
     }
     
     /// Resumes the journey with the provided URI and configuration block.
     /// - Parameters:
     /// - uri: The URI to resume the journey.
-    /// - block: A block to configure the `JourneyConfig`.
+    /// - block:  A block to configure the `Options` struct.
     /// - Returns: A `Node` representing the resumed journey.
-    func resume(_ uri: URL, block: @Sendable (JourneyConfig) -> Void = { _ in }) async -> Node {
+    func resume(_ uri: URL, configure: @Sendable (inout Options) -> Void = { _ in }) async -> Node {
+        var options = Options()
+        configure(&options)
         guard let journeyConfig = self.config as? JourneyConfig else {
             return FailureNode(cause: ApiError.error(400, [:], "JourneyConfig missing"))
         }
-        block(journeyConfig)
+        
         if let components = URLComponents(url: uri, resolvingAgainstBaseURL: false),
            let suspendedId = components.queryItems?.first(where: { $0.name == JourneyConstants.suspendedId })?.value {
             let request = Request()
-            request.populateRequest(authIndexValue: "", authIndexType: "", journeyConfig: journeyConfig)
+            request.populateRequest(authIndexValue: "", authIndexType: "", journeyConfig: journeyConfig, options: options)
             request.parameter(name: JourneyConstants.suspendedId, value: suspendedId)
-            do {
-                return try await start(request: request)
-            } catch {
-                return FailureNode(cause: error)
-            }
+            return await start(request)
         } else {
             return FailureNode(cause: ApiError.error(400, [:], "Invalid URI or missing suspendedId"))
         }
