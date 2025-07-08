@@ -20,7 +20,7 @@ let package = Package (
     ],
     dependencies: [
         .package(url: "https://github.com/facebook/facebook-ios-sdk.git", "16.3.1" ..< "16.4.0"),
-        .package(url: "https://github.com/google/GoogleSignIn-iOS.git", "8.1.0-vwg-eap-1.0.0" ..< "8.2.0"))
+        .package(url: "https://github.com/google/GoogleSignIn-iOS.git", "8.1.0-vwg-eap-1.0.0" ..< "8.2.0")
     ],
     targets: [
         .target(name: "PingLogger", dependencies: [], path: "Logger/Logger", exclude: ["Logger.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
