@@ -25,9 +25,13 @@ public class NodeTransformModule: @unchecked Sendable {
             
             // Check for 4XX errors that are unrecoverable
             if (400..<500).contains(status) {
-                let json = try response.json(data: response.data)
-                let message = json[JourneyConstants.message] as? String ?? ""
-                return ErrorNode(status: status, input: json, message: message, context: flowContext)
+                do {
+                    let json = try response.json(data: response.data)
+                    let message = json[JourneyConstants.message] as? String ?? ""
+                    return ErrorNode(status: status, input: json, message: message, context: flowContext)
+                } catch {
+                    return FailureNode(cause: ApiError.error(status, ["Exception": error], body))
+                }
             }
             
             // Handle success (2XX) responses
