@@ -5,6 +5,15 @@
 - Support for PingOne Forms MFA OTP components `DEVICE_REGISTRATION`, `DEVICE_AUTHENTICATION`, and `PHONE_NUMBER` [SDKS-3563]
 - Support for accessing the previous `ContinueNode` from `ErrorNode` [SDKS-3891]
 - Support for accessing the `key` attribute of `LabelCollector` [SDKS-3956]
+- New `PingExternalIdPApple` module [SDKS-3958]
+- New `PingExternalIdPGoogle` module [SDKS-3958]
+- New `PingExternalIdPFacebook` module [SDKS-3958]
+
+#### Fixed
+- Resolved an issue where cookies were incorrectly cleared from in-memory storage on requests containing a `Set-Cookie` header [SDKS-4189]
+
+#### Changed
+- Renamed `PingExternal-idp` module to `PingExternalIdP` [SDKS-3958]
 
 ## [1.1.0]
 
