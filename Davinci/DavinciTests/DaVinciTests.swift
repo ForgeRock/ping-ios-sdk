@@ -16,10 +16,27 @@ import XCTest
 @testable import PingStorage
 @testable import PingDavinci
 
-final class DaVinciTests: XCTestCase {
+final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
+    var davinci: DaVinci?
+    
+    let testClientId = "test"
+    let testScopes = ["openid", "email", "address"]
+    let testRedirectUri = "http://localhost:8080"
+    let testDiscoveryEndpoint = "http://localhost/.well-known/openid-configuration"
     
     override func setUp() {
+        self.configFileName = "Config"
         super.setUp()
+        
+        self.davinci = DaVinci.createDaVinci { config in
+            config.module(OidcModule.config) { oidcValue in
+                oidcValue.clientId = self.config.clientId
+                oidcValue.scopes = Set(self.config.scopes)
+                oidcValue.redirectUri = self.config.redirectUri
+                oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
+            }
+        }
+        
         MockURLProtocol.startInterceptingRequests()
         _ = CollectorFactory()
         
@@ -51,20 +68,15 @@ final class DaVinciTests: XCTestCase {
     }
     
     func testDaVinci() throws {
-        
-        let davinci = DaVinci.createDaVinci { config in
-            config.module(OidcModule.config) { oidcValue in
-                oidcValue.clientId = "c12743f9-08e8-4420-a624-71bbb08e9fe1"
-                oidcValue.scopes = ["openid", "email", "address", "phone", "profile"]
-                oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
-                oidcValue.discoveryEndpoint = "https://auth.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/as/.well-known/openid-configuration"
-            }
+        guard let davinci = self.davinci else {
+            XCTFail("Failed to create DaVinci instance")
+            return
         }
         
-        XCTAssertEqual(davinci.config.modules.count, 4)
+        XCTAssertEqual(davinci.config.modules.count, 5)
         XCTAssertEqual(davinci.initHandlers.count, 2)
         XCTAssertEqual(davinci.nextHandlers.count, 2)
-        XCTAssertEqual(davinci.nodeHandlers.count, 0)
+        XCTAssertEqual(davinci.nodeHandlers.count, 1)
         XCTAssertEqual(davinci.responseHandlers.count, 1)
         XCTAssertEqual(davinci.signOffHandlers.count, 2)
         XCTAssertEqual(davinci.successHandlers.count, 1)
@@ -78,19 +90,19 @@ final class DaVinciTests: XCTestCase {
         
         let davinci1 = DaVinci.createDaVinci { config in
             config.module(OidcModule.config) { oidcValue in
-                oidcValue.clientId = "c12743f9-08e8-4420-a624-71bbb08e9fe1"
-                oidcValue.scopes = ["openid", "email", "address", "phone", "profile"]
-                oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
-                oidcValue.discoveryEndpoint = "https://auth.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/as/.well-known/openid-configuration"
+                oidcValue.clientId = self.config.clientId
+                oidcValue.scopes = Set(self.config.scopes)
+                oidcValue.redirectUri = self.config.redirectUri
+                oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
             }
             
             config.module(nosession)
         }
         
-        XCTAssertEqual(davinci1.config.modules.count, 5)
+        XCTAssertEqual(davinci1.config.modules.count, 6)
         XCTAssertEqual(davinci1.initHandlers.count, 2)
         XCTAssertEqual(davinci1.nextHandlers.count, 3)
-        XCTAssertEqual(davinci1.nodeHandlers.count, 0)
+        XCTAssertEqual(davinci1.nodeHandlers.count, 1)
         XCTAssertEqual(davinci1.responseHandlers.count, 1)
         XCTAssertEqual(davinci1.signOffHandlers.count, 2)
         XCTAssertEqual(davinci1.successHandlers.count, 1)
@@ -102,10 +114,10 @@ final class DaVinciTests: XCTestCase {
             config.httpClient = HttpClient(session: .shared)
             
             config.module(OidcModule.config) { oidcValue in
-                oidcValue.clientId = "test"
-                oidcValue.scopes = ["openid", "email", "address"]
-                oidcValue.redirectUri = "http://localhost:8080"
-                oidcValue.discoveryEndpoint = "http://localhost/.well-known/openid-configuration"
+                oidcValue.clientId = self.testClientId
+                oidcValue.scopes = Set(self.testScopes)
+                oidcValue.redirectUri = self.testRedirectUri
+                oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
                 oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
@@ -116,12 +128,13 @@ final class DaVinciTests: XCTestCase {
             }
         }
         
-        XCTAssertEqual(4, daVinci.config.modules.count)
+        XCTAssertEqual(5, daVinci.config.modules.count)
         let list = daVinci.config.modules
         XCTAssertTrue(list[0].config is CustomHeaderConfig)
         XCTAssertTrue(list[1].config is Void)
-        XCTAssertTrue(list[2].config is OidcClientConfig)
-        XCTAssertTrue(list[3].config is CookieConfig)
+        XCTAssertTrue(list[2].config is Void)
+        XCTAssertTrue(list[3].config is OidcClientConfig)
+        XCTAssertTrue(list[4].config is CookieConfig)
         
     }
     
@@ -132,10 +145,10 @@ final class DaVinciTests: XCTestCase {
             config.httpClient = HttpClient(session: .shared)
             
             config.module(OidcModule.config) { oidcValue in
-                oidcValue.clientId = "test"
-                oidcValue.scopes = ["openid", "email", "address"]
-                oidcValue.redirectUri = "http://localhost:8080"
-                oidcValue.discoveryEndpoint = "http://localhost/.well-known/openid-configuration"
+                oidcValue.clientId = self.testClientId
+                oidcValue.scopes = Set(self.testScopes)
+                oidcValue.redirectUri = self.testRedirectUri
+                oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
                 oidcValue.storage = tokenStorage
                 oidcValue.logger = LogManager.standard
             }
@@ -224,10 +237,10 @@ final class DaVinciTests: XCTestCase {
             config.httpClient = HttpClient(session: .shared)
             
             config.module(OidcModule.config) { oidcValue in
-                oidcValue.clientId = "test"
-                oidcValue.scopes = ["openid", "email", "address"]
-                oidcValue.redirectUri = "http://localhost:8080"
-                oidcValue.discoveryEndpoint = "http://localhost/.well-known/openid-configuration"
+                oidcValue.clientId = self.testClientId
+                oidcValue.scopes = Set(self.testScopes)
+                oidcValue.redirectUri = self.testRedirectUri
+                oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
                 oidcValue.storage =  MemoryStorage()
                 oidcValue.logger = LogManager.standard
                 oidcValue.acrValues = "acrValues"
@@ -275,10 +288,10 @@ final class DaVinciTests: XCTestCase {
             config.httpClient = HttpClient(session: .shared)
             
             config.module(OidcModule.config) { oidcValue in
-                oidcValue.clientId = "test"
-                oidcValue.scopes = ["openid", "email", "address"]
-                oidcValue.redirectUri = "http://localhost:8080"
-                oidcValue.discoveryEndpoint = "http://localhost/.well-known/openid-configuration"
+                oidcValue.clientId = self.testClientId
+                oidcValue.scopes = Set(self.testScopes)
+                oidcValue.redirectUri = self.testRedirectUri
+                oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
                 oidcValue.storage = tokenStorage
                 oidcValue.logger = LogManager.standard
             }
@@ -313,7 +326,7 @@ final class DaVinciTests: XCTestCase {
             case MockAPIEndpoint.discovery.url.path:
                 return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfigurationResponse)
             case MockAPIEndpoint.authorization.url.path:
-                var headers = MockResponse.authorizeResponseHeaders
+                let headers = MockResponse.authorizeResponseHeaders
                 return (HTTPURLResponse(url: MockAPIEndpoint.authorization.url, statusCode: 200, httpVersion: nil, headerFields: headers)!, MockResponse.responseWithBasicTypes)
             default:
                 return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
@@ -324,10 +337,10 @@ final class DaVinciTests: XCTestCase {
             config.httpClient = HttpClient(session: .shared)
             
             config.module(OidcModule.config) { oidcValue in
-                oidcValue.clientId = "test"
-                oidcValue.scopes = ["openid", "email", "address"]
-                oidcValue.redirectUri = "http://localhost:8080"
-                oidcValue.discoveryEndpoint = "http://localhost/.well-known/openid-configuration"
+                oidcValue.clientId = self.testClientId
+                oidcValue.scopes = Set(self.testScopes)
+                oidcValue.redirectUri = self.testRedirectUri
+                oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
                 oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }

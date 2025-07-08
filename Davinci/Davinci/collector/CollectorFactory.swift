@@ -41,11 +41,12 @@ public actor CollectorFactory {
         register(type: Constants.RADIO, collector: SingleSelectCollector.self)
         register(type: Constants.COMBOBOX, collector: MultiSelectCollector.self)
         register(type: Constants.CHECKBOX, collector: MultiSelectCollector.self)
-        if let c: NSObject.Type = NSClassFromString("PingExternal_idp.IdpCollector") as? NSObject.Type {
+        if let c: NSObject.Type = NSClassFromString("PingExternalIdP.IdpCollector") as? NSObject.Type {
             c.perform(Selector(("registerCollector")))
         }
         register(type: Constants.DEVICE_REGISTRATION, collector: DeviceRegistrationCollector.self)
         register(type: Constants.DEVICE_AUTHENTICATION, collector: DeviceAuthenticationCollector.self)
+        register(type: Constants.PHONE_NUMBER, collector: PhoneNumberCollector.self)
     }
     
     /// Registers a new type of Collector.

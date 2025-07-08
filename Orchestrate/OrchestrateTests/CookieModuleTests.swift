@@ -187,6 +187,70 @@ final class CookieModuleTests: XCTestCase {
         XCTAssertEqual(cookies?.count, 1)
     }
     
+    func testExpiredCookieFromFailedResponse() async {
+        let testState = TestState()
+        let json: [String: Sendable] = ["booleanKey": true]
+        var requestCount = 0
+        MockURLProtocol.requestHandler = { request in
+            if requestCount == 0 {
+                requestCount += 1
+                return (HTTPURLResponse(url: URL(string: "http://openam.example.com")!, statusCode: 200, httpVersion: nil, headerFields: [
+                    "Set-Cookie":
+                        "interactionId=178ce234-afd2-4207-984e-bda28bd7042c; Path=/; Expires=Wed, 21 Oct 9999 01:00:00 GMT; HttpOnly; Domain=openam.example.com, interactionToken=abc; Path=/; Expires=Thu, 09 May 9999 21:38:44 GMT; HttpOnly; Domain=openam.example.com"
+                ])!, Data())
+            } else {
+                return (HTTPURLResponse(url: URL(string: "http://openam.example.com")!, statusCode: 200, httpVersion: nil, headerFields: [
+                    "Set-Cookie":
+                        "test=178ce234-afd2-4207-984e-bda28bd7042c; Path=/; Expires=Wed, 21 Oct 1999 01:00:00 GMT; HttpOnly; Domain=openam.example.com"
+                ])!, Data())
+            }
+            
+        }
+        
+        // Create initial workflow
+        let initialWorkflow = Workflow.createWorkflow { config in
+            config.httpClient = HttpClient(session: .shared)
+        }
+        
+        // Create state container
+        let workflowContainer = WorkflowContainer(workflow: initialWorkflow)
+        
+        // Create the dummy module with access to the state
+        let dummy = Module.of({CustomHeaderConfig()}) { module in
+            module.transform { flowContext, _ in
+                if await testState.isSuccess() {
+                    return ErrorNode(context: flowContext)
+                } else {
+                    await testState.setSuccess(value: true)
+                    return TestContinueNode(context: flowContext, workflow: workflowContainer.workflow, input: json, actions: [])
+                }
+            }
+        }
+        
+        let memory = MemoryStorage<[CustomHTTPCookie]>()
+        // Update the workflow in the shared state
+        workflowContainer.workflow = Workflow.createWorkflow { config in
+            config.httpClient = HttpClient(session: .shared)
+            config.module(dummy)
+            
+            config.module(CookieModule.config) { cookieValue in
+                cookieValue.cookieStorage = memory
+            }
+        }
+        
+        let node = await workflowContainer.workflow.start()
+        
+        if let cookieModule = workflowContainer.workflow.config.modules[1].config as? CookieConfig {
+            let inMemoryCookies = await cookieModule.inMemoryStorage.cookies
+            XCTAssertNotNil(inMemoryCookies)
+            XCTAssertEqual(inMemoryCookies?.count, 2)
+            let continueNode = node as? ContinueNode
+            let _ = await continueNode?.next()
+            let updatedInMemoryCookies = await cookieModule.inMemoryStorage.cookies
+            XCTAssertNotNil(updatedInMemoryCookies)
+            XCTAssertEqual(updatedInMemoryCookies?.count, 3)
+        }
+    }
     
     func testCookieIsExpiredValidationExpired() {
         let setCookie: [String: String] = ["Set-Cookie":"iPlanetDirectoryPro=token; Expires=Wed, 21 Oct 1999 01:00:00 GMT; Domain=openam.example.com"]

@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A51313C52D9C69E00086F846 /* PingExternal_idp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A51313C42D9C69E00086F846 /* PingExternal_idp.framework */; };
-		A51313C62D9C69E00086F846 /* PingExternal_idp.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A51313C42D9C69E00086F846 /* PingExternal_idp.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC0816AD2D4A692E00F1AD02 /* Browser.h in Headers */ = {isa = PBXBuildFile; fileRef = EC0816AB2D4A692E00F1AD02 /* Browser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EC0816B12D4A696F00F1AD02 /* BrowserLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816AE2D4A696F00F1AD02 /* BrowserLauncher.swift */; };
+		EC2E0D9B2DE60DF9000CC0E2 /* PingExternalIdP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC2E0D9A2DE60DF9000CC0E2 /* PingExternalIdP.framework */; };
+		EC2E0D9C2DE60DF9000CC0E2 /* PingExternalIdP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC2E0D9A2DE60DF9000CC0E2 /* PingExternalIdP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECA53F982D635CFA002B35D4 /* PingBrowserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA53F962D635CFA002B35D4 /* PingBrowserTests.swift */; };
 		ECA53F9A2D6368AF002B35D4 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = ECA53F992D6368AF002B35D4 /* PrivacyInfo.xcprivacy */; };
 		ECA53FBC2D6387A2002B35D4 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53FBB2D6387A2002B35D4 /* PingLogger.framework */; };
@@ -29,13 +29,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		A51313C72D9C69E00086F846 /* Embed Frameworks */ = {
+		EC2E0D9D2DE60DF9000CC0E2 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A51313C62D9C69E00086F846 /* PingExternal_idp.framework in Embed Frameworks */,
+				EC2E0D9C2DE60DF9000CC0E2 /* PingExternalIdP.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -60,6 +60,7 @@
 		EC0816AE2D4A696F00F1AD02 /* BrowserLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserLauncher.swift; sourceTree = "<group>"; };
 		EC0816B52D4A805800F1AD02 /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC0816B92D4A805D00F1AD02 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC2E0D9A2DE60DF9000CC0E2 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA53F962D635CFA002B35D4 /* PingBrowserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingBrowserTests.swift; sourceTree = "<group>"; };
 		ECA53F992D6368AF002B35D4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ECA53FBB2D6387A2002B35D4 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -81,7 +82,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECB7C66D2D5A1FAB0006F1C8 /* PingBrowser.framework in Frameworks */,
-				A51313C52D9C69E00086F846 /* PingExternal_idp.framework in Frameworks */,
+				EC2E0D9B2DE60DF9000CC0E2 /* PingExternalIdP.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,6 +121,7 @@
 		EC0816B42D4A805800F1AD02 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EC2E0D9A2DE60DF9000CC0E2 /* PingExternalIdP.framework */,
 				A51313C42D9C69E00086F846 /* PingExternal_idp.framework */,
 				ECA53FBF2D638843002B35D4 /* External_idp.framework */,
 				ECA53FBB2D6387A2002B35D4 /* PingLogger.framework */,
@@ -179,7 +181,7 @@
 				ECB7C6652D5A1FAB0006F1C8 /* Sources */,
 				ECB7C6662D5A1FAB0006F1C8 /* Frameworks */,
 				ECB7C6672D5A1FAB0006F1C8 /* Resources */,
-				A51313C72D9C69E00086F846 /* Embed Frameworks */,
+				EC2E0D9D2DE60DF9000CC0E2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -300,7 +302,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Browser;
@@ -336,7 +338,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Browser;
@@ -484,7 +486,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingBrowserTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -502,7 +504,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingBrowserTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;

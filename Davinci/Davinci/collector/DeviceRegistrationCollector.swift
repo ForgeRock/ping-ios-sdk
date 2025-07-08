@@ -27,7 +27,7 @@ open class DeviceRegistrationCollector: FieldCollector<String>, Submittable, @un
     /// Initializes a new instance of `DeviceRegistrationCollector` with the given JSON input.
     public required init(with json: [String : Any]) {
         super.init(with: json)
-        let devicesJson = json[Constants.devices] as? [[String: Any]] ?? [[:]]
+        let devicesJson = json[Constants.options] as? [[String: Any]] ?? [[:]]
         if let jsonData = try? JSONSerialization.data(withJSONObject: devicesJson, options: []) {
             devices = Device.populateDevices(from: jsonData)
         }

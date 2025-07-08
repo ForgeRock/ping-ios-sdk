@@ -35,7 +35,7 @@ DaVinci [here](https://docs.pingidentity.com/davinci/davinci_introduction.html).
 
 ## Integrating the SDK into your project
 
-Use Cocoapods or Swift Package Manger
+Use Cocoapods or Swift Package Manager
 
 ## Usage
 
@@ -228,6 +228,7 @@ case is ContinueNode: do {}
 case is FailureNode:
     (node as! FailureNode).cause //Retrieve the cause of the Failure
 case is ErrorNode:
+    (node as! ErrorNode).continueNode // Retrieve the previous ContinueNode
     (node as! ErrorNode).message //Retrieve the error message
     // Retrieve the details of the error
     (node as! ErrorNode).details.forEach { detail in

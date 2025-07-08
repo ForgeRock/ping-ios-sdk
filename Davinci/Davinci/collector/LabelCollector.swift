@@ -17,8 +17,10 @@ public class LabelCollector: Collector, @unchecked Sendable {
     
     /// The UUID of the field collector.
     public var id: String {
-        return UUID().uuidString
+        return key
     }
+    /// The key of the label collector.
+    public private(set) var key: String = ""
     /// The label content.
     public private(set) var content: String = ""
     
@@ -26,6 +28,7 @@ public class LabelCollector: Collector, @unchecked Sendable {
     /// - Parameter json: The json to initialize from.
     public required init(with json: [String : Any]) {
         content = json[Constants.content] as? String ?? ""
+        key = json[Constants.key] as? String ?? ""
     }
     
     /// Initializes the `LabelCollector` with the given value. The `LabelCollector` does not hold any value.

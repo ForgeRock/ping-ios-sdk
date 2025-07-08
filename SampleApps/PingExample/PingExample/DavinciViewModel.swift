@@ -15,7 +15,7 @@ import PingOidc
 import PingOrchestrate
 import PingLogger
 import PingStorage
-import PingExternal_idp
+import PingExternalIdP
 
 /// Configures and initializes the DaVinci instance with the PingOne server and OAuth 2.0 client details.
 /// - This configuration includes:
@@ -65,7 +65,7 @@ class DavinciViewModel: ObservableObject {
         // Starts the DaVinci orchestration process and retrieves the first node.
         let next = await davinci.start()
         await MainActor.run {
-            self.state = DavinciState(previous: next , node: next)
+            self.state = DavinciState(node: next)
             isLoading = false
         }
     }
@@ -80,7 +80,7 @@ class DavinciViewModel: ObservableObject {
             // Retrieves the next node in the flow.
             let next = await current.next()
             await MainActor.run {
-                self.state = DavinciState(previous: current, node: next)
+                self.state = DavinciState(node: next)
                 isLoading = false
             }
         }
@@ -107,17 +107,15 @@ class DavinciViewModel: ObservableObject {
     }
     
     public func refresh() {
-        state = DavinciState(previous: state.previous, node: state.node)
+        state = DavinciState(node: state.node)
     }
 }
 
 /// A model class that represents the state of the current and previous nodes in the DaVinci flow.
 class DavinciState {
-    var previous: Node? = nil
     var node: Node? = nil
     
-    init(previous: Node?  = nil, node: Node? = nil) {
-        self.previous = previous
+    init(node: Node? = nil) {
         self.node = node
     }
 }

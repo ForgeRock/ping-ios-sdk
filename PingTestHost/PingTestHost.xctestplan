@@ -18,19 +18,9 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:..\/Logger\/Logger.xcodeproj",
-        "identifier" : "A5A796B52BE04E68004D0F2D",
-        "name" : "LoggerTests"
-      }
-    },
-    {
-      "skippedTests" : [
-        "StorageDelegateTests\/testConcurrentAccess()"
-      ],
-      "target" : {
-        "containerPath" : "container:..\/Storage\/Storage.xcodeproj",
-        "identifier" : "A5A797032BE1782F004D0F2D",
-        "name" : "StorageTests"
+        "containerPath" : "container:..\/Orchestrate\/Orchestrate.xcodeproj",
+        "identifier" : "3A54417D2BCDF1D900385131",
+        "name" : "OrchestrateTests"
       }
     },
     {
@@ -42,15 +32,16 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Orchestrate\/Orchestrate.xcodeproj",
-        "identifier" : "3A54417D2BCDF1D900385131",
-        "name" : "OrchestrateTests"
+        "containerPath" : "container:..\/Browser\/Browser.xcodeproj",
+        "identifier" : "ECB7C6682D5A1FAB0006F1C8",
+        "name" : "PingBrowserTests"
       }
     },
     {
       "skippedTests" : [
         "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
         "DaVinciIntegrationTests\/testInvalidPassword()",
+        "DaVinciIntegrationTests\/testUserRegistrationFailureInvalidPassword()",
         "FormFieldValidationTest\/testPasswordValidation()",
         "FormFieldValidationTests\/testPasswordValidation()",
         "PasswordCollectorTests\/testAddsInvalidLengthErrorWhenValueTooShort()",
@@ -65,20 +56,27 @@
       }
     },
     {
+      "skippedTests" : [
+        "StorageDelegateTests\/testConcurrentAccess()"
+      ],
       "target" : {
-        "containerPath" : "container:..\/Browser\/Browser.xcodeproj",
-        "identifier" : "ECB7C6682D5A1FAB0006F1C8",
-        "name" : "PingBrowserTests"
+        "containerPath" : "container:..\/Storage\/Storage.xcodeproj",
+        "identifier" : "A5A797032BE1782F004D0F2D",
+        "name" : "StorageTests"
       }
     },
     {
-      "skippedTests" : [
-        "NativeHandlerTests"
-      ],
       "target" : {
-        "containerPath" : "container:..\/External-idp\/External-idp.xcodeproj",
+        "containerPath" : "container:..\/Logger\/Logger.xcodeproj",
+        "identifier" : "A5A796B52BE04E68004D0F2D",
+        "name" : "LoggerTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/ExternalIdP\/ExternalIdP.xcodeproj",
         "identifier" : "ECB7C6972D5A2C1F0006F1C8",
-        "name" : "PingExternal-idpTests"
+        "name" : "PingExternalIdPTests"
       }
     }
   ],

@@ -28,6 +28,7 @@ extension DaVinci {
             customHeaderConfig.header(name: Request.Constants.acceptLanguage, value: Locale.preferredLocales.toAcceptLanguage())
         }
         config.module(NodeTransformModule.config)
+        config.module(ContinueNodeModule.config)
         config.module(OidcModule.config)
         config.module(CookieModule.config) { cookieConfig in
             cookieConfig.persist = [Request.Constants.stCookie, Request.Constants.stNoSsCookie]

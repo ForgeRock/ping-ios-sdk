@@ -11,9 +11,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-15, macos-15-large]
+        os: [macos-15]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
+
+    env:
+      XCODE_VERSION: ${{ vars.XCODE_VERSION }}
+      SIM_DEVICE_NAME: ${{ vars.SIM_DEVICE_NAME }}
+      SIM_OS_VERSION: ${{ vars.SIM_OS_VERSION }}
 
     steps:
       # Clone the repo
@@ -31,11 +36,24 @@ jobs:
       # Set target Xcode version. For more details and options see:
       # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-15-Readme.md
       - name: Select Xcode
-        run: sudo xcode-select -switch /Applications/Xcode_16.1.0.app && /usr/bin/xcodebuild -version
+        run: sudo xcode-select -switch /Applications/Xcode_$XCODE_VERSION.app && /usr/bin/xcodebuild -version
         
       # Run all tests
       - name: Run tests
-        run: xcodebuild test -scheme PingTestHost -workspace SampleApps/Ping.xcworkspace -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 16 Pro Max,OS=18.1' -derivedDataPath DerivedData -enableCodeCoverage YES -resultBundlePath TestResults | xcpretty && exit ${PIPESTATUS[0]}
+        run: |
+          DEST="platform=iOS Simulator,name=${SIM_DEVICE_NAME},OS=${SIM_OS_VERSION}"
+          echo "Running tests on $DEST"
+
+          xcodebuild test \
+          -scheme PingTestHost \
+          -workspace SampleApps/Ping.xcworkspace \
+          -configuration Debug \
+          -destination "$DEST" \
+          -derivedDataPath DerivedData \
+          -enableCodeCoverage YES \
+          -resultBundlePath TestResults | xcpretty
+          
+          exit ${PIPESTATUS[0]}
 
       # Publish test results
       - name: Publish test results

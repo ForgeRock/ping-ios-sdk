@@ -12,7 +12,7 @@
 import SwiftUI
 import PingOrchestrate
 import PingDavinci
-import PingExternal_idp
+import PingExternalIdP
 
 struct ContinueNodeView: View {
     var continueNode: ContinueNode
@@ -86,6 +86,10 @@ struct ContinueNodeView: View {
                 case is DeviceAuthenticationCollector:
                     if let deviceAuthenticationCollector = collector as? DeviceAuthenticationCollector {
                         DeviceAuthenticationView(field: deviceAuthenticationCollector, onNext: onNext)
+                    }
+                case is PhoneNumberCollector:
+                    if let phoneNumberCollector = collector as? PhoneNumberCollector {
+                        PhoneNumberView(field: phoneNumberCollector, onNodeUpdated: onNodeUpdated)
                     }
                 default:
                     EmptyView()
