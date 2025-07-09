@@ -40,10 +40,13 @@ jobs:
         
       # Run all tests
       - name: Run tests
+        id: test_step
         run: |
           DEST="platform=iOS Simulator,name=${SIM_DEVICE_NAME},OS=${SIM_OS_VERSION}"
           echo "Running tests on $DEST"
 
+          # Capture test output to a file
+          mkdir -p test-output
           xcodebuild test \
           -scheme PingTestHost \
           -workspace SampleApps/Ping.xcworkspace \
@@ -51,15 +54,26 @@ jobs:
           -destination "$DEST" \
           -derivedDataPath DerivedData \
           -enableCodeCoverage YES \
-          -resultBundlePath TestResults | xcpretty
+          -resultBundlePath TestResults 2>&1 | tee test-output/xcodebuild.log | xcpretty
           
           exit ${PIPESTATUS[0]}
+
+      # Read test output if tests failed
+      - name: Process test output
+        if: failure()
+        id: process_logs
+        run: |
+          if [ -f test-output/xcodebuild.log ]; then
+            # Get last 500 lines of log file to avoid message size limits
+            tail -n 500 test-output/xcodebuild.log > test-output/failure.log
+            echo "failure_logs=$(cat test-output/failure.log)" >> $GITHUB_OUTPUT
+          fi
 
       # Publish test results
       - name: Publish test results
         uses: slidoapp/xcresulttool@v3.1.0
         with:
-          title: "Test Results ${{ matrix.os }} - ${{ env.CHIP_TYPE }}"
+          title: "Test Results ${{ matrix.os }}"
           path: TestResults.xcresult
           show-passed-tests: false
           upload-bundles: never
@@ -68,10 +82,12 @@ jobs:
       # Send slack notification with result status
       - uses: 8398a7/action-slack@v3
         with:
-          mention: 'stoyan.petrov'
+          mention: 'george.bafaloukas'
           if_mention: 'failure,cancelled'
           fields: repo,author,eventName,message,job,pullRequest,took
           status: ${{ job.status }}
+          text: |
+            ${{ job.status == 'failure' && format('Test Failure Logs:\n```{0}```', steps.process_logs.outputs.failure_logs) || '' }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
         if: always()
