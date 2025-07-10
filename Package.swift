@@ -16,9 +16,11 @@ let package = Package (
         .library(name: "PingExternalIdP", targets: ["PingExternalIdP"]),
         .library(name: "PingExternalIdPApple", targets: ["PingExternalIdPApple"]),
         .library(name: "PingExternalIdPGoogle", targets: ["PingExternalIdPGoogle"]),
-        .library(name: "PingExternalIdPFacebook", targets: ["PingExternalIdPFacebook"])
+        .library(name: "PingExternalIdPFacebook", targets: ["PingExternalIdPFacebook"]),
+        .library(name: "PingProtect", targets: ["PingProtect"])
     ],
     dependencies: [
+		.package(url: "https://github.com/pingidentity/pingone-signals-sdk-ios.git", "5.3.0" ..< "5.4.0"),
         .package(url: "https://github.com/facebook/facebook-ios-sdk.git", "16.3.1" ..< "16.4.0"),
         .package(url: "https://github.com/google/GoogleSignIn-iOS.git", "8.1.0-vwg-eap-1.0.0" ..< "8.2.0")
     ],
@@ -31,7 +33,8 @@ let package = Package (
         .target(name: "PingBrowser", dependencies: [.target(name: "PingLogger"),], path: "Browser/Browser", exclude: ["Browser.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingExternalIdP", dependencies: [.target(name: "PingDavinci"), .target(name: "PingBrowser")], path: "ExternalIdP/ExternalIdP", exclude: ["ExtrernalIdP.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingExternalIdPApple", dependencies: [.target(name: "PingExternalIdP")], path: "ExternalIdPApple/ExternalIdPApple", exclude: ["ExtrernalIdPApple.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-         .target(name: "PingExternalIdPGoogle", dependencies: [.target(name: "PingExternalIdP"), .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")], path: "ExternalIdPGoogle/ExternalIdPGoogle", exclude: ["ExtrernalIdPGoogle.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-          .target(name: "PingExternalIdPFacebook", dependencies: [.target(name: "PingExternalIdP"), .product(name: "FacebookLogin", package: "facebook-ios-sdk")], path: "ExternalIdPFacebook/ExternalIdPFacebook", exclude: ["ExtrernalIdPFacebook.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
+        .target(name: "PingExternalIdPGoogle", dependencies: [.target(name: "PingExternalIdP"), .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")], path: "ExternalIdPGoogle/ExternalIdPGoogle", exclude: ["ExtrernalIdPGoogle.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+    	.target(name: "PingExternalIdPFacebook", dependencies: [.target(name: "PingExternalIdP"), .product(name: "FacebookLogin", package: "facebook-ios-sdk")], path: "ExternalIdPFacebook/ExternalIdPFacebook", exclude: ["ExtrernalIdPFacebook.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+    	.target(name: "PingProtect", dependencies: [.target(name: "PingDavinci"), .product(name: "PingOneSignals", package: "pingone-signals-sdk-ios")], path: "Protect/Protect", exclude: ["Protect.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
     ]
 )

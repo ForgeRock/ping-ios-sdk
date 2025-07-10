@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1540"
+   LastUpgradeVersion = "1640"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -9,16 +9,30 @@
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
             buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
+            buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A54BF4642BF2E33C00CD24D4"
                BuildableName = "PingTestHost.app"
                BlueprintName = "PingTestHost"
                ReferencedContainer = "container:PingTestHost.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A5A31CA32E0A37C700ABBEF7"
+               BuildableName = "ProtectTests.xctest"
+               BlueprintName = "ProtectTests"
+               ReferencedContainer = "container:../Protect/Protect.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -169,40 +183,10 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EC5EA5432DC2295E000C2737"
-               BuildableName = "ExternalIdPFacebookTests.xctest"
-               BlueprintName = "ExternalIdPFacebookTests"
-               ReferencedContainer = "container:../ExternalIdPFacebook/ExternalIdPFacebook.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ECA7A2AB2DC24BC60011E59C"
-               BuildableName = "ExternalIdPAppleTests.xctest"
-               BlueprintName = "ExternalIdPAppleTests"
-               ReferencedContainer = "container:../ExternalIdPApple/ExternalIdPApple.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ECA7A2EF2DC251870011E59C"
-               BuildableName = "ExternalIdPGoogleTests.xctest"
-               BlueprintName = "ExternalIdPGoogleTests"
-               ReferencedContainer = "container:../ExternalIdPGoogle/ExternalIdPGoogle.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ECB7C6972D5A2C1F0006F1C8"
-               BuildableName = "PingExternalIdPTests.xctest"
-               BlueprintName = "PingExternalIdPTests"
-               ReferencedContainer = "container:../ExternalIdP/ExternalIdP.xcodeproj">
+               BlueprintIdentifier = "A5A31CA32E0A37C700ABBEF7"
+               BuildableName = "ProtectTests.xctest"
+               BlueprintName = "ProtectTests"
+               ReferencedContainer = "container:../Protect/Protect.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -217,16 +201,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A54BF4642BF2E33C00CD24D4"
-            BuildableName = "PingTestHost.app"
-            BlueprintName = "PingTestHost"
-            ReferencedContainer = "container:PingTestHost.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "IDEPreferLogStreaming"
@@ -241,16 +215,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A54BF4642BF2E33C00CD24D4"
-            BuildableName = "PingTestHost.app"
-            BlueprintName = "PingTestHost"
-            ReferencedContainer = "container:PingTestHost.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

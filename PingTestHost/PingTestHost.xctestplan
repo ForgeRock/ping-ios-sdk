@@ -78,6 +78,13 @@
         "identifier" : "ECB7C6972D5A2C1F0006F1C8",
         "name" : "PingExternalIdPTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Protect\/Protect.xcodeproj",
+        "identifier" : "A5A31CA32E0A37C700ABBEF7",
+        "name" : "ProtectTests"
+      }
     }
   ],
   "version" : 1
