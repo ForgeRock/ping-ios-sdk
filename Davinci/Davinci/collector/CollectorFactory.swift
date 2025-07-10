@@ -47,6 +47,9 @@ public actor CollectorFactory {
         register(type: Constants.DEVICE_REGISTRATION, collector: DeviceRegistrationCollector.self)
         register(type: Constants.DEVICE_AUTHENTICATION, collector: DeviceAuthenticationCollector.self)
         register(type: Constants.PHONE_NUMBER, collector: PhoneNumberCollector.self)
+        if let c: NSObject.Type = NSClassFromString("PingProtect.ProtectCollector") as? NSObject.Type {
+            c.perform(Selector(("registerCollector")))
+        }
     }
     
     /// Registers a new type of Collector.

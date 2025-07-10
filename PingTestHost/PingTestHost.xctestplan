@@ -81,9 +81,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Journey\/Journey.xcodeproj",
-        "identifier" : "EC727A2C2E019243005D9E28",
-        "name" : "JourneyTests"
+        "containerPath" : "container:..\/Protect\/Protect.xcodeproj",
+        "identifier" : "A5A31CA32E0A37C700ABBEF7",
+        "name" : "ProtectTests"
       }
     }
   ],

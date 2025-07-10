@@ -13,6 +13,7 @@ import SwiftUI
 import PingOrchestrate
 import PingDavinci
 import PingExternalIdP
+import PingProtect
 
 struct ContinueNodeView: View {
     var continueNode: ContinueNode
@@ -90,6 +91,10 @@ struct ContinueNodeView: View {
                 case is PhoneNumberCollector:
                     if let phoneNumberCollector = collector as? PhoneNumberCollector {
                         PhoneNumberView(field: phoneNumberCollector, onNodeUpdated: onNodeUpdated)
+                    }
+                case is ProtectCollector:
+                    if let protectCollector = collector as? ProtectCollector {
+                        ProtectView(field: protectCollector, onNodeUpdated: onNodeUpdated)
                     }
                 default:
                     EmptyView()
