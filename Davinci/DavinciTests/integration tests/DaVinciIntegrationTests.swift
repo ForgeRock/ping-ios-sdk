@@ -47,7 +47,7 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         // Start with a clean session
-        await daVinci.user()?.logout()
+        await daVinci.daVinciUser()?.logout()
     }
     
     // TestRailCase(21274)
@@ -103,11 +103,11 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
             XCTFail("Should have succeeded")
         }
         
-        let u = await daVinci.user()
+        let u = await daVinci.daVinciUser()
         await u?.logout() ?? { XCTFail("User is null") }()
         
         // After logout make sure the user is null
-        let daVinciUser = await daVinci.user()
+        let daVinciUser = await daVinci.daVinciUser()
         XCTAssertNil(daVinciUser)
     }
     
@@ -130,7 +130,7 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
         // Verify the error message upon attempt to login with invalid credentials
         XCTAssertEqual("Invalid username and/or password", errorNode.message)
         
-        let daVinciUser = await daVinci.user()
+        let daVinciUser = await daVinci.daVinciUser()
         XCTAssertNil(daVinciUser)
     }
     
@@ -186,11 +186,11 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
             XCTFail("Should have succeeded")
         }
         
-        let u = await daVinci.user()
+        let u = await daVinci.daVinciUser()
         await u?.logout() ?? { XCTFail("User is null") }()
         
         // After logout make sure the user is null
-        let daVinciUser = await daVinci.user()
+        let daVinciUser = await daVinci.daVinciUser()
         XCTAssertNil(daVinciUser)
     }
     
@@ -289,11 +289,11 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
             XCTFail("Should have succeeded")
         }
         
-        let u = await daVinci.user()
+        let u = await daVinci.daVinciUser()
         await u?.logout() ?? { XCTFail("User is null") }()
         
         // After logout make sure the user is null
-        let daVinciUser = await daVinci.user()
+        let daVinciUser = await daVinci.daVinciUser()
         XCTAssertNil(daVinciUser)
         
         // Delete the user from PingOne
@@ -480,7 +480,7 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
         // Make sure that we are still at verification code page
         XCTAssertEqual("Enter verification code", continueNode.name)
         
-        let daVinciUser = await daVinci.user()
+        let daVinciUser = await daVinci.daVinciUser()
         XCTAssertNil(daVinciUser)
         try await deleteUser(userName: newUser, pass: password)
     }
@@ -577,11 +577,11 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
             XCTFail("Should have succeeded")
         }
         
-        let u = await daVinci.user()
+        let u = await daVinci.daVinciUser()
         await u?.logout() ?? { XCTFail("User is null") }()
         
         // After logout make sure the user is null
-        let daVinciUser = await daVinci.user()
+        let daVinciUser = await daVinci.daVinciUser()
         XCTAssertNil(daVinciUser)
         
         // Delete the user from PingOne
@@ -668,11 +668,11 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
             XCTFail("Should have succeeded")
         }
         
-        let u = await daVinci.user()
+        let u = await daVinci.daVinciUser()
         await u?.logout() ?? { XCTFail("User is null") }()
         
         // After logout make sure the user is null
-        let daVinciUser = await daVinci.user()
+        let daVinciUser = await daVinci.daVinciUser()
         XCTAssertNil(daVinciUser)
         
         // Delete the user from PingOne
@@ -735,7 +735,7 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
         
         // Ensure that we are now at the login page and user is not logged in
         XCTAssertEqual("E2E Login Form", continueNode.name)
-        var daVinciUser = await daVinci.user()
+        var daVinciUser = await daVinci.daVinciUser()
         XCTAssertNil(daVinciUser)
         
         // Wait for a second so that the account gets unlocked
@@ -768,11 +768,11 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
             XCTFail("Should have succeeded")
         }
         
-        let u = await daVinci.user()
+        let u = await daVinci.daVinciUser()
         await u?.logout() ?? { XCTFail("User is null") }()
         
         // After logout make sure the user is null
-        daVinciUser = await daVinci.user()
+        daVinciUser = await daVinci.daVinciUser()
         XCTAssertNil(daVinciUser)
         
         // Delete the test user
@@ -827,7 +827,7 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
         XCTAssertTrue(node is SuccessNode)
         
         // logout the user
-        let u = await daVinci.user()
+        let u = await daVinci.daVinciUser()
         await u?.logout() ?? { XCTFail("User is null") }()
     }
     

@@ -26,9 +26,18 @@ import PingOidc
 class ConfigurationManager: ObservableObject, @unchecked Sendable {
     static let shared = ConfigurationManager()
     public var currentConfigurationViewModel: ConfigurationViewModel?
-    public var currentUser: User? {
-        get async throws {
-            return await davinci.user()
+    
+    public var journeyUser: User? {
+        get async {
+            let journeyUser = await journey.journeyUser()
+            return journeyUser
+        }
+    }
+    
+    public var davinciUser: User? {
+        get async {
+            let davinciUser = await davinci.daVinciUser()
+            return davinciUser
         }
     }
     
@@ -43,7 +52,7 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
     public func saveConfiguration() {
         if let currentConfiguration = self.currentConfigurationViewModel {
             let encoder = JSONEncoder()
-            let configuration = Configuration(clientId: currentConfiguration.clientId, scopes: currentConfiguration.scopes, redirectUri: currentConfiguration.redirectUri, signOutUri: currentConfiguration.signOutUri, discoveryEndpoint: currentConfiguration.discoveryEndpoint, environment: currentConfiguration.environment, cookieName: currentConfiguration.cookieName)
+            let configuration = Configuration(clientId: currentConfiguration.clientId, scopes: currentConfiguration.scopes, redirectUri: currentConfiguration.redirectUri, signOutUri: currentConfiguration.signOutUri, discoveryEndpoint: currentConfiguration.discoveryEndpoint, environment: currentConfiguration.environment, cookieName: currentConfiguration.cookieName, serverUrl: currentConfiguration.serverUrl, realm: currentConfiguration.realm)
             if let encoded = try? encoder.encode(configuration) {
                 let defaults = UserDefaults.standard
                 defaults.set(encoded, forKey: "CurrentConfiguration")
@@ -63,19 +72,21 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
         if let savedConfiguration = defaults.object(forKey: "CurrentConfiguration") as? Data {
             let decoder = JSONDecoder()
             if let loadedConfiguration = try? decoder.decode(Configuration.self, from: savedConfiguration) {
-                return ConfigurationViewModel(clientId: loadedConfiguration.clientId, scopes: loadedConfiguration.scopes, redirectUri: loadedConfiguration.redirectUri, signOutUri: loadedConfiguration.signOutUri, discoveryEndpoint: loadedConfiguration.discoveryEndpoint, environment: loadedConfiguration.environment, cookieName: loadedConfiguration.cookieName)
+                return ConfigurationViewModel(clientId: loadedConfiguration.clientId, scopes: loadedConfiguration.scopes, redirectUri: loadedConfiguration.redirectUri, signOutUri: loadedConfiguration.signOutUri, discoveryEndpoint: loadedConfiguration.discoveryEndpoint, environment: loadedConfiguration.environment, cookieName: loadedConfiguration.cookieName, serverUrl: loadedConfiguration.serverUrl, realm: loadedConfiguration.realm)
             }
         }
         
-        //TODO: Provide here the Server configuration. Add the PingOne server Discovery Endpoint and the OAuth2.0 client details
+        //TODO: Provide here the Server configuration. Add the PingOne server Discovery Endpoint and the OAuth2.0 client details. Or the AIC server URL and Realm, server Discovery Endpoint and the OAuth2.0 client details.
         return ConfigurationViewModel(
             clientId: <#"Client ID"#>,
             scopes: [<#"scope1"#>, <#"scope2"#>, <#"scope3"#>], // Alter the scopes based on your clients configuration
             redirectUri: <#"Redirect URI"#>,
             signOutUri: <#"Redirect URI"#>,
             discoveryEndpoint: <#"Discovery Endpoint"#>,
-            environment: "PingOne",
-            cookieName: nil
+            environment: "PingOne", // or "AIC" for the AIC server
+            cookieName: <#"Cookie Name"#>, // Optional, can be nil if not used
+            serverUrl: <#"Server URL"#>, // Optional, can be nil if not used
+            realm: <#"Realm"#> // Optional, can be nil if not used
         )
     }
 }

@@ -16,6 +16,7 @@ import PingOrchestrate
 import PingLogger
 import PingStorage
 import PingExternalIdP
+import PingJourney
 
 /// Configures and initializes the DaVinci instance with the PingOne server and OAuth 2.0 client details.
 /// - This configuration includes:
@@ -26,7 +27,7 @@ import PingExternalIdP
 ///   - Other optional fields
 public let davinci = DaVinci.createDaVinci { config in
     let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
-    config.module(OidcModule.config) { oidcValue in
+    config.module(PingDavinci.OidcModule.config) { oidcValue in
         oidcValue.clientId = currentConfig?.clientId ?? ""
         oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
@@ -58,6 +59,7 @@ class DavinciViewModel: ObservableObject {
     /// Starts the DaVinci orchestration process.
     /// - Sets the initial node and updates the `data` property with the starting node.
     public func startDavinci() async {
+        
         await MainActor.run {
             isLoading = true
         }

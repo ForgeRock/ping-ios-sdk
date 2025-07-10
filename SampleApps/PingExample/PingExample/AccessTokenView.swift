@@ -19,7 +19,7 @@ struct AccessTokenView: View {
     var body: some View {
         VStack {
             ScrollView {
-                Text($accessTokenViewModel.accessToken.wrappedValue)
+                Text($accessTokenViewModel.token.wrappedValue)
                     .foregroundStyle(.secondary)
                     .padding(.horizontal)
                     .navigationTitle("Access Token")

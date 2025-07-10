@@ -1,0 +1,659 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		EC23269E2E0D5E4E00634A50 /* CallbackRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23269D2E0D5E4700634A50 /* CallbackRegistryTests.swift */; };
+		EC2326A02E0D62ED00634A50 /* NameCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23269F2E0D62E600634A50 /* NameCallbackTests.swift */; };
+		EC2326A22E0D65A800634A50 /* PasswordCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2326A12E0D65A300634A50 /* PasswordCallbackTests.swift */; };
+		EC2326A42E0D671700634A50 /* JourneyContinueNodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2326A32E0D670D00634A50 /* JourneyContinueNodeTests.swift */; };
+		EC2326A62E0D744F00634A50 /* JourneyUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2326A52E0D744A00634A50 /* JourneyUserTests.swift */; };
+		EC2326A82E0D7C7900634A50 /* AgentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2326A72E0D7C7800634A50 /* AgentTests.swift */; };
+		EC727A2E2E019243005D9E28 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A242E019243005D9E28 /* PingJourney.framework */; };
+		EC727A5D2E019254005D9E28 /* Journey.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727A5B2E019254005D9E28 /* Journey.swift */; };
+		EC727A602E019258005D9E28 /* JourneyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727A5E2E019258005D9E28 /* JourneyTests.swift */; };
+		EC727A652E0192FA005D9E28 /* Journey.h in Headers */ = {isa = PBXBuildFile; fileRef = EC727A642E0192FA005D9E28 /* Journey.h */; };
+		EC727A662E0192FA005D9E28 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC727A632E0192FA005D9E28 /* PrivacyInfo.xcprivacy */; };
+		EC727A922E02DCA9005D9E28 /* PingOidc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A912E02DCA9005D9E28 /* PingOidc.framework */; };
+		EC727A932E02DCA9005D9E28 /* PingOidc.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A912E02DCA9005D9E28 /* PingOidc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC727A962E02DCAF005D9E28 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A952E02DCAF005D9E28 /* PingOrchestrate.framework */; };
+		EC727A972E02DCAF005D9E28 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A952E02DCAF005D9E28 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC727A9A2E02DD04005D9E28 /* Oidc.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727A992E02DCFF005D9E28 /* Oidc.swift */; };
+		EC727AC92E031C8A005D9E28 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727AC82E031C86005D9E28 /* Request.swift */; };
+		EC727ACB2E042A49005D9E28 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727ACA2E042A22005D9E28 /* Session.swift */; };
+		EC727ACD2E042B13005D9E28 /* SessionConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727ACC2E042B0E005D9E28 /* SessionConfig.swift */; };
+		EC727ACF2E042DC0005D9E28 /* SSOToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727ACE2E042DBB005D9E28 /* SSOToken.swift */; };
+		EC727AD12E044AA2005D9E28 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727AD02E044A9F005D9E28 /* Transform.swift */; };
+		EC727AD32E044C02005D9E28 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727AD22E044BFC005D9E28 /* Constants.swift */; };
+		EC727AD62E045274005D9E28 /* CallbackRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727AD52E045267005D9E28 /* CallbackRegistry.swift */; };
+		EC727AD82E0455D4005D9E28 /* Callbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727AD72E0455D1005D9E28 /* Callbacks.swift */; };
+		EC727B032E046FB9005D9E28 /* AbstractCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727B022E046FB3005D9E28 /* AbstractCallback.swift */; };
+		EC727B052E047079005D9E28 /* NameCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727B042E047076005D9E28 /* NameCallback.swift */; };
+		EC727B072E04713A005D9E28 /* PasswordCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727B062E047133005D9E28 /* PasswordCallback.swift */; };
+		EC727B092E059BB9005D9E28 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727B082E059BB5005D9E28 /* User.swift */; };
+		EC727B0B2E05A20D005D9E28 /* Agent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727B0A2E05A20B005D9E28 /* Agent.swift */; };
+		ECD562A42E0C45E300F0B5A9 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD562A32E0C45E300F0B5A9 /* Config.swift */; };
+		ECD562A52E0C45E300F0B5A9 /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = ECD562A22E0C45E300F0B5A9 /* Config.json */; };
+		ECD562A82E0C48A700F0B5A9 /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD562A72E0C489E00F0B5A9 /* MockURLProtocol.swift */; };
+		ECD562AB2E0C494200F0B5A9 /* MockAPIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD562AA2E0C494200F0B5A9 /* MockAPIEndpoint.swift */; };
+		ECD562AC2E0C494200F0B5A9 /* MockResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD562A92E0C494200F0B5A9 /* MockResponse.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EC727A2F2E019243005D9E28 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC727A1B2E019243005D9E28 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EC727A232E019243005D9E28;
+			remoteInfo = Journey;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EC727A942E02DCA9005D9E28 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EC727A932E02DCA9005D9E28 /* PingOidc.framework in Embed Frameworks */,
+				EC727A972E02DCAF005D9E28 /* PingOrchestrate.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		EC23269D2E0D5E4700634A50 /* CallbackRegistryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackRegistryTests.swift; sourceTree = "<group>"; };
+		EC23269F2E0D62E600634A50 /* NameCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameCallbackTests.swift; sourceTree = "<group>"; };
+		EC2326A12E0D65A300634A50 /* PasswordCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordCallbackTests.swift; sourceTree = "<group>"; };
+		EC2326A32E0D670D00634A50 /* JourneyContinueNodeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyContinueNodeTests.swift; sourceTree = "<group>"; };
+		EC2326A52E0D744A00634A50 /* JourneyUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyUserTests.swift; sourceTree = "<group>"; };
+		EC2326A72E0D7C7800634A50 /* AgentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentTests.swift; sourceTree = "<group>"; };
+		EC727A242E019243005D9E28 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC727A2D2E019243005D9E28 /* JourneyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JourneyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC727A5B2E019254005D9E28 /* Journey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Journey.swift; sourceTree = "<group>"; };
+		EC727A5E2E019258005D9E28 /* JourneyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyTests.swift; sourceTree = "<group>"; };
+		EC727A632E0192FA005D9E28 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		EC727A642E0192FA005D9E28 /* Journey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Journey.h; sourceTree = "<group>"; };
+		EC727A912E02DCA9005D9E28 /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC727A952E02DCAF005D9E28 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC727A992E02DCFF005D9E28 /* Oidc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Oidc.swift; sourceTree = "<group>"; };
+		EC727AC82E031C86005D9E28 /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
+		EC727ACA2E042A22005D9E28 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		EC727ACC2E042B0E005D9E28 /* SessionConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionConfig.swift; sourceTree = "<group>"; };
+		EC727ACE2E042DBB005D9E28 /* SSOToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSOToken.swift; sourceTree = "<group>"; };
+		EC727AD02E044A9F005D9E28 /* Transform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
+		EC727AD22E044BFC005D9E28 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		EC727AD52E045267005D9E28 /* CallbackRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackRegistry.swift; sourceTree = "<group>"; };
+		EC727AD72E0455D1005D9E28 /* Callbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Callbacks.swift; sourceTree = "<group>"; };
+		EC727B022E046FB3005D9E28 /* AbstractCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractCallback.swift; sourceTree = "<group>"; };
+		EC727B042E047076005D9E28 /* NameCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameCallback.swift; sourceTree = "<group>"; };
+		EC727B062E047133005D9E28 /* PasswordCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordCallback.swift; sourceTree = "<group>"; };
+		EC727B082E059BB5005D9E28 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		EC727B0A2E05A20B005D9E28 /* Agent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Agent.swift; sourceTree = "<group>"; };
+		ECD562A22E0C45E300F0B5A9 /* Config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Config.json; sourceTree = "<group>"; };
+		ECD562A32E0C45E300F0B5A9 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		ECD562A72E0C489E00F0B5A9 /* MockURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLProtocol.swift; sourceTree = "<group>"; };
+		ECD562A92E0C494200F0B5A9 /* MockResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockResponse.swift; sourceTree = "<group>"; };
+		ECD562AA2E0C494200F0B5A9 /* MockAPIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIEndpoint.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EC727A212E019243005D9E28 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC727A922E02DCA9005D9E28 /* PingOidc.framework in Frameworks */,
+				EC727A962E02DCAF005D9E28 /* PingOrchestrate.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC727A2A2E019243005D9E28 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC727A2E2E019243005D9E28 /* PingJourney.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		EC727A1A2E019243005D9E28 = {
+			isa = PBXGroup;
+			children = (
+				EC727A5C2E019254005D9E28 /* Journey */,
+				EC727A5F2E019258005D9E28 /* JourneyTests */,
+				EC727A902E02DCA9005D9E28 /* Frameworks */,
+				EC727A252E019243005D9E28 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EC727A252E019243005D9E28 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EC727A242E019243005D9E28 /* PingJourney.framework */,
+				EC727A2D2E019243005D9E28 /* JourneyTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EC727A5C2E019254005D9E28 /* Journey */ = {
+			isa = PBXGroup;
+			children = (
+				EC727A632E0192FA005D9E28 /* PrivacyInfo.xcprivacy */,
+				EC727A642E0192FA005D9E28 /* Journey.h */,
+				EC727AD42E04525C005D9E28 /* Callbacks */,
+				EC727A982E02DCF6005D9E28 /* Module */,
+				EC727A5B2E019254005D9E28 /* Journey.swift */,
+				EC727ACE2E042DBB005D9E28 /* SSOToken.swift */,
+				EC727B082E059BB5005D9E28 /* User.swift */,
+				EC727AD22E044BFC005D9E28 /* Constants.swift */,
+			);
+			path = Journey;
+			sourceTree = "<group>";
+		};
+		EC727A5F2E019258005D9E28 /* JourneyTests */ = {
+			isa = PBXGroup;
+			children = (
+				ECD562A62E0C45F900F0B5A9 /* Config */,
+				EC2326A72E0D7C7800634A50 /* AgentTests.swift */,
+				EC23269D2E0D5E4700634A50 /* CallbackRegistryTests.swift */,
+				EC2326A32E0D670D00634A50 /* JourneyContinueNodeTests.swift */,
+				EC727A5E2E019258005D9E28 /* JourneyTests.swift */,
+				EC2326A52E0D744A00634A50 /* JourneyUserTests.swift */,
+				EC23269F2E0D62E600634A50 /* NameCallbackTests.swift */,
+				EC2326A12E0D65A300634A50 /* PasswordCallbackTests.swift */,
+				ECD562AD2E0C494B00F0B5A9 /* Mock */,
+			);
+			path = JourneyTests;
+			sourceTree = "<group>";
+		};
+		EC727A902E02DCA9005D9E28 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EC727A952E02DCAF005D9E28 /* PingOrchestrate.framework */,
+				EC727A912E02DCA9005D9E28 /* PingOidc.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EC727A982E02DCF6005D9E28 /* Module */ = {
+			isa = PBXGroup;
+			children = (
+				EC727B0A2E05A20B005D9E28 /* Agent.swift */,
+				EC727AD02E044A9F005D9E28 /* Transform.swift */,
+				EC727ACC2E042B0E005D9E28 /* SessionConfig.swift */,
+				EC727ACA2E042A22005D9E28 /* Session.swift */,
+				EC727AC82E031C86005D9E28 /* Request.swift */,
+				EC727A992E02DCFF005D9E28 /* Oidc.swift */,
+			);
+			path = Module;
+			sourceTree = "<group>";
+		};
+		EC727AD42E04525C005D9E28 /* Callbacks */ = {
+			isa = PBXGroup;
+			children = (
+				EC727B042E047076005D9E28 /* NameCallback.swift */,
+				EC727B062E047133005D9E28 /* PasswordCallback.swift */,
+				EC727B022E046FB3005D9E28 /* AbstractCallback.swift */,
+				EC727AD72E0455D1005D9E28 /* Callbacks.swift */,
+				EC727AD52E045267005D9E28 /* CallbackRegistry.swift */,
+			);
+			path = Callbacks;
+			sourceTree = "<group>";
+		};
+		ECD562A62E0C45F900F0B5A9 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				ECD562A22E0C45E300F0B5A9 /* Config.json */,
+				ECD562A32E0C45E300F0B5A9 /* Config.swift */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		ECD562AD2E0C494B00F0B5A9 /* Mock */ = {
+			isa = PBXGroup;
+			children = (
+				ECD562A72E0C489E00F0B5A9 /* MockURLProtocol.swift */,
+				ECD562A92E0C494200F0B5A9 /* MockResponse.swift */,
+				ECD562AA2E0C494200F0B5A9 /* MockAPIEndpoint.swift */,
+			);
+			path = Mock;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		EC727A1F2E019243005D9E28 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC727A652E0192FA005D9E28 /* Journey.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		EC727A232E019243005D9E28 /* PingJourney */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC727A362E019243005D9E28 /* Build configuration list for PBXNativeTarget "PingJourney" */;
+			buildPhases = (
+				EC727A1F2E019243005D9E28 /* Headers */,
+				EC727A202E019243005D9E28 /* Sources */,
+				EC727A212E019243005D9E28 /* Frameworks */,
+				EC727A222E019243005D9E28 /* Resources */,
+				EC727A942E02DCA9005D9E28 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PingJourney;
+			packageProductDependencies = (
+			);
+			productName = Journey;
+			productReference = EC727A242E019243005D9E28 /* PingJourney.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		EC727A2C2E019243005D9E28 /* JourneyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC727A392E019243005D9E28 /* Build configuration list for PBXNativeTarget "JourneyTests" */;
+			buildPhases = (
+				EC727A292E019243005D9E28 /* Sources */,
+				EC727A2A2E019243005D9E28 /* Frameworks */,
+				EC727A2B2E019243005D9E28 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EC727A302E019243005D9E28 /* PBXTargetDependency */,
+			);
+			name = JourneyTests;
+			packageProductDependencies = (
+			);
+			productName = JourneyTests;
+			productReference = EC727A2D2E019243005D9E28 /* JourneyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EC727A1B2E019243005D9E28 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+					EC727A232E019243005D9E28 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					EC727A2C2E019243005D9E28 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+				};
+			};
+			buildConfigurationList = EC727A1E2E019243005D9E28 /* Build configuration list for PBXProject "Journey" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = EC727A1A2E019243005D9E28;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = EC727A252E019243005D9E28 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EC727A232E019243005D9E28 /* PingJourney */,
+				EC727A2C2E019243005D9E28 /* JourneyTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EC727A222E019243005D9E28 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC727A662E0192FA005D9E28 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC727A2B2E019243005D9E28 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ECD562A52E0C45E300F0B5A9 /* Config.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EC727A202E019243005D9E28 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC727AD62E045274005D9E28 /* CallbackRegistry.swift in Sources */,
+				EC727ACD2E042B13005D9E28 /* SessionConfig.swift in Sources */,
+				EC727B072E04713A005D9E28 /* PasswordCallback.swift in Sources */,
+				EC727B092E059BB9005D9E28 /* User.swift in Sources */,
+				EC727ACF2E042DC0005D9E28 /* SSOToken.swift in Sources */,
+				EC727A9A2E02DD04005D9E28 /* Oidc.swift in Sources */,
+				EC727B0B2E05A20D005D9E28 /* Agent.swift in Sources */,
+				EC727B032E046FB9005D9E28 /* AbstractCallback.swift in Sources */,
+				EC727AD12E044AA2005D9E28 /* Transform.swift in Sources */,
+				EC727B052E047079005D9E28 /* NameCallback.swift in Sources */,
+				EC727AC92E031C8A005D9E28 /* Request.swift in Sources */,
+				EC727AD82E0455D4005D9E28 /* Callbacks.swift in Sources */,
+				EC727ACB2E042A49005D9E28 /* Session.swift in Sources */,
+				EC727A5D2E019254005D9E28 /* Journey.swift in Sources */,
+				EC727AD32E044C02005D9E28 /* Constants.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC727A292E019243005D9E28 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ECD562A82E0C48A700F0B5A9 /* MockURLProtocol.swift in Sources */,
+				EC2326A22E0D65A800634A50 /* PasswordCallbackTests.swift in Sources */,
+				EC727A602E019258005D9E28 /* JourneyTests.swift in Sources */,
+				EC2326A02E0D62ED00634A50 /* NameCallbackTests.swift in Sources */,
+				ECD562A42E0C45E300F0B5A9 /* Config.swift in Sources */,
+				EC23269E2E0D5E4E00634A50 /* CallbackRegistryTests.swift in Sources */,
+				EC2326A62E0D744F00634A50 /* JourneyUserTests.swift in Sources */,
+				EC2326A82E0D7C7900634A50 /* AgentTests.swift in Sources */,
+				ECD562AB2E0C494200F0B5A9 /* MockAPIEndpoint.swift in Sources */,
+				EC2326A42E0D671700634A50 /* JourneyContinueNodeTests.swift in Sources */,
+				ECD562AC2E0C494200F0B5A9 /* MockResponse.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EC727A302E019243005D9E28 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EC727A232E019243005D9E28 /* PingJourney */;
+			targetProxy = EC727A2F2E019243005D9E28 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		EC727A342E019243005D9E28 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		EC727A352E019243005D9E28 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		EC727A372E019243005D9E28 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Journey;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EC727A382E019243005D9E28 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Journey;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		EC727A3A2E019243005D9E28 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.JourneyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
+			};
+			name = Debug;
+		};
+		EC727A3B2E019243005D9E28 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.JourneyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		EC727A1E2E019243005D9E28 /* Build configuration list for PBXProject "Journey" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC727A342E019243005D9E28 /* Debug */,
+				EC727A352E019243005D9E28 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EC727A362E019243005D9E28 /* Build configuration list for PBXNativeTarget "PingJourney" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC727A372E019243005D9E28 /* Debug */,
+				EC727A382E019243005D9E28 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EC727A392E019243005D9E28 /* Build configuration list for PBXNativeTarget "JourneyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC727A3A2E019243005D9E28 /* Debug */,
+				EC727A3B2E019243005D9E28 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = EC727A1B2E019243005D9E28 /* Project object */;
+}

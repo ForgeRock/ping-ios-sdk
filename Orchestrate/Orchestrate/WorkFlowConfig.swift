@@ -21,7 +21,7 @@ public enum OverrideMode {
 
 
 /// Workflow configuration
-public class WorkflowConfig: @unchecked Sendable {
+open class WorkflowConfig: @unchecked Sendable {
     /// Use a list instead of a map to allow registering a module twice with different configurations
     public private(set) var modules: [any ModuleRegistryProtocol] = []
     /// Timeout for the HTTP client, default is 15 seconds

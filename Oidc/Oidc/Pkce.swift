@@ -20,13 +20,15 @@ public struct Pkce: Sendable {
     public let codeVerifier: String
     public let codeChallenge: String
     public let codeChallengeMethod: String
+    public let state: String
     
     /// Generates a new PKCE.
     /// - Returns: A new PKCE.
     public static func generate() -> Pkce {
         let codeVerifier = generateCodeVerifier()
         let codeChallenge = generateCodeChallenge(codeVerifier: codeVerifier)
-        return Pkce(codeVerifier: codeVerifier, codeChallenge: codeChallenge, codeChallengeMethod: "S256")
+        let state = UUID().uuidString
+        return Pkce(codeVerifier: codeVerifier, codeChallenge: codeChallenge, codeChallengeMethod: "S256", state: state)
     }
     
     /// Generates a new code verifier for the PKCE.

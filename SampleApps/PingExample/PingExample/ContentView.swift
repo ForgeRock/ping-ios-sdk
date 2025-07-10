@@ -47,6 +47,9 @@ struct ContentView: View {
                 NavigationLink(value: "DaVinci") {
                     Text("Launch DaVinci")
                 }
+                NavigationLink(value: "Journey") {
+                    Text("Launch Journey")
+                }
                 NavigationLink(value: "Token") {
                     Text("Access Token")
                 }
@@ -68,6 +71,8 @@ struct ContentView: View {
                     ConfigurationView(configurationViewModel: $configurationViewModel)
                 case "DaVinci":
                     DavinciView(path: $path)
+                case "Journey":
+                    JourneyView(path: $path)
                 case "Token":
                     AccessTokenView(accessTokenViewModel: AccessTokenViewModel())
                 case "User":

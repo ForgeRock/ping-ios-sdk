@@ -34,6 +34,10 @@ public class Request: @unchecked Sendable {
         }
     }
     
+    public func url(_ urlRequest: URLRequest) {
+        self.urlRequest = urlRequest
+    }
+    
     /// Adds a parameter to the request.
     /// - Parameters:
     ///   - name: The name of the parameter.
@@ -106,7 +110,7 @@ public class Request: @unchecked Sendable {
         self.urlRequest.setValue(ContentType.urlEncoded.rawValue, forHTTPHeaderField: Constants.contentType)
         self.urlRequest.httpBody = formString.data(using: .utf8)
     }
-    
+        
     /// Represents various content types used in HTTP requests.
     public enum ContentType: String {
         case plainText = "text/plain"
