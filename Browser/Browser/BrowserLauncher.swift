@@ -117,24 +117,48 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
         
         self.isInProgress = true
         
+        // If we have custom parameters, add them to the URL
+        var finalUrl = url
+        if let params = customParams, !params.isEmpty {
+            var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
+            
+            // Create query items from custom parameters
+            let queryItems = params.map { URLQueryItem(name: $0.key, value: $0.value) }
+            
+            // If URL already has query items, append to them, otherwise set them
+            if var existingItems = urlComponents?.queryItems {
+                existingItems.append(contentsOf: queryItems)
+                urlComponents?.queryItems = existingItems
+            } else {
+                urlComponents?.queryItems = queryItems
+            }
+            
+            // Get the final URL with parameters
+            if let updatedUrl = urlComponents?.url {
+                finalUrl = updatedUrl
+            } else {
+                logger.i("Failed to append custom parameters to URL, using original URL")
+            }
+        }
+        
         // Launch the browser based on type
         switch browserType {
         case .nativeBrowserApp:
-            guard await UIApplication.shared.open(url) else {
+            guard await UIApplication.shared.open(finalUrl) else {
                 reset()
                 throw BrowserError.externalUserAgentFailure
             }
             logger.i("BrowserLauncher: Native Browser launched successfully")
-            return url
+            return finalUrl
             
         case .sfViewController:
-            return try await loginWithSFViewController(url: url)
+            return try await loginWithSFViewController(url: finalUrl)
             
         case .authSession:
-            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: false)
+            return try await asWebAuthenticationSession(url: finalUrl, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: false)
             
         case .ephemeralAuthSession:
-            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: true)
+            return try await asWebAuthenticationSession(url: finalUrl, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: true)
         }
     }
     

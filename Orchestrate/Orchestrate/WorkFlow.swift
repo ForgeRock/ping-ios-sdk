@@ -53,11 +53,11 @@ public class Workflow: @unchecked Sendable {
     private var started = false
     
     internal var initHandlers = [@Sendable () async throws -> Void]()
-    internal var startHandlers = [@Sendable (FlowContext, Request) async throws -> Request]()
+    public var startHandlers = [@Sendable (FlowContext, Request) async throws -> Request]()
     internal var nextHandlers = [@Sendable (FlowContext, ContinueNode, Request) async throws -> Request]()
     internal var responseHandlers = [@Sendable (FlowContext, Response) async throws -> Void]()
     internal var nodeHandlers = [@Sendable (FlowContext, Node) async throws -> Node]()
-    internal var successHandlers = [@Sendable (FlowContext, SuccessNode) async throws -> SuccessNode]()
+    public var successHandlers = [@Sendable (FlowContext, SuccessNode) async throws -> SuccessNode]()
     public var signOffHandlers = [@Sendable (Request) async throws -> Request]()
     // Transform response to Node, we can only have one transform
     internal var transformHandler: @Sendable (FlowContext, Response) async throws -> Node = { _, _ in EmptyNode() }

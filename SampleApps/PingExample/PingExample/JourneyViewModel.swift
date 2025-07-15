@@ -23,9 +23,6 @@ import PingJourney
 ///   - Redirect URI
 ///   - Discovery Endpoint
 ///   - Other optional fields
-
-
-
 public let journey = Journey.createJourney { config in
     let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
     config.serverUrl = currentConfig?.serverUrl
