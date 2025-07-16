@@ -12,8 +12,10 @@ import Foundation
 import PingOrchestrate
 import PingOidc
 
-public let oidLogin = OidcLogin.createOidcLogin { config in
+public let oidLogin = OidcWeb.createOidcLogin { config in
     let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
+    config.browserMode = .login
+    config.browserType = .nativeBrowserApp
     //config.cookie = currentConfig?.cookieName ?? "" //TODO: need add cookie  support
     config.module(PingOidc.OidcModule.config) { oidcValue in
         oidcValue.clientId = currentConfig?.clientId ?? ""

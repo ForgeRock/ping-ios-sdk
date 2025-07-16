@@ -11,6 +11,7 @@
 
 import Foundation
 import PingOrchestrate
+import PingBrowser
 
 /// A module that integrates OIDC capabilities into the DaVinci workflow.
 public class OidcModule {
@@ -22,7 +23,7 @@ public class OidcModule {
     public static let config: Module<OidcClientConfig> = Module.of ({ OidcClientConfig() }) { setup in
         
         let config: OidcClientConfig = setup.config
-        let oidcLoginFlow: OidcLogin = setup.workflow
+        let oidcLoginFlow: OidcWeb = setup.workflow
         
         // Initializes the module.
         setup.initialize {  @Sendable in
@@ -41,22 +42,17 @@ public class OidcModule {
         // Starts the module.
         setup.start { @Sendable context, request in
             // When user starts the flow again, revoke previous token if exists
-            let cloneConfig: OidcClientConfig = config.clone()
-            
             let flowPkce = context.flowContext.get(key: SharedContext.Keys.pkceKey) as? Pkce
-            
+            let oidcLoginConfig = oidcLoginFlow.config as? OidcWebConfig
             await oidcLoginFlow.user()?.revoke()
             let pkce = Pkce.generate()
             context.flowContext.set(key: SharedContext.Keys.pkceKey, value: pkce)
-            config.updateAgent(BrowserAgent(config: BrowserConfig(), pkce: pkce))
+            config.updateAgent(BrowserAgent(config: BrowserConfig(browserType: oidcLoginConfig?.browserType ?? .authSession, browserMode: oidcLoginConfig?.browserMode ?? .login), pkce: pkce))
             return config.populateRequest(request: request, pkce: pkce)
         }
         
         // Handles success of the module.
         setup.success { @Sendable context, success in
-//            //Override the agent setting
-//            let pkce = context.flowContext.get(key: SharedContext.Keys.pkceKey) as! Pkce
-//            config.updateAgent(BrowserAgent(config: BrowserConfig(), pkce: pkce))
             let oidcuser: User = OidcUser(config: config)
             let _ = await oidcuser.token()
             let prepareUser = UserDelegate(oidcLogin: oidcLoginFlow, user: oidcuser, session: success.session)
@@ -90,21 +86,3 @@ extension SharedContext.Keys {
     /// The key used to store the OIDC client configuration in the shared context.
     public static let oidcClientConfigKey = "com.pingidentity.oidcLogin.OidcClientConfig"
 }
-
-/*
- let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
- let config = OidcClientConfig()
- config.clientId = currentConfig?.clientId ?? ""
- config.scopes = Set<String>(currentConfig?.scopes ?? [])
- config.redirectUri = currentConfig?.redirectUri ?? ""
- config.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
- config.updateAgent(BrowserAgent(config: BrowserConfig()))
- do {
-     let oidcClient = OidcClient(config: config)
-     let token = await oidcClient.token()
-//                path.removeLast()
-//                path.append("Token")
- } catch {
-     print("OIDC Initialization failed \(error.localizedDescription)")
- }
- */

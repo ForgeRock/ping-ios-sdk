@@ -32,7 +32,7 @@
 		A5A712442CAC520500B7DD58 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */; };
 		EC0CB55E2E251C0D00A82D6C /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB55D2E251C0D00A82D6C /* Browser.swift */; };
 		EC0CB55F2E251C0D00A82D6C /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB55D2E251C0D00A82D6C /* Browser.swift */; };
-		EC0CB5922E266D7100A82D6C /* OidcLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5912E266D6C00A82D6C /* OidcLogin.swift */; };
+		EC0CB5922E266D7100A82D6C /* OidcWeb.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5912E266D6C00A82D6C /* OidcWeb.swift */; };
 		EC0CB5952E266F3900A82D6C /* Oidc.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5942E266F3400A82D6C /* Oidc.swift */; };
 /* End PBXBuildFile section */
 
@@ -85,7 +85,7 @@
 		A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		EC0CB55D2E251C0D00A82D6C /* Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
-		EC0CB5912E266D6C00A82D6C /* OidcLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLogin.swift; sourceTree = "<group>"; };
+		EC0CB5912E266D6C00A82D6C /* OidcWeb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcWeb.swift; sourceTree = "<group>"; };
 		EC0CB5942E266F3400A82D6C /* Oidc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Oidc.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -149,7 +149,7 @@
 				3AB1CA342BD884E4003FCE3C /* OidcClientConfig.swift */,
 				A50966B52C4C342800A4E5B5 /* OidcError.swift */,
 				3AB1CA3A2BD96089003FCE3C /* OidcUser.swift */,
-				EC0CB5912E266D6C00A82D6C /* OidcLogin.swift */,
+				EC0CB5912E266D6C00A82D6C /* OidcWeb.swift */,
 				A50966B92C4C3E7300A4E5B5 /* OpenIdConfiguration.swift */,
 				3AB1CA2B2BD7727B003FCE3C /* Pkce.swift */,
 				3AB1CA2A2BD7727B003FCE3C /* Token.swift */,
@@ -317,7 +317,7 @@
 				A50966B82C4C34CB00A4E5B5 /* AuthCode.swift in Sources */,
 				3AB1CA3B2BD96089003FCE3C /* OidcUser.swift in Sources */,
 				A50966BA2C4C3E7300A4E5B5 /* OpenIdConfiguration.swift in Sources */,
-				EC0CB5922E266D7100A82D6C /* OidcLogin.swift in Sources */,
+				EC0CB5922E266D7100A82D6C /* OidcWeb.swift in Sources */,
 				3AB1CA2E2BD7727B003FCE3C /* Pkce.swift in Sources */,
 				A50966B62C4C342800A4E5B5 /* OidcError.swift in Sources */,
 				EC0CB55F2E251C0D00A82D6C /* Browser.swift in Sources */,

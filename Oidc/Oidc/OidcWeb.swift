@@ -14,16 +14,16 @@ import PingOrchestrate
 import PingLogger
 import PingBrowser
 
-public typealias OidcLogin = Workflow
+public typealias OidcWeb = Workflow
 
-public class OidcLoginConfig: WorkflowConfig, @unchecked Sendable {
+public class OidcWebConfig: WorkflowConfig, @unchecked Sendable {
     public var browserType: BrowserType = .authSession
     public var browserMode: BrowserMode = .login
 }
 
-public extension OidcLogin {
-    static func createOidcLogin(block: @Sendable (OidcLoginConfig) -> Void = {_ in }) -> OidcLogin {
-        let config = OidcLoginConfig()
+public extension OidcWeb {
+    static func createOidcLogin(block: @Sendable (OidcWebConfig) -> Void = {_ in }) -> OidcWeb {
+        let config = OidcWebConfig()
         config.logger = LogManager.standard
         config.timeout = 30
         config.module(CustomHeader.config) { customHeaderConfig in
@@ -35,7 +35,7 @@ public extension OidcLogin {
         // Apply custom configuration
         block(config)
         
-        return OidcLogin(config: config)
+        return OidcWeb(config: config)
     }
     
     func authorize() async throws -> Result<User, OidcError> {
@@ -84,7 +84,7 @@ public extension OidcLogin {
         }
         return nil
     }
-
+    
     /// Alias for the Browser.user() method.
     /// - Returns: The user if found, otherwise nil.
     func oidcLoginUser() async -> User? {
@@ -99,7 +99,7 @@ public extension OidcLogin {
     ///   - session: The session.
     /// - Returns: The prepared user.
     internal func prepareUser(
-        oidcLogin: OidcLogin,
+        oidcLogin: OidcWeb,
         user: User,
         session: Session = EmptySession()
     ) async -> UserDelegate {
@@ -111,11 +111,11 @@ public extension OidcLogin {
 }
 
 struct UserDelegate: User, Session {
-    private let oidcLogin: OidcLogin
+    private let oidcLogin: OidcWeb
     private let user: User
     private let session: Session
     
-    init(oidcLogin: OidcLogin, user: User, session: Session) {
+    init(oidcLogin: OidcWeb, user: User, session: Session) {
         self.oidcLogin = oidcLogin
         self.user = user
         self.session = session

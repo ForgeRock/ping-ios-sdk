@@ -12,6 +12,7 @@
 import SwiftUI
 import PingExternalIdPFacebook
 import PingExternalIdPGoogle
+import PingBrowser
 
 /// The main application entry point.
 @main
@@ -25,6 +26,7 @@ struct MyApp: App {
                     if !handled {
                         FacebookRequestHandler.handleOpenURL(UIApplication.shared, url: url, options: nil)
                     }
+                    OpenURLMonitor.shared.handleOpenURL(url)
                 }
         }
     }

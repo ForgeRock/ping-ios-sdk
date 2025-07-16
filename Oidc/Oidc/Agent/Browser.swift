@@ -21,7 +21,7 @@ public struct BrowserConfig: Sendable {
     
     /// Initialize with a BrowserConfiguration
     /// - Parameter browserConfig: The browser configuration
-    public init(browserType: BrowserType = .authSession, browserMode: BrowserMode = .login) {
+    public init(browserType: BrowserType, browserMode: BrowserMode) {
         self.browserType = browserType
         self.browserMode = browserMode
     }
@@ -38,7 +38,7 @@ public final class BrowserAgent: Agent {
     
     /// Initialize the BrowserAgent with a configuration
     /// - Parameter config: The browser configuration
-    public init(config: BrowserConfig = BrowserConfig(), pkce: Pkce) {
+    public init(config: BrowserConfig, pkce: Pkce) {
         self.browserConfig = config
         self.pkce = pkce
     }
@@ -97,8 +97,6 @@ public final class BrowserAgent: Agent {
             
             // Extract and verify the auth code response
             let code = try clientConfig.extractCode(from: result)
-            
-            //let state = try clientConfig.extractState(from: result)
             
             // Return the authorization code
             return AuthCode(code: code, codeVerifier: pkce.codeVerifier)
