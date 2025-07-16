@@ -32,28 +32,14 @@ public let oidLogin = OidcLogin.createOidcLogin { config in
 @MainActor
 class OidcLoginViewModel: ObservableObject {
     /// Published property that holds the current state node data.
-    @Published public var state: OidcState = OidcState()
+    @Published public var state: Result<User, OidcError>?
     /// Published property to track whether the view is currently loading.
     @Published public var isLoading: Bool = false
     
     /// Initializes the view model and starts the Journey orchestration process.
     init() {
         Task {
-            let oidcLogin = try? await oidLogin.startOidcLogin()
-            self.state = OidcState(node: oidcLogin)
+            self.state = try await oidLogin.authorize()
         }
-    }
-    
-    public func refresh() {
-        state = OidcState(node: state.node)
-    }
-}
-
-/// A model class that represents the state of the current and previous nodes in the Journey flow.
-class OidcState {
-    var node: Node? = nil
-    
-    init(node: Node? = nil) {
-        self.node = node
     }
 }

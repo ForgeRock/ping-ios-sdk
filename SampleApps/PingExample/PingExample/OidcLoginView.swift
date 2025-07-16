@@ -25,16 +25,15 @@ struct OidcLoginView: View {
                 VStack {
                     Spacer()
                     // Handle different types of nodes in the Journey.
-                    switch oidcLoginViewModel.state.node {
-                    case let failureNode as FailureNode:
-                        ErrorView(message: failureNode.cause.localizedDescription)
-                    case is SuccessNode:
-                        // Authentication successful, retrieve the session
+                    switch oidcLoginViewModel.state {
+                    case .success( _ ):
                         VStack{}.onAppear {
                             path.removeLast()
                             path.append("Token")
                         }
-                    default:
+                    case .failure(let error):
+                        ErrorView(message: error.localizedDescription)
+                    case .none:
                         EmptyView()
                     }
                 }

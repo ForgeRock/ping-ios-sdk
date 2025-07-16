@@ -12,9 +12,14 @@
 import Foundation
 import PingOrchestrate
 import PingLogger
+import PingBrowser
 
 public typealias OidcLogin = Workflow
-public typealias OidcLoginConfig = WorkflowConfig
+
+public class OidcLoginConfig: WorkflowConfig, @unchecked Sendable {
+    public var browserType: BrowserType = .authSession
+    public var browserMode: BrowserMode = .login
+}
 
 public extension OidcLogin {
     static func createOidcLogin(block: @Sendable (OidcLoginConfig) -> Void = {_ in }) -> OidcLogin {
@@ -31,6 +36,18 @@ public extension OidcLogin {
         block(config)
         
         return OidcLogin(config: config)
+    }
+    
+    func authorize() async throws -> Result<User, OidcError> {
+        let result = try await startOidcLogin()
+        switch result {
+        case let failureNode as FailureNode:
+            return Result<User, OidcError>.failure(OidcError.unknown(message: failureNode.cause.localizedDescription))
+        case let successNode as SuccessNode:
+            return Result<User, OidcError>.success(successNode.session as! User)
+        default:
+            return Result<User, OidcError>.failure(OidcError.unknown(message: "Unexpected result"))
+        }
     }
     
     func startOidcLogin() async throws -> Node {
