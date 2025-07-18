@@ -40,7 +40,7 @@ extension IdpRequestHandler {
         request.header(name: Request.Constants.xRequestedWith, value: Request.Constants.pingSdk)
         request.header(name: Request.Constants.accept, value: Request.ContentType.json.rawValue)
         let (data, urlResponse) = try await httpClient.sendRequest(request: request)
-        let response = Response(data: data, response: urlResponse)
+        let response = HttpResponse(data: data, response: urlResponse)
         let idpClient = try IdpClient(response: response)
         return idpClient
     }
@@ -50,17 +50,17 @@ extension IdpClient {
     /// Initializes an `IdpClient` object from a `Response`.
     /// - Parameter response: The `Response` object to use for initialization.
     /// - Throws: if the response cannot be parsed.
-    public init(response: Response) throws {
+    public init(response: HttpResponse) throws {
         self.init()
         let responseJson = try response.json(data: response.data)
-        let idp: [String: Any]? = responseJson[Response.Constants.idp] as? [String: Any]
-        self.clientId = idp?[Response.Constants.clientId] as? String
-        self.nonce = idp?[Response.Constants.nonce] as? String
-        self.scopes = idp?[Response.Constants.scopes] as? [String] ?? []
-        let links: [String: Any]? = responseJson[Response.Constants._links] as? [String: Any]
-        let next = links?[Response.Constants.next] as? [String: Any]
-        let href = next?[Response.Constants.href] as? String ?? ""
-        self.redirectUri = idp?[Response.Constants.redirectUri] as? String
+        let idp: [String: Any]? = responseJson[HttpResponse.Constants.idp] as? [String: Any]
+        self.clientId = idp?[HttpResponse.Constants.clientId] as? String
+        self.nonce = idp?[HttpResponse.Constants.nonce] as? String
+        self.scopes = idp?[HttpResponse.Constants.scopes] as? [String] ?? []
+        let links: [String: Any]? = responseJson[HttpResponse.Constants._links] as? [String: Any]
+        let next = links?[HttpResponse.Constants.next] as? [String: Any]
+        let href = next?[HttpResponse.Constants.href] as? String ?? ""
+        self.redirectUri = idp?[HttpResponse.Constants.redirectUri] as? String
         self.continueUrl = href
     }
 }

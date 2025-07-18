@@ -30,10 +30,9 @@
 		A50981BE2CEBDF1700F4B487 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */; };
 		A50981BF2CEBDF1700F4B487 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5A712442CAC520500B7DD58 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */; };
-		EC0CB55E2E251C0D00A82D6C /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB55D2E251C0D00A82D6C /* Browser.swift */; };
-		EC0CB55F2E251C0D00A82D6C /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB55D2E251C0D00A82D6C /* Browser.swift */; };
 		EC0CB5922E266D7100A82D6C /* OidcWeb.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5912E266D6C00A82D6C /* OidcWeb.swift */; };
 		EC0CB5952E266F3900A82D6C /* Oidc.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5942E266F3400A82D6C /* Oidc.swift */; };
+		EC23D5132E295AAE00C43D42 /* Web.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5122E295AAB00C43D42 /* Web.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,9 +83,9 @@
 		A50967082C50843E00A4E5B5 /* MockAPIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIEndpoint.swift; sourceTree = "<group>"; };
 		A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		EC0CB55D2E251C0D00A82D6C /* Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
 		EC0CB5912E266D6C00A82D6C /* OidcWeb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcWeb.swift; sourceTree = "<group>"; };
 		EC0CB5942E266F3400A82D6C /* Oidc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Oidc.swift; sourceTree = "<group>"; };
+		EC23D5122E295AAB00C43D42 /* Web.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Web.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,7 +139,6 @@
 			isa = PBXGroup;
 			children = (
 				EC0CB5932E266F2D00A82D6C /* Module */,
-				EC0CB55C2E251B0F00A82D6C /* Agent */,
 				A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */,
 				3AB1CA0A2BD6F99C003FCE3C /* Oidc.h */,
 				3AB1CA322BD8823C003FCE3C /* Agent.swift */,
@@ -181,17 +179,10 @@
 			path = mock;
 			sourceTree = "<group>";
 		};
-		EC0CB55C2E251B0F00A82D6C /* Agent */ = {
-			isa = PBXGroup;
-			children = (
-				EC0CB55D2E251C0D00A82D6C /* Browser.swift */,
-			);
-			path = Agent;
-			sourceTree = "<group>";
-		};
 		EC0CB5932E266F2D00A82D6C /* Module */ = {
 			isa = PBXGroup;
 			children = (
+				EC23D5122E295AAB00C43D42 /* Web.swift */,
 				EC0CB5942E266F3400A82D6C /* Oidc.swift */,
 			);
 			path = Module;
@@ -316,11 +307,11 @@
 				3AB1CA332BD8823C003FCE3C /* Agent.swift in Sources */,
 				A50966B82C4C34CB00A4E5B5 /* AuthCode.swift in Sources */,
 				3AB1CA3B2BD96089003FCE3C /* OidcUser.swift in Sources */,
+				EC23D5132E295AAE00C43D42 /* Web.swift in Sources */,
 				A50966BA2C4C3E7300A4E5B5 /* OpenIdConfiguration.swift in Sources */,
 				EC0CB5922E266D7100A82D6C /* OidcWeb.swift in Sources */,
 				3AB1CA2E2BD7727B003FCE3C /* Pkce.swift in Sources */,
 				A50966B62C4C342800A4E5B5 /* OidcError.swift in Sources */,
-				EC0CB55F2E251C0D00A82D6C /* Browser.swift in Sources */,
 				3AB1CA2D2BD7727B003FCE3C /* Token.swift in Sources */,
 				3AB1CA352BD884E4003FCE3C /* OidcClientConfig.swift in Sources */,
 			);
@@ -332,7 +323,6 @@
 			files = (
 				A50967092C50843E00A4E5B5 /* MockAPIEndpoint.swift in Sources */,
 				A50966DB2C4DDFAE00A4E5B5 /* PkceTests.swift in Sources */,
-				EC0CB55E2E251C0D00A82D6C /* Browser.swift in Sources */,
 				A50966EF2C4FF75400A4E5B5 /* MockStorage.swift in Sources */,
 				A50966DF2C4DF3CD00A4E5B5 /* OidcClientConfigTests.swift in Sources */,
 				A50966E12C4F1D9D00A4E5B5 /* MockURLProtocol.swift in Sources */,

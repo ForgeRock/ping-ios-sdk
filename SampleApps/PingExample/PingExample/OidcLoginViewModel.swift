@@ -15,7 +15,7 @@ import PingOidc
 public let oidLogin = OidcWeb.createOidcLogin { config in
     let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
     config.browserMode = .login
-    config.browserType = .nativeBrowserApp
+    config.browserType = .authSession
     //config.cookie = currentConfig?.cookieName ?? "" //TODO: need add cookie  support
     config.module(PingOidc.OidcModule.config) { oidcValue in
         oidcValue.clientId = currentConfig?.clientId ?? ""
@@ -41,7 +41,9 @@ class OidcLoginViewModel: ObservableObject {
     /// Initializes the view model and starts the Journey orchestration process.
     init() {
         Task {
-            self.state = try await oidLogin.authorize()
+            self.state = try await oidLogin.authorize { options in
+                options.additionalParameters = ["foo": "bar"]
+            }
         }
     }
 }

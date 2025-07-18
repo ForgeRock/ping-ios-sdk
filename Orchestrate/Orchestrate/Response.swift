@@ -11,11 +11,35 @@
 
 import Foundation
 
+
+/// Represents an HTTP response.
+public protocol Response {
+    /// The original request that produced this response.
+    var data: Data { get }
+    
+    /// Returns the body of the response.
+    /// - Returns: The body as a String.
+    func body() async -> String
+    
+    /// Returns the HTTP status code.
+    /// - Returns: The status code as an Int.
+    func status() -> Int
+    
+    /// Returns the cookies included in the response.
+    /// - Returns: A `Cookies` container.
+    func getCookies() -> [HTTPCookie]
+    
+    /// Returns the value of a header.
+    /// - Parameter name: The name of the header.
+    /// - Returns: The header value, or `nil` if not present.
+    func header(name: String) -> String?
+}
+
 /// Struct for a Response. A Response represents a response received from a network request.
 /// - property data: The data  received from the network request.
 /// - property response: The URLResponse received from the network request.
-public struct Response {
-    public let data: Data
+public struct HttpResponse: Response, @unchecked Sendable {
+    public var data: Data
     public let response: URLResponse
     
     /// Initializes a new instance of `Response`.

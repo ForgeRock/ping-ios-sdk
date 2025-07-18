@@ -59,8 +59,12 @@ public class Workflow: @unchecked Sendable {
     internal var nodeHandlers = [@Sendable (FlowContext, Node) async throws -> Node]()
     public var successHandlers = [@Sendable (FlowContext, SuccessNode) async throws -> SuccessNode]()
     public var signOffHandlers = [@Sendable (Request) async throws -> Request]()
-    // Transform response to Node, we can only have one transform
+    /// Transform response to Node, we can only have one transform
     internal var transformHandler: @Sendable (FlowContext, Response) async throws -> Node = { _, _ in EmptyNode() }
+    /// A handler for sending requests and receiving responses.
+    internal lazy var transportHandler: @Sendable (FlowContext, Request) async throws -> Response = { [unowned self] flowContext, request in
+        try await self.send(flowContext, request: request)
+    }
     
     ///  Initializes the workflow.
     /// - Parameter config: The configuration for the workflow.
@@ -102,7 +106,8 @@ public class Workflow: @unchecked Sendable {
         for handler in startHandlers {
             currentRequest = try await handler(context, currentRequest)
         }
-        let response = try await send(context, request: currentRequest)
+        
+        let response = try await transportHandler(context, currentRequest)
         
         let transform = try await transformHandler(context, response)
         
@@ -144,7 +149,7 @@ public class Workflow: @unchecked Sendable {
     /// - Returns: The response received.
     private func send(_ context: FlowContext, request: Request) async throws -> Response {
         let (data, urlResponse) = try await config.httpClient.sendRequest(request: request)
-        let response = Response(data: data, response: urlResponse)
+        let response = HttpResponse(data: data, response: urlResponse)
         for handler in responseHandlers {
             try await handler(context, response)
         }
@@ -157,7 +162,7 @@ public class Workflow: @unchecked Sendable {
     private func send(_ request: Request) async throws -> Response {
         // semaphore
         let (data, urlResponse) = try await config.httpClient.sendRequest(request: request)
-        return Response(data: data, response: urlResponse)
+        return HttpResponse(data: data, response: urlResponse)
     }
     
     /// Processes the next node if it is a success node.
@@ -191,7 +196,7 @@ public class Workflow: @unchecked Sendable {
                 request = try await handler(context, current, request)
             }
             current.close()
-            let initialNode = try await transformHandler(context, try await send(context, request: request))
+            let initialNode = try await transformHandler(context, try await transportHandler(context, request))
             var node = initialNode
             for handler in nodeHandlers {
                 node = try await handler(context, node)
@@ -206,21 +211,21 @@ public class Workflow: @unchecked Sendable {
     /// Signs off the workflow.
     /// - Returns: A Result indicating the success or failure of the sign off.
     public func signOff() async -> Result<Void, Error> {
-            self.config.logger.i("SignOff...")
-            do {
-                try await initialize()
-                var request = Request()
-                for handler in signOffHandlers {
-                    request = try await handler(request)
-                }
-                _ = try await send(request)
-                return .success(())
+        self.config.logger.i("SignOff...")
+        do {
+            try await initialize()
+            var request = Request()
+            for handler in signOffHandlers {
+                request = try await handler(request)
             }
-            catch {
-                config.logger.e("Error during sign off", error: error)
-                return .failure(error)
-            }
+            _ = try await send(request)
+            return .success(())
         }
+        catch {
+            config.logger.e("Error during sign off", error: error)
+            return .failure(error)
+        }
+    }
     
     /// Processes the response.
     /// - Parameters:

@@ -79,6 +79,12 @@ public struct Setup<ModuleConfig: Sendable>: Sendable {
         workflow.transformHandler = block
     }
     
+    /// Sets the transform block of the workflow.
+    /// - Parameter block: The block to be set.
+    public func transport(block: @escaping @Sendable (FlowContext, Request) async throws -> Response) {
+        workflow.transportHandler = block
+    }
+    
     /// Adds a sign off block to the workflow.
     /// - Parameter block: The block to be added.
     public func signOff(block: @escaping @Sendable (Request) async -> Request) {
