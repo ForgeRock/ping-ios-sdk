@@ -62,12 +62,12 @@
 		EC0816BF2D4A832C00F1AD02 /* ConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */; };
 		EC0816C12D4A833400F1AD02 /* ConfigurationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */; };
 		EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */; };
-		EC0CB5812E25394E00A82D6C /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0CB5742E25393F00A82D6C /* PingJourney.framework */; };
-		EC0CB5822E25394E00A82D6C /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0CB5742E25393F00A82D6C /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EC0CB5852E25399500A82D6C /* JourneyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5832E25399500A82D6C /* JourneyView.swift */; };
-		EC0CB5862E25399500A82D6C /* JourneyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5842E25399500A82D6C /* JourneyViewModel.swift */; };
-		EC0CB5972E2699BA00A82D6C /* OidcLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5962E2699B200A82D6C /* OidcLoginView.swift */; };
-		EC0CB5992E2699DB00A82D6C /* OidcLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5982E2699D500A82D6C /* OidcLoginViewModel.swift */; };
+		EC0CB5C62E27AD5B00A82D6C /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0CB5B92E27AD3D00A82D6C /* PingJourney.framework */; };
+		EC0CB5C72E27AD5B00A82D6C /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0CB5B92E27AD3D00A82D6C /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC0CB5CA2E27AE4C00A82D6C /* JourneyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */; };
+		EC0CB5CB2E27AE4C00A82D6C /* JourneyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */; };
+		EC23D5712E2E8ECF00C43D42 /* OidcLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */; };
+		EC23D5722E2E8ECF00C43D42 /* OidcLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */; };
 		EC92B3882DA02D7400E4246D /* DeviceAuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */; };
 		EC92B38A2DA02D7F00E4246D /* DeviceRegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */; };
 		EC92B38C2DA039C000E4246D /* AsyncSVGImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */; };
@@ -243,16 +243,16 @@
 			remoteGlobalIDString = EC0816962D4A68FB00F1AD02;
 			remoteInfo = Browser;
 		};
-		EC0CB5732E25393F00A82D6C /* PBXContainerItemProxy */ = {
+		EC0CB5B82E27AD3D00A82D6C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = EC0CB5602E25393F00A82D6C /* Journey.xcodeproj */;
+			containerPortal = EC0CB5A52E27AD3D00A82D6C /* Journey.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = EC727A242E019243005D9E28;
 			remoteInfo = PingJourney;
 		};
-		EC0CB5752E25393F00A82D6C /* PBXContainerItemProxy */ = {
+		EC0CB5BA2E27AD3D00A82D6C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = EC0CB5602E25393F00A82D6C /* Journey.xcodeproj */;
+			containerPortal = EC0CB5A52E27AD3D00A82D6C /* Journey.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = EC727A2D2E019243005D9E28;
 			remoteInfo = JourneyTests;
@@ -284,7 +284,7 @@
 				A525E7BA2DD7647200B02C17 /* PingExternalIdPGoogle.framework in Embed Frameworks */,
 				A51FF3B32E0E11DC0094430B /* PingProtect.framework in Embed Frameworks */,
 				A525E7B42DD7647200B02C17 /* PingExternalIdP.framework in Embed Frameworks */,
-				EC0CB5822E25394E00A82D6C /* PingJourney.framework in Embed Frameworks */,
+				EC0CB5C72E27AD5B00A82D6C /* PingJourney.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -345,11 +345,11 @@
 		EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationView.swift; sourceTree = "<group>"; };
 		EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewModel.swift; sourceTree = "<group>"; };
 		EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
-		EC0CB5602E25393F00A82D6C /* Journey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Journey.xcodeproj; path = ../../Journey/Journey.xcodeproj; sourceTree = SOURCE_ROOT; };
-		EC0CB5832E25399500A82D6C /* JourneyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyView.swift; sourceTree = "<group>"; };
-		EC0CB5842E25399500A82D6C /* JourneyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyViewModel.swift; sourceTree = "<group>"; };
-		EC0CB5962E2699B200A82D6C /* OidcLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginView.swift; sourceTree = "<group>"; };
-		EC0CB5982E2699D500A82D6C /* OidcLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginViewModel.swift; sourceTree = "<group>"; };
+		EC0CB5A52E27AD3D00A82D6C /* Journey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Journey.xcodeproj; path = ../../Journey/Journey.xcodeproj; sourceTree = SOURCE_ROOT; };
+		EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyView.swift; sourceTree = "<group>"; };
+		EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyViewModel.swift; sourceTree = "<group>"; };
+		EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginView.swift; sourceTree = "<group>"; };
+		EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginViewModel.swift; sourceTree = "<group>"; };
 		EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticationView.swift; sourceTree = "<group>"; };
 		EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationView.swift; sourceTree = "<group>"; };
 		EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncSVGImage.swift; sourceTree = "<group>"; };
@@ -380,7 +380,7 @@
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
 				EC92B38F2DA03E0700E4246D /* SVGKit in Frameworks */,
 				A5560CA62CFE4EDA0076CA8D /* PingOrchestrate.framework in Frameworks */,
-				EC0CB5812E25394E00A82D6C /* PingJourney.framework in Frameworks */,
+				EC0CB5C62E27AD5B00A82D6C /* PingJourney.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,7 +404,7 @@
 		3A5441242BCDF10900385131 = {
 			isa = PBXGroup;
 			children = (
-				EC0CB5602E25393F00A82D6C /* Journey.xcodeproj */,
+				EC0CB5A52E27AD3D00A82D6C /* Journey.xcodeproj */,
 				A5A31CB52E0A37C700ABBEF7 /* Protect.xcodeproj */,
 				A525E7C62DD7683500B02C17 /* ExternalIdPGoogle.xcodeproj */,
 				A525E7DC2DD7687800B02C17 /* ExternalIdPApple.xcodeproj */,
@@ -449,14 +449,14 @@
 				3A8532322BE2D5D800F8619D /* DavinciView.swift */,
 				3ACD90E02BE586BC00DABCE6 /* DavinciViewModel.swift */,
 				A5A5F7FF2D4C64490053BF24 /* ErrorView.swift */,
-				EC0CB5832E25399500A82D6C /* JourneyView.swift */,
-				EC0CB5842E25399500A82D6C /* JourneyViewModel.swift */,
+				EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */,
+				EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */,
 				A5E9AED52D30393B000533ED /* LoggerView.swift */,
 				A588D0052BF6A0E500F9052A /* LoggerViewModel.swift */,
 				A5E9AEC12D30341E000533ED /* LogOutView.swift */,
 				A5E9AED32D303858000533ED /* LogOutViewModel.swift */,
-				EC0CB5962E2699B200A82D6C /* OidcLoginView.swift */,
-				EC0CB5982E2699D500A82D6C /* OidcLoginViewModel.swift */,
+				EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */,
+				EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */,
 				A5E9AED72D30395D000533ED /* StorageView.swift */,
 				A588D0042BF6A0E500F9052A /* StorageViewModel.swift */,
 				A5E9AECF2D3037DF000533ED /* UserInfoView.swift */,
@@ -629,11 +629,11 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		EC0CB5632E25393F00A82D6C /* Products */ = {
+		EC0CB5A82E27AD3D00A82D6C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EC0CB5742E25393F00A82D6C /* PingJourney.framework */,
-				EC0CB5762E25393F00A82D6C /* JourneyTests.xctest */,
+				EC0CB5B92E27AD3D00A82D6C /* PingJourney.framework */,
+				EC0CB5BB2E27AD3D00A82D6C /* JourneyTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -756,8 +756,8 @@
 					ProjectRef = A525E7C62DD7683500B02C17 /* ExternalIdPGoogle.xcodeproj */;
 				},
 				{
-					ProductGroup = EC0CB5632E25393F00A82D6C /* Products */;
-					ProjectRef = EC0CB5602E25393F00A82D6C /* Journey.xcodeproj */;
+					ProductGroup = EC0CB5A82E27AD3D00A82D6C /* Products */;
+					ProjectRef = EC0CB5A52E27AD3D00A82D6C /* Journey.xcodeproj */;
 				},
 				{
 					ProductGroup = A57A08F52CE50D51006F0CBB /* Products */;
@@ -937,18 +937,18 @@
 			remoteRef = EC0816A92D4A692900F1AD02 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		EC0CB5742E25393F00A82D6C /* PingJourney.framework */ = {
+		EC0CB5B92E27AD3D00A82D6C /* PingJourney.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = PingJourney.framework;
-			remoteRef = EC0CB5732E25393F00A82D6C /* PBXContainerItemProxy */;
+			remoteRef = EC0CB5B82E27AD3D00A82D6C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		EC0CB5762E25393F00A82D6C /* JourneyTests.xctest */ = {
+		EC0CB5BB2E27AD3D00A82D6C /* JourneyTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = JourneyTests.xctest;
-			remoteRef = EC0CB5752E25393F00A82D6C /* PBXContainerItemProxy */;
+			remoteRef = EC0CB5BA2E27AD3D00A82D6C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		ECB7C6852D5A24B70006F1C8 /* PingBrowserTests.xctest */ = {
@@ -1004,8 +1004,8 @@
 				EC92B3882DA02D7400E4246D /* DeviceAuthenticationView.swift in Sources */,
 				EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */,
 				A5A31CEC2E0A5B4F00ABBEF7 /* ProtectView.swift in Sources */,
-				EC0CB5852E25399500A82D6C /* JourneyView.swift in Sources */,
-				EC0CB5862E25399500A82D6C /* JourneyViewModel.swift in Sources */,
+				EC0CB5CA2E27AE4C00A82D6C /* JourneyView.swift in Sources */,
+				EC0CB5CB2E27AE4C00A82D6C /* JourneyViewModel.swift in Sources */,
 				EC0816BF2D4A832C00F1AD02 /* ConfigurationView.swift in Sources */,
 				3A5441332BCDF10900385131 /* ContentView.swift in Sources */,
 				A5EFA9792D35F62E00F771FE /* RadioButtonView.swift in Sources */,
@@ -1014,12 +1014,13 @@
 				EC0816C12D4A833400F1AD02 /* ConfigurationViewModel.swift in Sources */,
 				A5EFA9772D35F2FA00F771FE /* CheckBoxView.swift in Sources */,
 				A5E9AEDF2D30CA34000533ED /* ErrorMessageView.swift in Sources */,
-				EC0CB5992E2699DB00A82D6C /* OidcLoginViewModel.swift in Sources */,
 				A5E9AED22D30380B000533ED /* UserInfoViewModel.swift in Sources */,
 				A5EFA97D2D35F78800F771FE /* ComboBoxView.swift in Sources */,
 				A5A5F80A2D4C644E0053BF24 /* ErrorView.swift in Sources */,
 				A5E9AEE12D30D304000533ED /* SubmitButtonView.swift in Sources */,
 				3A8092F42BE99F0F00AD667F /* CustomViews.swift in Sources */,
+				EC23D5712E2E8ECF00C43D42 /* OidcLoginView.swift in Sources */,
+				EC23D5722E2E8ECF00C43D42 /* OidcLoginViewModel.swift in Sources */,
 				A5EFA97F2D35F88D00F771FE /* PasswordView.swift in Sources */,
 				A5E9AED02D3037E0000533ED /* UserInfoView.swift in Sources */,
 				EC92B38C2DA039C000E4246D /* AsyncSVGImage.swift in Sources */,
@@ -1028,7 +1029,6 @@
 				EC92B3932DA0422700E4246D /* DeviceCardView.swift in Sources */,
 				ECE2B8812DB7DBEC00E2C51E /* PhoneNumberView.swift in Sources */,
 				EC92B38A2DA02D7F00E4246D /* DeviceRegistrationView.swift in Sources */,
-				EC0CB5972E2699BA00A82D6C /* OidcLoginView.swift in Sources */,
 				3A3709962BEB038200AA7B51 /* AccessTokenView.swift in Sources */,
 				A5E9AEDB2D30A020000533ED /* LabelView.swift in Sources */,
 			);
@@ -1206,7 +1206,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PingExample/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Davinci;
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to deliver personalized ads to you";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1240,7 +1239,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PingExample/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Davinci;
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to deliver personalized ads to you";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
