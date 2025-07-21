@@ -147,14 +147,14 @@ public enum AuthorizeError: Error, LocalizedError {
 
 extension SharedContext.Keys {
     /// The key used to store the PKCE value in the shared context.
-    public static let pkceKey = "com.pingidentity.oidcLogin.PKCE"
+    static let pkceKey = "com.pingidentity.oidcLogin.PKCE"
     
     /// The key used to store the callbackURLScheme value in the shared context.
-    public static let callbackURLSchemeKey = "com.pingidentity.oidcLogin.callbackURLScheme"
+    static let callbackURLSchemeKey = "com.pingidentity.oidcLogin.callbackURLScheme"
     
     /// The key used to store the user in the shared context.
-    public static let userKey = "com.pingidentity.oidcLogin.User"
+    static let userKey = "com.pingidentity.oidcLogin.User"
     
     /// The key used to store the OIDC client configuration in the shared context.
-    public static let oidcClientConfigKey = "com.pingidentity.oidcLogin.OidcClientConfig"
+    static let oidcClientConfigKey = "com.pingidentity.oidcLogin.OidcClientConfig"
 }

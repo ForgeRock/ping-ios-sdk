@@ -12,7 +12,6 @@
 import XCTest
 @testable import PingJourney
 @testable import PingLogger
-@testable import PingOidc
 @testable import PingOrchestrate
 
 class JourneyBaseTests: XCTestCase, @unchecked Sendable {

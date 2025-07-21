@@ -19,7 +19,6 @@ public typealias OidcWeb = Workflow
 public class OidcWebConfig: WorkflowConfig, @unchecked Sendable {
     public var browserType: BrowserType = .authSession
     public var browserMode: BrowserMode = .login
-    public var cookieName: String = ""
 }
 
 public struct OidcOptions: Sendable {
@@ -103,7 +102,7 @@ public extension OidcWeb {
     }
 }
 
-struct UserDelegate: User, Session {
+struct UserDelegate: User, Session, Sendable {
     private let oidcLogin: OidcWeb
     private let user: User
     private let session: Session
