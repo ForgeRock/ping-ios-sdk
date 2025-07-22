@@ -16,16 +16,27 @@ import PingBrowser
 
 public typealias OidcWeb = Workflow
 
+/// OidcWeb is a subclass of Workflow
+/// - Parameters:
+///   - config: The configuration for the OIDC workflow.
+///   - Returns: An instance of OidcWeb configured for OIDC login.
 public class OidcWebConfig: WorkflowConfig, @unchecked Sendable {
+    /// Browser type used for OIDC login.
     public var browserType: BrowserType = .authSession
+    /// The mode of the browser for OIDC login.
     public var browserMode: BrowserMode = .login
 }
 
+/// OidcOptions is a struct that holds additional parameters for OIDC login.
 public struct OidcOptions: Sendable {
+    /// Additional parameters for OIDC login.
     public var additionalParameters: [String: String] = [:]
 }
 
 public extension OidcWeb {
+    /// Creates an OIDC login instance with the provided configuration block.
+    /// - Parameter block: A closure to configure the OIDC options.
+    /// - Returns: An instance of OidcWeb configured for OIDC login.
     static func createOidcLogin(block: @Sendable (OidcWebConfig) -> Void = {_ in }) -> OidcWeb {
         let config = OidcWebConfig()
         config.timeout = 30
@@ -38,6 +49,9 @@ public extension OidcWeb {
         return OidcWeb(config: config)
     }
     
+    /// This method initializes the OIDC client and starts the login process.
+    /// - Parameter configure: A closure to configure the OIDC options.
+    /// - Returns: A Result containing the User or an OidcError.
     func authorize(configure: @Sendable (inout OidcOptions) -> Void = { _ in }) async throws -> Result<User, OidcError> {
         var options = OidcOptions()
         configure(&options)
@@ -52,6 +66,9 @@ public extension OidcWeb {
         }
     }
     
+    /// Starts the OIDC login process.
+    /// - Parameter options: The OIDC options containing additional parameters.
+    /// - Returns: A Node representing the result of the login process.
     internal func startOidcLogin(options: OidcOptions) async throws -> Node {
         let request = Request()
         try await initialize()
@@ -62,6 +79,9 @@ public extension OidcWeb {
         return await self.start(currentRequest)
     }
     
+    /// Method to return the OIDC user.
+    /// This method checks if the OIDC client is initialized and sets up the necessary configurations.
+    /// - Returns: The user if found, otherwise nil.
     func user() async -> User? {
         try? await initialize()
         
@@ -69,11 +89,10 @@ public extension OidcWeb {
             return cachedUser
         }
         
-        if await hasCookies() {
-            if let oidcClientConfig = self.sharedContext.get(key: SharedContext.Keys.oidcClientConfigKey) as? OidcClientConfig {
-                return await prepareUser(oidcLogin: self, user: OidcUser(config: oidcClientConfig))
-            }
+        if let oidcClientConfig = self.sharedContext.get(key: SharedContext.Keys.oidcClientConfigKey) as? OidcClientConfig {
+            return await prepareUser(oidcLogin: self, user: OidcUser(config: oidcClientConfig))
         }
+        
         return nil
     }
     
@@ -102,11 +121,22 @@ public extension OidcWeb {
     }
 }
 
+/// UserDelegate is a struct that conforms to User and Session protocols.
+/// It is used to manage user sessions and provide methods for user-related operations.
+/// - Parameters:
+///   - oidcLogin: The OidcWeb instance.
+///   - user: The User instance.
+///   - session: The Session instance
 struct UserDelegate: User, Session, Sendable {
     private let oidcLogin: OidcWeb
     private let user: User
     private let session: Session
     
+    /// Initializes a new UserDelegate instance.
+    /// - Parameters:
+    ///  - oidcLogin: The OidcWeb instance.
+    ///  - user: The User instance.
+    ///  - session: The Session instance.
     init(oidcLogin: OidcWeb, user: User, session: Session) {
         self.oidcLogin = oidcLogin
         self.user = user
@@ -122,18 +152,26 @@ struct UserDelegate: User, Session, Sendable {
         _ = await oidcLogin.signOff()
     }
     
+    /// Method to get the user Token
+    /// - Returns: A Result containing the Token or an OidcError.
     func token() async -> Result<Token, OidcError> {
         return await user.token()
     }
     
+    /// Method to revoke the user token.
     func revoke() async {
         await user.revoke()
     }
     
+    /// Method to get the user info.
+    /// - Parameter cache: A Boolean indicating whether to use cached user info.
+    /// - Returns: A Result containing the UserInfo or an OidcError.
     func userinfo(cache: Bool) async -> Result<UserInfo, OidcError> {
         await user.userinfo(cache: cache)
     }
     
+    /// Method to get the session value.
+    /// - Returns: The session value as a String.
     var value: String {
         get {
             return session.value

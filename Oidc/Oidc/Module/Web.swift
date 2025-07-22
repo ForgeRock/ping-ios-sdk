@@ -31,6 +31,7 @@ public class WebModule {
             oidcLoginFlow.sharedContext.set(key: IS_WEB, value: true)
         }
         
+        // Start the browser authorization flow. Returns the authorization code in the response.
         setup.transport { @Sendable context, request in
             let callbackURLScheme = context.flowContext.get(key: SharedContext.Keys.callbackURLSchemeKey) as? String ?? ""
             let oidcLoginConfig = oidcLoginFlow.config as? OidcWebConfig
@@ -56,6 +57,7 @@ public class WebModule {
             }
         }
         
+        // Transform the response to `Node`.
         setup.transform { @Sendable context, response in
             guard let json = try? response.json(),
                   let code = json[OidcClient.Constants.code] as? String
@@ -70,7 +72,9 @@ public class WebModule {
 }
 
 extension WebModule {
-    
+    /// Extracts the redirect URI scheme from the provided redirect URI string.
+    /// - Parameter redirectUri: The redirect URI string.
+    /// - Returns: The scheme of the redirect URI if it is valid, otherwise nil.
     internal static func redirectURIScheme(redirectUri: String) -> String? {
         if let redirectURI = URL(string: redirectUri), let callbackURLScheme = redirectURI.scheme {
             return callbackURLScheme
@@ -78,6 +82,9 @@ extension WebModule {
         return nil
     }
     
+    /// Extracts the authorization code from the provided URL.
+    /// - Parameter url: The URL containing the authorization code.
+    /// - Returns: The authorization code if found.
     internal static func extractCode(from url: URL) throws -> String {
         if let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true), let code = components.queryItems?.filter({$0.name == OidcClient.Constants.code}).first?.value {
             return code
@@ -86,6 +93,9 @@ extension WebModule {
         }
     }
     
+    /// Extracts the state from the provided URL.
+    /// - Parameter url: The URL containing the state.
+    /// - Returns: The state if found.
     internal static func extractState(from url: URL) throws -> String {
         if let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true), let state = components.queryItems?.filter({$0.name == "state"}).first?.value {
             return state
@@ -94,6 +104,9 @@ extension WebModule {
         }
     }
     
+    /// Builds the body data for the request.
+    /// - Parameter code: The authorization code to include in the body.
+    /// - Returns: The body data as `Data`.
     internal static func body(code: String) async -> Data {
         // Build a JSON dictionary with your code value
         let jsonDict: [String: Any] = [
