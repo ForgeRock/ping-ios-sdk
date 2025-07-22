@@ -13,6 +13,7 @@ import SwiftUI
 import PingExternalIdPFacebook
 import PingExternalIdPGoogle
 import PingBrowser
+import PingDevice
 
 /// The main application entry point.
 @main
@@ -34,6 +35,7 @@ struct MyApp: App {
 
 /// The main view of the application, displaying navigation options and a logo.
 struct ContentView: View {
+    @State private var deviceID: String = ""
     /// State variable to track if Davinci has started.
     @State private var startDavinci = false
     /// State variable for managing the navigation stack path.
@@ -94,11 +96,22 @@ struct ContentView: View {
                 default:
                     EmptyView()
                 }
+                Spacer()
+                
+                
             }.navigationBarTitle("DaVinci")
                 .accentColor(.themeButtonBackground)
             Spacer()
             Image("Logo").resizable().scaledToFill().frame(width: 100, height: 100)
                 .padding(.vertical, 32)
+            Text(deviceID)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                .padding()
+                .task {
+                    let id = try? await DefaultDeviceIdentifier().id
+                    deviceID = "Device ID: \(id ?? "Unknown Device ID")"
+                }
         }
     }
 }
