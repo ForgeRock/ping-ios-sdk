@@ -24,7 +24,7 @@ final class ResponseTests: XCTestCase {
         let data = Data("{}".utf8)
         let response = HttpResponse(data: data, response: URLResponse())
         XCTAssertNotNil(response.body())
-        XCTAssertNotNil(try response.json(data: data))
+        XCTAssertNotNil(try response.json())
     }
     
     func testHeader() async throws {
@@ -39,7 +39,7 @@ final class ResponseTests: XCTestCase {
         XCTAssertEqual(response.header(name: "Set-Cookie"), "Ping=token; Expires=Wed, 21 Oct 1999 01:00:00 GMT; Domain=openam.example.com")
         
         XCTAssertEqual(response.status(), 200)
-        XCTAssertNotNil(try response.json(data: data))
+        XCTAssertNotNil(try response.json())
         
         XCTAssertEqual(response.getCookies().count, 1)
         

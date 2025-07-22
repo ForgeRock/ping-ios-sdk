@@ -31,20 +31,10 @@ public class WebModule {
             oidcLoginFlow.sharedContext.set(key: IS_WEB, value: true)
         }
         
-        setup.start { @Sendable context, request in
-            let parameters = oidcLoginFlow.sharedContext.get(key: PARAMETERS) as? [String: String] ?? [:]
-            for parameter in parameters {
-                request.parameter(name: parameter.key, value: parameter.value)
-            }
-            return request
-        }
-        
         setup.transport { @Sendable context, request in
-            let flowPkce = context.flowContext.get(key: SharedContext.Keys.pkceKey) as? Pkce
             let callbackURLScheme = context.flowContext.get(key: SharedContext.Keys.callbackURLSchemeKey) as? String ?? ""
             let oidcLoginConfig = oidcLoginFlow.config as? OidcWebConfig
-            await oidcLoginFlow.user()?.revoke()
-            let pkce = context.flowContext.get(key: SharedContext.Keys.pkceKey) as? Pkce
+            
             do {
                 guard let url = request.urlRequest.url else {
                     throw OidcError.authorizeError(message: "Browser authorization failed: URL not found")
@@ -67,9 +57,8 @@ public class WebModule {
         }
         
         setup.transform { @Sendable context, response in
-            guard let httpResponse = response as? HttpResponse,
-                    let json = try? httpResponse.json(data: response.data),
-                    let code = json[OidcClient.Constants.code] as? String
+            guard let json = try? response.json(),
+                  let code = json[OidcClient.Constants.code] as? String
             else {
                 throw OidcError.authorizeError(message: "Authorization code not found in response")
             }

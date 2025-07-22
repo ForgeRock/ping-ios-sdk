@@ -50,18 +50,26 @@ public class OidcModule {
             let url = URL(string: config.redirectUri)
             context.flowContext.set(key: SharedContext.Keys.callbackURLSchemeKey, value: url?.scheme ?? "https")
                 
-            return config.populateRequest(request: request, pkce: pkce, responseMode: "")
+            let oidcRequest = config.populateRequest(request: request, pkce: pkce, responseMode: "")
+            
+            let parameters = oidcLoginFlow.sharedContext.get(key: PARAMETERS) as? [String: String] ?? [:]
+            for parameter in parameters {
+                oidcRequest.parameter(name: parameter.key, value: parameter.value)
+            }
+            
+            return oidcRequest
         }
         
         // Handles success of the module.
         setup.success { @Sendable context, success in
-            let oidcuser: User = OidcUser(config: config)
+            let clonedConfig = config.clone()
+            let oidcuser: User = OidcUser(config: clonedConfig)
             let agent = agent(session: success.session, pkce: context.flowContext.get(key: SharedContext.Keys.pkceKey) as? Pkce)
             config.updateAgent(agent)
             let _ = await oidcuser.token()
             let prepareUser = UserDelegate(oidcLogin: oidcLoginFlow, user: oidcuser, session: success.session)
             oidcLoginFlow.sharedContext.set(key: SharedContext.Keys.userKey, value: prepareUser)
-            let _ = oidcLoginFlow.sharedContext.removeValue(forKey: SharedContext.Keys.pkceKey)
+            
             return SuccessNode(session: prepareUser)
         }
         

@@ -53,7 +53,7 @@ public class Workflow: @unchecked Sendable {
     private var started = false
     
     internal var initHandlers = [@Sendable () async throws -> Void]()
-    public var startHandlers = [@Sendable (FlowContext, Request) async throws -> Request]()
+    internal var startHandlers = [@Sendable (FlowContext, Request) async throws -> Request]()
     internal var nextHandlers = [@Sendable (FlowContext, ContinueNode, Request) async throws -> Request]()
     internal var responseHandlers = [@Sendable (FlowContext, Response) async throws -> Void]()
     internal var nodeHandlers = [@Sendable (FlowContext, Node) async throws -> Node]()

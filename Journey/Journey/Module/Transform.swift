@@ -23,15 +23,10 @@ public class NodeTransformModule: @unchecked Sendable {
             
             let body = await response.body()
             
-            guard let httpResponse = response as? HttpResponse else {
-                return FailureNode(cause: ApiError.error(status, ["Exception": "Response not recognised"], body))
-            }
-            
             // Check for 4XX errors that are unrecoverable
             if (400..<500).contains(status) {
                 do {
-                    
-                    let json = try httpResponse.json(data: response.data)
+                    let json = try response.json()
                     let message = json[JourneyConstants.message] as? String ?? ""
                     return ErrorNode(status: status, input: json, message: message, context: flowContext)
                 } catch {
@@ -41,7 +36,7 @@ public class NodeTransformModule: @unchecked Sendable {
             
             // Handle success (2XX) responses
             if status == 200 {
-                let json = try httpResponse.json(data: response.data)
+                let json = try response.json()
                 return await transform(context: flowContext, journey: setup.workflow, json: json)
             }
             
@@ -52,7 +47,7 @@ public class NodeTransformModule: @unchecked Sendable {
             }
             
             // 5XX errors are treated as unrecoverable failures
-            let json = try httpResponse.json(data: response.data)
+            let json = try response.json()
             return FailureNode(cause: ApiError.error(status, json, body))
         }
     })

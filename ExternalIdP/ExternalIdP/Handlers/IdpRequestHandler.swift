@@ -52,7 +52,7 @@ extension IdpClient {
     /// - Throws: if the response cannot be parsed.
     public init(response: HttpResponse) throws {
         self.init()
-        let responseJson = try response.json(data: response.data)
+        let responseJson = try response.json()
         let idp: [String: Any]? = responseJson[HttpResponse.Constants.idp] as? [String: Any]
         self.clientId = idp?[HttpResponse.Constants.clientId] as? String
         self.nonce = idp?[HttpResponse.Constants.nonce] as? String
