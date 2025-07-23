@@ -13,6 +13,7 @@ import PingOrchestrate
 import CommonCrypto
 import PingLogger
 import PingStorage
+import CryptoKit
 
 /// A protocol that defines a unique identifier for a device.
 public protocol DeviceIdentifier: Sendable {
@@ -59,19 +60,19 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
         case publicKey
     }
     /// Constant Device Identifier Key
-    let deviceIdentifierKey = "com.pingidentity.deviceIdentifier"
+    let deviceIdentifierKey = DeviceIndentifierConstants.deviceIdentifierKey
     /// Constant Public Key tag
-    let publicKeyTag = "com.pingidentity.deviceIdentifier.public-key".data(using: .utf8)!
+    let publicKeyTag = DeviceIndentifierConstants.publicKeyTag.data(using: .utf8)!
     /// Constant Private Key tag
-    let privateKeyTag = "com.pingidentity.deviceIdentifier.private-key".data(using: .utf8)!
+    let privateKeyTag = DeviceIndentifierConstants.privateKeyTag.data(using: .utf8)!
     /// Constant Key Pair type
     let keychainKeyType = kSecAttrKeyTypeRSA
     /// Constant RSA Key Pair size
-    let keychainKeySize = 2048
+    let keychainKeySize = DeviceIndentifierConstants.keychainKeySize
     /// KeychainService instance to persist, and manage generated identifier
-    var keychainService: any Storage<DeviceIdentifierImpl>
+    let keychainService: any Storage<DeviceIdentifierImpl>
     /// Optional Logger for logging purposes
-    var logger: Logger?
+    let logger: Logger?
     
     /// Unique identifier for the device
     public var id: String {
@@ -84,6 +85,7 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     ///
     /// - Parameter keychainService: Designated KeychainService to persist, and manage generated Key Pair, and Identifier
     public init(logger: Logger? = nil) {
+        self.logger = logger
         self.keychainService = KeychainStorage<DeviceIdentifierImpl>(account: deviceIdentifierKey, encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
     }
     
@@ -166,11 +168,11 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
                 return DeviceIdentifierKeyPair(privateKey: privateKeyData, publicKey: publicKeyData)
             }
             else {
-                throw NSError(domain: "DeviceIdentifierError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to retrieve Key Pairs from Keychain Service"])
+                throw NSError(domain: DeviceIndentifierConstants.errorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey: DeviceIndentifierConstants.retrieveKeysErrorValue])
             }
         }
         else {
-            throw NSError(domain: "DeviceIdentifierError", code: Int(status), userInfo: [NSLocalizedDescriptionKey: "Failed to generate Key Pair using SecKeyGeneratePair()"])
+            throw NSError(domain: DeviceIndentifierConstants.errorDomain, code: Int(status), userInfo: [NSLocalizedDescriptionKey: DeviceIndentifierConstants.generateKeyPairErrorValue])
         }
     }
     
@@ -187,11 +189,11 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
         
         switch keyType {
         case .privateKey:
-            query[kSecAttrLabel as String] = "Ping SDK Device identifier private key"
+            query[kSecAttrLabel as String] = DeviceIndentifierConstants.privatekSecAttrLabel
             query[kSecAttrApplicationTag as String] = self.privateKeyTag
             break
         case .publicKey:
-            query[kSecAttrLabel as String] = "Ping SDK Device identifier public key"
+            query[kSecAttrLabel as String] = DeviceIndentifierConstants.publickSecAttrLabel
             query[kSecAttrApplicationTag as String] = self.publicKeyTag
             break
         }
@@ -229,4 +231,16 @@ extension Data {
     func toHexString() -> String {
         return map { String(format: "%02hhx", $0) }.joined()
     }
+}
+
+enum DeviceIndentifierConstants {
+    static let deviceIdentifierKey = "com.pingidentity.deviceIdentifier"
+    static let publicKeyTag = "com.pingidentity.deviceIdentifier.public-key"
+    static let privateKeyTag = "com.pingidentity.deviceIdentifier.private-key"
+    static let keychainKeySize = 2048
+    static let privatekSecAttrLabel = "Ping SDK Device identifier private key"
+    static let publickSecAttrLabel = "Ping SDK Device identifier public key"
+    static let errorDomain = "DeviceIdentifierError"
+    static let retrieveKeysErrorValue = "Failed to retrieve Key Pairs from Keychain Service"
+    static let generateKeyPairErrorValue = "Failed to generate Key Pair using SecKeyGeneratePair()"
 }
