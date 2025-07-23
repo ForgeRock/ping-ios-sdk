@@ -14,37 +14,51 @@ import CommonCrypto
 import PingLogger
 import PingStorage
 
+/// A protocol that defines a unique identifier for a device.
 public protocol DeviceIdentifier: Sendable {
     /// Returns a unique identifier for the device.
     var id: String { get async throws }
 }
 
+/// A struct representing a key pair for device identifier.
 public struct DeviceIdentifierKeyPair: Codable, Sendable {
+    /// The private key data.
     let privateKey: Data
+    /// The public key data.
     let publicKey: Data
 }
 
+/// A class that implements the DeviceIdentifier protocol.
 final class DeviceIdentifierImpl: DeviceIdentifier, Sendable, Codable {
-    
+    /// The key pair for the device identifier.
     let deviceIdentifierKeyPair: DeviceIdentifierKeyPair
+    /// The unique identifier for the device.
     let id: String
     
+    /// Initializes a DeviceIdentifierImpl with the given identifier and key pair.
+    /// - Parameters:
+    ///  - id: The unique identifier for the device.
+    ///  - deviceIdentifierKeyPair: The key pair for the device identifier.
     init(id: String, deviceIdentifierKeyPair: DeviceIdentifierKeyPair) {
         self.id = id
         self.deviceIdentifierKeyPair = deviceIdentifierKeyPair
     }
 }
-/// FRDeviceIdentifier provides a unique identifier for each device defined in same Shared Keychain Access Group,
-/// and provides a secure mechanism to uniquely generate, persist, and manage the identifier
+
+/// A default implementation of the DeviceIdentifier protocol that generates and manages a device identifier using RSA key pairs.
+/// This implementation uses the Keychain to store the generated keys and identifier securely.
+/// It conforms to the DeviceIdentifier protocol and provides a unique identifier for the device.
+/// It also provides methods to generate a key pair, retrieve the identifier, and hash data using SHA1.
 public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     /// RSA Key types enumeration
     ///
     /// - privateKey: Private Key for RSA Key Pair
     /// - publicKey: Public Key for RSA Key Pair
-    enum FRDeviceIdentifierKeyType {
+    enum DeviceIdentifierKeyType {
         case privateKey
         case publicKey
     }
+    /// Constant Device Identifier Key
     let deviceIdentifierKey = "com.pingidentity.deviceIdentifier"
     /// Constant Public Key tag
     let publicKeyTag = "com.pingidentity.deviceIdentifier.public-key".data(using: .utf8)!
@@ -65,7 +79,8 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
             return try await getIdentifier()
         }
     }
-    /// Initializes FRDeviceIdentifier
+    
+    /// Initializes DeviceIdentifier
     ///
     /// - Parameter keychainService: Designated KeychainService to persist, and manage generated Key Pair, and Identifier
     public init(logger: Logger? = nil) {
@@ -151,11 +166,11 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
                 return DeviceIdentifierKeyPair(privateKey: privateKeyData, publicKey: publicKeyData)
             }
             else {
-                throw NSError(domain: "FRDeviceIdentifierError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to retrieve Key Pairs from Keychain Service"])
+                throw NSError(domain: "DeviceIdentifierError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to retrieve Key Pairs from Keychain Service"])
             }
         }
         else {
-            throw NSError(domain: "FRDeviceIdentifierError", code: Int(status), userInfo: [NSLocalizedDescriptionKey: "Failed to generate Key Pair using SecKeyGeneratePair()"])
+            throw NSError(domain: "DeviceIdentifierError", code: Int(status), userInfo: [NSLocalizedDescriptionKey: "Failed to generate Key Pair using SecKeyGeneratePair()"])
         }
     }
     
@@ -164,7 +179,7 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     ///
     /// - Parameter keyType: RSA Key Type whether Public or Private Key
     /// - Returns: A dictionary of Keychain operation attributes
-    func buildKeyAttr(_ keyType: FRDeviceIdentifierKeyType) -> [String: Any] {
+    func buildKeyAttr(_ keyType: DeviceIdentifierKeyType) -> [String: Any] {
         var query: [String: Any] = [:]
         
         query[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
@@ -172,11 +187,11 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
         
         switch keyType {
         case .privateKey:
-            query[kSecAttrLabel as String] = "FRAuth SDK FRDevice identifier private key"
+            query[kSecAttrLabel as String] = "Ping SDK Device identifier private key"
             query[kSecAttrApplicationTag as String] = self.privateKeyTag
             break
         case .publicKey:
-            query[kSecAttrLabel as String] = "FRAuth SDK FRDevice identifier public key"
+            query[kSecAttrLabel as String] = "Ping SDK Device identifier public key"
             query[kSecAttrApplicationTag as String] = self.publicKeyTag
             break
         }
@@ -189,7 +204,7 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     ///
     /// - Parameter keyType: RSA Key Type whether Public or Private Key
     /// - Returns: A dictionary of Keychain operation attributes
-    func buildQuery(_ keyType: FRDeviceIdentifierKeyType) -> [String: Any] {
+    func buildQuery(_ keyType: DeviceIdentifierKeyType) -> [String: Any] {
         var query: [String: Any] = [:]
         query[kSecClass as String] = kSecClassKey
         query[kSecAttrKeyType as String] = self.keychainKeyType
@@ -210,6 +225,7 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
 
 
 extension Data {
+    /// Converts Data to a hexadecimal string representation.
     func toHexString() -> String {
         return map { String(format: "%02hhx", $0) }.joined()
     }
