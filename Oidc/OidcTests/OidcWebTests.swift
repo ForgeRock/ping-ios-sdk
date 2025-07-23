@@ -19,7 +19,7 @@ class OidcWebTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        self.oidcWeb = OidcWeb.createOidcLogin { config in
+        self.oidcWeb = OidcWeb.createOidcWeb { config in
             config.browserMode = .login
             config.browserType = .authSession
             config.module(OidcModule.config) { oidcValue in

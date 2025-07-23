@@ -12,7 +12,7 @@ import Foundation
 import PingOrchestrate
 import PingOidc
 
-public let oidLogin = OidcWeb.createOidcLogin { config in
+public let oidLogin = OidcWeb.createOidcWeb { config in
     let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
     config.browserMode = .login
     config.browserType = .authSession
