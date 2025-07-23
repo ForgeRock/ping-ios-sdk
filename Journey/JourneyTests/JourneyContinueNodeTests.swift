@@ -16,14 +16,18 @@ final class JourneyContinueNodeTests: XCTestCase {
     
     // MARK: - Mock Classes
     
-    struct MockCallback: Callback, @unchecked Sendable {
+    class MockCallback: Callback, @unchecked Sendable {
+
         typealias T = String
-        let id: String
-        private var json: [String: Any]
-        
-        init(with json: [String: Any]) {
+        var id: String = ""
+        private var json: [String: Any] = [:]
+
+        required init() {}
+
+        func initialize(with json: [String : Any]) -> any PingJourney.Callback {
             self.json = json
             self.id = json["_id"] as? String ?? ""
+            return self
         }
         
         func payload() -> [String: Any] {
@@ -34,8 +38,8 @@ final class JourneyContinueNodeTests: XCTestCase {
     // MARK: - ContinueNode Extension Tests
     
     func testCallbacksExtraction() {
-        let mockCallback1 = MockCallback(with: ["_id": "1"])
-        let mockCallback2 = MockCallback(with: ["_id": "2"])
+        var mockCallback1 = MockCallback().initialize(with: ["_id": "1"])
+        var mockCallback2 = MockCallback().initialize(with: ["_id": "2"])
         let mockActions: [Action] = [mockCallback1, mockCallback2]
         
         let sharedContext = SharedContext()
@@ -57,8 +61,8 @@ final class JourneyContinueNodeTests: XCTestCase {
         let config = WorkflowConfig()
         let workflow = Workflow(config: config)
         let input = ["authId": "test-auth-id"]
-        let mockCallback = MockCallback(with: ["_id": "1"])
-        
+        var mockCallback = MockCallback().initialize(with: ["_id": "1"])
+
         let node = JourneyContinueNode(context: context,
                                      workflow: workflow,
                                      input: input,
@@ -77,8 +81,8 @@ final class JourneyContinueNodeTests: XCTestCase {
         }
         
         let input = ["authId": "test-auth-id"]
-        let mockCallback = MockCallback(with: ["_id": "1"])
-        
+        var mockCallback = MockCallback().initialize(with: ["_id": "1"])
+
         let node = JourneyContinueNode(context: context,
                                      workflow: journey,
                                      input: input,
@@ -104,8 +108,8 @@ final class JourneyContinueNodeTests: XCTestCase {
         let config = WorkflowConfig()
         let workflow = Workflow(config: config)
         let input: [String: Any] = [:]
-        let mockCallback = MockCallback(with: ["_id": "1"])
-        
+        var mockCallback = MockCallback().initialize(with: ["_id": "1"])
+
         let node = JourneyContinueNode(context: context,
                                      workflow: workflow,
                                      input: input,

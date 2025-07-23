@@ -31,19 +31,22 @@ final class PasswordCallbackTests: XCTestCase {
             "_id": 1
         ]
         
-        let callback = PasswordCallback(with: dictionary)
+        let callback = PasswordCallback()
+        _ = callback.initialize(with: dictionary)
         XCTAssertEqual(callback.prompt, "Password")
         XCTAssertEqual(callback.json["type"] as? String, "PasswordCallback")
     }
     
     func testInitWithEmptyDictionary() {
-        let callback = PasswordCallback(with: [:])
+        let callback = PasswordCallback()
+        _ = callback.initialize(with: [:])
         XCTAssertEqual(callback.prompt, "")
         XCTAssertTrue(callback.payload().isEmpty)
     }
     
     func testSetPassword() {
-        let callback = PasswordCallback(with: [
+        let callback = PasswordCallback()
+        _ = callback.initialize(with: [
             "input": [
                 [
                     "name": "IDToken2",
@@ -59,7 +62,8 @@ final class PasswordCallbackTests: XCTestCase {
     }
     
     func testPayloadGeneration() {
-        let callback = PasswordCallback(with: [
+        let callback = PasswordCallback()
+        _ = callback.initialize(with: [
             "input": [
                 [
                     "name": "IDToken2",
@@ -95,7 +99,8 @@ final class PasswordCallbackTests: XCTestCase {
             "_id": 1
         ]
         
-        let callback = PasswordCallback(with: dictionary)
+        let callback = PasswordCallback()
+        _ = callback.initialize(with: dictionary)
         XCTAssertEqual(callback.prompt, "Password")
         
         callback.password = "secretPass123"

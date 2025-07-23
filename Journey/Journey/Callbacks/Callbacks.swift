@@ -16,7 +16,8 @@ import PingOrchestrate
 /// The `id` property is used to uniquely identify the callback.
 /// The `payload` method returns a dictionary representation of the callback's data,
 public protocol Callback: Action, Identifiable, Sendable {
-    init(with json: [String: Any])
+    init()
+    func initialize(with json: [String: Any]) -> any Callback
     var id: String { get }
     func payload() -> [String: Any]
 }

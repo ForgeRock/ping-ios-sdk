@@ -16,14 +16,14 @@ public class NameCallback: AbstractCallback, ObservableObject, @unchecked Sendab
     private(set) public var prompt: String = ""
     /// The name of the input field.
     public var name: String = ""
-
+    
     /// Initializes a new instance of `NameCallback` with the provided JSON input.
     public override func initValue(name: String, value: Any) {
-        if name == "prompt", let stringValue = value as? String {
+        if name == JourneyConstants.prompt, let stringValue = value as? String {
             self.prompt = stringValue
         }
     }
-
+    
     /// Initializes a new instance of `NameCallback` with the given JSON input.
     public override func payload() -> [String: Any] {
         return input(name)

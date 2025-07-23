@@ -37,6 +37,23 @@
 		A5560CA72CFE4EDA0076CA8D /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A57A090A2CE50FA5006F0CBB /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A57A09022CE50EF1006F0CBB /* PingStorage.framework */; };
 		A5560CA92CFE4EDA0076CA8D /* PingStorage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A57A09022CE50EF1006F0CBB /* PingStorage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A5768D002E283F40000290EE /* NameCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768CFF2E283F3E000290EE /* NameCallbackView.swift */; };
+		A5768D022E283F85000290EE /* PasswordCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D012E283F82000290EE /* PasswordCallbackView.swift */; };
+		A5768D042E2845B6000290EE /* KbaCreateCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D032E2845B3000290EE /* KbaCreateCallbackView.swift */; };
+		A5768D062E288615000290EE /* PollingWaitCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D052E2885FA000290EE /* PollingWaitCallbackView.swift */; };
+		A5768D082E288DB7000290EE /* ChoiceCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D072E288DB5000290EE /* ChoiceCallbackView.swift */; };
+		A5768D0A2E2958C7000290EE /* TermsAndConditionsCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D092E2958C5000290EE /* TermsAndConditionsCallbackView.swift */; };
+		A5768D0C2E2959CC000290EE /* TextInputCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D0B2E2959CA000290EE /* TextInputCallbackView.swift */; };
+		A5768D0E2E29603B000290EE /* TextOutputCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D0D2E29603A000290EE /* TextOutputCallbackView.swift */; };
+		A5768D102E2965B8000290EE /* ConfirmationCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D0F2E2965B7000290EE /* ConfirmationCallbackView.swift */; };
+		A5768D122E297077000290EE /* ValidatedPasswordCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D112E297076000290EE /* ValidatedPasswordCallbackView.swift */; };
+		A5768D142E297260000290EE /* ValidatedUsernameCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D132E29725F000290EE /* ValidatedUsernameCallbackView.swift */; };
+		A5768D162E29AD45000290EE /* StringAttributeInputCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D152E29AD43000290EE /* StringAttributeInputCallbackView.swift */; };
+		A5768D182E29AE87000290EE /* BooleanAttributeInputCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D172E29AE85000290EE /* BooleanAttributeInputCallbackView.swift */; };
+		A5768D1A2E29B228000290EE /* NumberAttributeInputCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D192E29B225000290EE /* NumberAttributeInputCallbackView.swift */; };
+		A5768D1C2E29B369000290EE /* ConsentMappingCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D1B2E29B364000290EE /* ConsentMappingCallbackView.swift */; };
+		A5768D202E29BFE7000290EE /* PingOneProtectInitializeCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D1F2E29BFE5000290EE /* PingOneProtectInitializeCallbackView.swift */; };
+		A5768D222E29BFF6000290EE /* PingOneProtectEvaluationCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D212E29BFF5000290EE /* PingOneProtectEvaluationCallbackView.swift */; };
 		A588D0062BF6A0E500F9052A /* StorageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A588D0042BF6A0E500F9052A /* StorageViewModel.swift */; };
 		A588D0072BF6A0E500F9052A /* LoggerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A588D0052BF6A0E500F9052A /* LoggerViewModel.swift */; };
 		A5A31CEC2E0A5B4F00ABBEF7 /* ProtectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A31CEB2E0A5B3F00ABBEF7 /* ProtectView.swift */; };
@@ -313,6 +330,23 @@
 		A525E7BB2DD7680900B02C17 /* ExternalIdP.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdP.xcodeproj; path = ../../ExternalIdP/ExternalIdP.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A525E7C62DD7683500B02C17 /* ExternalIdPGoogle.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdPGoogle.xcodeproj; path = ../../ExternalIdPGoogle/ExternalIdPGoogle.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A525E7DC2DD7687800B02C17 /* ExternalIdPApple.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdPApple.xcodeproj; path = ../../ExternalIdPApple/ExternalIdPApple.xcodeproj; sourceTree = SOURCE_ROOT; };
+		A5768CFF2E283F3E000290EE /* NameCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameCallbackView.swift; sourceTree = "<group>"; };
+		A5768D012E283F82000290EE /* PasswordCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordCallbackView.swift; sourceTree = "<group>"; };
+		A5768D032E2845B3000290EE /* KbaCreateCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KbaCreateCallbackView.swift; sourceTree = "<group>"; };
+		A5768D052E2885FA000290EE /* PollingWaitCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingWaitCallbackView.swift; sourceTree = "<group>"; };
+		A5768D072E288DB5000290EE /* ChoiceCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoiceCallbackView.swift; sourceTree = "<group>"; };
+		A5768D092E2958C5000290EE /* TermsAndConditionsCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsCallbackView.swift; sourceTree = "<group>"; };
+		A5768D0B2E2959CA000290EE /* TextInputCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputCallbackView.swift; sourceTree = "<group>"; };
+		A5768D0D2E29603A000290EE /* TextOutputCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextOutputCallbackView.swift; sourceTree = "<group>"; };
+		A5768D0F2E2965B7000290EE /* ConfirmationCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationCallbackView.swift; sourceTree = "<group>"; };
+		A5768D112E297076000290EE /* ValidatedPasswordCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedPasswordCallbackView.swift; sourceTree = "<group>"; };
+		A5768D132E29725F000290EE /* ValidatedUsernameCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedUsernameCallbackView.swift; sourceTree = "<group>"; };
+		A5768D152E29AD43000290EE /* StringAttributeInputCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringAttributeInputCallbackView.swift; sourceTree = "<group>"; };
+		A5768D172E29AE85000290EE /* BooleanAttributeInputCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanAttributeInputCallbackView.swift; sourceTree = "<group>"; };
+		A5768D192E29B225000290EE /* NumberAttributeInputCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberAttributeInputCallbackView.swift; sourceTree = "<group>"; };
+		A5768D1B2E29B364000290EE /* ConsentMappingCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentMappingCallbackView.swift; sourceTree = "<group>"; };
+		A5768D1F2E29BFE5000290EE /* PingOneProtectInitializeCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneProtectInitializeCallbackView.swift; sourceTree = "<group>"; };
+		A5768D212E29BFF5000290EE /* PingOneProtectEvaluationCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneProtectEvaluationCallbackView.swift; sourceTree = "<group>"; };
 		A588CFEA2BF69F1A00F9052A /* Logger.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Logger.xcodeproj; path = ../../Logger/Logger.xcodeproj; sourceTree = "<group>"; };
 		A588CFF92BF69F3300F9052A /* Storage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Storage.xcodeproj; path = ../../Storage/Storage.xcodeproj; sourceTree = "<group>"; };
 		A588D0042BF6A0E500F9052A /* StorageViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StorageViewModel.swift; sourceTree = "<group>"; };
@@ -435,6 +469,7 @@
 			children = (
 				ECA540222D660859002B35D4 /* PingExample.entitlements */,
 				ECB7C5D02D562FAC0006F1C8 /* Info.plist */,
+				A5768CFE2E283F0C000290EE /* Callbacks */,
 				A5E9AED92D309FEF000533ED /* Collectors */,
 				3A3709952BEB038200AA7B51 /* AccessTokenView.swift */,
 				A5E9AECD2D3037BC000533ED /* AccessTokenViewModel.swift */,
@@ -508,6 +543,30 @@
 				A525E7E62DD7687800B02C17 /* ExternalIdPAppleTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A5768CFE2E283F0C000290EE /* Callbacks */ = {
+			isa = PBXGroup;
+			children = (
+				A5768D172E29AE85000290EE /* BooleanAttributeInputCallbackView.swift */,
+				A5768D072E288DB5000290EE /* ChoiceCallbackView.swift */,
+				A5768D0F2E2965B7000290EE /* ConfirmationCallbackView.swift */,
+				A5768D1B2E29B364000290EE /* ConsentMappingCallbackView.swift */,
+				A5768D032E2845B3000290EE /* KbaCreateCallbackView.swift */,
+				A5768CFF2E283F3E000290EE /* NameCallbackView.swift */,
+				A5768D192E29B225000290EE /* NumberAttributeInputCallbackView.swift */,
+				A5768D012E283F82000290EE /* PasswordCallbackView.swift */,
+				A5768D212E29BFF5000290EE /* PingOneProtectEvaluationCallbackView.swift */,
+				A5768D1F2E29BFE5000290EE /* PingOneProtectInitializeCallbackView.swift */,
+				A5768D052E2885FA000290EE /* PollingWaitCallbackView.swift */,
+				A5768D152E29AD43000290EE /* StringAttributeInputCallbackView.swift */,
+				A5768D092E2958C5000290EE /* TermsAndConditionsCallbackView.swift */,
+				A5768D0B2E2959CA000290EE /* TextInputCallbackView.swift */,
+				A5768D0D2E29603A000290EE /* TextOutputCallbackView.swift */,
+				A5768D112E297076000290EE /* ValidatedPasswordCallbackView.swift */,
+				A5768D132E29725F000290EE /* ValidatedUsernameCallbackView.swift */,
+			);
+			path = Callbacks;
 			sourceTree = "<group>";
 		};
 		A57A08F52CE50D51006F0CBB /* Products */ = {
@@ -986,25 +1045,38 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5E9AECE2D3037BE000533ED /* AccessTokenViewModel.swift in Sources */,
+				A5768D142E297260000290EE /* ValidatedUsernameCallbackView.swift in Sources */,
+				A5768D1A2E29B228000290EE /* NumberAttributeInputCallbackView.swift in Sources */,
 				A588D0072BF6A0E500F9052A /* LoggerViewModel.swift in Sources */,
 				3ACD90E12BE586BC00DABCE6 /* DavinciViewModel.swift in Sources */,
+				A5768D0E2E29603B000290EE /* TextOutputCallbackView.swift in Sources */,
 				A588D0062BF6A0E500F9052A /* StorageViewModel.swift in Sources */,
+				A5768D162E29AD45000290EE /* StringAttributeInputCallbackView.swift in Sources */,
 				A5E9AED62D30393F000533ED /* LoggerView.swift in Sources */,
+				A5768D1C2E29B369000290EE /* ConsentMappingCallbackView.swift in Sources */,
 				A5EFA97B2D35F6D700F771FE /* DropdownView.swift in Sources */,
 				A5E9AECC2D303428000533ED /* LogOutView.swift in Sources */,
+				A5768D0A2E2958C7000290EE /* TermsAndConditionsCallbackView.swift in Sources */,
+				A5768D082E288DB7000290EE /* ChoiceCallbackView.swift in Sources */,
 				A5E9AEE32D318524000533ED /* FlowButtonView.swift in Sources */,
 				3A8532332BE2D5D800F8619D /* DavinciView.swift in Sources */,
 				A5EFA9812D360ACC00F771FE /* ContinueNodeView.swift in Sources */,
 				EC92B3882DA02D7400E4246D /* DeviceAuthenticationView.swift in Sources */,
 				EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */,
+				A5768D122E297077000290EE /* ValidatedPasswordCallbackView.swift in Sources */,
+				A5768D002E283F40000290EE /* NameCallbackView.swift in Sources */,
 				A5A31CEC2E0A5B4F00ABBEF7 /* ProtectView.swift in Sources */,
 				EC0CB5CA2E27AE4C00A82D6C /* JourneyView.swift in Sources */,
 				EC0CB5CB2E27AE4C00A82D6C /* JourneyViewModel.swift in Sources */,
+				A5768D022E283F85000290EE /* PasswordCallbackView.swift in Sources */,
 				EC0816BF2D4A832C00F1AD02 /* ConfigurationView.swift in Sources */,
 				3A5441332BCDF10900385131 /* ContentView.swift in Sources */,
 				A5EFA9792D35F62E00F771FE /* RadioButtonView.swift in Sources */,
+				A5768D202E29BFE7000290EE /* PingOneProtectInitializeCallbackView.swift in Sources */,
 				A5E9AED42D30385D000533ED /* LogOutViewModel.swift in Sources */,
+				A5768D042E2845B6000290EE /* KbaCreateCallbackView.swift in Sources */,
 				A5E9AEDD2D30A22A000533ED /* TextView.swift in Sources */,
+				A5768D102E2965B8000290EE /* ConfirmationCallbackView.swift in Sources */,
 				EC0816C12D4A833400F1AD02 /* ConfigurationViewModel.swift in Sources */,
 				A5EFA9772D35F2FA00F771FE /* CheckBoxView.swift in Sources */,
 				A5E9AEDF2D30CA34000533ED /* ErrorMessageView.swift in Sources */,
@@ -1017,10 +1089,14 @@
 				A5E9AED02D3037E0000533ED /* UserInfoView.swift in Sources */,
 				EC92B38C2DA039C000E4246D /* AsyncSVGImage.swift in Sources */,
 				ECBF06A42D5391690066A3BD /* SocialButtonView.swift in Sources */,
+				A5768D0C2E2959CC000290EE /* TextInputCallbackView.swift in Sources */,
 				A5E9AED82D303962000533ED /* StorageView.swift in Sources */,
 				EC92B3932DA0422700E4246D /* DeviceCardView.swift in Sources */,
 				ECE2B8812DB7DBEC00E2C51E /* PhoneNumberView.swift in Sources */,
+				A5768D182E29AE87000290EE /* BooleanAttributeInputCallbackView.swift in Sources */,
+				A5768D062E288615000290EE /* PollingWaitCallbackView.swift in Sources */,
 				EC92B38A2DA02D7F00E4246D /* DeviceRegistrationView.swift in Sources */,
+				A5768D222E29BFF6000290EE /* PingOneProtectEvaluationCallbackView.swift in Sources */,
 				3A3709962BEB038200AA7B51 /* AccessTokenView.swift in Sources */,
 				A5E9AEDB2D30A020000533ED /* LabelView.swift in Sources */,
 			);
@@ -1198,6 +1274,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PingExample/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Davinci;
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to deliver personalized ads to you";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1231,6 +1308,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PingExample/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Davinci;
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to deliver personalized ads to you";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
