@@ -37,7 +37,7 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
                 
         daVinci = DaVinci.createDaVinci { config in
             config.logger = LogManager.standard
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri

@@ -23,9 +23,6 @@ import PingJourney
 ///   - Redirect URI
 ///   - Discovery Endpoint
 ///   - Other optional fields
-
-
-
 public let journey = Journey.createJourney { config in
     let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
     config.serverUrl = currentConfig?.serverUrl
@@ -66,6 +63,7 @@ class JourneyViewModel: ObservableObject {
         await MainActor.run {
             isLoading = true
         }
+        try await journey.start()
         
         let next = await journey.start("Login") { options in
             options.forceAuth = false

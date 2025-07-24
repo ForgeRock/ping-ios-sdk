@@ -34,10 +34,17 @@ class AccessTokenViewModel: ObservableObject {
     /// - Logs the success or failure result using `PingLogger`.
     func accessToken() async {
         let token: Result<Token, OidcError>?
-        if ConfigurationManager.shared.loadConfigurationViewModel().environment == "AIC" {
-            token = await ConfigurationManager.shared.journeyUser?.token()
+        
+        let journeyUser = await ConfigurationManager.shared.journeyUser
+        let davinci = await ConfigurationManager.shared.davinciUser
+        let oidcLoginUser = await ConfigurationManager.shared.oidcUser
+        
+        if journeyUser != nil {
+            token = await journeyUser?.token()
+        } else if davinci != nil {
+            token = await davinci?.token()
         } else {
-            token = await ConfigurationManager.shared.davinciUser?.token()
+            token = await oidcLoginUser?.token()
         }
 
         switch token {

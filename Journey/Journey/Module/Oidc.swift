@@ -67,11 +67,11 @@ public class OidcModule {
 
 extension SharedContext.Keys {
     /// The key used to store the PKCE value in the shared context.
-    public static let pkceKey = "com.pingidentity.journey.PKCE"
+    static let pkceKey = "com.pingidentity.journey.PKCE"
     
     /// The key used to store the user in the shared context.
-    public static let userKey = "com.pingidentity.journey.User"
+    static let userKey = "com.pingidentity.journey.User"
     
     /// The key used to store the OIDC client configuration in the shared context.
-    public static let oidcClientConfigKey = "com.pingidentity.journey.OidcClientConfig"
+    static let oidcClientConfigKey = "com.pingidentity.journey.OidcClientConfig"
 }

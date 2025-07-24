@@ -12,6 +12,7 @@ import Foundation
 import AuthenticationServices
 import PingLogger
 import SafariServices
+import Combine
 
 /// BrowserType enum to specify the type of external user-agent;
 /// ASWebAuthenticationSession, Native Browser App,  SFSafariViewController,
@@ -42,7 +43,8 @@ public enum BrowserMode: Sendable {
 @MainActor
 public protocol BrowserLauncherProtocol: Sendable {
     var isInProgress: Bool { get }
-    func launch(url: URL, browserType: BrowserType, callbackURLScheme: String) async throws -> URL
+    func launch(url: URL, customParams: [String: String]?,
+                browserType: BrowserType, browserMode: BrowserMode, callbackURLScheme: String) async throws -> URL
     func reset()
 }
 
@@ -53,7 +55,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     // MARK: Properties
     
     /// Static shared instance of current Browser object
-    public static var currentBrowser: BrowserLauncherProtocol = BrowserLauncher()
+    public static var currentBrowser: BrowserLauncher = BrowserLauncher()
     
     /// Boolean indicator whether or not current Browser object is in progress
     private(set) public var isInProgress: Bool = false
@@ -83,18 +85,9 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     /// Resets the browser state
     public func reset() {
         // Reset the browser
+        self.cleanup()
         self.isInProgress = false
         self.currentSession = nil
-    }
-    
-    /// Launches external user-agent for web requests
-    /// - Parameters:
-    ///  - url: URL to follow for the external user-agent
-    ///  - browserType: BrowserType enum to specify the type of external user-agent
-    ///  - callbackURLScheme: The callbackURLScheme to be used for returning to the app. Used in ASWebAuthenticationSession modes
-    ///  - Returns: URL of the external user-agent
-    public func launch(url: URL, browserType: BrowserType, callbackURLScheme: String) async throws -> URL {
-        return try await launch(url: url, browserType: browserType, browserMode: .login, callbackURLScheme: callbackURLScheme)
     }
     
     /// Launches external user-agent for web requests
@@ -110,58 +103,130 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
                        browserType: BrowserType = .authSession, browserMode: BrowserMode = .login, callbackURLScheme: String) async throws -> URL {
         
         // Make sure that no Browser instance is currently running
-        if let currentBrowser = BrowserLauncher.currentBrowser as? BrowserLauncher,
-           currentBrowser.isInProgress {
+        if BrowserLauncher.currentBrowser.isInProgress {
             throw BrowserError.externalUserAgentAuthenticationInProgress
         }
         
         self.isInProgress = true
         
+        // If we have custom parameters, add them to the URL
+        var finalUrl = url
+        if let params = customParams, !params.isEmpty {
+            var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
+            
+            // Create query items from custom parameters
+            let queryItems = params.map { URLQueryItem(name: $0.key, value: $0.value) }
+            
+            // If URL already has query items, append to them, otherwise set them
+            if var existingItems = urlComponents?.queryItems {
+                existingItems.append(contentsOf: queryItems)
+                urlComponents?.queryItems = existingItems
+            } else {
+                urlComponents?.queryItems = queryItems
+            }
+            
+            // Get the final URL with parameters
+            if let updatedUrl = urlComponents?.url {
+                finalUrl = updatedUrl
+            } else {
+                logger.i("Failed to append custom parameters to URL, using original URL")
+            }
+        }
+        
         // Launch the browser based on type
         switch browserType {
         case .nativeBrowserApp:
-            guard await UIApplication.shared.open(url) else {
-                reset()
-                throw BrowserError.externalUserAgentFailure
-            }
-            logger.i("BrowserLauncher: Native Browser launched successfully")
-            return url
+            return try await loginWithNativeBrowser(url: finalUrl, callbackURLScheme: callbackURLScheme)
             
         case .sfViewController:
-            return try await loginWithSFViewController(url: url)
+            return try await loginWithSFViewController(url: finalUrl, callbackURLScheme: callbackURLScheme)
             
         case .authSession:
-            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: false)
+            return try await asWebAuthenticationSession(url: finalUrl, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: false)
             
         case .ephemeralAuthSession:
-            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: true)
+            return try await asWebAuthenticationSession(url: finalUrl, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: true)
         }
     }
     
     // MARK: Private Methods
+    /// Performs authentication through /authorize endpoint using SFSafariViewController
+    /// - Parameters:
+    ///   - url: URL of /authorize including all URL query parameter
+    /// - Returns: URL after authentication is complete
+    /// - Throws: BrowserError if the view controller cannot be presented
+    private func loginWithNativeBrowser(url: URL, callbackURLScheme: String ) async throws -> URL {
+        // 1. Open in external browser
+        let opened = await withCheckedContinuation { (cont: CheckedContinuation<Bool, Never>) in
+            UIApplication.shared.open(url, options: [:]) { success in
+                cont.resume(returning: success)
+            }
+        }
+        guard opened else {
+            throw BrowserError.externalUserAgentFailure
+        }
+        
+        // 2. Await the first incoming URL matching our scheme
+        let redirectURL = try await withCheckedThrowingContinuation { (cont: CheckedContinuation<URL, Error>) in
+            self.cancellable = OpenURLMonitor.shared.urlPublisher
+                .filter { $0.scheme == callbackURLScheme }
+                .first()
+                .sink { url in
+                    self.cancellable?.cancel()
+                    cont.resume(returning: url)
+                }
+        }
+        
+        return redirectURL
+    }
     
     /// Performs authentication through /authorize endpoint using SFSafariViewController
     /// - Parameters:
     ///   - url: URL of /authorize including all URL query parameter
     /// - Returns: URL after authentication is complete
     /// - Throws: BrowserError if the view controller cannot be presented
-    private func loginWithSFViewController(url: URL) async throws -> URL {
-        return try await withCheckedThrowingContinuation { continuation in
-            let viewController = SFSafariViewController(url: url, configuration: SFSafariViewController.Configuration())
-            viewController.delegate = self
-            self.currentSession = viewController
-            
-            let scenes = UIApplication.shared.connectedScenes
-            let windowScene = scenes.first as? UIWindowScene
-            guard let presentingViewController = windowScene?.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
-                self.logger.e("Fail to launch SFSafariViewController; missing presenting ViewController", error: nil)
-                continuation.resume(throwing: BrowserError.externalUserAgentFailure)
-                return
-            }
-            
-            presentingViewController.present(viewController, animated: true)
-            continuation.resume(returning: url)
+    private func loginWithSFViewController(url: URL, callbackURLScheme: String ) async throws -> URL {
+        // 1. Prepare and present the Safari VC
+        let safariVC = SFSafariViewController(
+            url: url,
+            configuration: SFSafariViewController.Configuration()
+        )
+        safariVC.delegate = self
+        self.currentSession = safariVC
+        
+        guard
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+            let presentingVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController
+        else {
+            logger.e("Fail to launch SFSafariViewController; missing presenting ViewController", error: nil)
+            throw BrowserError.externalUserAgentFailure
         }
+        presentingVC.present(safariVC, animated: true)
+        
+        // 2. Await the first matching incoming URL
+        let redirectedURL = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<URL, Error>) in
+            self.cancellable = OpenURLMonitor.shared.urlPublisher
+                .filter { $0.scheme == callbackURLScheme }
+                .first()
+                .sink { [weak self] url in
+                    guard let self = self else { return }
+                    // Dismiss the Safari VC, then resume the continuation
+                    safariVC.dismiss(animated: true) {
+                        self.cleanup()
+                        continuation.resume(returning: url)
+                    }
+                }
+        }
+        
+        return redirectedURL
+    }
+    
+    private var cancellable: AnyCancellable?
+    
+    /// Clean up subscription
+    private func cleanup() {
+        cancellable?.cancel()
+        cancellable = nil
     }
     
     /// Performs authentication through /authorize endpoint using ASWebAuthenticationSession
@@ -224,8 +289,34 @@ extension BrowserLauncher: SFSafariViewControllerDelegate {
         Task { @MainActor in
             self.logger.i("User cancelled the authorization process by closing the window")
             self.reset()
+            self.cleanup()
         }
     }
     
     nonisolated public func safariViewController(_ controller: SFSafariViewController, initialLoadDidRedirectTo URL: URL) {}
+}
+
+/// A singleton that publishes all URLs your app is asked to open.
+@MainActor
+public final class OpenURLMonitor: NSObject {
+    
+    /// Shared singleton instance
+    public static let shared = OpenURLMonitor()
+    
+    /// Any subscriber can listen to this to be notified of incoming URLs
+    public let urlPublisher = PassthroughSubject<URL, Never>()
+    
+    private override init() {
+        super.init()
+    }
+    
+    /// Call this from your AppDelegate/SceneDelegate when the app is asked to open a URL.
+    /// - Returns: You can return the Bool back to the system if you want.
+    @discardableResult
+    public func handleOpenURL(_ url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        // Broadcast the URL
+        urlPublisher.send(url)
+        // Return true to indicate you handled it
+        return true
+    }
 }

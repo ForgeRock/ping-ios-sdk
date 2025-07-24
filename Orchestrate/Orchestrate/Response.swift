@@ -11,11 +11,47 @@
 
 import Foundation
 
+
+/// Represents an HTTP response.
+public protocol Response {
+    /// The original request that produced this response.
+    var data: Data { get }
+    
+    /// Returns the body of the response.
+    /// - Returns: The body as a String.
+    func body() async -> String
+    
+    /// Returns the HTTP status code.
+    /// - Returns: The status code as an Int.
+    func status() -> Int
+    
+    /// Returns the cookies included in the response.
+    /// - Returns: A `Cookies` container.
+    func getCookies() -> [HTTPCookie]
+    
+    /// Returns the value of a header.
+    /// - Parameter name: The name of the header.
+    /// - Returns: The header value, or `nil` if not present.
+    func header(name: String) -> String?
+    
+    /// Returns the body of the response as a JSON object.
+    /// - Returns: The body of the response as a JSON object.
+    func json() throws -> [String: Any]
+}
+
+extension Response {
+    /// Returns the body of the response as a JSON object.
+    /// - Returns: The body of the response as a JSON object.
+    public func json() throws -> [String: Any] {
+        return (try JSONSerialization.jsonObject(with: self.data, options: []) as? [String: Any]) ?? [:]
+    }
+}
+
 /// Struct for a Response. A Response represents a response received from a network request.
 /// - property data: The data  received from the network request.
 /// - property response: The URLResponse received from the network request.
-public struct Response {
-    public let data: Data
+public struct HttpResponse: Response, @unchecked Sendable {
+    public var data: Data
     public let response: URLResponse
     
     /// Initializes a new instance of `Response`.
@@ -31,13 +67,6 @@ public struct Response {
     /// - Returns: The body of the response as a String.
     public func body() -> String {
         return String(data: data, encoding: .utf8) ?? ""
-    }
-    
-    /// Returns the body of the response as a JSON object.
-    /// - Parameter data: The data to convert to a JSON object.
-    /// - Returns: The body of the response as a JSON object.
-    public func json(data: Data) throws -> [String: Any] {
-        return (try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]) ?? [:]
     }
     
     ///  Returns the status code of the response.

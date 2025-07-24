@@ -13,7 +13,7 @@ import Foundation
 import SwiftUI
 import UIKit
 import PingOidc
-
+import PingJourney
 
 //The ConfigurationManager class is used to manage the configuration settings for the SDK.
 //The class provides the following functionality:
@@ -38,6 +38,13 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
         get async {
             let davinciUser = await davinci.daVinciUser()
             return davinciUser
+        }
+    }
+    
+    public var oidcUser: User? {
+        get async {
+            let oidcLoginUser = await oidLogin.oidcLoginUser()
+            return oidcLoginUser
         }
     }
     
@@ -88,6 +95,8 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
             serverUrl: <#"Server URL"#>, // Optional, can be nil if not used
             realm: <#"Realm"#> // Optional, can be nil if not used
         )
+
+
     }
 }
 

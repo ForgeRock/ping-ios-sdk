@@ -66,6 +66,8 @@
 		EC0CB5C72E27AD5B00A82D6C /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0CB5B92E27AD3D00A82D6C /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC0CB5CA2E27AE4C00A82D6C /* JourneyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */; };
 		EC0CB5CB2E27AE4C00A82D6C /* JourneyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */; };
+		EC23D5712E2E8ECF00C43D42 /* OidcLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */; };
+		EC23D5722E2E8ECF00C43D42 /* OidcLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */; };
 		EC92B3882DA02D7400E4246D /* DeviceAuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */; };
 		EC92B38A2DA02D7F00E4246D /* DeviceRegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */; };
 		EC92B38C2DA039C000E4246D /* AsyncSVGImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */; };
@@ -346,6 +348,8 @@
 		EC0CB5A52E27AD3D00A82D6C /* Journey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Journey.xcodeproj; path = ../../Journey/Journey.xcodeproj; sourceTree = SOURCE_ROOT; };
 		EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyView.swift; sourceTree = "<group>"; };
 		EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyViewModel.swift; sourceTree = "<group>"; };
+		EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginView.swift; sourceTree = "<group>"; };
+		EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginViewModel.swift; sourceTree = "<group>"; };
 		EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticationView.swift; sourceTree = "<group>"; };
 		EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationView.swift; sourceTree = "<group>"; };
 		EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncSVGImage.swift; sourceTree = "<group>"; };
@@ -451,6 +455,8 @@
 				A588D0052BF6A0E500F9052A /* LoggerViewModel.swift */,
 				A5E9AEC12D30341E000533ED /* LogOutView.swift */,
 				A5E9AED32D303858000533ED /* LogOutViewModel.swift */,
+				EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */,
+				EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */,
 				A5E9AED72D30395D000533ED /* StorageView.swift */,
 				A588D0042BF6A0E500F9052A /* StorageViewModel.swift */,
 				A5E9AECF2D3037DF000533ED /* UserInfoView.swift */,
@@ -1013,6 +1019,8 @@
 				A5A5F80A2D4C644E0053BF24 /* ErrorView.swift in Sources */,
 				A5E9AEE12D30D304000533ED /* SubmitButtonView.swift in Sources */,
 				3A8092F42BE99F0F00AD667F /* CustomViews.swift in Sources */,
+				EC23D5712E2E8ECF00C43D42 /* OidcLoginView.swift in Sources */,
+				EC23D5722E2E8ECF00C43D42 /* OidcLoginViewModel.swift in Sources */,
 				A5EFA97F2D35F88D00F771FE /* PasswordView.swift in Sources */,
 				A5E9AED02D3037E0000533ED /* UserInfoView.swift in Sources */,
 				EC92B38C2DA039C000E4246D /* AsyncSVGImage.swift in Sources */,

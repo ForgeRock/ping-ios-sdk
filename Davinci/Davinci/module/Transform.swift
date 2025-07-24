@@ -21,11 +21,11 @@ public class NodeTransformModule {
         setup.transform { @Sendable flowContext, response in
             let status = response.status()
             
-            let body = response.body()
+            let body = await response.body()
             
             // Check for 4XX errors that are unrecoverable
             if (400..<500).contains(status) {
-                let json = try response.json(data: response.data)
+                let json = try response.json()
                 let message = json[Constants.message] as? String ?? ""
                 
                 // Filter out client-side "timeout" related unrecoverable failures
@@ -46,7 +46,7 @@ public class NodeTransformModule {
             
             // Handle success (2XX) responses
             if status == 200 {
-                let json = try response.json(data: response.data)
+                let json = try response.json()
                 
                 // Filter out 2XX errors with 'failure' status
                 if let failedStatus = json[Constants.status] as? String, failedStatus == Constants.FAILED {
@@ -68,7 +68,7 @@ public class NodeTransformModule {
             }
             
             // 5XX errors are treated as unrecoverable failures
-            let json = try response.json(data: response.data)
+            let json = try response.json()
             return FailureNode(cause: ApiError.error(status, json, body))
         }
         

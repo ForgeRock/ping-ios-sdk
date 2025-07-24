@@ -33,7 +33,6 @@ public let davinci = DaVinci.createDaVinci { config in
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
         oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
     }
-    
 }
 
 // A view model that manages the flow and state of the DaVinci orchestration process.
