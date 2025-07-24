@@ -12,14 +12,14 @@ import SwiftUI
 import PingProtect
 
 struct PingOneProtectEvaluationCallbackView: View {
-    let callback: PingOneProtectEvaluationCallback
-    let onNext: () -> Void
+    @StateObject private var viewModel: PingOneProtectEvaluationViewModel
 
-    @State private var isLoading: Bool = true
-    @State private var task: Task<Void, Never>?
+    init(callback: PingOneProtectEvaluationCallback, onNext: @escaping () -> Void) {
+        self._viewModel = StateObject(wrappedValue: PingOneProtectEvaluationViewModel(callback: callback, onNext: onNext))
+    }
 
     var body: some View {
-        if isLoading {
+        if viewModel.isLoading {
             VStack(spacing: 16) {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle())
@@ -31,21 +31,34 @@ struct PingOneProtectEvaluationCallbackView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding()
             .onAppear {
-                startEvaluation()
+                viewModel.startEvaluation()
             }
             .onDisappear {
-                task?.cancel()
-                task = nil
+                viewModel.cancelEvaluation()
             }
         }
     }
+}
 
-    private func startEvaluation() {
+
+class PingOneProtectEvaluationViewModel: ObservableObject {
+    @Published var isLoading: Bool = true
+
+    private var task: Task<Void, Never>?
+    private let callback: PingOneProtectEvaluationCallback
+    private let onNext: () -> Void
+
+    init(callback: PingOneProtectEvaluationCallback, onNext: @escaping () -> Void) {
+        self.callback = callback
+        self.onNext = onNext
+    }
+
+    @MainActor
+    func startEvaluation() {
         isLoading = true
         let startTime = Date()
 
         task = Task {
-
             // Execute the evaluation
             _ = await callback.collect()
 
@@ -61,10 +74,19 @@ struct PingOneProtectEvaluationCallbackView: View {
 
             if !Task.isCancelled {
                 await MainActor.run {
-                    isLoading = false
-                    onNext()
+                    self.isLoading = false
+                    self.onNext()
                 }
             }
         }
+    }
+
+    func cancelEvaluation() {
+        task?.cancel()
+        task = nil
+    }
+
+    deinit {
+        cancelEvaluation()
     }
 }

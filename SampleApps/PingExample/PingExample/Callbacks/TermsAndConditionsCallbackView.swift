@@ -46,7 +46,6 @@ struct TermsAndConditionsCallbackView: View {
                 .toggleStyle(SwitchToggleStyle())
                 .onChange(of: accepted) { newValue in
                     callback.accepted = newValue
-                    //onNodeUpdated()
                 }
         }
         .padding()

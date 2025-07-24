@@ -14,8 +14,8 @@ import PingJourney
 
 /// Abstract Protect Callback that provides the raw content of the Callback, and common methods
 /// for sub classes to access.
-open class AbstractProtectCallback: AbstractCallback, @unchecked Sendable {
-    
+open class AbstractProtectCallback: AbstractCallback, ContinueNodeAware, @unchecked Sendable {
+
     /// Reference to the continue node for accessing other callbacks
     public weak var continueNode: ContinueNode?
     private var derivedCallback: Bool = false

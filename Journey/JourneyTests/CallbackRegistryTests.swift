@@ -24,7 +24,7 @@ class CustomCallback: AbstractCallback, @unchecked Sendable {
         }
     }
     
-    /// Initializes a new instance of `NameCallback` with the given JSON input.
+    /// Returns the payload with the name value.
     public override func payload() -> [String: Any] {
         return input(name)
     }
@@ -72,7 +72,7 @@ final class CallbackRegistryTests: XCTestCase {
                 }
             }
             
-            /// Initializes a new instance of `NameCallback` with the given JSON input.
+            /// Returns the payload with the name value.
             public override func payload() -> [String: Any] {
                 return input(name)
             }

@@ -24,7 +24,7 @@ public class PasswordCallback: AbstractCallback, ObservableObject,  @unchecked S
         }
     }
     
-    /// Initializes a new instance of `PasswordCallback` with the given JSON input.
+    /// Returns the payload with the password value.
     public override func payload() -> [String: Any] {
         return input(password)
     }

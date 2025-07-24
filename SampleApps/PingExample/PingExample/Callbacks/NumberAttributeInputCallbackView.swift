@@ -48,7 +48,6 @@ struct NumberAttributeInputCallbackView: View {
                 // Update field value if valid number
                 if !text.isEmpty, let doubleValue = Double(text) {
                     callback.value = doubleValue
-                    //onNodeUpdated()
                 }
             }
             .onSubmit {

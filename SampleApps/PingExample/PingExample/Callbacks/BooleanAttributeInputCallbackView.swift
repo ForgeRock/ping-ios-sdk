@@ -28,7 +28,6 @@ struct BooleanAttributeInputCallbackView: View {
                 .toggleStyle(SwitchToggleStyle())
                 .onChange(of: value) { newValue in
                     callback.value = newValue
-                    //onNodeUpdated()
                 }
         }
         .padding()

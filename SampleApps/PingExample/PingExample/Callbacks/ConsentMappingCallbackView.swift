@@ -71,7 +71,6 @@ struct ConsentMappingCallbackView: View {
                 .toggleStyle(SwitchToggleStyle())
                 .onChange(of: accepted) { newValue in
                     callback.accepted = newValue
-                    //onNodeUpdated()
                 }
         }
         .padding()

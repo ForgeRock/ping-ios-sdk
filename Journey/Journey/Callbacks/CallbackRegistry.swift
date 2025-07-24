@@ -98,6 +98,10 @@ public class CallbackRegistry: @unchecked Sendable {
             if var callback = callback as? JourneyAware {
                 callback.journey = journey
             }
+
+            if var callback = callback as? ContinueNodeAware {
+                callback.continueNode = continueNode
+            }
         }
     }
 
@@ -105,4 +109,10 @@ public class CallbackRegistry: @unchecked Sendable {
     public func reset() {
         callbacks.removeAll()
     }
+}
+
+/// An interface that should be implemented by classes that need to be aware of the ContinueNode.
+/// The continueNode will be injected to the classes that implement this interface.
+public protocol ContinueNodeAware {
+    var continueNode: ContinueNode? { get set }
 }

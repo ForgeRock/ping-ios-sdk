@@ -24,7 +24,7 @@ public class NameCallback: AbstractCallback, ObservableObject, @unchecked Sendab
         }
     }
     
-    /// Initializes a new instance of `NameCallback` with the given JSON input.
+    /// Returns the payload with the name value.
     public override func payload() -> [String: Any] {
         return input(name)
     }

@@ -32,7 +32,6 @@ struct ChoiceCallbackView: View {
             )
             .onChange(of: selectedIndex) { newValue in
                 callback.selectedIndex = newValue
-                //onNodeUpdated()
             }
         }
         .padding()

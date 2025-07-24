@@ -12,58 +12,83 @@ import SwiftUI
 import PingProtect
 
 struct PingOneProtectInitializeCallbackView: View {
-    let callback: PingOneProtectInitializeCallback
-    let onNext: () -> Void
-    
-    @State private var isLoading: Bool = true
-    @State private var task: Task<Void, Never>?
-    
+    @StateObject private var viewModel: PingOneProtectInitializeViewModel
+
+    init(callback: PingOneProtectInitializeCallback, onNext: @escaping () -> Void) {
+        self._viewModel = StateObject(wrappedValue: PingOneProtectInitializeViewModel(callback: callback, onNext: onNext))
+    }
+
     var body: some View {
-        if isLoading {
+        if viewModel.isLoading {
             VStack(spacing: 16) {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle())
                     .scaleEffect(1.5)
-                
+
                 Text("Collecting device profile ...")
                     .foregroundColor(.secondary)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding()
             .onAppear {
-                startInitialization()
+                viewModel.startInitialization()
             }
             .onDisappear {
-                task?.cancel()
-                task = nil
+                viewModel.cancelInitialization()
             }
         }
     }
-    
-    private func startInitialization() {
+}
+
+
+class PingOneProtectInitializeViewModel: ObservableObject {
+    @Published var isLoading: Bool = true
+
+    private var task: Task<Void, Never>?
+    private let callback: PingOneProtectInitializeCallback
+    private let onNext: () -> Void
+
+    init(callback: PingOneProtectInitializeCallback, onNext: @escaping () -> Void) {
+        self.callback = callback
+        self.onNext = onNext
+    }
+
+    @MainActor
+    func startInitialization() {
         isLoading = true
         let startTime = Date()
-        
+
         task = Task {
             // Execute the initialization
             _ = await callback.start()
-            
+
             // Calculate task duration
             let taskDuration = Date().timeIntervalSince(startTime)
-            
+
             // If task completed too quickly, delay to meet minimum display time
             let minimumDisplayTime: TimeInterval = 2.0
             let remainingTime = minimumDisplayTime - taskDuration
             if remainingTime > 0 {
                 try? await Task.sleep(nanoseconds: UInt64(remainingTime * 1_000_000_000))
             }
-            
+
             if !Task.isCancelled {
                 await MainActor.run {
-                    isLoading = false
-                    onNext()
+                    self.isLoading = false
+                    self.onNext()
                 }
             }
         }
     }
+
+    func cancelInitialization() {
+        task?.cancel()
+        task = nil
+    }
+
+    deinit {
+        cancelInitialization()
+    }
 }
+
+
