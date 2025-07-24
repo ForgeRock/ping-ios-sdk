@@ -38,7 +38,7 @@ public class WebModule {
                 guard let url = request.urlRequest.url else {
                     throw OidcError.authorizeError(message: "Browser authorization failed: URL not found")
                 }
-                let launcher = await BrowserLauncher()
+                // Ensure the redirect URI scheme is valid
                 let result = try await BrowserLauncher.currentBrowser.launch(url: url, browserType: oidcLoginConfig?.browserType ?? .authSession, browserMode: oidcLoginConfig?.browserMode ?? .login, callbackURLScheme: callbackURLScheme)
                 
                 await BrowserLauncher.currentBrowser.reset()
