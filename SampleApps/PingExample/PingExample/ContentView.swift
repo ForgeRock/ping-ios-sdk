@@ -94,7 +94,7 @@ struct ContentView: View {
                 default:
                     EmptyView()
                 }
-            }.navigationBarTitle("DaVinci")
+            }.navigationBarTitle("Ping SDK")
                 .accentColor(.themeButtonBackground)
             Spacer()
             Image("Logo").resizable().scaledToFill().frame(width: 100, height: 100)
