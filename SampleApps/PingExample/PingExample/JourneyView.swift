@@ -8,7 +8,6 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
-
 import Foundation
 import SwiftUI
 import PingOrchestrate
@@ -23,35 +22,86 @@ struct JourneyView: View {
 
     var body: some View {
         ZStack {
-            ScrollView {
-                VStack {
-                    Spacer()
-                    // Handle different types of nodes in the Journey.
-                    switch journeyViewModel.state.node {
-                    case let continueNode as ContinueNode:
-                        // Display the callback view for the next node.
-                        CallbackView(journeyViewModel: journeyViewModel, node: continueNode)
-                    case let errorNode as ErrorNode:
-                        // Handle server-side errors (e.g., invalid credentials)
-                        // Display error to the user
-                        ErrorNodeView(node: errorNode)
-                        if let nextNode = errorNode.continueNode {
-                            CallbackView(journeyViewModel: journeyViewModel, node: nextNode)
+            if journeyViewModel.showJourneyNameInput {
+                // Show journey name input screen
+                JourneyNameInputView(journeyViewModel: journeyViewModel)
+            } else {
+                // Show the normal journey flow
+                ScrollView {
+                    VStack {
+                        Spacer()
+                        // Handle different types of nodes in the Journey.
+                        switch journeyViewModel.state.node {
+                        case let continueNode as ContinueNode:
+                            // Display the callback view for the next node.
+                            CallbackView(journeyViewModel: journeyViewModel, node: continueNode)
+                        case let errorNode as ErrorNode:
+                            // Handle server-side errors (e.g., invalid credentials)
+                            // Display error to the user
+                            ErrorNodeView(node: errorNode)
+                            if let nextNode = errorNode.continueNode {
+                                CallbackView(journeyViewModel: journeyViewModel, node: nextNode)
+                            }
+                        case let failureNode as FailureNode:
+                            ErrorView(message: failureNode.cause.localizedDescription)
+                        case is SuccessNode:
+                            // Authentication successful, retrieve the session
+                            VStack{}.onAppear {
+                                path.removeLast()
+                                path.append("Token")
+                            }
+                        default:
+                            EmptyView()
                         }
-                    case let failureNode as FailureNode:
-                        ErrorView(message: failureNode.cause.localizedDescription)
-                    case is SuccessNode:
-                        // Authentication successful, retrieve the session
-                        VStack{}.onAppear {
-                            path.removeLast()
-                            path.append("Token")
-                        }
-                    default:
-                        EmptyView()
                     }
                 }
             }
         }
+    }
+}
+
+/// A view for collecting the journey name before starting the flow
+struct JourneyNameInputView: View {
+    @ObservedObject var journeyViewModel: JourneyViewModel
+    @State private var journeyName: String = ""
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            Image("Logo")
+                .resizable()
+                .scaledToFill()
+                .frame(width: 120, height: 120)
+
+            VStack(spacing: 16) {
+                Text("Enter Journey Name")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+
+                TextField("Journey Name", text: $journeyName)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray, lineWidth: 1)
+                    )
+                    .onAppear() { journeyName = journeyViewModel.getSavedJourneyName() }
+
+                Spacer()
+
+                NextButton(title: "Start Journey") {
+                    Task {
+                        journeyViewModel.saveJourneyName(journeyName)
+                        await journeyViewModel.startJourney(with: journeyName)
+                    }
+                }
+            }
+
+            Spacer()
+        }
+        .padding()
     }
 }
 
@@ -68,7 +118,7 @@ struct CallbackView: View {
 
             JourneyNodeView(continueNode: node,
                             onNodeUpdated:  { journeyViewModel.refresh() },
-                            onStart: { Task { await journeyViewModel.startJourney() }},
+                            onStart: { Task { await journeyViewModel.startJourney(with: journeyViewModel.getSavedJourneyName()) }},
                             onNext: { Task {
                 await journeyViewModel.next(node: node)
             }})

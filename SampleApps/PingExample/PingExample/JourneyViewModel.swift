@@ -1,4 +1,3 @@
-//
 //  JourneyViewModel.swift
 //  PingExample
 //
@@ -7,7 +6,6 @@
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
-
 
 import Foundation
 import PingOidc
@@ -23,8 +21,6 @@ import PingJourney
 ///   - Redirect URI
 ///   - Discovery Endpoint
 ///   - Other optional fields
-
-
 
 public let journey = Journey.createJourney { config in
     let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
@@ -51,33 +47,36 @@ class JourneyViewModel: ObservableObject {
     @Published public var state: JourneyState = JourneyState()
     /// Published property to track whether the view is currently loading.
     @Published public var isLoading: Bool = false
-    
-    /// Initializes the view model and starts the Journey orchestration process.
+    /// Published property to control whether to show the journey name input screen
+    @Published public var showJourneyNameInput: Bool = true
+
+    /// Initializes the view model but does NOT automatically start the journey.
+    /// The journey will start when the user enters a journey name.
     init() {
-        Task {
-            await startJourney()
-        }
+        // Remove auto-start - let user enter journey name first
     }
-    
-    /// Starts the Journey orchestration process.
-    /// - Sets the initial node and updates the `data` property with the starting node.
-    public func startJourney() async {
-        
+
+    /// Starts the Journey orchestration process with a specific journey name.
+    /// - Parameter journeyName: The name of the journey to start
+    public func startJourney(with journeyName: String) async {
+        guard !journeyName.isEmpty else { return }
+
         await MainActor.run {
             isLoading = true
         }
-        
-        let next = await journey.start("Login") { options in
+
+        let next = await journey.start(journeyName) { options in
             options.forceAuth = false
             options.noSession = false
         }
-        
+
         await MainActor.run {
             self.state = JourneyState(node: next)
-            isLoading = false
+            self.showJourneyNameInput = false
+            self.isLoading = false
         }
     }
-    
+
     /// Advances to the next node in the orchestration process.
     /// - Parameter node: The current node to progress from.
     public func next(node: Node) async {
@@ -93,23 +92,42 @@ class JourneyViewModel: ObservableObject {
             }
         }
     }
-    
+
     public func shouldValidate(node: ContinueNode) -> Bool {
         let shouldValidate = false
-        
+
         return shouldValidate
     }
-    
+
     public func refresh() {
         state = JourneyState(node: state.node)
+    }
+
+    /// Reset the view model to show journey name input again
+    public func reset() {
+        showJourneyNameInput = true
+        state = JourneyState()
+        isLoading = false
+    }
+
+    func getSavedJourneyName() -> String {
+        // Retrieve the saved journey name from storage
+        UserDefaults.standard.string(forKey: "journeyName") ?? ""
+    }
+
+    func saveJourneyName(_ journeyName: String) {
+        // Save the journey name to storage
+        UserDefaults.standard.set(journeyName, forKey: "journeyName")
     }
 }
 
 /// A model class that represents the state of the current and previous nodes in the Journey flow.
 class JourneyState {
     var node: Node? = nil
-    
+
     init(node: Node? = nil) {
         self.node = node
     }
 }
+
+

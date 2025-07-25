@@ -19,27 +19,24 @@ struct PingOneProtectInitializeCallbackView: View {
     }
 
     var body: some View {
-        if viewModel.isLoading {
-            VStack(spacing: 16) {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .scaleEffect(1.5)
+        VStack(spacing: 16) {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle())
+                .scaleEffect(1.5)
 
-                Text("Collecting device profile ...")
-                    .foregroundColor(.secondary)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding()
-            .onAppear {
-                viewModel.startInitialization()
-            }
-            .onDisappear {
-                viewModel.cancelInitialization()
-            }
+            Text("Initializing device profile collection...")
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
+        .onAppear {
+            viewModel.startInitializationIfNeeded()
+        }
+        .onDisappear {
+            viewModel.cancelInitialization()
         }
     }
 }
-
 
 class PingOneProtectInitializeViewModel: ObservableObject {
     @Published var isLoading: Bool = true
@@ -47,6 +44,7 @@ class PingOneProtectInitializeViewModel: ObservableObject {
     private var task: Task<Void, Never>?
     private let callback: PingOneProtectInitializeCallback
     private let onNext: () -> Void
+    private var hasStartedInitialization = false
 
     init(callback: PingOneProtectInitializeCallback, onNext: @escaping () -> Void) {
         self.callback = callback
@@ -54,7 +52,11 @@ class PingOneProtectInitializeViewModel: ObservableObject {
     }
 
     @MainActor
-    func startInitialization() {
+    func startInitializationIfNeeded() {
+        // Guard against multiple initialization attempts
+        guard !hasStartedInitialization else { return }
+
+        hasStartedInitialization = true
         isLoading = true
         let startTime = Date()
 
@@ -90,5 +92,3 @@ class PingOneProtectInitializeViewModel: ObservableObject {
         cancelInitialization()
     }
 }
-
-

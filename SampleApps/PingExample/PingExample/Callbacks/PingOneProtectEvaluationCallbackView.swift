@@ -19,27 +19,24 @@ struct PingOneProtectEvaluationCallbackView: View {
     }
 
     var body: some View {
-        if viewModel.isLoading {
-            VStack(spacing: 16) {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .scaleEffect(1.5)
+        VStack(spacing: 16) {
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle())
+                .scaleEffect(1.5)
 
-                Text("Collecting device profile ...")
-                    .foregroundColor(.secondary)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding()
-            .onAppear {
-                viewModel.startEvaluation()
-            }
-            .onDisappear {
-                viewModel.cancelEvaluation()
-            }
+            Text("Collecting device profile ...")
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
+        .onAppear {
+            viewModel.startEvaluationIfNeeded()
+        }
+        .onDisappear {
+            viewModel.cancelEvaluation()
         }
     }
 }
-
 
 class PingOneProtectEvaluationViewModel: ObservableObject {
     @Published var isLoading: Bool = true
@@ -47,6 +44,7 @@ class PingOneProtectEvaluationViewModel: ObservableObject {
     private var task: Task<Void, Never>?
     private let callback: PingOneProtectEvaluationCallback
     private let onNext: () -> Void
+    private var hasStartedEvaluation = false
 
     init(callback: PingOneProtectEvaluationCallback, onNext: @escaping () -> Void) {
         self.callback = callback
@@ -54,7 +52,11 @@ class PingOneProtectEvaluationViewModel: ObservableObject {
     }
 
     @MainActor
-    func startEvaluation() {
+    func startEvaluationIfNeeded() {
+        // Guard against multiple evaluation attempts
+        guard !hasStartedEvaluation else { return }
+
+        hasStartedEvaluation = true
         isLoading = true
         let startTime = Date()
 
