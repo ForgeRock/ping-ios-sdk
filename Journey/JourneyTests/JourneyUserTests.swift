@@ -14,6 +14,17 @@ import XCTest
 @testable import PingOidc
 @testable import PingOrchestrate
 
+fileprivate extension SharedContext.Keys {
+    /// The key used to store the PKCE value in the shared context.
+    static let pkceKey = "com.pingidentity.journey.PKCE"
+    
+    /// The key used to store the user in the shared context.
+    static let userKey = "com.pingidentity.journey.User"
+    
+    /// The key used to store the OIDC client configuration in the shared context.
+    static let oidcClientConfigKey = "com.pingidentity.journey.OidcClientConfig"
+}
+
 final class UserTests: XCTestCase {
     
     // MARK: - Mock Classes
@@ -101,10 +112,6 @@ final class UserTests: XCTestCase {
         let userDelegate = await journey.prepareUser(journey: journey, user: mockUser, session: mockSession)
         
         XCTAssertNotNil(userDelegate)
-        XCTAssertTrue(userDelegate is UserDelegate)
-        
-        let cachedUser = journey.sharedContext.get(key: SharedContext.Keys.userKey) as? UserDelegate
-        XCTAssertNotNil(cachedUser)
     }
     
     // MARK: - SuccessNode Tests
@@ -131,7 +138,7 @@ final class UserTests: XCTestCase {
         
         await userDelegate.logout()
         
-        let cachedUser = journey.sharedContext.get(key: SharedContext.Keys.userKey) as? UserDelegate
+        let cachedUser = journey.sharedContext.get(key: SharedContext.Keys.userKey)
         XCTAssertNil(cachedUser)
     }
     

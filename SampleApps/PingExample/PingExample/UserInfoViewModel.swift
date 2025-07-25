@@ -35,10 +35,17 @@ class UserInfoViewModel: ObservableObject {
     /// - Logs success and error messages using `PingLogger`.
     func fetchUserInfo() async {
         let userInfo: Result<UserInfo, OidcError>?
-        if ConfigurationManager.shared.loadConfigurationViewModel().environment == "AIC" {
-            userInfo = await ConfigurationManager.shared.journeyUser?.userinfo(cache: false)
+        
+        let journeyUser = await ConfigurationManager.shared.journeyUser
+        let davinci = await ConfigurationManager.shared.davinciUser
+        let oidcLoginUser = await ConfigurationManager.shared.oidcUser
+        
+        if journeyUser != nil {
+            userInfo = await journeyUser?.userinfo(cache: false)
+        } else if davinci != nil {
+            userInfo = await davinci?.userinfo(cache: false)
         } else {
-            userInfo = await ConfigurationManager.shared.davinciUser?.userinfo(cache: false)
+            userInfo = await oidcLoginUser?.userinfo(cache: false)
         }
         
         switch userInfo {

@@ -147,7 +147,7 @@ public extension Journey {
     private func send(_ request: Request) async throws -> Response {
         // semaphore
         let (data, urlResponse) = try await config.httpClient.sendRequest(request: request)
-        return Response(data: data, response: urlResponse)
+        return HttpResponse(data: data, response: urlResponse)
     }
 }
 

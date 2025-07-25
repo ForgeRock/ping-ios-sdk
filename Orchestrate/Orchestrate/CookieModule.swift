@@ -52,7 +52,7 @@ public class CookieModule {
         
         setup.response { @Sendable context, response in
             let cookies = response.getCookies()
-            if cookies.count > 0, let url = response.response.url {
+            if cookies.count > 0, let httpResponse = response as? HttpResponse, let url = httpResponse.response.url {
                 await CookieModule.parseResponseForCookie(context: context,
                                                           url: url,
                                                           cookies: cookies,

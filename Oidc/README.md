@@ -20,37 +20,54 @@ Use Cocoapods or Swift Package Manager
 Basic Configuration, use `discoveryEndpoint` to lookup OIDC endpoints
 
 ```swift
-let config = OidcClientConfig()
-config.discoveryEndpoint = "https://auth.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/as/.well-known/openid-configuration"
-config.clientId = "c12743f9-08e8-4420-a624-71bbb08e9fe1"
-config.redirectUri = "org.forgerock.demo://oauth2redirect"
-config.scopes = ["openid", "email", "address", "profile", "phone"]
-
-let ping = OidcClient(config: config)
-
-let result = await ping.token() // Retrieve the access token
-switch result {
-case .success(let token):
-    let accessToken = token
-case .failure(let error):
-    switch error {
-    case .apiError:
-        //Address error
-        break
-    case .authorizeError:
-        //Address error
-        break
-    case .networkError:
-        //Address error
-        break
-    case .unknown:
-        //Address error
-        break
+// Create an OIDC client with the discovery endpoint, and other configurations
+public let oidLogin = OidcWeb.createOidcLogin { config in
+    config.module(PingOidc.OidcModule.config) { oidcValue in
+        oidcValue.clientId = "ClientID"
+        oidcValue.scopes = ["openid", "email", "address", "profile", "phone"]
+        oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
+        oidcValue.discoveryEndpoint = "https://example.com/.well-known/openid-configuration"
     }
 }
 
-await ping.revoke() //Revoke the access token
-_ = await ping.endSession() //End the session
+//Start the OIDC authentication flow
+let state = try await oidLogin.authorize { options in
+    // Pass additional parameters
+    options.additionalParameters = ["foo": "bar"]
+}
+
+// Handle the state
+switch oidcLoginViewModel.state {
+case .success( _ ):
+    ...
+case .failure(let error):
+    ...
+case .none:
+    ...
+}
+
+// To retieve the existing user
+let oidcLoginUser = await oidLogin.oidcLoginUser()
+
+// To receive the access token
+let token = await oidcLoginUser.token()
+
+// Other methods
+oidcLoginUser?.revoke()
+oidcLoginUser?.logout()
+
+// Setting the browser type and mode
+public let oidLogin = OidcWeb.createOidcLogin { config in
+    // Set the browser mode(only the .login mode supported currently) and browser type.
+    config.browserMode = .login
+    config.browserType = .authSession
+    config.module(PingOidc.OidcModule.config) { oidcValue in
+        oidcValue.clientId = "ClientID"
+        oidcValue.scopes = ["openid", "email", "address", "profile", "phone"]
+        oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
+        oidcValue.discoveryEndpoint = "https://example.com/.well-known/openid-configuration"
+    }
+}
 ```
 
 By default, the SDK uses `KeychainStorage` (with `SecuredKeyEncryptor` ) to store the token and `none` Logger is set,

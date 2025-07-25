@@ -2,20 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>FacebookAdvertiserIDCollectionEnabled</key>
-	<true/>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>This identifier will be used to deliver personalized ads to you</string>
-	<key>GIDClientID</key>
-	<string>[Enter Google Client ID]</string>
-	<key>GIDServerClientID</key>
-	<string>[Enter Google Server Client ID]</string>
-	<key>FacebookAppID</key>
-	<string>[Enter Facebook App ID]</string>
-	<key>FacebookDisplayName</key>
-	<string>PingExample</string>
-	<key>FacebookClientToken</key>
-	<string>[Enter FB Client Token]</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -44,7 +30,29 @@
 				<string>fb609903515015289</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>oauth2redirect</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>org.forgerock.demo</string>
+			</array>
+		</dict>
 	</array>
+	<key>FacebookAdvertiserIDCollectionEnabled</key>
+	<true/>
+	<key>FacebookAppID</key>
+	<string>[Enter Facebook App ID]</string>
+	<key>FacebookClientToken</key>
+	<string>[Enter FB Client Token]</string>
+	<key>FacebookDisplayName</key>
+	<string>PingExample</string>
+	<key>GIDClientID</key>
+	<string>[Enter Google Client ID]</string>
+	<key>GIDServerClientID</key>
+	<string>[Enter Google Server Client ID]</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>

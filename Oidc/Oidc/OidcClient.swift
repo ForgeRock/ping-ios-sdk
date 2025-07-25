@@ -48,7 +48,7 @@ public class OidcClient {
     /// Extracts the code from the URL and exchanges it for an access token.
     ///  - Parameter url: The URL to extract the code from.
     public func extractCodeAndGetToken(from url: URL) async throws -> Token {
-        if let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true), let code = components.queryItems?.filter({$0.name == "code"}).first?.value, let pcke = self.pkce {
+        if let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true), let code = components.queryItems?.filter({$0.name == Constants.code}).first?.value, let pcke = self.pkce {
             let authCode = AuthCode(code: code, codeVerifier: pcke.codeVerifier)
             return try await self.exchangeToken(authCode)
         } else {
@@ -315,7 +315,9 @@ extension OidcClientConfig {
         responseMode: String = OidcClient.Constants.piflow
     ) -> Request {
         request.url(openId?.authorizationEndpoint ?? "")
-        request.parameter(name: OidcClient.Constants.response_mode, value: responseMode)
+        if !responseMode.isEmpty {
+            request.parameter(name: OidcClient.Constants.response_mode, value: responseMode)
+        }
         request.parameter(name: OidcClient.Constants.client_id, value: clientId)
         request.parameter(name: OidcClient.Constants.response_type, value: OidcClient.Constants.code)
         request.parameter(name: OidcClient.Constants.scope, value: scopes.joined(separator: " "))

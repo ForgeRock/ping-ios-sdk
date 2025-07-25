@@ -92,6 +92,27 @@
         "identifier" : "EC727A2C2E019243005D9E28",
         "name" : "JourneyTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/ExternalIdPApple\/ExternalIdPApple.xcodeproj",
+        "identifier" : "ECA7A2AB2DC24BC60011E59C",
+        "name" : "ExternalIdPAppleTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/ExternalIdPFacebook\/ExternalIdPFacebook.xcodeproj",
+        "identifier" : "EC5EA5432DC2295E000C2737",
+        "name" : "ExternalIdPFacebookTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/ExternalIdPGoogle\/ExternalIdPGoogle.xcodeproj",
+        "identifier" : "ECA7A2EF2DC251870011E59C",
+        "name" : "ExternalIdPGoogleTests"
+      }
     }
   ],
   "version" : 1

@@ -12,6 +12,8 @@
 import SwiftUI
 import PingExternalIdPFacebook
 import PingExternalIdPGoogle
+import PingBrowser
+
 /// The main application entry point.
 @main
 struct MyApp: App {
@@ -24,6 +26,7 @@ struct MyApp: App {
                     if !handled {
                         FacebookRequestHandler.handleOpenURL(UIApplication.shared, url: url, options: nil)
                     }
+                    OpenURLMonitor.shared.handleOpenURL(url)
                 }
         }
     }
@@ -50,6 +53,9 @@ struct ContentView: View {
                 NavigationLink(value: "Journey") {
                     Text("Launch Journey")
                 }
+                NavigationLink(value: "OIDC") {
+                    Text("Launch OIDC")
+                }
                 NavigationLink(value: "Token") {
                     Text("Access Token")
                 }
@@ -73,6 +79,8 @@ struct ContentView: View {
                     DavinciView(path: $path)
                 case "Journey":
                     JourneyView(path: $path)
+                case "OIDC":
+                    OidcLoginView(path: $path)
                 case "Token":
                     AccessTokenView(accessTokenViewModel: AccessTokenViewModel())
                 case "User":
