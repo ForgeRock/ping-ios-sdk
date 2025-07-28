@@ -206,7 +206,7 @@ class MockBrowserLauncher: BrowserLauncherProtocol {
     /// A closure that will be called when `launch` is invoked.
     var launchHandler: ((URL, BrowserType, String) async throws -> URL)?
     
-    func launch(url: URL, browserType: BrowserType, callbackURLScheme: String) async throws -> URL {
+    func launch(url: URL, customParams: [String : String]?, browserType: PingBrowser.BrowserType, browserMode: PingBrowser.BrowserMode, callbackURLScheme: String) async throws -> URL {
         if let handler = launchHandler {
             return try await handler(url, browserType, callbackURLScheme)
         }
