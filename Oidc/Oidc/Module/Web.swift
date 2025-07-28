@@ -13,8 +13,6 @@ import PingOrchestrate
 import PingBrowser
 import Foundation
 
-internal let IS_WEB = "IS_WEB"
-internal let PARAMETERS = "PARAMETERS"
 /// A module that integrates OIDC capabilities into the DaVinci workflow.
 public class WebModule {
     
@@ -28,7 +26,7 @@ public class WebModule {
         
         // Initializes the module.
         setup.initialize {  @Sendable in
-            oidcLoginFlow.sharedContext.set(key: IS_WEB, value: true)
+            oidcLoginFlow.sharedContext.set(key: SharedContext.Keys.oidcIsWeb, value: true)
         }
         
         // Start the browser authorization flow. Returns the authorization code in the response.
@@ -40,8 +38,8 @@ public class WebModule {
                 guard let url = request.urlRequest.url else {
                     throw OidcError.authorizeError(message: "Browser authorization failed: URL not found")
                 }
-                let launcher = await BrowserLauncher()
-                let result = try await launcher.launch(url: url, browserType: oidcLoginConfig?.browserType ?? .authSession, browserMode: oidcLoginConfig?.browserMode ?? .login, callbackURLScheme: callbackURLScheme)
+                // Ensure the redirect URI scheme is valid
+                let result = try await BrowserLauncher.currentBrowser.launch(url: url, browserType: oidcLoginConfig?.browserType ?? .authSession, browserMode: oidcLoginConfig?.browserMode ?? .login, callbackURLScheme: callbackURLScheme)
                 
                 await BrowserLauncher.currentBrowser.reset()
                 

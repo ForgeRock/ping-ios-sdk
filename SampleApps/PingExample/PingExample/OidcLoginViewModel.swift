@@ -12,7 +12,7 @@ import Foundation
 import PingOrchestrate
 import PingOidc
 
-public let oidLogin = OidcWeb.createOidcLogin { config in
+public let oidcLogin = OidcWeb.createOidcWeb { config in
     let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
     config.browserMode = .login
     config.browserType = .authSession
@@ -41,7 +41,7 @@ class OidcLoginViewModel: ObservableObject {
     /// Initializes the view model and starts the Journey orchestration process.
     init() {
         Task {
-            self.state = try await oidLogin.authorize { options in
+            self.state = try await oidcLogin.authorize { options in
                 options.additionalParameters = ["foo": "bar"]
             }
         }

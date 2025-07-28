@@ -37,7 +37,7 @@ public extension OidcWeb {
     /// Creates an OIDC login instance with the provided configuration block.
     /// - Parameter block: A closure to configure the OIDC options.
     /// - Returns: An instance of OidcWeb configured for OIDC login.
-    static func createOidcLogin(block: @Sendable (OidcWebConfig) -> Void = {_ in }) -> OidcWeb {
+    static func createOidcWeb(block: @Sendable (OidcWebConfig) -> Void = {_ in }) -> OidcWeb {
         let config = OidcWebConfig()
         config.timeout = 30
         
@@ -60,7 +60,11 @@ public extension OidcWeb {
         case let failureNode as FailureNode:
             return Result<User, OidcError>.failure(OidcError.unknown(message: failureNode.cause.localizedDescription))
         case let successNode as SuccessNode:
-            return Result<User, OidcError>.success(successNode.session as! User)
+            guard let user = successNode.session as? User else {
+                // This should never happen, but just in case
+                return Result<User, OidcError>.failure(OidcError.unknown(message: "Unexpected result: Failed to get User"))
+            }
+            return Result<User, OidcError>.success(user)
         default:
             return Result<User, OidcError>.failure(OidcError.unknown(message: "Unexpected result"))
         }
@@ -74,7 +78,7 @@ public extension OidcWeb {
         try await initialize()
         config.logger.i("Starting...")
         let currentRequest = request
-        self.sharedContext.set(key: PARAMETERS, value: options.additionalParameters)
+        self.sharedContext.set(key: SharedContext.Keys.oidcParameters, value: options.additionalParameters)
         
         return await self.start(currentRequest)
     }

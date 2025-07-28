@@ -15,18 +15,19 @@ import Foundation
 open class AbstractCallback: Callback, @unchecked Sendable {
     /// The JSON payload for the callback, containing input and output data.
     public var json: [String: Any] = [:]
-    
+
     /// Initializes a new instance of `AbstractCallback` with the provided JSON.
-    public required init(with json: [String: Any]) {
+    open func initialize(with json: [String: Any]) -> any Callback {
         self.json = json
-        if let output = json["output"] as? [[String: Any]] {
+        if let output = json[JourneyConstants.output] as? [[String: Any]] {
             for item in output {
-                if let name = item["name"] as? String,
-                   let value = item["value"], !(value is NSNull) {
+                if let name = item[JourneyConstants.name] as? String,
+                   let value = item[JourneyConstants.value], !(value is NSNull) {
                     initValue(name: name, value: value)
                 }
             }
         }
+        return self
     }
 
     /// Abstract method – must be implemented by subclass
@@ -36,23 +37,23 @@ open class AbstractCallback: Callback, @unchecked Sendable {
 
     /// Generates an updated payload with input values inserted
     public func input(_ values: Any...) -> [String: Any] {
-        guard let inputArray = json["input"] as? [[String: Any]] else {
+        guard let inputArray = json[JourneyConstants.input] as? [[String: Any]] else {
             return json
         }
 
         var updatedInput: [[String: Any]] = []
 
         for (index, value) in values.enumerated() {
-            let name = (index < inputArray.count) ? (inputArray[index]["name"] as? String ?? "") : ""
+            let name = (index < inputArray.count) ? (inputArray[index][JourneyConstants.name] as? String ?? "") : ""
 
-            var entry: [String: Any] = ["name": name]
+            var entry: [String: Any] = [JourneyConstants.name: name]
             if value is Int || value is String || value is Bool || value is Double {
-                entry["value"] = value
+                entry[JourneyConstants.value] = value
             }
             updatedInput.append(entry)
         }
 
-        json["input"] = updatedInput
+        json[JourneyConstants.input] = updatedInput
         return json
     }
 
@@ -63,9 +64,11 @@ open class AbstractCallback: Callback, @unchecked Sendable {
 
     // MARK: - Required Protocol Stubs
 
+    /// A unique identifier for the callback instance.
     public var id: String {
         return UUID().uuidString // Replace with a real identifier if needed
     }
 
-    public init() {} // Required for registry factory
+    /// Initializer for the callback.
+    required public init() {} // Required for registry factory
 }

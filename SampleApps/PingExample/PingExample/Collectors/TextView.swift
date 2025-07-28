@@ -11,7 +11,6 @@
 
 import SwiftUI
 import PingDavinci
-import PingJourney
 
 struct TextView: View {
     let field: TextCollector
@@ -54,38 +53,5 @@ struct TextView: View {
             }
         }
         .padding()
-    }
-}
-
-struct NameCallbackView: View {
-    let field: NameCallback
-    let onNodeUpdated: () -> Void
-    
-    @State var text: String = ""
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            TextField(
-                field.prompt,
-                text: $text
-            )
-            .autocorrectionDisabled()
-            .textInputAutocapitalization(.never)
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.gray, lineWidth: 1)
-            )
-            .onAppear(perform: {
-                text = field.name
-            })
-            .onChange(of: text) { newValue in
-                field.name = newValue // update internal state only
-            }
-            .onSubmit {
-                onNodeUpdated() // commit to node state only when done
-            }
-            .padding()
-        }
     }
 }

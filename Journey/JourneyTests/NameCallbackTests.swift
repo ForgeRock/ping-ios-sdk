@@ -34,19 +34,22 @@ final class NameCallbackTests: XCTestCase {
             "_id": 0
         ]
         
-        let callback = NameCallback(with: dictionary)
+        let callback = NameCallback()
+        _ = callback.initialize(with: dictionary)
         XCTAssertEqual(callback.prompt, "User Name")
         XCTAssertEqual(callback.json["type"] as? String, "NameCallback")
     }
     
     func testInitWithEmptyDictionary() {
-        let callback = NameCallback(with: [:])
+        let callback = NameCallback()
+        _ = callback.initialize(with: [:])
         XCTAssertEqual(callback.prompt, "")
         XCTAssertTrue(callback.payload().isEmpty)
     }
     
     func testSetName() {
-        let callback = NameCallback(with: [
+        let callback = NameCallback()
+        _ = callback.initialize(with: [
             "input": [
                 [
                     "name": "IDToken1",
@@ -62,7 +65,8 @@ final class NameCallbackTests: XCTestCase {
     }
     
     func testPayloadGeneration() {
-        let callback = NameCallback(with: [
+        let callback = NameCallback()
+        _ = callback.initialize(with: [
             "input": [
                 [
                     "name": "IDToken1",
@@ -98,7 +102,8 @@ final class NameCallbackTests: XCTestCase {
             "_id": 0
         ]
         
-        let callback = NameCallback(with: dictionary)
+        let callback = NameCallback()
+        _ = callback.initialize(with: dictionary)
         XCTAssertEqual(callback.prompt, "User Name")
         
         callback.name = "john.doe"

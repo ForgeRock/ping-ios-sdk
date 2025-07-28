@@ -126,7 +126,8 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     ///
     /// - Parameter data: Data to be hashed
     /// - Returns: Hashed String of given Data
-    func hashAndBase64Data(_ data: Data) -> String {
+    /// Legacy method, use `hashAndBase64Data(_:)` instead
+    func hashSHA1AndBase64Data(_ data: Data) -> String {
         var digest = [UInt8](repeating: 0, count:Int(CC_SHA1_DIGEST_LENGTH))
         data.withUnsafeBytes {
             _ = CC_SHA1($0.baseAddress, CC_LONG(data.count), &digest)
@@ -135,6 +136,14 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
         return hexString
     }
     
+    /// Hashes given Data using SHA256 and converts it to a hexadecimal string
+    /// - Parameter data: Data to be hashed
+    /// - Returns: Hashed String of given Data in hexadecimal format
+    /// This is the preferred method to use for hashing device identifiers.
+    func hashAndBase64Data(_ data: Data) -> String {
+        let digest = SHA256.hash(data: data)
+        return Data(digest).toHexString()
+    }
     
     /// Generates Key Pair, and persists generated Keys
     ///

@@ -43,7 +43,8 @@ public enum BrowserMode: Sendable {
 @MainActor
 public protocol BrowserLauncherProtocol: Sendable {
     var isInProgress: Bool { get }
-    func launch(url: URL, browserType: BrowserType, callbackURLScheme: String) async throws -> URL
+    func launch(url: URL, customParams: [String: String]?,
+                browserType: BrowserType, browserMode: BrowserMode, callbackURLScheme: String) async throws -> URL
     func reset()
 }
 
@@ -54,7 +55,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     // MARK: Properties
     
     /// Static shared instance of current Browser object
-    public static var currentBrowser: BrowserLauncherProtocol = BrowserLauncher()
+    public static var currentBrowser: BrowserLauncher = BrowserLauncher()
     
     /// Boolean indicator whether or not current Browser object is in progress
     private(set) public var isInProgress: Bool = false
@@ -91,16 +92,6 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     
     /// Launches external user-agent for web requests
     /// - Parameters:
-    ///  - url: URL to follow for the external user-agent
-    ///  - browserType: BrowserType enum to specify the type of external user-agent
-    ///  - callbackURLScheme: The callbackURLScheme to be used for returning to the app. Used in ASWebAuthenticationSession modes
-    ///  - Returns: URL of the external user-agent
-    public func launch(url: URL, browserType: BrowserType, callbackURLScheme: String) async throws -> URL {
-        return try await launch(url: url, browserType: browserType, browserMode: .login, callbackURLScheme: callbackURLScheme)
-    }
-    
-    /// Launches external user-agent for web requests
-    /// - Parameters:
     ///   - url: URL to follow for the external user-agent
     ///   - customParams: Any custom URL query parameters to be passed as URL parameters in the request
     ///   - browserType: BrowserType enum to specify the type of external user-agent
@@ -112,8 +103,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
                        browserType: BrowserType = .authSession, browserMode: BrowserMode = .login, callbackURLScheme: String) async throws -> URL {
         
         // Make sure that no Browser instance is currently running
-        if let currentBrowser = BrowserLauncher.currentBrowser as? BrowserLauncher,
-           currentBrowser.isInProgress {
+        if BrowserLauncher.currentBrowser.isInProgress {
             throw BrowserError.externalUserAgentAuthenticationInProgress
         }
         

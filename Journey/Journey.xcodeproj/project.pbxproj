@@ -7,6 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A5768D1E2E29B37D000290EE /* ConsentMappingCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D1D2E29B37A000290EE /* ConsentMappingCallback.swift */; };
+		A5AB90402E26954C000E1089 /* TermsAndConditionsCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB903F2E26954A000E1089 /* TermsAndConditionsCallback.swift */; };
+		A5AB90422E2695B8000E1089 /* TextOutputCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90412E2695B7000E1089 /* TextOutputCallback.swift */; };
+		A5AB90442E2695D0000E1089 /* SuspendedTextOutputCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90432E2695CA000E1089 /* SuspendedTextOutputCallback.swift */; };
+		A5AB90462E2695F2000E1089 /* PollingWaitCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90452E2695ED000E1089 /* PollingWaitCallback.swift */; };
+		A5AB90482E269B80000E1089 /* ConfirmationCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90472E269B7E000E1089 /* ConfirmationCallback.swift */; };
+		A5AB904A2E269BB0000E1089 /* KbaCreateCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90492E269BA7000E1089 /* KbaCreateCallback.swift */; };
+		A5AB904C2E269BC7000E1089 /* ChoiceCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB904B2E269BC4000E1089 /* ChoiceCallback.swift */; };
+		A5AB904E2E269BE2000E1089 /* HiddenValueCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB904D2E269BE0000E1089 /* HiddenValueCallback.swift */; };
+		A5AB90502E269BFD000E1089 /* TextInputCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB904F2E269BFB000E1089 /* TextInputCallback.swift */; };
+		A5AB90522E26A6A3000E1089 /* AttributeInputCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90512E26A6A1000E1089 /* AttributeInputCallback.swift */; };
+		A5AB90542E26A90F000E1089 /* AbstractValidatedCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90532E26A90D000E1089 /* AbstractValidatedCallback.swift */; };
+		A5AB90562E26A93E000E1089 /* NumberAttributeInputCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90552E26A93C000E1089 /* NumberAttributeInputCallback.swift */; };
+		A5AB90582E26A958000E1089 /* BooleanAttributeInputCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90572E26A953000E1089 /* BooleanAttributeInputCallback.swift */; };
+		A5AB905A2E26A97A000E1089 /* StringAttributeInputCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90592E26A974000E1089 /* StringAttributeInputCallback.swift */; };
+		A5AB905C2E26AA1E000E1089 /* ValidatedUsernameCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB905B2E26AA03000E1089 /* ValidatedUsernameCallback.swift */; };
+		A5AB905E2E26AA55000E1089 /* ValidatedPasswordCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB905D2E26AA4D000E1089 /* ValidatedPasswordCallback.swift */; };
+		A5AB90602E26B158000E1089 /* MetadataCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB905F2E26B154000E1089 /* MetadataCallback.swift */; };
 		EC23269E2E0D5E4E00634A50 /* CallbackRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23269D2E0D5E4700634A50 /* CallbackRegistryTests.swift */; };
 		EC2326A02E0D62ED00634A50 /* NameCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23269F2E0D62E600634A50 /* NameCallbackTests.swift */; };
 		EC2326A22E0D65A800634A50 /* PasswordCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2326A12E0D65A300634A50 /* PasswordCallbackTests.swift */; };
@@ -69,6 +87,24 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A5768D1D2E29B37A000290EE /* ConsentMappingCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentMappingCallback.swift; sourceTree = "<group>"; };
+		A5AB903F2E26954A000E1089 /* TermsAndConditionsCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsCallback.swift; sourceTree = "<group>"; };
+		A5AB90412E2695B7000E1089 /* TextOutputCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextOutputCallback.swift; sourceTree = "<group>"; };
+		A5AB90432E2695CA000E1089 /* SuspendedTextOutputCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspendedTextOutputCallback.swift; sourceTree = "<group>"; };
+		A5AB90452E2695ED000E1089 /* PollingWaitCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingWaitCallback.swift; sourceTree = "<group>"; };
+		A5AB90472E269B7E000E1089 /* ConfirmationCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationCallback.swift; sourceTree = "<group>"; };
+		A5AB90492E269BA7000E1089 /* KbaCreateCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KbaCreateCallback.swift; sourceTree = "<group>"; };
+		A5AB904B2E269BC4000E1089 /* ChoiceCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoiceCallback.swift; sourceTree = "<group>"; };
+		A5AB904D2E269BE0000E1089 /* HiddenValueCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenValueCallback.swift; sourceTree = "<group>"; };
+		A5AB904F2E269BFB000E1089 /* TextInputCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputCallback.swift; sourceTree = "<group>"; };
+		A5AB90512E26A6A1000E1089 /* AttributeInputCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeInputCallback.swift; sourceTree = "<group>"; };
+		A5AB90532E26A90D000E1089 /* AbstractValidatedCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractValidatedCallback.swift; sourceTree = "<group>"; };
+		A5AB90552E26A93C000E1089 /* NumberAttributeInputCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberAttributeInputCallback.swift; sourceTree = "<group>"; };
+		A5AB90572E26A953000E1089 /* BooleanAttributeInputCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanAttributeInputCallback.swift; sourceTree = "<group>"; };
+		A5AB90592E26A974000E1089 /* StringAttributeInputCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringAttributeInputCallback.swift; sourceTree = "<group>"; };
+		A5AB905B2E26AA03000E1089 /* ValidatedUsernameCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedUsernameCallback.swift; sourceTree = "<group>"; };
+		A5AB905D2E26AA4D000E1089 /* ValidatedPasswordCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedPasswordCallback.swift; sourceTree = "<group>"; };
+		A5AB905F2E26B154000E1089 /* MetadataCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCallback.swift; sourceTree = "<group>"; };
 		EC23269D2E0D5E4700634A50 /* CallbackRegistryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackRegistryTests.swift; sourceTree = "<group>"; };
 		EC23269F2E0D62E600634A50 /* NameCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameCallbackTests.swift; sourceTree = "<group>"; };
 		EC2326A12E0D65A300634A50 /* PasswordCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordCallbackTests.swift; sourceTree = "<group>"; };
@@ -200,11 +236,29 @@
 		EC727AD42E04525C005D9E28 /* Callbacks */ = {
 			isa = PBXGroup;
 			children = (
-				EC727B042E047076005D9E28 /* NameCallback.swift */,
-				EC727B062E047133005D9E28 /* PasswordCallback.swift */,
 				EC727B022E046FB3005D9E28 /* AbstractCallback.swift */,
+				A5AB90532E26A90D000E1089 /* AbstractValidatedCallback.swift */,
+				A5AB90512E26A6A1000E1089 /* AttributeInputCallback.swift */,
+				A5AB90572E26A953000E1089 /* BooleanAttributeInputCallback.swift */,
 				EC727AD72E0455D1005D9E28 /* Callbacks.swift */,
 				EC727AD52E045267005D9E28 /* CallbackRegistry.swift */,
+				A5AB904B2E269BC4000E1089 /* ChoiceCallback.swift */,
+				A5AB90472E269B7E000E1089 /* ConfirmationCallback.swift */,
+				A5768D1D2E29B37A000290EE /* ConsentMappingCallback.swift */,
+				A5AB904D2E269BE0000E1089 /* HiddenValueCallback.swift */,
+				A5AB90492E269BA7000E1089 /* KbaCreateCallback.swift */,
+				A5AB905F2E26B154000E1089 /* MetadataCallback.swift */,
+				EC727B042E047076005D9E28 /* NameCallback.swift */,
+				A5AB90552E26A93C000E1089 /* NumberAttributeInputCallback.swift */,
+				EC727B062E047133005D9E28 /* PasswordCallback.swift */,
+				A5AB90452E2695ED000E1089 /* PollingWaitCallback.swift */,
+				A5AB90592E26A974000E1089 /* StringAttributeInputCallback.swift */,
+				A5AB90432E2695CA000E1089 /* SuspendedTextOutputCallback.swift */,
+				A5AB903F2E26954A000E1089 /* TermsAndConditionsCallback.swift */,
+				A5AB904F2E269BFB000E1089 /* TextInputCallback.swift */,
+				A5AB90412E2695B7000E1089 /* TextOutputCallback.swift */,
+				A5AB905D2E26AA4D000E1089 /* ValidatedPasswordCallback.swift */,
+				A5AB905B2E26AA03000E1089 /* ValidatedUsernameCallback.swift */,
 			);
 			path = Callbacks;
 			sourceTree = "<group>";
@@ -345,21 +399,39 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5AB90402E26954C000E1089 /* TermsAndConditionsCallback.swift in Sources */,
 				EC727AD62E045274005D9E28 /* CallbackRegistry.swift in Sources */,
+				A5AB90442E2695D0000E1089 /* SuspendedTextOutputCallback.swift in Sources */,
+				A5AB905A2E26A97A000E1089 /* StringAttributeInputCallback.swift in Sources */,
+				A5AB90562E26A93E000E1089 /* NumberAttributeInputCallback.swift in Sources */,
 				EC727ACD2E042B13005D9E28 /* SessionConfig.swift in Sources */,
+				A5AB90502E269BFD000E1089 /* TextInputCallback.swift in Sources */,
+				A5AB90542E26A90F000E1089 /* AbstractValidatedCallback.swift in Sources */,
 				EC727B072E04713A005D9E28 /* PasswordCallback.swift in Sources */,
 				EC727B092E059BB9005D9E28 /* User.swift in Sources */,
 				EC727ACF2E042DC0005D9E28 /* SSOToken.swift in Sources */,
+				A5AB904E2E269BE2000E1089 /* HiddenValueCallback.swift in Sources */,
 				EC727A9A2E02DD04005D9E28 /* Oidc.swift in Sources */,
 				EC727B0B2E05A20D005D9E28 /* Agent.swift in Sources */,
 				EC727B032E046FB9005D9E28 /* AbstractCallback.swift in Sources */,
+				A5768D1E2E29B37D000290EE /* ConsentMappingCallback.swift in Sources */,
+				A5AB905E2E26AA55000E1089 /* ValidatedPasswordCallback.swift in Sources */,
+				A5AB90422E2695B8000E1089 /* TextOutputCallback.swift in Sources */,
+				A5AB90582E26A958000E1089 /* BooleanAttributeInputCallback.swift in Sources */,
 				EC727AD12E044AA2005D9E28 /* Transform.swift in Sources */,
 				EC727B052E047079005D9E28 /* NameCallback.swift in Sources */,
 				EC727AC92E031C8A005D9E28 /* Request.swift in Sources */,
 				EC727AD82E0455D4005D9E28 /* Callbacks.swift in Sources */,
+				A5AB904A2E269BB0000E1089 /* KbaCreateCallback.swift in Sources */,
+				A5AB90482E269B80000E1089 /* ConfirmationCallback.swift in Sources */,
+				A5AB905C2E26AA1E000E1089 /* ValidatedUsernameCallback.swift in Sources */,
 				EC727ACB2E042A49005D9E28 /* Session.swift in Sources */,
+				A5AB904C2E269BC7000E1089 /* ChoiceCallback.swift in Sources */,
+				A5AB90462E2695F2000E1089 /* PollingWaitCallback.swift in Sources */,
+				A5AB90522E26A6A3000E1089 /* AttributeInputCallback.swift in Sources */,
 				EC727A5D2E019254005D9E28 /* Journey.swift in Sources */,
 				EC727AD32E044C02005D9E28 /* Constants.swift in Sources */,
+				A5AB90602E26B158000E1089 /* MetadataCallback.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

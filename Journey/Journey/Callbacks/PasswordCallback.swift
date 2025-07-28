@@ -16,15 +16,15 @@ public class PasswordCallback: AbstractCallback, ObservableObject,  @unchecked S
     private(set) public var prompt: String = ""
     /// The password input collected from the user.
     public var password: String = ""
-
+    
     /// Initializes a new instance of `PasswordCallback` with the provided JSON input.
     public override func initValue(name: String, value: Any) {
-        if name == "prompt", let stringValue = value as? String {
+        if name == JourneyConstants.prompt, let stringValue = value as? String {
             self.prompt = stringValue
         }
     }
     
-    /// Initializes a new instance of `PasswordCallback` with the given JSON input.
+    /// Returns the payload with the password value.
     public override func payload() -> [String: Any] {
         return input(password)
     }

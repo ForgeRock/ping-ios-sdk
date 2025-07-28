@@ -1,4 +1,4 @@
-// 
+//
 //  JourneyView.swift
 //  PingExample
 //
@@ -8,49 +8,100 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
-
 import Foundation
 import SwiftUI
 import PingOrchestrate
 import PingJourney
+import PingProtect
 
 struct JourneyView: View {
     /// The view model that manages the Journey flow logic.
     @StateObject private var journeyViewModel = JourneyViewModel()
     /// A binding to the navigation stack path.
     @Binding var path: [String]
-    
+
     var body: some View {
         ZStack {
-            ScrollView {
-                VStack {
-                    Spacer()
-                    // Handle different types of nodes in the Journey.
-                    switch journeyViewModel.state.node {
-                    case let continueNode as ContinueNode:
-                        // Display the callback view for the next node.
-                        CallbackView(journeyViewModel: journeyViewModel, node: continueNode)
-                    case let errorNode as ErrorNode:
-                        // Handle server-side errors (e.g., invalid credentials)
-                        // Display error to the user
-                        ErrorNodeView(node: errorNode)
-                        if let nextNode = errorNode.continueNode {
-                            CallbackView(journeyViewModel: journeyViewModel, node: nextNode)
+            if journeyViewModel.showJourneyNameInput {
+                // Show journey name input screen
+                JourneyNameInputView(journeyViewModel: journeyViewModel)
+            } else {
+                // Show the normal journey flow
+                ScrollView {
+                    VStack {
+                        Spacer()
+                        // Handle different types of nodes in the Journey.
+                        switch journeyViewModel.state.node {
+                        case let continueNode as ContinueNode:
+                            // Display the callback view for the next node.
+                            CallbackView(journeyViewModel: journeyViewModel, node: continueNode)
+                        case let errorNode as ErrorNode:
+                            // Handle server-side errors (e.g., invalid credentials)
+                            // Display error to the user
+                            ErrorNodeView(node: errorNode)
+                            if let nextNode = errorNode.continueNode {
+                                CallbackView(journeyViewModel: journeyViewModel, node: nextNode)
+                            }
+                        case let failureNode as FailureNode:
+                            ErrorView(message: failureNode.cause.localizedDescription)
+                        case is SuccessNode:
+                            // Authentication successful, retrieve the session
+                            VStack{}.onAppear {
+                                path.removeLast()
+                                path.append("Token")
+                            }
+                        default:
+                            EmptyView()
                         }
-                    case let failureNode as FailureNode:
-                        ErrorView(message: failureNode.cause.localizedDescription)
-                    case is SuccessNode:
-                        // Authentication successful, retrieve the session
-                        VStack{}.onAppear {
-                            path.removeLast()
-                            path.append("Token")
-                        }
-                    default:
-                        EmptyView()
                     }
                 }
             }
         }
+    }
+}
+
+/// A view for collecting the journey name before starting the flow
+struct JourneyNameInputView: View {
+    @ObservedObject var journeyViewModel: JourneyViewModel
+    @State private var journeyName: String = ""
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Spacer()
+
+            Image("Logo")
+                .resizable()
+                .scaledToFill()
+                .frame(width: 120, height: 120)
+
+            VStack(spacing: 16) {
+                Text("Enter Journey Name")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+
+                TextField("Journey Name", text: $journeyName)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray, lineWidth: 1)
+                    )
+                    .onAppear() { journeyName = journeyViewModel.getSavedJourneyName() }
+
+                Spacer()
+
+                NextButton(title: "Start Journey") {
+                    Task {
+                        journeyViewModel.saveJourneyName(journeyName)
+                        await journeyViewModel.startJourney(with: journeyName)
+                    }
+                }
+            }
+
+            Spacer()
+        }
+        .padding()
     }
 }
 
@@ -60,19 +111,19 @@ struct CallbackView: View {
     @ObservedObject var journeyViewModel: JourneyViewModel
     /// The next node to process in the flow.
     public var node: ContinueNode
-    
+
     var body: some View {
         VStack {
             Image("Logo").resizable().scaledToFill().frame(width: 100, height: 100)
-            
+
             JourneyNodeView(continueNode: node,
-                             onNodeUpdated:  { journeyViewModel.refresh() },
-                             onStart: { Task { await journeyViewModel.startJourney() }},
-                             onNext: { isSubmit in Task {
+                            onNodeUpdated:  { journeyViewModel.refresh() },
+                            onStart: { Task { await journeyViewModel.startJourney(with: journeyViewModel.getSavedJourneyName()) }},
+                            onNext: { Task {
                 await journeyViewModel.next(node: node)
             }})
         }
-        
+
     }
 }
 
@@ -80,35 +131,92 @@ struct JourneyNodeView: View {
     var continueNode: ContinueNode
     let onNodeUpdated: () -> Void
     let onStart: () -> Void
-    let onNext: (Bool) -> Void
-    
+    let onNext: () -> Void
+
+    private var showNext: Bool {
+        !continueNode.callbacks.contains { callback in
+            callback is ConfirmationCallback ||
+            callback is SuspendedTextOutputCallback ||
+            callback is PingOneProtectInitializeCallback ||
+            callback is PingOneProtectEvaluationCallback
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            
-            ForEach(continueNode.callbacks , id: \.id) { callback in
+
+            ForEach(continueNode.callbacks, id: \.id) { callback in
                 switch callback {
-                case is NameCallback:
-                    if let nameCallback = callback as? NameCallback {
-                        NameCallbackView(field: nameCallback, onNodeUpdated: onNodeUpdated)
-                    }
-                case is PasswordCallback:
-                    if let passwordCallback = callback as? PasswordCallback {
-                        PasswordCallbackView(field: passwordCallback, onNodeUpdated: onNodeUpdated)
-                    }
+                case let booleanCallback as BooleanAttributeInputCallback:
+                    BooleanAttributeInputCallbackView(callback: booleanCallback, onNodeUpdated: onNodeUpdated)
+
+                case let choiceCallback as ChoiceCallback:
+                    ChoiceCallbackView(callback: choiceCallback, onNodeUpdated: onNodeUpdated)
+
+                case let confirmationCallback as ConfirmationCallback:
+                    ConfirmationCallbackView(callback: confirmationCallback, onSelected: onNext)
+
+                case let consentCallback as ConsentMappingCallback:
+                    ConsentMappingCallbackView(callback: consentCallback, onNodeUpdated: onNodeUpdated)
+
+                case let kbaCallback as KbaCreateCallback:
+                    KbaCreateCallbackView(callback: kbaCallback, onNodeUpdated: onNodeUpdated)
+
+                case let numberCallback as NumberAttributeInputCallback:
+                    NumberAttributeInputCallbackView(callback: numberCallback, onNodeUpdated: onNodeUpdated)
+
+                case let passwordCallback as PasswordCallback:
+                    PasswordCallbackView(callback: passwordCallback, onNodeUpdated: onNodeUpdated)
+
+                case let pollingCallback as PollingWaitCallback:
+                    PollingWaitCallbackView(callback: pollingCallback, onTimeout: onNext)
+
+                case let stringCallback as StringAttributeInputCallback:
+                    StringAttributeInputCallbackView(callback: stringCallback, onNodeUpdated: onNodeUpdated)
+
+                case let termsCallback as TermsAndConditionsCallback:
+                    TermsAndConditionsCallbackView(callback: termsCallback, onNodeUpdated: onNodeUpdated)
+
+                case let textInputCallback as TextInputCallback:
+                    TextInputCallbackView(callback: textInputCallback, onNodeUpdated: onNodeUpdated)
+
+                case let textOutputCallback as TextOutputCallback:
+                    TextOutputCallbackView(callback: textOutputCallback)
+
+                case let suspendedTextCallback as SuspendedTextOutputCallback:
+                    TextOutputCallbackView(callback: suspendedTextCallback)
+
+                case let nameCallback as NameCallback:
+                    NameCallbackView(callback: nameCallback, onNodeUpdated: onNodeUpdated)
+
+                case let validatedUsernameCallback as ValidatedUsernameCallback:
+                    ValidatedUsernameCallbackView(callback: validatedUsernameCallback, onNodeUpdated: onNodeUpdated)
+
+                case let validatedPasswordCallback as ValidatedPasswordCallback:
+                    ValidatedPasswordCallbackView(callback: validatedPasswordCallback, onNodeUpdated: onNodeUpdated)
+
+                case let protectInitCallback as PingOneProtectInitializeCallback:
+                    PingOneProtectInitializeCallbackView(callback: protectInitCallback, onNext: onNext)
+
+                case let protectEvalCallback as PingOneProtectEvaluationCallback:
+                    PingOneProtectEvaluationCallbackView(callback: protectEvalCallback, onNext: onNext)
+
                 default:
                     EmptyView()
                 }
             }
-            
-            Button(action: { onNext(false) }) {
-                Text("Next")
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.themeButtonBackground)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+
+            if showNext {
+                Button(action: { onNext() }) {
+                    Text("Next")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.themeButtonBackground)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .padding(.top, 16)
             }
-            .padding(.top, 16)
         }
         .padding()
     }

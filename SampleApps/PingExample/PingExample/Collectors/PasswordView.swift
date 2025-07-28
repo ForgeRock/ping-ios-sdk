@@ -11,7 +11,6 @@
 
 import SwiftUI
 import PingDavinci
-import PingJourney
 
 struct PasswordView: View {
     var field: PasswordCollector
@@ -106,38 +105,5 @@ struct SecureFieldView: View {
                 ErrorMessageView(errors: errorMessages)
             }
         }
-    }
-}
-
-struct PasswordCallbackView: View {
-    
-    var field: PasswordCallback
-    var onNodeUpdated: () -> Void
-    
-    @State var text: String = ""
-    @State private var passwordVisibility: Bool = false
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Password Input Field
-            VStack(alignment: .leading) {
-                SecureFieldView(
-                    label: field.prompt,
-                    value: $text,
-                    isPasswordVisible: $passwordVisibility,
-                    onValueChange: { value in
-                        field.password = value
-                    }, onAppear: {
-                        text = field.password
-                    },
-                    isError: false,
-                    errorMessages: [""]
-                )
-                .onSubmit {
-                    onNodeUpdated()
-                }
-            }
-        }
-        .padding()
     }
 }

@@ -36,7 +36,7 @@ public protocol Logger: Sendable {
 
 /// LogManager to access the global logger instances
 public actor LogManager {
-    private static var shared: Logger = NoneLogger()
+    nonisolated(unsafe) private static var shared: Logger = NoneLogger()
     
     private init() {} // Prevents instantiation
     

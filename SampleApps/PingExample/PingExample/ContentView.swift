@@ -35,6 +35,7 @@ struct MyApp: App {
 
 /// The main view of the application, displaying navigation options and a logo.
 struct ContentView: View {
+    /// State variable to hold the device ID.
     @State private var deviceID: String = ""
     /// State variable to track if Davinci has started.
     @State private var startDavinci = false
@@ -96,10 +97,7 @@ struct ContentView: View {
                 default:
                     EmptyView()
                 }
-                Spacer()
-                
-                
-            }.navigationBarTitle("DaVinci")
+            }.navigationBarTitle("Ping SDK")
                 .accentColor(.themeButtonBackground)
             Spacer()
             Image("Logo").resizable().scaledToFill().frame(width: 100, height: 100)

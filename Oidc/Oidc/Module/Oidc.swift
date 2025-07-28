@@ -52,7 +52,7 @@ public class OidcModule {
                 
             let oidcRequest = config.populateRequest(request: request, pkce: pkce, responseMode: "")
             
-            let parameters = oidcLoginFlow.sharedContext.get(key: PARAMETERS) as? [String: String] ?? [:]
+            let parameters = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcParameters) as? [String: String] ?? [:]
             for parameter in parameters {
                 oidcRequest.parameter(name: parameter.key, value: parameter.value)
             }
@@ -65,7 +65,7 @@ public class OidcModule {
             let clonedConfig = config.clone()
             let oidcuser: User = OidcUser(config: clonedConfig)
             let agent = agent(session: success.session, pkce: context.flowContext.get(key: SharedContext.Keys.pkceKey) as? Pkce)
-            config.updateAgent(agent)
+            clonedConfig.updateAgent(agent)
             let _ = await oidcuser.token()
             let prepareUser = UserDelegate(oidcLogin: oidcLoginFlow, user: oidcuser, session: success.session)
             oidcLoginFlow.sharedContext.set(key: SharedContext.Keys.userKey, value: prepareUser)
@@ -75,7 +75,7 @@ public class OidcModule {
         
         // Handles sign off of the module.
         setup.signOff { @Sendable request in
-            let isWeb = oidcLoginFlow.sharedContext.get(key: IS_WEB) as? Bool ?? false
+            let isWeb = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcIsWeb) as? Bool ?? false
             if isWeb, let endSessionUrl = config.openId?.pingEndsessionEndpoint {
                 request.url(endSessionUrl)
             } else {
@@ -155,14 +155,20 @@ public enum AuthorizeError: Error, LocalizedError {
 
 extension SharedContext.Keys {
     /// The key used to store the PKCE value in the shared context.
-    static let pkceKey = "com.pingidentity.oidcLogin.PKCE"
+    static let pkceKey = "com.pingidentity.oidcWeb.PKCE"
     
     /// The key used to store the callbackURLScheme value in the shared context.
-    static let callbackURLSchemeKey = "com.pingidentity.oidcLogin.callbackURLScheme"
+    static let callbackURLSchemeKey = "com.pingidentity.oidcWeb.callbackURLScheme"
     
     /// The key used to store the user in the shared context.
-    static let userKey = "com.pingidentity.oidcLogin.User"
+    static let userKey = "com.pingidentity.oidcWeb.User"
     
     /// The key used to store the OIDC client configuration in the shared context.
-    static let oidcClientConfigKey = "com.pingidentity.oidcLogin.OidcClientConfig"
+    static let oidcClientConfigKey = "com.pingidentity.oidcWeb.OidcClientConfig"
+    
+    /// The key used to indicate if the flow is running in a web environment.
+    static let oidcIsWeb = "com.pingidentity.oidcWeb.isWeb"
+    
+    /// The key used to store additional parameters for the OIDC flow.
+    static let oidcParameters = "com.pingidentity.oidcWeb.parameters"
 }
