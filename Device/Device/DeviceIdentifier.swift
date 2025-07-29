@@ -49,7 +49,7 @@ final class DeviceIdentifierImpl: DeviceIdentifier, Sendable, Codable {
 /// A default implementation of the DeviceIdentifier protocol that generates and manages a device identifier using RSA key pairs.
 /// This implementation uses the Keychain to store the generated keys and identifier securely.
 /// It conforms to the DeviceIdentifier protocol and provides a unique identifier for the device.
-/// It also provides methods to generate a key pair, retrieve the identifier, and hash data using SHA1.
+/// It also provides methods to generate a key pair, retrieve the identifier, and hash data using SHA1 (Deprecated) or SHA256 (Preferred).
 public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     /// RSA Key types enumeration
     ///
@@ -60,15 +60,15 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
         case publicKey
     }
     /// Constant Device Identifier Key
-    let deviceIdentifierKey = DeviceIndentifierConstants.deviceIdentifierKey
+    let deviceIdentifierKey = DeviceIdentifierConstants.deviceIdentifierKey
     /// Constant Public Key tag
-    let publicKeyTag = DeviceIndentifierConstants.publicKeyTag.data(using: .utf8)!
+    let publicKeyTag = DeviceIdentifierConstants.publicKeyTag.data(using: .utf8)!
     /// Constant Private Key tag
-    let privateKeyTag = DeviceIndentifierConstants.privateKeyTag.data(using: .utf8)!
+    let privateKeyTag = DeviceIdentifierConstants.privateKeyTag.data(using: .utf8)!
     /// Constant Key Pair type
     let keychainKeyType = kSecAttrKeyTypeRSA
     /// Constant RSA Key Pair size
-    let keychainKeySize = DeviceIndentifierConstants.keychainKeySize
+    let keychainKeySize = DeviceIdentifierConstants.keychainKeySize
     /// KeychainService instance to persist, and manage generated identifier
     let keychainService: any Storage<DeviceIdentifierImpl>
     /// Optional Logger for logging purposes
@@ -83,13 +83,13 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     
     /// Initializes DeviceIdentifier
     ///
-    /// - Parameter keychainService: Designated KeychainService to persist, and manage generated Key Pair, and Identifier
+    /// - Parameter logger: Optional Logger for logging purposes, default is nil
     public init(logger: Logger? = nil) {
         self.logger = logger
         self.keychainService = KeychainStorage<DeviceIdentifierImpl>(account: deviceIdentifierKey, encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
     }
     
-    /// Generates, or retrieves an identifier, returns
+    /// Generates, or retrieves an identifier.
     ///
     /// - Returns: Uniquely generated Identifier as per Keychain Sharing Access Group
     @discardableResult func getIdentifier() async throws -> String {
@@ -101,7 +101,7 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
         }
         do {
             let deviceIdentifierKeyPair = try self.generateKeyPair()
-            let identifier = self.hashAndBase64Data(deviceIdentifierKeyPair.publicKey)
+            let identifier = self.hashSHA256AndTransformToHex(deviceIdentifierKeyPair.publicKey)
             let deviceIdentifier = DeviceIdentifierImpl(id: identifier, deviceIdentifierKeyPair: deviceIdentifierKeyPair)
             try await self.keychainService.save(item: deviceIdentifier)
             
@@ -112,7 +112,7 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
             let uuid = UUID().uuidString
             let uuidData = uuid.data(using: .utf8)!
             // Hash UUID string, and persists it
-            let identifier = self.hashAndBase64Data(uuidData)
+            let identifier = self.hashSHA256AndTransformToHex(uuidData)
             let emptyData = DeviceIdentifierKeyPair(privateKey: Data(), publicKey: Data())
             let deviceIdentifier = DeviceIdentifierImpl(id: identifier, deviceIdentifierKeyPair: emptyData)
             try await self.keychainService.save(item: deviceIdentifier)
@@ -127,7 +127,7 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     /// - Parameter data: Data to be hashed
     /// - Returns: Hashed String of given Data
     /// Legacy method, use `hashAndBase64Data(_:)` instead
-    func hashSHA1AndBase64Data(_ data: Data) -> String {
+    func hashSHA1AndTransformToHex(_ data: Data) -> String {
         var digest = [UInt8](repeating: 0, count:Int(CC_SHA1_DIGEST_LENGTH))
         data.withUnsafeBytes {
             _ = CC_SHA1($0.baseAddress, CC_LONG(data.count), &digest)
@@ -140,7 +140,7 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     /// - Parameter data: Data to be hashed
     /// - Returns: Hashed String of given Data in hexadecimal format
     /// This is the preferred method to use for hashing device identifiers.
-    func hashAndBase64Data(_ data: Data) -> String {
+    func hashSHA256AndTransformToHex(_ data: Data) -> String {
         let digest = SHA256.hash(data: data)
         return Data(digest).toHexString()
     }
@@ -177,11 +177,11 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
                 return DeviceIdentifierKeyPair(privateKey: privateKeyData, publicKey: publicKeyData)
             }
             else {
-                throw NSError(domain: DeviceIndentifierConstants.errorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey: DeviceIndentifierConstants.retrieveKeysErrorValue])
+                throw NSError(domain: DeviceIdentifierConstants.errorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey: DeviceIdentifierConstants.retrieveKeysErrorValue])
             }
         }
         else {
-            throw NSError(domain: DeviceIndentifierConstants.errorDomain, code: Int(status), userInfo: [NSLocalizedDescriptionKey: DeviceIndentifierConstants.generateKeyPairErrorValue])
+            throw NSError(domain: DeviceIdentifierConstants.errorDomain, code: Int(status), userInfo: [NSLocalizedDescriptionKey: DeviceIdentifierConstants.generateKeyPairErrorValue])
         }
     }
     
@@ -198,11 +198,11 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
         
         switch keyType {
         case .privateKey:
-            query[kSecAttrLabel as String] = DeviceIndentifierConstants.privatekSecAttrLabel
+            query[kSecAttrLabel as String] = DeviceIdentifierConstants.privatekSecAttrLabel
             query[kSecAttrApplicationTag as String] = self.privateKeyTag
             break
         case .publicKey:
-            query[kSecAttrLabel as String] = DeviceIndentifierConstants.publickSecAttrLabel
+            query[kSecAttrLabel as String] = DeviceIdentifierConstants.publickSecAttrLabel
             query[kSecAttrApplicationTag as String] = self.publicKeyTag
             break
         }
@@ -242,7 +242,7 @@ extension Data {
     }
 }
 
-enum DeviceIndentifierConstants {
+enum DeviceIdentifierConstants {
     static let deviceIdentifierKey = "com.pingidentity.deviceIdentifier"
     static let publicKeyTag = "com.pingidentity.deviceIdentifier.public-key"
     static let privateKeyTag = "com.pingidentity.deviceIdentifier.private-key"
