@@ -14,6 +14,10 @@
 		EC23D5A92E2FD26D00C43D42 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC23D5A62E2FD26D00C43D42 /* PrivacyInfo.xcprivacy */; };
 		ECCAB3102E393EDF00BA1C73 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB30F2E393EDF00BA1C73 /* PingLogger.framework */; };
 		ECCAB3112E393EDF00BA1C73 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB30F2E393EDF00BA1C73 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECCAB3142E393F2500BA1C73 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB3132E393F2500BA1C73 /* PingLogger.framework */; };
+		ECCAB3152E393F2500BA1C73 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB3132E393F2500BA1C73 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECCAB3182E393F2F00BA1C73 /* PingStorage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB3172E393F2F00BA1C73 /* PingStorage.framework */; };
+		ECCAB3192E393F2F00BA1C73 /* PingStorage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB3172E393F2F00BA1C73 /* PingStorage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +42,18 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ECCAB3162E393F2500BA1C73 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				ECCAB3192E393F2F00BA1C73 /* PingStorage.framework in Embed Frameworks */,
+				ECCAB3152E393F2500BA1C73 /* PingLogger.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +64,8 @@
 		EC23D5A62E2FD26D00C43D42 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		EC23D5A72E2FD26D00C43D42 /* Device.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
 		ECCAB30F2E393EDF00BA1C73 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECCAB3132E393F2500BA1C73 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECCAB3172E393F2F00BA1C73 /* PingStorage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingStorage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +73,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECCAB3182E393F2F00BA1C73 /* PingStorage.framework in Frameworks */,
+				ECCAB3142E393F2500BA1C73 /* PingLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,6 +130,8 @@
 		ECCAB30E2E393EDF00BA1C73 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				ECCAB3172E393F2F00BA1C73 /* PingStorage.framework */,
+				ECCAB3132E393F2500BA1C73 /* PingLogger.framework */,
 				ECCAB30F2E393EDF00BA1C73 /* PingLogger.framework */,
 			);
 			name = Frameworks;
@@ -137,6 +159,7 @@
 				EC23D5792E2FD12100C43D42 /* Sources */,
 				EC23D57A2E2FD12100C43D42 /* Frameworks */,
 				EC23D57B2E2FD12100C43D42 /* Resources */,
+				ECCAB3162E393F2500BA1C73 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
