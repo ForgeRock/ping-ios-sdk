@@ -12,6 +12,8 @@
 		EC23D5A52E2FD13400C43D42 /* DeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5A32E2FD13400C43D42 /* DeviceTests.swift */; };
 		EC23D5A82E2FD26D00C43D42 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = EC23D5A72E2FD26D00C43D42 /* Device.h */; };
 		EC23D5A92E2FD26D00C43D42 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC23D5A62E2FD26D00C43D42 /* PrivacyInfo.xcprivacy */; };
+		ECCAB3102E393EDF00BA1C73 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB30F2E393EDF00BA1C73 /* PingLogger.framework */; };
+		ECCAB3112E393EDF00BA1C73 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB30F2E393EDF00BA1C73 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,6 +26,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		ECCAB3122E393EDF00BA1C73 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				ECCAB3112E393EDF00BA1C73 /* PingLogger.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		EC23D57D2E2FD12100C43D42 /* PingDevice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingDevice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC23D5862E2FD12100C43D42 /* DeviceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeviceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -31,6 +47,7 @@
 		EC23D5A32E2FD13400C43D42 /* DeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTests.swift; sourceTree = "<group>"; };
 		EC23D5A62E2FD26D00C43D42 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		EC23D5A72E2FD26D00C43D42 /* Device.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
+		ECCAB30F2E393EDF00BA1C73 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECCAB3102E393EDF00BA1C73 /* PingLogger.framework in Frameworks */,
 				EC23D5872E2FD12100C43D42 /* PingDevice.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -57,6 +75,7 @@
 			children = (
 				EC23D5A12E2FD13200C43D42 /* Device */,
 				EC23D5A42E2FD13400C43D42 /* DeviceTests */,
+				ECCAB30E2E393EDF00BA1C73 /* Frameworks */,
 				EC23D57E2E2FD12100C43D42 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -86,6 +105,14 @@
 				EC23D5A32E2FD13400C43D42 /* DeviceTests.swift */,
 			);
 			path = DeviceTests;
+			sourceTree = "<group>";
+		};
+		ECCAB30E2E393EDF00BA1C73 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ECCAB30F2E393EDF00BA1C73 /* PingLogger.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -129,6 +156,7 @@
 				EC23D5822E2FD12100C43D42 /* Sources */,
 				EC23D5832E2FD12100C43D42 /* Frameworks */,
 				EC23D5842E2FD12100C43D42 /* Resources */,
+				ECCAB3122E393EDF00BA1C73 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
