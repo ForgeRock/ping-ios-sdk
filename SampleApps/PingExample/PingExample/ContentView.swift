@@ -103,8 +103,10 @@ struct ContentView: View {
             Image("Logo").resizable().scaledToFill().frame(width: 100, height: 100)
                 .padding(.vertical, 32)
             Text(deviceID)
-                .lineLimit(1)
+                .lineLimit(2)
                 .minimumScaleFactor(0.5)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
                 .padding()
                 .task {
                     let id = try? await DefaultDeviceIdentifier().id

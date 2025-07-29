@@ -259,6 +259,16 @@
                ReferencedContainer = "container:../ExternalIdPGoogle/ExternalIdPGoogle.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EC23D5852E2FD12100C43D42"
+               BuildableName = "DeviceTests.xctest"
+               BlueprintName = "DeviceTests"
+               ReferencedContainer = "container:../Device/Device.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

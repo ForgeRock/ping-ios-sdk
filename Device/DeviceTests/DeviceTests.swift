@@ -1,4 +1,4 @@
-// 
+//
 //  DeviceTests.swift
 //  DeviceTests
 //
@@ -10,31 +10,67 @@
 
 
 import XCTest
-@testable import Device
+@testable import PingDevice
+import PingLogger
 
 final class DeviceTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    
+    func testIdentifierProtocolUse() async {
+        let deviceIdentifier = TestDeviceIdentifier()
+        
+        // When
+        let identifier = try? await deviceIdentifier.id
+        
+        // Then
+        XCTAssertNotNil(identifier)
+        XCTAssertEqual(identifier?.count, 36) // UUID string length
+        
+        let identifier2 = try? await deviceIdentifier.id
+        
+        XCTAssertEqual(identifier, identifier2)
     }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    
+    
+    func testDefaultDeviceIdentifier() async throws {
+        // Initialize the DefaultDeviceIdentifier
+        let deviceIdentifier = DefaultDeviceIdentifier(logger: LogManager.standard)
+        
+        do {
+            // Get the identifier
+            let identifier1 = try await deviceIdentifier.id
+            
+            // Verify the identifier is not empty
+            XCTAssertFalse(identifier1.isEmpty, "Device identifier should not be empty")
+            
+            // Get the identifier again
+            let identifier2 = try await deviceIdentifier.id
+            
+            // Verify both identifiers are the same (persistence check)
+            XCTAssertEqual(identifier1, identifier2, "Device identifier should be consistent across multiple calls")
+            
+            // Verify the identifier format (SHA-256 hash in hex format is 64 characters)
+            XCTAssertEqual(identifier2.count, 64, "Device identifier should be a 64-character hex string")
+            
+            // Test using the protocol interface
+            let deviceIdProvider: DeviceIdentifier = deviceIdentifier
+            let identifier3 = try await deviceIdProvider.id
+            
+            // Verify we get the same identifier through the protocol interface
+            XCTAssertEqual(identifier1, identifier3, "Device identifier should be consistent when accessed through protocol")
+        } catch {
+            XCTFail("Failed to get device identifier: \(error)")
         }
     }
+}
 
+// MARK: - Test Device Identifier
+
+final class TestDeviceIdentifier: DeviceIdentifier {
+    private let identifier = UUID().uuidString
+    /// Unique identifier for the device
+    public var id: String {
+        get async throws {
+            return identifier
+        }
+    }
 }
