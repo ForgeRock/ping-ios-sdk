@@ -11,7 +11,6 @@
 
 import XCTest
 @testable import PingDevice
-import PingLogger
 
 final class DeviceTests: XCTestCase {
     
@@ -33,7 +32,7 @@ final class DeviceTests: XCTestCase {
     
     func testDefaultDeviceIdentifier() async throws {
         // Initialize the DefaultDeviceIdentifier
-        let deviceIdentifier = DefaultDeviceIdentifier(logger: LogManager.standard)
+        let deviceIdentifier = DefaultDeviceIdentifier()
         
         do {
             // Get the identifier
