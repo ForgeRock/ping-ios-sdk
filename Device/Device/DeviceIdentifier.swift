@@ -90,7 +90,7 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     
     /// Generates, or retrieves an identifier.
     ///
-    /// - Returns: Uniquely generated Identifier as per Keychain Sharing Access Group
+    /// - Returns: Uniquely generated identifier stored securely in the device's keychain
     @discardableResult func getIdentifier() async throws -> String {
         
         if let deviceIdentifier = try await self.keychainService.get() {
@@ -125,7 +125,7 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     ///
     /// - Parameter data: Data to be hashed
     /// - Returns: Hashed String of given Data
-    /// Legacy method, use `hashAndBase64Data(_:)` instead
+    /// Legacy method, use `hashSHA256AndTransformToHex(_:)` instead
     func hashSHA1AndTransformToHex(_ data: Data) -> String {
         var digest = [UInt8](repeating: 0, count:Int(CC_SHA1_DIGEST_LENGTH))
         data.withUnsafeBytes {
@@ -146,7 +146,8 @@ public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     
     /// Generates Key Pair, and persists generated Keys
     ///
-    /// - Returns: A boolean result of whether Key Pair generation, and store process was successful or not
+    /// - Returns: DeviceIdentifierKeyPair containing Private and Public Keys
+    /// - Throws: An error if key generation or retrieval fails
     func generateKeyPair() throws -> DeviceIdentifierKeyPair {
         logger?.i("Generating KeyPair for Device Identifier")
         let publicKeyPairAttr: [String: Any] = self.buildKeyAttr(.publicKey)
