@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		EC23D5872E2FD12100C43D42 /* PingDevice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC23D57D2E2FD12100C43D42 /* PingDevice.framework */; };
+		EC23D5872E2FD12100C43D42 /* PingDeviceId.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC23D57D2E2FD12100C43D42 /* PingDeviceId.framework */; };
 		EC23D5A22E2FD13200C43D42 /* DeviceIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5A02E2FD13200C43D42 /* DeviceIdentifier.swift */; };
 		EC23D5A52E2FD13400C43D42 /* DeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5A32E2FD13400C43D42 /* DeviceTests.swift */; };
-		EC23D5A82E2FD26D00C43D42 /* Device.h in Headers */ = {isa = PBXBuildFile; fileRef = EC23D5A72E2FD26D00C43D42 /* Device.h */; };
+		EC23D5A82E2FD26D00C43D42 /* DeviceId.h in Headers */ = {isa = PBXBuildFile; fileRef = EC23D5A72E2FD26D00C43D42 /* DeviceId.h */; };
 		EC23D5A92E2FD26D00C43D42 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC23D5A62E2FD26D00C43D42 /* PrivacyInfo.xcprivacy */; };
 		ECCAB3102E393EDF00BA1C73 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB30F2E393EDF00BA1C73 /* PingLogger.framework */; };
 		ECCAB3112E393EDF00BA1C73 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB30F2E393EDF00BA1C73 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -57,12 +57,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		EC23D57D2E2FD12100C43D42 /* PingDevice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingDevice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC23D5862E2FD12100C43D42 /* DeviceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeviceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC23D57D2E2FD12100C43D42 /* PingDeviceId.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingDeviceId.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC23D5862E2FD12100C43D42 /* DeviceIdTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeviceIdTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC23D5A02E2FD13200C43D42 /* DeviceIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceIdentifier.swift; sourceTree = "<group>"; };
 		EC23D5A32E2FD13400C43D42 /* DeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTests.swift; sourceTree = "<group>"; };
 		EC23D5A62E2FD26D00C43D42 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		EC23D5A72E2FD26D00C43D42 /* Device.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Device.h; sourceTree = "<group>"; };
+		EC23D5A72E2FD26D00C43D42 /* DeviceId.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceId.h; sourceTree = "<group>"; };
 		ECCAB30F2E393EDF00BA1C73 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECCAB3132E393F2500BA1C73 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECCAB3172E393F2F00BA1C73 /* PingStorage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingStorage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -83,7 +83,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECCAB3102E393EDF00BA1C73 /* PingLogger.framework in Frameworks */,
-				EC23D5872E2FD12100C43D42 /* PingDevice.framework in Frameworks */,
+				EC23D5872E2FD12100C43D42 /* PingDeviceId.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,8 +103,8 @@
 		EC23D57E2E2FD12100C43D42 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EC23D57D2E2FD12100C43D42 /* PingDevice.framework */,
-				EC23D5862E2FD12100C43D42 /* DeviceTests.xctest */,
+				EC23D57D2E2FD12100C43D42 /* PingDeviceId.framework */,
+				EC23D5862E2FD12100C43D42 /* DeviceIdTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -113,7 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				EC23D5A62E2FD26D00C43D42 /* PrivacyInfo.xcprivacy */,
-				EC23D5A72E2FD26D00C43D42 /* Device.h */,
+				EC23D5A72E2FD26D00C43D42 /* DeviceId.h */,
 				EC23D5A02E2FD13200C43D42 /* DeviceIdentifier.swift */,
 			);
 			path = Device;
@@ -144,16 +144,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC23D5A82E2FD26D00C43D42 /* Device.h in Headers */,
+				EC23D5A82E2FD26D00C43D42 /* DeviceId.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		EC23D57C2E2FD12100C43D42 /* PingDevice */ = {
+		EC23D57C2E2FD12100C43D42 /* PingDeviceId */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EC23D58F2E2FD12100C43D42 /* Build configuration list for PBXNativeTarget "PingDevice" */;
+			buildConfigurationList = EC23D58F2E2FD12100C43D42 /* Build configuration list for PBXNativeTarget "PingDeviceId" */;
 			buildPhases = (
 				EC23D5782E2FD12100C43D42 /* Headers */,
 				EC23D5792E2FD12100C43D42 /* Sources */,
@@ -165,16 +165,16 @@
 			);
 			dependencies = (
 			);
-			name = PingDevice;
+			name = PingDeviceId;
 			packageProductDependencies = (
 			);
 			productName = Device;
-			productReference = EC23D57D2E2FD12100C43D42 /* PingDevice.framework */;
+			productReference = EC23D57D2E2FD12100C43D42 /* PingDeviceId.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		EC23D5852E2FD12100C43D42 /* DeviceTests */ = {
+		EC23D5852E2FD12100C43D42 /* DeviceIdTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EC23D5922E2FD12100C43D42 /* Build configuration list for PBXNativeTarget "DeviceTests" */;
+			buildConfigurationList = EC23D5922E2FD12100C43D42 /* Build configuration list for PBXNativeTarget "DeviceIdTests" */;
 			buildPhases = (
 				EC23D5822E2FD12100C43D42 /* Sources */,
 				EC23D5832E2FD12100C43D42 /* Frameworks */,
@@ -186,11 +186,11 @@
 			dependencies = (
 				EC23D5892E2FD12100C43D42 /* PBXTargetDependency */,
 			);
-			name = DeviceTests;
+			name = DeviceIdTests;
 			packageProductDependencies = (
 			);
 			productName = DeviceTests;
-			productReference = EC23D5862E2FD12100C43D42 /* DeviceTests.xctest */;
+			productReference = EC23D5862E2FD12100C43D42 /* DeviceIdTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -211,7 +211,7 @@
 					};
 				};
 			};
-			buildConfigurationList = EC23D5772E2FD12100C43D42 /* Build configuration list for PBXProject "Device" */;
+			buildConfigurationList = EC23D5772E2FD12100C43D42 /* Build configuration list for PBXProject "DeviceId" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -225,8 +225,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				EC23D57C2E2FD12100C43D42 /* PingDevice */,
-				EC23D5852E2FD12100C43D42 /* DeviceTests */,
+				EC23D57C2E2FD12100C43D42 /* PingDeviceId */,
+				EC23D5852E2FD12100C43D42 /* DeviceIdTests */,
 			);
 		};
 /* End PBXProject section */
@@ -271,7 +271,7 @@
 /* Begin PBXTargetDependency section */
 		EC23D5892E2FD12100C43D42 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EC23D57C2E2FD12100C43D42 /* PingDevice */;
+			target = EC23D57C2E2FD12100C43D42 /* PingDeviceId */;
 			targetProxy = EC23D5882E2FD12100C43D42 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -511,7 +511,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EC23D5772E2FD12100C43D42 /* Build configuration list for PBXProject "Device" */ = {
+		EC23D5772E2FD12100C43D42 /* Build configuration list for PBXProject "DeviceId" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EC23D58D2E2FD12100C43D42 /* Debug */,
@@ -520,7 +520,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EC23D58F2E2FD12100C43D42 /* Build configuration list for PBXNativeTarget "PingDevice" */ = {
+		EC23D58F2E2FD12100C43D42 /* Build configuration list for PBXNativeTarget "PingDeviceId" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EC23D5902E2FD12100C43D42 /* Debug */,
@@ -529,7 +529,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EC23D5922E2FD12100C43D42 /* Build configuration list for PBXNativeTarget "DeviceTests" */ = {
+		EC23D5922E2FD12100C43D42 /* Build configuration list for PBXNativeTarget "DeviceIdTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EC23D5932E2FD12100C43D42 /* Debug */,

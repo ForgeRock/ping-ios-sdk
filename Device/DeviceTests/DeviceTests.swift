@@ -10,7 +10,7 @@
 
 
 import XCTest
-@testable import PingDevice
+@testable import PingDeviceId
 
 final class DeviceTests: XCTestCase {
     

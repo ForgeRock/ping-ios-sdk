@@ -1,6 +1,6 @@
 //
-//  Device.swift
-//  Device
+//  DeviceIdentifier.swift
+//  DeviceId
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -8,11 +8,10 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
-@preconcurrency import Foundation
-import CommonCrypto
+import Foundation
+import CryptoKit
 import PingLogger
 import PingStorage
-import CryptoKit
 
 /// A protocol that defines a unique identifier for a device.
 public protocol DeviceIdentifier: Sendable {
@@ -20,7 +19,18 @@ public protocol DeviceIdentifier: Sendable {
     var id: String { get async throws }
 }
 
-/// A struct representing a key pair for device identifier.
+/// An extension of `DeviceIdentifier` that provides a method to hash data using SHA256 and transform it to a hexadecimal string.
+extension DeviceIdentifier {
+    /// Hashes the given data using SHA256 and transforms it into a hexadecimal string.
+    /// - Parameter data: The data to be hashed.
+    /// - Returns: A hexadecimal string representation of the SHA256 hash of the data.
+    func hashSHA256AndTransformToHex(_ data: Data) -> String {
+        let digest = SHA256.hash(data: data)
+        return Data(digest).toHexString()
+    }
+}
+
+/// A struct that represents a key pair for device identification, containing both private and public keys.
 public struct DeviceIdentifierKeyPair: Codable, Sendable {
     /// The private key data.
     let privateKey: Data
@@ -28,228 +38,166 @@ public struct DeviceIdentifierKeyPair: Codable, Sendable {
     let publicKey: Data
 }
 
-/// A class that implements the DeviceIdentifier protocol.
-final class DeviceIdentifierImpl: DeviceIdentifier, Sendable, Codable {
-    /// The key pair for the device identifier.
-    let deviceIdentifierKeyPair: DeviceIdentifierKeyPair
-    /// The unique identifier for the device.
-    let id: String
+/// Default implementation that generates and persists a device identifier.
+public actor DefaultDeviceIdentifier: DeviceIdentifier {
+    /// Keychain storage service for persisting the device identifier.
+    private let keychainService: any Storage<DeviceIdentifierImpl>
+    /// Optional logger for logging events.
+    private let logger: Logger?
+    /// In-memory cache for the computed identifier.
+    private var cachedId: String?
     
-    /// Initializes a DeviceIdentifierImpl with the given identifier and key pair.
+    /// The unique identifier for the device.
+    /// This identifier is either retrieved from the keychain or generated if it does not exist.
+    public var id: String {
+        get async throws {
+            if let inMemory = cachedId {
+                logger?.i("Returning cached device identifier")
+                return inMemory
+            }
+            if let stored = try await keychainService.get() {
+                logger?.i("Retrieved device identifier from keychain")
+                return stored.id
+            }
+            // Generate and save new identifier
+            do {
+                let keyPair = try await generateKeyPair()
+                let identifier = hashSHA256AndTransformToHex(keyPair.publicKey)
+                let impl = DeviceIdentifierImpl(deviceIdentifierKeyPair: keyPair)
+                try await keychainService.save(item: impl)
+                return identifier
+            } catch {
+                logger?.e("Key pair generation failed", error: error)
+                logger?.i("Falling back to UUID-based identifier")
+                let uuidData = Data(UUID().uuidString.utf8)
+                let identifier = hashSHA256AndTransformToHex(uuidData)
+                let fallbackPair = DeviceIdentifierKeyPair(privateKey: Data(), publicKey: Data())
+                let fallback = DeviceIdentifierImpl(deviceIdentifierKeyPair: fallbackPair)
+                try await keychainService.save(item: fallback)
+                return identifier
+            }
+        }
+    }
+    
+    /// Initializes a new instance of `DefaultDeviceIdentifier`.
+    /// - Parameter logger: An optional logger to log events. Defaults to `nil`.
+    public init(logger: Logger? = nil) {
+        self.logger = logger
+        self.keychainService = KeychainStorage<DeviceIdentifierImpl>(
+            account: Constants.deviceIdentifierKey,
+            encryptor: SecuredKeyEncryptor() ?? NoEncryptor()
+        )
+    }
+        
+    /// Asynchronously generates a key pair on a background task.
+    /// - Throws: `DeviceIdentifierError` if key generation fails.
+    /// - Returns: A `DeviceIdentifierKeyPair` containing the private and public keys.
+    private func generateKeyPair() async throws -> DeviceIdentifierKeyPair {
+        try await Task.detached(priority: .userInitiated) {
+            try DefaultDeviceIdentifier.generateKeyPairSync()
+        }.value
+    }
+    
+    /// Synchronous key-pair generation logic.
+    /// - Throws: `DeviceIdentifierError` if key generation fails.
+    /// - Returns: A `DeviceIdentifierKeyPair` containing the private and public keys.
+    private static func generateKeyPairSync() throws -> DeviceIdentifierKeyPair {
+        let (privData, pubData) = try self.generateRSAKeyPairData(
+            keySize: Constants.keySize,
+            publicTag: Constants.publicKeyTag.data(using: .utf8) ?? Data(),
+            privateTag: Constants.privateKeyTag.data(using: .utf8) ?? Data()
+        )
+        return DeviceIdentifierKeyPair(privateKey: privData, publicKey: pubData)
+    }
+    
+    /// Generates an RSA key pair and returns the private and public key data.
     /// - Parameters:
-    ///  - id: The unique identifier for the device.
-    ///  - deviceIdentifierKeyPair: The key pair for the device identifier.
-    init(id: String, deviceIdentifierKeyPair: DeviceIdentifierKeyPair) {
-        self.id = id
+    ///  - keySize: The size of the RSA key in bits.
+    ///  - publicTag: The tag for the public key.
+    ///  - privateTag: The tag for the private key.
+    ///  - Throws: `DeviceIdentifierError` if key generation or export fails.
+    ///  - Returns: A tuple containing the private key data and public key data.
+    private static func generateRSAKeyPairData(
+        keySize: Int,
+        publicTag: Data,
+        privateTag: Data
+    ) throws -> (Data, Data) {
+        let attributes: [CFString: Any] = [
+            kSecAttrKeyType: kSecAttrKeyTypeRSA,
+            kSecAttrKeySizeInBits: keySize,
+            kSecPrivateKeyAttrs: [
+                kSecAttrIsPermanent: true,
+                kSecAttrApplicationTag: privateTag
+            ],
+            kSecPublicKeyAttrs: [
+                kSecAttrIsPermanent: true,
+                kSecAttrApplicationTag: publicTag
+            ]
+        ]
+        var cfError: Unmanaged<CFError>?
+        guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &cfError) else {
+            let err = cfError?.takeRetainedValue() as Error?
+            ?? NSError(domain: NSOSStatusErrorDomain,
+                       code: Int(errSecInternalError),
+                       userInfo: [NSLocalizedDescriptionKey: "Unknown key generation error"])
+            throw DeviceIdentifierError.keyGenerationFailed(err)
+        }
+        // Export private key
+        var cfErrorPriv: Unmanaged<CFError>?
+        guard let privDataRef = SecKeyCopyExternalRepresentation(privateKey, &cfErrorPriv) else {
+            let err = cfErrorPriv?.takeRetainedValue() as Error?
+            ?? NSError(domain: NSOSStatusErrorDomain,
+                       code: Int(errSecInternalError),
+                       userInfo: [NSLocalizedDescriptionKey: "Unable to export private key"])
+            throw DeviceIdentifierError.externalRepresentationFailed(err)
+        }
+        let privateKeyData = privDataRef as Data
+        
+        // Extract and export public key
+        guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
+            throw DeviceIdentifierError.publicKeyExtractionFailed
+        }
+        var cfErrorPub: Unmanaged<CFError>?
+        guard let pubDataRef = SecKeyCopyExternalRepresentation(publicKey, &cfErrorPub) else {
+            let err = cfErrorPub?.takeRetainedValue() as Error?
+            ?? NSError(domain: NSOSStatusErrorDomain,
+                       code: Int(errSecInternalError),
+                       userInfo: [NSLocalizedDescriptionKey: "Unable to export public key"])
+            throw DeviceIdentifierError.externalRepresentationFailed(err)
+        }
+        let publicKeyData = pubDataRef as Data
+        return (privateKeyData, publicKeyData)
+    }
+}
+
+/// Concrete identifier storing only key pair; `id` is computed.
+public final class DeviceIdentifierImpl: DeviceIdentifier, Codable {
+    /// The key pair used for device identification, containing both private and public keys.
+    let deviceIdentifierKeyPair: DeviceIdentifierKeyPair
+    /// The unique identifier for the device, computed as a SHA-256 hash of the public key.
+    public var id: String { hashSHA256AndTransformToHex(deviceIdentifierKeyPair.publicKey) }
+    /// Initializes a new instance of `DeviceIdentifierImpl`.
+    init(deviceIdentifierKeyPair: DeviceIdentifierKeyPair) {
         self.deviceIdentifierKeyPair = deviceIdentifierKeyPair
     }
 }
 
-/// A default implementation of the DeviceIdentifier protocol that generates and manages a device identifier using RSA key pairs.
-/// This implementation uses the Keychain to store the generated keys and identifier securely.
-/// It conforms to the DeviceIdentifier protocol and provides a unique identifier for the device.
-/// It also provides methods to generate a key pair, retrieve the identifier, and hash data using SHA1 (Deprecated) or SHA256 (Preferred).
-public struct DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
-    /// RSA Key types enumeration
-    ///
-    /// - privateKey: Private Key for RSA Key Pair
-    /// - publicKey: Public Key for RSA Key Pair
-    enum DeviceIdentifierKeyType {
-        case privateKey
-        case publicKey
-    }
-    /// Constant Device Identifier Key
-    let deviceIdentifierKey = DeviceIdentifierConstants.deviceIdentifierKey
-    /// Constant Public Key tag
-    let publicKeyTag = DeviceIdentifierConstants.publicKeyTag.data(using: .utf8)!
-    /// Constant Private Key tag
-    let privateKeyTag = DeviceIdentifierConstants.privateKeyTag.data(using: .utf8)!
-    /// Constant Key Pair type
-    let keychainKeyType = kSecAttrKeyTypeRSA
-    /// Constant RSA Key Pair size
-    let keychainKeySize = DeviceIdentifierConstants.keychainKeySize
-    /// KeychainService instance to persist, and manage generated identifier
-    let keychainService: any Storage<DeviceIdentifierImpl>
-    /// Optional Logger for logging purposes
-    let logger: Logger?
-    
-    /// Unique identifier for the device
-    public var id: String {
-        get async throws {
-            return try await getIdentifier()
-        }
-    }
-    
-    /// Initializes DeviceIdentifier
-    ///
-    /// - Parameter logger: Optional Logger for logging purposes, default is nil
-    public init(logger: Logger? = nil) {
-        self.logger = logger
-        self.keychainService = KeychainStorage<DeviceIdentifierImpl>(account: deviceIdentifierKey, encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
-    }
-    
-    /// Generates, or retrieves an identifier.
-    ///
-    /// - Returns: Uniquely generated identifier stored securely in the device's keychain
-    @discardableResult func getIdentifier() async throws -> String {
-        
-        if let deviceIdentifier = try await self.keychainService.get() {
-            logger?.i("Device Identifier is retrieved from Device Identifier Store")
-            // If the identifier was found from KeychainService
-            return deviceIdentifier.id
-        }
-        do {
-            let deviceIdentifierKeyPair = try self.generateKeyPair()
-            let identifier = self.hashSHA256AndTransformToHex(deviceIdentifierKeyPair.publicKey)
-            let deviceIdentifier = DeviceIdentifierImpl(id: identifier, deviceIdentifierKeyPair: deviceIdentifierKeyPair)
-            try await self.keychainService.save(item: deviceIdentifier)
-            
-            return deviceIdentifier.id
-        } catch {
-            logger?.e("Failed to generate Key Pair for Device Identifier", error: error)
-            logger?.i("For some reason Identifier was not found, and Key Pair generation and/or store process failed, we will use randomly generated UUID instead")
-            let uuid = UUID().uuidString
-            let uuidData = uuid.data(using: .utf8)!
-            // Hash UUID string, and persists it
-            let identifier = self.hashSHA256AndTransformToHex(uuidData)
-            let emptyData = DeviceIdentifierKeyPair(privateKey: Data(), publicKey: Data())
-            let deviceIdentifier = DeviceIdentifierImpl(id: identifier, deviceIdentifierKeyPair: emptyData)
-            try await self.keychainService.save(item: deviceIdentifier)
-            
-            return deviceIdentifier.id
-        }
-    }
-    
-    
-    /// Hashes given Data using SHA1
-    ///
-    /// - Parameter data: Data to be hashed
-    /// - Returns: Hashed String of given Data
-    /// Legacy method, use `hashSHA256AndTransformToHex(_:)` instead
-    func hashSHA1AndTransformToHex(_ data: Data) -> String {
-        var digest = [UInt8](repeating: 0, count:Int(CC_SHA1_DIGEST_LENGTH))
-        data.withUnsafeBytes {
-            _ = CC_SHA1($0.baseAddress, CC_LONG(data.count), &digest)
-        }
-        let hexString = Data(bytes: digest, count: digest.count).toHexString()
-        return hexString
-    }
-    
-    /// Hashes given Data using SHA256 and converts it to a hexadecimal string
-    /// - Parameter data: Data to be hashed
-    /// - Returns: Hashed String of given Data in hexadecimal format
-    /// This is the preferred method to use for hashing device identifiers.
-    func hashSHA256AndTransformToHex(_ data: Data) -> String {
-        let digest = SHA256.hash(data: data)
-        return Data(digest).toHexString()
-    }
-    
-    /// Generates Key Pair, and persists generated Keys
-    ///
-    /// - Returns: DeviceIdentifierKeyPair containing Private and Public Keys
-    /// - Throws: An error if key generation or retrieval fails
-    func generateKeyPair() throws -> DeviceIdentifierKeyPair {
-        logger?.i("Generating KeyPair for Device Identifier")
-        let publicKeyPairAttr: [String: Any] = self.buildKeyAttr(.publicKey)
-        let privateKeyPairAttr: [String: Any] = self.buildKeyAttr(.privateKey)
-        
-        let keyPairAttr: [String: Any] = [
-            kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
-            kSecAttrKeySizeInBits as String: 2048,
-            kSecPublicKeyAttrs as String: publicKeyPairAttr,
-            kSecPrivateKeyAttrs as String: privateKeyPairAttr
-        ]
-        
-        var publicKey: SecKey?
-        var privateKey: SecKey?
-        let status = SecKeyGeneratePair(keyPairAttr as CFDictionary, &publicKey, &privateKey)
-        
-        if status == noErr, let _ = privateKey, let _ = publicKey {
-            let publicKeyQuery = self.buildQuery(.publicKey)
-            var publicKeyDataRef: CFTypeRef?
-            let publicKeyStatus = SecItemCopyMatching(publicKeyQuery as CFDictionary, &publicKeyDataRef)
-            let privateKeyQuery = self.buildQuery(.privateKey)
-            var privateKeyDataRef: CFTypeRef?
-            let privateKeyStatus = SecItemCopyMatching(privateKeyQuery as CFDictionary, &privateKeyDataRef)
-            
-            if publicKeyStatus == noErr, let publicKeyData = publicKeyDataRef as? Data, privateKeyStatus == noErr, let privateKeyData = privateKeyDataRef as? Data {
-                
-                return DeviceIdentifierKeyPair(privateKey: privateKeyData, publicKey: publicKeyData)
-            }
-            else {
-                throw NSError(domain: DeviceIdentifierConstants.errorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey: DeviceIdentifierConstants.retrieveKeysErrorValue])
-            }
-        }
-        else {
-            throw NSError(domain: DeviceIdentifierConstants.errorDomain, code: Int(status), userInfo: [NSLocalizedDescriptionKey: DeviceIdentifierConstants.generateKeyPairErrorValue])
-        }
-    }
-    
-    
-    /// Builds Dictionary of Keychain operation attributes for Key Pair generation based on given Key Type
-    ///
-    /// - Parameter keyType: RSA Key Type whether Public or Private Key
-    /// - Returns: A dictionary of Keychain operation attributes
-    func buildKeyAttr(_ keyType: DeviceIdentifierKeyType) -> [String: Any] {
-        var query: [String: Any] = [:]
-        
-        query[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-        query[kSecAttrIsPermanent as String] = true
-        
-        switch keyType {
-        case .privateKey:
-            query[kSecAttrLabel as String] = DeviceIdentifierConstants.privatekSecAttrLabel
-            query[kSecAttrApplicationTag as String] = self.privateKeyTag
-            break
-        case .publicKey:
-            query[kSecAttrLabel as String] = DeviceIdentifierConstants.publickSecAttrLabel
-            query[kSecAttrApplicationTag as String] = self.publicKeyTag
-            break
-        }
-        
-        return query
-    }
-    
-    
-    /// Builds Dictionary of Keychain operation attributes for retrieving Key based on given Key Type
-    ///
-    /// - Parameter keyType: RSA Key Type whether Public or Private Key
-    /// - Returns: A dictionary of Keychain operation attributes
-    func buildQuery(_ keyType: DeviceIdentifierKeyType) -> [String: Any] {
-        var query: [String: Any] = [:]
-        query[kSecClass as String] = kSecClassKey
-        query[kSecAttrKeyType as String] = self.keychainKeyType
-        query[kSecReturnData as String] = true
-        
-        switch keyType {
-        case .privateKey:
-            query[kSecAttrApplicationTag as String] = self.privateKeyTag
-            break
-        case .publicKey:
-            query[kSecAttrApplicationTag as String] = self.publicKeyTag
-            break
-        }
-        
-        return query
-    }
-}
-
-
 extension Data {
-    /// Converts Data to a hexadecimal string representation.
-    func toHexString() -> String {
-        return map { String(format: "%02hhx", $0) }.joined()
+    /// Converts the `Data` instance to a hexadecimal string representation.
+    nonisolated func toHexString() -> String {
+        map { String(format: "%02x", $0) }.joined()
     }
 }
 
-enum DeviceIdentifierConstants {
+private enum Constants {
     static let deviceIdentifierKey = "com.pingidentity.deviceIdentifier"
     static let publicKeyTag = "com.pingidentity.deviceIdentifier.public-key"
     static let privateKeyTag = "com.pingidentity.deviceIdentifier.private-key"
-    static let keychainKeySize = 2048
-    static let privatekSecAttrLabel = "Ping SDK Device identifier private key"
-    static let publickSecAttrLabel = "Ping SDK Device identifier public key"
-    static let errorDomain = "DeviceIdentifierError"
-    static let retrieveKeysErrorValue = "Failed to retrieve Key Pairs from Keychain Service"
-    static let generateKeyPairErrorValue = "Failed to generate Key Pair using SecKeyGeneratePair()"
+    static let keySize = 2048
+}
+
+public enum DeviceIdentifierError: Error {
+    case keyGenerationFailed(Error)
+    case publicKeyExtractionFailed
+    case externalRepresentationFailed(Error)
 }

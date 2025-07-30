@@ -13,7 +13,7 @@ import SwiftUI
 import PingExternalIdPFacebook
 import PingExternalIdPGoogle
 import PingBrowser
-import PingDevice
+import PingDeviceId
 
 /// The main application entry point.
 @main
