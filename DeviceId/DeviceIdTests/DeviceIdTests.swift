@@ -38,7 +38,7 @@ final class DeviceTests: XCTestCase {
         
         group.wait()
     }
-
+    
     override func tearDownWithError() throws {
         // Clean up after each test to leave the keychain in a neutral state.
         let group = DispatchGroup()
@@ -98,7 +98,7 @@ final class DeviceTests: XCTestCase {
     func testHashSHA256AndTransformToHex() {
         // SHA256("abc") in hex is:
         let expected =
-            "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+        "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
         
         let helper = TestDeviceIdentifier()
         let computed = helper.hashSHA256AndTransformToHex(Data("abc".utf8))
@@ -145,8 +145,6 @@ final class DeviceTests: XCTestCase {
                           "Two different TestDeviceIdentifier instances should yield different UUIDs")
     }
     
-    // MARK: - New and Improved Tests
-    
     /// Tests that the `regenerateIdentifier` function correctly creates a new, stable identifier.
     func testRegenerateIdentifier() async throws {
         // Given
@@ -164,7 +162,7 @@ final class DeviceTests: XCTestCase {
         let id3 = try await deviceIdentifier.id
         XCTAssertEqual(id2, id3, "The new identifier should be persisted and stable after regeneration.")
     }
-
+    
     /// Tests that using different configurations results in different keychain accounts and thus different identifiers.
     func testDifferentConfigurationsYieldDifferentIDs() async throws {
         // Given two separate instances with different configurations
@@ -180,25 +178,60 @@ final class DeviceTests: XCTestCase {
         XCTAssertEqual(defaultId.count, 64)
         XCTAssertEqual(secureId.count, 64)
     }
-
+    
     /// Tests the critical fallback path where key generation fails.
     /// The system should fall back to a UUID-based identifier instead of crashing.
-    func testIdentifierFallbackOnKeyGenerationFailure() async throws {
-        // Given a configuration with an invalid key size, which will cause SecKeyCreateRandomKey to fail
+    func testIdentifierThrowsOnKeyGenerationFailure() async throws {
+        // GIVEN: A configuration with an invalid key size to guarantee key generation will fail.
         let failingConfig = DeviceIdentifierConfiguration(keySize: 0, keychainAccount: "com.pingidentity.test.failing")
+        // Note: The initializer itself can throw, but we assume it succeeds for this test's purpose.
         let deviceIdentifier = try DefaultDeviceIdentifier(configuration: failingConfig)
-
-        // When
-        // This call should not throw, because the failure is caught and handled by the fallback mechanism.
-        let fallbackId = try await deviceIdentifier.id
-
-        // Then
-        XCTAssertNotNil(fallbackId, "A fallback identifier should be generated.")
-        XCTAssertEqual(fallbackId.count, 64, "Fallback identifier should be a SHA-256 hash.")
         
-        // Verify the fallback ID is stable
-        let fallbackId2 = try await deviceIdentifier.id
-        XCTAssertEqual(fallbackId, fallbackId2, "The fallback identifier should be stable.")
+        // THEN: Expect the call to `id` to throw a specific error.
+        do {
+            // Attempt the operation that is expected to throw.
+            _ = try await deviceIdentifier.id
+            
+            // If this line is reached, it means no error was thrown, which is a test failure.
+            XCTFail("Expected `deviceIdentifier.id` to throw an error, but it succeeded.")
+            
+        } catch {
+            // This is the expected path. Now, inspect the error.
+            guard let deviceError = error as? DeviceIdentifierError else {
+                XCTFail("Expected DeviceIdentifierError but received a different error type: \(type(of: error))")
+                return
+            }
+            
+            // Check if the error is the specific case we expect.
+            switch deviceError {
+            case .keyGenerationFailed:
+                break
+            default:
+                XCTFail("Expected .keyGenerationFailed error but received \(deviceError)")
+            }
+        }
+    }
+    
+    /// Tests the `UUIDDeviceIdentifier` to ensure it creates a stable, correctly formatted identifier.
+    func testUUIDDeviceIdentifier() async throws {
+        // GIVEN a new instance of the UUIDDeviceIdentifier
+        let uuidIdentifier = UUIDDeviceIdentifier()
+        
+        // WHEN the identifier is requested
+        let id1 = try await uuidIdentifier.id
+        
+        // THEN the identifier should be a valid SHA-256 hash
+        XCTAssertFalse(id1.isEmpty)
+        XCTAssertEqual(id1.count, 64, "UUID-based identifier should be a 64-character SHA-256 hash.")
+        
+        // AND the identifier should be stable when requested again from the same instance
+        let id2 = try await uuidIdentifier.id
+        XCTAssertEqual(id1, id2, "Identifier should be stable on the same instance.")
+        
+        // AND the identifier should be persisted and loaded correctly by a new instance
+        let newInstance = UUIDDeviceIdentifier()
+        let id3 = try await newInstance.id
+        XCTAssertEqual(id1, id3, "Identifier should be persisted and loaded by new instances.")
     }
 }
 
