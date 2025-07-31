@@ -14,6 +14,11 @@ import PingStorage
 
 /// A fallback device identifier that uses a UUID when key pair generation fails.
 /// It generates and persists a UUID, then computes the ID by hashing the UUID's bytes.
+/// Example usage:
+/// ```swift
+/// let deviceId = UUIDDeviceIdentifier()
+/// let identifier = try await deviceId.id
+/// ```
 public actor UUIDDeviceIdentifier: DeviceIdentifier, Sendable {
     /// Keychain storage service for persisting the UUID data.
     internal let storage: any Storage<Data>
