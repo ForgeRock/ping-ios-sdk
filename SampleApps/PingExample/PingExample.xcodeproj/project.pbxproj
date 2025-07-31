@@ -283,6 +283,20 @@
 			remoteGlobalIDString = ECB7C6692D5A1FAB0006F1C8;
 			remoteInfo = PingBrowserTests;
 		};
+		ECCAB3AB2E3B600B00BA1C73 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ECCAB3A42E3B600B00BA1C73 /* DeviceId.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC23D57D2E2FD12100C43D42;
+			remoteInfo = PingDeviceId;
+		};
+		ECCAB3AD2E3B600B00BA1C73 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ECCAB3A42E3B600B00BA1C73 /* DeviceId.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC23D5862E2FD12100C43D42;
+			remoteInfo = DeviceIdTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -387,7 +401,6 @@
 		EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyViewModel.swift; sourceTree = "<group>"; };
 		EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginView.swift; sourceTree = "<group>"; };
 		EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginViewModel.swift; sourceTree = "<group>"; };
-		EC23D62F2E312ED900C43D42 /* DeviceId.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DeviceId.xcodeproj; path = ../../Device/DeviceId.xcodeproj; sourceTree = SOURCE_ROOT; };
 		EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticationView.swift; sourceTree = "<group>"; };
 		EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationView.swift; sourceTree = "<group>"; };
 		EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncSVGImage.swift; sourceTree = "<group>"; };
@@ -397,6 +410,7 @@
 		ECB7C5D02D562FAC0006F1C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		ECBF06A32D5391610066A3BD /* SocialButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialButtonView.swift; sourceTree = "<group>"; };
 		ECCAB3682E3A6C3300BA1C73 /* PingDeviceId.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDeviceId.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECCAB3A42E3B600B00BA1C73 /* DeviceId.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DeviceId.xcodeproj; path = ../../DeviceId/DeviceId.xcodeproj; sourceTree = SOURCE_ROOT; };
 		ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -444,7 +458,7 @@
 		3A5441242BCDF10900385131 = {
 			isa = PBXGroup;
 			children = (
-				EC23D62F2E312ED900C43D42 /* DeviceId.xcodeproj */,
+				ECCAB3A42E3B600B00BA1C73 /* DeviceId.xcodeproj */,
 				EC0CB5A52E27AD3D00A82D6C /* Journey.xcodeproj */,
 				A5A31CB52E0A37C700ABBEF7 /* Protect.xcodeproj */,
 				A525E7C62DD7683500B02C17 /* ExternalIdPGoogle.xcodeproj */,
@@ -705,6 +719,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		ECCAB3A72E3B600B00BA1C73 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ECCAB3AC2E3B600B00BA1C73 /* PingDeviceId.framework */,
+				ECCAB3AE2E3B600B00BA1C73 /* DeviceIdTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -805,6 +828,10 @@
 				{
 					ProductGroup = A57A09152CE511E7006F0CBB /* Products */;
 					ProjectRef = 3A54420F2BCE1F2900385131 /* Davinci.xcodeproj */;
+				},
+				{
+					ProductGroup = ECCAB3A72E3B600B00BA1C73 /* Products */;
+					ProjectRef = ECCAB3A42E3B600B00BA1C73 /* DeviceId.xcodeproj */;
 				},
 				{
 					ProductGroup = A5A74DBF2DD7B30800C6FF31 /* Products */;
@@ -1023,6 +1050,20 @@
 			fileType = wrapper.cfbundle;
 			path = PingBrowserTests.xctest;
 			remoteRef = ECB7C6842D5A24B70006F1C8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		ECCAB3AC2E3B600B00BA1C73 /* PingDeviceId.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingDeviceId.framework;
+			remoteRef = ECCAB3AB2E3B600B00BA1C73 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		ECCAB3AE2E3B600B00BA1C73 /* DeviceIdTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DeviceIdTests.xctest;
+			remoteRef = ECCAB3AD2E3B600B00BA1C73 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

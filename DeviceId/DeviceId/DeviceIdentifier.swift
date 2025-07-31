@@ -57,24 +57,26 @@ public actor DefaultDeviceIdentifier: DeviceIdentifier {
             }
             if let stored = try await keychainService.get() {
                 logger?.i("Retrieved device identifier from keychain")
-                return stored.id
+                let identifier = stored.id
+                cachedId = identifier
+                return identifier
             }
             // Generate and save new identifier
             do {
                 let keyPair = try await generateKeyPair()
-                let identifier = hashSHA256AndTransformToHex(keyPair.publicKey)
                 let impl = DeviceIdentifierImpl(deviceIdentifierKeyPair: keyPair)
                 try await keychainService.save(item: impl)
-                return identifier
+                cachedId = impl.id
+                return impl.id
             } catch {
                 logger?.e("Key pair generation failed", error: error)
                 logger?.i("Falling back to UUID-based identifier")
                 let uuidData = Data(UUID().uuidString.utf8)
-                let identifier = hashSHA256AndTransformToHex(uuidData)
                 let fallbackPair = DeviceIdentifierKeyPair(privateKey: Data(), publicKey: Data())
                 let fallback = DeviceIdentifierImpl(deviceIdentifierKeyPair: fallbackPair)
                 try await keychainService.save(item: fallback)
-                return identifier
+                cachedId = fallback.id
+                return fallback.id
             }
         }
     }
@@ -88,7 +90,7 @@ public actor DefaultDeviceIdentifier: DeviceIdentifier {
             encryptor: SecuredKeyEncryptor() ?? NoEncryptor()
         )
     }
-        
+    
     /// Asynchronously generates a key pair on a background task.
     /// - Throws: `DeviceIdentifierError` if key generation fails.
     /// - Returns: A `DeviceIdentifierKeyPair` containing the private and public keys.
@@ -102,7 +104,7 @@ public actor DefaultDeviceIdentifier: DeviceIdentifier {
     /// - Throws: `DeviceIdentifierError` if key generation fails.
     /// - Returns: A `DeviceIdentifierKeyPair` containing the private and public keys.
     private static func generateKeyPairSync() throws -> DeviceIdentifierKeyPair {
-        let (privData, pubData) = try self.generateRSAKeyPairData(
+        let (privData, pubData) = try generateRSAKeyPairData(
             keySize: Constants.keySize,
             publicTag: Constants.publicKeyTag.data(using: .utf8) ?? Data(),
             privateTag: Constants.privateKeyTag.data(using: .utf8) ?? Data()
@@ -115,8 +117,8 @@ public actor DefaultDeviceIdentifier: DeviceIdentifier {
     ///  - keySize: The size of the RSA key in bits.
     ///  - publicTag: The tag for the public key.
     ///  - privateTag: The tag for the private key.
-    ///  - Throws: `DeviceIdentifierError` if key generation or export fails.
-    ///  - Returns: A tuple containing the private key data and public key data.
+    /// - Throws: `DeviceIdentifierError` if key generation or export fails.
+    /// - Returns: A tuple containing the private key data and public key data.
     private static func generateRSAKeyPairData(
         keySize: Int,
         publicTag: Data,
@@ -168,6 +170,44 @@ public actor DefaultDeviceIdentifier: DeviceIdentifier {
         let publicKeyData = pubDataRef as Data
         return (privateKeyData, publicKeyData)
     }
+    
+    /// Attempts to pull the stored RSA key pair data out of the keychain.
+    /// - Throws: `KeychainRetrievalError` if either key is missing or unreadable.
+    /// - Returns: A `DeviceIdentifierKeyPair` containing both private and public key Data.
+    private static func retrieveKeyPairFromKeychain() throws -> DeviceIdentifierKeyPair {
+        func dataForTag(_ tag: Data) throws -> Data {
+            let query: [CFString: Any] = [
+                kSecClass: kSecClassKey,
+                kSecAttrKeyType: kSecAttrKeyTypeRSA,
+                kSecAttrApplicationTag: tag,
+                kSecReturnData: true,
+                kSecMatchLimit: kSecMatchLimitOne
+            ]
+            var result: AnyObject?
+            let status = SecItemCopyMatching(query as CFDictionary, &result)
+            switch status {
+            case errSecSuccess:
+                guard let data = result as? Data else {
+                    throw DeviceIdentifierError.keychainUnexpectedData
+                }
+                return data
+            case errSecItemNotFound:
+                throw DeviceIdentifierError.keychainItemNotFound
+            default:
+                throw DeviceIdentifierError.keychainUnexpectedStatus(status)
+            }
+        }
+        
+        // pull out both blobs
+        guard let privTag = Constants.privateKeyTag.data(using: .utf8), let pubTag = Constants.publicKeyTag.data(using: .utf8) else {
+            throw DeviceIdentifierError.keychainUnexpectedData
+        }
+        
+        let privData = try dataForTag(privTag)
+        let pubData  = try dataForTag(pubTag)
+        
+        return DeviceIdentifierKeyPair(privateKey: privData, publicKey: pubData)
+    }
 }
 
 /// Concrete identifier storing only key pair; `id` is computed.
@@ -196,8 +236,16 @@ private enum Constants {
     static let keySize = 2048
 }
 
+/// This enum defines various errors that can occur during device identifier operations, such as key generation failures or public key extraction issues.
+/// It conforms to the `Error` protocol, allowing it to be thrown and caught in error handling contexts.
+/// - keyGenerationFailed: Indicates that the key generation process failed, with an associated error.
+/// - publicKeyExtractionFailed: Indicates that the public key could not be extracted from the private key.
+/// - externalRepresentationFailed: Indicates that exporting the key to external representation failed, with an associated
 public enum DeviceIdentifierError: Error {
     case keyGenerationFailed(Error)
     case publicKeyExtractionFailed
     case externalRepresentationFailed(Error)
+    case keychainItemNotFound
+    case keychainUnexpectedData
+    case keychainUnexpectedStatus(OSStatus)
 }

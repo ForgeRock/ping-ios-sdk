@@ -13,7 +13,7 @@
 //! Project version number for Device.
 FOUNDATION_EXPORT double DeviceIdVersionNumber;
 
-//! Project version string for Journey.
+//! Project version string for Device.
 FOUNDATION_EXPORT const unsigned char DeviceIdVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <DeviceId/PublicHeader.h>
