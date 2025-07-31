@@ -116,9 +116,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Device\/Device.xcodeproj",
+        "containerPath" : "container:..\/DeviceId\/DeviceId.xcodeproj",
         "identifier" : "EC23D5852E2FD12100C43D42",
-        "name" : "DeviceTests"
+        "name" : "DeviceIdTests"
       }
     }
   ],
