@@ -20,7 +20,9 @@ public class KbaCreateCallback: AbstractCallback, ObservableObject, @unchecked S
     public var selectedQuestion: String = ""
     /// A string value of the answer from the user interaction
     public var selectedAnswer: String = ""
-    
+    /// A boolean flag indicating whether user-defined questions are allowed.
+    public var allowUserDefinedQuestions = false
+
     /// Initializes a new instance of `KbaCreateCallback` with the provided JSON input.
     public override func initValue(name: String, value: Any) {
         switch name {
@@ -32,11 +34,16 @@ public class KbaCreateCallback: AbstractCallback, ObservableObject, @unchecked S
             if let arrayValue = value as? [String] {
                 self.predefinedQuestions = arrayValue
             }
+        case JourneyConstants.allowUserDefinedQuestions:
+            if let boolValue = value as? Bool {
+                self.allowUserDefinedQuestions = boolValue
+            }
+
         default:
             break
         }
     }
-    
+
     /// Returns the payload with the question and answer values.
     public override func payload() -> [String: Any] {
         return input(selectedQuestion, selectedAnswer)
