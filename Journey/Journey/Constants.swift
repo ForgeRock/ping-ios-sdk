@@ -10,7 +10,7 @@
 
 /// Represents various constants used in Journey requests and flows.
 public enum JourneyConstants {
-    
+
     public static let realm = "root"
     public static let cookie = "iPlanetDirectoryPro"
 
@@ -38,13 +38,13 @@ public enum JourneyConstants {
     public static let tokenId = "tokenId"
     public static let successUrl = "successUrl"
     public static let realmName = "realm"
-    
+
     public static let location = "location"
     public static let type = "type"
-    
+
     /// Constant key used to store and retrieve the OIDC client from the shared context
     public static let oidcClient = "com.pingidentity.journey.OIDC_CLIENT"
-    
+
     /// Callback Types
     public static let booleanAttributeInputCallback = "BooleanAttributeInputCallback"
     public static let choiceCallback = "ChoiceCallback"
@@ -67,7 +67,7 @@ public enum JourneyConstants {
 
     // Response keys
     public static let message = "message"
-    
+
     // OIDC Requests
     public static let client_id = "client_id"
     public static let scope = "scope"
@@ -117,5 +117,6 @@ public enum JourneyConstants {
     public static let terms = "terms"
     public static let defaultText = "defaultText"
     public static let echoOn = "echoOn"
+    public static let allowUserDefinedQuestions = "allowUserDefinedQuestions"
 
 }
