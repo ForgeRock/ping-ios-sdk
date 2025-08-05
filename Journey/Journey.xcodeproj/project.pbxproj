@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A50585152E3D05FC004813B5 /* ConfirmationCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50585142E3D05FA004813B5 /* ConfirmationCallbackTests.swift */; };
+		A50585172E3D13B6004813B5 /* KbaCreateCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50585162E3D13B2004813B5 /* KbaCreateCallbackTests.swift */; };
 		A5768D1E2E29B37D000290EE /* ConsentMappingCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D1D2E29B37A000290EE /* ConsentMappingCallback.swift */; };
 		A5AB90402E26954C000E1089 /* TermsAndConditionsCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB903F2E26954A000E1089 /* TermsAndConditionsCallback.swift */; };
 		A5AB90422E2695B8000E1089 /* TextOutputCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90412E2695B7000E1089 /* TextOutputCallback.swift */; };
@@ -89,6 +90,7 @@
 
 /* Begin PBXFileReference section */
 		A50585142E3D05FA004813B5 /* ConfirmationCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationCallbackTests.swift; sourceTree = "<group>"; };
+		A50585162E3D13B2004813B5 /* KbaCreateCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KbaCreateCallbackTests.swift; sourceTree = "<group>"; };
 		A5768D1D2E29B37A000290EE /* ConsentMappingCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentMappingCallback.swift; sourceTree = "<group>"; };
 		A5AB903F2E26954A000E1089 /* TermsAndConditionsCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsCallback.swift; sourceTree = "<group>"; };
 		A5AB90412E2695B7000E1089 /* TextOutputCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextOutputCallback.swift; sourceTree = "<group>"; };
@@ -209,6 +211,7 @@
 				EC23269F2E0D62E600634A50 /* NameCallbackTests.swift */,
 				EC2326A12E0D65A300634A50 /* PasswordCallbackTests.swift */,
 				A50585142E3D05FA004813B5 /* ConfirmationCallbackTests.swift */,
+				A50585162E3D13B2004813B5 /* KbaCreateCallbackTests.swift */,
 				ECD562AD2E0C494B00F0B5A9 /* Mock */,
 			);
 			path = JourneyTests;
@@ -448,6 +451,7 @@
 				A50585152E3D05FC004813B5 /* ConfirmationCallbackTests.swift in Sources */,
 				EC2326A02E0D62ED00634A50 /* NameCallbackTests.swift in Sources */,
 				ECD562A42E0C45E300F0B5A9 /* Config.swift in Sources */,
+				A50585172E3D13B6004813B5 /* KbaCreateCallbackTests.swift in Sources */,
 				EC23269E2E0D5E4E00634A50 /* CallbackRegistryTests.swift in Sources */,
 				EC2326A62E0D744F00634A50 /* JourneyUserTests.swift in Sources */,
 				EC2326A82E0D7C7900634A50 /* AgentTests.swift in Sources */,
