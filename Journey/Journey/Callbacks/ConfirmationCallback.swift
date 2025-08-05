@@ -32,8 +32,8 @@ public class ConfirmationCallback: AbstractCallback, ObservableObject, @unchecke
     /// String value of prompt attribute in Callback response; prompt is usually human readable text that can be displayed in UI
     private(set) public var prompt: String = ""
     /// A value provided from user interaction for this particular callback
-    public var selectedIndex: Int = 0
-    
+    public var selectedIndex: Int?
+
     /// Initializes a new instance of `ConfirmationCallback` with the provided JSON input.
     public override func initValue(name: String, value: Any) {
         switch name {
@@ -56,7 +56,6 @@ public class ConfirmationCallback: AbstractCallback, ObservableObject, @unchecke
         case JourneyConstants.defaultOption:
             if let intValue = value as? Int {
                 self.defaultOption = intValue
-                self.selectedIndex = self.defaultOption
             }
         default:
             break
@@ -65,6 +64,9 @@ public class ConfirmationCallback: AbstractCallback, ObservableObject, @unchecke
     
     /// Returns the payload with the user's selection value.
     public override func payload() -> [String: Any] {
+        guard let selectedIndex = selectedIndex else {
+            return json
+        }
         return input(selectedIndex)
     }
 }
