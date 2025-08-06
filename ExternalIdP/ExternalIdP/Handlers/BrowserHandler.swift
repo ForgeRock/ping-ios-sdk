@@ -39,7 +39,7 @@ public class BrowserHandler: IdpRequestHandler {
         }
         
         do {
-            let result = try await BrowserLauncher.currentBrowser.launch(url: continueUrl, browserType: .ephemeralAuthSession, callbackURLScheme: callbackURLScheme)
+            let result = try await BrowserLauncher.currentBrowser.launch(url: continueUrl, customParams: nil, browserType: .ephemeralAuthSession, browserMode: .login, callbackURLScheme: callbackURLScheme)
             
             guard let components = URLComponents(url: result, resolvingAgainstBaseURL: false),
                   let queryItems = components.queryItems else {

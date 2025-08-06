@@ -43,7 +43,7 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
     
     public var oidcUser: User? {
         get async {
-            let oidcLoginUser = await oidLogin.oidcLoginUser()
+            let oidcLoginUser = await oidcLogin.oidcLoginUser()
             return oidcLoginUser
         }
     }

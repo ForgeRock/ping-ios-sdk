@@ -55,7 +55,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     // MARK: Properties
     
     /// Static shared instance of current Browser object
-    public static var currentBrowser: BrowserLauncher = BrowserLauncher()
+    public static var currentBrowser: BrowserLauncherProtocol = BrowserLauncher()
     
     /// Boolean indicator whether or not current Browser object is in progress
     private(set) public var isInProgress: Bool = false

@@ -113,6 +113,13 @@
         "identifier" : "ECA7A2EF2DC251870011E59C",
         "name" : "ExternalIdPGoogleTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/DeviceId\/DeviceId.xcodeproj",
+        "identifier" : "EC23D5852E2FD12100C43D42",
+        "name" : "DeviceIdTests"
+      }
     }
   ],
   "version" : 1

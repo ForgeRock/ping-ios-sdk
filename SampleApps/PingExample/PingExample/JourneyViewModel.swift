@@ -64,8 +64,6 @@ class JourneyViewModel: ObservableObject {
         await MainActor.run {
             isLoading = true
         }
-
-        await journey.start()
         
         let next = await journey.start(journeyName) { options in
             options.forceAuth = false
