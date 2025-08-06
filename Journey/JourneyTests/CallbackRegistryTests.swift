@@ -36,24 +36,24 @@ final class CallbackRegistryTests: XCTestCase {
     func testRegisterAndRetrieveCallback() async {
         let registry = CallbackRegistry()
         let key = "customCallback"
-        await registry.register(type: key, callback: CustomCallback.self)
-        let callbackType = await registry.callbacks[key]
+        registry.register(type: key, callback: CustomCallback.self)
+        let callbackType = registry.callbacks[key]
         XCTAssertNotNil(callbackType)
         XCTAssertTrue(callbackType is CustomCallback.Type)
     }
     
     func testCallbackNotFound() async {
         let registry = CallbackRegistry()
-        let callbackType = await registry.callbacks["nonexistent"]
+        let callbackType = registry.callbacks["nonexistent"]
         XCTAssertNil(callbackType)
     }
     
     func testClearAllCallbacks() async {
         let registry = CallbackRegistry()
-        await registry.register(type: "key1", callback: CustomCallback.self)
-        await registry.register(type: "key2", callback: CustomCallback.self)
-        await registry.reset()
-        let count = await registry.callbacks.count
+        registry.register(type: "key1", callback: CustomCallback.self)
+        registry.register(type: "key2", callback: CustomCallback.self)
+        registry.reset()
+        let count = registry.callbacks.count
         XCTAssertTrue(count == 0)
     }
     
@@ -77,10 +77,10 @@ final class CallbackRegistryTests: XCTestCase {
                 return input(name)
             }
         }
-        await registry.register(type: "type1", callback: CustomCallback.self)
-        await registry.register(type: "type2", callback: AnotherCallback.self)
-        let type1 = await registry.callbacks["type1"]
-        let type2 = await registry.callbacks["type2"]
+        registry.register(type: "type1", callback: CustomCallback.self)
+        registry.register(type: "type2", callback: AnotherCallback.self)
+        let type1 = registry.callbacks["type1"]
+        let type2 = registry.callbacks["type2"]
         XCTAssertNotNil(type1)
         XCTAssertNotNil(type2)
         XCTAssertTrue(type1 is CustomCallback.Type)
