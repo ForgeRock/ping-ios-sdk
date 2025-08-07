@@ -17,7 +17,22 @@ user-friendly authentication experience.
 
 ## Integrating the SDK into your project
 
-Use Cocoapods or Swift Package Manager
+### Add dependency to your project
+
+To integrate the PingProtect module into your iOS project, add the following dependency to your
+`Podfile` or `Package.swift` file:
+
+```ruby
+pod 'PingProtect', '<version>'
+```
+
+or for Swift Package Manager:
+
+```swift
+.package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+```
+
+Replace `<version>` with the latest version of the PingProtect SDK.
 
 ## Usage
 
@@ -61,7 +76,42 @@ employed to retrieve the necessary data when required by the flow.
 
 ## Journey Integration
 
-To be Implemented
+The `PingOneProtectInitializeCallback` is a specialized callback designed to initialize the Protect SDK within the
+Journey. It ensures that the SDK is properly configured and ready to collect behavioral data during the user journey.
+The `PingOneProtectEvaluationCallback` is another callback that collects data from the Protect SDK,
+allowing the Journey to collect and utilize risk data for decision-making.
+
+```swift
+node.callbacks.forEach { callback in
+    switch callback {
+    case let protectInitCallback as PingOneProtectInitializeCallback:
+        // Initialize the Protect SDK
+        let result = await protectInitCallback.start()
+        switch result {
+        case .success:
+            // Initialization successful: Proceed to the next step in the Journey.
+            break
+        case .failure(let error):
+            // Initialization failed: Implement robust error handling.
+            print("Protect initialization failed: \(error)")
+        }
+    case let protectEvalCallback as PingOneProtectEvaluationCallback:
+        // Collect risk data from the Protect SDK
+        let result = await protectEvalCallback.collect()
+        switch result {
+        case .success:
+            // Data collection successful: Process the collected data.
+            break
+        case .failure(let error):
+            // Data collection failed: Implement robust error handling.
+            print("Protect data collection failed: \(error)")
+        }
+    // ... Handle other callback types
+    default:
+        break
+    }
+}
+```
 
 ## PingProtect SDK Initialization
 

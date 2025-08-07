@@ -17,6 +17,8 @@
 		A5AB90632E26B7D3000E1089 /* AbstractProtectCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90622E26B7D1000E1089 /* AbstractProtectCallback.swift */; };
 		A5AB90652E26B80F000E1089 /* PingOneProtectInitializeCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90642E26B80A000E1089 /* PingOneProtectInitializeCallback.swift */; };
 		A5AB90672E26B842000E1089 /* PingOneProtectEvaluationCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90662E26B83E000E1089 /* PingOneProtectEvaluationCallback.swift */; };
+		A5CFC8E42E44F3E000CBFC3B /* PingOneProtectEvaluationCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5CFC8E32E44F3DD00CBFC3B /* PingOneProtectEvaluationCallbackTests.swift */; };
+		A5CFC8E72E44FBAA00CBFC3B /* PingOneProtectInitializeCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5CFC8E62E44FBA800CBFC3B /* PingOneProtectInitializeCallbackTests.swift */; };
 		A5F7A4ED2E0E27620033F8B6 /* ProtectLifecycleModuleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5F7A4EA2E0E27620033F8B6 /* ProtectLifecycleModuleTests.swift */; };
 		A5F7A4EE2E0E27620033F8B6 /* ProtectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5F7A4EB2E0E27620033F8B6 /* ProtectTests.swift */; };
 		A5F7A4F62E0E276A0033F8B6 /* Protect.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5F7A4F22E0E276A0033F8B6 /* Protect.swift */; };
@@ -62,6 +64,8 @@
 		A5AB90622E26B7D1000E1089 /* AbstractProtectCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractProtectCallback.swift; sourceTree = "<group>"; };
 		A5AB90642E26B80A000E1089 /* PingOneProtectInitializeCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneProtectInitializeCallback.swift; sourceTree = "<group>"; };
 		A5AB90662E26B83E000E1089 /* PingOneProtectEvaluationCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneProtectEvaluationCallback.swift; sourceTree = "<group>"; };
+		A5CFC8E32E44F3DD00CBFC3B /* PingOneProtectEvaluationCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneProtectEvaluationCallbackTests.swift; sourceTree = "<group>"; };
+		A5CFC8E62E44FBA800CBFC3B /* PingOneProtectInitializeCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneProtectInitializeCallbackTests.swift; sourceTree = "<group>"; };
 		A5F7A4EA2E0E27620033F8B6 /* ProtectLifecycleModuleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectLifecycleModuleTests.swift; sourceTree = "<group>"; };
 		A5F7A4EB2E0E27620033F8B6 /* ProtectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectTests.swift; sourceTree = "<group>"; };
 		A5F7A4EF2E0E276A0033F8B6 /* ProtectError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectError.swift; sourceTree = "<group>"; };
@@ -140,6 +144,8 @@
 				A5F7A4EB2E0E27620033F8B6 /* ProtectTests.swift */,
 				A5F7A4EA2E0E27620033F8B6 /* ProtectLifecycleModuleTests.swift */,
 				A5F7A4FC2E0E2AAF0033F8B6 /* ProtectCollectorTests.swift */,
+				A5CFC8E32E44F3DD00CBFC3B /* PingOneProtectEvaluationCallbackTests.swift */,
+				A5CFC8E62E44FBA800CBFC3B /* PingOneProtectInitializeCallbackTests.swift */,
 			);
 			path = ProtectTests;
 			sourceTree = "<group>";
@@ -295,6 +301,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5F7A4ED2E0E27620033F8B6 /* ProtectLifecycleModuleTests.swift in Sources */,
+				A5CFC8E42E44F3E000CBFC3B /* PingOneProtectEvaluationCallbackTests.swift in Sources */,
+				A5CFC8E72E44FBAA00CBFC3B /* PingOneProtectInitializeCallbackTests.swift in Sources */,
 				A5F7A4FD2E0E2ABB0033F8B6 /* ProtectCollectorTests.swift in Sources */,
 				A5F7A4EE2E0E27620033F8B6 /* ProtectTests.swift in Sources */,
 			);
