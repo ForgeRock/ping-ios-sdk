@@ -34,12 +34,8 @@ import GoogleSignIn
     /// - Returns: An `IdpResult` object containing the result of the authorization.
     public func authorize(idpClient: IdpClient) async throws -> IdpResult {
         GIDSignIn.sharedInstance.signOut()
-        guard let _ = idpClient.clientId else {
-            throw IdpExceptions.illegalArgumentException(message: "Client ID is required")
-        }
-        guard let topVC = IdpClient.getTopViewController() else {
-            throw IdpExceptions.illegalStateException(message: "Top view controller is required")
-        }
+        let topVC = try IdpValidationUtils.validateTopViewController()
+        try IdpValidationUtils.validateClientId(idpClient.clientId, provider: "Google")
         
         return try await Task { @MainActor in
             let token = try await GoogleAuthenticationManager.performGoogleSignIn(presenting: topVC, idpClient: idpClient)
@@ -61,7 +57,7 @@ class GoogleAuthenticationManager {
             signInResult = try await GIDSignIn.sharedInstance.signIn(withPresenting: window, hint: nil, additionalScopes: idpClient.scopes, nonce: idpClient.nonce)
             let user = try await signInResult.user.refreshTokensIfNeeded()
             guard let idToken = user.idToken?.tokenString else {
-                throw IdpExceptions.illegalStateException(message: "ID Token is required and not found on result")
+                throw IdpExceptions.illegalStateException(message: IdpErrorMessages.googleTokenMissing)
             }
             
             return idToken

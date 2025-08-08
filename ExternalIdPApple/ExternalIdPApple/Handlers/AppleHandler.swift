@@ -32,16 +32,17 @@ import PingExternalIdP
         // Sign in to Apple account
         for try await appleResponse in helper.startSignInWithAppleFlow() {
             guard let token = appleResponse.appleSignInResponse.id_token else {
-                throw IdpExceptions.illegalStateException(message: "Apple Sign In failed. No token received.")
+                throw IdpExceptions.illegalStateException(message: IdpErrorMessages.appleTokenMissing)
             }
             
-            guard let IDToken1tokenJSON = try? JSONEncoder().encode(appleResponse.appleSignInResponse), let IDToken1token = String(data: IDToken1tokenJSON, encoding: .utf8) else {
-                throw IdpExceptions.illegalStateException(message: "Encoding Apple Sign In response failed")
+            guard let encodedResponseData = try? JSONEncoder().encode(appleResponse.appleSignInResponse),
+                  let responseJsonString = String(data: encodedResponseData, encoding: .utf8) else {
+                throw IdpExceptions.illegalStateException(message: IdpErrorMessages.appleEncodingFailed)
             }
             
-            return IdpResult(token: token, additionalParameters: [AppleHandler.acceptsJSON: IDToken1token])
+            return IdpResult(token: token, additionalParameters: [AppleHandler.acceptsJSON: responseJsonString])
         }
-        throw IdpExceptions.illegalStateException(message: "Apple Sign In failed")
+        throw IdpExceptions.illegalStateException(message: IdpErrorMessages.appleSignInFailed)
     }
 }
 

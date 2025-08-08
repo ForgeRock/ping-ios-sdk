@@ -35,14 +35,14 @@ import PingExternalIdP
         do {
             self.idpClient = try await self.fetch(httpClient: self.httpClient, url: url)
         } catch {
-            throw IdpExceptions.unsupportedIdpException(message: "IdpClient fetch failed: \(error.localizedDescription)")
+            throw IdpExceptions.unsupportedIdpException(message: "\(IdpErrorMessages.idpFetchFailed) \(error.localizedDescription)")
         }
         guard let idpClient = self.idpClient else {
-            throw IdpExceptions.unsupportedIdpException(message: "IdpClient is nil")
+            throw IdpExceptions.unsupportedIdpException(message: IdpErrorMessages.invalidConfiguration)
         }
         let result = try await self.authorize(idpClient: idpClient)
         guard let continueUrl = idpClient.continueUrl, !continueUrl.isEmpty else {
-            throw IdpExceptions.illegalStateException(message: "continueUrl is missing or empty")
+            throw IdpExceptions.illegalStateException(message: IdpErrorMessages.invalidConfiguration)
         }
         let request = Request(urlString: continueUrl)
         request.header(name: Request.Constants.accept, value: Request.ContentType.json.rawValue)
@@ -59,7 +59,7 @@ import PingExternalIdP
         // Sign in to Apple account
         for try await appleResponse in helper.startSignInWithAppleFlow() {
             guard let token = appleResponse.appleSignInResponse.id_token else {
-                throw IdpExceptions.illegalStateException(message: "Apple Sign In failed. No token received.")
+                throw IdpExceptions.illegalStateException(message: IdpErrorMessages.appleTokenMissing)
             }
             
             let nonce = appleResponse.nonce ?? ""
@@ -70,6 +70,6 @@ import PingExternalIdP
             
             return IdpResult(token: token, additionalParameters: ["name": displayName, "firstName": firstName, "lastName": lastName, "nonce": nonce, "email": email])
         }
-        throw IdpExceptions.illegalStateException(message: "Apple Sign In failed")
+        throw IdpExceptions.illegalStateException(message: IdpErrorMessages.appleSignInFailed)
     }
 }

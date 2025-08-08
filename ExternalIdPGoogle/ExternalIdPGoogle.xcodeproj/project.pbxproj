@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		A525E7AC2DD7640D00B02C17 /* PingExternalIdP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7AB2DD7640D00B02C17 /* PingExternalIdP.framework */; };
 		A525E7AD2DD7640D00B02C17 /* PingExternalIdP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7AB2DD7640D00B02C17 /* PingExternalIdP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EC5016472E43B35F006D8C3A /* GoggleHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5016462E43B35A006D8C3A /* GoggleHandler.swift */; };
+		EC5016472E43B35F006D8C3A /* GoogleHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5016462E43B35A006D8C3A /* GoogleHandler.swift */; };
 		ECA7A2F12DC251870011E59C /* PingExternalIdPGoogle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2E72DC251860011E59C /* PingExternalIdPGoogle.framework */; };
 		ECA7A3142DC251F10011E59C /* ExternalIdPGoogleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A3122DC251F10011E59C /* ExternalIdPGoogleTests.swift */; };
 		ECA7A3172DC252590011E59C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = ECA7A3162DC252590011E59C /* GoogleSignIn */; };
@@ -44,7 +44,7 @@
 
 /* Begin PBXFileReference section */
 		A525E7AB2DD7640D00B02C17 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC5016462E43B35A006D8C3A /* GoggleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoggleHandler.swift; sourceTree = "<group>"; };
+		EC5016462E43B35A006D8C3A /* GoogleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleHandler.swift; sourceTree = "<group>"; };
 		ECA7A2E72DC251860011E59C /* PingExternalIdPGoogle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingExternalIdPGoogle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A2F02DC251870011E59C /* ExternalIdPGoogleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExternalIdPGoogleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A3122DC251F10011E59C /* ExternalIdPGoogleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalIdPGoogleTests.swift; sourceTree = "<group>"; };
@@ -122,7 +122,7 @@
 		ECA7A31A2DC252C40011E59C /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
-				EC5016462E43B35A006D8C3A /* GoggleHandler.swift */,
+				EC5016462E43B35A006D8C3A /* GoogleHandler.swift */,
 				ECA7A3182DC252BD0011E59C /* GoogleRequestHandler.swift */,
 			);
 			path = Handlers;
@@ -249,7 +249,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECA7A3192DC252BD0011E59C /* GoogleRequestHandler.swift in Sources */,
-				EC5016472E43B35F006D8C3A /* GoggleHandler.swift in Sources */,
+				EC5016472E43B35F006D8C3A /* GoogleHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

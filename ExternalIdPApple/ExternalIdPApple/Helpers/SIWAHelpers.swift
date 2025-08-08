@@ -114,7 +114,10 @@ final class SignInWithAppleHelper: NSObject {
             return
         }
         currentNonce = nonce
-        completionHandler = completion
+        completionHandler = { [weak self] result in
+            completion(result)
+            self?.completionHandler = nil  // Clear reference immediately
+        }
         showOSPrompt(nonce: nonce, scopes: scopes, on: topVC)
     }
     
@@ -213,6 +216,7 @@ extension FullName {
 //MARK: ASAuthorizationControllerDelegate
 extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        defer { completionHandler = nil }
         do {
             guard let currentNonce else {
                 throw SignInWithAppleError.unableToFindNonce
@@ -228,7 +232,9 @@ extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
             return
         }
     }
+    
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        defer { completionHandler = nil }
         completionHandler?(.failure(error))
         return
     }
@@ -238,6 +244,31 @@ extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
 @MainActor
 extension UIViewController: @retroactive ASAuthorizationControllerPresentationContextProviding {
     public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
-        return self.view.window!
+        // 1. Prefer the window associated with the current view controller.
+        // This is the most contextually correct window to present from.
+        if let window = self.view.window {
+            return window
+        }
+
+        // 2. As a fallback, find the key window of the app's active scene.
+        // This is a reliable method for modern (iOS 13+) scene-based apps.
+        let keyWindow = UIApplication.shared.connectedScenes
+            .filter { $0.activationState == .foregroundActive }
+            .compactMap { $0 as? UIWindowScene }
+            .first?
+            .windows
+            .first { $0.isKeyWindow }
+
+        if let window = keyWindow {
+            return window
+        }
+        
+        // 3. If no window can be found, something is fundamentally wrong.
+        // It's safer to crash with a clear error message than to use a temporary,
+        // un-managed window, which could hide bugs or cause unexpected UI behavior.
+        fatalError("""
+            Could not find a valid window to present the Sign in with Apple sheet.
+            Ensure the view controller is in the window hierarchy and the app has an active, foreground scene.
+            """)
     }
 }

@@ -80,12 +80,10 @@ import PingExternalIdP
     /// - Parameter idpClient: The `IdpClient` to use for authorization.
     /// - Returns: An `IdpResult` object containing the result of the authorization.
     public func authorize(idpClient: IdpClient) async throws -> IdpResult {
-        guard let topVC = IdpClient.getTopViewController() else {
-            throw IdpExceptions.illegalStateException(message: "Top view controller is required")
-        }
+        let topVC = try IdpValidationUtils.validateTopViewController()
         
         guard let validConfiguration = configuration else {
-            throw IdpExceptions.illegalStateException(message: "Invalid configuration")
+            throw IdpExceptions.illegalStateException(message: IdpErrorMessages.facebookConfigurationInvalid)
         }
         
         return try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<IdpResult, Error>) in
@@ -94,16 +92,16 @@ import PingExternalIdP
                 return
             }
             
-            Task { @MainActor in
-                self.manager.logIn(viewController: topVC, configuration: validConfiguration) { result in
+            Task { @MainActor [weak self] in
+                self?.manager.logIn(viewController: topVC, configuration: validConfiguration) { result in
                     switch result {
                     case .cancelled:
-                        continuation.resume(throwing: IdpExceptions.idpCanceledException(message: "User cancelled login"))
+                        continuation.resume(throwing: IdpExceptions.idpCanceledException(message: IdpErrorMessages.userCancelled))
                     case .failed(let error):
-                        continuation.resume(throwing: error)
+                        continuation.resume(throwing: IdpExceptions.illegalStateException(message: error.localizedDescription))
                     case .success(_, _, let token):
                         guard let accessToken = token?.tokenString else {
-                            continuation.resume(throwing: IdpExceptions.illegalStateException(message: "Access Token is required and not found on result"))
+                            continuation.resume(throwing: IdpExceptions.illegalStateException(message: IdpErrorMessages.facebookTokenMissing))
                             return
                         }
                         continuation.resume(returning: IdpResult(token: accessToken, additionalParameters: nil))

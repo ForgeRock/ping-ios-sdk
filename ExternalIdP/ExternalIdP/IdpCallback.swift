@@ -24,6 +24,32 @@ class IdpCallbacks: NSObject {
 }
 
 /// A callback that handles federated authentication with an external Identity Provider (IdP) like Google, Facebook, or Apple.
+///
+/// This callback provides all the necessary configuration from the authentication server to perform
+/// OAuth 2.0 / OpenID Connect flows with external identity providers. It supports both native SDK
+/// integration and browser-based flows.
+///
+/// ## Usage Example
+/// ```swift
+/// // The callback is automatically created from server response
+/// if let idpCallback = callback as? IdpCallback {
+///     let result = await idpCallback.authorize()
+///     switch result {
+///     case .success(let idpResult):
+///         // Authentication successful, proceed with next step
+///         await continueNode.next()
+///     case .failure(let error):
+///         // Handle authentication error
+///         print("Authentication failed: \(error)")
+///     }
+/// }
+/// ```
+///
+/// ## Supported Providers
+/// - Apple Sign In (Sign in with Apple)
+/// - Google Sign-In
+/// - Facebook Login
+///
 public final class IdpCallback: AbstractCallback, JourneyAware, RequestInterceptor, @unchecked Sendable {
     
     // MARK: - JourneyAware Conformance
@@ -32,34 +58,34 @@ public final class IdpCallback: AbstractCallback, JourneyAware, RequestIntercept
     // MARK: - Public Properties
     
     /// The name of the identity provider (e.g., "google", "facebook").
-    public var provider: String = ""
+    public private(set) var provider: String = ""
     
     /// The client ID for the application registered with the IdP.
-    public var clientId: String = ""
+    public private(set) var clientId: String = ""
     
     /// The redirect URI configured for the IdP application.
-    public var redirectUri: String = ""
+    public private(set) var redirectUri: String = ""
     
     /// A list of OAuth 2.0 scopes to request from the IdP.
-    public var scopes: [String] = []
+    public private(set) var scopes: [String] = []
     
     /// A unique value associated with the request to prevent replay attacks.
-    public var nonce: String = ""
+    public private(set) var nonce: String = ""
     
     /// A list of Authentication Context Class Reference values.
-    public var acrValues: [String] = []
+    public private(set) var acrValues: [String] = []
     
     /// A signed JWT containing the request parameters.
-    public var request: String = ""
+    public private(set) var request: String = ""
     
     /// A URL where the request object can be fetched.
-    public var requestUri: String = ""
+    public private(set) var requestUri: String = ""
     
     /// The native handler for the IdP request.
-    public var nativeHandler: IdpHandler?
+    public private(set) var nativeHandler: IdpHandler?
     
     /// Indicates whether the callback accepts JSON responses.
-    public var acceptsJSON: Bool = false
+    public private(set) var acceptsJSON: Bool = false
     
     // MARK: - Private State
     

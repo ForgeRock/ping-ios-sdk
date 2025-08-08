@@ -26,6 +26,7 @@
 		ECB7C5C22D54D9100006F1C8 /* IdpCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */; };
 		ECB7C69C2D5A2C1F0006F1C8 /* PingExternalIdP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0815B72D49377500F1AD02 /* PingExternalIdP.framework */; };
 		ECBF06492D50ED7A0066A3BD /* BrowserHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06482D50ED750066A3BD /* BrowserHandler.swift */; };
+		ECF7EB842E46262D002A5E8E /* IdpValidationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB832E462626002A5E8E /* IdpValidationUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +74,7 @@
 		ECB7C6982D5A2C1F0006F1C8 /* PingExternalIdPTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingExternalIdPTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF06442D50EBF60066A3BD /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF06482D50ED750066A3BD /* BrowserHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserHandler.swift; sourceTree = "<group>"; };
+		ECF7EB832E462626002A5E8E /* IdpValidationUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpValidationUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,9 +127,10 @@
 				EC9F9FC52D5E1E2800E2A31D /* IdpClient.swift */,
 				ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */,
 				EC5016112E436FE7006D8C3A /* IdpCallback.swift */,
-				EC5016132E436FF1006D8C3A /* SelectIdpCallback.swift */,
+				ECF7EB832E462626002A5E8E /* IdpValidationUtils.swift */,
 				EC0815EE2D493DC900F1AD02 /* IdpExceptions.swift */,
 				EC0815EC2D493A1E00F1AD02 /* IdpResult.swift */,
+				EC5016132E436FF1006D8C3A /* SelectIdpCallback.swift */,
 			);
 			path = ExternalIdP;
 			sourceTree = "<group>";
@@ -282,6 +285,7 @@
 			files = (
 				EC9F9FC42D5E1B2100E2A31D /* IdpRequestHandler.swift in Sources */,
 				ECB7C5C22D54D9100006F1C8 /* IdpCollector.swift in Sources */,
+				ECF7EB842E46262D002A5E8E /* IdpValidationUtils.swift in Sources */,
 				EC0815EF2D493DC900F1AD02 /* IdpExceptions.swift in Sources */,
 				EC9F9FC62D5E1E2C00E2A31D /* IdpClient.swift in Sources */,
 				ECBF06492D50ED7A0066A3BD /* BrowserHandler.swift in Sources */,

@@ -43,14 +43,14 @@ import GoogleSignIn
         do {
             self.idpClient = try await self.fetch(httpClient: self.httpClient, url: url)
         } catch {
-            throw IdpExceptions.unsupportedIdpException(message: "IdpClient fetch failed: \(error.localizedDescription)")
+            throw IdpExceptions.unsupportedIdpException(message: "\(IdpErrorMessages.idpFetchFailed) \(error.localizedDescription)")
         }
         guard let idpClient = self.idpClient else {
-            throw IdpExceptions.unsupportedIdpException(message: "IdpClient is nil")
+            throw IdpExceptions.unsupportedIdpException(message: IdpErrorMessages.invalidConfiguration)
         }
         let result = try await self.authorize(idpClient: idpClient)
         guard let continueUrl = idpClient.continueUrl, !continueUrl.isEmpty else {
-            throw IdpExceptions.illegalStateException(message: "continueUrl is missing or empty")
+            throw IdpExceptions.illegalStateException(message: IdpErrorMessages.invalidConfiguration)
         }
         let request = Request(urlString: continueUrl)
         request.header(name: Request.Constants.accept, value: Request.ContentType.json.rawValue)
@@ -63,22 +63,18 @@ import GoogleSignIn
     /// - Returns: An `IdpResult` object containing the result of the authorization.
     private func authorize(idpClient: IdpClient) async throws -> IdpResult {
         GIDSignIn.sharedInstance.signOut()
-        guard let _ = idpClient.clientId else {
-            throw IdpExceptions.illegalArgumentException(message: "Client ID is required")
-        }
-        guard let topVC = IdpClient.getTopViewController() else {
-            throw IdpExceptions.illegalStateException(message: "Top view controller is required")
-        }
+        let topVC = try IdpValidationUtils.validateTopViewController()
+        try IdpValidationUtils.validateClientId(idpClient.clientId, provider: "Google")
         
         return try await withCheckedThrowingContinuation { continuation in
             Task { @MainActor in
                 GIDSignIn.sharedInstance.signIn(withPresenting: topVC, hint: nil, additionalScopes: idpClient.scopes, nonce: idpClient.nonce) { result, error in
                     if let error = error {
-                        continuation.resume(throwing: error)
+                        continuation.resume(throwing: IdpExceptions.illegalStateException(message: error.localizedDescription))
                         return
                     }
                     guard let result = result else {
-                        continuation.resume(throwing: IdpExceptions.illegalStateException(message: "Result is nil"))
+                        continuation.resume(throwing: IdpExceptions.illegalStateException(message: IdpErrorMessages.googleResultMissing))
                         return
                     }
                     result.user.refreshTokensIfNeeded { user, error in
@@ -87,11 +83,11 @@ import GoogleSignIn
                             return
                         }
                         guard let _ = user else {
-                            continuation.resume(throwing: IdpExceptions.illegalStateException(message: "User returned nil"))
+                            continuation.resume(throwing: IdpExceptions.illegalStateException(message: IdpErrorMessages.googleUserMissing))
                             return
                         }
                         guard let token = result.user.idToken?.tokenString else {
-                            continuation.resume(throwing: IdpExceptions.illegalStateException(message: "ID Token is required and not found on result"))
+                            continuation.resume(throwing: IdpExceptions.illegalStateException(message: IdpErrorMessages.googleTokenMissing))
                             return
                         }
                         let idpResult = IdpResult(token: token, additionalParameters: nil)
