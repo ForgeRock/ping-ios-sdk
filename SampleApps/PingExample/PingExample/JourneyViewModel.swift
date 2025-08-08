@@ -123,5 +123,3 @@ class JourneyState {
         self.node = node
     }
 }
-
-
