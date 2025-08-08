@@ -27,6 +27,8 @@
 		ECB7C69C2D5A2C1F0006F1C8 /* PingExternalIdP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0815B72D49377500F1AD02 /* PingExternalIdP.framework */; };
 		ECBF06492D50ED7A0066A3BD /* BrowserHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06482D50ED750066A3BD /* BrowserHandler.swift */; };
 		ECF7EB842E46262D002A5E8E /* IdpValidationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB832E462626002A5E8E /* IdpValidationUtils.swift */; };
+		ECF7EB8A2E46553B002A5E8E /* IdpCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB892E465536002A5E8E /* IdpCallbackTests.swift */; };
+		ECF7EB8C2E4656F5002A5E8E /* SelectIdpCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB8B2E4656EA002A5E8E /* SelectIdpCallbackTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +77,8 @@
 		ECBF06442D50EBF60066A3BD /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF06482D50ED750066A3BD /* BrowserHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserHandler.swift; sourceTree = "<group>"; };
 		ECF7EB832E462626002A5E8E /* IdpValidationUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpValidationUtils.swift; sourceTree = "<group>"; };
+		ECF7EB892E465536002A5E8E /* IdpCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpCallbackTests.swift; sourceTree = "<group>"; };
+		ECF7EB8B2E4656EA002A5E8E /* SelectIdpCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectIdpCallbackTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +143,8 @@
 			isa = PBXGroup;
 			children = (
 				ECA53F932D635CF8002B35D4 /* ExternalIdPTests.swift */,
+				ECF7EB892E465536002A5E8E /* IdpCallbackTests.swift */,
+				ECF7EB8B2E4656EA002A5E8E /* SelectIdpCallbackTests.swift */,
 			);
 			path = ExternalIdPTests;
 			sourceTree = "<group>";
@@ -300,6 +306,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECF7EB8C2E4656F5002A5E8E /* SelectIdpCallbackTests.swift in Sources */,
+				ECF7EB8A2E46553B002A5E8E /* IdpCallbackTests.swift in Sources */,
 				ECA53F952D635CF8002B35D4 /* ExternalIdPTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

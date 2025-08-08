@@ -89,8 +89,8 @@ public final class IdpCallback: AbstractCallback, JourneyAware, RequestIntercept
     
     // MARK: - Private State
     
-    private var result: IdpResult = IdpResult(token: "", additionalParameters: [:])
-    private var tokenType: String = ""
+    var result: IdpResult = IdpResult(token: "", additionalParameters: [:])
+    var tokenType: String = ""
     
     // MARK: - Initialization and Parsing
     
