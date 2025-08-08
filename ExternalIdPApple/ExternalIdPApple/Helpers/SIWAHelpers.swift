@@ -44,9 +44,7 @@ struct SignInWithAppleResult: Sendable {
     ///  - Returns: A new `SignInWithAppleResult` object, or nil if the authorization object
     init?(authorization: ASAuthorization, nonce: String) {
         guard
-            let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
-            let appleIDToken = appleIDCredential.identityToken,
-            let token = String(data: appleIDToken, encoding: .utf8)
+            let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential
         else {
             return nil
         }

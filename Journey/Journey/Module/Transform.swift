@@ -63,11 +63,11 @@ public class NodeTransformModule: @unchecked Sendable {
         
         if json.keys.contains(JourneyConstants.authId) {
             if let callbackArray = json[JourneyConstants.callbacks] as? [[String: any Sendable]] {
-                callbacks.append(contentsOf: await CallbackRegistry.shared.callback(from: callbackArray))
+                callbacks.append(contentsOf: CallbackRegistry.shared.callback(from: callbackArray))
             }
             
             let node = JourneyContinueNode(context: context, workflow: journey, input: json, actions: callbacks)
-            await CallbackRegistry.shared.inject(continueNode: node, journey: journey)
+            CallbackRegistry.shared.inject(continueNode: node, journey: journey)
             
             return node
         } else {
