@@ -30,8 +30,10 @@ import GoogleSignIn
     }
     
     /// Authorizes the user with the IDP, based on the IdpClient.
-    /// - Parameter idpClient: The `IdpClient` to use for authorization.
+    /// - Parameters:
+    ///     - idpClient: The `IdpClient` to use for authorization.
     /// - Returns: An `IdpResult` object containing the result of the authorization.
+    /// - Throws: An error if the authorization fails.
     public func authorize(idpClient: IdpClient) async throws -> IdpResult {
         GIDSignIn.sharedInstance.signOut()
         let topVC = try IdpValidationUtils.validateTopViewController()

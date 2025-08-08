@@ -24,8 +24,10 @@ import PingExternalIdP
     private var idpClient: IdpClient?
     
     /// Authorizes the user with the IDP, based on the IdpClient.
-    /// - Parameter idpClient: The `IdpClient` to use for authorization.
+    /// - Parameters:
+    ///     - idpClient: The `IdpClient` instance used to initiate the authorization flow.
     /// - Returns: An `IdpResult` object containing the result of the authorization.
+    /// - Throws: An error if the authorization fails or if the token is missing.
     public func authorize(idpClient: IdpClient) async throws -> IdpResult {
         let helper = SignInWithAppleHelper(idpClient: idpClient)
         

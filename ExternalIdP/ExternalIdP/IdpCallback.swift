@@ -95,6 +95,9 @@ public final class IdpCallback: AbstractCallback, JourneyAware, RequestIntercept
     // MARK: - Initialization and Parsing
     
     /// Initializes a new instance of `IdpCallback` with the provided JSON input.
+    /// - Parameters:
+    ///  - name: The name of the callback.
+    ///  - value: The JSON value containing the IdP configuration.
     public override func initValue(name: String, value: Any) {
         switch name {
         case JourneyConstants.provider:
@@ -123,6 +126,9 @@ public final class IdpCallback: AbstractCallback, JourneyAware, RequestIntercept
     // MARK: - Payload and Interception
     
     /// Constructs the final payload with the token received from the IdP.
+    /// This method returns a dictionary containing the token and its type,
+    /// or the JSON response if `acceptsJSON` is true.
+    /// - Returns: A dictionary containing the token and its type.
     public override func payload() -> [String: Any] {
         if self.acceptsJSON, let jsonResponse = self.result.additionalParameters?[JourneyConstants.acceptsJSON] as? String {
             return input(jsonResponse, "JSON")
@@ -132,6 +138,12 @@ public final class IdpCallback: AbstractCallback, JourneyAware, RequestIntercept
     }
     
     /// A closure that modifies the outgoing request to include additional parameters from the IdP result.
+    /// This is used to add parameters to the request if the IdP does not accept JSON responses.
+    /// - Parameters:
+    ///  - context: The flow context containing the current state of the flow.
+    ///  - request: The outgoing request to be modified.
+    /// - Returns:
+    ///  - Request: The modified request with additional parameters added, if applicable.
     public func intercept(context: FlowContext, request: Request) -> Request {
         if self.acceptsJSON == false {
             let newRequest = request
@@ -216,6 +228,11 @@ public final class IdpCallback: AbstractCallback, JourneyAware, RequestIntercept
         }
     }
     
+    /// Creates an instance of the IdpHandler from the provided class type.
+    /// This method ensures that the class conforms to `NSObject` and `IdpHandler`
+    /// and initializes it safely.
+    /// - Parameter c: The class type to instantiate.
+    /// - Returns: An instance of `IdpHandler` if successful, or nil if the class does not conform to the required types.
     @MainActor
     private func makeNativeRequestHandler(from c: AnyClass) -> IdpHandler? {
         // 1) Ensure the class type is an NSObject subclass that conforms to IdpHandler.

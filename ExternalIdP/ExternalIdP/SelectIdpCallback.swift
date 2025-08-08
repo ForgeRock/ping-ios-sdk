@@ -53,6 +53,9 @@ public final class SelectIdpCallback: AbstractCallback, @unchecked Sendable {
     
     /// Sets the callback's properties from the JSON received from the authentication server.
     /// It specifically parses the list of providers from the "output" part of the JSON.
+    /// - Parameters:
+    ///  - name: The name of the callback.
+    ///  - value: The JSON value containing the list of providers.
     public override func initValue(name: String, value: Any) {
         guard let providersArray = value as? [[String: Any]] else {
             return
@@ -65,6 +68,7 @@ public final class SelectIdpCallback: AbstractCallback, @unchecked Sendable {
     // MARK: - Payload
     
     /// Constructs the final payload with the token received from the IdP.
+    /// - Returns: A dictionary containing the selected provider's name.
     public override func payload() -> [String: Any] {
         return input(self.value)
     }

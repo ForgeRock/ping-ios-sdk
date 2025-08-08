@@ -65,6 +65,12 @@ import PingExternalIdP
         self.manager.logOut()
     }
     
+    /// Handles the opening of a URL in the application.
+    /// - Parameters:
+    ///  - app: The `UIApplication` instance.
+    ///  - url: The URL to be opened.
+    ///  - options: Additional options for opening the URL.
+    /// - Returns: A boolean indicating whether the URL was handled successfully.
     @discardableResult
       public static func handleOpenURL(_ app: UIApplication, url: URL, options: [UIApplication.OpenURLOptionsKey:Any]?) -> Bool {
           ApplicationDelegate.shared.application(
@@ -77,7 +83,9 @@ import PingExternalIdP
       }
     
     /// Authorizes the user with the IDP, based on the IdpClient.
-    /// - Parameter idpClient: The `IdpClient` to use for authorization.
+    /// - Parameters:
+    ///  - idpClient: The `IdpClient` to use for authorization.
+    /// - Throws: An error if the authorization fails.
     /// - Returns: An `IdpResult` object containing the result of the authorization.
     public func authorize(idpClient: IdpClient) async throws -> IdpResult {
         let topVC = try IdpValidationUtils.validateTopViewController()
