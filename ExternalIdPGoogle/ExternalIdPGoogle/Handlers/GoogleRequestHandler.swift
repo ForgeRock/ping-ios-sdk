@@ -24,7 +24,7 @@ import GoogleSignIn
     
     private(set) var isNativeAvailable: Bool = false
     
-    /// Initializes a new instance of `AppleRequestHandler`.
+    /// Initializes a new instance of `GoogleRequestHandler`.
     /// - Parameter httpClient: The HTTP client to use for requests.
     @objc(initWithHttpClient:)
     init(httpClient: HttpClient) {

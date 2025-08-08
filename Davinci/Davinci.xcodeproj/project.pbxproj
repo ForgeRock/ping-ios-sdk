@@ -69,7 +69,6 @@
 		EC92B3782DA0132100E4246D /* PhoneNumberCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */; };
 		EC92B3A32DA52DAB00E4246D /* DeviceAuthenticatorCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3A22DA52DA200E4246D /* DeviceAuthenticatorCollectorTests.swift */; };
 		EC92B3A52DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3A42DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift */; };
-		ECB7C5C02D53D4440006F1C8 /* RequestInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7C5BF2D53D4390006F1C8 /* RequestInterceptor.swift */; };
 		ECE2B8712DB7C36800E2C51E /* PhoneNumberCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2B8702DB7C35400E2C51E /* PhoneNumberCollectorTests.swift */; };
 		ECF053222D9C31A3004C9AAE /* DeviceRegistrationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */; };
 		ECF053242D9C4275004C9AAE /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF053232D9C4273004C9AAE /* Device.swift */; };
@@ -164,7 +163,6 @@
 		EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberCollector.swift; sourceTree = "<group>"; };
 		EC92B3A22DA52DA200E4246D /* DeviceAuthenticatorCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticatorCollectorTests.swift; sourceTree = "<group>"; };
 		EC92B3A42DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationCollectorTests.swift; sourceTree = "<group>"; };
-		ECB7C5BF2D53D4390006F1C8 /* RequestInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestInterceptor.swift; sourceTree = "<group>"; };
 		ECBF06752D525BE20066A3BD /* Extrernal_idp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Extrernal_idp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECE2B8702DB7C35400E2C51E /* PhoneNumberCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberCollectorTests.swift; sourceTree = "<group>"; };
 		ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationCollector.swift; sourceTree = "<group>"; };
@@ -233,7 +231,6 @@
 				3A203D7E2BDB136C0020C995 /* DaVinci.swift */,
 				A5E646E12D665A050042D17E /* LocaleExtensions.swift */,
 				3A57CB612C44D688001EC9A0 /* User.swift */,
-				ECB7C5BF2D53D4390006F1C8 /* RequestInterceptor.swift */,
 			);
 			path = Davinci;
 			sourceTree = "<group>";
@@ -455,7 +452,6 @@
 			files = (
 				A5A61E032D4A92BF00767C2D /* ErrorNode.swift in Sources */,
 				A51D4CD12C585B4500FE09E0 /* FieldCollector.swift in Sources */,
-				ECB7C5C02D53D4440006F1C8 /* RequestInterceptor.swift in Sources */,
 				ECF0532D2D9D9966004C9AAE /* Collectors.swift in Sources */,
 				A5E9AEB82D2F2689000533ED /* ValidationError.swift in Sources */,
 				EC92B3782DA0132100E4246D /* PhoneNumberCollector.swift in Sources */,

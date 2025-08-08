@@ -74,11 +74,17 @@ final class JourneyContinueNode: ContinueNode, @unchecked Sendable {
         let realm = config?.realm ?? "root"
         let baseURL = config?.serverUrl ?? ""
 
-        let request = Request()
+        var request = Request()
         request.url("\(baseURL)/json/realms/\(realm)/authenticate")
         request.header(name: JourneyConstants.contentType,  value: JourneyConstants.applicationJson)
         request.body(body: asJson())
-
+        
+        for callback in actions {
+            if let interceptor = callback as? RequestInterceptor {
+                request = interceptor.intercept(context: context, request: request)
+            }
+        }
+        
         return request
     }
 }

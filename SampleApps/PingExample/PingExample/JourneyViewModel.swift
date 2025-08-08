@@ -92,13 +92,7 @@ class JourneyViewModel: ObservableObject {
             }
         }
     }
-
-    public func shouldValidate(node: ContinueNode) -> Bool {
-        let shouldValidate = false
-
-        return shouldValidate
-    }
-
+    
     public func refresh() {
         state = JourneyState(node: state.node)
     }

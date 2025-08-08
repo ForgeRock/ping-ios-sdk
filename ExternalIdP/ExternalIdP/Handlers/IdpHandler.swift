@@ -11,7 +11,7 @@
 import Foundation
 
 /// Idp handler protocol.
-public protocol IdpHandler {
+public protocol IdpHandler: Sendable {
     var tokenType: String { get set }
     
     /// Authorizes the user with the IDP.
