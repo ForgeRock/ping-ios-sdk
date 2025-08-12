@@ -7,6 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		95BF77B62E4AC09B005FAAC7 /* JourneyE2EBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77AE2E4AC09B005FAAC7 /* JourneyE2EBaseTest.swift */; };
+		95BF77B72E4AC09B005FAAC7 /* BooleanAttributeInputCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77A92E4AC09B005FAAC7 /* BooleanAttributeInputCallbackE2ETest.swift */; };
+		95BF77B82E4AC09B005FAAC7 /* ChoiceCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77AA2E4AC09B005FAAC7 /* ChoiceCallbackE2ETest.swift */; };
+		95BF77B92E4AC09B005FAAC7 /* MetadataCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77B12E4AC09B005FAAC7 /* MetadataCallbackE2ETest.swift */; };
+		95BF77BA2E4AC09B005FAAC7 /* KbaCreateCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77B02E4AC09B005FAAC7 /* KbaCreateCallbackE2ETest.swift */; };
+		95BF77BB2E4AC09B005FAAC7 /* JourneyE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77AF2E4AC09B005FAAC7 /* JourneyE2ETests.swift */; };
+		95BF77BC2E4AC09B005FAAC7 /* NamePasswordCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77B22E4AC09B005FAAC7 /* NamePasswordCallbackE2ETest.swift */; };
+		95BF77BD2E4AC09B005FAAC7 /* NumberAttributeInputCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77B32E4AC09B005FAAC7 /* NumberAttributeInputCallbackE2ETest.swift */; };
+		95BF77BE2E4AC09B005FAAC7 /* HiddenValueCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77AD2E4AC09B005FAAC7 /* HiddenValueCallbackE2ETest.swift */; };
+		95BF77BF2E4AC09B005FAAC7 /* ConsentMappingCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77AC2E4AC09B005FAAC7 /* ConsentMappingCallbackE2ETest.swift */; };
+		95BF77C02E4AC09B005FAAC7 /* ConfirmationCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77AB2E4AC09B005FAAC7 /* ConfirmationCallbackE2ETest.swift */; };
+		95BF77C12E4AC09B005FAAC7 /* PollingWaitCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77B42E4AC09B005FAAC7 /* PollingWaitCallbackE2ETest.swift */; };
+		95BF77C32E4AC196005FAAC7 /* StringAttributeInputCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77C22E4AC196005FAAC7 /* StringAttributeInputCallbackE2ETest.swift */; };
+		95BF77C52E4AC3B2005FAAC7 /* SuspendedTextCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77C42E4AC3B2005FAAC7 /* SuspendedTextCallbackE2ETest.swift */; };
+		95BF77C72E4AC5DF005FAAC7 /* TermsAndConditionsCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77C62E4AC5DF005FAAC7 /* TermsAndConditionsCallbackE2ETest.swift */; };
+		95BF77C92E4AC947005FAAC7 /* TextInputCallbackCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77C82E4AC947005FAAC7 /* TextInputCallbackCallbackE2ETest.swift */; };
+		95BF77CB2E4B9447005FAAC7 /* TextOutputCallbackCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77CA2E4B9447005FAAC7 /* TextOutputCallbackCallbackE2ETest.swift */; };
+		95BF77CD2E4B99EC005FAAC7 /* ValidatedUsernameCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77CC2E4B99EC005FAAC7 /* ValidatedUsernameCallbackE2ETest.swift */; };
+		95BF77CF2E4B9FB7005FAAC7 /* ValidatePasswordCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BF77CE2E4B9FB7005FAAC7 /* ValidatePasswordCallbackE2ETest.swift */; };
 		A50585152E3D05FC004813B5 /* ConfirmationCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50585142E3D05FA004813B5 /* ConfirmationCallbackTests.swift */; };
 		A50585172E3D13B6004813B5 /* KbaCreateCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50585162E3D13B2004813B5 /* KbaCreateCallbackTests.swift */; };
 		A5768D1E2E29B37D000290EE /* ConsentMappingCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D1D2E29B37A000290EE /* ConsentMappingCallback.swift */; };
@@ -89,6 +108,25 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		95BF77A92E4AC09B005FAAC7 /* BooleanAttributeInputCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanAttributeInputCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77AA2E4AC09B005FAAC7 /* ChoiceCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoiceCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77AB2E4AC09B005FAAC7 /* ConfirmationCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77AC2E4AC09B005FAAC7 /* ConsentMappingCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentMappingCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77AD2E4AC09B005FAAC7 /* HiddenValueCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiddenValueCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77AE2E4AC09B005FAAC7 /* JourneyE2EBaseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyE2EBaseTest.swift; sourceTree = "<group>"; };
+		95BF77AF2E4AC09B005FAAC7 /* JourneyE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyE2ETests.swift; sourceTree = "<group>"; };
+		95BF77B02E4AC09B005FAAC7 /* KbaCreateCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KbaCreateCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77B12E4AC09B005FAAC7 /* MetadataCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77B22E4AC09B005FAAC7 /* NamePasswordCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamePasswordCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77B32E4AC09B005FAAC7 /* NumberAttributeInputCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberAttributeInputCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77B42E4AC09B005FAAC7 /* PollingWaitCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingWaitCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77C22E4AC196005FAAC7 /* StringAttributeInputCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringAttributeInputCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77C42E4AC3B2005FAAC7 /* SuspendedTextCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspendedTextCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77C62E4AC5DF005FAAC7 /* TermsAndConditionsCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77C82E4AC947005FAAC7 /* TextInputCallbackCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextInputCallbackCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77CA2E4B9447005FAAC7 /* TextOutputCallbackCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextOutputCallbackCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77CC2E4B99EC005FAAC7 /* ValidatedUsernameCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedUsernameCallbackE2ETest.swift; sourceTree = "<group>"; };
+		95BF77CE2E4B9FB7005FAAC7 /* ValidatePasswordCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatePasswordCallbackE2ETest.swift; sourceTree = "<group>"; };
 		A50585142E3D05FA004813B5 /* ConfirmationCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationCallbackTests.swift; sourceTree = "<group>"; };
 		A50585162E3D13B2004813B5 /* KbaCreateCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KbaCreateCallbackTests.swift; sourceTree = "<group>"; };
 		A5768D1D2E29B37A000290EE /* ConsentMappingCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentMappingCallback.swift; sourceTree = "<group>"; };
@@ -165,6 +203,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		95BF77B52E4AC09B005FAAC7 /* integration tests */ = {
+			isa = PBXGroup;
+			children = (
+				95BF77AE2E4AC09B005FAAC7 /* JourneyE2EBaseTest.swift */,
+				95BF77AF2E4AC09B005FAAC7 /* JourneyE2ETests.swift */,
+				95BF77A92E4AC09B005FAAC7 /* BooleanAttributeInputCallbackE2ETest.swift */,
+				95BF77AA2E4AC09B005FAAC7 /* ChoiceCallbackE2ETest.swift */,
+				95BF77AB2E4AC09B005FAAC7 /* ConfirmationCallbackE2ETest.swift */,
+				95BF77AC2E4AC09B005FAAC7 /* ConsentMappingCallbackE2ETest.swift */,
+				95BF77AD2E4AC09B005FAAC7 /* HiddenValueCallbackE2ETest.swift */,
+				95BF77B02E4AC09B005FAAC7 /* KbaCreateCallbackE2ETest.swift */,
+				95BF77B12E4AC09B005FAAC7 /* MetadataCallbackE2ETest.swift */,
+				95BF77B22E4AC09B005FAAC7 /* NamePasswordCallbackE2ETest.swift */,
+				95BF77B32E4AC09B005FAAC7 /* NumberAttributeInputCallbackE2ETest.swift */,
+				95BF77B42E4AC09B005FAAC7 /* PollingWaitCallbackE2ETest.swift */,
+				95BF77C22E4AC196005FAAC7 /* StringAttributeInputCallbackE2ETest.swift */,
+				95BF77C42E4AC3B2005FAAC7 /* SuspendedTextCallbackE2ETest.swift */,
+				95BF77C62E4AC5DF005FAAC7 /* TermsAndConditionsCallbackE2ETest.swift */,
+				95BF77C82E4AC947005FAAC7 /* TextInputCallbackCallbackE2ETest.swift */,
+				95BF77CA2E4B9447005FAAC7 /* TextOutputCallbackCallbackE2ETest.swift */,
+				95BF77CC2E4B99EC005FAAC7 /* ValidatedUsernameCallbackE2ETest.swift */,
+				95BF77CE2E4B9FB7005FAAC7 /* ValidatePasswordCallbackE2ETest.swift */,
+			);
+			path = "integration tests";
+			sourceTree = "<group>";
+		};
 		EC727A1A2E019243005D9E28 = {
 			isa = PBXGroup;
 			children = (
@@ -202,6 +266,7 @@
 		EC727A5F2E019258005D9E28 /* JourneyTests */ = {
 			isa = PBXGroup;
 			children = (
+				95BF77B52E4AC09B005FAAC7 /* integration tests */,
 				ECD562A62E0C45F900F0B5A9 /* Config */,
 				EC2326A72E0D7C7800634A50 /* AgentTests.swift */,
 				EC23269D2E0D5E4700634A50 /* CallbackRegistryTests.swift */,
@@ -449,7 +514,25 @@
 				EC2326A22E0D65A800634A50 /* PasswordCallbackTests.swift in Sources */,
 				EC727A602E019258005D9E28 /* JourneyTests.swift in Sources */,
 				A50585152E3D05FC004813B5 /* ConfirmationCallbackTests.swift in Sources */,
+				95BF77B62E4AC09B005FAAC7 /* JourneyE2EBaseTest.swift in Sources */,
+				95BF77B72E4AC09B005FAAC7 /* BooleanAttributeInputCallbackE2ETest.swift in Sources */,
+				95BF77B82E4AC09B005FAAC7 /* ChoiceCallbackE2ETest.swift in Sources */,
+				95BF77B92E4AC09B005FAAC7 /* MetadataCallbackE2ETest.swift in Sources */,
+				95BF77BA2E4AC09B005FAAC7 /* KbaCreateCallbackE2ETest.swift in Sources */,
+				95BF77BB2E4AC09B005FAAC7 /* JourneyE2ETests.swift in Sources */,
+				95BF77BC2E4AC09B005FAAC7 /* NamePasswordCallbackE2ETest.swift in Sources */,
+				95BF77BD2E4AC09B005FAAC7 /* NumberAttributeInputCallbackE2ETest.swift in Sources */,
+				95BF77CF2E4B9FB7005FAAC7 /* ValidatePasswordCallbackE2ETest.swift in Sources */,
+				95BF77BE2E4AC09B005FAAC7 /* HiddenValueCallbackE2ETest.swift in Sources */,
+				95BF77BF2E4AC09B005FAAC7 /* ConsentMappingCallbackE2ETest.swift in Sources */,
+				95BF77C02E4AC09B005FAAC7 /* ConfirmationCallbackE2ETest.swift in Sources */,
+				95BF77C92E4AC947005FAAC7 /* TextInputCallbackCallbackE2ETest.swift in Sources */,
+				95BF77CB2E4B9447005FAAC7 /* TextOutputCallbackCallbackE2ETest.swift in Sources */,
+				95BF77C12E4AC09B005FAAC7 /* PollingWaitCallbackE2ETest.swift in Sources */,
+				95BF77C32E4AC196005FAAC7 /* StringAttributeInputCallbackE2ETest.swift in Sources */,
 				EC2326A02E0D62ED00634A50 /* NameCallbackTests.swift in Sources */,
+				95BF77CD2E4B99EC005FAAC7 /* ValidatedUsernameCallbackE2ETest.swift in Sources */,
+				95BF77C72E4AC5DF005FAAC7 /* TermsAndConditionsCallbackE2ETest.swift in Sources */,
 				ECD562A42E0C45E300F0B5A9 /* Config.swift in Sources */,
 				A50585172E3D13B6004813B5 /* KbaCreateCallbackTests.swift in Sources */,
 				EC23269E2E0D5E4E00634A50 /* CallbackRegistryTests.swift in Sources */,
@@ -458,6 +541,7 @@
 				ECD562AB2E0C494200F0B5A9 /* MockAPIEndpoint.swift in Sources */,
 				EC2326A42E0D671700634A50 /* JourneyContinueNodeTests.swift in Sources */,
 				ECD562AC2E0C494200F0B5A9 /* MockResponse.swift in Sources */,
+				95BF77C52E4AC3B2005FAAC7 /* SuspendedTextCallbackE2ETest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
