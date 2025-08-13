@@ -35,8 +35,18 @@ public protocol JourneyAware {
 ///  - inject(continueNode:): Injects the ContinueNode instances into the collectors.
 ///  - reset: Resets the CallbackRegistry by clearing all registered callbacks.
 public class CallbackRegistry: @unchecked Sendable {
-    /// A dictionary to hold the collector creation functions.
-    public var callbacks: [String: any Callback.Type] = [:]
+    /// Concurrent queue for thread-safe access to callbacks dictionary
+    private let queue = DispatchQueue(label: "com.pingidentity.callback.registry.queue", attributes: .concurrent)
+
+    /// Internal storage for callback types, protected by the synchronization queue
+    private var _callbacks: [String: any Callback.Type] = [:]
+
+    /// Thread-safe read-only access to the callbacks dictionary
+    public var callbacks: [String: any Callback.Type] {
+        return queue.sync {
+            return _callbacks
+        }
+    }
 
     /// The shared instance of the CallbackRegistry.
     public static let shared = CallbackRegistry()
@@ -77,7 +87,9 @@ public class CallbackRegistry: @unchecked Sendable {
     ///   - type: The type of the Callback.
     ///   - block: A function that creates a new instance of the Callback.
     public func register(type: String, callback: any Callback.Type) {
-        callbacks[type] = callback
+        queue.async(flags: .barrier) {
+            self._callbacks[type] = callback
+        }
     }
 
     /// Creates a list of Callback instances from an array of dictionaries.
@@ -110,7 +122,9 @@ public class CallbackRegistry: @unchecked Sendable {
 
     /// Resets the CallbackRegistry by clearing all registered collectors.
     public func reset() {
-        callbacks.removeAll()
+        queue.async(flags: .barrier) {
+            self._callbacks.removeAll()
+        }
     }
 }
 

@@ -184,11 +184,10 @@ user input. You can
 access these callbacks using `node.callbacks()` and provide the necessary information to each
 relevant callback.
 
-The following Callback will be supported in the Core Journey Module:
+The following Callbacks will be supported in the Core Journey Module:
 
 | Callback Name                   | Callback Description                                                                                |
 |---------------------------------|-----------------------------------------------------------------------------------------------------|
-| AppIntegrity                    | Collects a generated token from the client to verify the integrity of the app                       |
 | BooleanAttributeInputCallback   | Collects true or false.                                                                             |
 | ChoiceCallback                  | Collects single user input from available choices, retrieves selected choice from user interaction. |
 | ConfirmationCallback            | Retrieve a selected option from a list of options.                                                  |
@@ -204,7 +203,7 @@ The following Callback will be supported in the Core Journey Module:
 | SuspendedTextOutputCallback     | Pause and resume authentication, sometimes known as "magic links".                                  |
 | TextInputCallback               | Collects text input from the end user. For example, a nickname for their account.                   |
 | TextOutputCallback              | Provides a message to be displayed to a user with a given message type.                             |
-| TermsAndConditionsCallback      | Collects a user’s acceptance of the configured Terms & Conditions.                                  |
+| TermsAndConditionsCallback      | Collects a user's acceptance of the configured Terms & Conditions.                                  |
 | ValidatedCreatePasswordCallback | Collects a password value with optional password policy validation.                                 |
 | ValidatedCreateUsernameCallback | Collects a username value with optional username policy validation.                                 |
 
@@ -476,8 +475,21 @@ C4Context
     Rel(journey, utils, "Depends on")
 ```
 
-* [Logger](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/logger)
-* [Plugin](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/plugin)
-* [Orchestrator](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/orchestrator)
-* [Storage](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/storage)
-* [Utils](https://github.com/ForgeRock/ping-ios-sdk/tree/SDKS-3918_Journey_module_design/foundation/utils)
+### Journey's Callback Customization & Extension
+
+Callbacks below will be supported by other modules:
+
+| Callback Name                    | Callback Description                                                           |
+|----------------------------------|--------------------------------------------------------------------------------|
+| AppIntegrity                     | Collects a generated token from the client to verify the integrity of the app  |
+| DeviceBinding                    | Cryptographically bind a mobile device to a user account.                      |
+| DeviceProfileCallback            | Collects meta and/or location data about the authenticating device.            |
+| DeviceSigningVerifier            | Verify ownership of a bound device by signing a challenge.                     |
+| PingOneProtectEvaluationCallback | Collects captured contextual data from the client to perform risk evaluations. |
+| PingOneProtectInitializeCallback | Instructs the client to start capturing contextual data for risk evaluations   |
+| ReCaptchaCallback                | Provides data required to use a CAPTCHA in your apps.                          |
+| ReCaptchaEnterpriseCallback      | Provides data required to use reCAPTCHA Enterprise in your apps.               |
+| WebAuthnRegistrationCallback     | WebAuthn Registration.                                                         |
+| WebAuthnAuthenticationCallback   | WebAuthn Authentication.                                                       |
+| SelectIdpCallback                | External Identity provider selection.                                          |
+| IdpCallback                      | External Identity provider authentication.                                     |

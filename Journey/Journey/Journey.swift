@@ -59,9 +59,7 @@ public extension Journey {
         config.module(SessionModule.config)
         config.module(OidcModule.config)
         
-        Task {
-            CallbackRegistry.shared.registerDefaultCallbacks()
-        }
+        CallbackRegistry.shared.registerDefaultCallbacks()
         
         // Apply custom configuration
         block(config)
