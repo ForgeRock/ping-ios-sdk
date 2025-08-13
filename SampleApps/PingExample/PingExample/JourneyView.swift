@@ -13,13 +13,14 @@ import SwiftUI
 import PingOrchestrate
 import PingJourney
 import PingProtect
+import PingExternalIdP
 
 struct JourneyView: View {
     /// The view model that manages the Journey flow logic.
     @StateObject private var journeyViewModel = JourneyViewModel()
     /// A binding to the navigation stack path.
     @Binding var path: [String]
-
+    
     var body: some View {
         ZStack {
             if journeyViewModel.showJourneyNameInput {
@@ -64,21 +65,21 @@ struct JourneyView: View {
 struct JourneyNameInputView: View {
     @ObservedObject var journeyViewModel: JourneyViewModel
     @State private var journeyName: String = ""
-
+    
     var body: some View {
         VStack(spacing: 24) {
             Spacer()
-
+            
             Image("Logo")
                 .resizable()
                 .scaledToFill()
                 .frame(width: 120, height: 120)
-
+            
             VStack(spacing: 16) {
                 Text("Enter Journey Name")
                     .font(.title2)
                     .fontWeight(.semibold)
-
+                
                 TextField("Journey Name", text: $journeyName)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
@@ -88,9 +89,9 @@ struct JourneyNameInputView: View {
                             .stroke(Color.gray, lineWidth: 1)
                     )
                     .onAppear() { journeyName = journeyViewModel.getSavedJourneyName() }
-
+                
                 Spacer()
-
+                
                 NextButton(title: "Start Journey") {
                     Task {
                         journeyViewModel.saveJourneyName(journeyName)
@@ -98,7 +99,7 @@ struct JourneyNameInputView: View {
                     }
                 }
             }
-
+            
             Spacer()
         }
         .padding()
@@ -111,19 +112,20 @@ struct CallbackView: View {
     @ObservedObject var journeyViewModel: JourneyViewModel
     /// The next node to process in the flow.
     public var node: ContinueNode
-
+    
     var body: some View {
         VStack {
             Image("Logo").resizable().scaledToFill().frame(width: 100, height: 100)
-
+            
             JourneyNodeView(continueNode: node,
                             onNodeUpdated:  { journeyViewModel.refresh() },
                             onStart: { Task { await journeyViewModel.startJourney(with: journeyViewModel.getSavedJourneyName()) }},
                             onNext: { Task {
+                print("Next button tapped")
                 await journeyViewModel.next(node: node)
             }})
         }
-
+        
     }
 }
 
@@ -132,82 +134,97 @@ struct JourneyNodeView: View {
     let onNodeUpdated: () -> Void
     let onStart: () -> Void
     let onNext: () -> Void
-
+    
     private var showNext: Bool {
         !continueNode.callbacks.contains { callback in
             callback is ConfirmationCallback ||
             callback is SuspendedTextOutputCallback ||
             callback is PingOneProtectInitializeCallback ||
-            callback is PingOneProtectEvaluationCallback
+            callback is PingOneProtectEvaluationCallback ||
+            callback is IdpCallback
         }
     }
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-
+            
             ForEach(continueNode.callbacks, id: \.id) { callback in
                 switch callback {
                 case let booleanCallback as BooleanAttributeInputCallback:
                     BooleanAttributeInputCallbackView(callback: booleanCallback, onNodeUpdated: onNodeUpdated)
-
+                    
                 case let choiceCallback as ChoiceCallback:
                     ChoiceCallbackView(callback: choiceCallback, onNodeUpdated: onNodeUpdated)
-
+                    
                 case let confirmationCallback as ConfirmationCallback:
                     ConfirmationCallbackView(callback: confirmationCallback, onSelected: onNext)
-
+                    
                 case let consentCallback as ConsentMappingCallback:
                     ConsentMappingCallbackView(callback: consentCallback, onNodeUpdated: onNodeUpdated)
-
+                    
                 case let kbaCallback as KbaCreateCallback:
                     KbaCreateCallbackView(callback: kbaCallback, onNodeUpdated: onNodeUpdated)
-
+                    
                 case let numberCallback as NumberAttributeInputCallback:
                     NumberAttributeInputCallbackView(callback: numberCallback, onNodeUpdated: onNodeUpdated)
-
+                    
                 case let passwordCallback as PasswordCallback:
                     PasswordCallbackView(callback: passwordCallback, onNodeUpdated: onNodeUpdated)
-
+                    
                 case let pollingCallback as PollingWaitCallback:
                     PollingWaitCallbackView(callback: pollingCallback, onTimeout: onNext)
-
+                    
                 case let stringCallback as StringAttributeInputCallback:
                     StringAttributeInputCallbackView(callback: stringCallback, onNodeUpdated: onNodeUpdated)
-
+                    
                 case let termsCallback as TermsAndConditionsCallback:
                     TermsAndConditionsCallbackView(callback: termsCallback, onNodeUpdated: onNodeUpdated)
-
+                    
                 case let textInputCallback as TextInputCallback:
                     TextInputCallbackView(callback: textInputCallback, onNodeUpdated: onNodeUpdated)
-
+                    
                 case let textOutputCallback as TextOutputCallback:
                     TextOutputCallbackView(callback: textOutputCallback)
-
+                    
                 case let suspendedTextCallback as SuspendedTextOutputCallback:
                     TextOutputCallbackView(callback: suspendedTextCallback)
-
+                    
                 case let nameCallback as NameCallback:
                     NameCallbackView(callback: nameCallback, onNodeUpdated: onNodeUpdated)
-
+                    
                 case let validatedUsernameCallback as ValidatedUsernameCallback:
                     ValidatedUsernameCallbackView(callback: validatedUsernameCallback, onNodeUpdated: onNodeUpdated)
-
+                    
                 case let validatedPasswordCallback as ValidatedPasswordCallback:
                     ValidatedPasswordCallbackView(callback: validatedPasswordCallback, onNodeUpdated: onNodeUpdated)
-
+                    
                 case let protectInitCallback as PingOneProtectInitializeCallback:
                     PingOneProtectInitializeCallbackView(callback: protectInitCallback, onNext: onNext)
-
+                    
                 case let protectEvalCallback as PingOneProtectEvaluationCallback:
                     PingOneProtectEvaluationCallbackView(callback: protectEvalCallback, onNext: onNext)
+                    
+                case let selectIdpCallback as SelectIdpCallback:
+                    SelectIdpCallbackView(callback: selectIdpCallback, onNext: onNext)
+                    
+                case let idpCallback as IdpCallback:
+                    let idpCallbackViewModel = IdpCallbackViewModel(callback: idpCallback)
+                    IdpCallbackView(viewModel: idpCallbackViewModel, onNext: onNext)
 
                 default:
                     EmptyView()
                 }
             }
-
+            
             if showNext {
-                Button(action: { onNext() }) {
+                Button(action: {
+                    if let selectIDPCallback = continueNode.callbacks.first(where: {
+                        $0 is SelectIdpCallback
+                    }) as? SelectIdpCallback {
+                        selectIDPCallback.value = "localAuthentication"
+                    }
+                    onNext()
+                }) {
                     Text("Next")
                         .frame(maxWidth: .infinity)
                         .padding()

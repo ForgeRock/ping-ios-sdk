@@ -58,7 +58,7 @@ open class AbstractCallback: Callback, @unchecked Sendable {
     }
 
     /// Returns the full JSON payload
-    public func payload() -> [String: Any] {
+    open func payload() -> [String: Any] {
         return json
     }
 
