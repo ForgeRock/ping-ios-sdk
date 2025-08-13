@@ -12,73 +12,11 @@ import XCTest
 @testable import PingProtect
 @testable import PingJourney
 
-// Mock Protect Configuration
-struct MockProtectConfig {
-    var envId: String?
-    var deviceAttributesToIgnore: [String] = []
-    var customHost: String?
-    var isConsoleLogEnabled: Bool = false
-    var isLazyMetadata: Bool = false
-    var isBehavioralDataCollection: Bool = false
-}
 
-// Mock Protect SDK for testing
-class MockProtectSDK {
-    static var shouldThrowError = false
-    static var errorMessage = "Initialization failed"
-    static var initializeCalled = false
-    static var resumeBehavioralDataCalled = false
-    static var pauseBehavioralDataCalled = false
-    static var configCalled = false
-    static var lastConfig: MockProtectConfig?
-
-    static func reset() {
-        shouldThrowError = false
-        errorMessage = "Initialization failed"
-        initializeCalled = false
-        resumeBehavioralDataCalled = false
-        pauseBehavioralDataCalled = false
-        configCalled = false
-        lastConfig = nil
-    }
-
-    static func config(_ closure: (inout MockProtectConfig) -> Void) async {
-        configCalled = true
-        var config = MockProtectConfig()
-        closure(&config)
-        lastConfig = config
-    }
-
-    static func initialize() async throws {
-        initializeCalled = true
-        if shouldThrowError {
-            throw InitializationError.initFailed(errorMessage)
-        }
-    }
-
-    static func resumeBehavioralData() async throws {
-        resumeBehavioralDataCalled = true
-    }
-
-    static func pauseBehavioralData() async throws {
-        pauseBehavioralDataCalled = true
-    }
-}
-
-enum InitializationError: LocalizedError {
-    case initFailed(String)
-
-    var errorDescription: String? {
-        switch self {
-        case .initFailed(let message):
-            return message
-        }
-    }
-}
 
 // Test double for PingOneProtectInitializeCallback
 class TestableProtectInitializeCallback: PingOneProtectInitializeCallback, @unchecked Sendable {
-    var mockProtect: MockProtectSDK.Type = MockProtectSDK.self
+    var mockProtect: MockProtect.Type = MockProtect.self
     var errorMessage: String?
 
     override func error(_ message: String) {
@@ -119,13 +57,13 @@ final class PingOneProtectInitializeCallbackTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        MockProtectSDK.reset()
+        MockProtect.reset()
         callback = TestableProtectInitializeCallback()
     }
 
     override func tearDown() {
         callback = nil
-        MockProtectSDK.reset()
+        MockProtect.reset()
         super.tearDown()
     }
 
@@ -154,18 +92,18 @@ final class PingOneProtectInitializeCallbackTests: XCTestCase {
         // Then - Verify result and mock calls
         switch result {
         case .success:
-            XCTAssertTrue(MockProtectSDK.configCalled)
-            XCTAssertTrue(MockProtectSDK.initializeCalled)
-            XCTAssertTrue(MockProtectSDK.resumeBehavioralDataCalled)
-            XCTAssertFalse(MockProtectSDK.pauseBehavioralDataCalled)
+            XCTAssertTrue(MockProtect.configCalled)
+            XCTAssertTrue(MockProtect.initializeCalled)
+            XCTAssertTrue(MockProtect.resumeBehavioralDataCalled)
+            XCTAssertFalse(MockProtect.pauseBehavioralDataCalled)
 
             // Verify config values
-            XCTAssertEqual(MockProtectSDK.lastConfig?.envId, "02fb4743-189a-4bc7-9d6c-a919edfe6447")
-            XCTAssertEqual(MockProtectSDK.lastConfig?.customHost, "host.example.com")
-            XCTAssertTrue(MockProtectSDK.lastConfig?.isConsoleLogEnabled ?? false)
-            XCTAssertTrue(MockProtectSDK.lastConfig?.isLazyMetadata ?? false)
-            XCTAssertTrue(MockProtectSDK.lastConfig?.isBehavioralDataCollection ?? false)
-            XCTAssertEqual(MockProtectSDK.lastConfig?.deviceAttributesToIgnore, ["attr1", "attr2"])
+            XCTAssertEqual(MockProtect.lastConfig?.envId, "02fb4743-189a-4bc7-9d6c-a919edfe6447")
+            XCTAssertEqual(MockProtect.lastConfig?.customHost, "host.example.com")
+            XCTAssertTrue(MockProtect.lastConfig?.isConsoleLogEnabled ?? false)
+            XCTAssertTrue(MockProtect.lastConfig?.isLazyMetadata ?? false)
+            XCTAssertTrue(MockProtect.lastConfig?.isBehavioralDataCollection ?? false)
+            XCTAssertEqual(MockProtect.lastConfig?.deviceAttributesToIgnore, ["attr1", "attr2"])
 
             XCTAssertNil(callback.errorMessage)
         case .failure:
@@ -175,8 +113,8 @@ final class PingOneProtectInitializeCallbackTests: XCTestCase {
 
     func testStartReturnsFailureResultWhenProtectThrowsException() async {
         // Given
-        MockProtectSDK.shouldThrowError = true
-        MockProtectSDK.errorMessage = "Initialization failed"
+        MockProtect.shouldThrowError = true
+        MockProtect.errorMessage = "Initialization failed"
 
         callback.initValue(name: JourneyConstants.envId, value: "02fb4743-189a-4bc7-9d6c-a919edfe6447")
         callback.initValue(name: JourneyConstants.behavioralDataCollection, value: true)
@@ -191,9 +129,9 @@ final class PingOneProtectInitializeCallbackTests: XCTestCase {
         case .failure(let error):
             XCTAssertEqual(error.localizedDescription, "Initialization failed")
             XCTAssertEqual(callback.errorMessage, "Initialization failed")
-            XCTAssertTrue(MockProtectSDK.configCalled)
-            XCTAssertTrue(MockProtectSDK.initializeCalled)
-            XCTAssertFalse(MockProtectSDK.resumeBehavioralDataCalled)
+            XCTAssertTrue(MockProtect.configCalled)
+            XCTAssertTrue(MockProtect.initializeCalled)
+            XCTAssertFalse(MockProtect.resumeBehavioralDataCalled)
         }
     }
 
@@ -223,8 +161,8 @@ final class PingOneProtectInitializeCallbackTests: XCTestCase {
         // Then
         switch result {
         case .success:
-            XCTAssertTrue(MockProtectSDK.resumeBehavioralDataCalled)
-            XCTAssertFalse(MockProtectSDK.pauseBehavioralDataCalled)
+            XCTAssertTrue(MockProtect.resumeBehavioralDataCalled)
+            XCTAssertFalse(MockProtect.pauseBehavioralDataCalled)
         case .failure:
             XCTFail("Expected success")
         }
@@ -241,8 +179,8 @@ final class PingOneProtectInitializeCallbackTests: XCTestCase {
         // Then
         switch result {
         case .success:
-            XCTAssertFalse(MockProtectSDK.resumeBehavioralDataCalled)
-            XCTAssertTrue(MockProtectSDK.pauseBehavioralDataCalled)
+            XCTAssertFalse(MockProtect.resumeBehavioralDataCalled)
+            XCTAssertTrue(MockProtect.pauseBehavioralDataCalled)
         case .failure:
             XCTFail("Expected success")
         }
@@ -309,7 +247,7 @@ final class PingOneProtectInitializeCallbackTests: XCTestCase {
         _ = await callback.start()
 
         // Then - Should pass nil to config
-        XCTAssertNil(MockProtectSDK.lastConfig?.envId)
+        XCTAssertNil(MockProtect.lastConfig?.envId)
     }
 
     func testEmptyCustomHostHandling() async {
@@ -321,7 +259,7 @@ final class PingOneProtectInitializeCallbackTests: XCTestCase {
         _ = await callback.start()
 
         // Then - Should pass nil to config
-        XCTAssertNil(MockProtectSDK.lastConfig?.customHost)
+        XCTAssertNil(MockProtect.lastConfig?.customHost)
     }
 
     func testNonEmptyStringsHandling() async {
@@ -333,16 +271,16 @@ final class PingOneProtectInitializeCallbackTests: XCTestCase {
         _ = await callback.start()
 
         // Then - Should pass actual values to config
-        XCTAssertEqual(MockProtectSDK.lastConfig?.envId, "env-id")
-        XCTAssertEqual(MockProtectSDK.lastConfig?.customHost, "host.com")
+        XCTAssertEqual(MockProtect.lastConfig?.envId, "env-id")
+        XCTAssertEqual(MockProtect.lastConfig?.customHost, "host.com")
     }
 
     // MARK: - Error Message Tests
 
     func testErrorWithEmptyMessage() async {
         // Given
-        MockProtectSDK.shouldThrowError = true
-        MockProtectSDK.errorMessage = ""
+        MockProtect.shouldThrowError = true
+        MockProtect.errorMessage = ""
 
         // When
         let result = await callback.start()
@@ -375,18 +313,18 @@ final class PingOneProtectInitializeCallbackTests: XCTestCase {
         switch result {
         case .success:
             // Verify all configurations were applied
-            XCTAssertEqual(MockProtectSDK.lastConfig?.envId, "complete-env-id")
-            XCTAssertEqual(MockProtectSDK.lastConfig?.customHost, "complete.host.com")
-            XCTAssertTrue(MockProtectSDK.lastConfig?.isConsoleLogEnabled ?? false)
-            XCTAssertTrue(MockProtectSDK.lastConfig?.isLazyMetadata ?? false)
-            XCTAssertTrue(MockProtectSDK.lastConfig?.isBehavioralDataCollection ?? false)
-            XCTAssertEqual(MockProtectSDK.lastConfig?.deviceAttributesToIgnore, ["attr1", "attr2", "attr3"])
+            XCTAssertEqual(MockProtect.lastConfig?.envId, "complete-env-id")
+            XCTAssertEqual(MockProtect.lastConfig?.customHost, "complete.host.com")
+            XCTAssertTrue(MockProtect.lastConfig?.isConsoleLogEnabled ?? false)
+            XCTAssertTrue(MockProtect.lastConfig?.isLazyMetadata ?? false)
+            XCTAssertTrue(MockProtect.lastConfig?.isBehavioralDataCollection ?? false)
+            XCTAssertEqual(MockProtect.lastConfig?.deviceAttributesToIgnore, ["attr1", "attr2", "attr3"])
 
             // Verify correct method calls
-            XCTAssertTrue(MockProtectSDK.configCalled)
-            XCTAssertTrue(MockProtectSDK.initializeCalled)
-            XCTAssertTrue(MockProtectSDK.resumeBehavioralDataCalled)
-            XCTAssertFalse(MockProtectSDK.pauseBehavioralDataCalled)
+            XCTAssertTrue(MockProtect.configCalled)
+            XCTAssertTrue(MockProtect.initializeCalled)
+            XCTAssertTrue(MockProtect.resumeBehavioralDataCalled)
+            XCTAssertFalse(MockProtect.pauseBehavioralDataCalled)
         case .failure:
             XCTFail("Expected success")
         }
@@ -408,18 +346,18 @@ final class PingOneProtectInitializeCallbackTests: XCTestCase {
         switch result {
         case .success:
             // Verify configurations
-            XCTAssertEqual(MockProtectSDK.lastConfig?.envId, "minimal-env-id")
-            XCTAssertNil(MockProtectSDK.lastConfig?.customHost)
-            XCTAssertFalse(MockProtectSDK.lastConfig?.isConsoleLogEnabled ?? true)
-            XCTAssertFalse(MockProtectSDK.lastConfig?.isLazyMetadata ?? true)
-            XCTAssertFalse(MockProtectSDK.lastConfig?.isBehavioralDataCollection ?? true)
-            XCTAssertTrue(MockProtectSDK.lastConfig?.deviceAttributesToIgnore.isEmpty ?? false)
+            XCTAssertEqual(MockProtect.lastConfig?.envId, "minimal-env-id")
+            XCTAssertNil(MockProtect.lastConfig?.customHost)
+            XCTAssertFalse(MockProtect.lastConfig?.isConsoleLogEnabled ?? true)
+            XCTAssertFalse(MockProtect.lastConfig?.isLazyMetadata ?? true)
+            XCTAssertFalse(MockProtect.lastConfig?.isBehavioralDataCollection ?? true)
+            XCTAssertTrue(MockProtect.lastConfig?.deviceAttributesToIgnore.isEmpty ?? false)
 
             // Verify correct method calls
-            XCTAssertTrue(MockProtectSDK.configCalled)
-            XCTAssertTrue(MockProtectSDK.initializeCalled)
-            XCTAssertFalse(MockProtectSDK.resumeBehavioralDataCalled)
-            XCTAssertTrue(MockProtectSDK.pauseBehavioralDataCalled)
+            XCTAssertTrue(MockProtect.configCalled)
+            XCTAssertTrue(MockProtect.initializeCalled)
+            XCTAssertFalse(MockProtect.resumeBehavioralDataCalled)
+            XCTAssertTrue(MockProtect.pauseBehavioralDataCalled)
         case .failure:
             XCTFail("Expected success")
         }
@@ -428,26 +366,27 @@ final class PingOneProtectInitializeCallbackTests: XCTestCase {
     // MARK: - Thread Safety Tests
 
     func testConcurrentStartCalls() async {
-        // Given
         callback.initValue(name: JourneyConstants.envId, value: "concurrent-env")
-        callback.initValue(name: JourneyConstants.behavioralDataCollection, value: true)
 
-        // When - Call start concurrently
-        async let result1 = callback.start()
-        async let result2 = callback.start()
-        async let result3 = callback.start()
-
-        let results = await [result1, result2, result3]
-
-        // Then - All should complete (though state may be unpredictable in real scenario)
-        for result in results {
-            switch result {
-            case .success:
-                break // Expected
-            case .failure:
-                XCTFail("Concurrent calls should handle gracefully")
-            }
+        let concurrentCount = 100 // <-- Maybe we can change that to a smaller number
+        let tasks = (0..<concurrentCount).map { _ in
+            Task { await callback.start() }
         }
+
+        let results = await withTaskGroup(of: Result<Void, Error>.self) { group in
+            for task in tasks {
+                group.addTask { await task.value }
+            }
+
+            var results: [Result<Void, Error>] = []
+            for await result in group {
+                results.append(result)
+            }
+            return results
+        }
+
+        // Verify all results and check for race conditions
+        XCTAssertEqual(results.count, concurrentCount)
     }
 }
 

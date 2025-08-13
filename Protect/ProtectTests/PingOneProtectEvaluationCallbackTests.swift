@@ -12,60 +12,7 @@ import XCTest
 @testable import PingProtect
 @testable import PingJourney
 
-// Mock Protect SDK for testing
-class MockProtect {
-    static var shouldThrowError = false
-    static var errorMessage = "Collect data failed"
-    static var pauseBehavioralDataCalled = false
-    static var dataReturnValue = "deviceSignals"
 
-    static func reset() {
-        shouldThrowError = false
-        errorMessage = "Collect data failed"
-        pauseBehavioralDataCalled = false
-        dataReturnValue = "deviceSignals"
-    }
-
-    static func data() async throws -> String {
-        if shouldThrowError {
-            throw TestError.collectDataFailed(errorMessage)
-        }
-        return dataReturnValue
-    }
-
-    static func pauseBehavioralData() async throws {
-        pauseBehavioralDataCalled = true
-    }
-
-    static func resumeBehavioralData() {
-        // Mock implementation
-    }
-
-    static func config(_ config: Any) {
-        // Mock implementation
-    }
-
-    static func initialize() async throws {
-        // Mock implementation
-    }
-}
-
-enum TestError: LocalizedError {
-    case collectDataFailed(String)
-
-    var errorDescription: String? {
-        switch self {
-        case .collectDataFailed(let message):
-            return message
-        }
-    }
-}
-
-// Protocol for dependency injection
-protocol ProtectProtocol {
-    static func data() async throws -> String
-    static func pauseBehavioralData() async throws
-}
 
 // Test double for PingOneProtectEvaluationCallback
 class TestableProtectEvaluationCallback: PingOneProtectEvaluationCallback, @unchecked Sendable {
@@ -294,6 +241,7 @@ final class PingOneProtectEvaluationCallbackTests: XCTestCase {
         case .failure(let error):
             // When error message is empty, it should use JourneyConstants.clientError
             XCTAssertTrue(!error.localizedDescription.isEmpty)
+            XCTAssertEqual(error.localizedDescription, JourneyConstants.clientError)
         }
     }
 
