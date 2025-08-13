@@ -1,5 +1,5 @@
 // 
-//  IdpCallbackiew.swift
+//  IdpCallbackView.swift
 //  PingExample
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
