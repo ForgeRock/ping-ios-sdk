@@ -25,9 +25,9 @@ class LogOutViewModel: ObservableObject {
         let davinci = await ConfigurationManager.shared.davinciUser
         
         if journeyUser != nil {
-            await ConfigurationManager.shared.journeyUser?.logout()
+            await journeyUser?.logout()
         } else if davinci != nil {
-            await ConfigurationManager.shared.davinciUser?.logout()
+            await davinci?.logout()
         } else {
             await ConfigurationManager.shared.oidcUser?.logout()
         }
