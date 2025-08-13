@@ -119,4 +119,20 @@ public enum JourneyConstants {
     public static let echoOn = "echoOn"
     public static let allowUserDefinedQuestions = "allowUserDefinedQuestions"
 
+    /// Constants for IdpCallbacks
+    public static let provider = "provider"
+    public static let clientId = "clientId"
+    public static let redirectUri = "redirectUri"
+    public static let scopes = "scopes"
+    public static let acrValues = "acrValues"
+    public static let request = "request"
+    public static let requestUri = "requestUri"
+    public static let IDPLogin = "IDPLogin"
+    public static let token_type = "token_type"
+    public static let APPLE = "apple"
+    public static let SIWA = "siwa"
+    public static let GOOGLE = "google"
+    public static let FACEBOOK = "facebook"
+    public static let providers = "providers"
+    public static let acceptsJSON = "acceptsJSON"
 }

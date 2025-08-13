@@ -1,6 +1,6 @@
 // 
 //  RequestInterceptor.swift
-//  Davinci
+//  PingOrchestrate
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -10,7 +10,6 @@
 
 
 import Foundation
-import PingOrchestrate
 
 /// A protocol for request interceptor. To be implemented by classes that need to override the request.
 public protocol RequestInterceptor {

@@ -60,7 +60,7 @@ public extension Journey {
         config.module(OidcModule.config)
         
         Task {
-            await CallbackRegistry.shared.registerDefaultCallbacks()
+            CallbackRegistry.shared.registerDefaultCallbacks()
         }
         
         // Apply custom configuration

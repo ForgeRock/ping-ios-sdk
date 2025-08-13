@@ -16,6 +16,8 @@
 		EC5EA56A2DC229A8000C2737 /* ExternalIdPFacebookTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5EA5682DC229A8000C2737 /* ExternalIdPFacebookTests.swift */; };
 		EC5EA5712DC23516000C2737 /* ExternalIdPFacebook.h in Headers */ = {isa = PBXBuildFile; fileRef = EC5EA5702DC23516000C2737 /* ExternalIdPFacebook.h */; };
 		EC5EA5A82DC23B38000C2737 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC5EA5A72DC23B38000C2737 /* PrivacyInfo.xcprivacy */; };
+		ECF7EB682E461BE2002A5E8E /* FacebookHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB672E461BDC002A5E8E /* FacebookHandler.swift */; };
+		ECF7EBC22E4C9C03002A5E8E /* FacebookHandlerUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EBC12E4C9BF7002A5E8E /* FacebookHandlerUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +52,8 @@
 		EC5EA5682DC229A8000C2737 /* ExternalIdPFacebookTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalIdPFacebookTests.swift; sourceTree = "<group>"; };
 		EC5EA5702DC23516000C2737 /* ExternalIdPFacebook.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalIdPFacebook.h; sourceTree = "<group>"; };
 		EC5EA5A72DC23B38000C2737 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		ECF7EB672E461BDC002A5E8E /* FacebookHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookHandler.swift; sourceTree = "<group>"; };
+		ECF7EBC12E4C9BF7002A5E8E /* FacebookHandlerUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookHandlerUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +127,8 @@
 			isa = PBXGroup;
 			children = (
 				EC5EA5652DC229A8000C2737 /* FacebookRequestHandler.swift */,
+				ECF7EB672E461BDC002A5E8E /* FacebookHandler.swift */,
+				ECF7EBC12E4C9BF7002A5E8E /* FacebookHandlerUtils.swift */,
 			);
 			path = Handlers;
 			sourceTree = "<group>";
@@ -248,6 +254,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECF7EBC22E4C9C03002A5E8E /* FacebookHandlerUtils.swift in Sources */,
+				ECF7EB682E461BE2002A5E8E /* FacebookHandler.swift in Sources */,
 				EC5EA5672DC229A8000C2737 /* FacebookRequestHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
