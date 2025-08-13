@@ -88,7 +88,7 @@ import PingExternalIdP
         guard let idpClient = self.idpClient else {
             throw IdpExceptions.unsupportedIdpException(message: IdpErrorMessages.invalidConfiguration)
         }
-        let result = try await self.authorize(idpClient: idpClient)
+        let result = try await FacebookHandlerUtils.authorize(idpClient: idpClient, configuration: self.configuration, manager: self.manager)
         guard let continueUrl = idpClient.continueUrl, !continueUrl.isEmpty else {
             throw IdpExceptions.illegalStateException(message: IdpErrorMessages.invalidConfiguration)
         }
@@ -96,40 +96,5 @@ import PingExternalIdP
         request.header(name: Request.Constants.accept, value: Request.ContentType.json.rawValue)
         request.body(body: [Request.Constants.accessToken: result.token])
         return request
-    }
-    
-    /// Authorizes the user with the IDP, based on the IdpClient.
-    /// - Parameter idpClient: The `IdpClient` to use for authorization.
-    /// - Returns: An `IdpResult` object containing the result of the authorization.
-    private func authorize(idpClient: IdpClient) async throws -> IdpResult {
-        let topVC = try IdpValidationUtils.validateTopViewController()
-        
-        guard let validConfiguration = configuration else {
-            throw IdpExceptions.illegalStateException(message: IdpErrorMessages.invalidConfiguration)
-        }
-        
-        return try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<IdpResult, Error>) in
-            guard let self = self else {
-                continuation.resume(throwing: IdpExceptions.illegalStateException(message: "Self was deallocated"))
-                return
-            }
-            
-            Task { @MainActor [weak self] in
-                self?.manager.logIn(viewController: topVC, configuration: validConfiguration) { result in
-                    switch result {
-                    case .cancelled:
-                        continuation.resume(throwing: IdpExceptions.idpCanceledException(message: IdpErrorMessages.userCancelled))
-                    case .failed(let error):
-                        continuation.resume(throwing: IdpExceptions.illegalStateException(message: error.localizedDescription))
-                    case .success(_, _, let token):
-                        guard let accessToken = token?.tokenString else {
-                            continuation.resume(throwing: IdpExceptions.illegalStateException(message: IdpErrorMessages.facebookTokenMissing))
-                            return
-                        }
-                        continuation.resume(returning: IdpResult(token: accessToken, additionalParameters: nil))
-                    }
-                }
-            }
-        }
     }
 }

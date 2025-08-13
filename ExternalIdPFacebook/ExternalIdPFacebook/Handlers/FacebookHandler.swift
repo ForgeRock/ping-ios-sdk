@@ -20,7 +20,7 @@ import PingExternalIdP
 @objc public class FacebookHandler: NSObject, @preconcurrency IdpHandler, Sendable {
     
     /// The type of token this handler supports.
-    public var tokenType: String = "access_token"
+    public var tokenType: String = IdpConstants.access_token
     
     /// `LoginManager` instance for Facebook SDK
     private var manager: LoginManager
@@ -88,34 +88,6 @@ import PingExternalIdP
     /// - Throws: An error if the authorization fails.
     /// - Returns: An `IdpResult` object containing the result of the authorization.
     public func authorize(idpClient: IdpClient) async throws -> IdpResult {
-        let topVC = try IdpValidationUtils.validateTopViewController()
-        
-        guard let validConfiguration = configuration else {
-            throw IdpExceptions.illegalStateException(message: IdpErrorMessages.facebookConfigurationInvalid)
-        }
-        
-        return try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<IdpResult, Error>) in
-            guard let self = self else {
-                continuation.resume(throwing: IdpExceptions.illegalStateException(message: "Self was deallocated"))
-                return
-            }
-            
-            Task { @MainActor [weak self] in
-                self?.manager.logIn(viewController: topVC, configuration: validConfiguration) { result in
-                    switch result {
-                    case .cancelled:
-                        continuation.resume(throwing: IdpExceptions.idpCanceledException(message: IdpErrorMessages.userCancelled))
-                    case .failed(let error):
-                        continuation.resume(throwing: IdpExceptions.illegalStateException(message: error.localizedDescription))
-                    case .success(_, _, let token):
-                        guard let accessToken = token?.tokenString else {
-                            continuation.resume(throwing: IdpExceptions.illegalStateException(message: IdpErrorMessages.facebookTokenMissing))
-                            return
-                        }
-                        continuation.resume(returning: IdpResult(token: accessToken, additionalParameters: nil))
-                    }
-                }
-            }
-        }
+        return try await FacebookHandlerUtils.authorize(idpClient: idpClient, configuration: self.configuration, manager: self.manager)
     }
 }

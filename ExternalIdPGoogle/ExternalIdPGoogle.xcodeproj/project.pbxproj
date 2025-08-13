@@ -16,6 +16,7 @@
 		ECA7A3192DC252BD0011E59C /* GoogleRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A3182DC252BD0011E59C /* GoogleRequestHandler.swift */; };
 		ECA7A31F2DC253710011E59C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = ECA7A31E2DC253710011E59C /* PrivacyInfo.xcprivacy */; };
 		ECA7A3202DC253710011E59C /* ExternalIdPGoogle.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA7A31D2DC253710011E59C /* ExternalIdPGoogle.h */; };
+		ECF7EBC02E4C995C002A5E8E /* GoogleHandlerUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EBBF2E4C9952002A5E8E /* GoogleHandlerUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 		ECA7A3182DC252BD0011E59C /* GoogleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleRequestHandler.swift; sourceTree = "<group>"; };
 		ECA7A31D2DC253710011E59C /* ExternalIdPGoogle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalIdPGoogle.h; sourceTree = "<group>"; };
 		ECA7A31E2DC253710011E59C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		ECF7EBBF2E4C9952002A5E8E /* GoogleHandlerUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleHandlerUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +126,7 @@
 			children = (
 				EC5016462E43B35A006D8C3A /* GoogleHandler.swift */,
 				ECA7A3182DC252BD0011E59C /* GoogleRequestHandler.swift */,
+				ECF7EBBF2E4C9952002A5E8E /* GoogleHandlerUtils.swift */,
 			);
 			path = Handlers;
 			sourceTree = "<group>";
@@ -250,6 +253,7 @@
 			files = (
 				ECA7A3192DC252BD0011E59C /* GoogleRequestHandler.swift in Sources */,
 				EC5016472E43B35F006D8C3A /* GoogleHandler.swift in Sources */,
+				ECF7EBC02E4C995C002A5E8E /* GoogleHandlerUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

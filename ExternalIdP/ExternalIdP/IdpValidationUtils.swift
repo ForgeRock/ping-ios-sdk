@@ -59,4 +59,10 @@ public struct IdpErrorMessages {
     // MARK: - Facebook Sign-In Errors
     public static let facebookTokenMissing = "Facebook login completed but no access token was received"
     public static let facebookConfigurationInvalid = "Facebook login configuration is invalid"
+    public static let facebookManagerMissing = "Facebook login manager is not initialized"
+}
+
+public struct IdpConstants {
+    public static let id_token = "id_token"
+    public static let access_token = "access_token"
 }

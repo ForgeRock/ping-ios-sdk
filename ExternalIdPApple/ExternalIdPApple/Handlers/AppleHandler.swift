@@ -18,7 +18,7 @@ import PingExternalIdP
 @objc public final class AppleHandler: NSObject, @preconcurrency IdpHandler, Sendable {
     
     /// Token type for the IdpHandler.
-    public var tokenType: String = "id_token"
+    public var tokenType: String = IdpConstants.id_token
     
     /// The IdpClient to use for requests.
     private var idpClient: IdpClient?
