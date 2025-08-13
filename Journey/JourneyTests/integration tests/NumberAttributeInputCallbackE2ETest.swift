@@ -24,14 +24,17 @@ class NumberAttributeInputCallbackE2ETest: JourneyE2EBaseTest, @unchecked Sendab
             return
         }
         
-        let callback = nextNode.callbacks.first as! NumberAttributeInputCallback
-        XCTAssertTrue(callback.name.contains("age"))
-        XCTAssertEqual("How old are you?", callback.prompt)
-        XCTAssertEqual(true, callback.required)
-        XCTAssertTrue(callback.policies.isEmpty)
-        XCTAssertTrue(callback.failedPolicies.isEmpty)
+        guard let numberAttributeInputCallback = nextNode.callbacks.first as? NumberAttributeInputCallback else {
+            XCTFail("Expected NumberAttributeInputCallback")
+            return
+        }
+        XCTAssertTrue(numberAttributeInputCallback.name.contains("age"))
+        XCTAssertEqual("How old are you?", numberAttributeInputCallback.prompt)
+        XCTAssertEqual(true, numberAttributeInputCallback.required)
+        XCTAssertTrue(numberAttributeInputCallback.policies.isEmpty)
+        XCTAssertTrue(numberAttributeInputCallback.failedPolicies.isEmpty)
         // Set the value to 30.0 and continue
-        callback.value = 30.0
+        numberAttributeInputCallback.value = 30.0
         
         // Submit callback and expect SuccessNode
         guard let result = await nextNode.next() as? SuccessNode else {

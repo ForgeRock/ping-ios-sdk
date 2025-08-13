@@ -11,7 +11,7 @@ import XCTest
 @testable import PingOidc
 @testable import PingLogger
 
-class TextOutputCallbackCallbackE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
+class TextOutputCallbackE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
     
     var logger = LogManager.logger
     var testTree = "TextOutputCallbackTest"

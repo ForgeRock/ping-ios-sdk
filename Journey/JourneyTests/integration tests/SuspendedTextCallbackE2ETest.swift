@@ -16,7 +16,7 @@ class SuspendedTextCallbackE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
     var logger = LogManager.logger
     var testTree = "SuspendedTextCallbackTest"
     
-    func testChoiceCallback() async throws {
+    func testSuspendedTextCallback() async throws {
         // Start the journey and provide valid credentials
         let node = try await handleLoginCallbacks(treeName: testTree)
         guard let nextNode = node as? ContinueNode else {

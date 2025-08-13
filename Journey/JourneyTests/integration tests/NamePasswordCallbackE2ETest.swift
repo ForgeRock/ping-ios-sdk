@@ -31,7 +31,10 @@ class NamePasswordCallbackE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
         
         XCTAssertEqual("User Name", nameCallback.prompt)
         nameCallback.name = username
-        node = await node.next() as! ContinueNode
+        guard let node = await node.next() as? ContinueNode else {
+            XCTFail("Expected ContinueNode but got \(type(of: node))")
+            return
+        }
 
         XCTAssertEqual(1, node.callbacks.count)
         guard let passwordCallback = node.callbacks.first as? PasswordCallback else {

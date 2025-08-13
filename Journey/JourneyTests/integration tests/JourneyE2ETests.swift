@@ -35,8 +35,8 @@ class JourneyE2ETests: JourneyE2EBaseTest, @unchecked Sendable {
         let token = await journeyUser?.token()
         XCTAssertNotNil(token, "User should have a valid access token")
 
-        
-//        // Log the session value for debug purposes
+//        TODO: Revisit the following section once SDKS-4194 is resolved
+//        // Log the session value for debug purposes -
 //        let userSession = await journeyUser?.session()
 //        logger.d("User session: \(userSession.value)")
 //
@@ -88,7 +88,7 @@ class JourneyE2ETests: JourneyE2EBaseTest, @unchecked Sendable {
         var session = await defaultJourney.session()
         XCTAssertNotNil(session, "Expected session to exist after login")
      
-//        // Perform sign-off (see SDKS-4297)
+//        TODO: Revisit the following section once SDKS-4297 is resovlved
 //        let signOffResult = await defaultJourney.signOff()
 //        switch signOffResult {
 //        case .success:
@@ -227,7 +227,7 @@ class JourneyE2ETests: JourneyE2EBaseTest, @unchecked Sendable {
         let token1 = await defaultJourney.journeyUser()?.token()
         XCTAssertNotNil(token1)
 
-//        // Refresh token (see SDKS-4194 - iOS does not provide 'refresh' function)
+//        TODO: Revisit the following code once SDKS-4194 is resolved (iOS does not provide 'refresh' function)
 //        let token2 = await defaultJourney.journeyUser()?.refresh()
 //        XCTAssertNotNil(token2)
 //
@@ -255,7 +255,7 @@ class JourneyE2ETests: JourneyE2EBaseTest, @unchecked Sendable {
         // Revoke the token
         await defaultJourney.journeyUser()?.revoke()
 
-//        // Get a new access token after revocation - see SDKS-4305
+//        TODO: Revisit the following section once SDKS-4305 is resolved (Get a new access token after revocation not working properly)
 //        let result2 = await defaultJourney.journeyUser()?.token()
 //        var token2: Token? = nil
 //        
