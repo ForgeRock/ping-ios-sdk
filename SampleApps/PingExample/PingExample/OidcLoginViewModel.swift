@@ -16,7 +16,6 @@ public let oidcLogin = OidcWeb.createOidcWeb { config in
     let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
     config.browserMode = .login
     config.browserType = .authSession
-    //config.cookie = currentConfig?.cookieName ?? "" //TODO: need add cookie  support
     config.module(PingOidc.OidcModule.config) { oidcValue in
         oidcValue.clientId = currentConfig?.clientId ?? ""
         oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])

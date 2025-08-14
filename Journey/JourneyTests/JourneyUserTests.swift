@@ -30,6 +30,8 @@ final class UserTests: XCTestCase {
     // MARK: - Mock Classes
     
     class MockUser: User, @unchecked Sendable {
+        
+        
         func logout() async {
             
         }
@@ -39,6 +41,10 @@ final class UserTests: XCTestCase {
         var wasRevokeCalled = false
         
         func token() async -> Result<Token, OidcError> {
+            return tokenResult
+        }
+        
+        func refresh() async -> Result<Token, OidcError> {
             return tokenResult
         }
         

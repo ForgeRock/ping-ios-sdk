@@ -16,6 +16,10 @@ public protocol User: Sendable {
     /// - Returns: A `Result` object containing either the `Token` or an `OidcError`.
     func token() async -> Result<Token, OidcError>
     
+    /// Refreshes the user's token.
+    /// - Returns: A `Result` object containing either the `Token` or an `OidcError`.
+    func refresh() async -> Result<Token, OidcError>
+    
     /// Revokes the user's token.
     func revoke() async
     

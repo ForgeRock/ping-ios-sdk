@@ -57,6 +57,13 @@ extension SuccessNode {
     }
 }
 
+extension User {
+    /// Extension property for User to cast the `User.session` to a Session.
+    public var session: Session? {
+        return self as? Session
+    }
+}
+
 /// Struct representing a UserDelegate.
 /// This struct is a delegate for the User and Session interfaces.
 /// It overrides the logout function to remove the cached user from the context and sign off the user.
@@ -84,8 +91,15 @@ struct UserDelegate: User, Session, Sendable {
     }
     
     /// User token retrieval method.
+    /// - Returns: A Result containing the Token or an OidcError.
     func token() async -> Result<Token, OidcError> {
         return await user.token()
+    }
+    
+    /// Method to refresh the user token.
+    /// - Returns: A Result containing the refreshed Token or an OidcError.
+    func refresh() async -> Result<Token, OidcError> {
+        await user.refresh()
     }
     
     /// Method to revoke the user's token.
@@ -94,6 +108,8 @@ struct UserDelegate: User, Session, Sendable {
     }
     
     /// Method to retrieve user information.
+    /// - Parameter cache: A Boolean indicating whether to use cached user information.
+    /// - Returns: A Result containing the UserInfo or an OidcError.
     func userinfo(cache: Bool) async -> Result<UserInfo, OidcError> {
         await user.userinfo(cache: cache)
     }

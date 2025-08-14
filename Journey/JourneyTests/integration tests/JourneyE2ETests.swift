@@ -35,13 +35,12 @@ class JourneyE2ETests: JourneyE2EBaseTest, @unchecked Sendable {
         let token = await journeyUser?.token()
         XCTAssertNotNil(token, "User should have a valid access token")
 
-//        TODO: Revisit the following section once SDKS-4194 is resolved
-//        // Log the session value for debug purposes -
-//        let userSession = await journeyUser?.session()
-//        logger.d("User session: \(userSession.value)")
-//
-//        // User session should match journey session
-//        XCTAssertEqual(user?.session()?.value, session?.value)
+        // Log the session value for debug purposes -
+        let userSession = journeyUser?.session
+        logger.d("User session: \(userSession?.value ?? "<nil>")")
+
+        // User session should match journey session
+        XCTAssertEqual(journeyUser?.session?.value, session?.value)
         
         logger.d("Journey session: \(session?.value ?? "<nil>")")
     }
@@ -73,7 +72,6 @@ class JourneyE2ETests: JourneyE2EBaseTest, @unchecked Sendable {
 
         // Assert that no session is created
         let session = await defaultJourney.session()
-        XCTExpectFailure("See SDKS-4296")
         XCTAssertNil(session, "Expected no session when noSession = true")
     }
     
@@ -88,18 +86,17 @@ class JourneyE2ETests: JourneyE2EBaseTest, @unchecked Sendable {
         var session = await defaultJourney.session()
         XCTAssertNotNil(session, "Expected session to exist after login")
      
-//        TODO: Revisit the following section once SDKS-4297 is resovlved
-//        let signOffResult = await defaultJourney.signOff()
-//        switch signOffResult {
-//        case .success:
-//            break // Sign-off succeeded
-//        case .failure(let error):
-//            XCTFail("Sign-off failed with error: \(error)")
-//        }
-//
-//        // After sign-off, session should be nil
-//        session = await defaultJourney.session()
-//        XCTAssertNil(session, "Expected session to be nil after sign-off")
+        let signOffResult = await defaultJourney.journeySignOff()
+        switch signOffResult {
+        case .success:
+            break // Sign-off succeeded
+        case .failure(let error):
+            XCTFail("Sign-off failed with error: \(error)")
+        }
+
+        // After sign-off, session should be nil
+        session = await defaultJourney.session()
+        XCTAssertNil(session, "Expected session to be nil after sign-off")
     }
     
     func testHandleError() async throws {
@@ -224,15 +221,32 @@ class JourneyE2ETests: JourneyE2EBaseTest, @unchecked Sendable {
         XCTAssertTrue(node is SuccessNode)
 
         // Get access token
-        let token1 = await defaultJourney.journeyUser()?.token()
-        XCTAssertNotNil(token1)
+        let result1 = await defaultJourney.journeyUser()?.token()
+        XCTAssertNotNil(result1)
 
-//        TODO: Revisit the following code once SDKS-4194 is resolved (iOS does not provide 'refresh' function)
-//        let token2 = await defaultJourney.journeyUser()?.refresh()
-//        XCTAssertNotNil(token2)
-//
-//        // Ensure tokens are different
-//        XCTAssertNotEqual(token1.accessToken, token2.accessToken)
+        let result2 = await defaultJourney.journeyUser()?.refresh()
+        XCTAssertNotNil(result2)
+
+        var token1: Token? = nil
+        switch result1! {
+        case .success(let token):
+            token1 = token
+        case .failure:
+            XCTFail("Failed to obtain access token")
+        }
+        XCTAssertNotNil(token1)
+        
+        var token2: Token? = nil
+        switch result2! {
+        case .success(let token):
+            token2 = token
+        case .failure:
+            XCTFail("Failed to obtain access token")
+        }
+        XCTAssertNotNil(token2)
+        
+        // Ensure tokens are different
+        XCTAssertNotEqual(token1?.accessToken, token2?.accessToken)
     }
     
     func testUserTokenRevoke() async throws {
@@ -255,20 +269,19 @@ class JourneyE2ETests: JourneyE2EBaseTest, @unchecked Sendable {
         // Revoke the token
         await defaultJourney.journeyUser()?.revoke()
 
-//        TODO: Revisit the following section once SDKS-4305 is resolved (Get a new access token after revocation not working properly)
-//        let result2 = await defaultJourney.journeyUser()?.token()
-//        var token2: Token? = nil
-//        
-//        switch result2! {
-//        case .success(let token):
-//            token2 = token
-//        case .failure(let error):
-//            XCTFail("Failed to obtain access token: \(error.errorMessage)")
-//        }
-//        XCTAssertNotNil(token2)
-//        
-//        // Tokens should be different
-//        XCTAssertNotEqual(token1?.accessToken, token2?.accessToken)
+        let result2 = await defaultJourney.journeyUser()?.token()
+        var token2: Token? = nil
+        
+        switch result2! {
+        case .success(let token):
+            token2 = token
+        case .failure(let error):
+            XCTFail("Failed to obtain access token: \(error.errorMessage)")
+        }
+        XCTAssertNotNil(token2)
+        
+        // Tokens should be different
+        XCTAssertNotEqual(token1?.accessToken, token2?.accessToken)
     }
     
     func testUserInfo() async throws {

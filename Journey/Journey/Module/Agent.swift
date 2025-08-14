@@ -55,9 +55,6 @@ internal final class CreateAgent: Agent, Sendable {
         guard !session.value.isEmpty else {
             throw OidcError.authorizeError(message: "Please start Journey to authenticate.")
         }
-        guard !used else {
-            throw OidcError.authorizeError(message: "Auth code already used, please start Journey again.")
-        }
         
         let pkce = Pkce.generate()
         let config = oidcConfig.oidcClientConfig
