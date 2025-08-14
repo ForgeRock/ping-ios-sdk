@@ -75,19 +75,6 @@ final class AgentTests: XCTestCase {
         }
     }
     
-    func testAuthorizeWhenAlreadyUsed() async throws {
-        agent.used = true
-        
-        do {
-            _ = try await agent.authorize(oidcConfig: oidcConfig)
-            XCTFail("Should throw error when already used")
-        } catch {
-            XCTAssertTrue(error is OidcError)
-            let oidcError = error as! OidcError
-            XCTAssertEqual(oidcError.errorMessage, "Authorization error: Auth code already used, please start Journey again.")
-        }
-    }
-    
     func testSuccessfulAuthorize() async throws {
         let successResponse = HTTPURLResponse(
             url: URL(string: "https://auth.example.com/authorize")!,

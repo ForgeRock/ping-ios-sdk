@@ -96,18 +96,32 @@ struct UserDelegate: User, Session, Sendable {
         _ = await daVinci.signOff()
     }
     
+    /// Method to get the user token.
+    /// - Returns: A Result containing the Token or an OidcError.
     func token() async -> Result<Token, OidcError> {
         return await user.token()
     }
     
+    /// Method to refresh the user token.
+    /// - Returns: A Result containing the refreshed Token or an OidcError.
+    func refresh() async -> Result<Token, OidcError> {
+        await user.refresh()
+    }
+    
+    /// Method to revoke the user token.
+    /// - Returns: A Result containing the success or an OidcError.
     func revoke() async {
         await user.revoke()
     }
     
+    /// Method to get the user info.
+    /// - Parameter cache: A Boolean indicating whether to use the cache.
+    /// - Returns: A Result containing the UserInfo or an OidcError.
     func userinfo(cache: Bool) async -> Result<UserInfo, OidcError> {
         await user.userinfo(cache: cache)
     }
     
+    /// Method to get the session value
     var value: String {
         get {
             return session.value

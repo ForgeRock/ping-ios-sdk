@@ -11,7 +11,10 @@
 
 /// Class for an OIDC User
 public class OidcUser: User, @unchecked Sendable {
+    
+    /// The user information.
     private var userinfo: UserInfo?
+    /// The OIDC client used to interact with the OIDC provider.
     private let oidcClient: OidcClient
     
     /// OidcUser initializer
@@ -24,6 +27,23 @@ public class OidcUser: User, @unchecked Sendable {
     /// - Returns: The token for the user.
     public func token() async -> Result<Token, OidcError> {
         return await oidcClient.token()
+    }
+    
+    /// Method to refresh the user token.
+    /// - Note: This method retrieves the current token and attempts to refresh it using the refresh token.
+    /// - Returns: A Result containing the refreshed Token or an OidcError.
+    public func refresh() async -> Result<Token, OidcError> {
+        let token = await self.token()
+        if case .success(let data) = token, let refreshToken = data.refreshToken {
+            do {
+                let refreshedToken = try await oidcClient.refreshToken(refreshToken)
+                return .success(refreshedToken)
+            } catch {
+                return .failure(OidcError.authorizeError(cause: error, message: error.localizedDescription))
+            }
+        } else {
+            return .failure(OidcError.unknown(cause: nil, message: "Failed to get the refresh token"))
+        }
     }
     
     /// Revokes the user's token.

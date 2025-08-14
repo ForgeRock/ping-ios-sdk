@@ -9,7 +9,7 @@
 //
 
 
-import Foundation
+
 import PingOrchestrate
 import PingLogger
 import PingBrowser
@@ -160,6 +160,12 @@ struct UserDelegate: User, Session, Sendable {
     /// - Returns: A Result containing the Token or an OidcError.
     func token() async -> Result<Token, OidcError> {
         return await user.token()
+    }
+    
+    /// Method to refresh the user token.
+    /// - Returns: A Result containing the refreshed Token or an OidcError.
+    func refresh() async -> Result<Token, OidcError> {
+        await user.refresh()
     }
     
     /// Method to revoke the user token.
