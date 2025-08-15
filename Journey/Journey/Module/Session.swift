@@ -40,6 +40,15 @@ public class SessionModule {
             if let token = await journeyFlow.session(), let journeyConfig = journeyFlow.config as? JourneyConfig {
                 request.header(name: journeyConfig.cookie, value: token.value)
             }
+            
+            if let noSession = journeyFlow.sharedContext.get(key: JourneyConstants.noSession) as? Bool {
+                request.parameter(name: JourneyConstants.noSessionParam, value: "\(noSession)") // assume no session false by default
+            }
+            
+            if let forceAuth = journeyFlow.sharedContext.get(key: JourneyConstants.forceAuth) as? Bool {
+                request.parameter(name: JourneyConstants.forceAuthParam, value: "\(forceAuth)") // assume no session false by default
+            }
+             
             return request
         }
         /// Success handler for the session module

@@ -59,7 +59,9 @@ public extension Journey {
         config.module(SessionModule.config)
         config.module(OidcModule.config)
         
-        CallbackRegistry.shared.registerDefaultCallbacks()
+        Task {
+            CallbackRegistry.shared.registerDefaultCallbacks()
+        }
         
         // Apply custom configuration
         block(config)
@@ -79,6 +81,9 @@ public extension Journey {
             return FailureNode(cause: ApiError.error(400, [:], "JourneyConfig missing"))
         }
         
+        self.sharedContext.set(key: JourneyConstants.forceAuth, value: options.forceAuth)
+        self.sharedContext.set(key: JourneyConstants.noSession, value: options.noSession)
+        
         let request = Request()
         request.populateRequest(authIndexValue: journeyName, journeyConfig: journeyConfig, options: options)
         
@@ -97,6 +102,9 @@ public extension Journey {
             return FailureNode(cause: ApiError.error(400, [:], "JourneyConfig missing"))
         }
         
+        self.sharedContext.set(key: JourneyConstants.forceAuth, value: options.forceAuth)
+        self.sharedContext.set(key: JourneyConstants.noSession, value: options.noSession)
+        
         if let components = URLComponents(url: uri, resolvingAgainstBaseURL: false),
            let suspendedId = components.queryItems?.first(where: { $0.name == JourneyConstants.suspendedId })?.value {
             let request = Request()
@@ -106,6 +114,10 @@ public extension Journey {
         } else {
             return FailureNode(cause: ApiError.error(400, [:], "Invalid URI or missing suspendedId"))
         }
+    }
+    
+    func journeySignOff() async -> Result<Void, Error> {
+        return await signOff()
     }
     
     /// Journey sign off method.
@@ -143,7 +155,6 @@ public extension Journey {
     /// - Parameter request: The request to be sent.
     /// - Returns: The response received.
     private func send(_ request: Request) async throws -> Response {
-        // semaphore
         let (data, urlResponse) = try await config.httpClient.sendRequest(request: request)
         return HttpResponse(data: data, response: urlResponse)
     }
