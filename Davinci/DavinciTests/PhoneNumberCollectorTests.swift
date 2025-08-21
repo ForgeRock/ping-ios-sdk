@@ -1,4 +1,4 @@
-// 
+//
 //  PhoneNumberCollectorTests.swift
 //  Davinci
 //
@@ -60,11 +60,27 @@ class PhoneNumberCollectorTests: XCTestCase {
         XCTAssertEqual(collector.defaultCountryCode, "GB")
     }
     
-    func testdefaultWithPhoneNumber() {
+    func testDefaultWithPhoneNumber() {
         let input = "1234567"
         let collector = PhoneNumberCollector(with: [:])
         collector.initialize(with: input)
         
         XCTAssertEqual(collector.phoneNumber, "1234567")
+    }
+    
+    func testInitializeWithDictionaryAndSetsPhoneNumberAndCountryCode() {
+        // Arrange
+        let input: [String: Any] = [
+            "phoneNumber": "CA-1-+17783186380-7783186380",
+            "countryCode": "CA"
+        ]
+        let collector = PhoneNumberCollector(with: [:])
+        
+        // Act
+        collector.initialize(with: input)
+        
+        // Assert
+        XCTAssertEqual(collector.phoneNumber, "CA-1-+17783186380-7783186380")
+        XCTAssertEqual(collector.countryCode, "CA")
     }
 }
