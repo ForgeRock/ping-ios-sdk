@@ -85,6 +85,7 @@
 		EC0CB5CB2E27AE4C00A82D6C /* JourneyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */; };
 		EC23D5712E2E8ECF00C43D42 /* OidcLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */; };
 		EC23D5722E2E8ECF00C43D42 /* OidcLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */; };
+		EC83DEB02E69D45900D2B5B4 /* ScenePhaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC83DEAF2E69D44C00D2B5B4 /* ScenePhaseManager.swift */; };
 		EC92B3882DA02D7400E4246D /* DeviceAuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */; };
 		EC92B38A2DA02D7F00E4246D /* DeviceRegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */; };
 		EC92B38C2DA039C000E4246D /* AsyncSVGImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */; };
@@ -403,6 +404,7 @@
 		EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyViewModel.swift; sourceTree = "<group>"; };
 		EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginView.swift; sourceTree = "<group>"; };
 		EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginViewModel.swift; sourceTree = "<group>"; };
+		EC83DEAF2E69D44C00D2B5B4 /* ScenePhaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenePhaseManager.swift; sourceTree = "<group>"; };
 		EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticationView.swift; sourceTree = "<group>"; };
 		EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationView.swift; sourceTree = "<group>"; };
 		EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncSVGImage.swift; sourceTree = "<group>"; };
@@ -524,6 +526,7 @@
 				EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */,
 				EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */,
 				EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */,
+				EC83DEAF2E69D44C00D2B5B4 /* ScenePhaseManager.swift */,
 				3A5441342BCDF10B00385131 /* Assets.xcassets */,
 				3A5441362BCDF10B00385131 /* Preview Content */,
 			);
@@ -1141,6 +1144,7 @@
 				A5768D102E2965B8000290EE /* ConfirmationCallbackView.swift in Sources */,
 				EC0816C12D4A833400F1AD02 /* ConfigurationViewModel.swift in Sources */,
 				A5EFA9772D35F2FA00F771FE /* CheckBoxView.swift in Sources */,
+				EC83DEB02E69D45900D2B5B4 /* ScenePhaseManager.swift in Sources */,
 				A5E9AEDF2D30CA34000533ED /* ErrorMessageView.swift in Sources */,
 				A5E9AED22D30380B000533ED /* UserInfoViewModel.swift in Sources */,
 				A5EFA97D2D35F78800F771FE /* ComboBoxView.swift in Sources */,

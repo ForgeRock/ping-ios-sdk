@@ -72,6 +72,12 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     /// Browser mode (either login, logout or custom)
     private var browserMode: BrowserMode = .login
     
+    /// Continuation to be used by the delegate or the sink
+    private var loginContinuation: CheckedContinuation<URL, Error>?
+    
+    /// Cancellable for Combine subscription
+    private var cancellable: AnyCancellable?
+    
     /// Logger instance
     var logger: Logger = LogManager.logger {
         didSet {
@@ -187,10 +193,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     /// - Throws: BrowserError if the view controller cannot be presented
     private func loginWithSFViewController(url: URL, callbackURLScheme: String ) async throws -> URL {
         // 1. Prepare and present the Safari VC
-        let safariVC = SFSafariViewController(
-            url: url,
-            configuration: SFSafariViewController.Configuration()
-        )
+        let safariVC = SFSafariViewController(url: url)
         safariVC.delegate = self
         self.currentSession = safariVC
         
@@ -201,27 +204,32 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
             logger.e("Fail to launch SFSafariViewController; missing presenting ViewController", error: nil)
             throw BrowserError.externalUserAgentFailure
         }
+        
         presentingVC.present(safariVC, animated: true)
         
-        // 2. Await the first matching incoming URL
-        let redirectedURL = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<URL, Error>) in
+        // 2. Await the result using the continuation stored in a property
+        return try await withCheckedThrowingContinuation { continuation in
+            // STORE the continuation to be used by the delegate or the sink
+            self.loginContinuation = continuation
+            
+            // Listen for the incoming URL
             self.cancellable = OpenURLMonitor.shared.urlPublisher
                 .filter { $0.scheme == callbackURLScheme }
                 .first()
                 .sink { [weak self] url in
-                    guard let self = self else { return }
-                    // Dismiss the Safari VC, then resume the continuation
-                    safariVC.dismiss(animated: true) {
-                        self.cleanup()
-                        continuation.resume(returning: url)
+                    if let sfViewController = self?.currentSession as? SFSafariViewController {
+                        sfViewController.dismiss(animated: true) {
+                            // Resume with success and clean up
+                            self?.loginContinuation?.resume(returning: url)
+                            self?.cleanup()
+                        }
+                    } else {
+                        self?.loginContinuation?.resume(returning: url)
+                        self?.cleanup()
                     }
                 }
         }
-        
-        return redirectedURL
     }
-    
-    private var cancellable: AnyCancellable?
     
     /// Clean up subscription
     private func cleanup() {
@@ -286,10 +294,11 @@ extension BrowserLauncher: ASWebAuthenticationPresentationContextProviding {
 // MARK: SFSafariViewControllerDelegate
 extension BrowserLauncher: SFSafariViewControllerDelegate {
     nonisolated public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-        Task { @MainActor in
-            self.logger.i("User cancelled the authorization process by closing the window")
-            self.reset()
-            self.cleanup()
+        Task { @MainActor [weak self] in
+            self?.logger.i("User cancelled the authorization process by closing the window")
+            self?.loginContinuation?.resume(throwing: BrowserError.externalUserAgentCancelled)
+            self?.reset()
+            self?.cleanup()
         }
     }
     
