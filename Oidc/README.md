@@ -5,7 +5,7 @@
   <hr/>
 </p>
 
-`PingOidc` module provides OIDC client for PingOne and ForgeRock platform.
+`PingOidc` module provides a generic OIDC client that can be used with PingOne and ForgeRock platforms.
 
 The `PingOidc` module follows the [OIDC](https://openid.net/specs/openid-connect-core-1_0.html) specification and
 provides a simple and easy-to-use API to interact with the OIDC server. It allows you to authenticate, retrieve the
@@ -21,7 +21,7 @@ Basic Configuration, use `discoveryEndpoint` to lookup OIDC endpoints
 
 ```swift
 // Create an OIDC client with the discovery endpoint, and other configurations
-public let oidLogin = OidcWeb.createOidcLogin { config in
+public let oidcLogin = OidcWeb.createOidcWeb { config in
     config.module(PingOidc.OidcModule.config) { oidcValue in
         oidcValue.clientId = "ClientID"
         oidcValue.scopes = ["openid", "email", "address", "profile", "phone"]
@@ -31,13 +31,13 @@ public let oidLogin = OidcWeb.createOidcLogin { config in
 }
 
 //Start the OIDC authentication flow
-let state = try await oidLogin.authorize { options in
+let state = try await oidcLogin.authorize { options in
     // Pass additional parameters
     options.additionalParameters = ["foo": "bar"]
 }
 
 // Handle the state
-switch oidcLoginViewModel.state {
+switch oidcLogin.state {
 case .success( _ ):
     ...
 case .failure(let error):
@@ -46,8 +46,8 @@ case .none:
     ...
 }
 
-// To retieve the existing user
-let oidcLoginUser = await oidLogin.oidcLoginUser()
+// To retrieve the existing user
+let oidcLoginUser = await oidcLogin.oidcLoginUser()
 
 // To receive the access token
 let token = await oidcLoginUser.token()
@@ -57,7 +57,7 @@ oidcLoginUser?.revoke()
 oidcLoginUser?.logout()
 
 // Setting the browser type and mode
-public let oidLogin = OidcWeb.createOidcLogin { config in
+public let oidcLogin = OidcWeb.createOidcWeb { config in
     // Set the browser mode(only the .login mode supported currently) and browser type.
     config.browserMode = .login
     config.browserType = .authSession
@@ -70,7 +70,7 @@ public let oidLogin = OidcWeb.createOidcLogin { config in
 }
 ```
 
-By default, the SDK uses `KeychainStorage` (with `SecuredKeyEncryptor` ) to store the token and `none` Logger is set,
+By default, the SDK uses `KeychainStorage` (with `SecuredKeyEncryptor`) to store the token and `none` Logger is set,
 however developers can override the storage and logger settings.
 
 Basic Configuration with custom `storage` and `logger`
@@ -84,8 +84,9 @@ config.storage = CustomStorage<Token>() //Use Custom Storage
 let ping = OidcClient(config: config)
 ```
 
-More OidcClient configuration, configurable attribute can be found under
-[OIDC Spec](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest)
+## Advanced OIDC Configuration
+
+Configurable attributes can be found under the [OIDC Spec](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest)
 
 ```swift
 let config = OidcClientConfig()
