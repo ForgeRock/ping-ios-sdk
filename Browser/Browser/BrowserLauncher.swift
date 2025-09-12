@@ -199,6 +199,9 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     /// - Returns: URL after authentication is complete
     /// - Throws: BrowserError if the view controller cannot be presented
     private func loginWithSFViewController(url: URL, callbackURLScheme: String ) async throws -> URL {
+       guard self.loginContinuation == nil else {
+            throw BrowserError.externalUserAgentAuthenticationInProgress
+        }
         // 1. Prepare and present the Safari VC
         let safariVC = SFSafariViewController(url: url)
         safariVC.delegate = self
