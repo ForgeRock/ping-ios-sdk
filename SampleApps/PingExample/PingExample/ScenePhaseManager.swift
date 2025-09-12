@@ -24,7 +24,7 @@ class ScenePhaseManager: ObservableObject {
         print("ScenePhaseManager initialised. Subscribing to notifications.")
 
         // Subscribe to the notification for when the scene becomes active
-        NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)
+        NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
             .receive(on: RunLoop.main) // Ensure updates happen on the main thread
             .sink { [weak self] _ in
                 self?.currentPhase = "✅ Active"
@@ -39,7 +39,7 @@ class ScenePhaseManager: ObservableObject {
             .store(in: &cancellables)
 
         // Subscribe to the notification for when the scene enters the background
-        NotificationCenter.default.publisher(for: UIScene.didEnterBackgroundNotification)
+        NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)
             .sink { [weak self] _ in
                 self?.currentPhase = "BACKGROUND - Inactive"
                 print("Scene has entered the background.")

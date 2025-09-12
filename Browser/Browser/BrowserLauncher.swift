@@ -90,10 +90,16 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     
     /// Resets the browser state
     public func reset() {
-        // Reset the browser
+        self.logger.i("Resetting the browser")
+        if let session = self.currentSession as? SFSafariViewController {
+            session.dismiss(animated: false)
+        }
+        
+        if self.isInProgress {
+            self.loginContinuation?.resume(throwing: BrowserError.externalUserAgentCancelled)
+        }
+        
         self.cleanup()
-        self.isInProgress = false
-        self.currentSession = nil
     }
     
     /// Launches external user-agent for web requests
@@ -169,21 +175,22 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
             }
         }
         guard opened else {
+            cleanup()
             throw BrowserError.externalUserAgentFailure
         }
         
-        // 2. Await the first incoming URL matching our scheme
-        let redirectURL = try await withCheckedThrowingContinuation { (cont: CheckedContinuation<URL, Error>) in
+        // 2. Await the result using the class-level continuation
+        return try await withCheckedThrowingContinuation { continuation in
+            self.loginContinuation = continuation
+            
             self.cancellable = OpenURLMonitor.shared.urlPublisher
                 .filter { $0.scheme == callbackURLScheme }
                 .first()
-                .sink { url in
-                    self.cancellable?.cancel()
-                    cont.resume(returning: url)
+                .sink { [weak self] url in
+                    self?.loginContinuation?.resume(returning: url)
+                    self?.cleanup()
                 }
         }
-        
-        return redirectURL
     }
     
     /// Performs authentication through /authorize endpoint using SFSafariViewController
@@ -195,6 +202,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
         // 1. Prepare and present the Safari VC
         let safariVC = SFSafariViewController(url: url)
         safariVC.delegate = self
+        safariVC.modalPresentationStyle = .fullScreen
         self.currentSession = safariVC
         
         guard
@@ -217,24 +225,34 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
                 .filter { $0.scheme == callbackURLScheme }
                 .first()
                 .sink { [weak self] url in
-                    if let sfViewController = self?.currentSession as? SFSafariViewController {
+                    guard let self = self else { return }
+
+                    // First, resume the continuation to unblock the caller.
+                    self.loginContinuation?.resume(returning: url)
+
+                    // Then, dismiss the view controller and clean up the state.
+                    if let sfViewController = self.currentSession as? SFSafariViewController {
+                        // Set delegate to nil to prevent safariViewControllerDidFinish from firing.
+                        sfViewController.delegate = nil
                         sfViewController.dismiss(animated: true) {
-                            // Resume with success and clean up
-                            self?.loginContinuation?.resume(returning: url)
-                            self?.cleanup()
+                            self.cleanup()
                         }
                     } else {
-                        self?.loginContinuation?.resume(returning: url)
-                        self?.cleanup()
+                        // If there's no view controller, just clean up.
+                        self.cleanup()
                     }
                 }
         }
     }
     
-    /// Clean up subscription
+    /// Clean up subscription and reset state
     private func cleanup() {
         cancellable?.cancel()
         cancellable = nil
+        loginContinuation = nil
+        currentSession = nil
+        isInProgress = false
+        logger.i("Browser session cleaned up and state reset.")
     }
     
     /// Performs authentication through /authorize endpoint using ASWebAuthenticationSession
@@ -296,9 +314,7 @@ extension BrowserLauncher: SFSafariViewControllerDelegate {
     nonisolated public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
         Task { @MainActor [weak self] in
             self?.logger.i("User cancelled the authorization process by closing the window")
-            self?.loginContinuation?.resume(throwing: BrowserError.externalUserAgentCancelled)
             self?.reset()
-            self?.cleanup()
         }
     }
     
