@@ -20,6 +20,8 @@
 		EC59E1FC2E7AD81700A91E66 /* URLSchemeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E1F12E7AD81700A91E66 /* URLSchemeDetector.swift */; };
 		EC59E1FD2E7AD81700A91E66 /* JailbreakDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = EC59E1E72E7AD81700A91E66 /* JailbreakDetector.h */; };
 		EC59E1FE2E7AD81700A91E66 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC59E1E92E7AD81700A91E66 /* PrivacyInfo.xcprivacy */; };
+		EC59E24F2E7AF60600A91E66 /* JailbreakDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E24C2E7AF60600A91E66 /* JailbreakDetectorTests.swift */; };
+		EC59E2512E7AF74F00A91E66 /* MockJailbreakDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E2502E7AF74F00A91E66 /* MockJailbreakDetector.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,15 +49,10 @@
 		EC59E1EF2E7AD81700A91E66 /* SuspiciousObjCClassesDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspiciousObjCClassesDetector.swift; sourceTree = "<group>"; };
 		EC59E1F02E7AD81700A91E66 /* SymbolicLinkDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolicLinkDetector.swift; sourceTree = "<group>"; };
 		EC59E1F12E7AD81700A91E66 /* URLSchemeDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSchemeDetector.swift; sourceTree = "<group>"; };
+		EC59E24C2E7AF60600A91E66 /* JailbreakDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JailbreakDetectorTests.swift; sourceTree = "<group>"; };
+		EC59E24D2E7AF60600A91E66 /* JailbreakDetectorTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JailbreakDetectorTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		EC59E2502E7AF74F00A91E66 /* MockJailbreakDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockJailbreakDetector.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		EC59E1662E7AD21700A91E66 /* JailbreakDetectorTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = JailbreakDetectorTests;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		EC59E1562E7AD21600A91E66 /* Frameworks */ = {
@@ -80,7 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				EC59E1F22E7AD81700A91E66 /* JailbreakDetector */,
-				EC59E1662E7AD21700A91E66 /* JailbreakDetectorTests */,
+				EC59E24E2E7AF60600A91E66 /* JailbreakDetectorTests */,
 				EC59E15A2E7AD21600A91E66 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -111,6 +108,16 @@
 				EC59E1F12E7AD81700A91E66 /* URLSchemeDetector.swift */,
 			);
 			path = JailbreakDetector;
+			sourceTree = "<group>";
+		};
+		EC59E24E2E7AF60600A91E66 /* JailbreakDetectorTests */ = {
+			isa = PBXGroup;
+			children = (
+				EC59E24C2E7AF60600A91E66 /* JailbreakDetectorTests.swift */,
+				EC59E2502E7AF74F00A91E66 /* MockJailbreakDetector.swift */,
+				EC59E24D2E7AF60600A91E66 /* JailbreakDetectorTests-Bridging-Header.h */,
+			);
+			path = JailbreakDetectorTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -159,9 +166,6 @@
 			);
 			dependencies = (
 				EC59E1652E7AD21700A91E66 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				EC59E1662E7AD21700A91E66 /* JailbreakDetectorTests */,
 			);
 			name = JailbreakDetectorTests;
 			packageProductDependencies = (
@@ -250,6 +254,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC59E24F2E7AF60600A91E66 /* JailbreakDetectorTests.swift in Sources */,
+				EC59E2512E7AF74F00A91E66 /* MockJailbreakDetector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -478,6 +484,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = JV6EC9KSN3;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.JailbreakDetectorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -489,6 +496,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
 			};
 			name = Debug;
 		};
@@ -500,6 +508,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = JV6EC9KSN3;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.JailbreakDetectorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -510,6 +519,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
 			};
 			name = Release;
 		};

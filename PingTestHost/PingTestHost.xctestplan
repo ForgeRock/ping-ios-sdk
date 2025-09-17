@@ -120,6 +120,13 @@
         "identifier" : "EC23D5852E2FD12100C43D42",
         "name" : "DeviceIdTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/JailbreakDetector\/JailbreakDetector.xcodeproj",
+        "identifier" : "EC59E1612E7AD21700A91E66",
+        "name" : "JailbreakDetectorTests"
+      }
     }
   ],
   "version" : 1

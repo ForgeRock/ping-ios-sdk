@@ -96,14 +96,15 @@ public class JailbreakDetector: NSObject {
     ///
     /// - Returns: returns result of analysis of all given detectors
     @objc
-    public func analyze() -> Double {
+    public func analyze(forceRunOnSimulator: Bool = false) -> Double {
         #if targetEnvironment(simulator)
-            return 0.0
-        #else
+            if !forceRunOnSimulator {
+                return 0.0
+            }
+        #endif
+        
         if self.detectors.count > 0 {
-            let _ = self.detectors.count
             var maxResult = 0.0
-            var result = 0.0
             for detector in self.detectors {
                 var detectorResult = detector.analyze()
                 if detectorResult > 1.0 {
@@ -114,7 +115,6 @@ public class JailbreakDetector: NSObject {
                 }
                 
                 maxResult = max(maxResult, detectorResult)
-                result += detectorResult
             }
             
             return maxResult
@@ -122,6 +122,5 @@ public class JailbreakDetector: NSObject {
         else {
             return -1.0
         }
-        #endif
     }
 }
