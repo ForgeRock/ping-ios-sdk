@@ -21,6 +21,7 @@ public let oidcLogin = OidcWeb.createOidcWeb { config in
         oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
         oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
+        oidcValue.acrValues = "ea02bcbfb2112e051c94ee9b08083d2d"
     }
 }
 

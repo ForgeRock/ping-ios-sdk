@@ -14,6 +14,7 @@ import PingExternalIdPFacebook
 import PingExternalIdPGoogle
 import PingBrowser
 import PingDeviceId
+import PingJailbreakDetector
 
 /// The main application entry point.
 @main
@@ -111,6 +112,14 @@ struct ContentView: View {
                 .task {
                     let id = try? await DefaultDeviceIdentifier().id
                     deviceID = "Device ID: \(id ?? "Unknown Device ID")"
+                    let jailbreakDetector = JailbreakDetector()
+                    let score = jailbreakDetector.analyze()
+
+                    if score > 0 {
+                        print("The device is likely jailbroken. Score: \(score)")
+                    } else {
+                        print("The device is likely not jailbroken. Or running a simulator")
+                    }
                 }
         }
     }

@@ -85,6 +85,8 @@
 		EC0CB5CB2E27AE4C00A82D6C /* JourneyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */; };
 		EC23D5712E2E8ECF00C43D42 /* OidcLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */; };
 		EC23D5722E2E8ECF00C43D42 /* OidcLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */; };
+		EC59E2172E7AF06600A91E66 /* JailbreakDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E1992E7AD46A00A91E66 /* JailbreakDetector.framework */; };
+		EC59E2182E7AF06600A91E66 /* JailbreakDetector.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E1992E7AD46A00A91E66 /* JailbreakDetector.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC92B3882DA02D7400E4246D /* DeviceAuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */; };
 		EC92B38A2DA02D7F00E4246D /* DeviceRegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */; };
 		EC92B38C2DA039C000E4246D /* AsyncSVGImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */; };
@@ -278,6 +280,20 @@
 			remoteGlobalIDString = EC727A2D2E019243005D9E28;
 			remoteInfo = JourneyTests;
 		};
+		EC59E1982E7AD46A00A91E66 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC59E17A2E7AD46A00A91E66 /* JailbreakDetector.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC59E1592E7AD21600A91E66;
+			remoteInfo = JailbreakDetector;
+		};
+		EC59E19A2E7AD46A00A91E66 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC59E17A2E7AD46A00A91E66 /* JailbreakDetector.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC59E1622E7AD21700A91E66;
+			remoteInfo = JailbreakDetectorTests;
+		};
 		ECB7C6842D5A24B70006F1C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */;
@@ -312,6 +328,7 @@
 				A5560CA32CFE4EDA0076CA8D /* PingLogger.framework in Embed Frameworks */,
 				A525E7B62DD7647200B02C17 /* PingExternalIdPApple.framework in Embed Frameworks */,
 				A5560CA52CFE4EDA0076CA8D /* PingOidc.framework in Embed Frameworks */,
+				EC59E2182E7AF06600A91E66 /* JailbreakDetector.framework in Embed Frameworks */,
 				A5560CA12CFE4EDA0076CA8D /* PingDavinci.framework in Embed Frameworks */,
 				A5560CA92CFE4EDA0076CA8D /* PingStorage.framework in Embed Frameworks */,
 				A5560CA72CFE4EDA0076CA8D /* PingOrchestrate.framework in Embed Frameworks */,
@@ -403,6 +420,7 @@
 		EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyViewModel.swift; sourceTree = "<group>"; };
 		EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginView.swift; sourceTree = "<group>"; };
 		EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginViewModel.swift; sourceTree = "<group>"; };
+		EC59E17A2E7AD46A00A91E66 /* JailbreakDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = JailbreakDetector.xcodeproj; path = ../../JailbreakDetector/JailbreakDetector.xcodeproj; sourceTree = SOURCE_ROOT; };
 		EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticationView.swift; sourceTree = "<group>"; };
 		EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationView.swift; sourceTree = "<group>"; };
 		EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncSVGImage.swift; sourceTree = "<group>"; };
@@ -433,6 +451,7 @@
 				A5560CA42CFE4EDA0076CA8D /* PingOidc.framework in Frameworks */,
 				A525E7B32DD7647200B02C17 /* PingExternalIdP.framework in Frameworks */,
 				A525E7B72DD7647200B02C17 /* PingExternalIdPFacebook.framework in Frameworks */,
+				EC59E2172E7AF06600A91E66 /* JailbreakDetector.framework in Frameworks */,
 				A5560CA02CFE4EDA0076CA8D /* PingDavinci.framework in Frameworks */,
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
 				EC92B38F2DA03E0700E4246D /* SVGKit in Frameworks */,
@@ -462,6 +481,7 @@
 		3A5441242BCDF10900385131 = {
 			isa = PBXGroup;
 			children = (
+				EC59E17A2E7AD46A00A91E66 /* JailbreakDetector.xcodeproj */,
 				ECCAB3A42E3B600B00BA1C73 /* DeviceId.xcodeproj */,
 				EC0CB5A52E27AD3D00A82D6C /* Journey.xcodeproj */,
 				A5A31CB52E0A37C700ABBEF7 /* Protect.xcodeproj */,
@@ -725,6 +745,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		EC59E1862E7AD46A00A91E66 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EC59E1992E7AD46A00A91E66 /* JailbreakDetector.framework */,
+				EC59E19B2E7AD46A00A91E66 /* JailbreakDetectorTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		ECCAB3A72E3B600B00BA1C73 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -854,6 +883,10 @@
 				{
 					ProductGroup = A5A74DA92DD7B30800C6FF31 /* Products */;
 					ProjectRef = A525E7C62DD7683500B02C17 /* ExternalIdPGoogle.xcodeproj */;
+				},
+				{
+					ProductGroup = EC59E1862E7AD46A00A91E66 /* Products */;
+					ProjectRef = EC59E17A2E7AD46A00A91E66 /* JailbreakDetector.xcodeproj */;
 				},
 				{
 					ProductGroup = EC0CB5A82E27AD3D00A82D6C /* Products */;
@@ -1049,6 +1082,20 @@
 			fileType = wrapper.cfbundle;
 			path = JourneyTests.xctest;
 			remoteRef = EC0CB5BA2E27AD3D00A82D6C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		EC59E1992E7AD46A00A91E66 /* JailbreakDetector.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = JailbreakDetector.framework;
+			remoteRef = EC59E1982E7AD46A00A91E66 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		EC59E19B2E7AD46A00A91E66 /* JailbreakDetectorTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = JailbreakDetectorTests.xctest;
+			remoteRef = EC59E19A2E7AD46A00A91E66 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		ECB7C6852D5A24B70006F1C8 /* PingBrowserTests.xctest */ = {
