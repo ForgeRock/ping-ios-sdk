@@ -79,12 +79,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     private var cancellable: AnyCancellable?
     
     /// Logger instance
-    var logger: Logger = LogManager.logger {
-        didSet {
-            // Propagate the logger to Modules
-            LogManager.logger = logger
-        }
-    }
+    var logger: Logger = LogManager.logger
     
     // MARK: Public Methods
     
@@ -113,6 +108,8 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     ///   - Throws: BrowserError
     public func launch(url: URL, customParams: [String: String]? = nil,
                        browserType: BrowserType = .authSession, browserMode: BrowserMode = .login, callbackURLScheme: String) async throws -> URL {
+        // Update the logger to the latest set before calling launch
+        logger = LogManager.logger
         
         // Make sure that no Browser instance is currently running
         if BrowserLauncher.currentBrowser.isInProgress {

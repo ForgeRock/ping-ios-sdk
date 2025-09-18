@@ -11,11 +11,13 @@
 import Foundation
 import PingOrchestrate
 import PingOidc
+import PingLogger
 
 public let oidcLogin = OidcWeb.createOidcWeb { config in
     let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
     config.browserMode = .login
-    config.browserType = .authSession
+    config.browserType = .sfViewController
+    config.logger = LogManager.standard
     config.module(PingOidc.OidcModule.config) { oidcValue in
         oidcValue.clientId = currentConfig?.clientId ?? ""
         oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
