@@ -279,16 +279,6 @@
                ReferencedContainer = "container:../DeviceId/DeviceId.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EC59E1612E7AD21700A91E66"
-               BuildableName = "JailbreakDetectorTests.xctest"
-               BlueprintName = "JailbreakDetectorTests"
-               ReferencedContainer = "container:../JailbreakDetector/JailbreakDetector.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

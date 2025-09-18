@@ -33,7 +33,16 @@ public class URLSchemeDetector: JailbreakDetectorProtocol {
         ]
         for urlScheme in urlSchemes {
             if let url = URL(string: urlScheme) {
-                if UIApplication.shared.canOpenURL(url) {
+                var canOpen = false
+                if Thread.isMainThread {
+                    canOpen = UIApplication.shared.canOpenURL(url)
+                } else {
+                    canOpen = DispatchQueue.main.sync {
+                        return UIApplication.shared.canOpenURL(url)
+                    }
+                }
+                
+                if canOpen {
                     return 1.0
                 }
             }
