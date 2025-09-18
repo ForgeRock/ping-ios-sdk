@@ -52,7 +52,7 @@ public class DyldDetector: JailbreakDetectorProtocol {
         for libraryIndex in 0..<_dyld_image_count() {
             
             // _dyld_get_image_name returns const char * that needs to be casted to Swift String
-            guard let loadedLibrary = String(validatingUTF8: _dyld_get_image_name(libraryIndex)) else { continue }
+            guard let loadedLibrary = String(validatingCString: _dyld_get_image_name(libraryIndex)) else { continue }
             
             for suspiciousLibrary in suspiciousLibraries {
                 if loadedLibrary.lowercased().contains(suspiciousLibrary.lowercased()) {

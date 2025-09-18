@@ -26,7 +26,7 @@ The `analyze()` method returns a score between 0.0 and 1.0, where 1.0 indicates 
 
 ### Built-in Detectors
 
-The `JailbreakDetector` includes the following built-in detectors:
+The `JailbreakDetector` includes the following built-in detectors, which are available through the `JailbreakDetector.defaultDetectors` static property:
 
 - `SuspiciousFilesExistenceDetector`: Checks for the existence of files that are commonly found on jailbroken devices.
 - `SuspiciousFilesAccessibleDetector`: Checks if suspicious files can be accessed.
@@ -40,7 +40,7 @@ The `JailbreakDetector` includes the following built-in detectors:
 
 ### Custom Detectors
 
-You can also create your own custom detectors and add them to the `JailbreakDetector`. To do this, you need to create a class that conforms to the `JailbreakDetectorProtocol` and implement the `analyze()` method.
+You can also create your own custom detectors. To do this, you need to create a class that conforms to the `JailbreakDetectorProtocol` and implement the `analyze()` method.
 
 Here is an example of a custom detector:
 
@@ -56,33 +56,29 @@ class MyCustomDetector: JailbreakDetectorProtocol {
 }
 ```
 
-Once you have created your custom detector, you can add it to the `JailbreakDetector` by passing it to the initializer:
+### Combining Default and Custom Detectors
+
+You can easily combine the default detectors with your own custom detectors.
+
+#### Adding Custom Detectors to the Default Set
+
+If you want to use the default detectors and add your own, you can use the `init(customDetectors:)` initializer:
 
 ```swift
 let customDetector = MyCustomDetector()
-let jailbreakDetector = JailbreakDetector(detectors: [customDetector])
+let jailbreakDetector = JailbreakDetector(customDetectors: [customDetector])
 let score = jailbreakDetector.analyze()
 ```
 
-You can also combine your custom detectors with the default ones:
+#### Creating a Custom Set of Detectors
+
+If you want to use a specific set of detectors, you can create your own array of detectors and pass it to the `init(detectors:)` initializer. You can use the `JailbreakDetector.defaultDetectors` static property to get the array of default detectors and modify it as you wish.
 
 ```swift
-let defaultDetectors = [
-    SuspiciousFilesExistenceDetector(),
-    SuspiciousFilesAccessibleDetector(),
-    URLSchemeDetector(),
-    RestrictedDirectoriesWritableDetector(),
-    SymbolicLinkDetector(),
-    DyldDetector(),
-    SandboxDetector(),
-    SuspiciousObjCClassesDetector(),
-    SandboxRestrictedFilesAccessable()
-]
-
 let customDetector = MyCustomDetector()
-let allDetectors = defaultDetectors + [customDetector]
+var detectors = JailbreakDetector.defaultDetectors
+detectors.append(customDetector)
 
-let jailbreakDetector = JailbreakDetector(detectors: allDetectors)
+let jailbreakDetector = JailbreakDetector(detectors: detectors)
 let score = jailbreakDetector.analyze()
 ```
-
