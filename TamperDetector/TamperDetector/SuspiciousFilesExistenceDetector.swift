@@ -1,6 +1,6 @@
 //
 //  SuspiciousFilesExistenceDetector.swift
-//  JailbreakDetector
+//  TamperDetector
 //
 //  Copyright (c) 2023 - 2025 Ping Identity Corporation. All rights reserved.
 //

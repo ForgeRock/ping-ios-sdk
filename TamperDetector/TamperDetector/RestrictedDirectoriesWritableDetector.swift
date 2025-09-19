@@ -1,6 +1,6 @@
 //
 //  RestrictedDirectoriesWritableDetector.swift
-//  JailbreakDetector
+//  TamperDetector
 //
 //  Copyright (c) 2019 - 2025 Ping Identity Corporation. All rights reserved.
 //
