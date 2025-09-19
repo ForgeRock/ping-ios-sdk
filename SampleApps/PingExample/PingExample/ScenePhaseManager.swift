@@ -13,9 +13,23 @@ import Combine
 import UIKit // Required for UIScene notifications
 import PingBrowser
 
+enum ScenePhase {
+    case active
+    case background
+    case unknown
+    
+    var description: String {
+        switch self {
+            case .active: return "✅ Active"
+            case .background: return "BACKGROUND - Inactive"
+            case .unknown: return "Unknown"
+        }
+    }
+}
+
 class ScenePhaseManager: ObservableObject {
     // A property to track the current phase, which views can observe.
-    @Published var currentPhase: String = "Unknown"
+    @Published var currentPhase: ScenePhase = .unknown
     
     // A set to store the notification subscriptions to manage their lifecycle.
     private var cancellables = Set<AnyCancellable>()
@@ -27,12 +41,11 @@ class ScenePhaseManager: ObservableObject {
         NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
             .receive(on: RunLoop.main) // Ensure updates happen on the main thread
             .sink { [weak self] _ in
-                self?.currentPhase = "✅ Active"
+                self?.currentPhase = .active
                 Task { @MainActor in
                     print("Scene is entering the foreground.")
                     if BrowserLauncher.currentBrowser.isInProgress {
-                        print("RESETTING BROWSER")
-                        BrowserLauncher.currentBrowser.reset()
+                        BrowserLauncher.currentBrowser.handleAppActivation()
                     }
                 }
             }
@@ -41,7 +54,7 @@ class ScenePhaseManager: ObservableObject {
         // Subscribe to the notification for when the scene enters the background
         NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)
             .sink { [weak self] _ in
-                self?.currentPhase = "BACKGROUND - Inactive"
+                self?.currentPhase = .background
                 print("Scene has entered the background.")
             }
             .store(in: &cancellables)

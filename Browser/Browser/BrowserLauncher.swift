@@ -40,17 +40,26 @@ public enum BrowserMode: Sendable {
 
 /// A protocol to abstract the BrowserLauncher functionality (if not already provided).
 /// (If your project already has a protocol that BrowserLauncher conforms to, you can use it.)
+
 @MainActor
 public protocol BrowserLauncherProtocol: Sendable {
     var isInProgress: Bool { get }
     func launch(url: URL, customParams: [String: String]?,
                 browserType: BrowserType, browserMode: BrowserMode, callbackURLScheme: String) async throws -> URL
     func reset()
+    func handleAppActivation()
 }
 
 /// BrowserLauncher class to launch external user-agent for web requests
 @MainActor
 public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
+    
+    private enum State {
+        case idle
+        case launching
+        case authenticating(session: Any)
+        case closing
+    }
     
     // MARK: Properties
     
@@ -58,7 +67,12 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     public static var currentBrowser: BrowserLauncherProtocol = BrowserLauncher()
     
     /// Boolean indicator whether or not current Browser object is in progress
-    private(set) public var isInProgress: Bool = false
+    public var isInProgress: Bool {
+        if case .idle = state {
+            return false
+        }
+        return true
+    }
     
     /// Custom URL query parameter for /authorize request
     private var customParams: [String: String] = [:]
@@ -67,7 +81,12 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     private var browserType: BrowserType = .authSession
     
     /// Current external user-agent instance
-    private var currentSession: Any?
+    private var currentSession: Any? {
+        if case .authenticating(let session) = state {
+            return session
+        }
+        return nil
+    }
     
     /// Browser mode (either login, logout or custom)
     private var browserMode: BrowserMode = .login
@@ -81,20 +100,38 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     /// Logger instance
     var logger: Logger = LogManager.logger
     
+    private var state: State = .idle
+    
     // MARK: Public Methods
+    
+    public func handleAppActivation() {
+        if case .authenticating(let session) = state, session is String {
+            logger.i("App became active during native browser authentication. Cancelling.")
+            loginContinuation?.resume(throwing: BrowserError.externalUserAgentCancelled)
+            cleanup()
+        }
+    }
     
     /// Resets the browser state
     public func reset() {
-        self.logger.i("Resetting the browser")
-        if let session = self.currentSession as? SFSafariViewController {
-            session.dismiss(animated: false)
+        logger.i("Resetting the browser")
+        
+        guard case .authenticating(let session) = state else {
+            logger.w("Browser is not in a state that can be reset.", error: nil)
+            return
         }
         
-        if self.isInProgress {
-            self.loginContinuation?.resume(throwing: BrowserError.externalUserAgentCancelled)
+        state = .closing
+        
+        if let session = session as? SFSafariViewController {
+            session.dismiss(animated: false) {
+                self.cleanup()
+            }
+        } else {
+            cleanup()
         }
         
-        self.cleanup()
+        loginContinuation?.resume(throwing: BrowserError.externalUserAgentCancelled)
     }
     
     /// Launches external user-agent for web requests
@@ -108,25 +145,20 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     ///   - Throws: BrowserError
     public func launch(url: URL, customParams: [String: String]? = nil,
                        browserType: BrowserType = .authSession, browserMode: BrowserMode = .login, callbackURLScheme: String) async throws -> URL {
-        // Update the logger to the latest set before calling launch
         logger = LogManager.logger
         
-        // Make sure that no Browser instance is currently running
-        if BrowserLauncher.currentBrowser.isInProgress {
+        guard case .idle = state else {
             throw BrowserError.externalUserAgentAuthenticationInProgress
         }
         
-        self.isInProgress = true
+        state = .launching
         
-        // If we have custom parameters, add them to the URL
         var finalUrl = url
         if let params = customParams, !params.isEmpty {
             var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
             
-            // Create query items from custom parameters
             let queryItems = params.map { URLQueryItem(name: $0.key, value: $0.value) }
             
-            // If URL already has query items, append to them, otherwise set them
             if var existingItems = urlComponents?.queryItems {
                 existingItems.append(contentsOf: queryItems)
                 urlComponents?.queryItems = existingItems
@@ -134,7 +166,6 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
                 urlComponents?.queryItems = queryItems
             }
             
-            // Get the final URL with parameters
             if let updatedUrl = urlComponents?.url {
                 finalUrl = updatedUrl
             } else {
@@ -142,19 +173,22 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
             }
         }
         
-        // Launch the browser based on type
+        return try await performLaunch(url: finalUrl, browserType: browserType, callbackURLScheme: callbackURLScheme)
+    }
+    
+    private func performLaunch(url: URL, browserType: BrowserType, callbackURLScheme: String) async throws -> URL {
         switch browserType {
         case .nativeBrowserApp:
-            return try await loginWithNativeBrowser(url: finalUrl, callbackURLScheme: callbackURLScheme)
+            return try await loginWithNativeBrowser(url: url, callbackURLScheme: callbackURLScheme)
             
         case .sfViewController:
-            return try await loginWithSFViewController(url: finalUrl, callbackURLScheme: callbackURLScheme)
+            return try await loginWithSFViewController(url: url, callbackURLScheme: callbackURLScheme)
             
         case .authSession:
-            return try await asWebAuthenticationSession(url: finalUrl, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: false)
+            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: false)
             
         case .ephemeralAuthSession:
-            return try await asWebAuthenticationSession(url: finalUrl, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: true)
+            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: true)
         }
     }
     
@@ -165,18 +199,17 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     /// - Returns: URL after authentication is complete
     /// - Throws: BrowserError if the view controller cannot be presented
     private func loginWithNativeBrowser(url: URL, callbackURLScheme: String ) async throws -> URL {
-        // 1. Open in external browser
         let opened = await withCheckedContinuation { (cont: CheckedContinuation<Bool, Never>) in
             UIApplication.shared.open(url, options: [:]) { success in
                 cont.resume(returning: success)
             }
         }
         guard opened else {
-            cleanup()
             throw BrowserError.externalUserAgentFailure
         }
         
-        // 2. Await the result using the class-level continuation
+        state = .authenticating(session: "Native Browser")
+        
         return try await withCheckedThrowingContinuation { continuation in
             self.loginContinuation = continuation
             
@@ -196,14 +229,10 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     /// - Returns: URL after authentication is complete
     /// - Throws: BrowserError if the view controller cannot be presented
     private func loginWithSFViewController(url: URL, callbackURLScheme: String ) async throws -> URL {
-       guard self.loginContinuation == nil else {
-            throw BrowserError.externalUserAgentAuthenticationInProgress
-        }
-        // 1. Prepare and present the Safari VC
         let safariVC = SFSafariViewController(url: url)
         safariVC.delegate = self
         safariVC.modalPresentationStyle = .fullScreen
-        self.currentSession = safariVC
+        state = .authenticating(session: safariVC)
         
         guard
             let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -215,31 +244,25 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
         
         presentingVC.present(safariVC, animated: true)
         
-        // 2. Await the result using the continuation stored in a property
         return try await withCheckedThrowingContinuation { continuation in
-            // STORE the continuation to be used by the delegate or the sink
             self.loginContinuation = continuation
             
-            // Listen for the incoming URL
             self.cancellable = OpenURLMonitor.shared.urlPublisher
                 .filter { $0.scheme == callbackURLScheme }
                 .first()
                 .sink { [weak self] url in
                     guard let self = self else { return }
-
-                    // First, resume the continuation to unblock the caller.
-                    self.loginContinuation?.resume(returning: url)
-
-                    // Then, dismiss the view controller and clean up the state.
-                    if let sfViewController = self.currentSession as? SFSafariViewController {
-                        // Set delegate to nil to prevent safariViewControllerDidFinish from firing.
-                        sfViewController.delegate = nil
-                        sfViewController.dismiss(animated: true) {
+                    
+                    if case .authenticating(let session) = self.state {
+                        self.state = .closing
+                        self.loginContinuation?.resume(returning: url)
+                        if let sfViewController = session as? SFSafariViewController {
+                            sfViewController.dismiss(animated: true) {
+                                self.cleanup()
+                            }
+                        } else {
                             self.cleanup()
                         }
-                    } else {
-                        // If there's no view controller, just clean up.
-                        self.cleanup()
                     }
                 }
         }
@@ -250,8 +273,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
         cancellable?.cancel()
         cancellable = nil
         loginContinuation = nil
-        currentSession = nil
-        isInProgress = false
+        state = .idle
         logger.i("Browser session cleaned up and state reset.")
     }
     
@@ -265,7 +287,11 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     private func asWebAuthenticationSession(url: URL, callbackURLScheme: String,
                                             prefersEphemeralWebBrowserSession: Bool) async throws -> URL {
         return try await withCheckedThrowingContinuation { continuation in
-            let authSession = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme) { (url, error) in
+            let authSession = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme) { [weak self] (url, error) in
+                guard let self = self else { return }
+                
+                self.state = .closing
+                
                 if let error = error {
                     continuation.resume(throwing: error)
                 } else if let url = url {
@@ -273,27 +299,33 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
                 } else {
                     continuation.resume(throwing: BrowserError.externalUserAgentFailure)
                 }
+                self.cleanup()
             }
             
             authSession.presentationContextProvider = self
             authSession.prefersEphemeralWebBrowserSession = prefersEphemeralWebBrowserSession
-            self.currentSession = authSession
+            self.state = .authenticating(session: authSession)
             
             if !authSession.start() {
+                self.state = .closing
                 continuation.resume(throwing: BrowserError.externalUserAgentFailure)
+                self.cleanup()
             }
-            reset()
         }
     }
     
     /// Closes currently presenting ViewController
     private func close() async {
-        if let sfViewController = self.currentSession as? SFSafariViewController {
+        guard case .authenticating(let session) = state else {
+            return
+        }
+        
+        if let sfViewController = session as? SFSafariViewController {
             self.logger.i("Close called with SFSafariViewController: \(String(describing: self.currentSession))")
             sfViewController.dismiss(animated: true)
         }
         
-        if let asAuthSession = self.currentSession as? ASWebAuthenticationSession {
+        if let asAuthSession = session as? ASWebAuthenticationSession {
             self.logger.i("Close called with ASWebAuthenticationSession: \(String(describing: self.currentSession))")
             asAuthSession.cancel()
         }
