@@ -95,34 +95,6 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
             serverUrl: <#"Server URL"#>, // Optional, can be nil if not used
             realm: <#"Realm"#> // Optional, can be nil if not used
         )
-//        return ConfigurationViewModel(
-//
-//                            clientId: "iosClient",
-//                            scopes: ["openid", "email", "address"], // Alter the scopes based on your clients configuration
-//                            redirectUri: "org.forgerock.demo://oauth2redirect",
-//                            signOutUri: "",
-//                            discoveryEndpoint: "https://openam-sdks.forgeblocks.com/am/oauth2/alpha/.well-known/openid-configuration",
-//                            environment: "AIC",
-//                            cookieName: "5421aeddf91aa20",
-//                            serverUrl: "https://openam-sdks.forgeblocks.com/am",
-//                            realm: "alpha"
-//                        )
-        
-
-                      return ConfigurationViewModel(
-                            clientId: "iosClient",
-                            scopes: ["openid", "email", "address"], // Alter the scopes based on your clients configuration
-                            redirectUri: "org.forgerock.demo://oauth2redirect",
-                            signOutUri: "",
-                            discoveryEndpoint: "https://openam-bafaloukas.forgeblocks.com/am/oauth2/alpha/.well-known/openid-configuration",
-                            environment: "AIC",
-                            cookieName: "386c0d288cac4b9",
-                            serverUrl: "https://openam-bafaloukas.forgeblocks.com/am",
-                            realm: "alpha"
-                      )
-
-
-
     }
 }
 
