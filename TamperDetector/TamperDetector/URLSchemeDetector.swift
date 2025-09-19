@@ -12,8 +12,8 @@
 import Foundation
 import UIKit
 
-/// URLSchemeDetector is a JailbreakDetector class, and is used as one of default JailbreakDetector's detectors to determine whether the device is Jailbroken or not
-public class URLSchemeDetector: JailbreakDetectorProtocol {
+/// URLSchemeDetector is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
+public class URLSchemeDetector: TamperDetectorProtocol {
     
     public init() { }
 

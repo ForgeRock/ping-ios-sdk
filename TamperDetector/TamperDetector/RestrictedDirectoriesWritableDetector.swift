@@ -10,8 +10,8 @@
 
 import Foundation
 
-/// RestrictedDirectoriesWritableDetector is a JailbreakDetector class, and is used as one of default JailbreakDetector's detectors to determine whether the device is Jailbroken or not
-public class RestrictedDirectoriesWritableDetector: JailbreakDetectorProtocol {
+/// RestrictedDirectoriesWritableDetector is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
+public class RestrictedDirectoriesWritableDetector: TamperDetectorProtocol {
     
     public init() { }
 
@@ -36,7 +36,7 @@ public class RestrictedDirectoriesWritableDetector: JailbreakDetectorProtocol {
             // Try to generate a file with Random UUID as name
             // Make sure to handle writing / deleting operation separately to correctly measure the result
             do {
-                try "[JailbreakDetector] RestrictedDirectoriesWritableDetection Test".write(toFile: path, atomically: true, encoding: String.Encoding.utf8)
+                try "[TamperDetector] RestrictedDirectoriesWritableDetection Test".write(toFile: path, atomically: true, encoding: String.Encoding.utf8)
                 isFileWritable = true
             } catch {
                 isFileWritable = false

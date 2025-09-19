@@ -8,7 +8,7 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'PingJailbreakDetector'
+  s.name             = 'PingTamperDetector'
   s.version          = '1.0.0'
   s.summary          = 'PingJailbreakDetector module for the Ping iOS SDK'
   s.description      = <<-DESC
@@ -31,7 +31,7 @@ Pod::Spec.new do |s|
   base_dir = "JailbreakDetector/JailbreakDetector"
   s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.c', base_dir + '/**/*.h'
   s.resource_bundles = {
-    'JailbreakDetector' => [base_dir + '/*.xcprivacy']
+    'TamperDetector' => [base_dir + '/*.xcprivacy']
   }
   
 end

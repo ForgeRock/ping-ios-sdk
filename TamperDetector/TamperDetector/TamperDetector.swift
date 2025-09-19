@@ -2,11 +2,11 @@
 import Foundation
 
 @MainActor
-public protocol JailbreakDetectorProtocol {
+public protocol TamperDetectorProtocol {
     func analyze() -> Double
 }
 
-extension JailbreakDetectorProtocol {
+extension TamperDetectorProtocol {
     func canOpen(path: String) -> Bool {
         let file = fopen(path, "r")
         guard file != nil else {
@@ -34,10 +34,10 @@ extension JailbreakDetectorProtocol {
 }
 
 @MainActor
-public class JailbreakDetector {
+public class TamperDetector {
 
     @MainActor
-    public static var defaultDetectors: [JailbreakDetectorProtocol] {
+    public static var defaultDetectors: [TamperDetectorProtocol] {
         return [
             SuspiciousFilesExistenceDetector(),
             SuspiciousFilesAccessibleDetector(),
@@ -51,14 +51,14 @@ public class JailbreakDetector {
         ]
     }
 
-    public let detectors: [JailbreakDetectorProtocol]
+    public let detectors: [TamperDetectorProtocol]
 
-    public init(detectors: [JailbreakDetectorProtocol] = defaultDetectors) {
+    public init(detectors: [TamperDetectorProtocol] = defaultDetectors) {
         self.detectors = detectors
     }
     
-    public init(customDetectors: [JailbreakDetectorProtocol]) {
-        self.detectors = JailbreakDetector.defaultDetectors + customDetectors
+    public init(customDetectors: [TamperDetectorProtocol]) {
+        self.detectors = TamperDetector.defaultDetectors + customDetectors
     }
 
     @MainActor public func analyze(forceRunOnSimulator: Bool = false) -> Double {

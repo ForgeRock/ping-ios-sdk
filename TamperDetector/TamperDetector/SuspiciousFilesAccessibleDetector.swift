@@ -11,8 +11,8 @@
 
 import Foundation
 
-/// SuspiciousFilesAccessibleDetector is a JailbreakDetector class, and is used as one of default JailbreakDetector's detectors to determine whether the device is Jailbroken or not
-public class SuspiciousFilesAccessibleDetector: JailbreakDetectorProtocol {
+/// SuspiciousFilesAccessibleDetector is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
+public class SuspiciousFilesAccessibleDetector: TamperDetectorProtocol {
     
     public init() { }
 

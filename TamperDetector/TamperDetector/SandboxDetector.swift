@@ -10,8 +10,8 @@
 
 import Foundation
 
-/// SandboxDetector is a JailbreakDetector class, and is used as one of default JailbreakDetector's detectors to determine whether the device is Jailbroken or not
-public class SandboxDetector: JailbreakDetectorProtocol {
+/// SandboxDetector is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
+public class SandboxDetector: TamperDetectorProtocol {
     
     public init() { }
 

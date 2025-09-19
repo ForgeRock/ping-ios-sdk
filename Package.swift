@@ -18,7 +18,7 @@ let package = Package (
         .library(name: "PingExternalIdPGoogle", targets: ["PingExternalIdPGoogle"]),
         .library(name: "PingExternalIdPFacebook", targets: ["PingExternalIdPFacebook"]),
         .library(name: "PingProtect", targets: ["PingProtect"]),
-        .library(name: "PingJailbreakDetector", targets: ["PingJailbreakDetector"])
+        .library(name: "PingTamperDetector", targets: ["PingTamperDetector"])
     ],
     dependencies: [
 		.package(url: "https://github.com/pingidentity/pingone-signals-sdk-ios.git", "5.3.0" ..< "5.4.0"),
@@ -36,9 +36,7 @@ let package = Package (
         .target(name: "PingExternalIdPApple", dependencies: [.target(name: "PingExternalIdP")], path: "ExternalIdPApple/ExternalIdPApple", exclude: ["ExtrernalIdPApple.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingExternalIdPGoogle", dependencies: [.target(name: "PingExternalIdP"), .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")], path: "ExternalIdPGoogle/ExternalIdPGoogle", exclude: ["ExtrernalIdPGoogle.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
     	.target(name: "PingExternalIdPFacebook", dependencies: [.target(name: "PingExternalIdP"), .product(name: "FacebookLogin", package: "facebook-ios-sdk")], path: "ExternalIdPFacebook/ExternalIdPFacebook", exclude: ["ExtrernalIdPFacebook.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-    	.target(name: "PingProtect", dependencies: [.target(name: "PingDavinci"), .product(name: "PingOneSignals", package: "pingone-signals-sdk-ios")], path: "Protect/Protect", exclude: ["Protect.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
-    ]
-)
-ilbreakDetector", exclude: ["JailbreakDetector.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
+    	.target(name: "PingProtect", dependencies: [.target(name: "PingDavinci"), .product(name: "PingOneSignals", package: "pingone-signals-sdk-ios")], path: "Protect/Protect", exclude: ["Protect.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingTamperDetector", dependencies: [], path: "TamperDetector/TamperDetector", exclude: ["TamperDetector.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
     ]
 )

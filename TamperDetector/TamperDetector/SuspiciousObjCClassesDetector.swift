@@ -11,8 +11,8 @@
 
 import Foundation
 
-/// SuspiciousObjCClassesDetector is a JailbreakDetector class, and is used as one of default JailbreakDetector's detectors to determine whether the device is Jailbroken or not
-public class SuspiciousObjCClassesDetector: JailbreakDetectorProtocol {
+/// SuspiciousObjCClassesDetector is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
+public class SuspiciousObjCClassesDetector: TamperDetectorProtocol {
     
     public init() { }
 

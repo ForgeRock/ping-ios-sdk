@@ -1,8 +1,7 @@
-
 import Foundation
-@testable import PingJailbreakDetector
+@testable import PingTamperDetector
 
-class MockJailbreakDetector: JailbreakDetectorProtocol {
+class MockTamperDetector: TamperDetectorProtocol {
     
     var score: Double
     

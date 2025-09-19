@@ -10,9 +10,8 @@
 
 import Foundation
 import MachO
-
-/// DyldDetector is a JailbreakDetector class, and is used as one of default JailbreakDetector's detectors to determine whether the device is Jailbroken or not
-public class DyldDetector: JailbreakDetectorProtocol {
+/// DyldDetector is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
+public class DyldDetector: TamperDetectorProtocol {
     
     public init() { }
 

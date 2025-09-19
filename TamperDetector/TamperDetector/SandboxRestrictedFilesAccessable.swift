@@ -11,8 +11,8 @@
 
 import Foundation
 
-/// SandboxRestrictedFilesAccessable is a JailbreakDetector class, and is used as one of default JailbreakDetector's detectors to determine whether the device is Jailbroken or not
-public class SandboxRestrictedFilesAccessable: JailbreakDetectorProtocol {
+/// SandboxRestrictedFilesAccessable is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
+public class SandboxRestrictedFilesAccessable: TamperDetectorProtocol {
         
     public init() { }
 

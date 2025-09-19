@@ -1,62 +1,62 @@
 import XCTest
-@testable import PingJailbreakDetector
+@testable import PingTamperDetector
 
 class TamperDetectorTests: XCTestCase {
 
     @MainActor
     func testDefaultAnalyze() {
-        let detector = JailbreakDetector()
+        let detector = TamperDetector()
         let result = detector.analyze(forceRunOnSimulator: true)
         XCTAssert(result >= 0.0 && result <= 1.0)
     }
     
     @MainActor
     func testDefaultDetectors() {
-        let detector = JailbreakDetector()
+        let detector = TamperDetector()
         XCTAssertFalse(detector.detectors.isEmpty)
     }
     
     @MainActor
     func testCustomDetector() {
-        let customDetector = MockJailbreakDetector(score: 0.5)
-        let detector = JailbreakDetector(detectors: [customDetector])
+        let customDetector = MockTamperDetector(score: 0.5)
+        let detector = TamperDetector(detectors: [customDetector])
         let result = detector.analyze(forceRunOnSimulator: true)
         XCTAssertEqual(result, 0.5)
     }
     
     @MainActor
     func testEmptyDetector() {
-        let detector = JailbreakDetector(detectors: [])
+        let detector = TamperDetector(detectors: [])
         let result = detector.analyze(forceRunOnSimulator: true)
         XCTAssertEqual(result, -1.0)
     }
     
     @MainActor
     func testMixedDetectors() {
-        let customDetector = MockJailbreakDetector(score: 0.8)
-        var detectors = JailbreakDetector().detectors
+        let customDetector = MockTamperDetector(score: 0.8)
+        var detectors = TamperDetector().detectors
         detectors.append(customDetector)
-        let detector = JailbreakDetector(detectors: detectors)
+        let detector = TamperDetector(detectors: detectors)
         let result = detector.analyze(forceRunOnSimulator: true)
         XCTAssertEqual(result, 0.8)
     }
     
     @MainActor
     func testUpperBoundCap() {
-        let detectors: [JailbreakDetectorProtocol] = [
-            MockJailbreakDetector(score: 1.5)
+        let detectors: [TamperDetectorProtocol] = [
+            MockTamperDetector(score: 1.5)
         ]
-        let detector = JailbreakDetector(detectors: detectors)
+        let detector = TamperDetector(detectors: detectors)
         let result = detector.analyze(forceRunOnSimulator: true)
         XCTAssertEqual(result, 1.0)
     }
     
     @MainActor
     func testLowerBoundFloor() {
-        let detectors: [JailbreakDetectorProtocol] = [
-            MockJailbreakDetector(score: -0.5)
+        let detectors: [TamperDetectorProtocol] = [
+            MockTamperDetector(score: -0.5)
         ]
-        let detector = JailbreakDetector(detectors: detectors)
+        let detector = TamperDetector(detectors: detectors)
         let result = detector.analyze(forceRunOnSimulator: true)
         XCTAssertEqual(result, 0.0)
     }
