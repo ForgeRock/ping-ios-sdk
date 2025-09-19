@@ -75,7 +75,7 @@ public class JailbreakDetector {
         var maxResult = 0.0
         for detector in self.detectors {
             var detectorResult = detector.analyze()
-            if detectorResult > 1.0 {
+            if detectorResult >= 1.0 {
                 detectorResult = 1.0
             }
             else if detectorResult < 0 {

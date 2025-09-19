@@ -1,7 +1,7 @@
 import XCTest
 @testable import PingJailbreakDetector
 
-class JailbreakDetectorTests: XCTestCase {
+class TamperDetectorTests: XCTestCase {
 
     @MainActor
     func testDefaultAnalyze() {

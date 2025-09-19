@@ -183,7 +183,7 @@ class WorkflowMock: Workflow, @unchecked Sendable {
     }
 }
 
-class FlowContextMock: FlowContext {}
+class FlowContextMock: FlowContext, @unchecked Sendable {}
 
 final class NodeMock: Node {}
 

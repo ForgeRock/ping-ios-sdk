@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EC59E1582E7AD21600A91E66"
-               BuildableName = "PingJailbreakDetector.framework"
-               BlueprintName = "PingJailbreakDetector"
-               ReferencedContainer = "container:JailbreakDetector.xcodeproj">
+               BuildableName = "PingTamperDetector.framework"
+               BlueprintName = "PingTamperDetector"
+               ReferencedContainer = "container:TamperDetector.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -27,21 +27,13 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      shouldAutocreateTestPlan = "YES">
-      <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EC59E1612E7AD21700A91E66"
-               BuildableName = "JailbreakDetectorTests.xctest"
-               BlueprintName = "JailbreakDetectorTests"
-               ReferencedContainer = "container:JailbreakDetector.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:PingTamperDetector.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+      </TestPlans>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -64,9 +56,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EC59E1582E7AD21600A91E66"
-            BuildableName = "PingJailbreakDetector.framework"
-            BlueprintName = "PingJailbreakDetector"
-            ReferencedContainer = "container:JailbreakDetector.xcodeproj">
+            BuildableName = "PingTamperDetector.framework"
+            BlueprintName = "PingTamperDetector"
+            ReferencedContainer = "container:TamperDetector.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

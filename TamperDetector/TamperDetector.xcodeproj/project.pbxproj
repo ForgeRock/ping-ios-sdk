@@ -7,21 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		EC59E1632E7AD21700A91E66 /* PingJailbreakDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E1592E7AD21600A91E66 /* PingJailbreakDetector.framework */; };
-		EC59E1F32E7AD81700A91E66 /* DyldDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E1E62E7AD81700A91E66 /* DyldDetector.swift */; };
-		EC59E1F42E7AD81700A91E66 /* JailbreakDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E1E82E7AD81700A91E66 /* JailbreakDetector.swift */; };
-		EC59E1F52E7AD81700A91E66 /* RestrictedDirectoriesWritableDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E1EA2E7AD81700A91E66 /* RestrictedDirectoriesWritableDetector.swift */; };
-		EC59E1F62E7AD81700A91E66 /* SandboxDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E1EB2E7AD81700A91E66 /* SandboxDetector.swift */; };
-		EC59E1F72E7AD81700A91E66 /* SandboxRestrictedFilesAccessable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E1EC2E7AD81700A91E66 /* SandboxRestrictedFilesAccessable.swift */; };
-		EC59E1F82E7AD81700A91E66 /* SuspiciousFilesAccessibleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E1ED2E7AD81700A91E66 /* SuspiciousFilesAccessibleDetector.swift */; };
-		EC59E1F92E7AD81700A91E66 /* SuspiciousFilesExistenceDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E1EE2E7AD81700A91E66 /* SuspiciousFilesExistenceDetector.swift */; };
-		EC59E1FA2E7AD81700A91E66 /* SuspiciousObjCClassesDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E1EF2E7AD81700A91E66 /* SuspiciousObjCClassesDetector.swift */; };
-		EC59E1FB2E7AD81700A91E66 /* SymbolicLinkDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E1F02E7AD81700A91E66 /* SymbolicLinkDetector.swift */; };
-		EC59E1FC2E7AD81700A91E66 /* URLSchemeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E1F12E7AD81700A91E66 /* URLSchemeDetector.swift */; };
-		EC59E1FD2E7AD81700A91E66 /* JailbreakDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = EC59E1E72E7AD81700A91E66 /* JailbreakDetector.h */; };
-		EC59E1FE2E7AD81700A91E66 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC59E1E92E7AD81700A91E66 /* PrivacyInfo.xcprivacy */; };
-		EC59E24F2E7AF60600A91E66 /* JailbreakDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E24C2E7AF60600A91E66 /* JailbreakDetectorTests.swift */; };
-		EC59E2512E7AF74F00A91E66 /* MockJailbreakDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E2502E7AF74F00A91E66 /* MockJailbreakDetector.swift */; };
+		EC59E1632E7AD21700A91E66 /* PingTamperDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E1592E7AD21600A91E66 /* PingTamperDetector.framework */; };
+		EC59E30F2E7D7E1300A91E66 /* MockTamperDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E30B2E7D7E1300A91E66 /* MockTamperDetector.swift */; };
+		EC59E3102E7D7E1300A91E66 /* TamperDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E30C2E7D7E1300A91E66 /* TamperDetectorTests.swift */; };
+		EC59E31E2E7D7E1D00A91E66 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC59E3122E7D7E1D00A91E66 /* PrivacyInfo.xcprivacy */; };
+		EC59E31F2E7D7E1D00A91E66 /* TamperDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = EC59E31A2E7D7E1D00A91E66 /* TamperDetector.h */; };
+		EC59E3202E7D7E1D00A91E66 /* SandboxDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E3142E7D7E1D00A91E66 /* SandboxDetector.swift */; };
+		EC59E3212E7D7E1D00A91E66 /* TamperDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E31B2E7D7E1D00A91E66 /* TamperDetector.swift */; };
+		EC59E3222E7D7E1D00A91E66 /* SuspiciousObjCClassesDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E3182E7D7E1D00A91E66 /* SuspiciousObjCClassesDetector.swift */; };
+		EC59E3232E7D7E1D00A91E66 /* RestrictedDirectoriesWritableDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E3132E7D7E1D00A91E66 /* RestrictedDirectoriesWritableDetector.swift */; };
+		EC59E3242E7D7E1D00A91E66 /* SandboxRestrictedFilesAccessable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E3152E7D7E1D00A91E66 /* SandboxRestrictedFilesAccessable.swift */; };
+		EC59E3252E7D7E1D00A91E66 /* SymbolicLinkDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E3192E7D7E1D00A91E66 /* SymbolicLinkDetector.swift */; };
+		EC59E3262E7D7E1D00A91E66 /* SuspiciousFilesExistenceDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E3172E7D7E1D00A91E66 /* SuspiciousFilesExistenceDetector.swift */; };
+		EC59E3272E7D7E1D00A91E66 /* URLSchemeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E31C2E7D7E1D00A91E66 /* URLSchemeDetector.swift */; };
+		EC59E3282E7D7E1D00A91E66 /* DyldDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E3112E7D7E1D00A91E66 /* DyldDetector.swift */; };
+		EC59E3292E7D7E1D00A91E66 /* SuspiciousFilesAccessibleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E3162E7D7E1D00A91E66 /* SuspiciousFilesAccessibleDetector.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,23 +35,23 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		EC59E1592E7AD21600A91E66 /* PingJailbreakDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingJailbreakDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC59E1622E7AD21700A91E66 /* JailbreakDetectorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JailbreakDetectorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC59E1E62E7AD81700A91E66 /* DyldDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DyldDetector.swift; sourceTree = "<group>"; };
-		EC59E1E72E7AD81700A91E66 /* JailbreakDetector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JailbreakDetector.h; sourceTree = "<group>"; };
-		EC59E1E82E7AD81700A91E66 /* JailbreakDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JailbreakDetector.swift; sourceTree = "<group>"; };
-		EC59E1E92E7AD81700A91E66 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		EC59E1EA2E7AD81700A91E66 /* RestrictedDirectoriesWritableDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestrictedDirectoriesWritableDetector.swift; sourceTree = "<group>"; };
-		EC59E1EB2E7AD81700A91E66 /* SandboxDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxDetector.swift; sourceTree = "<group>"; };
-		EC59E1EC2E7AD81700A91E66 /* SandboxRestrictedFilesAccessable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxRestrictedFilesAccessable.swift; sourceTree = "<group>"; };
-		EC59E1ED2E7AD81700A91E66 /* SuspiciousFilesAccessibleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspiciousFilesAccessibleDetector.swift; sourceTree = "<group>"; };
-		EC59E1EE2E7AD81700A91E66 /* SuspiciousFilesExistenceDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspiciousFilesExistenceDetector.swift; sourceTree = "<group>"; };
-		EC59E1EF2E7AD81700A91E66 /* SuspiciousObjCClassesDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspiciousObjCClassesDetector.swift; sourceTree = "<group>"; };
-		EC59E1F02E7AD81700A91E66 /* SymbolicLinkDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolicLinkDetector.swift; sourceTree = "<group>"; };
-		EC59E1F12E7AD81700A91E66 /* URLSchemeDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSchemeDetector.swift; sourceTree = "<group>"; };
-		EC59E24C2E7AF60600A91E66 /* JailbreakDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JailbreakDetectorTests.swift; sourceTree = "<group>"; };
-		EC59E24D2E7AF60600A91E66 /* JailbreakDetectorTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JailbreakDetectorTests-Bridging-Header.h"; sourceTree = "<group>"; };
-		EC59E2502E7AF74F00A91E66 /* MockJailbreakDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockJailbreakDetector.swift; sourceTree = "<group>"; };
+		EC59E1592E7AD21600A91E66 /* PingTamperDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingTamperDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC59E1622E7AD21700A91E66 /* TamplerDetectorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TamplerDetectorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC59E30B2E7D7E1300A91E66 /* MockTamperDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTamperDetector.swift; sourceTree = "<group>"; };
+		EC59E30C2E7D7E1300A91E66 /* TamperDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TamperDetectorTests.swift; sourceTree = "<group>"; };
+		EC59E30D2E7D7E1300A91E66 /* TamperDetectorTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TamperDetectorTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		EC59E3112E7D7E1D00A91E66 /* DyldDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DyldDetector.swift; sourceTree = "<group>"; };
+		EC59E3122E7D7E1D00A91E66 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		EC59E3132E7D7E1D00A91E66 /* RestrictedDirectoriesWritableDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestrictedDirectoriesWritableDetector.swift; sourceTree = "<group>"; };
+		EC59E3142E7D7E1D00A91E66 /* SandboxDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxDetector.swift; sourceTree = "<group>"; };
+		EC59E3152E7D7E1D00A91E66 /* SandboxRestrictedFilesAccessable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxRestrictedFilesAccessable.swift; sourceTree = "<group>"; };
+		EC59E3162E7D7E1D00A91E66 /* SuspiciousFilesAccessibleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspiciousFilesAccessibleDetector.swift; sourceTree = "<group>"; };
+		EC59E3172E7D7E1D00A91E66 /* SuspiciousFilesExistenceDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspiciousFilesExistenceDetector.swift; sourceTree = "<group>"; };
+		EC59E3182E7D7E1D00A91E66 /* SuspiciousObjCClassesDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspiciousObjCClassesDetector.swift; sourceTree = "<group>"; };
+		EC59E3192E7D7E1D00A91E66 /* SymbolicLinkDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolicLinkDetector.swift; sourceTree = "<group>"; };
+		EC59E31A2E7D7E1D00A91E66 /* TamperDetector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TamperDetector.h; sourceTree = "<group>"; };
+		EC59E31B2E7D7E1D00A91E66 /* TamperDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TamperDetector.swift; sourceTree = "<group>"; };
+		EC59E31C2E7D7E1D00A91E66 /* URLSchemeDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSchemeDetector.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC59E1632E7AD21700A91E66 /* PingJailbreakDetector.framework in Frameworks */,
+				EC59E1632E7AD21700A91E66 /* PingTamperDetector.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,8 +76,8 @@
 		EC59E14F2E7AD21600A91E66 = {
 			isa = PBXGroup;
 			children = (
-				EC59E1F22E7AD81700A91E66 /* JailbreakDetector */,
-				EC59E24E2E7AF60600A91E66 /* JailbreakDetectorTests */,
+				EC59E31D2E7D7E1D00A91E66 /* TamperDetector */,
+				EC59E30E2E7D7E1300A91E66 /* TamperDetectorTests */,
 				EC59E15A2E7AD21600A91E66 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,39 +85,39 @@
 		EC59E15A2E7AD21600A91E66 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EC59E1592E7AD21600A91E66 /* PingJailbreakDetector.framework */,
-				EC59E1622E7AD21700A91E66 /* JailbreakDetectorTests.xctest */,
+				EC59E1592E7AD21600A91E66 /* PingTamperDetector.framework */,
+				EC59E1622E7AD21700A91E66 /* TamplerDetectorTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		EC59E1F22E7AD81700A91E66 /* JailbreakDetector */ = {
+		EC59E30E2E7D7E1300A91E66 /* TamperDetectorTests */ = {
 			isa = PBXGroup;
 			children = (
-				EC59E1E62E7AD81700A91E66 /* DyldDetector.swift */,
-				EC59E1E72E7AD81700A91E66 /* JailbreakDetector.h */,
-				EC59E1E82E7AD81700A91E66 /* JailbreakDetector.swift */,
-				EC59E1E92E7AD81700A91E66 /* PrivacyInfo.xcprivacy */,
-				EC59E1EA2E7AD81700A91E66 /* RestrictedDirectoriesWritableDetector.swift */,
-				EC59E1EB2E7AD81700A91E66 /* SandboxDetector.swift */,
-				EC59E1EC2E7AD81700A91E66 /* SandboxRestrictedFilesAccessable.swift */,
-				EC59E1ED2E7AD81700A91E66 /* SuspiciousFilesAccessibleDetector.swift */,
-				EC59E1EE2E7AD81700A91E66 /* SuspiciousFilesExistenceDetector.swift */,
-				EC59E1EF2E7AD81700A91E66 /* SuspiciousObjCClassesDetector.swift */,
-				EC59E1F02E7AD81700A91E66 /* SymbolicLinkDetector.swift */,
-				EC59E1F12E7AD81700A91E66 /* URLSchemeDetector.swift */,
+				EC59E30B2E7D7E1300A91E66 /* MockTamperDetector.swift */,
+				EC59E30C2E7D7E1300A91E66 /* TamperDetectorTests.swift */,
+				EC59E30D2E7D7E1300A91E66 /* TamperDetectorTests-Bridging-Header.h */,
 			);
-			path = JailbreakDetector;
+			path = TamperDetectorTests;
 			sourceTree = "<group>";
 		};
-		EC59E24E2E7AF60600A91E66 /* JailbreakDetectorTests */ = {
+		EC59E31D2E7D7E1D00A91E66 /* TamperDetector */ = {
 			isa = PBXGroup;
 			children = (
-				EC59E24C2E7AF60600A91E66 /* JailbreakDetectorTests.swift */,
-				EC59E2502E7AF74F00A91E66 /* MockJailbreakDetector.swift */,
-				EC59E24D2E7AF60600A91E66 /* JailbreakDetectorTests-Bridging-Header.h */,
+				EC59E3112E7D7E1D00A91E66 /* DyldDetector.swift */,
+				EC59E3122E7D7E1D00A91E66 /* PrivacyInfo.xcprivacy */,
+				EC59E3132E7D7E1D00A91E66 /* RestrictedDirectoriesWritableDetector.swift */,
+				EC59E3142E7D7E1D00A91E66 /* SandboxDetector.swift */,
+				EC59E3152E7D7E1D00A91E66 /* SandboxRestrictedFilesAccessable.swift */,
+				EC59E3162E7D7E1D00A91E66 /* SuspiciousFilesAccessibleDetector.swift */,
+				EC59E3172E7D7E1D00A91E66 /* SuspiciousFilesExistenceDetector.swift */,
+				EC59E3182E7D7E1D00A91E66 /* SuspiciousObjCClassesDetector.swift */,
+				EC59E3192E7D7E1D00A91E66 /* SymbolicLinkDetector.swift */,
+				EC59E31A2E7D7E1D00A91E66 /* TamperDetector.h */,
+				EC59E31B2E7D7E1D00A91E66 /* TamperDetector.swift */,
+				EC59E31C2E7D7E1D00A91E66 /* URLSchemeDetector.swift */,
 			);
-			path = JailbreakDetectorTests;
+			path = TamperDetector;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -127,16 +127,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC59E1FD2E7AD81700A91E66 /* JailbreakDetector.h in Headers */,
+				EC59E31F2E7D7E1D00A91E66 /* TamperDetector.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		EC59E1582E7AD21600A91E66 /* PingJailbreakDetector */ = {
+		EC59E1582E7AD21600A91E66 /* PingTamperDetector */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EC59E16B2E7AD21700A91E66 /* Build configuration list for PBXNativeTarget "PingJailbreakDetector" */;
+			buildConfigurationList = EC59E16B2E7AD21700A91E66 /* Build configuration list for PBXNativeTarget "PingTamperDetector" */;
 			buildPhases = (
 				EC59E1542E7AD21600A91E66 /* Headers */,
 				EC59E1552E7AD21600A91E66 /* Sources */,
@@ -147,16 +147,16 @@
 			);
 			dependencies = (
 			);
-			name = PingJailbreakDetector;
+			name = PingTamperDetector;
 			packageProductDependencies = (
 			);
 			productName = JailbreakDetector;
-			productReference = EC59E1592E7AD21600A91E66 /* PingJailbreakDetector.framework */;
+			productReference = EC59E1592E7AD21600A91E66 /* PingTamperDetector.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		EC59E1612E7AD21700A91E66 /* JailbreakDetectorTests */ = {
+		EC59E1612E7AD21700A91E66 /* TamplerDetectorTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EC59E16E2E7AD21700A91E66 /* Build configuration list for PBXNativeTarget "JailbreakDetectorTests" */;
+			buildConfigurationList = EC59E16E2E7AD21700A91E66 /* Build configuration list for PBXNativeTarget "TamplerDetectorTests" */;
 			buildPhases = (
 				EC59E15E2E7AD21700A91E66 /* Sources */,
 				EC59E15F2E7AD21700A91E66 /* Frameworks */,
@@ -167,11 +167,11 @@
 			dependencies = (
 				EC59E1652E7AD21700A91E66 /* PBXTargetDependency */,
 			);
-			name = JailbreakDetectorTests;
+			name = TamplerDetectorTests;
 			packageProductDependencies = (
 			);
 			productName = JailbreakDetectorTests;
-			productReference = EC59E1622E7AD21700A91E66 /* JailbreakDetectorTests.xctest */;
+			productReference = EC59E1622E7AD21700A91E66 /* TamplerDetectorTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -194,7 +194,7 @@
 					};
 				};
 			};
-			buildConfigurationList = EC59E1532E7AD21600A91E66 /* Build configuration list for PBXProject "JailbreakDetector" */;
+			buildConfigurationList = EC59E1532E7AD21600A91E66 /* Build configuration list for PBXProject "TamperDetector" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -208,8 +208,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				EC59E1582E7AD21600A91E66 /* PingJailbreakDetector */,
-				EC59E1612E7AD21700A91E66 /* JailbreakDetectorTests */,
+				EC59E1582E7AD21600A91E66 /* PingTamperDetector */,
+				EC59E1612E7AD21700A91E66 /* TamplerDetectorTests */,
 			);
 		};
 /* End PBXProject section */
@@ -219,7 +219,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC59E1FE2E7AD81700A91E66 /* PrivacyInfo.xcprivacy in Resources */,
+				EC59E31E2E7D7E1D00A91E66 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -237,16 +237,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC59E1F32E7AD81700A91E66 /* DyldDetector.swift in Sources */,
-				EC59E1F42E7AD81700A91E66 /* JailbreakDetector.swift in Sources */,
-				EC59E1F52E7AD81700A91E66 /* RestrictedDirectoriesWritableDetector.swift in Sources */,
-				EC59E1F62E7AD81700A91E66 /* SandboxDetector.swift in Sources */,
-				EC59E1F72E7AD81700A91E66 /* SandboxRestrictedFilesAccessable.swift in Sources */,
-				EC59E1F82E7AD81700A91E66 /* SuspiciousFilesAccessibleDetector.swift in Sources */,
-				EC59E1F92E7AD81700A91E66 /* SuspiciousFilesExistenceDetector.swift in Sources */,
-				EC59E1FA2E7AD81700A91E66 /* SuspiciousObjCClassesDetector.swift in Sources */,
-				EC59E1FB2E7AD81700A91E66 /* SymbolicLinkDetector.swift in Sources */,
-				EC59E1FC2E7AD81700A91E66 /* URLSchemeDetector.swift in Sources */,
+				EC59E3202E7D7E1D00A91E66 /* SandboxDetector.swift in Sources */,
+				EC59E3212E7D7E1D00A91E66 /* TamperDetector.swift in Sources */,
+				EC59E3222E7D7E1D00A91E66 /* SuspiciousObjCClassesDetector.swift in Sources */,
+				EC59E3232E7D7E1D00A91E66 /* RestrictedDirectoriesWritableDetector.swift in Sources */,
+				EC59E3242E7D7E1D00A91E66 /* SandboxRestrictedFilesAccessable.swift in Sources */,
+				EC59E3252E7D7E1D00A91E66 /* SymbolicLinkDetector.swift in Sources */,
+				EC59E3262E7D7E1D00A91E66 /* SuspiciousFilesExistenceDetector.swift in Sources */,
+				EC59E3272E7D7E1D00A91E66 /* URLSchemeDetector.swift in Sources */,
+				EC59E3282E7D7E1D00A91E66 /* DyldDetector.swift in Sources */,
+				EC59E3292E7D7E1D00A91E66 /* SuspiciousFilesAccessibleDetector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,8 +254,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC59E24F2E7AF60600A91E66 /* JailbreakDetectorTests.swift in Sources */,
-				EC59E2512E7AF74F00A91E66 /* MockJailbreakDetector.swift in Sources */,
+				EC59E30F2E7D7E1300A91E66 /* MockTamperDetector.swift in Sources */,
+				EC59E3102E7D7E1300A91E66 /* TamperDetectorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,7 +264,7 @@
 /* Begin PBXTargetDependency section */
 		EC59E1652E7AD21700A91E66 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EC59E1582E7AD21600A91E66 /* PingJailbreakDetector */;
+			target = EC59E1582E7AD21600A91E66 /* PingTamperDetector */;
 			targetProxy = EC59E1642E7AD21700A91E66 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -491,7 +491,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "JailbreakDetectorTests/JailbreakDetectorTests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "TamperDetectorTests/TamperDetectorTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
@@ -515,7 +515,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "JailbreakDetectorTests/JailbreakDetectorTests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "TamperDetectorTests/TamperDetectorTests-Bridging-Header.h";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -526,7 +526,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EC59E1532E7AD21600A91E66 /* Build configuration list for PBXProject "JailbreakDetector" */ = {
+		EC59E1532E7AD21600A91E66 /* Build configuration list for PBXProject "TamperDetector" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EC59E1692E7AD21700A91E66 /* Debug */,
@@ -535,7 +535,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EC59E16B2E7AD21700A91E66 /* Build configuration list for PBXNativeTarget "PingJailbreakDetector" */ = {
+		EC59E16B2E7AD21700A91E66 /* Build configuration list for PBXNativeTarget "PingTamperDetector" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EC59E16C2E7AD21700A91E66 /* Debug */,
@@ -544,7 +544,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EC59E16E2E7AD21700A91E66 /* Build configuration list for PBXNativeTarget "JailbreakDetectorTests" */ = {
+		EC59E16E2E7AD21700A91E66 /* Build configuration list for PBXNativeTarget "TamplerDetectorTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EC59E16F2E7AD21700A91E66 /* Debug */,
