@@ -81,5 +81,3 @@ detectors.append(customDetector)
 let tamperDetector = TamperDetector(detectors: detectors)
 let score = tamperDetector.analyze()
 ```
-
-`

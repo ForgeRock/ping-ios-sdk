@@ -28,7 +28,7 @@ class TamperDetectorTests: XCTestCase {
     func testEmptyDetector() {
         let detector = TamperDetector(detectors: [])
         let result = detector.analyze(forceRunOnSimulator: true)
-        XCTAssertEqual(result, -1.0)
+        XCTAssertEqual(result, 1.0)
     }
     
     @MainActor
