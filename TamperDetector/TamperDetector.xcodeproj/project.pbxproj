@@ -22,6 +22,8 @@
 		EC59E3272E7D7E1D00A91E66 /* URLSchemeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E31C2E7D7E1D00A91E66 /* URLSchemeDetector.swift */; };
 		EC59E3282E7D7E1D00A91E66 /* DyldDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E3112E7D7E1D00A91E66 /* DyldDetector.swift */; };
 		EC59E3292E7D7E1D00A91E66 /* SuspiciousFilesAccessibleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E3162E7D7E1D00A91E66 /* SuspiciousFilesAccessibleDetector.swift */; };
+		ECC52B2C2E81B34700C468C7 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECC52B2B2E81B34700C468C7 /* PingLogger.framework */; };
+		ECC52B2D2E81B34700C468C7 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECC52B2B2E81B34700C468C7 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +35,20 @@
 			remoteInfo = JailbreakDetector;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		ECC52B2E2E81B34700C468C7 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				ECC52B2D2E81B34700C468C7 /* PingLogger.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		EC59E1592E7AD21600A91E66 /* PingTamperDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingTamperDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,6 +68,7 @@
 		EC59E31A2E7D7E1D00A91E66 /* TamperDetector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TamperDetector.h; sourceTree = "<group>"; };
 		EC59E31B2E7D7E1D00A91E66 /* TamperDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TamperDetector.swift; sourceTree = "<group>"; };
 		EC59E31C2E7D7E1D00A91E66 /* URLSchemeDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSchemeDetector.swift; sourceTree = "<group>"; };
+		ECC52B2B2E81B34700C468C7 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +76,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECC52B2C2E81B34700C468C7 /* PingLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +96,7 @@
 			children = (
 				EC59E31D2E7D7E1D00A91E66 /* TamperDetector */,
 				EC59E30E2E7D7E1300A91E66 /* TamperDetectorTests */,
+				ECC52B2A2E81B34700C468C7 /* Frameworks */,
 				EC59E15A2E7AD21600A91E66 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -120,6 +139,14 @@
 			path = TamperDetector;
 			sourceTree = "<group>";
 		};
+		ECC52B2A2E81B34700C468C7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ECC52B2B2E81B34700C468C7 /* PingLogger.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -142,6 +169,7 @@
 				EC59E1552E7AD21600A91E66 /* Sources */,
 				EC59E1562E7AD21600A91E66 /* Frameworks */,
 				EC59E1572E7AD21600A91E66 /* Resources */,
+				ECC52B2E2E81B34700C468C7 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
