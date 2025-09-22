@@ -18,17 +18,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.402702484144-irabrlvkuhaooomhhha3g9taipc4fna2</string>
-			</array>
-		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>fb609903515015289</string>
-			</array>
+			<array/>
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
@@ -40,28 +30,19 @@
 				<string>org.forgerock.demo</string>
 			</array>
 		</dict>
-        <dict>
-            <key>CFBundleTypeRole</key>
-            <string>Editor</string>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>com.googleusercontent.apps.402702484144-2i8adihkip65f4g39ctqtj2irknqb6nn</string>
-            </array>
-        </dict>
-
 	</array>
 	<key>FacebookAdvertiserIDCollectionEnabled</key>
 	<true/>
 	<key>FacebookAppID</key>
-	<string>609903515015289</string>
+	<string></string>
 	<key>FacebookClientToken</key>
-	<string>c9397d567f462a6395825b9ef157aa43</string>
+	<string></string>
 	<key>FacebookDisplayName</key>
 	<string>PingExample</string>
 	<key>GIDClientID</key>
-	<string>402702484144-2i8adihkip65f4g39ctqtj2irknqb6nn.apps.googleusercontent.com</string>
+	<string></string>
 	<key>GIDServerClientID</key>
-	<string>402702484144-6cd0uu11o0ppptsnqot72dmf9of6nb34.apps.googleusercontent.com</string>
+	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>

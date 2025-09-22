@@ -197,6 +197,10 @@ class RequestMock: Request, @unchecked Sendable {}
 
 /// A mock BrowserLauncher that you can control in tests.
 class MockBrowserLauncher: BrowserLauncherProtocol {
+    func handleAppActivation() {
+        // No-op for mock
+    }
+    
     func reset() {
         self.isInProgress = false
     }

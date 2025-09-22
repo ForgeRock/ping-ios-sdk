@@ -20,6 +20,9 @@ import PingTamperDetector
 @main
 struct MyApp: App {
     
+    // Create an instance of the manager.
+    // @StateObject ensures it's kept alive for the app's lifecycle.
+    @StateObject private var sceneManager = ScenePhaseManager()
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -30,6 +33,7 @@ struct MyApp: App {
                     }
                     OpenURLMonitor.shared.handleOpenURL(url)
                 }
+                .environmentObject(sceneManager)
         }
     }
 }

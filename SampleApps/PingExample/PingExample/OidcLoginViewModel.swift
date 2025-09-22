@@ -11,17 +11,19 @@
 import Foundation
 import PingOrchestrate
 import PingOidc
+import PingLogger
 
 public let oidcLogin = OidcWeb.createOidcWeb { config in
     let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
     config.browserMode = .login
-    config.browserType = .authSession
+    config.browserType = .sfViewController
+    config.logger = LogManager.standard
     config.module(PingOidc.OidcModule.config) { oidcValue in
         oidcValue.clientId = currentConfig?.clientId ?? ""
         oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
         oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
-        oidcValue.acrValues = "ea02bcbfb2112e051c94ee9b08083d2d"
+        oidcValue.acrValues = "ACR_VALUE" //update with actual ACR values if needed or remove
     }
 }
 
