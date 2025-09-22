@@ -104,6 +104,8 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     
     // MARK: Public Methods
     
+    /// Handles app activation event
+    /// - Note: If the app becomes active during native browser authentication, the authentication will be cancelled.
     public func handleAppActivation() {
         if case .authenticating(let session) = state, session is String {
             logger.i("App became active during native browser authentication. Cancelling.")
@@ -112,7 +114,8 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
         }
     }
     
-    /// Resets the browser state
+    /// Resets the browser state and dismisses any presented view controllers.
+    /// - Note: If the browser is not in an authenticating state, this method will log a warning and return without making any changes.
     public func reset() {
         logger.i("Resetting the browser")
         
@@ -176,22 +179,6 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
         return try await performLaunch(url: finalUrl, browserType: browserType, callbackURLScheme: callbackURLScheme)
     }
     
-    private func performLaunch(url: URL, browserType: BrowserType, callbackURLScheme: String) async throws -> URL {
-        switch browserType {
-        case .nativeBrowserApp:
-            return try await loginWithNativeBrowser(url: url, callbackURLScheme: callbackURLScheme)
-            
-        case .sfViewController:
-            return try await loginWithSFViewController(url: url, callbackURLScheme: callbackURLScheme)
-            
-        case .authSession:
-            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: false)
-            
-        case .ephemeralAuthSession:
-            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: true)
-        }
-    }
-    
     // MARK: Private Methods
     /// Performs authentication through /authorize endpoint using SFSafariViewController
     /// - Parameters:
@@ -220,6 +207,29 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
                     self?.loginContinuation?.resume(returning: url)
                     self?.cleanup()
                 }
+        }
+    }
+    
+    /// Performs the launch based on the specified browser type
+    /// - Parameters:
+    ///  - url: The URL to be opened
+    ///  - browserType: The type of browser to be used
+    ///  - callbackURLScheme: The callback URL scheme for the app
+    ///  - Returns: The URL after authentication is complete
+    ///  - Throws: An error if the launch fails
+    private func performLaunch(url: URL, browserType: BrowserType, callbackURLScheme: String) async throws -> URL {
+        switch browserType {
+        case .nativeBrowserApp:
+            return try await loginWithNativeBrowser(url: url, callbackURLScheme: callbackURLScheme)
+            
+        case .sfViewController:
+            return try await loginWithSFViewController(url: url, callbackURLScheme: callbackURLScheme)
+            
+        case .authSession:
+            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: false)
+            
+        case .ephemeralAuthSession:
+            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: true)
         }
     }
     
