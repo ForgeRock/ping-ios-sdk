@@ -137,6 +137,20 @@
         "identifier" : "A569DBA82E789BD200F4D7A8",
         "name" : "DeviceProfileTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Oath\/Oath.xcodeproj",
+        "identifier" : "1B29338F2E7DF20A004D1D38",
+        "name" : "OathTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/MfaCommons\/MfaCommons.xcodeproj",
+        "identifier" : "1B75AC322E8210E1002B5DDD",
+        "name" : "MfaCommonsTests"
+      }
     }
   ],
   "version" : 1
