@@ -19,7 +19,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.402702484144-irabrlvkuhaooomhhha3g9taipc4fna2</string>
+				<string>com.googleusercontent.apps.684644441808-44ecssta9g7m70umr3unkeb0v7iumahj</string>
 			</array>
 		</dict>
 		<dict>
@@ -28,31 +28,32 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>fb609903515015289</string>
+				<string>fb1516578175589358</string>
 			</array>
 		</dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>oauth2redirect</string>
+			<string>org.forgerock.demo</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>org.forgerock.demo</string>
+				<string>oauth2redirect</string>
 			</array>
 		</dict>
 	</array>
 	<key>FacebookAdvertiserIDCollectionEnabled</key>
 	<true/>
 	<key>FacebookAppID</key>
-	<string>[Enter Facebook App ID]</string>
+	<string>1516578175589358</string>
 	<key>FacebookClientToken</key>
-	<string>[Enter FB Client Token]</string>
+	<string>8d4db20a9f1bfb118c3798e5b4cd3860</string>
 	<key>FacebookDisplayName</key>
 	<string>PingExample</string>
 	<key>GIDClientID</key>
-	<string>[Enter Google Client ID]</string>
+	<string>684644441808-44ecssta9g7m70umr3unkeb0v7iumahj.apps.googleusercontent.com</string>
 	<key>GIDServerClientID</key>
-	<string>[Enter Google Server Client ID]</string>
+	<string>684644441808-i6loorknmkpfvh9g91qfrsois2s13t99.apps.googleusercontent.com</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>

@@ -279,6 +279,26 @@
                ReferencedContainer = "container:../DeviceId/DeviceId.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A569DBA82E789BD200F4D7A8"
+               BuildableName = "DeviceProfileTests.xctest"
+               BlueprintName = "DeviceProfileTests"
+               ReferencedContainer = "container:../DeviceProfile/DeviceProfile.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A569DBA82E789BD200F4D7A8"
+               BuildableName = "DeviceProfileTests.xctest"
+               BlueprintName = "DeviceProfileTests"
+               ReferencedContainer = "container:../DeviceProfile/DeviceProfile.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

@@ -44,6 +44,9 @@
         "DaVinciIntegrationTests\/testUserRegistrationFailureInvalidPassword()",
         "FormFieldValidationTest\/testPasswordValidation()",
         "FormFieldValidationTests\/testPasswordValidation()",
+        "MFADeviceTests\/testDeviceAuthenticationForm()",
+        "MFADeviceTests\/testDeviceRegistrationSMS()",
+        "MFADeviceTests\/testDeviceRegistrationVOICE()",
         "PasswordCollectorTests\/testAddsInvalidLengthErrorWhenValueTooShort()",
         "PasswordCollectorTests\/testAddsMaxRepeatErrorWhenTooManyRepeatedCharacters()",
         "PasswordCollectorTests\/testAddsMinCharactersErrorWhenNotEnoughDigits()",
@@ -119,6 +122,13 @@
         "containerPath" : "container:..\/DeviceId\/DeviceId.xcodeproj",
         "identifier" : "EC23D5852E2FD12100C43D42",
         "name" : "DeviceIdTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/DeviceProfile\/DeviceProfile.xcodeproj",
+        "identifier" : "A569DBA82E789BD200F4D7A8",
+        "name" : "DeviceProfileTests"
       }
     }
   ],
