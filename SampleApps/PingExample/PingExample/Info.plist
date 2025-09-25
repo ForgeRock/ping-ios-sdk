@@ -34,15 +34,15 @@
 	<key>FacebookAdvertiserIDCollectionEnabled</key>
 	<true/>
 	<key>FacebookAppID</key>
-	<string></string>
+	<string>[Enter Facebook App ID]</string>
 	<key>FacebookClientToken</key>
-	<string></string>
+	<string>[Enter FB Client Token]</string>
 	<key>FacebookDisplayName</key>
 	<string>PingExample</string>
 	<key>GIDClientID</key>
-	<string></string>
+	<string>[Enter Google Client ID]</string>
 	<key>GIDServerClientID</key>
-	<string></string>
+	<string>[Enter Google Server Client ID]</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
