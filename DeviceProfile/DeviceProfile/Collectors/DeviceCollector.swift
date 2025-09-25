@@ -83,6 +83,9 @@ extension Array where Element == any DeviceCollector {
                 }
             } catch {
                 // Log encoding/collection errors but continue with other collectors
+                if let loggerAwareCollector = collector as? LoggerAware {
+                    loggerAwareCollector.logger.e("Error collecting data from \(collector.key): \(error.localizedDescription)", error: error)
+                }
             }
         }
 

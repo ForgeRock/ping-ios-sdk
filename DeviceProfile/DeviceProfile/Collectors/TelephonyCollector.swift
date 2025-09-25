@@ -77,11 +77,11 @@ struct TelephonyInfo: Codable {
         
         // Set final values with fallback to "Unknown"
         if let carrier = selectedCarrier {
-            self.carrierName = carrier.carrierName ?? "Unknown"
-            self.networkCountryIso = carrier.isoCountryCode ?? "Unknown"
+            self.carrierName = carrier.carrierName ?? DeviceProfileConstants.unknown
+            self.networkCountryIso = carrier.isoCountryCode ?? DeviceProfileConstants.unknown
         } else {
-            self.carrierName = "Unknown"
-            self.networkCountryIso = "Unknown"
+            self.carrierName = DeviceProfileConstants.unknown
+            self.networkCountryIso = DeviceProfileConstants.unknown
         }
     }
 }

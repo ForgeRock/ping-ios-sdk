@@ -72,12 +72,12 @@ struct BrowserInfo: Codable {
                 let webView = WKWebView()
                 
                 // Attempt to get user agent via JavaScript evaluation
-                webView.evaluateJavaScript("navigator.userAgent") { result, error in
+                webView.evaluateJavaScript(DeviceProfileConstants.navigator_userAgent) { result, error in
                     if let userAgent = result as? String {
                         continuation.resume(returning: BrowserInfo(userAgent: userAgent))
                     } else {
                         // Fallback to WebView's internal user agent property
-                        let fallbackUserAgent = webView.value(forKey: "userAgent") as? String ?? "Unknown"
+                        let fallbackUserAgent = webView.value(forKey: DeviceProfileConstants.userAgent) as? String ?? DeviceProfileConstants.unknown
                         continuation.resume(returning: BrowserInfo(userAgent: fallbackUserAgent))
                     }
                 }

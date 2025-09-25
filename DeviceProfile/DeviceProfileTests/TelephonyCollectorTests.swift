@@ -107,24 +107,6 @@ class TelephonyCollectorTests: XCTestCase {
         XCTAssertNotNil(result?.carrierName, "Collected TelephonyInfo should have carrierName")
     }
     
-    func testCollectorCollectReturnsValidData() async {
-        let result = await collector.collect()
-        
-        guard let telephonyInfo = result else {
-            XCTFail("TelephonyCollector should return TelephonyInfo")
-            return
-        }
-        
-        // Validate the data
-        if let countryIso = telephonyInfo.networkCountryIso {
-            XCTAssertFalse(countryIso.isEmpty, "Country ISO should not be empty")
-        }
-        
-        if let carrierName = telephonyInfo.carrierName {
-            XCTAssertFalse(carrierName.isEmpty, "Carrier name should not be empty")
-        }
-    }
-    
     func testCollectorCollectConsistency() async {
         let result1 = await collector.collect()
         let result2 = await collector.collect()

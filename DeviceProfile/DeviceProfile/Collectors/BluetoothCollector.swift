@@ -51,35 +51,20 @@ struct BluetoothInfo: Codable {
     /// - Returns: True if BLE is supported (regardless of power state), false otherwise
     @MainActor
     private static func getBluetoothStatus() async -> Bool {
-        let manager = CBCentralManager(delegate: nil, queue: nil)
+        let delegateBridge = BluetoothDelegateBridge()
+        let manager = CBCentralManager(delegate: delegateBridge, queue: nil)
+        manager.delegate = delegateBridge
         
-        // Wait for the manager state to be determined if it's currently unknown
-        if manager.state == .unknown {
-            await waitForBluetoothState(manager)
+        // Await the first value emitted by the stream
+        for await state in delegateBridge.stream {
+            // This loop will only run once because we call continuation.finish()
+            // `manager` and `delegateBridge` are kept alive until this point.
+            let isBLESupported = state == .poweredOn || state == .poweredOff
+            return isBLESupported
         }
         
-        let state = manager.state
-        
-        // BLE is considered "supported" if the state is either powered on or off
-        // (as opposed to unsupported, unauthorized, etc.)
-        let isBLESupported = state == .poweredOn || state == .poweredOff
-        
-        return isBLESupported
-    }
-    
-    /// Waits for the Bluetooth manager to determine its state
-    /// - Parameter manager: The CBCentralManager to monitor
-    @MainActor
-    private static func waitForBluetoothState(_ manager: CBCentralManager) async {
-        await withCheckedContinuation { continuation in
-            let delegate = BluetoothStateDelegate {
-                continuation.resume()
-            }
-            manager.delegate = delegate
-            
-            // Retain the delegate during the async operation to prevent deallocation
-            objc_setAssociatedObject(manager, "delegate", delegate, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
+        // Fallback if the stream finishes without yielding a value
+        return false
     }
     
     /// Converts CBManagerState to a human-readable string
@@ -99,24 +84,29 @@ struct BluetoothInfo: Codable {
     }
 }
 
-// MARK: - BluetoothStateDelegate
+// MARK: - BluetoothDelegate
 
 /// Private delegate class for monitoring Bluetooth state changes.
 ///
 /// This delegate is used temporarily to wait for the Bluetooth manager
 /// to determine its initial state when it starts as `.unknown`.
-private class BluetoothStateDelegate: NSObject, CBCentralManagerDelegate {
-    private let completion: () -> Void
+@MainActor
+private class BluetoothDelegateBridge: NSObject, @preconcurrency CBCentralManagerDelegate {
     
-    /// Initializes the delegate with a completion handler
-    /// - Parameter completion: Closure to call when state is determined
-    init(completion: @escaping () -> Void) {
-        self.completion = completion
-    }
+    // The continuation to push state updates into the stream
+    private var continuation: AsyncStream<CBManagerState>.Continuation?
     
-    /// Called when the central manager's state is updated
-    /// - Parameter central: The central manager whose state changed
+    // The stream that async functions can listen to
+    lazy var stream: AsyncStream<CBManagerState> = {
+        AsyncStream { self.continuation = $0 }
+    }()
+    
+    // The delegate method that fires when the state changes
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        completion()
+        // Push the new state into the stream
+        continuation?.yield(central.state)
+        
+        // Since we only need the *first* state update, we can finish the stream.
+        continuation?.finish()
     }
 }

@@ -393,8 +393,8 @@ extension NetworkPathMonitor {
     /// ```
     /// Status: Connected
     /// Type: WiFi
-    /// â€¢ Expensive connection
-    /// â€¢ Constrained connection
+    /// • Expensive connection
+    /// • Constrained connection
     /// ```
     ///
     /// ## Usage
@@ -409,10 +409,10 @@ extension NetworkPathMonitor {
             info += "\nType: \(connectionType.rawValue)"
             
             if isExpensive {
-                info += "\nâ€¢ Expensive connection"
+                info += "\n• Expensive connection"
             }
             if isConstrained {
-                info += "\nâ€¢ Constrained connection"
+                info += "\n• Constrained connection"
             }
         }
         

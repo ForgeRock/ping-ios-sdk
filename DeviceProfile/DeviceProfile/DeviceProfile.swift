@@ -85,3 +85,11 @@ extension JourneyConstants {
     /// is required during the authentication journey.
     public static let deviceProfileCallback = "DeviceProfileCallback"
 }
+
+/// Represents various constants used in DeviceProfile module
+public enum DeviceProfileConstants {
+    public static let unknown = "Unknown"
+    public static let navigator_userAgent = "navigator.userAgent"
+    public static let userAgent = "userAgent"
+    
+}

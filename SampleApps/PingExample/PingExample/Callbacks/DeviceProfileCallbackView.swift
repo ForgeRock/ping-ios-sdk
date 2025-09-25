@@ -60,22 +60,27 @@ struct DeviceProfileCallbackView: View {
     
     @MainActor
     private func startDeviceProfileCollection() {
+        // Prevent multiple concurrent collections
+        guard task == nil && isLoading else { return }
+        
         isLoading = true
         
         task = Task {
-            
-            _ =  await callback.collect{ config in
-                config.collectors {
-                    return DefaultDeviceCollector.defaultDeviceCollectors()
-                }}
-            
-            if !Task.isCancelled {
-                await MainActor.run {
-                    self.isLoading = false
-                    self.onNext()
+            do {
+                _ = await callback.collect { config in
+                    config.collectors {
+                        return DefaultDeviceCollector.defaultDeviceCollectors()
+                    }
+                }
+                
+                if !Task.isCancelled {
+                    await MainActor.run {
+                        self.isLoading = false
+                        self.task = nil  // Clear task reference
+                        self.onNext()
+                    }
                 }
             }
-            
         }
     }
     

@@ -19,7 +19,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.684644441808-44ecssta9g7m70umr3unkeb0v7iumahj</string>
+				<string>[Enter Google Client ID]</string>
 			</array>
 		</dict>
 		<dict>
@@ -27,8 +27,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb609903515015289</string>
-				<string>fb1516578175589358</string>
+				<string>[Enter Facebook App ID]</string>
 			</array>
 		</dict>
 		<dict>
@@ -45,15 +44,15 @@
 	<key>FacebookAdvertiserIDCollectionEnabled</key>
 	<true/>
 	<key>FacebookAppID</key>
-	<string>1516578175589358</string>
+	<string>[Enter Facebook App ID]</string>
 	<key>FacebookClientToken</key>
-	<string>8d4db20a9f1bfb118c3798e5b4cd3860</string>
+	<string>[Enter FB Client Token]</string>
 	<key>FacebookDisplayName</key>
 	<string>PingExample</string>
 	<key>GIDClientID</key>
-	<string>684644441808-44ecssta9g7m70umr3unkeb0v7iumahj.apps.googleusercontent.com</string>
+	<string>[Enter Google Client ID]</string>
 	<key>GIDServerClientID</key>
-	<string>684644441808-i6loorknmkpfvh9g91qfrsois2s13t99.apps.googleusercontent.com</string>
+	<string>[Enter Google Server Client ID]</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
