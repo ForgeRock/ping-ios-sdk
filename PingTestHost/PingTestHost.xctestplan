@@ -123,13 +123,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/JailbreakDetector\/JailbreakDetector.xcodeproj",
-        "identifier" : "EC59E1612E7AD21700A91E66",
-        "name" : "JailbreakDetectorTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/TamperDetector\/TamperDetector.xcodeproj",
         "identifier" : "EC59E1612E7AD21700A91E66",
         "name" : "TamplerDetectorTests"
