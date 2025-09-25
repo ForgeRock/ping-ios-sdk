@@ -1,6 +1,5 @@
-
 #
-# Be sure to run `pod lib lint PingJailbreakDetector.podspec` to ensure this is a
+# Be sure to run `pod lib lint PingTamperDetector.podspec` to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -10,9 +9,9 @@
 Pod::Spec.new do |s|
   s.name             = 'PingTamperDetector'
   s.version          = '1.0.0'
-  s.summary          = 'PingJailbreakDetector module for the Ping iOS SDK'
+  s.summary          = 'PingTamperDetector module for the Ping iOS SDK'
   s.description      = <<-DESC
-  The PingJailbreakDetector module for the Ping iOS SDK is a library for detecting jailbroken devices.
+  The PingTamperDetector module for the Ping iOS SDK is a library for detecting tampered devices.
                        DESC
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
@@ -23,15 +22,15 @@ Pod::Spec.new do |s|
       :tag => s.version.to_s
   }
 
-  s.module_name   = 'PingJailbreakDetector'
+  s.module_name   = 'PingTamperDetector'
   s.swift_versions = ['5.0', '5.1', '6.0']
 
   s.ios.deployment_target = '13.0'
 
-  base_dir = "JailbreakDetector/JailbreakDetector"
+  base_dir = "TamperDetector/TamperDetector"
   s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.c', base_dir + '/**/*.h'
   s.resource_bundles = {
-    'TamperDetector' => [base_dir + '/*.xcprivacy']
+    'PingTamperDetector' => [base_dir + '/*.xcprivacy']
   }
   
 end
