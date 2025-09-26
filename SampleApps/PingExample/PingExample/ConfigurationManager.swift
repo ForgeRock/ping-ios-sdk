@@ -95,8 +95,6 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
             serverUrl: <#"Server URL"#>, // Optional, can be nil if not used
             realm: <#"Realm"#> // Optional, can be nil if not used
         )
-
-
     }
 }
 

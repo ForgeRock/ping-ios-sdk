@@ -85,7 +85,8 @@
 		EC0CB5CB2E27AE4C00A82D6C /* JourneyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */; };
 		EC23D5712E2E8ECF00C43D42 /* OidcLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */; };
 		EC23D5722E2E8ECF00C43D42 /* OidcLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */; };
-		EC83DEB02E69D45900D2B5B4 /* ScenePhaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC83DEAF2E69D44C00D2B5B4 /* ScenePhaseManager.swift */; };
+		EC59E3532E7D8BB900A91E66 /* PingTamperDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E3082E7D7DE300A91E66 /* PingTamperDetector.framework */; };
+		EC59E3542E7D8BB900A91E66 /* PingTamperDetector.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E3082E7D7DE300A91E66 /* PingTamperDetector.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC92B3882DA02D7400E4246D /* DeviceAuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */; };
 		EC92B38A2DA02D7F00E4246D /* DeviceRegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */; };
 		EC92B38C2DA039C000E4246D /* AsyncSVGImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */; };
@@ -96,6 +97,7 @@
 		ECBF06732D5229BC0066A3BD /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; };
 		ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC0816AA2D4A692900F1AD02 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECBF06A42D5391690066A3BD /* SocialButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06A32D5391610066A3BD /* SocialButtonView.swift */; };
+		ECC52B0D2E81AF5B00C468C7 /* ScenePhaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC52B0C2E81AF5B00C468C7 /* ScenePhaseManager.swift */; };
 		ECCAB3692E3A6C3300BA1C73 /* PingDeviceId.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB3682E3A6C3300BA1C73 /* PingDeviceId.framework */; };
 		ECCAB36A2E3A6C3300BA1C73 /* PingDeviceId.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB3682E3A6C3300BA1C73 /* PingDeviceId.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECE2B8812DB7DBEC00E2C51E /* PhoneNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */; };
@@ -279,6 +281,20 @@
 			remoteGlobalIDString = EC727A2D2E019243005D9E28;
 			remoteInfo = JourneyTests;
 		};
+		EC59E3072E7D7DE300A91E66 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC59E3002E7D7DE300A91E66 /* TamperDetector.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC59E1592E7AD21600A91E66;
+			remoteInfo = PingJailbreakDetector;
+		};
+		EC59E3092E7D7DE300A91E66 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC59E3002E7D7DE300A91E66 /* TamperDetector.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC59E1622E7AD21700A91E66;
+			remoteInfo = JailbreakDetectorTests;
+		};
 		ECB7C6842D5A24B70006F1C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */;
@@ -310,6 +326,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */,
+				EC59E3542E7D8BB900A91E66 /* PingTamperDetector.framework in Embed Frameworks */,
 				A5560CA32CFE4EDA0076CA8D /* PingLogger.framework in Embed Frameworks */,
 				A525E7B62DD7647200B02C17 /* PingExternalIdPApple.framework in Embed Frameworks */,
 				A5560CA52CFE4EDA0076CA8D /* PingOidc.framework in Embed Frameworks */,
@@ -404,7 +421,7 @@
 		EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyViewModel.swift; sourceTree = "<group>"; };
 		EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginView.swift; sourceTree = "<group>"; };
 		EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginViewModel.swift; sourceTree = "<group>"; };
-		EC83DEAF2E69D44C00D2B5B4 /* ScenePhaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenePhaseManager.swift; sourceTree = "<group>"; };
+		EC59E3002E7D7DE300A91E66 /* TamperDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TamperDetector.xcodeproj; path = ../../TamperDetector/TamperDetector.xcodeproj; sourceTree = SOURCE_ROOT; };
 		EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticationView.swift; sourceTree = "<group>"; };
 		EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationView.swift; sourceTree = "<group>"; };
 		EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncSVGImage.swift; sourceTree = "<group>"; };
@@ -413,6 +430,7 @@
 		ECA540BC2D6DD7D6002B35D4 /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = SDKROOT; };
 		ECB7C5D02D562FAC0006F1C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		ECBF06A32D5391610066A3BD /* SocialButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialButtonView.swift; sourceTree = "<group>"; };
+		ECC52B0C2E81AF5B00C468C7 /* ScenePhaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenePhaseManager.swift; sourceTree = "<group>"; };
 		ECCAB3682E3A6C3300BA1C73 /* PingDeviceId.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDeviceId.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECCAB3A42E3B600B00BA1C73 /* DeviceId.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DeviceId.xcodeproj; path = ../../DeviceId/DeviceId.xcodeproj; sourceTree = SOURCE_ROOT; };
 		ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberView.swift; sourceTree = "<group>"; };
@@ -438,6 +456,7 @@
 				A5560CA02CFE4EDA0076CA8D /* PingDavinci.framework in Frameworks */,
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
 				EC92B38F2DA03E0700E4246D /* SVGKit in Frameworks */,
+				EC59E3532E7D8BB900A91E66 /* PingTamperDetector.framework in Frameworks */,
 				ECCAB3692E3A6C3300BA1C73 /* PingDeviceId.framework in Frameworks */,
 				A5560CA62CFE4EDA0076CA8D /* PingOrchestrate.framework in Frameworks */,
 				EC0CB5C62E27AD5B00A82D6C /* PingJourney.framework in Frameworks */,
@@ -464,6 +483,7 @@
 		3A5441242BCDF10900385131 = {
 			isa = PBXGroup;
 			children = (
+				EC59E3002E7D7DE300A91E66 /* TamperDetector.xcodeproj */,
 				ECCAB3A42E3B600B00BA1C73 /* DeviceId.xcodeproj */,
 				EC0CB5A52E27AD3D00A82D6C /* Journey.xcodeproj */,
 				A5A31CB52E0A37C700ABBEF7 /* Protect.xcodeproj */,
@@ -498,6 +518,7 @@
 		3A54412F2BCDF10900385131 /* PingExample */ = {
 			isa = PBXGroup;
 			children = (
+				ECC52B0C2E81AF5B00C468C7 /* ScenePhaseManager.swift */,
 				ECA540222D660859002B35D4 /* PingExample.entitlements */,
 				ECB7C5D02D562FAC0006F1C8 /* Info.plist */,
 				A5768CFE2E283F0C000290EE /* Callbacks */,
@@ -526,7 +547,6 @@
 				EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */,
 				EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */,
 				EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */,
-				EC83DEAF2E69D44C00D2B5B4 /* ScenePhaseManager.swift */,
 				3A5441342BCDF10B00385131 /* Assets.xcassets */,
 				3A5441362BCDF10B00385131 /* Preview Content */,
 			);
@@ -728,6 +748,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		EC59E3032E7D7DE300A91E66 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EC59E3082E7D7DE300A91E66 /* PingTamperDetector.framework */,
+				EC59E30A2E7D7DE300A91E66 /* TamplerDetectorTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		ECCAB3A72E3B600B00BA1C73 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -881,6 +910,10 @@
 				{
 					ProductGroup = A57A08FD2CE50EF1006F0CBB /* Products */;
 					ProjectRef = A588CFF92BF69F3300F9052A /* Storage.xcodeproj */;
+				},
+				{
+					ProductGroup = EC59E3032E7D7DE300A91E66 /* Products */;
+					ProjectRef = EC59E3002E7D7DE300A91E66 /* TamperDetector.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1054,6 +1087,20 @@
 			remoteRef = EC0CB5BA2E27AD3D00A82D6C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		EC59E3082E7D7DE300A91E66 /* PingTamperDetector.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingTamperDetector.framework;
+			remoteRef = EC59E3072E7D7DE300A91E66 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		EC59E30A2E7D7DE300A91E66 /* TamplerDetectorTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = TamplerDetectorTests.xctest;
+			remoteRef = EC59E3092E7D7DE300A91E66 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		ECB7C6852D5A24B70006F1C8 /* PingBrowserTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -1144,7 +1191,7 @@
 				A5768D102E2965B8000290EE /* ConfirmationCallbackView.swift in Sources */,
 				EC0816C12D4A833400F1AD02 /* ConfigurationViewModel.swift in Sources */,
 				A5EFA9772D35F2FA00F771FE /* CheckBoxView.swift in Sources */,
-				EC83DEB02E69D45900D2B5B4 /* ScenePhaseManager.swift in Sources */,
+				ECC52B0D2E81AF5B00C468C7 /* ScenePhaseManager.swift in Sources */,
 				A5E9AEDF2D30CA34000533ED /* ErrorMessageView.swift in Sources */,
 				A5E9AED22D30380B000533ED /* UserInfoViewModel.swift in Sources */,
 				A5EFA97D2D35F78800F771FE /* ComboBoxView.swift in Sources */,
@@ -1410,7 +1457,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1428,7 +1475,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
