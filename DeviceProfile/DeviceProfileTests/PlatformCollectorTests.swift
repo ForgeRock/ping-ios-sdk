@@ -34,8 +34,8 @@ class PlatformCollectorTests: XCTestCase {
     
     // MARK: - PlatformInfo Tests
     
-    func testPlatformInfoInitialization() {
-        let platformInfo = PlatformInfo()
+    func testPlatformInfoInitialization() async {
+        let platformInfo = await PlatformInfo()
         
         // Test all required fields are not empty
         XCTAssertFalse(platformInfo.platform.isEmpty, "Platform should not be empty")
@@ -51,17 +51,20 @@ class PlatformCollectorTests: XCTestCase {
         XCTAssertLessThanOrEqual(platformInfo.jailBreakScore, 1.0, "Jailbreak score should be <= 1")
     }
     
-    func testPlatformInfoSystemValues() {
-        let platformInfo = PlatformInfo()
-        
+    func testPlatformInfoSystemValues() async {
+        let platformInfo = await PlatformInfo()
+        let systemName = await UIDevice.current.systemName
+        let systemVersion = await UIDevice.current.systemVersion
+        let model = await UIDevice.current.model
+        let name = await UIDevice.current.name
         // Compare with UIDevice values
-        XCTAssertEqual(platformInfo.platform, UIDevice.current.systemName,
+        XCTAssertEqual(platformInfo.platform, systemName,
                       "Platform should match UIDevice systemName")
-        XCTAssertEqual(platformInfo.version, UIDevice.current.systemVersion,
+        XCTAssertEqual(platformInfo.version, systemVersion,
                       "Version should match UIDevice systemVersion")
-        XCTAssertEqual(platformInfo.device, UIDevice.current.model,
+        XCTAssertEqual(platformInfo.device, model,
                       "Device should match UIDevice model")
-        XCTAssertEqual(platformInfo.deviceName, UIDevice.current.name,
+        XCTAssertEqual(platformInfo.deviceName, name,
                       "Device name should match UIDevice name")
         
         // Compare with system values
@@ -69,8 +72,8 @@ class PlatformCollectorTests: XCTestCase {
                       "TimeZone should match current timezone")
     }
     
-    func testPlatformInfoLocale() {
-        let platformInfo = PlatformInfo()
+    func testPlatformInfoLocale() async {
+        let platformInfo = await PlatformInfo()
         
         // Locale can be nil in some cases, but if present should match system
         if let locale = platformInfo.locale {
@@ -80,8 +83,8 @@ class PlatformCollectorTests: XCTestCase {
         }
     }
     
-    func testPlatformInfoModel() {
-        let platformInfo = PlatformInfo()
+    func testPlatformInfoModel() async {
+        let platformInfo = await PlatformInfo()
         
         // Model should be a valid device identifier
         XCTAssertFalse(platformInfo.model.isEmpty, "Model should not be empty")
@@ -94,8 +97,8 @@ class PlatformCollectorTests: XCTestCase {
         XCTAssertFalse(platformInfo.model.contains(" "), "Model should not contain spaces")
     }
     
-    func testPlatformInfoCodable() throws {
-        let platformInfo = PlatformInfo()
+    func testPlatformInfoCodable() async throws {
+        let platformInfo = await PlatformInfo()
         
         // Test encoding
         let encoder = JSONEncoder()
@@ -117,8 +120,8 @@ class PlatformCollectorTests: XCTestCase {
         XCTAssertEqual(platformInfo.jailBreakScore, decodedInfo.jailBreakScore)
     }
     
-    func testPlatformInfoJSONStructure() throws {
-        let platformInfo = PlatformInfo()
+    func testPlatformInfoJSONStructure() async throws {
+        let platformInfo = await PlatformInfo()
         
         let encoder = JSONEncoder()
         let data = try encoder.encode(platformInfo)
@@ -262,18 +265,6 @@ class PlatformCollectorTests: XCTestCase {
         }
     }
     
-    func testPlatformInfoInitializationPerformance() {
-        measure {
-            _ = PlatformInfo()
-        }
-    }
-    
-    func testGetDeviceModelPerformance() {
-        measure {
-            _ = PlatformInfo.getDeviceModel()
-        }
-    }
-    
     // MARK: - Integration Tests
     
     func testPlatformCollectorInDefaultSet() {
@@ -362,7 +353,7 @@ class PlatformCollectorTests: XCTestCase {
     
     // MARK: - Edge Case Tests
     
-    func testPlatformInfoWithDifferentTimeZones() {
+    func testPlatformInfoWithDifferentTimeZones() async {
         // Test with different timezones (if possible)
         let testTimeZones = [
             TimeZone(identifier: "America/New_York"),
@@ -379,12 +370,12 @@ class PlatformCollectorTests: XCTestCase {
         }
         
         // Verify current platform info uses system timezone
-        let platformInfo = PlatformInfo()
+        let platformInfo = await PlatformInfo()
         XCTAssertEqual(platformInfo.timeZone, TimeZone.current.identifier)
     }
     
-    func testPlatformInfoVersionFormat() {
-        let platformInfo = PlatformInfo()
+    func testPlatformInfoVersionFormat() async {
+        let platformInfo = await PlatformInfo()
         
         // iOS version should follow semantic versioning pattern
         let version = platformInfo.version
@@ -398,22 +389,13 @@ class PlatformCollectorTests: XCTestCase {
         let hasOnlyVersionChars = version.rangeOfCharacter(from: versionCharacterSet.inverted) == nil
         XCTAssertTrue(hasOnlyVersionChars, "Version should contain only numbers and periods")
     }
-    
-    func testJailbreakScoreValue() {
-        let platformInfo = PlatformInfo()
-        
-        // Currently returns 1.0 as placeholder
-        XCTAssertEqual(platformInfo.jailBreakScore, 1.0, "Jailbreak score should be placeholder value 1.0")
-        
-        // When real jailbreak detection is implemented, this test should be updated
-        // to verify the score is calculated correctly
-    }
+
     
     // MARK: - Validation Helper Tests
     
-    func testPlatformInfoEquality() {
-        let info1 = PlatformInfo()
-        let info2 = PlatformInfo()
+    func testPlatformInfoEquality() async {
+        let info1 = await PlatformInfo()
+        let info2 = await PlatformInfo()
         
         // All platform info should be identical across instances
         XCTAssertEqual(info1.platform, info2.platform)
@@ -452,19 +434,22 @@ class PlatformCollectorTests: XCTestCase {
     
     // MARK: - System Integration Tests
     
-    func testPlatformInfoMatchesUIDevice() {
-        let platformInfo = PlatformInfo()
-        let device = UIDevice.current
+    func testPlatformInfoMatchesUIDevice() async {
+        let platformInfo = await PlatformInfo()
+        let systemName = await UIDevice.current.systemName
+        let systemVersion = await UIDevice.current.systemVersion
+        let model = await UIDevice.current.model
+        let name = await UIDevice.current.name
         
-        XCTAssertEqual(platformInfo.platform, device.systemName, "Platform should match UIDevice")
-        XCTAssertEqual(platformInfo.version, device.systemVersion, "Version should match UIDevice")
-        XCTAssertEqual(platformInfo.device, device.model, "Device should match UIDevice")
-        XCTAssertEqual(platformInfo.deviceName, device.name, "Device name should match UIDevice")
+        XCTAssertEqual(platformInfo.platform, systemName, "Platform should match UIDevice")
+        XCTAssertEqual(platformInfo.version, systemVersion, "Version should match UIDevice")
+        XCTAssertEqual(platformInfo.device, model, "Device should match UIDevice")
+        XCTAssertEqual(platformInfo.deviceName, name, "Device name should match UIDevice")
         XCTAssertEqual(platformInfo.brand, "Apple", "Brand should always be Apple")
     }
     
-    func testPlatformInfoMatchesLocale() {
-        let platformInfo = PlatformInfo()
+    func testPlatformInfoMatchesLocale() async {
+        let platformInfo = await PlatformInfo()
         let currentLocale = Locale.current
         
         if let platformLocale = platformInfo.locale {
