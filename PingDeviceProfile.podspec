@@ -32,4 +32,8 @@ Pod::Spec.new do |s|
   s.resource_bundles = {
     'DeviceProfile' => [base_dir + '/*.xcprivacy']
   }
+  
+    s.ios.dependency 'PingJourney', '~> 1.2.0'
+    s.ios.dependency 'PingTamperDetector', '~> 1.2.0'
+    s.ios.dependency 'PingLogger', '~> 1.2.0''
 end
