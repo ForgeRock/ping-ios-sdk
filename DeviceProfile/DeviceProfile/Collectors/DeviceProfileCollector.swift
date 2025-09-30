@@ -17,19 +17,19 @@ import Foundation
 /// This collector serves as the root coordinator for gathering all device profile
 /// information based on a specified configuration. It manages the collection process,
 /// handles conditional data gathering, and combines results into a unified profile.
-class DeviceProfileCollector: DeviceCollector {
+public class DeviceProfileCollector: DeviceCollector {
     
-    typealias DataType = DeviceProfileResult
+    public typealias DataType = DeviceProfileResult
     
     /// Configuration defining what data to collect and how to collect it
     private let config: DeviceProfileConfig
     
     /// The key identifier for this collector (empty string as this is the root collector)
-    let key: String = ""
+    public let key: String = ""
     
     /// Initializes the device profile collector with the specified configuration
     /// - Parameter config: The configuration specifying what data to collect
-    init(config: DeviceProfileConfig) {
+    public init(config: DeviceProfileConfig) {
         self.config = config
     }
     
@@ -61,7 +61,7 @@ class DeviceProfileCollector: DeviceCollector {
     /// - Propagates identifier collection errors
     /// - Handles metadata collection failures gracefully
     /// - Treats location collection failures as non-fatal
-    func collect() async throws -> DeviceProfileResult? {
+    public func collect() async throws -> DeviceProfileResult? {
         // Configure loggers for all collectors that support logging
         configureCollectorLoggers()
         
@@ -108,6 +108,7 @@ class DeviceProfileCollector: DeviceCollector {
     
     /// Collects location information if available
     /// - Returns: LocationInfo if successful, nil if unavailable or unauthorized
+    @MainActor
     private func collectLocation() async -> LocationInfo? {
         return await LocationCollector().collect()
     }
@@ -119,7 +120,7 @@ class DeviceProfileCollector: DeviceCollector {
 ///
 /// This structure represents the complete device profile, including the unique
 /// identifier, device metadata, and geographic location if available.
-struct DeviceProfileResult: Codable {
+public struct DeviceProfileResult: Codable, Sendable {
     /// Unique device identifier string
     let identifier: String
     
@@ -148,84 +149,3 @@ struct DeviceProfileResult: Codable {
     }
 }
 
-// MARK: - AnyValue Helper
-
-/// A type-erased wrapper for any Codable value.
-///
-/// This wrapper allows heterogeneous data types to be stored in the same
-/// dictionary while maintaining Codable compliance for JSON serialization.
-///
-/// ## Supported Types
-/// - Primitives: Bool, Int, Double, String
-/// - Collections: Arrays and Dictionaries (recursively)
-/// - Null values: NSNull representation
-///
-/// ## Usage
-/// ```swift
-/// let anyValue = AnyValue("Hello World")
-/// let originalValue = anyValue.value as? String
-/// ```
-struct AnyValue: Codable {
-    let value: Any
-    
-    init(_ value: Any) {
-        self.value = value
-    }
-    
-    init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        
-        if container.decodeNil() {
-            value = NSNull()
-        } else if let int = try? container.decode(Int.self) {
-            // Check for Int first - more specific than Bool
-            value = int
-        } else if let double = try? container.decode(Double.self) {
-            // Check for Double before Bool as well
-            value = double
-        } else if let bool = try? container.decode(Bool.self) {
-            // Bool check comes after numeric types
-            value = bool
-        } else if let string = try? container.decode(String.self) {
-            value = string
-        } else if let array = try? container.decode([AnyValue].self) {
-            value = array.map(\.value)
-        } else if let dictionary = try? container.decode([String: AnyValue].self) {
-            value = dictionary.mapValues(\.value)
-        } else {
-            throw DecodingError.dataCorrupted(
-                DecodingError.Context(
-                    codingPath: decoder.codingPath,
-                    debugDescription: "Cannot decode AnyValue - unsupported type"
-                )
-            )
-        }
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        
-        switch value {
-        case is NSNull:
-            try container.encodeNil()
-        case let int as Int:
-            try container.encode(int)
-        case let double as Double:
-            try container.encode(double)
-        case let bool as Bool:
-            try container.encode(bool)
-        case let string as String:
-            try container.encode(string)
-        case let array as [Any]:
-            try container.encode(array.map(AnyValue.init))
-        case let dict as [String: Any]:
-            try container.encode(dict.mapValues(AnyValue.init))
-        default:
-            let context = EncodingError.Context(
-                codingPath: encoder.codingPath,
-                debugDescription: "Cannot encode value of type \(type(of: value))"
-            )
-            throw EncodingError.invalidValue(value, context)
-        }
-    }
-}

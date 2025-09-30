@@ -342,13 +342,7 @@ When the server requests device profiling during a journey, the callback will au
 // The callback receives server configuration for metadata and location collection
 
 // Collect with default collectors
-let result = await callback.collect { config in
-    config.location = false
-    config.metadata = true
-    config.collectors {
-        return DefaultDeviceCollector.defaultDeviceCollectors()
-    }
-}
+let result = await callback.collect()
 ```
 
 ### Customizing AIC Journey Device Profile Collection

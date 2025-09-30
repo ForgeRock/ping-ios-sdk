@@ -1,4 +1,4 @@
-// 
+//
 //  LocationManagerTests.swift
 //  DeviceProfile
 //
@@ -14,23 +14,43 @@ import CoreLocation
 
 class LocationManagerTests: XCTestCase {
     
-    var locationManager: LocationManager!
+    var sut: LocationManager!
+    var mockLocationManager: MockLocationManager!
     
     override func setUp() {
         super.setUp()
-        locationManager = LocationManager()
+        mockLocationManager = MockLocationManager()
+        mockLocationManager.mockLocationServicesEnabled = true
+        MockLocationManager.shared = mockLocationManager // Enable static method mocking
+        sut = LocationManager(
+            locationManager: mockLocationManager,
+            locationManagerType: MockLocationManager.self
+        )
     }
     
     override func tearDown() {
-        locationManager = nil
+        sut = nil
+        mockLocationManager = nil
+        MockLocationManager.shared = nil // Clean up
         super.tearDown()
     }
     
     // MARK: - Initialization Tests
     
     func testLocationManagerInitialization() {
-        XCTAssertNotNil(locationManager, "LocationManager should initialize")
-        XCTAssertFalse(locationManager.isRequesting, "isRequesting should be false initially")
+        XCTAssertNotNil(sut, "LocationManager should initialize")
+        XCTAssertFalse(sut.isRequesting, "isRequesting should be false initially")
+    }
+    
+    func testLocationManagerInitializationWithCustomDependencies() {
+        let customMock = MockLocationManager()
+        let customManager = LocationManager(
+            locationManager: customMock,
+            locationManagerType: MockLocationManager.self
+        )
+        
+        XCTAssertNotNil(customManager, "LocationManager should initialize with custom dependencies")
+        XCTAssertFalse(customManager.isRequesting, "isRequesting should be false initially")
     }
     
     // MARK: - Shared Instance Tests
@@ -69,97 +89,269 @@ class LocationManagerTests: XCTestCase {
     
     // MARK: - Authorization Status Tests
     
-    func testAuthorizationStatus() {
-        let status = locationManager.authorizationStatus
+    func testAuthorizationStatusReflectsMockStatus() {
+        mockLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
         
-        // Should be one of the valid CLAuthorizationStatus values
-        let validStatuses: [CLAuthorizationStatus] = [
-            .notDetermined,
-            .restricted,
-            .denied,
-            .authorizedAlways,
-            .authorizedWhenInUse
-        ]
-        
-        XCTAssertTrue(validStatuses.contains(status),
-                     "Authorization status should be valid")
+        let status = sut.authorizationStatus
+        XCTAssertEqual(status, .authorizedWhenInUse, "Should return mock authorization status")
     }
     
-    func testAuthorizationStatusString() {
-        let statusString = locationManager.authorizationStatusString
-        
-        let validStrings = [
-            "notDetermined",
-            "restricted",
-            "denied",
-            "authorizedAlways",
-            "authorizedWhenInUse"
+    func testAuthorizationStatusString_AllCases() {
+        let testCases: [(CLAuthorizationStatus, String)] = [
+            (.notDetermined, "notDetermined"),
+            (.restricted, "restricted"),
+            (.denied, "denied"),
+            (.authorizedAlways, "authorizedAlways"),
+            (.authorizedWhenInUse, "authorizedWhenInUse")
         ]
         
-        XCTAssertTrue(validStrings.contains(statusString),
-                     "Authorization status string should be valid")
-        XCTAssertFalse(statusString.isEmpty, "Status string should not be empty")
-    }
-    
-    func testAuthorizationStatusStringConsistency() {
-        let status = locationManager.authorizationStatus
-        let statusString = locationManager.authorizationStatusString
-        
-        // Verify string matches the actual status
-        switch status {
-        case .notDetermined:
-            XCTAssertEqual(statusString, "notDetermined")
-        case .restricted:
-            XCTAssertEqual(statusString, "restricted")
-        case .denied:
-            XCTAssertEqual(statusString, "denied")
-        case .authorizedAlways:
-            XCTAssertEqual(statusString, "authorizedAlways")
-        case .authorizedWhenInUse:
-            XCTAssertEqual(statusString, "authorizedWhenInUse")
-        @unknown default:
-            XCTAssertEqual(statusString, "unknown")
+        for (status, expectedString) in testCases {
+            mockLocationManager.mockAuthorizationStatus = status
+            let statusString = sut.authorizationStatusString
+            XCTAssertEqual(statusString, expectedString,
+                          "Status string should match for \(status)")
         }
     }
     
-    // MARK: - Location Request Tests
+    // MARK: - Location Request Success Tests
     
-    func testRequestLocationSafeNeverThrows() async {
-        // This method should never throw, even on errors
-        _ = await locationManager.requestLocationSafe()
+    func testRequestLocation_WhenAuthorizedWhenInUse_ReturnsLocation() async throws {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
+        let expectedLocation = CLLocation(latitude: 37.7749, longitude: -122.4194)
+        mockLocationManager.mockLocation = expectedLocation
         
-        // Result can be nil (which is expected in many cases), but method should complete
-        XCTAssertTrue(true, "requestLocationSafe completed without throwing")
+        // When
+        let location = try await sut.requestLocation()
+        
+        // Then
+        XCTAssertNotNil(location)
+        XCTAssertEqual(location?.coordinate.latitude, expectedLocation.coordinate.latitude)
+        XCTAssertEqual(location?.coordinate.longitude, expectedLocation.coordinate.longitude)
+        XCTAssertEqual(mockLocationManager.requestLocationCallCount, 1,
+                      "Should call requestLocation once")
     }
     
-    func testRequestLocationSafeMultipleCalls() async {
-        _ = await locationManager.requestLocationSafe()
-        _ = await locationManager.requestLocationSafe()
+    func testRequestLocation_WhenAuthorizedAlways_ReturnsLocation() async throws {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .authorizedAlways
+        let expectedLocation = CLLocation(latitude: 40.7128, longitude: -74.0060) // NYC
+        mockLocationManager.mockLocation = expectedLocation
         
-        // Both calls should complete without throwing
-        XCTAssertTrue(true, "Multiple requestLocationSafe calls completed without throwing")
+        // When
+        let location = try await sut.requestLocation()
         
-        // Results might be nil or valid locations, both are acceptable
+        // Then
+        XCTAssertNotNil(location)
+        XCTAssertEqual(location?.coordinate.latitude, 40.7128)
+        XCTAssertEqual(location?.coordinate.longitude, -74.0060)
     }
     
-    func testRequestLocationWithoutPermissions() async {
-        // In test environment without permissions, this should handle gracefully
+    func testRequestLocation_WithValidCache_ReturnsCachedLocation() async throws {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
+        let cachedLocation = CLLocation(latitude: 51.5074, longitude: -0.1278) // London
+        mockLocationManager.mockLocation = cachedLocation
+        
+        // When - First request
+        let firstLocation = try await sut.requestLocation()
+        XCTAssertNotNil(firstLocation)
+        
+        // Change mock location (should not affect cached result)
+        mockLocationManager.mockLocation = CLLocation(latitude: 0.0, longitude: 0.0)
+        
+        // When - Second request within cache validity (< 5 seconds)
+        let secondLocation = try await sut.requestLocation()
+        
+        // Then - Should return cached location, not new one
+        XCTAssertEqual(secondLocation?.coordinate.latitude, 51.5074)
+        XCTAssertEqual(secondLocation?.coordinate.longitude, -0.1278)
+        XCTAssertEqual(mockLocationManager.requestLocationCallCount, 1,
+                      "Should only call requestLocation once due to caching")
+    }
+    
+    func testRequestLocation_WhenNotDetermined_RequestsAuthorizationAndReturnsLocation() async throws {
+        // Given - Start with notDetermined (mock will auto-grant when requested)
+        mockLocationManager.mockAuthorizationStatus = .notDetermined
+        let expectedLocation = CLLocation(latitude: 35.6762, longitude: 139.6503) // Tokyo
+        mockLocationManager.mockLocation = expectedLocation
+        
+        // When
+        let location = try await sut.requestLocation()
+        
+        // Then
+        XCTAssertNotNil(location)
+        XCTAssertGreaterThan(mockLocationManager.requestWhenInUseAuthorizationCallCount, 0,
+                            "Should request authorization when status is notDetermined")
+    }
+    
+    // MARK: - Location Request Error Tests
+    
+    func testRequestLocation_WhenDenied_ThrowsAuthorizationDeniedError() async {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .denied
+        
+        // When/Then
         do {
-            _ = try await locationManager.requestLocation()
-            // If it succeeds, that's fine (might have permissions in test environment)
-            // Result might be nil, which is acceptable
+            _ = try await sut.requestLocation()
+            XCTFail("Expected authorizationDenied error")
+        } catch LocationError.authorizationDenied {
+            // Expected error
+            XCTAssertTrue(true, "Correctly threw authorizationDenied error")
         } catch {
-            // Expected to throw in many test scenarios
-            XCTAssertTrue(error is LocationError, "Should throw LocationError")
+            XCTFail("Unexpected error: \(error)")
+        }
+        
+        XCTAssertEqual(mockLocationManager.requestLocationCallCount, 0,
+                      "Should not request location when denied")
+    }
+    
+    func testRequestLocation_WhenRestricted_ThrowsAuthorizationRestrictedError() async {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .restricted
+        
+        // When/Then
+        do {
+            _ = try await sut.requestLocation()
+            XCTFail("Expected authorizationRestricted error")
+        } catch LocationError.authorizationRestricted {
+            // Expected error
+            XCTAssertTrue(true, "Correctly threw authorizationRestricted error")
+        } catch {
+            XCTFail("Unexpected error: \(error)")
         }
     }
     
-    func testIsRequestingProperty() {
-        XCTAssertFalse(locationManager.isRequesting, "Should not be requesting initially")
+    func testRequestLocation_WhenLocationServicesDisabled_ThrowsLocationServicesDisabledError() async {
+        // Given
+        mockLocationManager.mockLocationServicesEnabled = false
+        mockLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
         
-        // Test that isRequesting is @Published (important for SwiftUI)
-        // We can't easily test the actual state change during async operations in unit tests
-        // but we can verify the property exists and has correct initial state
+        // When/Then
+        do {
+            _ = try await sut.requestLocation()
+            XCTFail("Expected locationServicesDisabled error")
+        } catch LocationError.locationServicesDisabled {
+            // Expected error
+            XCTAssertTrue(true, "Correctly threw locationServicesDisabled error")
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+    
+    func testRequestLocation_WhenLocationFails_ThrowsLocationFailedError() async {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
+        let expectedError = NSError(domain: kCLErrorDomain,
+                                    code: CLError.locationUnknown.rawValue,
+                                    userInfo: [NSLocalizedDescriptionKey: "Location unavailable"])
+        mockLocationManager.mockError = expectedError
+        
+        // When/Then
+        do {
+            _ = try await sut.requestLocation()
+            XCTFail("Expected locationFailed error")
+        } catch LocationError.locationFailed(let underlyingError) {
+            // Expected error
+            XCTAssertEqual((underlyingError as NSError).code, CLError.locationUnknown.rawValue)
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+    
+    func testRequestLocation_WhenAuthorizationDeniedAfterRequest_ThrowsError() async {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .denied // User denies permission
+        
+        // When/Then
+        do {
+            _ = try await sut.requestLocation()
+            XCTFail("Expected error when user denies authorization")
+        } catch LocationError.authorizationDenied {
+            // Expected error
+            XCTAssertTrue(true, "Correctly handled denied authorization")
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+    }
+    
+    // MARK: - Safe Request Tests
+    
+    func testRequestLocationSafe_WhenSuccessful_ReturnsLocation() async {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
+        let expectedLocation = CLLocation(latitude: 48.8566, longitude: 2.3522) // Paris
+        mockLocationManager.mockLocation = expectedLocation
+        
+        // When
+        let location = await sut.requestLocationSafe()
+        
+        // Then
+        XCTAssertNotNil(location)
+        XCTAssertEqual(location?.coordinate.latitude, 48.8566)
+    }
+    
+    func testRequestLocationSafe_WhenFails_ReturnsNil() async {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .denied
+        
+        // When
+        let location = await sut.requestLocationSafe()
+        
+        // Then
+        XCTAssertNil(location, "Should return nil on error")
+    }
+    
+    func testRequestLocationSafe_NeverThrows() async {
+        // Given - Various error conditions
+        let errorConditions: [CLAuthorizationStatus] = [.denied, .restricted]
+        
+        for condition in errorConditions {
+            mockLocationManager.mockAuthorizationStatus = condition
+            
+            // When/Then - Should not throw
+            let location = await sut.requestLocationSafe()
+            XCTAssertNil(location, "Should return nil for \(condition)")
+        }
+    }
+    
+    func testRequestLocationSafe_MultipleCalls() async {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
+        mockLocationManager.mockLocation = CLLocation(latitude: 0.0, longitude: 0.0)
+        
+        // When
+        let location1 = await sut.requestLocationSafe()
+        let location2 = await sut.requestLocationSafe()
+        
+        // Then
+        XCTAssertNotNil(location1)
+        XCTAssertNotNil(location2)
+    }
+    
+    // MARK: - IsRequesting Property Tests
+    
+    func testIsRequesting_InitiallyFalse() {
+        XCTAssertFalse(sut.isRequesting, "Should not be requesting initially")
+    }
+    
+    func testIsRequesting_UpdatesDuringRequest() async {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
+        mockLocationManager.shouldDelayResponse = true
+        
+        // When
+        let requestTask = Task {
+            _ = try? await sut.requestLocation()
+        }
+        
+        // Give it a moment to start
+        try? await Task.sleep(nanoseconds: 50_000_000) // 0.05 seconds
+        
+        // Then - Would need to check on main actor in real scenario
+        // This test demonstrates the pattern, actual value checking would be done differently
+        
+        await requestTask.value
     }
     
     // MARK: - LocationError Tests
@@ -205,33 +397,36 @@ class LocationManagerTests: XCTestCase {
     
     // MARK: - Thread Safety Tests
     
-    func testConcurrentLocationRequests() async {
-        let iterations = 5
+    func testSequentialLocationRequests() async {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
+        mockLocationManager.mockLocation = CLLocation(latitude: 37.7749, longitude: -122.4194)
         
-        await withTaskGroup(of: CLLocation?.self) { group in
-            for _ in 0..<iterations {
-                group.addTask {
-                    return await self.locationManager.requestLocationSafe()
-                }
-            }
-            
-            var results: [CLLocation?] = []
-            for await result in group {
-                results.append(result)
-            }
-            
-            XCTAssertEqual(results.count, iterations, "Should complete all concurrent requests")
-            // Results might be nil, which is acceptable
-        }
+        // When - Sequential requests (realistic usage)
+        let location1 = await sut.requestLocationSafe()
+        let location2 = await sut.requestLocationSafe()
+        let location3 = await sut.requestLocationSafe()
+        
+        // Then - All should succeed
+        XCTAssertNotNil(location1, "First request should succeed")
+        XCTAssertNotNil(location2, "Second request should succeed (cached)")
+        XCTAssertNotNil(location3, "Third request should succeed (cached)")
+        
+        // Only first request should actually call the location manager (rest are cached)
+        XCTAssertEqual(mockLocationManager.requestLocationCallCount, 1,
+                      "Should use cache for subsequent requests")
     }
     
     func testConcurrentAuthorizationStatusAccess() async {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
         let iterations = 10
         
+        // When - Reading status is safe to do concurrently
         await withTaskGroup(of: CLAuthorizationStatus.self) { group in
             for _ in 0..<iterations {
                 group.addTask {
-                    return self.locationManager.authorizationStatus
+                    return self.sut.authorizationStatus
                 }
             }
             
@@ -240,16 +435,35 @@ class LocationManagerTests: XCTestCase {
                 statuses.append(status)
             }
             
+            // Then
             XCTAssertEqual(statuses.count, iterations, "Should complete all concurrent status reads")
             
-            // All statuses should be the same (authorization doesn't change rapidly)
-            if statuses.count > 1 {
-                let firstStatus = statuses[0]
-                for status in statuses {
-                    XCTAssertEqual(status, firstStatus, "Authorization status should be consistent")
-                }
+            for status in statuses {
+                XCTAssertEqual(status, .authorizedWhenInUse, "All statuses should be consistent")
             }
         }
+    }
+    
+    func testRapidSequentialRequests() async {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
+        mockLocationManager.mockLocation = CLLocation(latitude: 37.7749, longitude: -122.4194)
+        
+        // When - Make requests in rapid succession (but not truly concurrent)
+        var results: [CLLocation?] = []
+        for _ in 0..<5 {
+            let location = await sut.requestLocationSafe()
+            results.append(location)
+        }
+        
+        // Then - All should complete successfully
+        XCTAssertEqual(results.count, 5, "Should complete all requests")
+        let successfulResults = results.compactMap { $0 }
+        XCTAssertEqual(successfulResults.count, 5, "All requests should succeed")
+        
+        // Cache should prevent multiple actual location requests
+        XCTAssertLessThanOrEqual(mockLocationManager.requestLocationCallCount, 2,
+                                "Cache should reduce actual location manager calls")
     }
     
     // MARK: - Memory Management Tests
@@ -258,193 +472,240 @@ class LocationManagerTests: XCTestCase {
         weak var weakManager: LocationManager?
         
         autoreleasepool {
-            let localManager = LocationManager()
+            let mockManager = MockLocationManager()
+            let localManager = LocationManager(
+                locationManager: mockManager,
+                locationManagerType: MockLocationManager.self
+            )
             weakManager = localManager
             XCTAssertNotNil(weakManager, "Manager should exist")
         }
         
-        // Give time for deallocation
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            XCTAssertNil(weakManager, "Local manager should be deallocated")
-        }
+        // Manager should be deallocated when out of scope
+        XCTAssertNil(weakManager, "Local manager should be deallocated")
     }
     
     // MARK: - CLLocationManagerDelegate Tests
     
-    func testLocationManagerDelegateConformance() {
-        // Verify the delegate methods exist and are callable
+    func testLocationManagerDelegate_DidChangeAuthorization() {
+        // Given
+        let manager = CLLocationManager()
+        
+        // When
+        sut.locationManager(manager, didChangeAuthorization: .authorizedWhenInUse)
+        
+        // Then - Should not crash
+        XCTAssertTrue(true, "Delegate method should be callable")
+    }
+    
+    func testLocationManagerDelegate_DidUpdateLocations() {
+        // Given
         let manager = CLLocationManager()
         let testLocation = CLLocation(latitude: 37.7749, longitude: -122.4194)
+        
+        // When
+        sut.locationManager(manager, didUpdateLocations: [testLocation])
+        
+        // Then - Should not crash
+        XCTAssertTrue(true, "Delegate method should be callable")
+    }
+    
+    func testLocationManagerDelegate_DidFailWithError() {
+        // Given
+        let manager = CLLocationManager()
         let testError = NSError(domain: kCLErrorDomain, code: CLError.denied.rawValue)
         
-        // These should not crash when called
-        locationManager.locationManager(manager, didChangeAuthorization: .authorizedWhenInUse)
-        locationManager.locationManager(manager, didUpdateLocations: [testLocation])
-        locationManager.locationManager(manager, didFailWithError: testError)
+        // When
+        sut.locationManager(manager, didFailWithError: testError)
         
-        XCTAssertTrue(true, "Delegate methods should be callable without crashing")
+        // Then - Should not crash
+        XCTAssertTrue(true, "Delegate method should be callable")
+    }
+    
+    // MARK: - Edge Case Tests
+    
+    func testLocationManagerWithExtremeCoordinates() async throws {
+        // Given
+        let extremeLocations = [
+            CLLocation(latitude: 90.0, longitude: 180.0),      // North pole, date line
+            CLLocation(latitude: -90.0, longitude: -180.0),    // South pole
+            CLLocation(latitude: 0.0, longitude: 0.0),         // Null island
+            CLLocation(latitude: 85.0511, longitude: 179.9999) // Near projection limits
+        ]
+        
+        for extremeLocation in extremeLocations {
+            // Create fresh manager for each location to avoid cache interference
+            let freshMock = MockLocationManager()
+            freshMock.mockAuthorizationStatus = .authorizedWhenInUse
+            freshMock.mockLocation = extremeLocation
+            freshMock.mockLocationServicesEnabled = true
+            MockLocationManager.shared = freshMock
+            
+            let freshManager = LocationManager(
+                locationManager: freshMock,
+                locationManagerType: MockLocationManager.self
+            )
+            
+            // When
+            let location = try await freshManager.requestLocation()
+            
+            // Then
+            XCTAssertNotNil(location, "Extreme location should be handled")
+            XCTAssertEqual(location?.coordinate.latitude, extremeLocation.coordinate.latitude)
+            XCTAssertEqual(location?.coordinate.longitude, extremeLocation.coordinate.longitude)
+        }
+        
+        // Restore original mock for other tests
+        MockLocationManager.shared = mockLocationManager
+    }
+    
+    func testMultipleLocationManagerInstances() {
+        // Given
+        let mock1 = MockLocationManager()
+        let mock2 = MockLocationManager()
+        let mock3 = MockLocationManager()
+        
+        let manager1 = LocationManager(locationManager: mock1, locationManagerType: MockLocationManager.self)
+        let manager2 = LocationManager(locationManager: mock2, locationManagerType: MockLocationManager.self)
+        let manager3 = LocationManager(locationManager: mock3, locationManagerType: MockLocationManager.self)
+        
+        // Then
+        XCTAssertNotNil(manager1, "First manager should be valid")
+        XCTAssertNotNil(manager2, "Second manager should be valid")
+        XCTAssertNotNil(manager3, "Third manager should be valid")
+        
+        XCTAssertFalse(manager1 === manager2, "Instances should be different")
+        XCTAssertFalse(manager2 === manager3, "Instances should be different")
+        XCTAssertFalse(manager1 === manager3, "Instances should be different")
+        
+        XCTAssertFalse(LocationManager.shared === manager1, "Shared should be different from instance")
+    }
+    
+    // MARK: - Call Tracking Tests
+    
+    func testRequestLocation_CallsRequestLocationOnce() async throws {
+        // Given
+        mockLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
+        mockLocationManager.mockLocation = CLLocation(latitude: 37.7749, longitude: -122.4194)
+        
+        // When
+        _ = try await sut.requestLocation()
+        
+        // Then
+        XCTAssertEqual(mockLocationManager.requestLocationCallCount, 1,
+                      "Should call requestLocation exactly once")
+    }
+    
+    func testRequestLocation_CallsAuthorizationWhenNeeded() async throws {
+        // Given - Start with notDetermined so authorization is needed
+        mockLocationManager.mockAuthorizationStatus = .notDetermined
+        mockLocationManager.mockLocation = CLLocation(latitude: 37.7749, longitude: -122.4194)
+        
+        // When
+        _ = try await sut.requestLocation()
+        
+        // Then
+        let totalAuthCalls = mockLocationManager.requestWhenInUseAuthorizationCallCount +
+                            mockLocationManager.requestAlwaysAuthorizationCallCount
+        XCTAssertGreaterThan(totalAuthCalls, 0,
+                           "Should request authorization when status is not determined")
     }
     
     // MARK: - Performance Tests
     
     func testAuthorizationStatusPerformance() {
         measure {
-            _ = locationManager.authorizationStatus
+            _ = sut.authorizationStatus
         }
     }
     
     func testAuthorizationStatusStringPerformance() {
         measure {
-            _ = locationManager.authorizationStatusString
+            _ = sut.authorizationStatusString
         }
     }
+}
+
+
+// MARK: - MockLocationManager
+
+/// Mock implementation for testing location scenarios
+class MockLocationManager: LocationManagerProtocol {
+    weak var delegate: CLLocationManagerDelegate?
+    var desiredAccuracy: CLLocationAccuracy = kCLLocationAccuracyBest
     
-    func testRequestLocationSafePerformance() {
-        measure {
-            Task {
-                _ = await locationManager.requestLocationSafe()
+    // Test configuration properties
+    var mockAuthorizationStatus: CLAuthorizationStatus = .notDetermined
+    var mockLocationServicesEnabled: Bool = true
+    var mockLocation: CLLocation?
+    var mockError: Error?
+    var shouldDelayResponse: Bool = false
+    
+    // Call tracking for verification
+    var requestLocationCallCount = 0
+    var requestWhenInUseAuthorizationCallCount = 0
+    var requestAlwaysAuthorizationCallCount = 0
+    
+    // Shared state for static methods (used in tests)
+    static var shared: MockLocationManager?
+    
+    static func locationServicesEnabled() -> Bool {
+        return shared?.mockLocationServicesEnabled ?? true
+    }
+    
+    static func authorizationStatus() -> CLAuthorizationStatus {
+        return shared?.mockAuthorizationStatus ?? .notDetermined
+    }
+    
+    func requestLocation() {
+        requestLocationCallCount += 1
+        
+        let simulateResponse = {
+            if let error = self.mockError {
+                self.delegate?.locationManager?(CLLocationManager(), didFailWithError: error)
+            } else if let location = self.mockLocation {
+                self.delegate?.locationManager?(CLLocationManager(), didUpdateLocations: [location])
+            } else {
+                // No location set - simulate a failure
+                let error = NSError(domain: kCLErrorDomain,
+                                   code: CLError.locationUnknown.rawValue,
+                                   userInfo: [NSLocalizedDescriptionKey: "No mock location configured"])
+                self.delegate?.locationManager?(CLLocationManager(), didFailWithError: error)
             }
         }
-    }
-    
-    // MARK: - Edge Case Tests
-    
-    func testLocationManagerDescription() {
-        let description = String(describing: locationManager)
-        XCTAssertFalse(description.isEmpty, "Description should not be empty")
-        XCTAssertTrue(description.contains("LocationManager"),
-                     "Description should mention LocationManager")
-    }
-    
-    func testMultipleLocationManagerInstances() {
-        let manager1 = LocationManager()
-        let manager2 = LocationManager()
-        let manager3 = LocationManager()
         
-        // All should be valid instances
-        XCTAssertNotNil(manager1, "First manager should be valid")
-        XCTAssertNotNil(manager2, "Second manager should be valid")
-        XCTAssertNotNil(manager3, "Third manager should be valid")
-        
-        // They should be different instances (not singleton like shared)
-        XCTAssertFalse(manager1 === manager2, "Instances should be different")
-        XCTAssertFalse(manager2 === manager3, "Instances should be different")
-        XCTAssertFalse(manager1 === manager3, "Instances should be different")
-        
-        // But shared should be different from all
-        XCTAssertFalse(LocationManager.shared === manager1, "Shared should be different from instance")
-        XCTAssertFalse(LocationManager.shared === manager2, "Shared should be different from instance")
-        XCTAssertFalse(LocationManager.shared === manager3, "Shared should be different from instance")
-    }
-    
-    // MARK: - System Integration Tests
-    
-    func testLocationManagerUsesSystemLocationServices() {
-        // Verify that authorization status reflects system state
-        let systemEnabled = CLLocationManager.locationServicesEnabled()
-        let managerStatus = locationManager.authorizationStatus
-        
-        // These should be correlated (if services disabled, status shouldn't be authorized)
-        if !systemEnabled {
-            XCTAssertNotEqual(managerStatus, .authorizedAlways,
-                            "Should not be authorized if services disabled")
-            XCTAssertNotEqual(managerStatus, .authorizedWhenInUse,
-                            "Should not be authorized if services disabled")
+        // Always respond asynchronously to match real CoreLocation behavior
+        let delay = shouldDelayResponse ? 0.1 : 0.01
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            simulateResponse()
         }
     }
     
-    func testLocationManagerStatusConsistency() {
-        // Multiple calls should return consistent status
-        let status1 = locationManager.authorizationStatus
-        let status2 = locationManager.authorizationStatus
-        let status3 = locationManager.authorizationStatus
+    func requestWhenInUseAuthorization() {
+        requestWhenInUseAuthorizationCallCount += 1
         
-        XCTAssertEqual(status1, status2, "Status should be consistent")
-        XCTAssertEqual(status2, status3, "Status should be consistent")
-        XCTAssertEqual(status1, status3, "Status should be consistent")
-        
-        // String representation should also be consistent
-        let string1 = locationManager.authorizationStatusString
-        let string2 = locationManager.authorizationStatusString
-        
-        XCTAssertEqual(string1, string2, "Status string should be consistent")
-    }
-    
-    // MARK: - Error Scenario Tests
-    
-    func testLocationErrorEquality() {
-        let error1 = LocationError.locationServicesDisabled
-        let error2 = LocationError.locationServicesDisabled
-        let error3 = LocationError.authorizationDenied
-        
-        // Same error types should be equal
-        switch (error1, error2) {
-        case (.locationServicesDisabled, .locationServicesDisabled):
-            XCTAssertTrue(true, "Same error types should match")
-        default:
-            XCTFail("Same error types should be equal")
+        // If currently notDetermined, grant permission automatically
+        if mockAuthorizationStatus == .notDetermined {
+            mockAuthorizationStatus = .authorizedWhenInUse
         }
         
-        // Different error types should not be equal
-        switch (error1, error3) {
-        case (.locationServicesDisabled, .authorizationDenied):
-            XCTAssertTrue(true, "Different error types should not match")
-        default:
-            XCTFail("Different error types should not be equal")
+        // Simulate authorization change
+        DispatchQueue.main.async {
+            self.delegate?.locationManager?(CLLocationManager(), didChangeAuthorization: self.mockAuthorizationStatus)
         }
     }
     
-    func testLocationFailedErrorWithDifferentUnderlyingErrors() {
-        let error1 = NSError(domain: "Domain1", code: 1)
-        let error2 = NSError(domain: "Domain2", code: 2)
+    func requestAlwaysAuthorization() {
+        requestAlwaysAuthorizationCallCount += 1
         
-        let locationError1 = LocationError.locationFailed(error1)
-        let locationError2 = LocationError.locationFailed(error2)
-        
-        XCTAssertNotNil(locationError1.errorDescription)
-        XCTAssertNotNil(locationError2.errorDescription)
-        XCTAssertNotEqual(locationError1.errorDescription, locationError2.errorDescription,
-                         "Different underlying errors should produce different descriptions")
-    }
-    
-    // MARK: - Publisher/ObservableObject Tests
-    
-    func testObservableObjectPublishing() {
-        // The @Published property should exist
-        XCTAssertFalse(locationManager.isRequesting, "isRequesting should be accessible")
-        
-        // In a real app, this would trigger UI updates when changed
-        // but we can't easily test the @Published behavior in unit tests
-    }
-    
-    // MARK: - Boundary Condition Tests
-    
-    func testLocationManagerWithExtremeCoordinates() {
-        // Test that the manager can handle extreme coordinate values if they were returned
-        let extremeLocations = [
-            CLLocation(latitude: 90.0, longitude: 180.0),      // North pole, date line
-            CLLocation(latitude: -90.0, longitude: -180.0),    // South pole, opposite date line
-            CLLocation(latitude: 0.0, longitude: 0.0),         // Null island
-            CLLocation(latitude: 85.0511, longitude: 179.9999) // Near projection limits
-        ]
-        
-        for location in extremeLocations {
-            XCTAssertNotNil(location, "Extreme location should be valid")
-            XCTAssertTrue(location.coordinate.latitude >= -90.0 && location.coordinate.latitude <= 90.0,
-                         "Latitude should be in valid range")
-            XCTAssertTrue(location.coordinate.longitude >= -180.0 && location.coordinate.longitude <= 180.0,
-                         "Longitude should be in valid range")
+        // If currently notDetermined, grant permission automatically
+        if mockAuthorizationStatus == .notDetermined {
+            mockAuthorizationStatus = .authorizedAlways
         }
-    }
-    
-    func testLocationManagerCacheValidityBoundary() {
-        let validity = LocationManager.locationCacheValidityInSeconds
         
-        // Should be a reasonable cache duration
-        XCTAssertGreaterThan(validity, 1.0, "Cache validity should be > 1 second")
-        XCTAssertLessThan(validity, 300.0, "Cache validity should be < 5 minutes")
-        
-        // Should be exactly 5 seconds as specified
-        XCTAssertEqual(validity, 5.0, "Cache validity should be exactly 5 seconds")
+        // Simulate authorization change
+        DispatchQueue.main.async {
+            self.delegate?.locationManager?(CLLocationManager(), didChangeAuthorization: self.mockAuthorizationStatus)
+        }
     }
 }

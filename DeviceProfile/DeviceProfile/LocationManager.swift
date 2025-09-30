@@ -51,6 +51,29 @@ enum LocationError: Error, LocalizedError {
     }
 }
 
+// MARK: - LocationManagerProtocol
+
+/// Protocol wrapping CoreLocation functionality for dependency injection and testability
+protocol LocationManagerProtocol: AnyObject {
+    var delegate: CLLocationManagerDelegate? { get set }
+    var desiredAccuracy: CLLocationAccuracy { get set }
+    
+    static func locationServicesEnabled() -> Bool
+    static func authorizationStatus() -> CLAuthorizationStatus
+    
+    func requestLocation()
+    func requestWhenInUseAuthorization()
+    func requestAlwaysAuthorization()
+}
+
+// MARK: - CLLocationManager Conformance
+
+extension CLLocationManager: LocationManagerProtocol {
+    // CLLocationManager already implements all required methods
+    // No additional code needed - this just makes it conform to the protocol
+}
+
+
 // MARK: - LocationManager
 
 /// LocationManager is responsible for requesting authorization, managing, and collecting device location information.
@@ -93,8 +116,11 @@ class LocationManager: NSObject, ObservableObject {
     
     // MARK: - Private Properties
     
-    /// Core Location manager instance for system location services
-    private let locationManager = CLLocationManager()
+    /// LocationManagerProtocol instance for system location services
+    private let locationManager: LocationManagerProtocol
+        
+    /// LocationManagerProtocol concrete type
+    private let locationManagerType: LocationManagerProtocol.Type
     
     /// Most recently obtained location with timestamp for cache validation
     private var lastKnownLocation: CLLocation?
@@ -116,7 +142,7 @@ class LocationManager: NSObject, ObservableObject {
     /// Current authorization status using iOS 13+ compatible class method
     /// - Returns: Current location authorization status for the application
     var authorizationStatus: CLAuthorizationStatus {
-        return CLLocationManager.authorizationStatus()
+        return locationManagerType.authorizationStatus()
     }
     
     /// Human-readable authorization status for debugging and logging
@@ -140,12 +166,17 @@ class LocationManager: NSObject, ObservableObject {
     
     // MARK: - Lifecycle
     
-    /// Initializes LocationManager instance with optimal configuration
-    /// - Note: Private initializer enforces singleton pattern
-    override init() {
-        super.init()
-        setupLocationManager()
-    }
+    /// Initializes LocationManager with dependency injection support
+        /// - Parameters:
+        ///   - locationManager: The location manager implementation (defaults to CLLocationManager)
+        ///   - locationManagerType: The type for class methods (defaults to CLLocationManager.self)
+        init(locationManager: LocationManagerProtocol = CLLocationManager(),
+             locationManagerType: LocationManagerProtocol.Type = CLLocationManager.self) {
+            self.locationManager = locationManager
+            self.locationManagerType = locationManagerType
+            super.init()
+            setupLocationManager()
+        }
     
     /// Configures the location manager with optimal settings for device profiling
     private func setupLocationManager() {
@@ -207,7 +238,7 @@ class LocationManager: NSObject, ObservableObject {
         }
         
         // Verify location services are enabled system-wide
-        guard CLLocationManager.locationServicesEnabled() else {
+        guard locationManagerType.locationServicesEnabled() else {
             throw LocationError.locationServicesDisabled
         }
         

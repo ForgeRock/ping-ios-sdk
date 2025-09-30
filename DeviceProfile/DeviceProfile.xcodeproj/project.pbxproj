@@ -22,9 +22,10 @@
 		A5554B2B2E84107100BA6217 /* BluetoothCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5554B2A2E84106F00BA6217 /* BluetoothCollectorTests.swift */; };
 		A5554B2D2E84109400BA6217 /* BrowserCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5554B2C2E84109300BA6217 /* BrowserCollectorTests.swift */; };
 		A569DBAA2E789BD200F4D7A8 /* PingDeviceProfile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A569DBA02E789BD200F4D7A8 /* PingDeviceProfile.framework */; };
-		A569DBE22E789D2200F4D7A8 /* DeviceProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A569DBE02E789D2200F4D7A8 /* DeviceProfileTests.swift */; };
 		A569DBE82E78A0FC00F4D7A8 /* DeviceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A569DBE62E78A0FC00F4D7A8 /* DeviceProfile.swift */; };
 		A5BE8BAA2E84C599007AF0B9 /* LocationManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BE8BA92E84C597007AF0B9 /* LocationManagerTests.swift */; };
+		A5BE8C782E8C40A8007AF0B9 /* DeviceProfileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BE8C772E8C40A1007AF0B9 /* DeviceProfileUtils.swift */; };
+		A5BE8C7A2E8C4A8F007AF0B9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5BE8C792E8C4A8F007AF0B9 /* PrivacyInfo.xcprivacy */; };
 		A5D2967E2E79D4BB0093A761 /* DeviceProfileCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D2967D2E79D4BA0093A761 /* DeviceProfileCallback.swift */; };
 		A5D296812E79D5A60093A761 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D296802E79D5A60093A761 /* PingJourney.framework */; };
 		A5D296822E79D5A60093A761 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5D296802E79D5A60093A761 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -80,10 +81,11 @@
 		A5554B2C2E84109300BA6217 /* BrowserCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserCollectorTests.swift; sourceTree = "<group>"; };
 		A569DBA02E789BD200F4D7A8 /* PingDeviceProfile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingDeviceProfile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A569DBA92E789BD200F4D7A8 /* DeviceProfileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeviceProfileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A569DBE02E789D2200F4D7A8 /* DeviceProfileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProfileTests.swift; sourceTree = "<group>"; };
 		A569DBE62E78A0FC00F4D7A8 /* DeviceProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProfile.swift; sourceTree = "<group>"; };
 		A569DBEB2E78A3C600F4D7A8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A5BE8BA92E84C597007AF0B9 /* LocationManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerTests.swift; sourceTree = "<group>"; };
+		A5BE8C772E8C40A1007AF0B9 /* DeviceProfileUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProfileUtils.swift; sourceTree = "<group>"; };
+		A5BE8C792E8C4A8F007AF0B9 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A5D2967D2E79D4BA0093A761 /* DeviceProfileCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProfileCallback.swift; sourceTree = "<group>"; };
 		A5D296802E79D5A60093A761 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5D296862E79DD5C0093A761 /* DeviceCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCollector.swift; sourceTree = "<group>"; };
@@ -151,7 +153,6 @@
 				A50143BB2E84ADCE00FC2E9A /* NetworkCollectorTests.swift */,
 				A50143BD2E84ADF600FC2E9A /* PlatformCollectorTests.swift */,
 				A50143BF2E84AE7100FC2E9A /* TelephonyCollectorTests.swift */,
-				A569DBE02E789D2200F4D7A8 /* DeviceProfileTests.swift */,
 			);
 			path = DeviceProfileTests;
 			sourceTree = "<group>";
@@ -160,9 +161,11 @@
 			isa = PBXGroup;
 			children = (
 				A5554B262E840F6400BA6217 /* DeviceProfile.h */,
+				A5BE8C792E8C4A8F007AF0B9 /* PrivacyInfo.xcprivacy */,
 				A5D296852E79D73D0093A761 /* Collectors */,
 				A569DBE62E78A0FC00F4D7A8 /* DeviceProfile.swift */,
 				A5D2967D2E79D4BA0093A761 /* DeviceProfileCallback.swift */,
+				A5BE8C772E8C40A1007AF0B9 /* DeviceProfileUtils.swift */,
 				A5554B282E840FB800BA6217 /* LocationManager.swift */,
 				A5D296982E7C72330093A761 /* NetworkPathMonitor.swift */,
 			);
@@ -292,6 +295,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5BE8C7A2E8C4A8F007AF0B9 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -322,6 +326,7 @@
 				A5554B292E840FC200BA6217 /* LocationManager.swift in Sources */,
 				A5554B252E840EFA00BA6217 /* DeviceProfileCollector.swift in Sources */,
 				A569DBE82E78A0FC00F4D7A8 /* DeviceProfile.swift in Sources */,
+				A5BE8C782E8C40A8007AF0B9 /* DeviceProfileUtils.swift in Sources */,
 				A5D2968F2E79E1C10093A761 /* TelephonyCollector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -337,7 +342,6 @@
 				A50143BC2E84ADD000FC2E9A /* NetworkCollectorTests.swift in Sources */,
 				A50143C82E84AF4C00FC2E9A /* LocationCollectorTests.swift in Sources */,
 				A50143C42E84AEB700FC2E9A /* DeviceProfileCallbackTests.swift in Sources */,
-				A569DBE22E789D2200F4D7A8 /* DeviceProfileTests.swift in Sources */,
 				A50143BE2E84ADF800FC2E9A /* PlatformCollectorTests.swift in Sources */,
 				A50143C22E84AE9900FC2E9A /* DeviceProfileCollectorTests.swift in Sources */,
 				A50143C02E84AE7400FC2E9A /* TelephonyCollectorTests.swift in Sources */,

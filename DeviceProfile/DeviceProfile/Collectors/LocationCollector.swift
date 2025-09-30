@@ -62,8 +62,15 @@ class LocationCollector: NSObject, DeviceCollector {
     let key = "location"
     
     /// LocationManager instance for handling location requests
-    /// - Note: Uses the shared singleton instance for consistency
-    var locationManager: LocationManager = LocationManager.shared
+    /// - Note: Defaults to shared singleton, but can be injected for testing
+    var locationManager: LocationManager
+    
+    /// Initializes the collector with optional dependency injection
+    /// - Parameter locationManager: LocationManager instance (defaults to shared)
+    init(locationManager: LocationManager = LocationManager.shared) {
+        self.locationManager = locationManager
+        super.init()
+    }
     
     /// Collects current device location information
     /// - Returns: LocationInfo with coordinates, or nil if location unavailable
@@ -86,7 +93,7 @@ class LocationCollector: NSObject, DeviceCollector {
     /// - Returns: LocationInfo if successful, nil if failed or unauthorized
     ///
     /// ## Implementation Details
-    /// - Uses the LocationManager.shared instance
+    /// - Uses the injected LocationManager instance
     /// - Handles all error cases gracefully
     /// - Converts CLLocation to LocationInfo structure
     /// - Maintains privacy by returning nil on denial

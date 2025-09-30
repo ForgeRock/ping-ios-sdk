@@ -142,7 +142,7 @@ class DeviceProfileCollectorTests: XCTestCase {
     
     func testAnyValueWithDouble() throws {
         let value = AnyValue(3.14159)
-        XCTAssertEqual(value.value as! Double, 3.14159, accuracy: 0.00001, "Double value should be preserved")
+        XCTAssertEqual(value.value as? Double, 3.14159, "Double value should be preserved")
         
         // Test encoding/decoding
         let encoder = JSONEncoder()
@@ -151,7 +151,7 @@ class DeviceProfileCollectorTests: XCTestCase {
         let decoder = JSONDecoder()
         let decoded = try decoder.decode(AnyValue.self, from: data)
         
-        XCTAssertEqual(decoded.value as! Double, 3.14159, accuracy: 0.00001, "Decoded double should match")
+        XCTAssertEqual(decoded.value as? Double, 3.14159, "Decoded double should match")
     }
     
     func testAnyValueWithBool() throws {

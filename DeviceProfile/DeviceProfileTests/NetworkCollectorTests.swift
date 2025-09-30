@@ -331,7 +331,10 @@ class NetworkCollectorTests: XCTestCase {
             }
             """
             
-            let jsonData = jsonString.data(using: .utf8)!
+            guard let jsonData = jsonString.data(using: .utf8) else {
+                XCTFail("Failed to convert JSON string to data")
+                return
+            }
             let decoder = JSONDecoder()
             let networkInfo = try decoder.decode(NetworkInfo.self, from: jsonData)
             

@@ -67,11 +67,7 @@ struct DeviceProfileCallbackView: View {
         
         task = Task {
             do {
-                _ = await callback.collect { config in
-                    config.collectors {
-                        return DefaultDeviceCollector.defaultDeviceCollectors()
-                    }
-                }
+                _ = await callback.collect()
                 
                 if !Task.isCancelled {
                     await MainActor.run {

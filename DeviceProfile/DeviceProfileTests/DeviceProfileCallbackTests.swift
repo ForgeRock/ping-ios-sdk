@@ -95,7 +95,8 @@ class DeviceProfileCallbackTests: XCTestCase {
         XCTAssertFalse(config.metadata, "Metadata should be false by default")
         XCTAssertFalse(config.location, "Location should be false by default")
         XCTAssertNotNil(config.logger, "Logger should not be nil")
-        XCTAssertTrue(config.collectors.isEmpty, "Collectors should be empty by default")
+        XCTAssertFalse(config.collectors.isEmpty, "Collectors should not be empty by default")
+        XCTAssertEqual(config.collectors.count, DefaultDeviceCollector.defaultDeviceCollectors().count, "Collectors should have all default collectors")
         // DeviceIdentifier might be nil in test environment
     }
     

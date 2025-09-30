@@ -126,7 +126,7 @@ public class DeviceProfileCallback: AbstractCallback, ObservableObject, @uncheck
     /// - Returns .success with collected data dictionary
     /// - Automatically submits successful results to server
     public func collect(
-        configBlock: @escaping @Sendable (DeviceProfileConfig) -> Void
+        configBlock: @escaping @Sendable (DeviceProfileConfig) -> Void = {_ in }
     ) async -> Result<[String: any Sendable], Error> {
         
         // Create configuration with server settings
@@ -151,7 +151,7 @@ public class DeviceProfileCallback: AbstractCallback, ObservableObject, @uncheck
             }
             
             // Submit to server
-            let jsonString = jsonStringify(value: profileDict as AnyObject)
+            let jsonString = DeviceProfileUtils.jsonStringify(value: profileDict as AnyObject)
             _ = input(jsonString)
             
             return .success(profileDict)
@@ -185,11 +185,13 @@ public final class DeviceProfileConfig: @unchecked Sendable {
     /// Logger instance for recording collection events
     public var logger: Logger = LogManager.warning
     
-    /// Device identifier generator for unique device identification
+    /// Device identifier generator for unique device identification.
+    /// Default value is `DefaultDeviceIdentifier()`
     public var deviceIdentifier: DeviceIdentifier? = try? DefaultDeviceIdentifier()
     
-    /// Array of collectors to use for metadata gathering
-    public var collectors: [any DeviceCollector] = []
+    /// Array of collectors to use for metadata gathering.
+    /// Defaults valuse is `DefaultDeviceCollector.defaultDeviceCollectors()`
+    public var collectors: [any DeviceCollector] =  DefaultDeviceCollector.defaultDeviceCollectors()
     
     /// Configures the collectors array using a builder pattern
     /// - Parameter configBlock: Block that returns the desired collectors array
@@ -207,16 +209,20 @@ public final class DeviceProfileConfig: @unchecked Sendable {
     public func collectors(_ configBlock: () -> [any DeviceCollector]) {
         collectors = configBlock()
     }
+    
+    /// Initializes a new instance of `DeviceProfileConfig`
+    public init() {}
 }
 
 // MARK: - Error Types
 
 /// Errors that can occur during device profile collection
-private enum DeviceProfileError: Error, LocalizedError {
+public enum DeviceProfileError: Error, LocalizedError {
     case collectionFailed
     case serializationFailed
     
-    var errorDescription: String? {
+    // String Description of the error
+    public var errorDescription: String? {
         switch self {
         case .collectionFailed:
             return "Device profile collection failed"
@@ -233,33 +239,3 @@ extension JourneyConstants {
     static let metadata = "metadata"
 }
 
-// MARK: - JSON Utility Extension
-
-extension DeviceProfileCallback {
-    
-    /// Converts an object to JSON string representation
-    /// - Parameters:
-    ///   - value: The object to convert to JSON
-    ///   - prettyPrinted: Whether to format JSON with indentation
-    /// - Returns: JSON string, or empty string if conversion fails
-    ///
-    /// ## Implementation Notes
-    /// - Validates JSON object before serialization
-    /// - Handles serialization errors gracefully
-    /// - Uses UTF-8 encoding for string conversion
-    /// - Returns empty string as fallback for invalid objects
-    private func jsonStringify(value: AnyObject, prettyPrinted: Bool = false) -> String {
-        let options: JSONSerialization.WritingOptions = prettyPrinted ? .prettyPrinted : []
-        
-        guard JSONSerialization.isValidJSONObject(value) else {
-            return ""
-        }
-        
-        do {
-            let data = try JSONSerialization.data(withJSONObject: value, options: options)
-            return String(data: data, encoding: .utf8) ?? ""
-        } catch {
-            return ""
-        }
-    }
-}
