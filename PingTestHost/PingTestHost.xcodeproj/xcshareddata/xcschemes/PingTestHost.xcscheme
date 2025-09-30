@@ -283,10 +283,10 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A569DBA82E789BD200F4D7A8"
-               BuildableName = "DeviceProfileTests.xctest"
-               BlueprintName = "DeviceProfileTests"
-               ReferencedContainer = "container:../DeviceProfile/DeviceProfile.xcodeproj">
+               BlueprintIdentifier = "EC59E1612E7AD21700A91E66"
+               BuildableName = "TamplerDetectorTests.xctest"
+               BlueprintName = "TamplerDetectorTests"
+               ReferencedContainer = "container:../TamperDetector/TamperDetector.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference

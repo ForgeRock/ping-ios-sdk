@@ -41,8 +41,6 @@ public class WebModule {
                 // Ensure the redirect URI scheme is valid
                 let result = try await BrowserLauncher.currentBrowser.launch(url: url, customParams: nil, browserType: oidcLoginConfig?.browserType ?? .authSession, browserMode: oidcLoginConfig?.browserMode ?? .login, callbackURLScheme: callbackURLScheme)
                 
-                await BrowserLauncher.currentBrowser.reset()
-                
                 // Extract and verify the auth code response
                 let code = try WebModule.extractCode(from: result)
                 let jsonDict: [String: Any] = [

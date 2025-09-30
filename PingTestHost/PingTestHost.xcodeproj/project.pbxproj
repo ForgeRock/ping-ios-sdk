@@ -31,6 +31,8 @@
 		EC2E0D962DE60C50000CC0E2 /* PingExternalIdPFacebook.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC2E0D942DE60C50000CC0E2 /* PingExternalIdPFacebook.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC2E0D982DE60C55000CC0E2 /* PingExternalIdPGoogle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC2E0D972DE60C55000CC0E2 /* PingExternalIdPGoogle.framework */; };
 		EC2E0D992DE60C55000CC0E2 /* PingExternalIdPGoogle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC2E0D972DE60C55000CC0E2 /* PingExternalIdPGoogle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC59E3702E7D8BFC00A91E66 /* PingTamperDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E36F2E7D8BFC00A91E66 /* PingTamperDetector.framework */; };
+		EC59E3712E7D8BFC00A91E66 /* PingTamperDetector.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E36F2E7D8BFC00A91E66 /* PingTamperDetector.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC9591062DC116EF005633A1 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = EC9591052DC116EF005633A1 /* GoogleSignIn */; };
 		ECB7C6922D5A27840006F1C8 /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECB7C6912D5A27840006F1C8 /* PingBrowser.framework */; };
 		ECB7C6932D5A27840006F1C8 /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECB7C6912D5A27840006F1C8 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -46,6 +48,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				ECB7C6932D5A27840006F1C8 /* PingBrowser.framework in Embed Frameworks */,
+				EC59E3712E7D8BFC00A91E66 /* PingTamperDetector.framework in Embed Frameworks */,
 				A507A26A2CEBED9F007F5C16 /* PingLogger.framework in Embed Frameworks */,
 				EC2E0D902DE60C42000CC0E2 /* PingExternalIdPApple.framework in Embed Frameworks */,
 				EC2E0D932DE60C49000CC0E2 /* PingExternalIdP.framework in Embed Frameworks */,
@@ -91,6 +94,7 @@
 		EC2E0D912DE60C49000CC0E2 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC2E0D942DE60C50000CC0E2 /* PingExternalIdPFacebook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdPFacebook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC2E0D972DE60C55000CC0E2 /* PingExternalIdPGoogle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdPGoogle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC59E36F2E7D8BFC00A91E66 /* PingTamperDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingTamperDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A3212DC258700011E59C /* PingExternal_idp_Apple.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp_Apple.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A3242DC258770011E59C /* PingExternal_idp_Google.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp_Google.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A3272DC2587E0011E59C /* PingExternal_idp_Facebook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp_Facebook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,6 +109,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECED512E2DC1111800FA39A7 /* FacebookLogin in Frameworks */,
+				EC59E3702E7D8BFC00A91E66 /* PingTamperDetector.framework in Frameworks */,
 				EC2E0D982DE60C55000CC0E2 /* PingExternalIdPGoogle.framework in Frameworks */,
 				ECB7C6922D5A27840006F1C8 /* PingBrowser.framework in Frameworks */,
 				EC2E0D8F2DE60C42000CC0E2 /* PingExternalIdPApple.framework in Frameworks */,
@@ -157,6 +162,7 @@
 		A54BF4822BF2E5B800CD24D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EC59E36F2E7D8BFC00A91E66 /* PingTamperDetector.framework */,
 				EC2E0D972DE60C55000CC0E2 /* PingExternalIdPGoogle.framework */,
 				EC2E0D942DE60C50000CC0E2 /* PingExternalIdPFacebook.framework */,
 				EC2E0D912DE60C49000CC0E2 /* PingExternalIdP.framework */,

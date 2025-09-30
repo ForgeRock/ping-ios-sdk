@@ -14,11 +14,15 @@ import PingExternalIdPFacebook
 import PingExternalIdPGoogle
 import PingBrowser
 import PingDeviceId
+import PingTamperDetector
 
 /// The main application entry point.
 @main
 struct MyApp: App {
     
+    // Create an instance of the manager.
+    // @StateObject ensures it's kept alive for the app's lifecycle.
+    @StateObject private var sceneManager = ScenePhaseManager()
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -29,6 +33,7 @@ struct MyApp: App {
                     }
                     OpenURLMonitor.shared.handleOpenURL(url)
                 }
+                .environmentObject(sceneManager)
         }
     }
 }
@@ -116,6 +121,14 @@ struct ContentView: View {
                 .task {
                     let id = try? await DefaultDeviceIdentifier().id
                     deviceID = "Device ID: \(id ?? "Unknown Device ID")"
+                    let tamperDetector = TamperDetector()
+                    let score = tamperDetector.analyze()
+
+                    if score > 0 {
+                        print("The device is likely jailbroken. Score: \(score)")
+                    } else {
+                        print("The device is likely not jailbroken. Or running a simulator")
+                    }
                 }
         }
     }

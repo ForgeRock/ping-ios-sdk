@@ -10,6 +10,7 @@
 
 import Foundation
 import UIKit
+import PingTamperDetector
 
 // MARK: - PlatformCollector
 
@@ -26,7 +27,7 @@ class PlatformCollector: DeviceCollector {
     /// Collects comprehensive platform information
     /// - Returns: PlatformInfo containing system and device details
     func collect() async -> PlatformInfo? {
-        return PlatformInfo()
+        return await PlatformInfo()
     }
 }
 
@@ -64,23 +65,20 @@ struct PlatformInfo: Codable {
     let timeZone: String
     
     /// Jailbreak detection score (0.0 = no jailbreak, 1.0 = likely jailbroken)
-    /// - Note: Currently returns 1.0 as placeholder until JailbreakDetector is merged
     let jailBreakScore: Double
     
     /// Initializes platform information by collecting system details
-    init() {
-        self.platform = UIDevice.current.systemName
-        self.version = UIDevice.current.systemVersion
-        self.device = UIDevice.current.model
-        self.deviceName = UIDevice.current.name
+    init() async {
+        self.platform = await UIDevice.current.systemName
+        self.version = await UIDevice.current.systemVersion
+        self.device = await UIDevice.current.model
+        self.deviceName = await UIDevice.current.name
         self.model = Self.getDeviceModel()
         self.brand = "Apple"
         self.locale = Locale.current.languageCode
         self.timeZone = TimeZone.current.identifier
         
-        // TODO: Replace with actual JailbreakDetector when merged
-        // self.jailBreakScore = JailbreakDetector().analyze()
-        self.jailBreakScore = 1.0
+        self.jailBreakScore = await TamperDetector().analyze()
     }
     
     /// Retrieves the specific device model identifier using system info
