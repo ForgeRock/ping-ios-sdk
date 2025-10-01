@@ -299,6 +299,76 @@
                ReferencedContainer = "container:../DeviceProfile/DeviceProfile.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B29338F2E7DF20A004D1D38"
+               BuildableName = "OathTests.xctest"
+               BlueprintName = "OathTests"
+               ReferencedContainer = "container:../Oath/Oath.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B29338F2E7DF20A004D1D38"
+               BuildableName = "OathTests.xctest"
+               BlueprintName = "OathTests"
+               ReferencedContainer = "container:../Oath/Oath.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B75AC322E8210E1002B5DDD"
+               BuildableName = "MfaCommonsTests.xctest"
+               BlueprintName = "MfaCommonsTests"
+               ReferencedContainer = "container:../MfaCommons/MfaCommons.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B29338F2E7DF20A004D1D38"
+               BuildableName = "OathTests.xctest"
+               BlueprintName = "OathTests"
+               ReferencedContainer = "container:../Oath/Oath.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B29338F2E7DF20A004D1D38"
+               BuildableName = "OathTests.xctest"
+               BlueprintName = "OathTests"
+               ReferencedContainer = "container:../Oath/Oath.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B75AC322E8210E1002B5DDD"
+               BuildableName = "MfaCommonsTests.xctest"
+               BlueprintName = "MfaCommonsTests"
+               ReferencedContainer = "container:../MfaCommons/MfaCommons.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B75AC322E8210E1002B5DDD"
+               BuildableName = "MfaCommonsTests.xctest"
+               BlueprintName = "MfaCommonsTests"
+               ReferencedContainer = "container:../MfaCommons/MfaCommons.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
