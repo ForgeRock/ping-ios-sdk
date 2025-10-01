@@ -14,6 +14,7 @@ import PingOrchestrate
 import PingJourney
 import PingProtect
 import PingExternalIdP
+import PingDeviceProfile
 
 struct JourneyView: View {
     /// The view model that manages the Journey flow logic.
@@ -210,6 +211,9 @@ struct JourneyNodeView: View {
                 case let idpCallback as IdpCallback:
                     let idpCallbackViewModel = IdpCallbackViewModel(callback: idpCallback)
                     IdpCallbackView(viewModel: idpCallbackViewModel, onNext: onNext)
+
+                case let deviceProfileCallback as DeviceProfileCallback:
+                    DeviceProfileCallbackView(callback: deviceProfileCallback, onNext: onNext)
 
                 default:
                     EmptyView()

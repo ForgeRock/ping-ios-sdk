@@ -80,6 +80,9 @@ public class CallbackRegistry: @unchecked Sendable {
         if let c: NSObject.Type = NSClassFromString("PingExternalIdP.IdpCallbacks") as? NSObject.Type {
             c.perform(Selector(("registerCallbacks")))
         }
+        if let c: NSObject.Type = NSClassFromString("PingDeviceProfile.DeviceProfile") as? NSObject.Type {
+            c.perform(Selector(("registerCallbacks")))
+        }
     }
 
     /// Registers a new type of Callback.

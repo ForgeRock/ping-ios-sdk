@@ -70,14 +70,17 @@ struct ContentView: View {
                 NavigationLink(value: "User") {
                     Text("User Info")
                 }
-                NavigationLink(value: "Logout") {
-                    Text("Logout")
+                NavigationLink(value: "DeviceInfo") {
+                    Text("Collect Device Information")
                 }
                 NavigationLink(value: "Logger") {
                     Text("Logger")
                 }
                 NavigationLink(value: "Storage") {
                     Text("Storage")
+                }
+                NavigationLink(value: "Logout") {
+                    Text("Logout")
                 }
             }.navigationDestination(for: String.self) { item in
                 switch item {
@@ -99,6 +102,8 @@ struct ContentView: View {
                     LoggerView()
                 case "Storage":
                     StorageView()
+                case "DeviceInfo":
+                    DeviceInfoView()
                 default:
                     EmptyView()
                 }

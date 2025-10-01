@@ -44,6 +44,9 @@
         "DaVinciIntegrationTests\/testUserRegistrationFailureInvalidPassword()",
         "FormFieldValidationTest\/testPasswordValidation()",
         "FormFieldValidationTests\/testPasswordValidation()",
+        "MFADeviceTests\/testDeviceAuthenticationForm()",
+        "MFADeviceTests\/testDeviceRegistrationSMS()",
+        "MFADeviceTests\/testDeviceRegistrationVOICE()",
         "PasswordCollectorTests\/testAddsInvalidLengthErrorWhenValueTooShort()",
         "PasswordCollectorTests\/testAddsMaxRepeatErrorWhenTooManyRepeatedCharacters()",
         "PasswordCollectorTests\/testAddsMinCharactersErrorWhenNotEnoughDigits()",
@@ -126,6 +129,13 @@
         "containerPath" : "container:..\/TamperDetector\/TamperDetector.xcodeproj",
         "identifier" : "EC59E1612E7AD21700A91E66",
         "name" : "TamplerDetectorTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/DeviceProfile\/DeviceProfile.xcodeproj",
+        "identifier" : "A569DBA82E789BD200F4D7A8",
+        "name" : "DeviceProfileTests"
       }
     }
   ],
