@@ -13,16 +13,17 @@ import SwiftUI
 
 /// A view that displays device information
 struct DeviceInfoView: View {
+    let menuItem: MenuItem
     /// A state object that manages the device information data.
     /// The `DeviceInfoViewModel` is responsible for collecting device info.
-    @StateObject var deviceInfoViewModel = DeviceInfoViewModel()
+    @StateObject private var deviceInfoViewModel = DeviceInfoViewModel()
     
     var body: some View {
         ScrollView {
-            Text($deviceInfoViewModel.deviceInfo.wrappedValue)
+            Text(deviceInfoViewModel.deviceInfo)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal)
-                .navigationTitle("Device Information")
+                .navigationTitle(menuItem.title)
         }
     }
 }

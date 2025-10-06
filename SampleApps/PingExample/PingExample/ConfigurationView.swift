@@ -11,6 +11,7 @@
 import SwiftUI
 
 struct ConfigurationView: View {
+    let menuItem: MenuItem
     @Binding var configurationViewModel: ConfigurationViewModel
     @State private var scopes: String = ""
     @State private var environments = ["AIC", "PingOne"]
@@ -98,7 +99,7 @@ struct ConfigurationView: View {
                 }
             }
         }
-        .navigationTitle("Edit Configuration")
+        .navigationTitle(menuItem.title)
         .onAppear{
             scopes = $configurationViewModel.scopes.wrappedValue.joined(separator: " ")
             selectedEnvironment = configurationViewModel.environment

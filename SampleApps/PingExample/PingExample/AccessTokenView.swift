@@ -13,16 +13,17 @@ import SwiftUI
 
 /// A view that displays the access token.
 struct AccessTokenView: View {
+    let menuItem: MenuItem
     /// A state object that manages the access token data.
-    @StateObject var accessTokenViewModel: AccessTokenViewModel
+    @StateObject private var accessTokenViewModel = AccessTokenViewModel()
     
     var body: some View {
         VStack {
             ScrollView {
-                Text($accessTokenViewModel.token.wrappedValue)
+                Text(accessTokenViewModel.token)
                     .foregroundStyle(.secondary)
                     .padding(.horizontal)
-                    .navigationTitle("Access Token")
+                    .navigationTitle(menuItem.title)
             }
         }
     }

@@ -19,7 +19,7 @@ struct DavinciView: View {
     /// The view model that manages the Davinci flow logic.
     @StateObject private var davinciViewModel = DavinciViewModel()
     /// A binding to the navigation stack path.
-    @Binding var path: [String]
+    @Binding var path: [MenuItem]
     
     var body: some View {
         ZStack {
@@ -35,7 +35,7 @@ struct DavinciView: View {
                         // Navigate to the token view on success.
                         VStack{}.onAppear {
                             path.removeLast()
-                            path.append("Token")
+                            path.append(.token)
                         }
                     case let failureNode as FailureNode:
                         let apiError = failureNode.cause as? ApiError
