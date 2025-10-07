@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		EC5597F32E952FF600A07329 /* PingFido2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597F12E952FF600A07329 /* PingFido2Tests.swift */; };
 		EC5597F52E9533B100A07329 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597F42E9533B100A07329 /* Mocks.swift */; };
+		EC5597FB2E95445800A07329 /* Fido2RegistrationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597F92E95445800A07329 /* Fido2RegistrationCollector.swift */; };
+		EC5597FC2E95445800A07329 /* CollectorInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597F72E95445800A07329 /* CollectorInitializer.swift */; };
+		EC5597FD2E95445800A07329 /* AbstractFido2Collector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597F62E95445800A07329 /* AbstractFido2Collector.swift */; };
+		EC5597FE2E95445800A07329 /* Fido2AuthenticationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597F82E95445800A07329 /* Fido2AuthenticationCollector.swift */; };
 		ECD5A2A62E8FE40C00A27205 /* PingFido2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD5A29C2E8FE40B00A27205 /* PingFido2.framework */; };
 		ECD5A2F72E8FE49C00A27205 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = ECD5A2F62E8FE49C00A27205 /* PrivacyInfo.xcprivacy */; };
 		ECD5A2F82E8FE49C00A27205 /* FidoConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */; };
@@ -57,6 +61,10 @@
 /* Begin PBXFileReference section */
 		EC5597F12E952FF600A07329 /* PingFido2Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingFido2Tests.swift; sourceTree = "<group>"; };
 		EC5597F42E9533B100A07329 /* Mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
+		EC5597F62E95445800A07329 /* AbstractFido2Collector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractFido2Collector.swift; sourceTree = "<group>"; };
+		EC5597F72E95445800A07329 /* CollectorInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectorInitializer.swift; sourceTree = "<group>"; };
+		EC5597F82E95445800A07329 /* Fido2AuthenticationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fido2AuthenticationCollector.swift; sourceTree = "<group>"; };
+		EC5597F92E95445800A07329 /* Fido2RegistrationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fido2RegistrationCollector.swift; sourceTree = "<group>"; };
 		ECD5A29C2E8FE40B00A27205 /* PingFido2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingFido2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECD5A2A52E8FE40C00A27205 /* Fido2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Fido2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoConstants.swift; sourceTree = "<group>"; };
@@ -105,6 +113,17 @@
 			path = Fido2Tests;
 			sourceTree = "<group>";
 		};
+		EC5597FA2E95445800A07329 /* Davinci */ = {
+			isa = PBXGroup;
+			children = (
+				EC5597F62E95445800A07329 /* AbstractFido2Collector.swift */,
+				EC5597F72E95445800A07329 /* CollectorInitializer.swift */,
+				EC5597F82E95445800A07329 /* Fido2AuthenticationCollector.swift */,
+				EC5597F92E95445800A07329 /* Fido2RegistrationCollector.swift */,
+			);
+			path = Davinci;
+			sourceTree = "<group>";
+		};
 		ECD5A2922E8FE40B00A27205 = {
 			isa = PBXGroup;
 			children = (
@@ -127,6 +146,7 @@
 		ECD5A2E22E8FE41300A27205 /* Fido2 */ = {
 			isa = PBXGroup;
 			children = (
+				EC5597FA2E95445800A07329 /* Davinci */,
 				ECD5A3032E90195300A27205 /* Journey */,
 				ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */,
 				ECD5A3402E90464400A27205 /* FidoExtensions.swift */,
@@ -279,6 +299,10 @@
 			files = (
 				ECD5A2F82E8FE49C00A27205 /* FidoConstants.swift in Sources */,
 				ECD5A3422E90464400A27205 /* FidoExtensions.swift in Sources */,
+				EC5597FB2E95445800A07329 /* Fido2RegistrationCollector.swift in Sources */,
+				EC5597FC2E95445800A07329 /* CollectorInitializer.swift in Sources */,
+				EC5597FD2E95445800A07329 /* AbstractFido2Collector.swift in Sources */,
+				EC5597FE2E95445800A07329 /* Fido2AuthenticationCollector.swift in Sources */,
 				ECD5A3042E90195300A27205 /* Fido2Callback.swift in Sources */,
 				ECD5A3052E90195300A27205 /* Fido2RegistrationCallback.swift in Sources */,
 				ECD5A3062E90195300A27205 /* Fido2AuthenticationCallback.swift in Sources */,
@@ -438,7 +462,7 @@
 		ECD5A2AF2E8FE40C00A27205 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -451,6 +475,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -466,7 +491,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -477,7 +502,7 @@
 		ECD5A2B02E8FE40C00A27205 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -490,6 +515,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -505,7 +531,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

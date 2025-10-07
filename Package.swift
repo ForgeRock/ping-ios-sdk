@@ -47,6 +47,6 @@ let package = Package (
     	.target(name: "PingDeviceProfile", dependencies: [.target(name: "PingTamperDetector"), ], path: "DeviceProfile/DeviceProfile", exclude: ["DeviceProfile.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingMfaCommons", dependencies: [.target(name: "PingLogger"), .target(name: "PingStorage"), .target(name: "PingOrchestrate")], path: "MfaCommons/MfaCommons", exclude: ["MfaCommons.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingOath", dependencies: [.target(name: "PingMfaCommons")], path: "Oath/Oath", exclude: ["Oath.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingFido", dependencies: [.target(name: "PingJourney"), .target(name: "PingLogger")], path: "Fido2/Fido2", exclude: ["PingFido.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
+        .target(name: "PingFido", dependencies: [.target(name: "PingJourney"), .target(name: "PingLogger"), .target(name: "PingDavinci")], path: "Fido2/Fido2", exclude: ["PingFido.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
     ]
 )

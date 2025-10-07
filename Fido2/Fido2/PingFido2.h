@@ -10,10 +10,10 @@
 
 #import <Foundation/Foundation.h>
 
-//! Project version number for PingFido.
+//! Project version number for PingFido2.
 FOUNDATION_EXPORT double PingFido2VersionNumber;
 
-//! Project version string for PingFido.
+//! Project version string for PingFido2.
 FOUNDATION_EXPORT const unsigned char PingFido2VersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PingFido2/PublicHeader.h>

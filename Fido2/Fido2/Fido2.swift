@@ -156,6 +156,6 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
 
 /// Represents an error that can occur during FIDO2 operations.
 public enum FidoError: Error {
-    /// The provided challenge was invalid.
     case invalidChallenge
+    case invalidWindow
 }

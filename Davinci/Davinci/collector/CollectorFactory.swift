@@ -50,6 +50,9 @@ public actor CollectorFactory {
         if let c: NSObject.Type = NSClassFromString("PingProtect.ProtectCollector") as? NSObject.Type {
             c.perform(Selector(("registerCollector")))
         }
+        if let c: NSObject.Type = NSClassFromString("PingFido2.CollectorInitializer") as? NSObject.Type {
+            c.perform(Selector(("registerCollectors")))
+        }
     }
     
     /// Registers a new type of Collector.
@@ -80,6 +83,9 @@ public actor CollectorFactory {
         continueNode.collectors.forEach { collector in
             if var collector = collector as? ContinueNodeAware {
                 collector.continueNode = continueNode
+            }
+            if var collector = collector as? DaVinciAware {
+                collector.davinci = continueNode.workflow as? DaVinci
             }
         }
     }
