@@ -1,0 +1,113 @@
+//
+//  Fido2Callback.swift
+//  Fido
+//
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
+//
+
+import Foundation
+import PingJourney
+import PingOrchestrate
+import PingLogger
+
+/// Abstract base class for FIDO2 callbacks in PingOne Journey workflows.
+///
+/// This class provides common functionality for handling FIDO2 operations within
+/// Journey workflows, including error handling and value setting.
+/// It manages the interaction between FIDO2 operations and the Journey framework.
+import AuthenticationServices
+
+/// Abstract base class for FIDO2 callbacks in PingOne Journey workflows.
+///
+/// This class provides common functionality for handling FIDO2 operations within
+/// Journey workflows, including error handling and value setting.
+/// It manages the interaction between FIDO2 operations and the Journey framework.
+public class Fido2Callback: AbstractCallback, JourneyAware, ContinueNodeAware, @unchecked Sendable {
+    
+    /// The Journey continue node that this callback is associated with.
+    /// This provides access to the workflow context and other callbacks.
+    public var continueNode: ContinueNode?
+    
+    /// The Journey instance that this callback is associated with.
+    public var journey: Journey?
+    
+    /// Logger instance for this callback, obtained from the workflow configuration.
+    public var logger: Logger? {
+        return journey?.config.logger
+    }
+    
+    public override func initValue(name: String, value: Any) {
+        
+    }
+
+    /// Sets a value to the ValueCallback associated with the WebAuthn outcome.
+    ///
+    /// This method finds the ValueCallback with the ID "webAuthnOutcome" and sets
+    /// the provided value, which will be sent back to the Journey server.
+    ///
+    /// - Parameter value: The value to set for the WebAuthn outcome.
+    public func valueCallback(value: String) {
+        logger?.d("Setting WebAuthn outcome value")
+        if let valueCallback = continueNode?.callbacks.first(where: { ($0 as? HiddenValueCallback)?.hiddenId == FidoConstants.WEB_AUTHN_OUTCOME }) as? HiddenValueCallback {
+            valueCallback.value = value
+        } else {
+            logger?.w("WebAuthn outcome callback not found", error: nil)
+        }
+    }
+    
+    /// Handles errors that occur during FIDO2 operations.
+    ///
+    /// This method converts various types of credential exceptions into appropriate
+    /// error messages that the Journey server can understand and process.
+    ///
+    /// - Parameter error: The error to handle and convert.
+    public func handleError(error: Error) {
+        logger?.e("Handling FIDO2 error: \(error.localizedDescription)", error: error)
+        
+        let nsError = error as NSError
+        
+        switch nsError.domain {
+        case ASAuthorizationError.errorDomain:
+            switch nsError.code {
+            case ASAuthorizationError.canceled.rawValue:
+                logger?.d("Credential creation cancelled")
+                setError(error: FidoConstants.ERROR_NOT_ALLOWED, message: error.localizedDescription)
+            case ASAuthorizationError.invalidResponse.rawValue:
+                logger?.d("DOM exception occurred: InvalidStateError")
+                setError(error: FidoConstants.ERROR_INVALID_STATE, message: error.localizedDescription)
+            case ASAuthorizationError.notHandled.rawValue:
+                logger?.d("DOM exception occurred: NotSupportedError")
+                setError(error: FidoConstants.ERROR_NOT_SUPPORTED, message: error.localizedDescription)
+            case ASAuthorizationError.unknown.rawValue:
+                logger?.d("Unknown error occurred")
+                setError(error: FidoConstants.ERROR_UNKNOWN, message: error.localizedDescription)
+            default:
+                logger?.d("Unknown error occurred")
+                setError(error: FidoConstants.ERROR_UNKNOWN, message: error.localizedDescription)
+            }
+        default:
+            logger?.d("Unknown error occurred")
+            setError(error: FidoConstants.ERROR_UNKNOWN, message: error.localizedDescription)
+        }
+    }
+
+    /// Sets an error value in the WebAuthn outcome callback.
+    /// This method formats the error and message into a single string and sets it in the appropriate HiddenValueCallback.
+    /// - Parameters:
+    ///  - error: The error type or code.
+    ///  - message: A descriptive message about the error.
+    private func setError(error: String?, message: String?) {
+        logger?.d("Setting error - type: \(error ?? "nil"), message: \(message ?? "nil")")
+        if let valueCallback = continueNode?.callbacks.first(where: { ($0 as? HiddenValueCallback)?.hiddenId == FidoConstants.WEB_AUTHN_OUTCOME }) as? HiddenValueCallback {
+            let errorValue = "\(FidoConstants.ERROR_PREFIX)\(error ?? ""):\(message ?? "")"
+            logger?.d("Setting error value: \(errorValue)")
+            valueCallback.value = errorValue
+        } else {
+            logger?.e("WebAuthn outcome callback not found for error setting", error: nil)
+        }
+    }
+}
+

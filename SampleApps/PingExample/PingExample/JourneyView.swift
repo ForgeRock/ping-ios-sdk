@@ -15,6 +15,7 @@ import PingJourney
 import PingProtect
 import PingExternalIdP
 import PingDeviceProfile
+import PingFido2
 
 struct JourneyView: View {
     /// The view model that manages the Journey flow logic.
@@ -142,7 +143,9 @@ struct JourneyNodeView: View {
             callback is SuspendedTextOutputCallback ||
             callback is PingOneProtectInitializeCallback ||
             callback is PingOneProtectEvaluationCallback ||
-            callback is IdpCallback
+            callback is IdpCallback ||
+            callback is Fido2RegistrationCallback ||
+            callback is Fido2AuthenticationCallback
         }
     }
     
@@ -214,6 +217,12 @@ struct JourneyNodeView: View {
 
                 case let deviceProfileCallback as DeviceProfileCallback:
                     DeviceProfileCallbackView(callback: deviceProfileCallback, onNext: onNext)
+
+                case let fidoRegistrationCallback as Fido2RegistrationCallback:
+                    Fido2RegistrationCallbackView(callback: fidoRegistrationCallback, onNext: onNext)
+                    
+                case let fidoAuthenticationCallback as Fido2AuthenticationCallback:
+                    Fido2AuthenticationCallbackView(callback: fidoAuthenticationCallback, onNext: onNext)
 
                 default:
                     EmptyView()

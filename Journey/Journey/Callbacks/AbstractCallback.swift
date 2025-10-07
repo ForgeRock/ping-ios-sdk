@@ -62,6 +62,7 @@ open class AbstractCallback: Callback, @unchecked Sendable {
         return json
     }
 
+
     // MARK: - Required Protocol Stubs
 
     /// A unique identifier for the callback instance.
