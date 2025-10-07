@@ -7,13 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EC5597F32E952FF600A07329 /* PingFido2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597F12E952FF600A07329 /* PingFido2Tests.swift */; };
+		EC5597F52E9533B100A07329 /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597F42E9533B100A07329 /* Mocks.swift */; };
 		ECD5A2A62E8FE40C00A27205 /* PingFido2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD5A29C2E8FE40B00A27205 /* PingFido2.framework */; };
 		ECD5A2F72E8FE49C00A27205 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = ECD5A2F62E8FE49C00A27205 /* PrivacyInfo.xcprivacy */; };
 		ECD5A2F82E8FE49C00A27205 /* FidoConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */; };
 		ECD5A2F92E8FE49C00A27205 /* Fido2.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F52E8FE49C00A27205 /* Fido2.swift */; };
 		ECD5A2FA2E8FE49C00A27205 /* FidoModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F32E8FE49C00A27205 /* FidoModels.swift */; };
 		ECD5A2FB2E8FE49C00A27205 /* PingFido2.h in Headers */ = {isa = PBXBuildFile; fileRef = ECD5A2F42E8FE49C00A27205 /* PingFido2.h */; };
-		ECD5A2FD2E8FE4A900A27205 /* PingFidoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2FC2E8FE4A900A27205 /* PingFidoTests.swift */; };
 		ECD5A3042E90195300A27205 /* Fido2Callback.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A3012E90195300A27205 /* Fido2Callback.swift */; };
 		ECD5A3052E90195300A27205 /* Fido2RegistrationCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A3022E90195300A27205 /* Fido2RegistrationCallback.swift */; };
 		ECD5A3062E90195300A27205 /* Fido2AuthenticationCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A3002E90195300A27205 /* Fido2AuthenticationCallback.swift */; };
@@ -54,6 +55,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		EC5597F12E952FF600A07329 /* PingFido2Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingFido2Tests.swift; sourceTree = "<group>"; };
+		EC5597F42E9533B100A07329 /* Mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
 		ECD5A29C2E8FE40B00A27205 /* PingFido2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingFido2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECD5A2A52E8FE40C00A27205 /* Fido2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Fido2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoConstants.swift; sourceTree = "<group>"; };
@@ -61,8 +64,6 @@
 		ECD5A2F42E8FE49C00A27205 /* PingFido2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PingFido2.h; sourceTree = "<group>"; };
 		ECD5A2F52E8FE49C00A27205 /* Fido2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fido2.swift; sourceTree = "<group>"; };
 		ECD5A2F62E8FE49C00A27205 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		ECD5A2FC2E8FE4A900A27205 /* PingFidoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingFidoTests.swift; sourceTree = "<group>"; };
-		ECD5A2FE2E8FE4AB00A27205 /* FidoTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FidoTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		ECD5A2FF2E90195300A27205 /* CallbackInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackInitializer.swift; sourceTree = "<group>"; };
 		ECD5A3002E90195300A27205 /* Fido2AuthenticationCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fido2AuthenticationCallback.swift; sourceTree = "<group>"; };
 		ECD5A3012E90195300A27205 /* Fido2Callback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fido2Callback.swift; sourceTree = "<group>"; };
@@ -95,11 +96,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EC5597F22E952FF600A07329 /* Fido2Tests */ = {
+			isa = PBXGroup;
+			children = (
+				EC5597F12E952FF600A07329 /* PingFido2Tests.swift */,
+				EC5597F42E9533B100A07329 /* Mocks.swift */,
+			);
+			path = Fido2Tests;
+			sourceTree = "<group>";
+		};
 		ECD5A2922E8FE40B00A27205 = {
 			isa = PBXGroup;
 			children = (
 				ECD5A2E22E8FE41300A27205 /* Fido2 */,
-				ECD5A2E52E8FE41700A27205 /* FidoTests */,
+				EC5597F22E952FF600A07329 /* Fido2Tests */,
 				ECD5A3082E901C0400A27205 /* Frameworks */,
 				ECD5A29D2E8FE40B00A27205 /* Products */,
 			);
@@ -126,15 +136,6 @@
 				ECD5A2F62E8FE49C00A27205 /* PrivacyInfo.xcprivacy */,
 			);
 			path = Fido2;
-			sourceTree = "<group>";
-		};
-		ECD5A2E52E8FE41700A27205 /* FidoTests */ = {
-			isa = PBXGroup;
-			children = (
-				ECD5A2FC2E8FE4A900A27205 /* PingFidoTests.swift */,
-				ECD5A2FE2E8FE4AB00A27205 /* FidoTests-Bridging-Header.h */,
-			);
-			path = FidoTests;
 			sourceTree = "<group>";
 		};
 		ECD5A3032E90195300A27205 /* Journey */ = {
@@ -291,7 +292,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECD5A2FD2E8FE4A900A27205 /* PingFidoTests.swift in Sources */,
+				EC5597F32E952FF600A07329 /* PingFido2Tests.swift in Sources */,
+				EC5597F52E9533B100A07329 /* Mocks.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -524,7 +526,6 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "FidoTests/FidoTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -547,7 +548,6 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "FidoTests/FidoTests-Bridging-Header.h";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

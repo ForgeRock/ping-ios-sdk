@@ -102,6 +102,7 @@ public struct FidoConstants {
     public static let ERROR_UNSUPPORTED = "unsupported"
     public static let ERROR_NOT_ALLOWED = "NotAllowedError"
     public static let ERROR_UNKNOWN = "UnknownError"
+    public static let ERROR_NOT_ALLOWED_MESSAGE = "The operation was canceled."
     public static let ERROR_INVALID_STATE = "InvalidStateError"
     public static let ERROR_NOT_SUPPORTED = "NotSupportedError"
     public static let ERROR_PREFIX = "ERROR::"

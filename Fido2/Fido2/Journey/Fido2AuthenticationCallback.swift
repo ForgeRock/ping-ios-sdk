@@ -90,7 +90,7 @@ public class Fido2AuthenticationCallback: Fido2Callback, @unchecked Sendable {
     /// Transforms the input dictionary to match the expected format for FIDO2 authentication.
     /// - Parameter input: The input dictionary containing FIDO2 authentication options.
     /// - Returns: A transformed dictionary suitable for FIDO2 authentication.
-    private func transform(_ input: [String: Any]) -> [String: Any] {
+    func transform(_ input: [String: Any]) -> [String: Any] {
         logger?.d("Transforming FIDO2 authentication request options")
         var output: [String: Any] = [:]
 

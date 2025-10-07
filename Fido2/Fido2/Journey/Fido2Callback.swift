@@ -74,7 +74,7 @@ public class Fido2Callback: AbstractCallback, JourneyAware, ContinueNodeAware, @
             switch nsError.code {
             case ASAuthorizationError.canceled.rawValue:
                 logger?.d("Credential creation cancelled")
-                setError(error: FidoConstants.ERROR_NOT_ALLOWED, message: error.localizedDescription)
+                setError(error: FidoConstants.ERROR_NOT_ALLOWED, message: FidoConstants.ERROR_NOT_ALLOWED_MESSAGE)
             case ASAuthorizationError.invalidResponse.rawValue:
                 logger?.d("DOM exception occurred: InvalidStateError")
                 setError(error: FidoConstants.ERROR_INVALID_STATE, message: error.localizedDescription)
