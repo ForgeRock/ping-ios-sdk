@@ -166,11 +166,21 @@ public class Fido2RegistrationCallback: Fido2Callback, @unchecked Sendable {
             if let authenticatorAttachment = authSelection[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String {
                 newAuthSelection[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] = authenticatorAttachment
             }
+            
             if let requireResidentKey = authSelection[FidoConstants.FIELD_REQUIRE_RESIDENT_KEY] as? Bool {
                 newAuthSelection[FidoConstants.FIELD_REQUIRE_RESIDENT_KEY] = requireResidentKey
                 newAuthSelection[FidoConstants.FIELD_RESIDENT_KEY] = requireResidentKey ? FidoConstants.DEFAULT_RESIDENT_KEY_REQUIRED : FidoConstants.RESIDENT_KEY_DISCOURAGED
             }
+            
             if let residentKey = authSelection[FidoConstants.FIELD_RESIDENT_KEY] as? String {
+                if authSelection[FidoConstants.FIELD_REQUIRE_RESIDENT_KEY] as? Bool == nil {
+                    if residentKey == FidoConstants.RESIDENT_KEY_DISCOURAGED {
+                        newAuthSelection[FidoConstants.FIELD_REQUIRE_RESIDENT_KEY] = false
+                    } else {
+                        newAuthSelection[FidoConstants.FIELD_REQUIRE_RESIDENT_KEY] = true
+                    }
+                }
+                
                 newAuthSelection[FidoConstants.FIELD_RESIDENT_KEY] = residentKey
             }
             if let userVerification = authSelection[FidoConstants.FIELD_USER_VERIFICATION] as? String {

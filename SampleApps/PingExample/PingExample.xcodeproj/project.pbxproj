@@ -96,6 +96,8 @@
 		EC23D5722E2E8ECF00C43D42 /* OidcLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */; };
 		EC5597C92E93EB0D00A07329 /* Fido2AuthenticationCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597C82E93EB0D00A07329 /* Fido2AuthenticationCallbackView.swift */; };
 		EC5597EF2E93EB1700A07329 /* Fido2RegistrationCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597EE2E93EB1700A07329 /* Fido2RegistrationCallbackView.swift */; };
+		EC5598032E96799200A07329 /* Fido2AuthenticationCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5598012E96799200A07329 /* Fido2AuthenticationCollectorView.swift */; };
+		EC5598042E96799200A07329 /* Fido2RegistrationCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5598022E96799200A07329 /* Fido2RegistrationCollectorView.swift */; };
 		EC59E3532E7D8BB900A91E66 /* PingTamperDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E3082E7D7DE300A91E66 /* PingTamperDetector.framework */; };
 		EC59E3542E7D8BB900A91E66 /* PingTamperDetector.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E3082E7D7DE300A91E66 /* PingTamperDetector.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC92B3882DA02D7400E4246D /* DeviceAuthenticationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */; };
@@ -512,6 +514,8 @@
 		EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginViewModel.swift; sourceTree = "<group>"; };
 		EC5597C82E93EB0D00A07329 /* Fido2AuthenticationCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fido2AuthenticationCallbackView.swift; sourceTree = "<group>"; };
 		EC5597EE2E93EB1700A07329 /* Fido2RegistrationCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fido2RegistrationCallbackView.swift; sourceTree = "<group>"; };
+		EC5598012E96799200A07329 /* Fido2AuthenticationCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fido2AuthenticationCollectorView.swift; sourceTree = "<group>"; };
+		EC5598022E96799200A07329 /* Fido2RegistrationCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fido2RegistrationCollectorView.swift; sourceTree = "<group>"; };
 		EC59E3002E7D7DE300A91E66 /* TamperDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TamperDetector.xcodeproj; path = ../../TamperDetector/TamperDetector.xcodeproj; sourceTree = SOURCE_ROOT; };
 		EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticationView.swift; sourceTree = "<group>"; };
 		EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationView.swift; sourceTree = "<group>"; };
@@ -852,6 +856,8 @@
 		A5E9AED92D309FEF000533ED /* Collectors */ = {
 			isa = PBXGroup;
 			children = (
+				EC5598012E96799200A07329 /* Fido2AuthenticationCollectorView.swift */,
+				EC5598022E96799200A07329 /* Fido2RegistrationCollectorView.swift */,
 				A5EFA96C2D35F2F800F771FE /* CheckBoxView.swift */,
 				A5EFA97C2D35F78700F771FE /* ComboBoxView.swift */,
 				EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */,
@@ -1462,6 +1468,8 @@
 				A5768D182E29AE87000290EE /* BooleanAttributeInputCallbackView.swift in Sources */,
 				A5768D062E288615000290EE /* PollingWaitCallbackView.swift in Sources */,
 				EC92B38A2DA02D7F00E4246D /* DeviceRegistrationView.swift in Sources */,
+				EC5598032E96799200A07329 /* Fido2AuthenticationCollectorView.swift in Sources */,
+				EC5598042E96799200A07329 /* Fido2RegistrationCollectorView.swift in Sources */,
 				A5768D222E29BFF6000290EE /* PingOneProtectEvaluationCallbackView.swift in Sources */,
 				3A3709962BEB038200AA7B51 /* AccessTokenView.swift in Sources */,
 				A5E9AEDB2D30A020000533ED /* LabelView.swift in Sources */,

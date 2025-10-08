@@ -31,23 +31,65 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
         self.completion = completion
         
         do {
+            // Use the Codable struct for safe decoding
             let jsonData = try JSONSerialization.data(withJSONObject: options, options: [])
             let registrationOptions = try JSONDecoder().decode(PublicKeyCredentialCreationOptions.self, from: jsonData)
             
-            let platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier: registrationOptions.rp.id ?? "")
+            let relyingParty = registrationOptions.rp.id ?? ""
             
+            // Prepare common parameters for the requests
             guard let challengeData = Data(base64Encoded: registrationOptions.challenge, options: .ignoreUnknownCharacters) else {
                 completion(.failure(FidoError.invalidChallenge))
                 return
             }
             let userID = Data(registrationOptions.user.id.utf8)
             
-            let registrationRequest = platformProvider.createCredentialRegistrationRequest(challenge: challengeData, name: registrationOptions.user.name, userID: userID)
+            var requests: [ASAuthorizationRequest] = []
             
-            let authorizationController = ASAuthorizationController(authorizationRequests: [registrationRequest])
+            if registrationOptions.authenticatorSelection?.authenticatorAttachment != .crossPlatform {
+                let platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier: relyingParty)
+                let platformRequest = platformProvider.createCredentialRegistrationRequest(challenge: challengeData, name: registrationOptions.user.name, userID: userID)
+                platformRequest.userVerificationPreference = ASAuthorizationPublicKeyCredentialUserVerificationPreference(rawValue: registrationOptions.authenticatorSelection?.userVerification?.rawValue ?? "preferred")
+                platformRequest.attestationPreference = ASAuthorizationPublicKeyCredentialAttestationKind(rawValue: registrationOptions.attestation?.rawValue ?? "none")
+                requests.append(platformRequest)
+            }
+            
+            if registrationOptions.authenticatorSelection?.authenticatorAttachment != .platform {
+                let securityKeyProvider = ASAuthorizationSecurityKeyPublicKeyCredentialProvider(relyingPartyIdentifier: registrationOptions.rp.id ?? "")
+                let securityKeyRequest = securityKeyProvider.createCredentialRegistrationRequest(
+                    challenge: challengeData,
+                    displayName: registrationOptions.user.displayName,
+                    name: registrationOptions.user.name,
+                    userID: userID
+                )
+                securityKeyRequest.residentKeyPreference = (registrationOptions.authenticatorSelection?.requireResidentKey == true) ? .required : .discouraged
+                securityKeyRequest.userVerificationPreference = ASAuthorizationPublicKeyCredentialUserVerificationPreference(rawValue: registrationOptions.authenticatorSelection?.userVerification?.rawValue ?? "preferred")
+                securityKeyRequest.attestationPreference = ASAuthorizationPublicKeyCredentialAttestationKind(rawValue: registrationOptions.attestation?.rawValue ?? "none")
+                
+                // Configure credential parameters (algorithms)
+                securityKeyRequest.credentialParameters = registrationOptions.pubKeyCredParams.compactMap { param -> ASAuthorizationPublicKeyCredentialParameters? in
+                    switch param.alg {
+                    case .es256:
+                        return ASAuthorizationPublicKeyCredentialParameters(algorithm: .ES256)
+                    default:
+                        return nil
+                    }
+                }
+                // If resident key is not required, only use the securityKeyRequest
+                if registrationOptions.authenticatorSelection?.requireResidentKey == false {
+                    requests = [securityKeyRequest]
+                } else {
+                    requests.append(securityKeyRequest)
+                }
+                
+            }
+            
+            // 3. Perform the requests. The system will merge the UI prompts automatically.
+            let authorizationController = ASAuthorizationController(authorizationRequests: requests)
             authorizationController.delegate = self
             authorizationController.presentationContextProvider = self
             authorizationController.performRequests()
+            
         } catch {
             completion(.failure(error))
         }
@@ -74,8 +116,25 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
                 return
             }
             let assertionRequest = platformProvider.createCredentialAssertionRequest(challenge: challengeData)
+            assertionRequest.userVerificationPreference = ASAuthorizationPublicKeyCredentialUserVerificationPreference(rawValue: authenticationOptions.userVerification?.rawValue ?? "preferred")
             
-            let authorizationController = ASAuthorizationController(authorizationRequests: [assertionRequest])
+            var requests: [ASAuthorizationRequest] = [assertionRequest]
+            
+            if let allowCredentials = authenticationOptions.allowCredentials, !allowCredentials.isEmpty {
+                let securityKeyProvider = ASAuthorizationSecurityKeyPublicKeyCredentialProvider(relyingPartyIdentifier: authenticationOptions.rpId ?? "")
+                let securityKeyRequest = securityKeyProvider.createCredentialAssertionRequest(challenge: challengeData)
+                securityKeyRequest.userVerificationPreference = ASAuthorizationPublicKeyCredentialUserVerificationPreference(rawValue: authenticationOptions.userVerification?.rawValue ?? "preferred")
+                securityKeyRequest.allowedCredentials = allowCredentials.compactMap { cred -> ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor? in
+                    guard let idData = Data(base64Encoded: cred.id) else {
+                        return nil
+                    }
+                    
+                    return ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor(credentialID: idData, transports: [])
+                }
+                requests.append(securityKeyRequest)
+            }
+            
+            let authorizationController = ASAuthorizationController(authorizationRequests: requests)
             authorizationController.delegate = self
             authorizationController.presentationContextProvider = self
             authorizationController.performRequests()
@@ -102,14 +161,14 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
     ///   - authorization: The authorization.
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         switch authorization.credential {
-        case let credential as ASAuthorizationPlatformPublicKeyCredentialRegistration:
+        case let credential as ASAuthorizationPublicKeyCredentialRegistration:
             let int8Arr = credential.rawAttestationObject?.bytesArray.map { Int8(bitPattern: $0) }
             let attestationObject = convertInt8ArrToStr(int8Arr ?? [])
             
             let clientDataJSON = String(decoding: credential.rawClientDataJSON, as: UTF8.self)
             
             let credID = base64ToBase64url(base64: credential.credentialID.base64EncodedString())
-
+            
             let result: [String: Any] = [
                 FidoConstants.FIELD_CLIENT_DATA_JSON: clientDataJSON,
                 FidoConstants.FIELD_ATTESTATION_OBJECT: attestationObject,
@@ -117,7 +176,7 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
             ]
             completion?(.success(result))
             
-        case let credential as ASAuthorizationPlatformPublicKeyCredentialAssertion:
+        case let credential as ASAuthorizationPublicKeyCredentialAssertion:
             // Verify the below signature and clientDataJSON with your service for the given userID.
             
             let signatureInt8 = credential.signature.bytesArray.map { Int8(bitPattern: $0) }

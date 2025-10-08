@@ -28,7 +28,7 @@ class PingFido2Tests: XCTestCase {
         super.tearDown()
     }
 
-    func testRegister() {
+    func testRegisterAssosiatedDomainError() {
         let options: [String: Any] = [
             "rp": [
                 "id": "example.com",
@@ -39,42 +39,58 @@ class PingFido2Tests: XCTestCase {
                 "name": "testuser",
                 "displayName": "Test User"
             ],
-            "challenge": "someChallenge",
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
             "pubKeyCredParams": [
                 ["type": "public-key", "alg": -7]
             ]
         ]
         
         let expectation = self.expectation(description: "FIDO2 registration expectation")
+        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        guard let scene = windowScene else {
+            XCTFail("No UIWindowScene available")
+            return
+        }
+        let window = UIWindow(windowScene: scene)
         
-        fido2.register(options: options, window: UIWindow()) { result in
+        fido2.register(options: options, window: window) { result in
             switch result {
-            case .success(let response):
-                XCTAssertNotNil(response)
+            case .success( _):
+                XCTFail("Expected to fail, got success")
                 expectation.fulfill()
             case .failure(let error):
-                XCTFail("FIDO2 registration failed with error: \(error.localizedDescription)")
+                print("Authentication error: \(error.localizedDescription)")
+                XCTAssertTrue(error.localizedDescription.contains("not associated with domain example.com"), "Error message: \(error.localizedDescription)")
+                expectation.fulfill()
             }
         }
         
         waitForExpectations(timeout: 1, handler: nil)
     }
-    
-    func testAuthenticate() {
+
+    func testAuthenticateAssosiatedDomainError() {
         let options: [String: Any] = [
-            "challenge": "someChallenge",
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
             "rpId": "example.com"
         ]
         
         let expectation = self.expectation(description: "FIDO2 authentication expectation")
+        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        guard let scene = windowScene else {
+            XCTFail("No UIWindowScene available")
+            return
+        }
+        let window = UIWindow(windowScene: scene)
         
-        fido2.authenticate(options: options, window: UIWindow()) { result in
+        fido2.authenticate(options: options, window: window) { result in
             switch result {
-            case .success(let response):
-                XCTAssertNotNil(response)
+            case .success( _):
+                XCTFail("Expected to fail, got success")
                 expectation.fulfill()
             case .failure(let error):
-                XCTFail("FIDO2 authentication failed with error: \(error.localizedDescription)")
+                print("Authentication error: \(error.localizedDescription)")
+                XCTAssertTrue(error.localizedDescription.contains("not associated with domain example.com"), "Error message: \(error.localizedDescription)")
+                expectation.fulfill()
             }
         }
         
