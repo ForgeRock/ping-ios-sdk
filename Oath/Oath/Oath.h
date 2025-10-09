@@ -1,6 +1,6 @@
 //
 //  Oath.h
-//  Oath
+//  PingOath
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
