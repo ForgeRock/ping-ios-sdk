@@ -13,37 +13,29 @@ import PingDavinci
 import PingLogger
 import PingOrchestrate
 
-public class AbstractFido2Collector: Collector, ContinueNodeAware, DaVinciAware, @unchecked Sendable {
-    public typealias T = [String: Any]
-    
-    public var id: String {
-        return key
+public class AbstractFido2Collector: FieldCollector<[String: Any]>, DaVinciAware, Submittable, @unchecked Sendable {    
+    /// Return event type
+    public func eventType() -> String {
+        return Constants.submit
     }
     
-    public var continueNode: ContinueNode?
     public var davinci: DaVinci?
     
     public var logger: Logger? {
         return davinci?.config.logger
     }
     
-    public var key: String = ""
-    public var label: String = ""
-    public var trigger: String = ""
-    public var required: Bool = false
-    
-    public required init(with json: [String : Any]) {
-        self.key = json[FidoConstants.FIELD_KEY] as? String ?? ""
-        self.label = json[FidoConstants.FIELD_LABEL] as? String ?? ""
-        self.trigger = json[FidoConstants.FIELD_TRIGGER] as? String ?? ""
-        self.required = json[FidoConstants.FIELD_REQUIRED] as? Bool ?? false
-    }
-    
-    public func initialize(with value: Any) {
-        
-    }
-    
-    public func payload() -> [String : Any]? {
-        return nil
+    public static func getCollector(with json: [String: Any]) -> AbstractFido2Collector? {
+        guard let action = json[FidoConstants.FIELD_ACTION] as? String else {
+            return nil
+        }
+        switch action {
+        case FidoConstants.ACTION_REGISTER:
+            return Fido2RegistrationCollector(with: json)
+        case FidoConstants.ACTION_AUTHENTICATE:
+            return Fido2AuthenticationCollector(with: json)
+        default:
+            return nil
+        }
     }
 }

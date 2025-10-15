@@ -14,8 +14,9 @@ import PingDavinci
 public class CollectorInitializer: NSObject {
     @objc public static func registerCollectors() {
         Task {
-            await CollectorFactory.shared.register(type: "Fido2RegistrationCollector", collector: Fido2RegistrationCollector.self)
-            await CollectorFactory.shared.register(type: "Fido2AuthenticationCollector", collector: Fido2AuthenticationCollector.self)
+            await CollectorFactory.shared.register(type: "FIDO2", closure: { json in
+                return AbstractFido2Collector.getCollector(with: json)
+            })
         }
     }
 }

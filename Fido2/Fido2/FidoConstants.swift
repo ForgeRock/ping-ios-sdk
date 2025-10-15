@@ -26,10 +26,6 @@ public struct FidoConstants {
 
     // MARK: - JSON Fields
     
-    public static let FIELD_KEY = "key"
-    public static let FIELD_LABEL = "label"
-    public static let FIELD_TRIGGER = "trigger"
-    public static let FIELD_REQUIRED = "required"
     public static let FIELD_DATA = "data"
     public static let FIELD_ACTION = "action"
     public static let FIELD_RESPONSE = "response"
@@ -47,6 +43,7 @@ public struct FidoConstants {
     public static let FIELD_ATTESTATION = "attestation"
     public static let FIELD_RP = "rp"
     public static let FIELD_USER = "user"
+    public static let FIELD_PUB_KEY = "public-key"
     public static let FIELD_PUB_KEY_CRED_PARAMS = "pubKeyCredParams"
     public static let FIELD_EXCLUDE_CREDENTIALS = "excludeCredentials"
     public static let FIELD_AUTHENTICATOR_SELECTION = "authenticatorSelection"

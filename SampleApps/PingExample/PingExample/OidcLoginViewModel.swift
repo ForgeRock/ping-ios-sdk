@@ -16,7 +16,7 @@ import PingLogger
 public let oidcLogin = OidcWeb.createOidcWeb { config in
     let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
     config.browserMode = .login
-    config.browserType = .sfViewController
+    config.browserType = .authSession
     config.logger = LogManager.standard
     config.module(PingOidc.OidcModule.config) { oidcValue in
         oidcValue.clientId = currentConfig?.clientId ?? ""
@@ -24,6 +24,7 @@ public let oidcLogin = OidcWeb.createOidcWeb { config in
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
         oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
         oidcValue.acrValues = "ACR_VALUE" //update with actual ACR values if needed or remove
+        
     }
 }
 

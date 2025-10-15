@@ -97,13 +97,49 @@ public enum PublicKeyCredentialType: String, Codable {
 }
 
 /// Represents the COSE algorithm identifier.
-public enum COSEAlgorithmIdentifier: Int, Codable {
-    case es256 = -7
-    case es384 = -35
-    case es512 = -36
-    case rs256 = -257
-    case rs384 = -258
-    case rs512 = -259
+public enum COSEAlgorithmIdentifier: Codable, RawRepresentable {
+    case es256
+    case es384
+    case es512
+    case rs256
+    case rs384
+    case rs512
+    case unknown(Int)
+
+    public var rawValue: Int {
+        switch self {
+        case .es256: return -7
+        case .es384: return -35
+        case .es512: return -36
+        case .rs256: return -257
+        case .rs384: return -258
+        case .rs512: return -259
+        case .unknown(let value): return value
+        }
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if let intValue = try? container.decode(Int.self) {
+            self = COSEAlgorithmIdentifier(rawValue: intValue) ?? .unknown(intValue)
+        } else if let stringValue = try? container.decode(String.self), let intValue = Int(stringValue) {
+            self = COSEAlgorithmIdentifier(rawValue: intValue) ?? .unknown(intValue)
+        } else {
+            throw DecodingError.typeMismatch(COSEAlgorithmIdentifier.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Unsupported type for COSEAlgorithmIdentifier"))
+        }
+    }
+
+    public init?(rawValue: Int) {
+        switch rawValue {
+        case -7: self = .es256
+        case -35: self = .es384
+        case -36: self = .es512
+        case -257: self = .rs256
+        case -258: self = .rs384
+        case -259: self = .rs512
+        default: self = .unknown(rawValue)
+        }
+    }
 }
 
 /// Represents the authenticator transport.

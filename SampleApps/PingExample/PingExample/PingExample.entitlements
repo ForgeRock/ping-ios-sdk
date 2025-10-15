@@ -11,6 +11,9 @@
 		<string>webcredentials:openam-forgerrock-sdks.forgeblocks.com</string>
 		<string>webcredentials:openam-bafaloukas.forgeblocks.com</string>
 		<string>webcredentials:openam-bafaloukas.forgeblocks.com?mode=developer</string>
+		<string>webcredentials:idc.petrov.ca</string>
+		<string>webcredentials:idc.petrov.ca?mode=developer</string>
+		<string>webcredentials:petrov.ca?mode=developer</string>
 	</array>
 </dict>
 </plist>

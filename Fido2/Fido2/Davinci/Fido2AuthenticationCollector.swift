@@ -22,13 +22,13 @@ public class Fido2AuthenticationCollector: AbstractFido2Collector, @unchecked Se
         super.init(with: json)
         logger?.d("Initializing FIDO2 authentication collector")
         if let options = json[FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS] as? [String: Any] {
-            publicKeyCredentialRequestOptions = transform(options)
+            self.publicKeyCredentialRequestOptions = self.transform(options)
         } else {
             logger?.e("Missing \(FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS)", error: nil)
         }
         logger?.d("FIDO2 authentication collector initialized with request options")
     }
-    
+        
     override public func payload() -> [String: Any]? {
         guard let assertionValue = assertionValue else {
             logger?.d("No assertion value available, returning null payload")

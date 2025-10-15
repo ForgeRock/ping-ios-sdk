@@ -82,7 +82,7 @@ public class NodeTransformModule {
         
         var collectors: Collectors = []
         if let _ = json[Constants.form] {
-            await collectors.append(contentsOf: Form.parse(json: json))
+            await collectors.append(contentsOf: Form.parse(daVinci: davinci, json: json))
         }
         
         let connector = Connector(context: context, davinci: davinci, input: json, collectors: collectors)

@@ -68,7 +68,10 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
                 
                 // Configure credential parameters (algorithms)
                 securityKeyRequest.credentialParameters = registrationOptions.pubKeyCredParams.compactMap { param -> ASAuthorizationPublicKeyCredentialParameters? in
-                    switch param.alg {
+                    guard let alg = COSEAlgorithmIdentifier(rawValue: param.alg.rawValue) else {
+                        return nil
+                    }
+                    switch alg {
                     case .es256:
                         return ASAuthorizationPublicKeyCredentialParameters(algorithm: .ES256)
                     default:
@@ -162,20 +165,18 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         switch authorization.credential {
         case let credential as ASAuthorizationPublicKeyCredentialRegistration:
-            let int8Arr = credential.rawAttestationObject?.bytesArray.map { Int8(bitPattern: $0) }
-            let attestationObject = convertInt8ArrToStr(int8Arr ?? [])
-            
-            let clientDataJSON = String(decoding: credential.rawClientDataJSON, as: UTF8.self)
-            
-            let credID = base64ToBase64url(base64: credential.credentialID.base64EncodedString())
-            
             let result: [String: Any] = [
-                FidoConstants.FIELD_CLIENT_DATA_JSON: clientDataJSON,
-                FidoConstants.FIELD_ATTESTATION_OBJECT: attestationObject,
-                FidoConstants.FIELD_RAW_ID: credID
+                // Pass the raw Data object for the credential ID.
+                FidoConstants.FIELD_RAW_ID: credential.credentialID,
+                
+                // Pass the raw Data object for the client data.
+                FidoConstants.FIELD_CLIENT_DATA_JSON: credential.rawClientDataJSON,
+                
+                // Pass the raw Data object for the attestation.
+                FidoConstants.FIELD_ATTESTATION_OBJECT: credential.rawAttestationObject as Any
             ]
-            completion?(.success(result))
             
+            completion?(.success(result))
         case let credential as ASAuthorizationPublicKeyCredentialAssertion:
             // Verify the below signature and clientDataJSON with your service for the given userID.
             
@@ -217,4 +218,5 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
 public enum FidoError: Error {
     case invalidChallenge
     case invalidWindow
+    case invalidResponse
 }

@@ -46,10 +46,15 @@ public class Fido2RegistrationCallback: Fido2Callback, @unchecked Sendable {
             switch result {
             case .success(let response):
                 self.logger?.d("FIDO2 registration successful")
+                let rawAttestationObject = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? Data ?? Data()
+                let rawClientDataJSON = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data ?? Data()
+                let rawIdData = response[FidoConstants.FIELD_RAW_ID] as? Data ?? Data()
                 
-                let clientDataJSON = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? String ?? ""
-                let attestationObject = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? String ?? ""
-                let rawId = response[FidoConstants.FIELD_RAW_ID] as? String ?? ""
+                let int8Arr = rawAttestationObject.bytesArray.map { Int8(bitPattern: $0) }
+                let attestationObject = convertInt8ArrToStr(int8Arr)
+                let clientDataJSON = String(decoding: rawClientDataJSON, as: UTF8.self)
+                let rawId = base64ToBase64url(base64: rawIdData.base64EncodedString())
+    
                 
                 var data = [
                     clientDataJSON,
