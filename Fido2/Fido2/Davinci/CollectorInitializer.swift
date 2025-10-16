@@ -15,7 +15,7 @@ public class CollectorInitializer: NSObject {
     @objc public static func registerCollectors() {
         Task {
             await CollectorFactory.shared.register(type: "FIDO2", closure: { json in
-                return AbstractFido2Collector.getCollector(with: json)
+                return try? AbstractFido2Collector.getCollector(with: json)
             })
         }
     }

@@ -24,7 +24,7 @@ open class PhoneNumberCollector: FieldCollector<[String: Any]>, @unchecked Senda
     public required init(with json: [String : Any]) {
         self.defaultCountryCode = json[Constants.defaultCountryCode] as? String ?? ""
         self.validatePhoneNumber = json[Constants.validatePhoneNumber] as? Bool ?? false
-        super.init(with: json)
+        try super.init(with: json)
     }
     
     /// Initializes the collector's values. The input can be a dictionary containing

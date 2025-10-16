@@ -168,34 +168,24 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
             let result: [String: Any] = [
                 // Pass the raw Data object for the credential ID.
                 FidoConstants.FIELD_RAW_ID: credential.credentialID,
-                
                 // Pass the raw Data object for the client data.
                 FidoConstants.FIELD_CLIENT_DATA_JSON: credential.rawClientDataJSON,
-                
                 // Pass the raw Data object for the attestation.
                 FidoConstants.FIELD_ATTESTATION_OBJECT: credential.rawAttestationObject as Any
             ]
-            
             completion?(.success(result))
         case let credential as ASAuthorizationPublicKeyCredentialAssertion:
-            // Verify the below signature and clientDataJSON with your service for the given userID.
-            
-            let signatureInt8 = credential.signature.bytesArray.map { Int8(bitPattern: $0) }
-            let signature = convertInt8ArrToStr(signatureInt8)
-            let clientDataJSON = String(decoding: credential.rawClientDataJSON, as: UTF8.self)
-            let authenticatorDataInt8 = credential.rawAuthenticatorData.bytesArray.map { Int8(bitPattern: $0) }
-            let authenticatorData = convertInt8ArrToStr(authenticatorDataInt8)
-            let credID = base64ToBase64url(base64: credential.credentialID.base64EncodedString())
-            let userIDString = String(decoding: credential.userID, as: UTF8.self)
-            //  Expected AM result for successful assertion
-            
-            //  {clientDataJSON as String}::{Int8 array of authenticatorData}::{Int8 array of signature}::{assertion identifier}::{user handle}
             let result: [String: Any] = [
-                FidoConstants.FIELD_CLIENT_DATA_JSON: clientDataJSON,
-                FidoConstants.FIELD_AUTHENTICATOR_DATA: authenticatorData,
-                FidoConstants.FIELD_SIGNATURE: signature,
-                FidoConstants.FIELD_RAW_ID: credID,
-                FidoConstants.FIELD_USER_HANDLE: userIDString
+                // Pass the raw Data object for the client data.
+                FidoConstants.FIELD_CLIENT_DATA_JSON: credential.rawClientDataJSON,
+                // Pass the raw Data object for the authenticator data.
+                FidoConstants.FIELD_AUTHENTICATOR_DATA: credential.rawAuthenticatorData ?? Data(),
+                // Pass the raw Data object for the signature.
+                FidoConstants.FIELD_SIGNATURE: credential.signature ?? Data(),
+                // Pass the raw Data object for the credential ID.
+                FidoConstants.FIELD_RAW_ID: credential.credentialID,
+                // Pass the user handle if available.
+                FidoConstants.FIELD_USER_HANDLE: credential.userID ?? Data()
             ]
             completion?(.success(result))
             
@@ -219,4 +209,7 @@ public enum FidoError: Error {
     case invalidChallenge
     case invalidWindow
     case invalidResponse
+    case invalidAction
+    case unsupportedAction(String)
+    case missingParameters(String)
 }

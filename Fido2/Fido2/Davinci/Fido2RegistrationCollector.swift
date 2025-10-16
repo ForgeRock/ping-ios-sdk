@@ -21,11 +21,11 @@ public class Fido2RegistrationCollector: AbstractFido2Collector, @unchecked Send
     required public init(with json: [String : Any]) {
         super.init(with: json)
         logger?.d("Initializing FIDO2 registration collector")
-        if let options = json[FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS] as? [String: Any] {
-            self.publicKeyCredentialCreationOptions = self.transform(options)
-        } else {
+        guard let options = json[FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS] as? [String: Any] else {
             logger?.e("Missing \(FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS)", error: nil)
+            return
         }
+        self.publicKeyCredentialCreationOptions = self.transform(options)
         logger?.d("FIDO2 registration collector initialized with creation options")
     }
     
@@ -97,6 +97,7 @@ public class Fido2RegistrationCollector: AbstractFido2Collector, @unchecked Send
                     completion(.failure(error))
                     return
                 }
+                
                 
                 // This is likely static for registrations from this device.
                 let authenticatorAttachment = "platform"

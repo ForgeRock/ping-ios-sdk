@@ -45,16 +45,33 @@ public class Fido2AuthenticationCallback: Fido2Callback, @unchecked Sendable {
             switch result {
             case .success(let response):
                 self.logger?.d("FIDO2 authentication successful")
+                //  Expected AM result for successful assertion
                 
-                let clientDataJSON = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? String ?? ""
-                let authenticatorData = response[FidoConstants.FIELD_AUTHENTICATOR_DATA] as? String ?? ""
-                let signature = response[FidoConstants.FIELD_SIGNATURE] as? String ?? ""
-                let rawId = response[FidoConstants.FIELD_RAW_ID] as? String ?? ""
-                let userHandle = response[FidoConstants.FIELD_USER_HANDLE] as? String ?? ""
+                //  {clientDataJSON as String}::{Int8 array of authenticatorData}::{Int8 array of signature}::{assertion identifier}::{user handle}
+                let signatureData = response[FidoConstants.FIELD_SIGNATURE] as? Data ?? Data()
+                let signatureInt8 = signatureData.bytesArray.map { Int8(bitPattern: $0) }
+                let signature = convertInt8ArrToStr(signatureInt8)
+                
+                let clientData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data ?? Data()
+                let clientDataJSON = String(decoding: clientData, as: UTF8.self)
+                
+                let authenticatorData = response[FidoConstants.FIELD_AUTHENTICATOR_DATA] as? Data ?? Data()
+                let authenticatorDataInt8 = authenticatorData.bytesArray.map { Int8(bitPattern: $0) }
+                let authenticatorDataString = convertInt8ArrToStr(authenticatorDataInt8)
+                
+                let credIDData = response[FidoConstants.FIELD_RAW_ID] as? Data ?? Data()
+                let credID = base64ToBase64url(base64: credIDData.base64EncodedString())
+                
+                let userHandleData = response[FidoConstants.FIELD_USER_HANDLE] as? Data ?? Data()
+                let userIDString = String(decoding: userHandleData, as: UTF8.self)
+                
+                
+                let rawId = credID
+                let userHandle = userIDString
                 
                 let data = [
                     clientDataJSON,
-                    authenticatorData,
+                    authenticatorDataString,
                     signature,
                     rawId,
                     userHandle

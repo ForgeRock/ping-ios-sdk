@@ -25,17 +25,17 @@ public class AbstractFido2Collector: FieldCollector<[String: Any]>, DaVinciAware
         return davinci?.config.logger
     }
     
-    public static func getCollector(with json: [String: Any]) -> AbstractFido2Collector? {
+    public static func getCollector(with json: [String: Any]) throws -> AbstractFido2Collector {
         guard let action = json[FidoConstants.FIELD_ACTION] as? String else {
-            return nil
+            throw FidoError.invalidAction
         }
         switch action {
         case FidoConstants.ACTION_REGISTER:
-            return Fido2RegistrationCollector(with: json)
+            return try Fido2RegistrationCollector(with: json)
         case FidoConstants.ACTION_AUTHENTICATE:
-            return Fido2AuthenticationCollector(with: json)
+            return try Fido2AuthenticationCollector(with: json)
         default:
-            return nil
+            throw FidoError.unsupportedAction(action)
         }
     }
 }

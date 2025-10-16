@@ -21,11 +21,11 @@ public class Fido2AuthenticationCollector: AbstractFido2Collector, @unchecked Se
     required public init(with json: [String : Any]) {
         super.init(with: json)
         logger?.d("Initializing FIDO2 authentication collector")
-        if let options = json[FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS] as? [String: Any] {
-            self.publicKeyCredentialRequestOptions = self.transform(options)
-        } else {
+        guard let options = json[FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS] as? [String: Any] else {
             logger?.e("Missing \(FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS)", error: nil)
+            return
         }
+        self.publicKeyCredentialRequestOptions = self.transform(options)
         logger?.d("FIDO2 authentication collector initialized with request options")
     }
         
@@ -40,18 +40,55 @@ public class Fido2AuthenticationCollector: AbstractFido2Collector, @unchecked Se
     
     public func authenticate(completion: @escaping (Result<[String: Any], Error>) -> Void) {
         logger?.d("Starting FIDO2 authentication")
-        
+
         guard let window = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first else {
             completion(.failure(FidoError.invalidWindow))
             return
         }
-        
+
         Fido2.shared.authenticate(options: publicKeyCredentialRequestOptions, window: window) { result in
             switch result {
             case .success(let response):
-                self.logger?.d("FIDO2 authentication successful")
-                self.assertionValue = response
-                completion(.success(response))
+                self.logger?.d("FIDO2 authentication successful, building assertionValue object...")
+                
+                let signatureData = response[FidoConstants.FIELD_SIGNATURE] as? Data ?? Data()
+                let signatureInt8 = signatureData.bytesArray.map { Int8(bitPattern: $0) }
+                let signature = convertInt8ArrToStr(signatureInt8)
+                
+                let clientData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data ?? Data()
+                let clientDataJSON = String(decoding: clientData, as: UTF8.self)
+                
+                let authenticatorData = response[FidoConstants.FIELD_AUTHENTICATOR_DATA] as? Data ?? Data()
+                let authenticatorDataInt8 = authenticatorData.bytesArray.map { Int8(bitPattern: $0) }
+                let authenticatorDataString = convertInt8ArrToStr(authenticatorDataInt8)
+                
+                let credIDData = response[FidoConstants.FIELD_RAW_ID] as? Data ?? Data()
+                let credID = base64ToBase64url(base64: credIDData.base64EncodedString())
+                
+                let userHandleData = response[FidoConstants.FIELD_USER_HANDLE] as? Data ?? Data()
+                let userIDString = String(decoding: userHandleData, as: UTF8.self)
+                
+                // Builds the assertionValue with all the correct encodings
+                let assertionValue: [String: Any] = [
+                    // ✅ `id` is Base64URL
+                    FidoConstants.FIELD_ID: credIDData.base64urlEncodedString(),
+                    // ✅ `rawId` is standard Base64
+                    FidoConstants.FIELD_RAW_ID: credIDData.base64EncodedString(),
+                    FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: "platform",
+                    FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,
+                    FidoConstants.FIELD_RESPONSE: [
+                        // ✅ All nested fields are correctly Base64URL encoded
+                        FidoConstants.FIELD_AUTHENTICATOR_DATA: authenticatorData.base64urlEncodedString(),
+                        FidoConstants.FIELD_CLIENT_DATA_JSON: clientData.base64urlEncodedString(),
+                        FidoConstants.FIELD_SIGNATURE: signatureData.base64urlEncodedString(),
+                        FidoConstants.FIELD_USER_HANDLE: userIDString
+                    ]
+                ]
+                
+                self.logger?.d("assertionValue object created successfully")
+                self.assertionValue = assertionValue
+                completion(.success(assertionValue))
+                
             case .failure(let error):
                 self.logger?.e("FIDO2 authentication failed", error: error)
                 completion(.failure(error))

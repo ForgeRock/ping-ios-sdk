@@ -16,12 +16,15 @@ extension Data {
         return [UInt8](self)
     }
     
-    /// Returns a base64url encoded string from the data.
+    /// Returns a Base64URL encoded string (no padding, URL-safe characters).
     func base64urlEncodedString() -> String {
-        return self.base64EncodedString()
-            .replacingOccurrences(of: "+", with: "-")
-            .replacingOccurrences(of: "/", with: "_")
-            .replacingOccurrences(of: "=", with: "")
+        var base64 = self.base64EncodedString()
+        // Replace URL-unsafe characters with URL-safe ones
+        base64 = base64.replacingOccurrences(of: "+", with: "-")
+        base64 = base64.replacingOccurrences(of: "/", with: "_")
+        // Remove padding
+        base64 = base64.replacingOccurrences(of: "=", with: "")
+        return base64
     }
 }
 
@@ -33,7 +36,7 @@ extension String {
         }
         return data.base64urlEncodedString()
     }
-
+    
     /// Returns a base64 encoded string from the string.
     func toBase64() -> String {
         return Data(self.utf8).base64EncodedString()
