@@ -19,26 +19,29 @@ public class Fido2RegistrationCallback: Fido2Callback, @unchecked Sendable {
     /// The `PublicKeyCredentialCreationOptions` received from the server for FIDO2 registration.
     public var publicKeyCredentialCreationOptions: [String: Any] = [:]
     
+    /// A flag indicating whether the server supports a JSON response format.
     private var supportsJsonResponse: Bool = false
     
-    /// Initializes the callback with the provided JSON data.
-    /// - Parameter json: The JSON data used to initialize the callback.
-    /// - Returns: The initialized callback instance.
+    /// Initializes the callback's properties with values from the JSON payload.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the property to initialize.
+    ///   - value: The value of the property.
     public override func initValue(name: String, value: Any) {
         if name == FidoConstants.FIELD_DATA, let data = value as? [String: Any] {
-            logger?.d("Processing FIDO2 authentication data")
+            logger?.d("Processing FIDO2 registration data")
             supportsJsonResponse = data[FidoConstants.FIELD_SUPPORTS_JSON_RESPONSE] as? Bool ?? false
             publicKeyCredentialCreationOptions = transform(data)
-            logger?.d("FIDO2 authentication callback initialized successfully")
+            logger?.d("FIDO2 registration callback initialized successfully")
         }
     }
     
     /// Initiates the FIDO2 registration process.
+    ///
     /// - Parameters:
     ///  - deviceName: An optional name for the device being registered.
     ///  - window: The `ASPresentationAnchor` to present the FIDO2 UI.
-    ///  - completion: A closure that is called upon completion of the registration process, with
-    ///              a `Result` containing either the registration response or an error.
+    ///  - completion: A closure that is called upon completion of the registration process.
     public func register(deviceName: String? = nil, window: ASPresentationAnchor, completion: @escaping (Error?) -> Void) {
         logger?.d("Starting FIDO2 registration with device name: \(deviceName ?? "nil")")
         
@@ -46,31 +49,34 @@ public class Fido2RegistrationCallback: Fido2Callback, @unchecked Sendable {
             switch result {
             case .success(let response):
                 self.logger?.d("FIDO2 registration successful")
-                let rawAttestationObject = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? Data ?? Data()
-                let rawClientDataJSON = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data ?? Data()
-                let rawIdData = response[FidoConstants.FIELD_RAW_ID] as? Data ?? Data()
+                guard let rawAttestationObject = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? Data,
+                      let rawClientDataJSON = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
+                      let rawIdData = response[FidoConstants.FIELD_RAW_ID] as? Data else {
+                    let error = FidoError.invalidResponse
+                    self.logger?.e(error.localizedDescription, error: error)
+                    self.handleError(error: error)
+                    completion(error)
+                    return
+                }
                 
-                let int8Arr = rawAttestationObject.bytesArray.map { Int8(bitPattern: $0) }
-                let attestationObject = convertInt8ArrToStr(int8Arr)
-                let clientDataJSON = String(decoding: rawClientDataJSON, as: UTF8.self)
-                let rawId = base64ToBase64url(base64: rawIdData.base64EncodedString())
-    
-                
-                var data = [
-                    clientDataJSON,
-                    attestationObject,
-                    rawId
+                // For older servers, a concatenated string is sent.
+                let legacyData = [
+                    String(decoding: rawClientDataJSON, as: UTF8.self),
+                    convertInt8ArrToStr(rawAttestationObject.bytesArray.map { Int8(bitPattern: $0) }),
+                    base64ToBase64url(base64: rawIdData.base64EncodedString())
                 ].joined(separator: FidoConstants.DATA_SEPARATOR)
                 
+                var finalData = legacyData
                 if let deviceName = deviceName {
-                    data += "\(FidoConstants.DATA_SEPARATOR)\(deviceName)"
+                    finalData += "\(FidoConstants.DATA_SEPARATOR)\(deviceName)"
                 }
                 
                 let callbackValue: String
                 if self.supportsJsonResponse {
+                    // For newer servers, a JSON object is sent.
                     let jsonResponse: [String: Any] = [
                         FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: FidoConstants.AUTHENTICATOR_PLATFORM,
-                        FidoConstants.FIELD_LEGACY_DATA: data
+                        FidoConstants.FIELD_LEGACY_DATA: finalData
                     ]
                     if let jsonData = try? JSONSerialization.data(withJSONObject: jsonResponse, options: []),
                        let jsonString = String(data: jsonData, encoding: .utf8) {
@@ -79,7 +85,7 @@ public class Fido2RegistrationCallback: Fido2Callback, @unchecked Sendable {
                         callbackValue = ""
                     }
                 } else {
-                    callbackValue = data
+                    callbackValue = finalData
                 }
                 
                 self.logger?.d("Setting registration callback value")
@@ -93,7 +99,8 @@ public class Fido2RegistrationCallback: Fido2Callback, @unchecked Sendable {
         }
     }
     
-    /// Transforms the input dictionary to match the expected format for FIDO2 registration.
+    /// Transforms the input dictionary from the server to the format expected by the FIDO2 client.
+    ///
     /// - Parameter input: The input dictionary containing FIDO2 registration options.
     /// - Returns: A transformed dictionary suitable for FIDO2 registration.
     func transform(_ input: [String: Any]) -> [String: Any] {

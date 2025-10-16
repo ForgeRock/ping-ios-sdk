@@ -146,10 +146,7 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
         }
     }
     
-    /// ASAuthorizationControllerDelegate method that returns the presentation anchor for the authorization controller.
-    ///
-    /// - Parameter controller: The authorization controller.
-    /// - Returns: The presentation anchor.
+    ///- Returns: The presentation anchor.
     public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         guard let window = window else {
             fatalError("Window not set")
@@ -157,34 +154,26 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
         return window
     }
     
-    /// ASAuthorizationControllerDelegate method that handles the authorization controller completion with authorization.
+    /// Handles the successful completion of an authorization request.
     ///
     /// - Parameters:
     ///   - controller: The authorization controller.
-    ///   - authorization: The authorization.
+    ///   - authorization: The authorization object containing the credential.
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         switch authorization.credential {
         case let credential as ASAuthorizationPublicKeyCredentialRegistration:
             let result: [String: Any] = [
-                // Pass the raw Data object for the credential ID.
                 FidoConstants.FIELD_RAW_ID: credential.credentialID,
-                // Pass the raw Data object for the client data.
                 FidoConstants.FIELD_CLIENT_DATA_JSON: credential.rawClientDataJSON,
-                // Pass the raw Data object for the attestation.
                 FidoConstants.FIELD_ATTESTATION_OBJECT: credential.rawAttestationObject as Any
             ]
             completion?(.success(result))
         case let credential as ASAuthorizationPublicKeyCredentialAssertion:
             let result: [String: Any] = [
-                // Pass the raw Data object for the client data.
                 FidoConstants.FIELD_CLIENT_DATA_JSON: credential.rawClientDataJSON,
-                // Pass the raw Data object for the authenticator data.
                 FidoConstants.FIELD_AUTHENTICATOR_DATA: credential.rawAuthenticatorData ?? Data(),
-                // Pass the raw Data object for the signature.
                 FidoConstants.FIELD_SIGNATURE: credential.signature ?? Data(),
-                // Pass the raw Data object for the credential ID.
                 FidoConstants.FIELD_RAW_ID: credential.credentialID,
-                // Pass the user handle if available.
                 FidoConstants.FIELD_USER_HANDLE: credential.userID ?? Data()
             ]
             completion?(.success(result))
@@ -194,11 +183,11 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
         }
     }
     
-    /// ASAuthorizationControllerDelegate method that handles the authorization controller completion with an error.
+    /// Handles the completion of an authorization request with an error.
     ///
     /// - Parameters:
     ///   - controller: The authorization controller.
-    ///   - error: The error.
+    ///   - error: The error that occurred.
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         completion?(.failure(error))
     }

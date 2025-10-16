@@ -10,26 +10,30 @@
 
 import Foundation
 
+// MARK: - Data Extensions
+
 extension Data {
-    /// Returns an array of bytes from the data.
+    /// Returns an array of bytes from the `Data` object.
     var bytesArray: [UInt8] {
         return [UInt8](self)
     }
     
-    /// Returns a Base64URL encoded string (no padding, URL-safe characters).
+    /// Returns a Base64URL encoded string.
+    ///
+    /// This encoding is URL-safe and does not include padding.
     func base64urlEncodedString() -> String {
         var base64 = self.base64EncodedString()
-        // Replace URL-unsafe characters with URL-safe ones
         base64 = base64.replacingOccurrences(of: "+", with: "-")
         base64 = base64.replacingOccurrences(of: "/", with: "_")
-        // Remove padding
         base64 = base64.replacingOccurrences(of: "=", with: "")
         return base64
     }
 }
 
+// MARK: - String Extensions
+
 extension String {
-    /// Returns a base64url encoded string from the string.
+    /// Returns a Base64URL encoded string from the string.
     func base64urlEncodedString() -> String? {
         guard let data = self.data(using: .utf8) else {
             return nil
@@ -37,24 +41,26 @@ extension String {
         return data.base64urlEncodedString()
     }
     
-    /// Returns a base64 encoded string from the string.
+    /// Returns a Base64 encoded string from the string.
     func toBase64() -> String {
         return Data(self.utf8).base64EncodedString()
     }
 }
 
-/// Converts an array of Int8 to a string.
+// MARK: - Helper Functions
+
+/// Converts an array of `Int8` to a comma-separated string.
 ///
-/// - Parameter arr: The array of Int8 to convert.
+/// - Parameter arr: The array of `Int8` to convert.
 /// - Returns: A string representation of the array.
 func convertInt8ArrToStr(_ arr: [Int8]) -> String {
-    return arr.map { String($0) }.joined(separator: ",")
+    return arr.map { String($0) }.joined(separator: FidoConstants.INT_SEPARATOR)
 }
 
-/// Converts a base64 string to a base64url string.
+/// Converts a Base64 string to a Base64URL string.
 ///
-/// - Parameter base64: The base64 string to convert.
-/// - Returns: A base64url encoded string.
+/// - Parameter base64: The Base64 string to convert.
+/// - Returns: A Base64URL encoded string.
 func base64ToBase64url(base64: String) -> String {
     return base64
         .replacingOccurrences(of: "+", with: "-")

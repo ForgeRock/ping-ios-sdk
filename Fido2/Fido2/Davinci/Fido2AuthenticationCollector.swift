@@ -8,16 +8,24 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
+
 import Foundation
 import PingDavinci
 import PingLogger
 import UIKit
 
+/// A collector for FIDO2 authentication within a DaVinci flow.
 public class Fido2AuthenticationCollector: AbstractFido2Collector, @unchecked Sendable {
     
+    /// The public key credential request options provided by the server.
     public var publicKeyCredentialRequestOptions: [String: Any] = [:]
+    /// The assertion value constructed after a successful authentication. This value is sent to the server.
     public var assertionValue: [String: Any]?
     
+    /// Initializes a new FIDO2 authentication collector.
+    ///
+    /// - Parameter json: The JSON payload from the server that includes the FIDO2 authentication options.
+    /// - Throws: An error if the required `publicKeyCredentialRequestOptions` parameter is missing from the JSON.
     required public init(with json: [String : Any]) {
         super.init(with: json)
         logger?.d("Initializing FIDO2 authentication collector")
@@ -28,7 +36,10 @@ public class Fido2AuthenticationCollector: AbstractFido2Collector, @unchecked Se
         self.publicKeyCredentialRequestOptions = self.transform(options)
         logger?.d("FIDO2 authentication collector initialized with request options")
     }
-        
+    
+    /// The payload to be sent to the DaVinci server.
+    ///
+    /// - Returns: A dictionary containing the assertion value, or `nil` if authentication has not been completed.
     override public func payload() -> [String: Any]? {
         guard let assertionValue = assertionValue else {
             logger?.d("No assertion value available, returning null payload")
@@ -38,46 +49,45 @@ public class Fido2AuthenticationCollector: AbstractFido2Collector, @unchecked Se
         return [FidoConstants.FIELD_ASSERTION_VALUE: assertionValue]
     }
     
+    /// Initiates the FIDO2 authentication process.
+    ///
+    /// This method uses the `Fido2.shared.authenticate` method to perform the authentication ceremony.
+    /// On success, it constructs the `assertionValue` and calls the completion handler.
+    /// - Parameter completion: A closure to be called with the result of the authentication.
     public func authenticate(completion: @escaping (Result<[String: Any], Error>) -> Void) {
         logger?.d("Starting FIDO2 authentication")
-
+        
         guard let window = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first else {
             completion(.failure(FidoError.invalidWindow))
             return
         }
-
+        
         Fido2.shared.authenticate(options: publicKeyCredentialRequestOptions, window: window) { result in
             switch result {
             case .success(let response):
                 self.logger?.d("FIDO2 authentication successful, building assertionValue object...")
                 
-                let signatureData = response[FidoConstants.FIELD_SIGNATURE] as? Data ?? Data()
-                let signatureInt8 = signatureData.bytesArray.map { Int8(bitPattern: $0) }
-                let signature = convertInt8ArrToStr(signatureInt8)
+                guard let signatureData = response[FidoConstants.FIELD_SIGNATURE] as? Data,
+                      let clientData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
+                      let authenticatorData = response[FidoConstants.FIELD_AUTHENTICATOR_DATA] as? Data,
+                      let credIDData = response[FidoConstants.FIELD_RAW_ID] as? Data,
+                      let userHandleData = response[FidoConstants.FIELD_USER_HANDLE] as? Data else {
+                    let error = FidoError.invalidResponse
+                    self.logger?.e(error.localizedDescription, error: error)
+                    completion(.failure(error))
+                    return
+                }
                 
-                let clientData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data ?? Data()
-                let clientDataJSON = String(decoding: clientData, as: UTF8.self)
-                
-                let authenticatorData = response[FidoConstants.FIELD_AUTHENTICATOR_DATA] as? Data ?? Data()
-                let authenticatorDataInt8 = authenticatorData.bytesArray.map { Int8(bitPattern: $0) }
-                let authenticatorDataString = convertInt8ArrToStr(authenticatorDataInt8)
-                
-                let credIDData = response[FidoConstants.FIELD_RAW_ID] as? Data ?? Data()
-                let credID = base64ToBase64url(base64: credIDData.base64EncodedString())
-                
-                let userHandleData = response[FidoConstants.FIELD_USER_HANDLE] as? Data ?? Data()
                 let userIDString = String(decoding: userHandleData, as: UTF8.self)
-                
-                // Builds the assertionValue with all the correct encodings
+                // Construct the assertionValue payload in the format expected by the server.
                 let assertionValue: [String: Any] = [
-                    // ✅ `id` is Base64URL
+                    // `id` is Base64URL
                     FidoConstants.FIELD_ID: credIDData.base64urlEncodedString(),
-                    // ✅ `rawId` is standard Base64
+                    // `rawId` is standard Base64
                     FidoConstants.FIELD_RAW_ID: credIDData.base64EncodedString(),
                     FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: "platform",
                     FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,
                     FidoConstants.FIELD_RESPONSE: [
-                        // ✅ All nested fields are correctly Base64URL encoded
                         FidoConstants.FIELD_AUTHENTICATOR_DATA: authenticatorData.base64urlEncodedString(),
                         FidoConstants.FIELD_CLIENT_DATA_JSON: clientData.base64urlEncodedString(),
                         FidoConstants.FIELD_SIGNATURE: signatureData.base64urlEncodedString(),
@@ -96,6 +106,11 @@ public class Fido2AuthenticationCollector: AbstractFido2Collector, @unchecked Se
         }
     }
     
+    /// Transforms the FIDO2 authentication request options from the server to the format expected by the `ASAuthorization` framework.
+    ///
+    /// This involves converting byte arrays for `challenge` and `allowCredentials` IDs to Base64 encoded strings.
+    /// - Parameter input: The dictionary of options received from the server.
+    /// - Returns: A transformed dictionary of options.
     private func transform(_ input: [String: Any]) -> [String: Any] {
         logger?.d("Transforming FIDO2 authentication request options")
         var output = input
@@ -121,3 +136,4 @@ public class Fido2AuthenticationCollector: AbstractFido2Collector, @unchecked Se
         return output
     }
 }
+

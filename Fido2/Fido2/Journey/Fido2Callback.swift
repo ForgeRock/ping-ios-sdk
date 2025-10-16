@@ -12,12 +12,6 @@ import Foundation
 import PingJourney
 import PingOrchestrate
 import PingLogger
-
-/// Abstract base class for FIDO2 callbacks in PingOne Journey workflows.
-///
-/// This class provides common functionality for handling FIDO2 operations within
-/// Journey workflows, including error handling and value setting.
-/// It manages the interaction between FIDO2 operations and the Journey framework.
 import AuthenticationServices
 
 /// Abstract base class for FIDO2 callbacks in PingOne Journey workflows.
@@ -27,11 +21,10 @@ import AuthenticationServices
 /// It manages the interaction between FIDO2 operations and the Journey framework.
 public class Fido2Callback: AbstractCallback, JourneyAware, ContinueNodeAware, @unchecked Sendable {
     
-    /// The Journey continue node that this callback is associated with.
-    /// This provides access to the workflow context and other callbacks.
+    /// The Journey `ContinueNode` that this callback is associated with.
     public var continueNode: ContinueNode?
     
-    /// The Journey instance that this callback is associated with.
+    /// The `Journey` instance that this callback is associated with.
     public var journey: Journey?
     
     /// Logger instance for this callback, obtained from the workflow configuration.
@@ -39,14 +32,12 @@ public class Fido2Callback: AbstractCallback, JourneyAware, ContinueNodeAware, @
         return journey?.config.logger
     }
     
+    /// This method is an override from `AbstractCallback` and is not used in this context.
     public override func initValue(name: String, value: Any) {
         
     }
 
-    /// Sets a value to the ValueCallback associated with the WebAuthn outcome.
-    ///
-    /// This method finds the ValueCallback with the ID "webAuthnOutcome" and sets
-    /// the provided value, which will be sent back to the Journey server.
+    /// Sets a value to the `HiddenValueCallback` associated with the WebAuthn outcome.
     ///
     /// - Parameter value: The value to set for the WebAuthn outcome.
     public func valueCallback(value: String) {
@@ -60,9 +51,7 @@ public class Fido2Callback: AbstractCallback, JourneyAware, ContinueNodeAware, @
     
     /// Handles errors that occur during FIDO2 operations.
     ///
-    /// This method converts various types of credential exceptions into appropriate
-    /// error messages that the Journey server can understand and process.
-    ///
+    /// This method converts `ASAuthorizationError` codes into error messages that the Journey server can process.
     /// - Parameter error: The error to handle and convert.
     public func handleError(error: Error) {
         logger?.e("Handling FIDO2 error: \(error.localizedDescription)", error: error)
@@ -95,7 +84,7 @@ public class Fido2Callback: AbstractCallback, JourneyAware, ContinueNodeAware, @
     }
 
     /// Sets an error value in the WebAuthn outcome callback.
-    /// This method formats the error and message into a single string and sets it in the appropriate HiddenValueCallback.
+    ///
     /// - Parameters:
     ///  - error: The error type or code.
     ///  - message: A descriptive message about the error.

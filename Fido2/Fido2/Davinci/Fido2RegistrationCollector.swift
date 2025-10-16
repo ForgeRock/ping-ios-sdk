@@ -13,11 +13,18 @@ import PingDavinci
 import PingLogger
 import UIKit
 
+/// A collector for FIDO2 registration within a DaVinci flow.
 public class Fido2RegistrationCollector: AbstractFido2Collector, @unchecked Sendable {
     
+    /// The public key credential creation options provided by the server.
     public var publicKeyCredentialCreationOptions: [String: Any] = [:]
+    /// The attestation value constructed after a successful registration. This value is sent to the server.
     public var attestationValue: [String: Any]?
     
+    /// Initializes a new FIDO2 registration collector.
+    ///
+    /// - Parameter json: The JSON payload from the server that includes the FIDO2 registration options.
+    /// - Throws: An error if the required `publicKeyCredentialCreationOptions` parameter is missing from the JSON.
     required public init(with json: [String : Any]) {
         super.init(with: json)
         logger?.d("Initializing FIDO2 registration collector")
@@ -29,6 +36,11 @@ public class Fido2RegistrationCollector: AbstractFido2Collector, @unchecked Send
         logger?.d("FIDO2 registration collector initialized with creation options")
     }
     
+    /// Transforms the FIDO2 registration request options from the server to the format expected by the `ASAuthorization` framework.
+    ///
+    /// This involves converting byte arrays for `user.id`, `challenge`, and `excludeCredentials` IDs to Base64 encoded strings.
+    /// - Parameter input: The dictionary of options received from the server.
+    /// - Returns: A transformed dictionary of options.
     private func transform(_ input: [String: Any]) -> [String: Any] {
         logger?.d("Transforming FIDO2 registration creation options")
         var output = input
@@ -66,6 +78,9 @@ public class Fido2RegistrationCollector: AbstractFido2Collector, @unchecked Send
         return output
     }
     
+    /// The payload to be sent to the DaVinci server.
+    ///
+    /// - Returns: A dictionary containing the attestation value, or `nil` if registration has not been completed.
     override public func payload() -> [String: Any]? {
         guard let attestationValue = attestationValue else {
             logger?.d("No attestation value available, returning null payload")
@@ -75,6 +90,11 @@ public class Fido2RegistrationCollector: AbstractFido2Collector, @unchecked Send
         return [FidoConstants.FIELD_ATTESTATION_VALUE: attestationValue]
     }
     
+    /// Initiates the FIDO2 registration process.
+    ///
+    /// This method uses the `Fido2.shared.register` method to perform the registration ceremony.
+    /// On success, it constructs the `attestationValue` and calls the completion handler.
+    /// - Parameter completion: A closure to be called with the result of the registration.
     public func register(completion: @escaping (Result<[String: Any], Error>) -> Void) {
         logger?.d("Starting FIDO2 registration")
 
@@ -88,7 +108,6 @@ public class Fido2RegistrationCollector: AbstractFido2Collector, @unchecked Send
             case .success(let response):
                 self.logger?.d("FIDO2 registration successful, building attestationValue object...")
 
-                // ✅ FIX 1: Cast to `Data`, not `String`. FIDO2 libraries return raw binary data.
                 guard let rawIdData = response[FidoConstants.FIELD_RAW_ID] as? Data,
                       let clientDataJSONData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
                       let attestationObjectData = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? Data else {
@@ -98,24 +117,15 @@ public class Fido2RegistrationCollector: AbstractFido2Collector, @unchecked Send
                     return
                 }
                 
-                
-                // This is likely static for registrations from this device.
                 let authenticatorAttachment = "platform"
 
-                // ✅ FIX 2: Build the dictionary using the correct encoding methods on the `Data` objects.
+                // Construct the attestationValue payload in the format expected by the server.
                 let attestationValue: [String: Any] = [
-                    // `id` MUST be Base64URL encoded.
                     FidoConstants.FIELD_ID: rawIdData.base64urlEncodedString(),
-                    
                     FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,
-                    
-                    // `rawId` MUST be standard Base64 encoded.
                     FidoConstants.FIELD_RAW_ID: rawIdData.base64EncodedString(),
-                    
                     FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: authenticatorAttachment,
-                    
                     FidoConstants.FIELD_RESPONSE: [
-                        // These values MUST be Base64URL encoded.
                         FidoConstants.FIELD_CLIENT_DATA_JSON: clientDataJSONData.base64urlEncodedString(),
                         FidoConstants.FIELD_ATTESTATION_OBJECT: attestationObjectData.base64urlEncodedString()
                     ]
@@ -123,7 +133,6 @@ public class Fido2RegistrationCollector: AbstractFido2Collector, @unchecked Send
                 
                 self.logger?.d("attestationValue object created successfully")
 
-                // 3. Return the fully formed 'attestationValue' object.
                 self.attestationValue = attestationValue
                 completion(.success(attestationValue))
                 

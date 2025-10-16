@@ -19,11 +19,14 @@ public class Fido2AuthenticationCallback: Fido2Callback, @unchecked Sendable {
     /// The `PublicKeyCredentialRequestOptions` received from the server for FIDO2 authentication.
     public var publicKeyCredentialRequestOptions: [String: Any] = [:]
     
+    /// A flag indicating whether the server supports a JSON response format.
     private var supportsJsonResponse: Bool = false
     
-    /// Initializes the callback with the provided JSON data.
-    /// - Parameter json: The JSON data used to initialize the callback.
-    /// - Returns: The initialized callback instance.
+    /// Initializes the callback's properties with values from the JSON payload.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the property to initialize.
+    ///   - value: The value of the property.
     public override func initValue(name: String, value: Any) {
         if name == FidoConstants.FIELD_DATA, let data = value as? [String: Any] {
             logger?.d("Processing FIDO2 authentication data")
@@ -34,10 +37,10 @@ public class Fido2AuthenticationCallback: Fido2Callback, @unchecked Sendable {
     }
     
     /// Initiates the FIDO2 authentication process.
+    ///
     /// - Parameters:
     ///  - window: The `ASPresentationAnchor` to present the FIDO2 UI.
-    ///  - completion: A closure that is called upon completion of the authentication process, with
-    ///              a `Result` containing either the authentication response or an error.
+    ///  - completion: A closure that is called upon completion of the authentication process.
     public func authenticate(window: ASPresentationAnchor, completion: @escaping (Error?) -> Void) {
         logger?.d("Starting FIDO2 authentication")
         
@@ -45,43 +48,34 @@ public class Fido2AuthenticationCallback: Fido2Callback, @unchecked Sendable {
             switch result {
             case .success(let response):
                 self.logger?.d("FIDO2 authentication successful")
-                //  Expected AM result for successful assertion
                 
-                //  {clientDataJSON as String}::{Int8 array of authenticatorData}::{Int8 array of signature}::{assertion identifier}::{user handle}
-                let signatureData = response[FidoConstants.FIELD_SIGNATURE] as? Data ?? Data()
-                let signatureInt8 = signatureData.bytesArray.map { Int8(bitPattern: $0) }
-                let signature = convertInt8ArrToStr(signatureInt8)
+                guard let signatureData = response[FidoConstants.FIELD_SIGNATURE] as? Data,
+                      let clientData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
+                      let authenticatorData = response[FidoConstants.FIELD_AUTHENTICATOR_DATA] as? Data,
+                      let credIDData = response[FidoConstants.FIELD_RAW_ID] as? Data,
+                      let userHandleData = response[FidoConstants.FIELD_USER_HANDLE] as? Data else {
+                    let error = FidoError.invalidResponse
+                    self.logger?.e(error.localizedDescription, error: error)
+                    self.handleError(error: error)
+                    completion(error)
+                    return
+                }
                 
-                let clientData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data ?? Data()
-                let clientDataJSON = String(decoding: clientData, as: UTF8.self)
-                
-                let authenticatorData = response[FidoConstants.FIELD_AUTHENTICATOR_DATA] as? Data ?? Data()
-                let authenticatorDataInt8 = authenticatorData.bytesArray.map { Int8(bitPattern: $0) }
-                let authenticatorDataString = convertInt8ArrToStr(authenticatorDataInt8)
-                
-                let credIDData = response[FidoConstants.FIELD_RAW_ID] as? Data ?? Data()
-                let credID = base64ToBase64url(base64: credIDData.base64EncodedString())
-                
-                let userHandleData = response[FidoConstants.FIELD_USER_HANDLE] as? Data ?? Data()
-                let userIDString = String(decoding: userHandleData, as: UTF8.self)
-                
-                
-                let rawId = credID
-                let userHandle = userIDString
-                
-                let data = [
-                    clientDataJSON,
-                    authenticatorDataString,
-                    signature,
-                    rawId,
-                    userHandle
+                // For older servers, a concatenated string is sent.
+                let legacyData = [
+                    String(decoding: clientData, as: UTF8.self),
+                    convertInt8ArrToStr(authenticatorData.bytesArray.map { Int8(bitPattern: $0) }),
+                    convertInt8ArrToStr(signatureData.bytesArray.map { Int8(bitPattern: $0) }),
+                    base64ToBase64url(base64: credIDData.base64EncodedString()),
+                    String(decoding: userHandleData, as: UTF8.self)
                 ].joined(separator: FidoConstants.DATA_SEPARATOR)
                 
                 let callbackValue: String
                 if self.supportsJsonResponse {
+                    // For newer servers, a JSON object is sent.
                     let jsonResponse: [String: Any] = [
                         FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: FidoConstants.AUTHENTICATOR_PLATFORM,
-                        FidoConstants.FIELD_LEGACY_DATA: data
+                        FidoConstants.FIELD_LEGACY_DATA: legacyData
                     ]
                     if let jsonData = try? JSONSerialization.data(withJSONObject: jsonResponse, options: []),
                        let jsonString = String(data: jsonData, encoding: .utf8) {
@@ -90,7 +84,7 @@ public class Fido2AuthenticationCallback: Fido2Callback, @unchecked Sendable {
                         callbackValue = ""
                     }
                 } else {
-                    callbackValue = data
+                    callbackValue = legacyData
                 }
                 
                 self.logger?.d("Setting authentication callback value")
@@ -104,7 +98,8 @@ public class Fido2AuthenticationCallback: Fido2Callback, @unchecked Sendable {
         }
     }
     
-    /// Transforms the input dictionary to match the expected format for FIDO2 authentication.
+    /// Transforms the input dictionary from the server to the format expected by the FIDO2 client.
+    ///
     /// - Parameter input: The input dictionary containing FIDO2 authentication options.
     /// - Returns: A transformed dictionary suitable for FIDO2 authentication.
     func transform(_ input: [String: Any]) -> [String: Any] {
@@ -117,8 +112,6 @@ public class Fido2AuthenticationCallback: Fido2Callback, @unchecked Sendable {
 
         if let timeoutStr = input[FidoConstants.FIELD_TIMEOUT] as? String, let timeout = Int(timeoutStr) {
             output[FidoConstants.FIELD_TIMEOUT] = timeout
-        } else {
-            output[FidoConstants.FIELD_TIMEOUT] = FidoConstants.DEFAULT_TIMEOUT
         }
 
         if let userVerification = input[FidoConstants.FIELD_USER_VERIFICATION] as? String {
