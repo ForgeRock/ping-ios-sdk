@@ -23,7 +23,8 @@ let package = Package (
         .library(name: "PingTamperDetector", targets: ["PingTamperDetector"]),
         .library(name: "PingDeviceProfile", targets: ["PingDeviceProfile"]),
         .library(name: "PingMfaCommons", targets: ["PingMfaCommons"]),
-        .library(name: "PingOath", targets: ["PingOath"])
+        .library(name: "PingOath", targets: ["PingOath"]),
+        .library(name: "PingJourney", targets: ["PingJourney"]),
     ],
     dependencies: [
 		.package(url: "https://github.com/pingidentity/pingone-signals-sdk-ios.git", "5.3.0" ..< "5.4.0"),
@@ -45,6 +46,7 @@ let package = Package (
     	.target(name: "PingTamperDetector", dependencies: [], path: "TamperDetector/TamperDetector", exclude: ["TamperDetector.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
     	.target(name: "PingDeviceProfile", dependencies: [.target(name: "PingTamperDetector"), ], path: "DeviceProfile/DeviceProfile", exclude: ["DeviceProfile.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingMfaCommons", dependencies: [.target(name: "PingLogger"), .target(name: "PingStorage"), .target(name: "PingOrchestrate")], path: "MfaCommons/MfaCommons", exclude: ["MfaCommons.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingOath", dependencies: [.target(name: "PingMfaCommons")], path: "Oath/Oath", exclude: ["Oath.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
+        .target(name: "PingOath", dependencies: [.target(name: "PingMfaCommons")], path: "Oath/Oath", exclude: ["Oath.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingJourney",dependencies: [.target(name: "PingOidc"),], path: "Journey/Journey", exclude: ["Journey.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
     ]
 )
