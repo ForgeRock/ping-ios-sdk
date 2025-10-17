@@ -24,6 +24,9 @@ public class AbstractFido2Collector: FieldCollector<[String: Any]>, DaVinciAware
         return davinci?.config.logger
     }
     
+    /// The FIDO2 instance, used for FIDO2 operations.
+    var fido2: Fido2 = Fido2.shared
+    
     /// Returns the event type for submission.
     public func eventType() -> String {
         return Constants.submit

@@ -32,6 +32,9 @@ public class Fido2Callback: AbstractCallback, JourneyAware, ContinueNodeAware, @
         return journey?.config.logger
     }
     
+    /// Shared instance of the Fido2 manager.
+    var fido2: Fido2 = Fido2.shared
+    
     /// This method is an override from `AbstractCallback` and is not used in this context.
     public override func initValue(name: String, value: Any) {
         

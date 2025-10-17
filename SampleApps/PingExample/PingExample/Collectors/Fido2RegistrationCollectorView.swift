@@ -25,12 +25,15 @@ struct Fido2RegistrationCollectorView: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
             Button(action: {
-                collector.register { result in
-                    switch result {
-                    case .success:
-                        onNext()
-                    case .failure(let error):
-                        print("FIDO2 Registration failed: \(error.localizedDescription)")
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let window = windowScene.windows.first {
+                    collector.register(window: window) { result in
+                        switch result {
+                        case .success:
+                            onNext()
+                        case .failure(let error):
+                            print("FIDO2 Registration failed: \(error.localizedDescription)")
+                        }
                     }
                 }
             }) {

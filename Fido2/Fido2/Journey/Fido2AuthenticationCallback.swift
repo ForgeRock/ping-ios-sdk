@@ -44,7 +44,7 @@ public class Fido2AuthenticationCallback: Fido2Callback, @unchecked Sendable {
     public func authenticate(window: ASPresentationAnchor, completion: @escaping (Error?) -> Void) {
         logger?.d("Starting FIDO2 authentication")
         
-        Fido2.shared.authenticate(options: publicKeyCredentialRequestOptions, window: window) { result in
+        fido2.authenticate(options: publicKeyCredentialRequestOptions, window: window) { result in
             switch result {
             case .success(let response):
                 self.logger?.d("FIDO2 authentication successful")

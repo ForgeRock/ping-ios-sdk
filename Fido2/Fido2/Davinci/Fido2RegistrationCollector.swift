@@ -12,6 +12,7 @@ import Foundation
 import PingDavinci
 import PingLogger
 import UIKit
+import AuthenticationServices
 
 /// A collector for FIDO2 registration within a DaVinci flow.
 public class Fido2RegistrationCollector: AbstractFido2Collector, @unchecked Sendable {
@@ -95,15 +96,10 @@ public class Fido2RegistrationCollector: AbstractFido2Collector, @unchecked Send
     /// This method uses the `Fido2.shared.register` method to perform the registration ceremony.
     /// On success, it constructs the `attestationValue` and calls the completion handler.
     /// - Parameter completion: A closure to be called with the result of the registration.
-    public func register(completion: @escaping (Result<[String: Any], Error>) -> Void) {
+    public func register(window: ASPresentationAnchor, completion: @escaping (Result<[String: Any], Error>) -> Void) {
         logger?.d("Starting FIDO2 registration")
 
-        guard let window = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first else {
-            completion(.failure(FidoError.invalidWindow))
-            return
-        }
-
-        Fido2.shared.register(options: publicKeyCredentialCreationOptions, window: window) { result in
+        fido2.register(options: publicKeyCredentialCreationOptions, window: window) { result in
             switch result {
             case .success(let response):
                 self.logger?.d("FIDO2 registration successful, building attestationValue object...")

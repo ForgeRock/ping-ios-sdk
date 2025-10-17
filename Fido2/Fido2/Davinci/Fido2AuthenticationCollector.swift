@@ -13,6 +13,7 @@ import Foundation
 import PingDavinci
 import PingLogger
 import UIKit
+import AuthenticationServices
 
 /// A collector for FIDO2 authentication within a DaVinci flow.
 public class Fido2AuthenticationCollector: AbstractFido2Collector, @unchecked Sendable {
@@ -54,15 +55,10 @@ public class Fido2AuthenticationCollector: AbstractFido2Collector, @unchecked Se
     /// This method uses the `Fido2.shared.authenticate` method to perform the authentication ceremony.
     /// On success, it constructs the `assertionValue` and calls the completion handler.
     /// - Parameter completion: A closure to be called with the result of the authentication.
-    public func authenticate(completion: @escaping (Result<[String: Any], Error>) -> Void) {
+    public func authenticate(window: ASPresentationAnchor, completion: @escaping (Result<[String: Any], Error>) -> Void) {
         logger?.d("Starting FIDO2 authentication")
         
-        guard let window = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.first else {
-            completion(.failure(FidoError.invalidWindow))
-            return
-        }
-        
-        Fido2.shared.authenticate(options: publicKeyCredentialRequestOptions, window: window) { result in
+        fido2.authenticate(options: publicKeyCredentialRequestOptions, window: window) { result in
             switch result {
             case .success(let response):
                 self.logger?.d("FIDO2 authentication successful, building assertionValue object...")

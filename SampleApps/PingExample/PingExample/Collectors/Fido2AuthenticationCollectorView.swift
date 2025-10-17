@@ -20,12 +20,15 @@ struct Fido2AuthenticationCollectorView: View {
             Text("FIDO2 Authentication")
                 .font(.title)
             Button(action: {
-                collector.authenticate { result in
-                    switch result {
-                    case .success:
-                        onNext()
-                    case .failure(let error):
-                        print("FIDO2 Authentication failed: \(error.localizedDescription)")
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let window = windowScene.windows.first {
+                    collector.authenticate(window: window) { result in
+                        switch result {
+                        case .success:
+                            onNext()
+                        case .failure(let error):
+                            print("FIDO2 Authentication failed: \(error.localizedDescription)")
+                        }
                     }
                 }
             }) {

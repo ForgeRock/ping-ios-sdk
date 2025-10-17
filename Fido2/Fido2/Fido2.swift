@@ -17,8 +17,15 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
     /// The shared singleton Fido2 instance.
     public static let shared = Fido2()
     
-    private var window: ASPresentationAnchor?
-    private var completion: ((Result<[String: Any], Error>) -> Void)?
+    var window: ASPresentationAnchor?
+    var completion: ((Result<[String: Any], Error>) -> Void)?
+    
+    func makeAuthorizationController(requests: [ASAuthorizationRequest]) -> ASAuthorizationController {
+        let authorizationController = ASAuthorizationController(authorizationRequests: requests)
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        return authorizationController
+    }
     
     /// Registers a new FIDO2 credential.
     ///
@@ -87,10 +94,7 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
                 
             }
             
-            // 3. Perform the requests. The system will merge the UI prompts automatically.
-            let authorizationController = ASAuthorizationController(authorizationRequests: requests)
-            authorizationController.delegate = self
-            authorizationController.presentationContextProvider = self
+            let authorizationController = makeAuthorizationController(requests: requests)
             authorizationController.performRequests()
             
         } catch {
@@ -137,9 +141,7 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
                 requests.append(securityKeyRequest)
             }
             
-            let authorizationController = ASAuthorizationController(authorizationRequests: requests)
-            authorizationController.delegate = self
-            authorizationController.presentationContextProvider = self
+            let authorizationController = makeAuthorizationController(requests: requests)
             authorizationController.performRequests()
         } catch {
             completion(.failure(error))
@@ -160,7 +162,11 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
     ///   - controller: The authorization controller.
     ///   - authorization: The authorization object containing the credential.
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
-        switch authorization.credential {
+        didComplete(with: authorization.credential)
+    }
+    
+    func didComplete(with credential: ASAuthorizationCredential) {
+        switch credential {
         case let credential as ASAuthorizationPublicKeyCredentialRegistration:
             let result: [String: Any] = [
                 FidoConstants.FIELD_RAW_ID: credential.credentialID,
@@ -194,7 +200,7 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
 }
 
 /// Represents an error that can occur during FIDO2 operations.
-public enum FidoError: Error {
+public enum FidoError: Error, Equatable {
     case invalidChallenge
     case invalidWindow
     case invalidResponse

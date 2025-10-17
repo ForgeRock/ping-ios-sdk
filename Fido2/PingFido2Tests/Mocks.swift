@@ -48,6 +48,23 @@ class MockASAuthorizationPlatformPublicKeyCredentialAssertion: ASAuthorizationPl
     }
 }
 
+//class MockASAuthorization: ASAuthorization, @unchecked Sendable {
+//    private let _credential: ASAuthorizationCredential
+//    
+//    override var credential: ASAuthorizationCredential {
+//        return _credential
+//    }
+//    
+//    init(credential: ASAuthorizationCredential) {
+//        self._credential = credential
+//        super.init()
+//    }
+//    
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+//}
+
 class MockContinueNode: ContinueNode, @unchecked Sendable {
     
     init(callbacks: Callbacks) {
@@ -56,4 +73,23 @@ class MockContinueNode: ContinueNode, @unchecked Sendable {
     }
 }
 
+class MockFido2: Fido2 {
+    var registrationResult: Result<[String: Any], Error>?
+    var authenticationResult: Result<[String: Any], Error>?
+    
+    override func register(options: [String : Any], window: ASPresentationAnchor, completion: @escaping (Result<[String : Any], Error>) -> Void) {
+        if let result = registrationResult {
+            completion(result)
+        }
+    }
+    
+    override func authenticate(options: [String : Any], window: ASPresentationAnchor, completion: @escaping (Result<[String : Any], Error>) -> Void) {
+        if let result = authenticationResult {
+            completion(result)
+        }
+    }
+}
 
+class MockASPresentationAnchor: UIWindow {
+    
+}

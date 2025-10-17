@@ -14,6 +14,7 @@ import XCTest
 @testable import PingDavinci
 
 class CallbackFactoryTests: XCTestCase {
+    let davinci = DaVinci.createDaVinci()
     override func setUp() async throws{
         await CollectorFactory.shared.register(type: "type1", collector: DummyCallback.self)
         await CollectorFactory.shared.register(type: "type2", collector: Dummy2Callback.self)
@@ -25,7 +26,7 @@ class CallbackFactoryTests: XCTestCase {
             ["type": "type2"]
         ]
         
-        let callbacks = await CollectorFactory.shared.collector(from: jsonArray)
+        let callbacks = await CollectorFactory.shared.collector(daVinci: davinci, from: jsonArray)
         XCTAssertEqual((callbacks[0] as? DummyCallback)?.value, "dummy")
         XCTAssertEqual((callbacks[1] as? Dummy2Callback)?.value, "dummy2")
         
@@ -37,7 +38,7 @@ class CallbackFactoryTests: XCTestCase {
             ["type": "invalidType"]
         ]
         
-        let callbacks = await CollectorFactory.shared.collector(from: jsonArray)
+        let callbacks = await CollectorFactory.shared.collector(daVinci: davinci, from: jsonArray)
         
         XCTAssertTrue(callbacks.isEmpty)
     }
@@ -45,7 +46,7 @@ class CallbackFactoryTests: XCTestCase {
     func testShouldReturnEmptyListWhenJsonArrayIsEmpty() async {
         let jsonArray: [[String: Any]] = []
         
-        let callbacks = await CollectorFactory.shared.collector(from: jsonArray)
+        let callbacks = await CollectorFactory.shared.collector(daVinci: davinci, from: jsonArray)
         
         XCTAssertTrue(callbacks.isEmpty)
     }

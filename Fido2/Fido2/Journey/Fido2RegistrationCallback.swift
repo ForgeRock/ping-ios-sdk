@@ -45,7 +45,7 @@ public class Fido2RegistrationCallback: Fido2Callback, @unchecked Sendable {
     public func register(deviceName: String? = nil, window: ASPresentationAnchor, completion: @escaping (Error?) -> Void) {
         logger?.d("Starting FIDO2 registration with device name: \(deviceName ?? "nil")")
         
-        Fido2.shared.register(options: publicKeyCredentialCreationOptions, window: window) { result in
+        fido2.register(options: publicKeyCredentialCreationOptions, window: window) { result in
             switch result {
             case .success(let response):
                 self.logger?.d("FIDO2 registration successful")

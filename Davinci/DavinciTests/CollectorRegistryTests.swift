@@ -16,6 +16,7 @@ import XCTest
 final class CollectorRegistryTests: XCTestCase {
     
     private var collectorFactory: CollectorFactory!
+    let davinci = DaVinci.createDaVinci()
     
     override func setUp() async throws {
         try await super.setUp()
@@ -43,7 +44,7 @@ final class CollectorRegistryTests: XCTestCase {
             ["inputType": "MULTI_SELECT"],
         ]
         
-        let collectors = await collectorFactory.collector(from: jsonArray)
+        let collectors = await collectorFactory.collector(daVinci: davinci, from: jsonArray)
         XCTAssertTrue(collectors[0] is TextCollector)
         XCTAssertTrue(collectors[1] is PasswordCollector)
         XCTAssertTrue(collectors[2] is SubmitCollector)
@@ -66,7 +67,7 @@ final class CollectorRegistryTests: XCTestCase {
             ["type": "UNKNOWN"]
         ]
         
-        let collectors = await collectorFactory.collector(from: jsonArray)
+        let collectors = await collectorFactory.collector(daVinci: davinci, from: jsonArray)
         XCTAssertEqual(collectors.count, 4)
     }
 }
