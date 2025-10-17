@@ -48,23 +48,6 @@ class MockASAuthorizationPlatformPublicKeyCredentialAssertion: ASAuthorizationPl
     }
 }
 
-//class MockASAuthorization: ASAuthorization, @unchecked Sendable {
-//    private let _credential: ASAuthorizationCredential
-//    
-//    override var credential: ASAuthorizationCredential {
-//        return _credential
-//    }
-//    
-//    init(credential: ASAuthorizationCredential) {
-//        self._credential = credential
-//        super.init()
-//    }
-//    
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//}
-
 class MockContinueNode: ContinueNode, @unchecked Sendable {
     
     init(callbacks: Callbacks) {

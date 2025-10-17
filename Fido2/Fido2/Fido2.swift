@@ -151,7 +151,11 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
     ///- Returns: The presentation anchor.
     public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         guard let window = window else {
-            fatalError("Window not set")
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first {
+                return window
+            }
+            fatalError("Window not set. This should never occur.")
         }
         return window
     }
