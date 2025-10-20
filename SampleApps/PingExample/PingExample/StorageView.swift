@@ -12,12 +12,13 @@
 import SwiftUI
 
 struct StorageView: View {
+    let menuItem: MenuItem
     var storageViewModel = StorageViewModel()
     var body: some View {
         Text("This View is for testing Storage functionality.\nPlease check the Console Logs")
             .font(.title3)
             .multilineTextAlignment(.center)
-            .navigationBarTitle("Storage", displayMode: .inline)
+            .navigationTitle(menuItem.title)
             .onAppear() {
                 Task {
                     await storageViewModel.setupMemoryStorage()

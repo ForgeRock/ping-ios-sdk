@@ -17,7 +17,7 @@ struct OidcLoginView: View {
     /// The view model that manages the Journey flow logic.
     @StateObject private var oidcLoginViewModel = OidcLoginViewModel()
     /// A binding to the navigation stack path.
-    @Binding var path: [String]
+    @Binding var path: [MenuItem]
     
     var body: some View {
         ZStack {
@@ -29,7 +29,7 @@ struct OidcLoginView: View {
                     case .success( _ ):
                         VStack{}.onAppear {
                             path.removeLast()
-                            path.append("Token")
+                            path.append(.token)
                         }
                     case .failure(let error):
                         ErrorView(message: error.localizedDescription)

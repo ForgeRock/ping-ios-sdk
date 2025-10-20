@@ -14,7 +14,7 @@ import SwiftUI
 /// A view for managing the logout process.
 struct LogOutView: View {
     /// A binding to the navigation stack path.
-    @Binding var path: [String]
+    @Binding var path: [MenuItem]
     /// State object for managing the logout functionality.
     @StateObject private var logoutViewModel =  LogOutViewModel()
     
@@ -28,6 +28,6 @@ struct LogOutView: View {
                 }
             }
         }
-        .navigationTitle("Logout")
+        .navigationTitle(path.last?.title ?? "")
     }
 }
