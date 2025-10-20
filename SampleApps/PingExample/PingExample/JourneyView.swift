@@ -21,7 +21,7 @@ struct JourneyView: View {
     /// The view model that manages the Journey flow logic.
     @StateObject private var journeyViewModel = JourneyViewModel()
     /// A binding to the navigation stack path.
-    @Binding var path: [String]
+    @Binding var path: [MenuItem]
     
     var body: some View {
         ZStack {
@@ -51,7 +51,7 @@ struct JourneyView: View {
                             // Authentication successful, retrieve the session
                             VStack{}.onAppear {
                                 path.removeLast()
-                                path.append("Token")
+                                path.append(.token)
                             }
                         default:
                             EmptyView()

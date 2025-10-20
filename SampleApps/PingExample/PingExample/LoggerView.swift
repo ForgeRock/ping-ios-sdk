@@ -12,12 +12,13 @@
 import SwiftUI
 
 struct LoggerView: View {
+    let menuItem: MenuItem
     var loggerViewModel = LoggerViewModel()
     var body: some View {
         Text("This View is for testing Logger functionality.\nPlease check the Console Logs")
             .font(.title3)
             .multilineTextAlignment(.center)
-            .navigationBarTitle("Logger", displayMode: .inline)
+            .navigationTitle(menuItem.title)
             .onAppear() {
                 loggerViewModel.setupLogger()
             }
