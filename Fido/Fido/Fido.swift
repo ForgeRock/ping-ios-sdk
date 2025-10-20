@@ -11,11 +11,11 @@
 import Foundation
 import AuthenticationServices
 
-/// Fido2 is a class that provides FIDO2 registration and authentication functionalities.
-public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+/// Fido is a class that provides FIDO registration and authentication functionalities.
+public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     
-    /// The shared singleton Fido2 instance.
-    public static let shared = Fido2()
+    /// The shared singleton FIDO instance.
+    public static let shared = Fido()
     
     var window: ASPresentationAnchor?
     var completion: ((Result<[String: Any], Error>) -> Void)?
@@ -27,7 +27,7 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
         return authorizationController
     }
     
-    /// Registers a new FIDO2 credential.
+    /// Registers a new FIDO credential.
     ///
     /// - Parameters:
     ///   - options: A dictionary containing the registration options.
@@ -102,7 +102,7 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
         }
     }
     
-    /// Authenticates with an existing FIDO2 credential.
+    /// Authenticates with an existing FIDO credential.
     ///
     /// - Parameters:
     ///   - options: A dictionary containing the authentication options.
@@ -203,7 +203,7 @@ public class Fido2: NSObject, ASAuthorizationControllerDelegate, ASAuthorization
     }
 }
 
-/// Represents an error that can occur during FIDO2 operations.
+/// Represents an error that can occur during FIDO operations.
 public enum FidoError: Error, Equatable {
     case invalidChallenge
     case invalidWindow

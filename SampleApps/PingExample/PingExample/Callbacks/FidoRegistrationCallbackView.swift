@@ -1,5 +1,5 @@
 //
-//  Fido2RegistrationCollectorView.swift
+//  FidoRegistrationCallbackView.swift
 //  PingExample
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
@@ -9,17 +9,17 @@
 //
 
 import SwiftUI
-import PingFido2
+import PingFido
 
-struct Fido2RegistrationCollectorView: View {
-    var collector: Fido2RegistrationCollector
+struct FidoRegistrationCallbackView: View {
+    var callback: FidoRegistrationCallback
     let onNext: () -> Void
     
     @State private var deviceName: String = ""
     
     var body: some View {
         VStack {
-            Text("FIDO2 Registration")
+            Text("FIDO Registration")
                 .font(.title)
             TextField("Device Name (Optional)", text: $deviceName)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -27,17 +27,15 @@ struct Fido2RegistrationCollectorView: View {
             Button(action: {
                 if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                    let window = windowScene.windows.first {
-                    collector.register(window: window) { result in
-                        switch result {
-                        case .success:
-                            onNext()
-                        case .failure(let error):
-                            print("FIDO2 Registration failed: \(error.localizedDescription)")
+                    callback.register(deviceName: deviceName, window: window) { error in
+                        if let error = error {
+                            print("FIDO Registration failed: \(error.localizedDescription)")
                         }
+                        onNext()
                     }
                 }
             }) {
-                Text("Register with FIDO2")
+                Text("Register with FIDO")
             }
         }
     }

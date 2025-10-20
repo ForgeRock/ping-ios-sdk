@@ -1,7 +1,7 @@
 
 //
-//  Fido2CollectorTests.swift
-//  PingFido2Tests
+//  FidoCollectorTests.swift
+//  PingFidoTests
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -10,9 +10,9 @@
 //
 
 import XCTest
-@testable import PingFido2
+@testable import PingFido
 
-class Fido2CollectorTests: XCTestCase {
+class FidoCollectorTests: XCTestCase {
 
     func testGetCollector() {
         // Test registration collector
@@ -20,48 +20,48 @@ class Fido2CollectorTests: XCTestCase {
             FidoConstants.FIELD_ACTION: FidoConstants.ACTION_REGISTER,
             FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]
         ]
-        let registrationCollector = try? AbstractFido2Collector.getCollector(with: registrationJson)
-        XCTAssertTrue(registrationCollector is Fido2RegistrationCollector)
+        let registrationCollector = try? AbstractFidoCollector.getCollector(with: registrationJson)
+        XCTAssertTrue(registrationCollector is FidoRegistrationCollector)
         
         // Test authentication collector
         let authenticationJson: [String: Any] = [
             FidoConstants.FIELD_ACTION: FidoConstants.ACTION_AUTHENTICATE,
             FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]
         ]
-        let authenticationCollector = try? AbstractFido2Collector.getCollector(with: authenticationJson)
-        XCTAssertTrue(authenticationCollector is Fido2AuthenticationCollector)
+        let authenticationCollector = try? AbstractFidoCollector.getCollector(with: authenticationJson)
+        XCTAssertTrue(authenticationCollector is FidoAuthenticationCollector)
         
         // Test invalid action
         let invalidActionJson: [String: Any] = ["action": "invalid"]
-        XCTAssertThrowsError(try AbstractFido2Collector.getCollector(with: invalidActionJson)) {
+        XCTAssertThrowsError(try AbstractFidoCollector.getCollector(with: invalidActionJson)) {
             let fidoError = $0 as? FidoError
             XCTAssertEqual(fidoError, .unsupportedAction("invalid"))
         }
         
         // Test missing action
         let missingActionJson: [String: Any] = [:]
-        XCTAssertThrowsError(try AbstractFido2Collector.getCollector(with: missingActionJson)) {
+        XCTAssertThrowsError(try AbstractFidoCollector.getCollector(with: missingActionJson)) {
             let fidoError = $0 as? FidoError
             XCTAssertEqual(fidoError, .invalidAction)
         }
     }
     
-    // MARK: - Fido2AuthenticationCollector Tests
+    // MARK: - FidoAuthenticationCollector Tests
     
-    func testFido2AuthenticationCollectorInit() {
+    func testFidoAuthenticationCollectorInit() {
         let json: [String: Any] = [
             FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]
         ]
-        let collector = Fido2AuthenticationCollector(with: json)
+        let collector = FidoAuthenticationCollector(with: json)
         XCTAssertNotNil(collector)
         XCTAssertFalse(collector.publicKeyCredentialRequestOptions.isEmpty)
         let invalidJson: [String: Any] = [:]
-        let collector2 = Fido2AuthenticationCollector(with: invalidJson)
+        let collector2 = FidoAuthenticationCollector(with: invalidJson)
         XCTAssertTrue(collector2.publicKeyCredentialRequestOptions.isEmpty)
     }
     
-    func testFido2AuthenticationCollectorPayload() {
-        let collector = Fido2AuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+    func testFidoAuthenticationCollectorPayload() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
         XCTAssertNil(collector.payload())
         
         collector.assertionValue = ["test": "test"]
@@ -70,10 +70,10 @@ class Fido2CollectorTests: XCTestCase {
         XCTAssertEqual(payload?[FidoConstants.FIELD_ASSERTION_VALUE] as? [String: String], ["test": "test"])
     }
     
-    func testFido2AuthenticationCollectorAuthenticate() {
-        let mockFido2 = MockFido2()
-        let collector = Fido2AuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
-        collector.fido2 = mockFido2
+    func testFidoAuthenticationCollectorAuthenticate() {
+        let mockFido = MockFido()
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        collector.fido = mockFido
         
         // Test success
         let successResponse: [String: Any] = [
@@ -83,9 +83,9 @@ class Fido2CollectorTests: XCTestCase {
             FidoConstants.FIELD_SIGNATURE: "signature".data(using: .utf8)!,
             FidoConstants.FIELD_USER_HANDLE: "userHandle".data(using: .utf8)!
         ]
-        mockFido2.authenticationResult = .success(successResponse)
+        mockFido.authenticationResult = .success(successResponse)
         
-        let expectation = self.expectation(description: "FIDO2 authentication success")
+        let expectation = self.expectation(description: "FIDO authentication success")
         collector.authenticate(window: MockASPresentationAnchor()) { result in
             switch result {
             case .success(let response):
@@ -98,8 +98,8 @@ class Fido2CollectorTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
         
         // Test failure
-        mockFido2.authenticationResult = .failure(FidoError.invalidChallenge)
-        let failureExpectation = self.expectation(description: "FIDO2 authentication failure")
+        mockFido.authenticationResult = .failure(FidoError.invalidChallenge)
+        let failureExpectation = self.expectation(description: "FIDO authentication failure")
         collector.authenticate(window: MockASPresentationAnchor()) { result in
             switch result {
             case .success:
@@ -112,22 +112,22 @@ class Fido2CollectorTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
     
-    // MARK: - Fido2RegistrationCollector Tests
+    // MARK: - FidoRegistrationCollector Tests
     
-    func testFido2RegistrationCollectorInit() {
+    func testFidoRegistrationCollectorInit() {
         let json: [String: Any] = [
             FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]
         ]
-        let collector = Fido2RegistrationCollector(with: json)
+        let collector = FidoRegistrationCollector(with: json)
         XCTAssertNotNil(collector)
         XCTAssertFalse(collector.publicKeyCredentialCreationOptions.isEmpty)
         let invalidJson: [String: Any] = [:]
-        let collector2 = Fido2RegistrationCollector(with: invalidJson)
+        let collector2 = FidoRegistrationCollector(with: invalidJson)
         XCTAssertTrue(collector2.publicKeyCredentialCreationOptions.isEmpty)
     }
     
-    func testFido2RegistrationCollectorPayload() {
-        let collector = Fido2RegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
+    func testFidoRegistrationCollectorPayload() {
+        let collector = FidoRegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
         XCTAssertNil(collector.payload())
         
         collector.attestationValue = ["test": "test"]
@@ -136,10 +136,10 @@ class Fido2CollectorTests: XCTestCase {
         XCTAssertEqual(payload?[FidoConstants.FIELD_ATTESTATION_VALUE] as? [String: String], ["test": "test"])
     }
     
-    func testFido2RegistrationCollectorRegister() {
-        let mockFido2 = MockFido2()
-        let collector = Fido2RegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
-        collector.fido2 = mockFido2
+    func testFidoRegistrationCollectorRegister() {
+        let mockFido = MockFido()
+        let collector = FidoRegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
+        collector.fido = mockFido
         
         // Test success
         let successResponse: [String: Any] = [
@@ -147,9 +147,9 @@ class Fido2CollectorTests: XCTestCase {
             FidoConstants.FIELD_CLIENT_DATA_JSON: "clientDataJSON".data(using: .utf8)!,
             FidoConstants.FIELD_ATTESTATION_OBJECT: "attestationObject".data(using: .utf8)!
         ]
-        mockFido2.registrationResult = .success(successResponse)
+        mockFido.registrationResult = .success(successResponse)
         
-        let expectation = self.expectation(description: "FIDO2 registration success")
+        let expectation = self.expectation(description: "FIDO registration success")
         collector.register(window: MockASPresentationAnchor()) { result in
             switch result {
             case .success(let response):
@@ -162,8 +162,8 @@ class Fido2CollectorTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
         
         // Test failure
-        mockFido2.registrationResult = .failure(FidoError.invalidChallenge)
-        let failureExpectation = self.expectation(description: "FIDO2 registration failure")
+        mockFido.registrationResult = .failure(FidoError.invalidChallenge)
+        let failureExpectation = self.expectation(description: "FIDO registration failure")
         collector.register(window: MockASPresentationAnchor()) { result in
             switch result {
             case .success:

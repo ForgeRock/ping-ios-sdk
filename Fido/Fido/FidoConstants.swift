@@ -14,14 +14,14 @@ import Foundation
 public struct FidoConstants {
     // MARK: - Actions
     
-    /// Action to register a new FIDO2 credential.
+    /// Action to register a new FIDO credential.
     public static let ACTION_REGISTER = "REGISTER"
-    /// Action to authenticate with an existing FIDO2 credential.
+    /// Action to authenticate with an existing FIDO credential.
     public static let ACTION_AUTHENTICATE = "AUTHENTICATE"
 
     // MARK: - Event Types
     
-    /// Event type for submitting a FIDO2 response.
+    /// Event type for submitting a FIDO response.
     public static let EVENT_TYPE_SUBMIT = "submit"
 
     // MARK: - JSON Fields
@@ -30,7 +30,7 @@ public struct FidoConstants {
     public static let FIELD_DATA = "data"
     /// The key for the action to be performed (e.g., "REGISTER" or "AUTHENTICATE").
     public static let FIELD_ACTION = "action"
-    /// The key for the response data from a FIDO2 operation.
+    /// The key for the response data from a FIDO operation.
     public static let FIELD_RESPONSE = "response"
     /// The key for the raw ID of a credential, typically Base64 encoded.
     public static let FIELD_RAW_ID = "rawId"
@@ -121,7 +121,7 @@ public struct FidoConstants {
 
     // MARK: - Default Values
     
-    /// The default timeout for FIDO2 operations (60 seconds).
+    /// The default timeout for FIDO operations (60 seconds).
     public static let DEFAULT_TIMEOUT: Double = 60000.0
     /// The default attestation preference ("none").
     public static let DEFAULT_ATTESTATION = "none"
@@ -136,7 +136,7 @@ public struct FidoConstants {
 
     // MARK: - Separators
     
-    /// The separator used for concatenating data in legacy FIDO2 responses.
+    /// The separator used for concatenating data in legacy FIDO responses.
     public static let DATA_SEPARATOR = "::"
     /// The separator used for integer arrays.
     public static let INT_SEPARATOR = ","
@@ -168,15 +168,15 @@ public struct FidoConstants {
     /// The platform authenticator type.
     public static let AUTHENTICATOR_PLATFORM = "platform"
 
-    // MARK: - FIDO2 JSON Response Keys
+    // MARK: - FIDO JSON Response Keys
     
     /// The key for legacy data in a JSON response.
     public static let FIELD_LEGACY_DATA = "legacyData"
 
     // MARK: - Callback Types
     
-    /// The type for the FIDO2 registration callback.
-    public static let FIDO2_REGISTRATION_CALLBACK = "Fido2RegistrationCallback"
-    /// The type for the FIDO2 authentication callback.
-    public static let FIDO2_AUTHENTICATION_CALLBACK = "Fido2AuthenticationCallback"
+    /// The type for the FIDO registration callback.
+    public static let FIDO_REGISTRATION_CALLBACK = "FidoRegistrationCallback"
+    /// The type for the FIDO authentication callback.
+    public static let FIDO_AUTHENTICATION_CALLBACK = "FidoAuthenticationCallback"
 }

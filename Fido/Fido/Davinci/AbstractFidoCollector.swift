@@ -1,6 +1,6 @@
 //
-//  AbstractFido2Collector.swift
-//  Fido2
+//  AbstractFidoCollector.swift
+//  Fido
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -13,39 +13,39 @@ import PingDavinci
 import PingLogger
 import PingOrchestrate
 
-/// An abstract base class for FIDO2 collectors in a DaVinci flow.
-public class AbstractFido2Collector: FieldCollector<[String: Any]>, DaVinciAware, Submittable, @unchecked Sendable {    
+/// An abstract base class for Fido collectors in a DaVinci flow.
+public class AbstractFidoCollector: FieldCollector<[String: Any]>, DaVinciAware, Submittable, @unchecked Sendable {    
     
     /// The DaVinci instance, providing access to configuration and logging.
     public var davinci: DaVinci?
     
-    /// The logger for recording FIDO2 related events.
+    /// The logger for recording Fido related events.
     public var logger: Logger? {
         return davinci?.config.logger
     }
     
-    /// The FIDO2 instance, used for FIDO2 operations.
-    var fido2: Fido2 = Fido2.shared
+    /// The Fido instance, used for Fido operations.
+    var fido: Fido = Fido.shared
     
     /// Returns the event type for submission.
     public func eventType() -> String {
         return Constants.submit
     }
     
-    /// A factory method to create the appropriate FIDO2 collector based on the action specified in the JSON payload.
+    /// A factory method to create the appropriate Fido collector based on the action specified in the JSON payload.
     ///
     /// - Parameter json: The JSON payload from the server.
     /// - Throws: An error if the action is invalid or unsupported.
-    /// - Returns: An instance of a concrete `AbstractFido2Collector` subclass.
-    public static func getCollector(with json: [String: Any]) throws -> AbstractFido2Collector {
+    /// - Returns: An instance of a concrete `AbstractFidoCollector` subclass.
+    public static func getCollector(with json: [String: Any]) throws -> AbstractFidoCollector {
         guard let action = json[FidoConstants.FIELD_ACTION] as? String else {
             throw FidoError.invalidAction
         }
         switch action {
         case FidoConstants.ACTION_REGISTER:
-            return Fido2RegistrationCollector(with: json)
+            return FidoRegistrationCollector(with: json)
         case FidoConstants.ACTION_AUTHENTICATE:
-            return Fido2AuthenticationCollector(with: json)
+            return FidoAuthenticationCollector(with: json)
         default:
             throw FidoError.unsupportedAction(action)
         }

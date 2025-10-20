@@ -1,5 +1,5 @@
 //
-//  Fido2AuthenticationCollectorView.swift
+//  FidoAuthenticationCollectorView.swift
 //  PingExample
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
@@ -9,15 +9,15 @@
 //
 
 import SwiftUI
-import PingFido2
+import PingFido
 
-struct Fido2AuthenticationCollectorView: View {
-    var collector: Fido2AuthenticationCollector
+struct FidoAuthenticationCollectorView: View {
+    var collector: FidoAuthenticationCollector
     let onNext: () -> Void
     
     var body: some View {
         VStack {
-            Text("FIDO2 Authentication")
+            Text("FIDO Authentication")
                 .font(.title)
             Button(action: {
                 if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
@@ -27,12 +27,12 @@ struct Fido2AuthenticationCollectorView: View {
                         case .success:
                             onNext()
                         case .failure(let error):
-                            print("FIDO2 Authentication failed: \(error.localizedDescription)")
+                            print("FIDO Authentication failed: \(error.localizedDescription)")
                         }
                     }
                 }
             }) {
-                Text("Authenticate with FIDO2")
+                Text("Authenticate with FIDO")
             }
         }
     }

@@ -1,6 +1,6 @@
 //
-//  PingFido2Tests.swift
-//  PingFido2Tests
+//  PingFidoTests.swift
+//  PingFidoTests
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -9,22 +9,22 @@
 //
 
 import XCTest
-@testable import PingFido2
+@testable import PingFido
 @testable import PingJourney
 @testable import PingOrchestrate
 import AuthenticationServices
 
-class PingFido2Tests: XCTestCase {
+class PingFidoTests: XCTestCase {
 
-    var fido2: Fido2!
+    var fido: Fido!
     
     override func setUp() {
         super.setUp()
-        fido2 = Fido2()
+        fido = Fido()
     }
     
     override func tearDown() {
-        fido2 = nil
+        fido = nil
         super.tearDown()
     }
 
@@ -45,7 +45,7 @@ class PingFido2Tests: XCTestCase {
             ]
         ]
         
-        let expectation = self.expectation(description: "FIDO2 registration expectation")
+        let expectation = self.expectation(description: "FIDO registration expectation")
         let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
         guard let scene = windowScene else {
             XCTFail("No UIWindowScene available")
@@ -53,7 +53,7 @@ class PingFido2Tests: XCTestCase {
         }
         let window = UIWindow(windowScene: scene)
         
-        fido2.register(options: options, window: window) { result in
+        fido.register(options: options, window: window) { result in
             switch result {
             case .success( _):
                 XCTFail("Expected to fail, got success")
@@ -74,7 +74,7 @@ class PingFido2Tests: XCTestCase {
             "rpId": "example.com"
         ]
         
-        let expectation = self.expectation(description: "FIDO2 authentication expectation")
+        let expectation = self.expectation(description: "FIDO authentication expectation")
         let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
         guard let scene = windowScene else {
             XCTFail("No UIWindowScene available")
@@ -82,7 +82,7 @@ class PingFido2Tests: XCTestCase {
         }
         let window = UIWindow(windowScene: scene)
         
-        fido2.authenticate(options: options, window: window) { result in
+        fido.authenticate(options: options, window: window) { result in
             switch result {
             case .success( _):
                 XCTFail("Expected to fail, got success")
@@ -97,8 +97,8 @@ class PingFido2Tests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
     
-    func testFido2RegistrationCallbackTransform() {
-        let callback = Fido2RegistrationCallback()
+    func testFidoRegistrationCallbackTransform() {
+        let callback = FidoRegistrationCallback()
         let input: [String: Any] = [
             FidoConstants.FIELD_CHALLENGE: "someChallenge",
             FidoConstants.FIELD_RELYING_PARTY_NAME: "Example Corp",
@@ -118,8 +118,8 @@ class PingFido2Tests: XCTestCase {
         // Add more assertions here
     }
     
-    func testFido2AuthenticationCallbackTransform() {
-        let callback = Fido2AuthenticationCallback()
+    func testFidoAuthenticationCallbackTransform() {
+        let callback = FidoAuthenticationCallback()
         let input: [String: Any] = [
             FidoConstants.FIELD_CHALLENGE: "someChallenge",
             FidoConstants.FIELD_RELYING_PARTY_ID_INTERNAL: "example.com"
@@ -133,7 +133,7 @@ class PingFido2Tests: XCTestCase {
     }
     
     func testHandleError() {
-        let callback = Fido2Callback()
+        let callback = FidoCallback()
         let journey = Journey.createJourney()
         let hiddenValueCallback = HiddenValueCallback()
         hiddenValueCallback.initValue(name: JourneyConstants.id, value: FidoConstants.WEB_AUTHN_OUTCOME)
@@ -147,8 +147,8 @@ class PingFido2Tests: XCTestCase {
         XCTAssertEqual(hiddenValueCallback.value, "ERROR::NotAllowedError:The operation was canceled.")
     }
     
-    func testFido2RegistrationCallbackInit() {
-        let callback = Fido2RegistrationCallback()
+    func testFidoRegistrationCallbackInit() {
+        let callback = FidoRegistrationCallback()
         let data: [String: Any] = [
             FidoConstants.FIELD_SUPPORTS_JSON_RESPONSE: true,
             FidoConstants.FIELD_CHALLENGE: "someChallenge"
@@ -157,8 +157,8 @@ class PingFido2Tests: XCTestCase {
         XCTAssertTrue(callback.publicKeyCredentialCreationOptions.keys.contains(FidoConstants.FIELD_CHALLENGE))
     }
     
-    func testFido2AuthenticationCallbackInit() {
-        let callback = Fido2AuthenticationCallback()
+    func testFidoAuthenticationCallbackInit() {
+        let callback = FidoAuthenticationCallback()
         let data: [String: Any] = [
             FidoConstants.FIELD_SUPPORTS_JSON_RESPONSE: true,
             FidoConstants.FIELD_CHALLENGE: "someChallenge"

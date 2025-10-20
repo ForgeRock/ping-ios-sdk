@@ -1,7 +1,7 @@
 
 //
-//  Fido2CallbackTests.swift
-//  PingFido2Tests
+//  FidoCallbackTests.swift
+//  PingFidoTests
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -10,26 +10,26 @@
 //
 
 import XCTest
-@testable import PingFido2
+@testable import PingFido
 @testable import PingJourney
 
-class Fido2CallbackTests: XCTestCase {
+class FidoCallbackTests: XCTestCase {
 
-    var mockFido2: MockFido2!
+    var mockFido: MockFido!
     
     override func setUp() {
         super.setUp()
-        mockFido2 = MockFido2()
+        mockFido = MockFido()
     }
     
     override func tearDown() {
-        mockFido2 = nil
+        mockFido = nil
         super.tearDown()
     }
     
-    func testFido2RegistrationCallbackRegister() {
-        let callback = Fido2RegistrationCallback()
-        callback.fido2 = mockFido2
+    func testFidoRegistrationCallbackRegister() {
+        let callback = FidoRegistrationCallback()
+        callback.fido = mockFido
         
         let journey = Journey.createJourney()
         let hiddenValueCallback = HiddenValueCallback()
@@ -44,9 +44,9 @@ class Fido2CallbackTests: XCTestCase {
             FidoConstants.FIELD_CLIENT_DATA_JSON: "clientDataJSON".data(using: .utf8)!,
             FidoConstants.FIELD_ATTESTATION_OBJECT: "attestationObject".data(using: .utf8)!
         ]
-        mockFido2.registrationResult = .success(successResponse)
+        mockFido.registrationResult = .success(successResponse)
         
-        let expectation = self.expectation(description: "FIDO2 registration success")
+        let expectation = self.expectation(description: "FIDO registration success")
         callback.register(window: MockASPresentationAnchor()) { error in
             XCTAssertNil(error)
             expectation.fulfill()
@@ -54,8 +54,8 @@ class Fido2CallbackTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
         
         // Test failure
-        mockFido2.registrationResult = .failure(FidoError.invalidChallenge)
-        let failureExpectation = self.expectation(description: "FIDO2 registration failure")
+        mockFido.registrationResult = .failure(FidoError.invalidChallenge)
+        let failureExpectation = self.expectation(description: "FIDO registration failure")
         callback.register(window: MockASPresentationAnchor()) { error in
             XCTAssertNotNil(error)
             XCTAssertEqual(error as? FidoError, .invalidChallenge)
@@ -64,9 +64,9 @@ class Fido2CallbackTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
     
-    func testFido2AuthenticationCallbackAuthenticate() {
-        let callback = Fido2AuthenticationCallback()
-        callback.fido2 = mockFido2
+    func testFidoAuthenticationCallbackAuthenticate() {
+        let callback = FidoAuthenticationCallback()
+        callback.fido = mockFido
         
         let journey = Journey.createJourney()
         let hiddenValueCallback = HiddenValueCallback()
@@ -83,9 +83,9 @@ class Fido2CallbackTests: XCTestCase {
             FidoConstants.FIELD_SIGNATURE: "signature".data(using: .utf8)!,
             FidoConstants.FIELD_USER_HANDLE: "userHandle".data(using: .utf8)!
         ]
-        mockFido2.authenticationResult = .success(successResponse)
+        mockFido.authenticationResult = .success(successResponse)
         
-        let expectation = self.expectation(description: "FIDO2 authentication success")
+        let expectation = self.expectation(description: "FIDO authentication success")
         callback.authenticate(window: MockASPresentationAnchor()) { error in
             XCTAssertNil(error)
             expectation.fulfill()
@@ -93,8 +93,8 @@ class Fido2CallbackTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
         
         // Test failure
-        mockFido2.authenticationResult = .failure(FidoError.invalidChallenge)
-        let failureExpectation = self.expectation(description: "FIDO2 authentication failure")
+        mockFido.authenticationResult = .failure(FidoError.invalidChallenge)
+        let failureExpectation = self.expectation(description: "FIDO authentication failure")
         callback.authenticate(window: MockASPresentationAnchor()) { error in
             XCTAssertNotNil(error)
             XCTAssertEqual(error as? FidoError, .invalidChallenge)

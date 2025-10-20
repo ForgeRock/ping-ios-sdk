@@ -1,5 +1,5 @@
 //
-//  Fido2RegistrationCallback.swift
+//  FidoRegistrationCallback.swift
 //  Fido
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
@@ -13,10 +13,10 @@ import PingJourney
 import AuthenticationServices
 import PingLogger
 
-/// A callback for handling FIDO2 registration in a PingOne Journey.
-public class Fido2RegistrationCallback: Fido2Callback, @unchecked Sendable {
+/// A callback for handling FIDO registration in a PingOne Journey.
+public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
     
-    /// The `PublicKeyCredentialCreationOptions` received from the server for FIDO2 registration.
+    /// The `PublicKeyCredentialCreationOptions` received from the server for FIDO registration.
     public var publicKeyCredentialCreationOptions: [String: Any] = [:]
     
     /// A flag indicating whether the server supports a JSON response format.
@@ -29,26 +29,26 @@ public class Fido2RegistrationCallback: Fido2Callback, @unchecked Sendable {
     ///   - value: The value of the property.
     public override func initValue(name: String, value: Any) {
         if name == FidoConstants.FIELD_DATA, let data = value as? [String: Any] {
-            logger?.d("Processing FIDO2 registration data")
+            logger?.d("Processing FIDO registration data")
             supportsJsonResponse = data[FidoConstants.FIELD_SUPPORTS_JSON_RESPONSE] as? Bool ?? false
             publicKeyCredentialCreationOptions = transform(data)
-            logger?.d("FIDO2 registration callback initialized successfully")
+            logger?.d("FIDO registration callback initialized successfully")
         }
     }
     
-    /// Initiates the FIDO2 registration process.
+    /// Initiates the FIDO registration process.
     ///
     /// - Parameters:
     ///  - deviceName: An optional name for the device being registered.
-    ///  - window: The `ASPresentationAnchor` to present the FIDO2 UI.
+    ///  - window: The `ASPresentationAnchor` to present the FIDO UI.
     ///  - completion: A closure that is called upon completion of the registration process.
     public func register(deviceName: String? = nil, window: ASPresentationAnchor, completion: @escaping (Error?) -> Void) {
-        logger?.d("Starting FIDO2 registration with device name: \(deviceName ?? "nil")")
+        logger?.d("Starting FIDO registration with device name: \(deviceName ?? "nil")")
         
-        fido2.register(options: publicKeyCredentialCreationOptions, window: window) { result in
+        fido.register(options: publicKeyCredentialCreationOptions, window: window) { result in
             switch result {
             case .success(let response):
-                self.logger?.d("FIDO2 registration successful")
+                self.logger?.d("FIDO registration successful")
                 guard let rawAttestationObject = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? Data,
                       let rawClientDataJSON = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
                       let rawIdData = response[FidoConstants.FIELD_RAW_ID] as? Data else {
@@ -92,19 +92,19 @@ public class Fido2RegistrationCallback: Fido2Callback, @unchecked Sendable {
                 self.valueCallback(value: callbackValue)
                 completion(nil)
             case .failure(let error):
-                self.logger?.e("FIDO2 registration failed", error: error)
+                self.logger?.e("FIDO registration failed", error: error)
                 self.handleError(error: error)
                 completion(error)
             }
         }
     }
     
-    /// Transforms the input dictionary from the server to the format expected by the FIDO2 client.
+    /// Transforms the input dictionary from the server to the format expected by the FIDO client.
     ///
-    /// - Parameter input: The input dictionary containing FIDO2 registration options.
-    /// - Returns: A transformed dictionary suitable for FIDO2 registration.
+    /// - Parameter input: The input dictionary containing FIDO registration options.
+    /// - Returns: A transformed dictionary suitable for FIDO registration.
     func transform(_ input: [String: Any]) -> [String: Any] {
-        logger?.d("Transforming FIDO2 registration creation options")
+        logger?.d("Transforming FIDO registration creation options")
         var output: [String: Any] = [:]
 
         if let challenge = input[FidoConstants.FIELD_CHALLENGE] as? String {

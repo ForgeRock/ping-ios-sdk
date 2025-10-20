@@ -1,6 +1,6 @@
 //
 //  CollectorInitializer.swift
-//  Fido2
+//  Fido
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -17,7 +17,7 @@ public class CollectorInitializer: NSObject {
     @objc public static func registerCollectors() {
         Task {
             await CollectorFactory.shared.register(type: "FIDO2", closure: { json in
-                return try? AbstractFido2Collector.getCollector(with: json)
+                return try? AbstractFidoCollector.getCollector(with: json)
             })
         }
     }

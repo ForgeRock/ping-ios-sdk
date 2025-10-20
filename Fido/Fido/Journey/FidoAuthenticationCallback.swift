@@ -1,5 +1,5 @@
 //
-//  Fido2AuthenticationCallback.swift
+//  FidoAuthenticationCallback.swift
 //  Fido
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
@@ -13,10 +13,10 @@ import PingJourney
 import AuthenticationServices
 import PingLogger
 
-/// A callback for handling FIDO2 authentication in a PingOne Journey.
-public class Fido2AuthenticationCallback: Fido2Callback, @unchecked Sendable {
+/// A callback for handling FIDO authentication in a PingOne Journey.
+public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
     
-    /// The `PublicKeyCredentialRequestOptions` received from the server for FIDO2 authentication.
+    /// The `PublicKeyCredentialRequestOptions` received from the server for FIDO authentication.
     public var publicKeyCredentialRequestOptions: [String: Any] = [:]
     
     /// A flag indicating whether the server supports a JSON response format.
@@ -29,25 +29,25 @@ public class Fido2AuthenticationCallback: Fido2Callback, @unchecked Sendable {
     ///   - value: The value of the property.
     public override func initValue(name: String, value: Any) {
         if name == FidoConstants.FIELD_DATA, let data = value as? [String: Any] {
-            logger?.d("Processing FIDO2 authentication data")
+            logger?.d("Processing FIDO authentication data")
             supportsJsonResponse = data[FidoConstants.FIELD_SUPPORTS_JSON_RESPONSE] as? Bool ?? false
             publicKeyCredentialRequestOptions = transform(data)
-            logger?.d("FIDO2 authentication callback initialized successfully")
+            logger?.d("FIDO authentication callback initialized successfully")
         }
     }
     
-    /// Initiates the FIDO2 authentication process.
+    /// Initiates the FIDO authentication process.
     ///
     /// - Parameters:
-    ///  - window: The `ASPresentationAnchor` to present the FIDO2 UI.
+    ///  - window: The `ASPresentationAnchor` to present the FIDO UI.
     ///  - completion: A closure that is called upon completion of the authentication process.
     public func authenticate(window: ASPresentationAnchor, completion: @escaping (Error?) -> Void) {
-        logger?.d("Starting FIDO2 authentication")
+        logger?.d("Starting FIDO authentication")
         
-        fido2.authenticate(options: publicKeyCredentialRequestOptions, window: window) { result in
+        fido.authenticate(options: publicKeyCredentialRequestOptions, window: window) { result in
             switch result {
             case .success(let response):
-                self.logger?.d("FIDO2 authentication successful")
+                self.logger?.d("FIDO authentication successful")
                 
                 guard let signatureData = response[FidoConstants.FIELD_SIGNATURE] as? Data,
                       let clientData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
@@ -91,19 +91,19 @@ public class Fido2AuthenticationCallback: Fido2Callback, @unchecked Sendable {
                 self.valueCallback(value: callbackValue)
                 completion(nil)
             case .failure(let error):
-                self.logger?.e("FIDO2 authentication failed", error: error)
+                self.logger?.e("FIDO authentication failed", error: error)
                 self.handleError(error: error)
                 completion(error)
             }
         }
     }
     
-    /// Transforms the input dictionary from the server to the format expected by the FIDO2 client.
+    /// Transforms the input dictionary from the server to the format expected by the FIDO client.
     ///
-    /// - Parameter input: The input dictionary containing FIDO2 authentication options.
-    /// - Returns: A transformed dictionary suitable for FIDO2 authentication.
+    /// - Parameter input: The input dictionary containing FIDO authentication options.
+    /// - Returns: A transformed dictionary suitable for FIDO authentication.
     func transform(_ input: [String: Any]) -> [String: Any] {
-        logger?.d("Transforming FIDO2 authentication request options")
+        logger?.d("Transforming FIDO authentication request options")
         var output: [String: Any] = [:]
 
         if let challenge = input[FidoConstants.FIELD_CHALLENGE] as? String {

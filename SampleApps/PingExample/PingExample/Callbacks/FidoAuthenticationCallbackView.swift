@@ -1,5 +1,5 @@
 //
-//  Fido2AuthenticationCallbackView.swift
+//  FidoAuthenticationCallbackView.swift
 //  PingExample
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
@@ -9,28 +9,28 @@
 //
 
 import SwiftUI
-import PingFido2
+import PingFido
 
-struct Fido2AuthenticationCallbackView: View {
-    var callback: Fido2AuthenticationCallback
+struct FidoAuthenticationCallbackView: View {
+    var callback: FidoAuthenticationCallback
     let onNext: () -> Void
     
     var body: some View {
         VStack {
-            Text("FIDO2 Authentication")
+            Text("FIDO Authentication")
                 .font(.title)
             Button(action: {
                 if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                    let window = windowScene.windows.first {
                     callback.authenticate(window: window) { error in
                         if let error = error {
-                            print("FIDO2 Authentication failed: \(error.localizedDescription)")
+                            print("FIDO Authentication failed: \(error.localizedDescription)")
                         }
                         onNext()
                     }
                 }
             }) {
-                Text("Authenticate with FIDO2")
+                Text("Authenticate with FIDO")
             }
         }
     }

@@ -1,5 +1,5 @@
 //
-//  Fido2Callback.swift
+//  FidoCallback.swift
 //  Fido
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
@@ -14,12 +14,12 @@ import PingOrchestrate
 import PingLogger
 import AuthenticationServices
 
-/// Abstract base class for FIDO2 callbacks in PingOne Journey workflows.
+/// Abstract base class for FIDO callbacks in PingOne Journey workflows.
 ///
-/// This class provides common functionality for handling FIDO2 operations within
+/// This class provides common functionality for handling FIDO operations within
 /// Journey workflows, including error handling and value setting.
-/// It manages the interaction between FIDO2 operations and the Journey framework.
-public class Fido2Callback: AbstractCallback, JourneyAware, ContinueNodeAware, @unchecked Sendable {
+/// It manages the interaction between FIDO operations and the Journey framework.
+public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @unchecked Sendable {
     
     /// The Journey `ContinueNode` that this callback is associated with.
     public var continueNode: ContinueNode?
@@ -32,8 +32,8 @@ public class Fido2Callback: AbstractCallback, JourneyAware, ContinueNodeAware, @
         return journey?.config.logger
     }
     
-    /// Shared instance of the Fido2 manager.
-    var fido2: Fido2 = Fido2.shared
+    /// Shared instance of the Fido manager.
+    var fido: Fido = Fido.shared
     
     /// This method is an override from `AbstractCallback` and is not used in this context.
     public override func initValue(name: String, value: Any) {
@@ -52,12 +52,12 @@ public class Fido2Callback: AbstractCallback, JourneyAware, ContinueNodeAware, @
         }
     }
     
-    /// Handles errors that occur during FIDO2 operations.
+    /// Handles errors that occur during FIDO operations.
     ///
     /// This method converts `ASAuthorizationError` codes into error messages that the Journey server can process.
     /// - Parameter error: The error to handle and convert.
     public func handleError(error: Error) {
-        logger?.e("Handling FIDO2 error: \(error.localizedDescription)", error: error)
+        logger?.e("Handling FIDO error: \(error.localizedDescription)", error: error)
         
         let nsError = error as NSError
         

@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "ECD5A29B2E8FE40B00A27205"
-               BuildableName = "PingFido2.framework"
-               BlueprintName = "PingFido2"
-               ReferencedContainer = "container:Fido2.xcodeproj">
+               BuildableName = "PingFido.framework"
+               BlueprintName = "PingFido"
+               ReferencedContainer = "container:Fido.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -51,9 +51,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "ECD5A29B2E8FE40B00A27205"
-            BuildableName = "PingFido2.framework"
-            BlueprintName = "PingFido2"
-            ReferencedContainer = "container:Fido2.xcodeproj">
+            BuildableName = "PingFido.framework"
+            BlueprintName = "PingFido"
+            ReferencedContainer = "container:Fido.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

@@ -1,7 +1,7 @@
 
 //
-//  Fido2ExtensionsTests.swift
-//  PingFido2Tests
+//  FidoExtensionsTests.swift
+//  PingFidoTests
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -10,9 +10,9 @@
 //
 
 import XCTest
-@testable import PingFido2
+@testable import PingFido
 
-class Fido2ExtensionsTests: XCTestCase {
+class FidoExtensionsTests: XCTestCase {
 
     func testDataExtensions() {
         let data = "Hello World".data(using: .utf8)!

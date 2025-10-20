@@ -15,7 +15,7 @@ import PingJourney
 public class CallbackInitializer: NSObject {
     /// Registers the FIDO callbacks with the `CallbackRegistry`.
     @objc public static func registerCallbacks() {
-        CallbackRegistry.shared.register(type: FidoConstants.FIDO2_REGISTRATION_CALLBACK, callback: Fido2RegistrationCallback.self)
-        CallbackRegistry.shared.register(type: FidoConstants.FIDO2_AUTHENTICATION_CALLBACK, callback: Fido2AuthenticationCallback.self)
+        CallbackRegistry.shared.register(type: FidoConstants.FIDO_REGISTRATION_CALLBACK, callback: FidoRegistrationCallback.self)
+        CallbackRegistry.shared.register(type: FidoConstants.FIDO_AUTHENTICATION_CALLBACK, callback: FidoAuthenticationCallback.self)
     }
 }

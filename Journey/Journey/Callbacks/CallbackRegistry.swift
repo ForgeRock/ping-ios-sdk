@@ -83,7 +83,7 @@ public class CallbackRegistry: @unchecked Sendable {
         if let c: NSObject.Type = NSClassFromString("PingDeviceProfile.DeviceProfile") as? NSObject.Type {
             c.perform(Selector(("registerCallbacks")))
         }
-        if let c: NSObject.Type = NSClassFromString("PingFido2.CallbackInitializer") as? NSObject.Type {
+        if let c: NSObject.Type = NSClassFromString("PingFido.CallbackInitializer") as? NSObject.Type {
             c.perform(Selector(("registerCallbacks")))
         }
     }

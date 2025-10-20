@@ -126,8 +126,8 @@ public class MetadataCallback: AbstractCallback, ObservableObject, @unchecked Se
 private enum Constants {
     fileprivate static let PING_ONE_PROTECT_INITIALIZE_CALLBACK = "PingOneProtectInitializeCallback"
     fileprivate static let PING_ONE_PROTECT_EVALUATION_CALLBACK = "PingOneProtectEvaluationCallback"
-    fileprivate static let FIDO_2_REGISTRATION_CALLBACK = "Fido2RegistrationCallback"
-    fileprivate static let FIDO_2_AUTHENTICATION_CALLBACK = "Fido2AuthenticationCallback"
+    fileprivate static let FIDO_2_REGISTRATION_CALLBACK = "FidoRegistrationCallback"
+    fileprivate static let FIDO_2_AUTHENTICATION_CALLBACK = "FidoAuthenticationCallback"
     fileprivate static let ACTION = "_action"
     fileprivate static let TYPE = "_type"
     fileprivate static let WEBAUTHN_REGISTRATION = "webauthn_registration"

@@ -1,6 +1,6 @@
 import Foundation
 import AuthenticationServices
-@testable import PingFido2
+@testable import PingFido
 @testable import PingJourney
 @testable import PingOrchestrate
 
@@ -56,7 +56,7 @@ class MockContinueNode: ContinueNode, @unchecked Sendable {
     }
 }
 
-class MockFido2: Fido2 {
+class MockFido: Fido {
     var registrationResult: Result<[String: Any], Error>?
     var authenticationResult: Result<[String: Any], Error>?
     

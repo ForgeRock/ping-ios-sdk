@@ -51,7 +51,7 @@ public actor CollectorFactory {
         if let c: NSObject.Type = NSClassFromString("PingProtect.ProtectCollector") as? NSObject.Type {
             c.perform(Selector(("registerCollector")))
         }
-        if let c: NSObject.Type = NSClassFromString("PingFido2.CollectorInitializer") as? NSObject.Type {
+        if let c: NSObject.Type = NSClassFromString("PingFido.CollectorInitializer") as? NSObject.Type {
             c.perform(Selector(("registerCollectors")))
         }
     }
