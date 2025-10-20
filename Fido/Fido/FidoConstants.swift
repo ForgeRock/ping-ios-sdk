@@ -122,7 +122,7 @@ public struct FidoConstants {
     // MARK: - Default Values
     
     /// The default timeout for FIDO operations (60 seconds).
-    public static let DEFAULT_TIMEOUT: Double = 60000.0
+    public static let DEFAULT_TIMEOUT: Int = 60000
     /// The default attestation preference ("none").
     public static let DEFAULT_ATTESTATION = "none"
     /// The default user verification preference ("required").

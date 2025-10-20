@@ -69,7 +69,7 @@ func handleDaVinciFido(json: [String: Any]) {
         let collector = try AbstractFidoCollector.getCollector(with: json)
         
         if let registrationCollector = collector as? FidoRegistrationCollector {
-            registrationCollector.register { result in
+            registrationCollector.register(window: window) { result in
                 switch result {
                 case .success(let attestationValue):
                     // Send attestationValue to the server
@@ -80,7 +80,7 @@ func handleDaVinciFido(json: [String: Any]) {
                 }
             }
         } else if let authenticationCollector = collector as? FidoAuthenticationCollector {
-            authenticationCollector.authenticate { result in
+            authenticationCollector.authenticate(window: window) { result in
                 switch result {
                 case .success(let assertionValue):
                     // Send assertionValue to the server

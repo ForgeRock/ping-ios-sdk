@@ -29,7 +29,7 @@ public class AbstractFidoCollector: FieldCollector<[String: Any]>, DaVinciAware,
     
     /// Returns the event type for submission.
     public func eventType() -> String {
-        return Constants.submit
+        return FidoConstants.EVENT_TYPE_SUBMIT
     }
     
     /// A factory method to create the appropriate Fido collector based on the action specified in the JSON payload.
