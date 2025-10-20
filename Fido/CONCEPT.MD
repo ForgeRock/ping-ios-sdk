@@ -1,17 +1,15 @@
 
 [![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)](https://github.com/ForgeRock/ping-ios-sdk)
 
-# FIDO2 Module Design Concept
+# FIDO Module Design Concept
 
-This document explains the internal design and architecture of the FIDO2 module, focusing on how it integrates with the `AuthenticationServices` framework.
+This document explains the internal design and architecture of the FIDO module, focusing on how it integrates with the `AuthenticationServices` framework and the two main Ping Identity authentication flows: DaVinci and Journey.
 
 ## Overview
 
-The FIDO2 module serves as a bridge between Ping Identity's authentication flows (DaVinci and Journey) and Apple's native FIDO2 capabilities through the `AuthenticationServices` framework. The `PingFido` class acts as a proxy, abstracting the complexity of the underlying credential management system while providing a clean, consistent API for authentication operations.
+The FIDO module serves as a bridge between Ping Identity's authentication flows and Apple's native FIDO capabilities through the `AuthenticationServices` framework. It provides a high-level API for FIDO registration and authentication, abstracting the complexity of the underlying credential management system.
 
 ## Architecture Components
-
-### Component Diagram
 
 ```mermaid
 graph TB
@@ -28,8 +26,8 @@ graph TB
       JC[Journey Callbacks]
     end
 
-    subgraph "FIDO2 Core"
-      PingFido[PingFido Instance]
+    subgraph "FIDO Core"
+      PingFido[Fido Instance]
     end
   end
 
@@ -57,73 +55,92 @@ graph TB
 
 ## Design Principles
 
-### 1. Proxy Pattern
+### 1. Abstraction and Encapsulation
 
-The `PingFido` class acts as a proxy to the `AuthenticationServices` framework:
+The `Fido` class encapsulates the interaction with the `AuthenticationServices` framework, providing a simple and clean API for FIDO operations.
 
-- **Abstraction**: Hides the complexity of the `AuthenticationServices` API.
-- **Error Handling**: Provides consistent error handling and reporting.
+### 2. Separation of Concerns
 
-### 2. Dependency Injection
+The module is divided into three main parts:
+- **Core:** The `Fido` class that handles the FIDO operations.
+- **DaVinci:** The collectors that integrate FIDO operations with the DaVinci flow.
+- **Journey:** The callbacks that integrate FIDO operations with the Journey flow.
 
-Both DaVinci Collectors and Journey Callbacks will depend on configurable `PingFido` instances:
+### 3. Testability
 
-- **Loose Coupling**: Components depend on the abstraction, not the implementation.
-- **Testability**: Easy to mock the `PingFido` instance for unit testing.
-- **Consistency**: All authentication flows use the same underlying FIDO2 operations.
+Dependency injection is used to allow for easy mocking of the `Fido` class, making the collectors and callbacks highly testable.
 
 ## Data Flow
 
-### FIDO2 Registration Flow
+### FIDO Registration Flow (DaVinci)
 
 ```mermaid
 sequenceDiagram
   participant App as Mobile App
-  participant SDK as Ping SDK
-  participant Server as Auth Server
-  participant PingFido as PingFido Instance
+  participant Collector as FidoRegistrationCollector
+  participant Server as DaVinci Server
+  participant Fido as Fido Instance
   participant AuthServices as AuthenticationServices
 
-  App ->> SDK: Start Registration Flow
-  SDK ->> Server: Start Registration Flow
-  Server ->> SDK: Registration Challenge (JSON)
-  SDK ->> PingFido: register(options)
-  PingFido ->> AuthServices: createCredentialRegistrationRequest(...)
-  Note over AuthServices: User interaction:<br/>- Select authenticator<br/>- Biometric verification<br/>- Create credential
-  AuthServices ->> PingFido: ASAuthorizationPlatformPublicKeyCredentialRegistration
-  PingFido ->> SDK: Result<[String: Any]>
-  SDK ->> App: Registration Complete
-  App ->> SDK: next()
-  SDK ->> Server: process node
+  App ->> Server: Start Registration Flow
+  Server ->> App: JSON with FIDO options
+  App ->> Collector: new FidoRegistrationCollector(json)
+  App ->> Collector: register()
+  Collector ->> Fido: register(options)
+  Fido ->> AuthServices: createCredentialRegistrationRequest(...)
+  Note over AuthServices: User interaction (e.g., biometrics)
+  AuthServices ->> Fido: ASAuthorizationPlatformPublicKeyCredentialRegistration
+  Fido ->> Collector: Result.success(response)
+  Collector ->> App: completion(success)
+  App ->> Server: Send attestationValue
 ```
 
-### FIDO2 Authentication Flow
+### FIDO Authentication Flow (Journey)
 
-Similar to the registration flow, but calling `authenticate()` instead of `register()`.
+```mermaid
+sequenceDiagram
+  participant App as Mobile App
+  participant Callback as FidoAuthenticationCallback
+  participant Server as Journey Server
+  participant Fido as Fido Instance
+  participant AuthServices as AuthenticationServices
+
+  App ->> Server: Start Authentication Flow
+  Server ->> App: JSON with FIDO options
+  App ->> Callback: new FidoAuthenticationCallback(json)
+  App ->> Callback: authenticate()
+  Callback ->> Fido: authenticate(options)
+  Fido ->> AuthServices: createCredentialAssertionRequest(...)
+  Note over AuthServices: User interaction (e.g., biometrics)
+  AuthServices ->> Fido: ASAuthorizationPlatformPublicKeyCredentialAssertion
+  Fido ->> Callback: Result.success(response)
+  Callback ->> App: completion(success)
+  App ->> Server: Send assertionValue
+```
 
 ## Key Components Explained
 
-### PingFido
+### Core (`Fido.swift`)
 
-- **Location**: `Fido/Fido`
-- **Purpose**: Central coordinator for all FIDO2 operations and Journey callbacks.
+- **Purpose**: Central coordinator for all FIDO operations.
 - **Responsibilities**:
     - Manage the `AuthenticationServices` lifecycle.
     - Handle errors and exceptions consistently.
-    - Support both discoverable and non-discoverable credentials.
-    - Provides the Journey callbacks for FIDO2 operations.
+    - Provides a simple API for `register` and `authenticate`.
+
+### DaVinci Integration (`Fido/Fido/Davinci`)
+
+- **Purpose**: Integrates FIDO operations with the DaVinci orchestration engine.
 - **Key Classes**:
-    - `PingFido.swift`: The main class that orchestrates the FIDO2 registration and authentication processes.
-    - `FidoModels.swift`: Contains the data models for FIDO2 requests and responses.
-    - `FidoConstants.swift`: Defines the constants used in the FIDO2 implementation.
-    - `PingFido.h`: The header file for the module.
-    - **Journey**: Contains the Journey callbacks for FIDO2 operations.
-        - `Fido2Callback.swift`: Base class for FIDO2 callbacks.
-        - `Fido2RegistrationCallback.swift`: Handles FIDO2 registration.
-        - `Fido2AuthenticationCallback.swift`: Handles FIDO2 authentication.
-        - `CallbackInitializer.swift`: Registers the FIDO2 callbacks with the Journey framework.
+    - `AbstractFidoCollector`: A factory class that creates the appropriate collector based on the `action` parameter from the server.
+    - `FidoRegistrationCollector`: Handles the FIDO registration ceremony in a DaVinci flow.
+    - `FidoAuthenticationCollector`: Handles the FIDO authentication ceremony in a DaVinci flow.
 
-### DaVinci Collectors & Journey Callbacks
+### Journey Integration (`Fido/Fido/Journey`)
 
-The integration with DaVinci is not yet implemented. The integration with Journey is handled by the `PingFido` module.
-
+- **Purpose**: Integrates FIDO operations with the Journey framework.
+- **Key Classes**:
+    - `FidoCallback`: Base class for FIDO callbacks, providing common functionality for error handling and value setting.
+    - `FidoRegistrationCallback`: Handles FIDO registration in a Journey flow.
+    - `FidoAuthenticationCallback`: Handles FIDO authentication in a Journey flow.
+    - `CallbackInitializer`: Registers the FIDO callbacks with the Journey `CallbackRegistry`.
