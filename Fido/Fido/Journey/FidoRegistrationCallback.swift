@@ -36,68 +36,83 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
         }
     }
     
-    /// Initiates the FIDO registration process.
+    /// Initiates the FIDO registration process using async/await.
     ///
     /// - Parameters:
-    ///  - deviceName: An optional name for the device being registered.
-    ///  - window: The `ASPresentationAnchor` to present the FIDO UI.
-    ///  - completion: A closure that is called upon completion of the registration process.
-    public func register(deviceName: String? = nil, window: ASPresentationAnchor, completion: @escaping (Error?) -> Void) {
-        logger?.d("Starting FIDO registration with device name: \(deviceName ?? "nil")")
+    ///   - deviceName: An optional name for the device being registered.
+    ///   - window: The `ASPresentationAnchor` to present the FIDO UI.
+    /// - Throws: An error if the registration process fails.
+    @MainActor
+    public func register(deviceName: String? = nil, window: ASPresentationAnchor) async throws {
+        logger?.d("Starting FIDO registration with device name: \(deviceName ?? "nil") (async)")
         
-        fido.register(options: publicKeyCredentialCreationOptions, window: window) { result in
-            switch result {
-            case .success(let response):
-                self.logger?.d("FIDO registration successful")
-                guard let rawAttestationObject = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? Data,
-                      let rawClientDataJSON = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
-                      let rawIdData = response[FidoConstants.FIELD_RAW_ID] as? Data else {
-                    let error = FidoError.invalidResponse
-                    self.logger?.e(error.localizedDescription, error: error)
-                    self.handleError(error: error)
-                    completion(error)
-                    return
-                }
-                
-                // For older servers, a concatenated string is sent.
-                let legacyData = [
-                    String(decoding: rawClientDataJSON, as: UTF8.self),
-                    convertInt8ArrToStr(rawAttestationObject.bytesArray.map { Int8(bitPattern: $0) }),
-                    base64ToBase64url(base64: rawIdData.base64EncodedString())
-                ].joined(separator: FidoConstants.DATA_SEPARATOR)
-                
-                var finalData = legacyData
-                if let deviceName = deviceName {
-                    finalData += "\(FidoConstants.DATA_SEPARATOR)\(deviceName)"
-                }
-                
-                let callbackValue: String
-                if self.supportsJsonResponse {
-                    // For newer servers, a JSON object is sent.
-                    let jsonResponse: [String: Any] = [
-                        FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: FidoConstants.AUTHENTICATOR_PLATFORM,
-                        FidoConstants.FIELD_LEGACY_DATA: finalData
-                    ]
-                    if let jsonData = try? JSONSerialization.data(withJSONObject: jsonResponse, options: []),
-                       let jsonString = String(data: jsonData, encoding: .utf8) {
-                        callbackValue = jsonString
-                    } else {
-                        callbackValue = ""
+        do {
+            // 1. Wrap the closure-based fido.register in a continuation
+            let response = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[String: Any], Error>) in
+                fido.register(options: publicKeyCredentialCreationOptions, window: window) { result in
+                    switch result {
+                    case .success(let response):
+                        continuation.resume(returning: response)
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
                     }
-                } else {
-                    callbackValue = finalData
                 }
-                
-                self.logger?.d("Setting registration callback value")
-                self.valueCallback(value: callbackValue)
-                completion(nil)
-            case .failure(let error):
-                self.logger?.e("FIDO registration failed", error: error)
-                self.handleError(error: error)
-                completion(error)
             }
+            
+            // 2. Handle the successful response
+            self.logger?.d("FIDO registration successful")
+            guard let rawAttestationObject = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? Data,
+                  let rawClientDataJSON = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
+                  let rawIdData = response[FidoConstants.FIELD_RAW_ID] as? Data else {
+                
+                let error = FidoError.invalidResponse
+                self.logger?.e(error.localizedDescription, error: error)
+                self.handleError(error: error)
+                throw error
+            }
+            
+            // For older servers, a concatenated string is sent.
+            let legacyData = [
+                String(decoding: rawClientDataJSON, as: UTF8.self),
+                convertInt8ArrToStr(rawAttestationObject.bytesArray.map { Int8(bitPattern: $0) }),
+                base64ToBase64url(base64: rawIdData.base64EncodedString())
+            ].joined(separator: FidoConstants.DATA_SEPARATOR)
+            
+            var finalData = legacyData
+            if let deviceName = deviceName {
+                finalData += "\(FidoConstants.DATA_SEPARATOR)\(deviceName)"
+            }
+            
+            let callbackValue: String
+            if self.supportsJsonResponse {
+                // For newer servers, a JSON object is sent.
+                let jsonResponse: [String: Any] = [
+                    FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: FidoConstants.AUTHENTICATOR_PLATFORM,
+                    FidoConstants.FIELD_LEGACY_DATA: finalData
+                ]
+                if let jsonData = try? JSONSerialization.data(withJSONObject: jsonResponse, options: []),
+                   let jsonString = String(data: jsonData, encoding: .utf8) {
+                    callbackValue = jsonString
+                } else {
+                    callbackValue = ""
+                }
+            } else {
+                callbackValue = finalData
+            }
+            
+            self.logger?.d("Setting registration callback value")
+            self.valueCallback(value: callbackValue)
+            // On success, the function simply returns.
+            
+        } catch {
+            // 3. Handle any error (from the continuation or the guard)
+            self.logger?.e("FIDO registration failed", error: error)
+            self.handleError(error: error)
+            throw error // Re-throw to the caller
         }
     }
+    
+    // MARK: - Private Transform
     
     /// Transforms the input dictionary from the server to the format expected by the FIDO client.
     ///

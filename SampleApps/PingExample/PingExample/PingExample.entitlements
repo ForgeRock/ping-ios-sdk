@@ -8,12 +8,7 @@
 	</array>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>webcredentials:openam-forgerrock-sdks.forgeblocks.com</string>
-		<string>webcredentials:openam-bafaloukas.forgeblocks.com</string>
-		<string>webcredentials:openam-bafaloukas.forgeblocks.com?mode=developer</string>
-		<string>webcredentials:idc.petrov.ca</string>
-		<string>webcredentials:idc.petrov.ca?mode=developer</string>
-		<string>webcredentials:petrov.ca?mode=developer</string>
+		<string>webcredentials:example.com</string>
 	</array>
 </dict>
 </plist>

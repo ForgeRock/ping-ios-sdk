@@ -36,67 +36,81 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
         }
     }
     
-    /// Initiates the FIDO authentication process.
+    /// Initiates the FIDO authentication process using async/await.
     ///
-    /// - Parameters:
-    ///  - window: The `ASPresentationAnchor` to present the FIDO UI.
-    ///  - completion: A closure that is called upon completion of the authentication process.
-    public func authenticate(window: ASPresentationAnchor, completion: @escaping (Error?) -> Void) {
-        logger?.d("Starting FIDO authentication")
+    /// - Parameter window: The `ASPresentationAnchor` to present the FIDO UI.
+    /// - Throws: An error if the authentication process fails.
+    @MainActor
+    public func authenticate(window: ASPresentationAnchor) async throws {
+        logger?.d("Starting FIDO authentication (async)")
         
-        fido.authenticate(options: publicKeyCredentialRequestOptions, window: window) { result in
-            switch result {
-            case .success(let response):
-                self.logger?.d("FIDO authentication successful")
-                
-                guard let signatureData = response[FidoConstants.FIELD_SIGNATURE] as? Data,
-                      let clientData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
-                      let authenticatorData = response[FidoConstants.FIELD_AUTHENTICATOR_DATA] as? Data,
-                      let credIDData = response[FidoConstants.FIELD_RAW_ID] as? Data,
-                      let userHandleData = response[FidoConstants.FIELD_USER_HANDLE] as? Data else {
-                    let error = FidoError.invalidResponse
-                    self.logger?.e(error.localizedDescription, error: error)
-                    self.handleError(error: error)
-                    completion(error)
-                    return
-                }
-                
-                // For older servers, a concatenated string is sent.
-                let legacyData = [
-                    String(decoding: clientData, as: UTF8.self),
-                    convertInt8ArrToStr(authenticatorData.bytesArray.map { Int8(bitPattern: $0) }),
-                    convertInt8ArrToStr(signatureData.bytesArray.map { Int8(bitPattern: $0) }),
-                    base64ToBase64url(base64: credIDData.base64EncodedString()),
-                    String(decoding: userHandleData, as: UTF8.self)
-                ].joined(separator: FidoConstants.DATA_SEPARATOR)
-                
-                let callbackValue: String
-                if self.supportsJsonResponse {
-                    // For newer servers, a JSON object is sent.
-                    let jsonResponse: [String: Any] = [
-                        FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: FidoConstants.AUTHENTICATOR_PLATFORM,
-                        FidoConstants.FIELD_LEGACY_DATA: legacyData
-                    ]
-                    if let jsonData = try? JSONSerialization.data(withJSONObject: jsonResponse, options: []),
-                       let jsonString = String(data: jsonData, encoding: .utf8) {
-                        callbackValue = jsonString
-                    } else {
-                        callbackValue = ""
+        do {
+            // 1. Wrap the closure-based fido.authenticate in a continuation
+            let response = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[String: Any], Error>) in
+                fido.authenticate(options: publicKeyCredentialRequestOptions, window: window) { result in
+                    switch result {
+                    case .success(let response):
+                        continuation.resume(returning: response)
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
                     }
-                } else {
-                    callbackValue = legacyData
                 }
-                
-                self.logger?.d("Setting authentication callback value")
-                self.valueCallback(value: callbackValue)
-                completion(nil)
-            case .failure(let error):
-                self.logger?.e("FIDO authentication failed", error: error)
-                self.handleError(error: error)
-                completion(error)
             }
+            
+            // 2. Handle the successful response
+            self.logger?.d("FIDO authentication successful")
+            
+            guard let signatureData = response[FidoConstants.FIELD_SIGNATURE] as? Data,
+                  let clientData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
+                  let authenticatorData = response[FidoConstants.FIELD_AUTHENTICATOR_DATA] as? Data,
+                  let credIDData = response[FidoConstants.FIELD_RAW_ID] as? Data,
+                  let userHandleData = response[FidoConstants.FIELD_USER_HANDLE] as? Data else {
+                
+                let error = FidoError.invalidResponse
+                self.logger?.e(error.localizedDescription, error: error)
+                self.handleError(error: error)
+                throw error
+            }
+            
+            // For older servers, a concatenated string is sent.
+            let legacyData = [
+                String(decoding: clientData, as: UTF8.self),
+                convertInt8ArrToStr(authenticatorData.bytesArray.map { Int8(bitPattern: $0) }),
+                convertInt8ArrToStr(signatureData.bytesArray.map { Int8(bitPattern: $0) }),
+                base64ToBase64url(base64: credIDData.base64EncodedString()),
+                String(decoding: userHandleData, as: UTF8.self)
+            ].joined(separator: FidoConstants.DATA_SEPARATOR)
+            
+            let callbackValue: String
+            if self.supportsJsonResponse {
+                // For newer servers, a JSON object is sent.
+                let jsonResponse: [String: Any] = [
+                    FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: FidoConstants.AUTHENTICATOR_PLATFORM,
+                    FidoConstants.FIELD_LEGACY_DATA: legacyData
+                ]
+                if let jsonData = try? JSONSerialization.data(withJSONObject: jsonResponse, options: []),
+                   let jsonString = String(data: jsonData, encoding: .utf8) {
+                    callbackValue = jsonString
+                } else {
+                    callbackValue = ""
+                }
+            } else {
+                callbackValue = legacyData
+            }
+            
+            self.logger?.d("Setting authentication callback value")
+            self.valueCallback(value: callbackValue)
+            // On success, the function simply returns.
+            
+        } catch {
+            // 3. Handle any error (from the continuation or the guard)
+            self.logger?.e("FIDO authentication failed", error: error)
+            self.handleError(error: error)
+            throw error // Re-throw to the caller
         }
     }
+    
+    // MARK: - Private Transform
     
     /// Transforms the input dictionary from the server to the format expected by the FIDO client.
     ///

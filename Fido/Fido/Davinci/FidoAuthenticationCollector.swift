@@ -50,55 +50,64 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, @unchecked Send
         return [FidoConstants.FIELD_ASSERTION_VALUE: assertionValue]
     }
     
-    /// Initiates the FIDO authentication process.
+    
+    /// Initiates the FIDO authentication process using async/await.
     ///
-    /// This method uses the `Fido.shared.authenticate` method to perform the authentication ceremony.
-    /// On success, it constructs the `assertionValue` and calls the completion handler.
-    /// - Parameter completion: A closure to be called with the result of the authentication.
-    public func authenticate(window: ASPresentationAnchor, completion: @escaping (Result<[String: Any], Error>) -> Void) {
-        logger?.d("Starting FIDO authentication")
+    /// This method uses the `fido.authenticate` method to perform the authentication ceremony.
+    /// On success, it constructs and stores the `assertionValue`, then returns it.
+    /// - Parameter window: The `ASPresentationAnchor` to present the FIDO UI.
+    /// - Returns: A dictionary representing the `assertionValue`.
+    /// - Throws: An error if the authentication process fails or the response is invalid.
+    @MainActor
+    public func authenticate(window: ASPresentationAnchor) async throws -> [String: Any] {
+        logger?.d("Starting FIDO authentication (async)")
         
-        fido.authenticate(options: publicKeyCredentialRequestOptions, window: window) { result in
-            switch result {
-            case .success(let response):
-                self.logger?.d("FIDO authentication successful, building assertionValue object...")
-                
-                guard let signatureData = response[FidoConstants.FIELD_SIGNATURE] as? Data,
-                      let clientData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
-                      let authenticatorData = response[FidoConstants.FIELD_AUTHENTICATOR_DATA] as? Data,
-                      let credIDData = response[FidoConstants.FIELD_RAW_ID] as? Data,
-                      let userHandleData = response[FidoConstants.FIELD_USER_HANDLE] as? Data else {
-                    let error = FidoError.invalidResponse
-                    self.logger?.e(error.localizedDescription, error: error)
-                    completion(.failure(error))
-                    return
+        do {
+            // 1. Wrap the closure-based fido.authenticate in a continuation
+            let response = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[String: Any], Error>) in
+                // Assuming 'fido' is accessible
+                fido.authenticate(options: publicKeyCredentialRequestOptions, window: window) { result in
+                    continuation.resume(with: result)
                 }
-                
-                let userIDString = String(decoding: userHandleData, as: UTF8.self)
-                // Construct the assertionValue payload in the format expected by the server.
-                let assertionValue: [String: Any] = [
-                    // `id` is Base64URL
-                    FidoConstants.FIELD_ID: credIDData.base64urlEncodedString(),
-                    // `rawId` is standard Base64
-                    FidoConstants.FIELD_RAW_ID: credIDData.base64EncodedString(),
-                    FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: "platform",
-                    FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,
-                    FidoConstants.FIELD_RESPONSE: [
-                        FidoConstants.FIELD_AUTHENTICATOR_DATA: authenticatorData.base64urlEncodedString(),
-                        FidoConstants.FIELD_CLIENT_DATA_JSON: clientData.base64urlEncodedString(),
-                        FidoConstants.FIELD_SIGNATURE: signatureData.base64urlEncodedString(),
-                        FidoConstants.FIELD_USER_HANDLE: userIDString
-                    ]
-                ]
-                
-                self.logger?.d("assertionValue object created successfully")
-                self.assertionValue = assertionValue
-                completion(.success(assertionValue))
-                
-            case .failure(let error):
-                self.logger?.e("FIDO authentication failed", error: error)
-                completion(.failure(error))
             }
+            
+            // 2. Process the successful response
+            logger?.d("FIDO authentication successful, building assertionValue object...")
+            
+            guard let signatureData = response[FidoConstants.FIELD_SIGNATURE] as? Data,
+                  let clientData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
+                  let authenticatorData = response[FidoConstants.FIELD_AUTHENTICATOR_DATA] as? Data,
+                  let credIDData = response[FidoConstants.FIELD_RAW_ID] as? Data,
+                  let userHandleData = response[FidoConstants.FIELD_USER_HANDLE] as? Data else {
+                
+                let error = FidoError.invalidResponse
+                logger?.e(error.localizedDescription, error: error)
+                throw error // Throw directly in async context
+            }
+            
+            let userIDString = String(decoding: userHandleData, as: UTF8.self)
+            // Construct the assertionValue payload
+            let newAssertionValue: [String: Any] = [
+                FidoConstants.FIELD_ID: credIDData.base64urlEncodedString(),
+                FidoConstants.FIELD_RAW_ID: credIDData.base64EncodedString(),
+                FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: "platform",
+                FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,
+                FidoConstants.FIELD_RESPONSE: [
+                    FidoConstants.FIELD_AUTHENTICATOR_DATA: authenticatorData.base64urlEncodedString(),
+                    FidoConstants.FIELD_CLIENT_DATA_JSON: clientData.base64urlEncodedString(),
+                    FidoConstants.FIELD_SIGNATURE: signatureData.base64urlEncodedString(),
+                    FidoConstants.FIELD_USER_HANDLE: userIDString
+                ]
+            ]
+            
+            logger?.d("assertionValue object created successfully")
+            self.assertionValue = newAssertionValue // Store the value
+            return newAssertionValue // Return the value
+            
+        } catch {
+            // 3. Handle errors from the continuation or guard statement
+            logger?.e("FIDO authentication failed", error: error)
+            throw error // Re-throw the error
         }
     }
     

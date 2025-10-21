@@ -38,62 +38,46 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
         self.completion = completion
         
         do {
-            // Use the Codable struct for safe decoding
+            // 1. Decode options
             let jsonData = try JSONSerialization.data(withJSONObject: options, options: [])
             let registrationOptions = try JSONDecoder().decode(PublicKeyCredentialCreationOptions.self, from: jsonData)
             
-            let relyingParty = registrationOptions.rp.id ?? ""
-            
-            // Prepare common parameters for the requests
+            // 2. Prepare common parameters
             guard let challengeData = Data(base64Encoded: registrationOptions.challenge, options: .ignoreUnknownCharacters) else {
                 completion(.failure(FidoError.invalidChallenge))
                 return
             }
             let userID = Data(registrationOptions.user.id.utf8)
             
+            // 3. Determine which requests to create based on selection criteria
             var requests: [ASAuthorizationRequest] = []
-            
-            if registrationOptions.authenticatorSelection?.authenticatorAttachment != .crossPlatform {
-                let platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier: relyingParty)
-                let platformRequest = platformProvider.createCredentialRegistrationRequest(challenge: challengeData, name: registrationOptions.user.name, userID: userID)
-                platformRequest.userVerificationPreference = ASAuthorizationPublicKeyCredentialUserVerificationPreference(rawValue: registrationOptions.authenticatorSelection?.userVerification?.rawValue ?? "preferred")
-                platformRequest.attestationPreference = ASAuthorizationPublicKeyCredentialAttestationKind(rawValue: registrationOptions.attestation?.rawValue ?? "none")
+            let attachment = registrationOptions.authenticatorSelection?.authenticatorAttachment
+            let requireResidentKey = registrationOptions.authenticatorSelection?.requireResidentKey
+
+            // Add platform request (Passkey) if:
+            // - Attachment is .platform OR nil (no preference)
+            // - AND requireResidentKey is NOT explicitly false (since Passkeys are always resident)
+            if attachment != .crossPlatform && requireResidentKey != false {
+                let platformRequest = self.createPlatformRequest(
+                    from: registrationOptions,
+                    challenge: challengeData,
+                    userID: userID
+                )
                 requests.append(platformRequest)
             }
             
-            if registrationOptions.authenticatorSelection?.authenticatorAttachment != .platform {
-                let securityKeyProvider = ASAuthorizationSecurityKeyPublicKeyCredentialProvider(relyingPartyIdentifier: registrationOptions.rp.id ?? "")
-                let securityKeyRequest = securityKeyProvider.createCredentialRegistrationRequest(
+            // Add security key request if:
+            // - Attachment is .crossPlatform OR nil (no preference)
+            if attachment != .platform {
+                let securityKeyRequest = self.createSecurityKeyRequest(
+                    from: registrationOptions,
                     challenge: challengeData,
-                    displayName: registrationOptions.user.displayName,
-                    name: registrationOptions.user.name,
                     userID: userID
                 )
-                securityKeyRequest.residentKeyPreference = (registrationOptions.authenticatorSelection?.requireResidentKey == true) ? .required : .discouraged
-                securityKeyRequest.userVerificationPreference = ASAuthorizationPublicKeyCredentialUserVerificationPreference(rawValue: registrationOptions.authenticatorSelection?.userVerification?.rawValue ?? "preferred")
-                securityKeyRequest.attestationPreference = ASAuthorizationPublicKeyCredentialAttestationKind(rawValue: registrationOptions.attestation?.rawValue ?? "none")
-                
-                // Configure credential parameters (algorithms)
-                securityKeyRequest.credentialParameters = registrationOptions.pubKeyCredParams.compactMap { param -> ASAuthorizationPublicKeyCredentialParameters? in
-                    guard let alg = COSEAlgorithmIdentifier(rawValue: param.alg.rawValue) else {
-                        return nil
-                    }
-                    switch alg {
-                    case .es256:
-                        return ASAuthorizationPublicKeyCredentialParameters(algorithm: .ES256)
-                    default:
-                        return nil
-                    }
-                }
-                // If resident key is not required, only use the securityKeyRequest
-                if registrationOptions.authenticatorSelection?.requireResidentKey == false {
-                    requests = [securityKeyRequest]
-                } else {
-                    requests.append(securityKeyRequest)
-                }
-                
+                requests.append(securityKeyRequest)
             }
             
+            // 4. Perform requests
             let authorizationController = makeAuthorizationController(requests: requests)
             authorizationController.performRequests()
             
@@ -169,6 +153,82 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
         didComplete(with: authorization.credential)
     }
     
+    /// Handles the completion of an authorization request with an error.
+    ///
+    /// - Parameters:
+    ///   - controller: The authorization controller.
+    ///   - error: The error that occurred.
+    public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        completion?(.failure(error))
+    }
+    
+    // MARK: - Private Request Builders
+    
+    /// Creates a platform request based on the provided options.
+    /// - Parameters:
+    /// - options: The public key credential creation options.
+    /// - challenge: The challenge data.
+    /// - userID: The user ID data.
+    /// - Returns: An `ASAuthorizationRequest` configured for platform registration.
+    private func createPlatformRequest(from options: PublicKeyCredentialCreationOptions, challenge: Data, userID: Data) -> ASAuthorizationRequest {
+        let relyingParty = options.rp.id ?? ""
+        let provider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier: relyingParty)
+        let request = provider.createCredentialRegistrationRequest(challenge: challenge, name: options.user.name, userID: userID)
+        
+        let authSelection = options.authenticatorSelection
+        request.userVerificationPreference = ASAuthorizationPublicKeyCredentialUserVerificationPreference(
+            rawValue: authSelection?.userVerification?.rawValue ?? "preferred"
+        )
+        request.attestationPreference = ASAuthorizationPublicKeyCredentialAttestationKind(
+            rawValue: options.attestation?.rawValue ?? "none"
+        )
+        
+        return request
+    }
+
+    /// Creates a security key request based on the provided options.
+    /// - Parameters:
+    ///  - options: The public key credential creation options.
+    ///  - challenge: The challenge data.
+    ///  - userID: The user ID data.
+    ///  - Returns: An `ASAuthorizationRequest` configured for security key registration.
+    private func createSecurityKeyRequest(from options: PublicKeyCredentialCreationOptions, challenge: Data, userID: Data) -> ASAuthorizationRequest {
+        let relyingParty = options.rp.id ?? ""
+        let provider = ASAuthorizationSecurityKeyPublicKeyCredentialProvider(relyingPartyIdentifier: relyingParty)
+        let request = provider.createCredentialRegistrationRequest(
+            challenge: challenge,
+            displayName: options.user.displayName,
+            name: options.user.name,
+            userID: userID
+        )
+        
+        let authSelection = options.authenticatorSelection
+        request.residentKeyPreference = (authSelection?.requireResidentKey == true) ? .required : .discouraged
+        request.userVerificationPreference = ASAuthorizationPublicKeyCredentialUserVerificationPreference(
+            rawValue: authSelection?.userVerification?.rawValue ?? "preferred"
+        )
+        request.attestationPreference = ASAuthorizationPublicKeyCredentialAttestationKind(
+            rawValue: options.attestation?.rawValue ?? "none"
+        )
+        
+        // Configure credential parameters (algorithms)
+        request.credentialParameters = options.pubKeyCredParams.compactMap { param in
+            guard let alg = COSEAlgorithmIdentifier(rawValue: param.alg.rawValue) else { return nil }
+            
+            switch alg {
+            case .es256:
+                return ASAuthorizationPublicKeyCredentialParameters(algorithm: .ES256)
+            default:
+                // Add other supported algorithms here if needed
+                return nil
+            }
+        }
+        
+        return request
+    }
+    
+    /// Processes the provided authorization credential and calls the completion handler.
+    /// - Parameter credential: The authorization credential to process.
     func didComplete(with credential: ASAuthorizationCredential) {
         switch credential {
         case let credential as ASAuthorizationPublicKeyCredentialRegistration:
@@ -191,15 +251,6 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
         default:
             break
         }
-    }
-    
-    /// Handles the completion of an authorization request with an error.
-    ///
-    /// - Parameters:
-    ///   - controller: The authorization controller.
-    ///   - error: The error that occurred.
-    public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        completion?(.failure(error))
     }
 }
 

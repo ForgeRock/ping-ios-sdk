@@ -19,16 +19,27 @@ struct FidoAuthenticationCollectorView: View {
         VStack {
             Text("FIDO Authentication")
                 .font(.title)
+            
+            // 1. Button action now creates a Task
             Button(action: {
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let window = windowScene.windows.first {
-                    collector.authenticate(window: window) { result in
-                        switch result {
-                        case .success:
-                            onNext()
-                        case .failure(let error):
-                            print("FIDO Authentication failed: \(error.localizedDescription)")
+                Task {
+                    do {
+                        // 2. Get the window (same as before)
+                        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                              let window = windowScene.windows.first else {
+                            print("Could not find active window scene.")
+                            return // Exit if no window found
                         }
+                        
+                        // 3. Use 'try await' to call the async version
+                        _ = try await collector.authenticate(window: window) // Result is returned, but we might not need it here if state is updated internally
+                        
+                        // 4. Handle success by calling onNext()
+                        onNext()
+                        
+                    } catch {
+                        // 5. Handle errors in the catch block
+                        print("FIDO Authentication failed: \(error.localizedDescription)")
                     }
                 }
             }) {

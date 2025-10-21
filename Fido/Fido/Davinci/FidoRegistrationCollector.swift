@@ -37,6 +37,78 @@ public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendab
         logger?.d("FIDO registration collector initialized with creation options")
     }
     
+    /// The payload to be sent to the DaVinci server.
+    ///
+    /// - Returns: A dictionary containing the attestation value, or `nil` if registration has not been completed.
+    override public func payload() -> [String: Any]? {
+        guard let attestationValue = attestationValue else {
+            logger?.d("No attestation value available, returning null payload")
+            return nil
+        }
+        logger?.d("Returning attestation payload for FIDO registration")
+        return [FidoConstants.FIELD_ATTESTATION_VALUE: attestationValue]
+    }
+    
+    
+    /// Initiates the FIDO registration process using async/await.
+    ///
+    /// This method uses the `fido.register` method to perform the registration ceremony.
+    /// On success, it constructs and stores the `attestationValue`, then returns it.
+    /// - Parameter window: The `ASPresentationAnchor` to present the FIDO UI.
+    /// - Returns: A dictionary representing the `attestationValue`.
+    /// - Throws: An error if the registration process fails or the response is invalid.
+    @MainActor
+    public func register(window: ASPresentationAnchor) async throws -> [String: Any] {
+        logger?.d("Starting FIDO registration (async)")
+
+        do {
+            // 1. Wrap the closure-based fido.register in a continuation
+            let response = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[String: Any], Error>) in
+                 // Assuming 'fido' is accessible
+                fido.register(options: publicKeyCredentialCreationOptions, window: window) { result in
+                    continuation.resume(with: result)
+                }
+            }
+
+            // 2. Process the successful response
+            logger?.d("FIDO registration successful, building attestationValue object...")
+
+            guard let rawIdData = response[FidoConstants.FIELD_RAW_ID] as? Data,
+                  let clientDataJSONData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
+                  let attestationObjectData = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? Data else {
+                
+                let error = FidoError.invalidResponse
+                logger?.e(error.localizedDescription, error: error)
+                throw error // Throw directly in async context
+            }
+            
+            let authenticatorAttachment = "platform"
+
+            // Construct the attestationValue payload
+            let newAttestationValue: [String: Any] = [
+                FidoConstants.FIELD_ID: rawIdData.base64urlEncodedString(),
+                FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,
+                FidoConstants.FIELD_RAW_ID: rawIdData.base64EncodedString(),
+                FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: authenticatorAttachment,
+                FidoConstants.FIELD_RESPONSE: [
+                    FidoConstants.FIELD_CLIENT_DATA_JSON: clientDataJSONData.base64urlEncodedString(),
+                    FidoConstants.FIELD_ATTESTATION_OBJECT: attestationObjectData.base64urlEncodedString()
+                ]
+            ]
+            
+            logger?.d("attestationValue object created successfully")
+            self.attestationValue = newAttestationValue // Store the value
+            return newAttestationValue // Return the value
+            
+        } catch {
+            // 3. Handle errors from the continuation or guard statement
+            logger?.e("FIDO registration failed", error: error)
+            throw error // Re-throw the error
+        }
+    }
+    
+    // MARK: - Private Transform
+    
     /// Transforms the FIDO registration request options from the server to the format expected by the `ASAuthorization` framework.
     ///
     /// This involves converting byte arrays for `user.id`, `challenge`, and `excludeCredentials` IDs to Base64 encoded strings.
@@ -77,65 +149,5 @@ public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendab
         
         logger?.d("FIDO registration creation options transformed successfully")
         return output
-    }
-    
-    /// The payload to be sent to the DaVinci server.
-    ///
-    /// - Returns: A dictionary containing the attestation value, or `nil` if registration has not been completed.
-    override public func payload() -> [String: Any]? {
-        guard let attestationValue = attestationValue else {
-            logger?.d("No attestation value available, returning null payload")
-            return nil
-        }
-        logger?.d("Returning attestation payload for FIDO registration")
-        return [FidoConstants.FIELD_ATTESTATION_VALUE: attestationValue]
-    }
-    
-    /// Initiates the FIDO registration process.
-    ///
-    /// This method uses the `Fido.shared.register` method to perform the registration ceremony.
-    /// On success, it constructs the `attestationValue` and calls the completion handler.
-    /// - Parameter completion: A closure to be called with the result of the registration.
-    public func register(window: ASPresentationAnchor, completion: @escaping (Result<[String: Any], Error>) -> Void) {
-        logger?.d("Starting FIDO registration")
-
-        fido.register(options: publicKeyCredentialCreationOptions, window: window) { result in
-            switch result {
-            case .success(let response):
-                self.logger?.d("FIDO registration successful, building attestationValue object...")
-
-                guard let rawIdData = response[FidoConstants.FIELD_RAW_ID] as? Data,
-                      let clientDataJSONData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
-                      let attestationObjectData = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? Data else {
-                    let error = FidoError.invalidResponse
-                    self.logger?.e(error.localizedDescription, error: error)
-                    completion(.failure(error))
-                    return
-                }
-                
-                let authenticatorAttachment = "platform"
-
-                // Construct the attestationValue payload in the format expected by the server.
-                let attestationValue: [String: Any] = [
-                    FidoConstants.FIELD_ID: rawIdData.base64urlEncodedString(),
-                    FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,
-                    FidoConstants.FIELD_RAW_ID: rawIdData.base64EncodedString(),
-                    FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: authenticatorAttachment,
-                    FidoConstants.FIELD_RESPONSE: [
-                        FidoConstants.FIELD_CLIENT_DATA_JSON: clientDataJSONData.base64urlEncodedString(),
-                        FidoConstants.FIELD_ATTESTATION_OBJECT: attestationObjectData.base64urlEncodedString()
-                    ]
-                ]
-                
-                self.logger?.d("attestationValue object created successfully")
-
-                self.attestationValue = attestationValue
-                completion(.success(attestationValue))
-                
-            case .failure(let error):
-                self.logger?.e("FIDO registration failed", error: error)
-                completion(.failure(error))
-            }
-        }
     }
 }
