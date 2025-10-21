@@ -50,7 +50,7 @@ class FidoCollectorTests: XCTestCase {
     
     func testFidoAuthenticationCollectorInit() {
         let json: [String: Any] = [
-            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]
+             FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]
         ]
         let collector = FidoAuthenticationCollector(with: json)
         XCTAssertNotNil(collector)
@@ -61,21 +61,23 @@ class FidoCollectorTests: XCTestCase {
     }
     
     func testFidoAuthenticationCollectorPayload() {
-        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
-        XCTAssertNil(collector.payload())
+        // ... (this test remains unchanged)
+         let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+         XCTAssertNil(collector.payload())
         
-        collector.assertionValue = ["test": "test"]
-        let payload = collector.payload()
-        XCTAssertNotNil(payload)
-        XCTAssertEqual(payload?[FidoConstants.FIELD_ASSERTION_VALUE] as? [String: String], ["test": "test"])
+         collector.assertionValue = ["test": "test"]
+         let payload = collector.payload()
+         XCTAssertNotNil(payload)
+         XCTAssertEqual(payload?[FidoConstants.FIELD_ASSERTION_VALUE] as? [String: String], ["test": "test"])
     }
     
-    func testFidoAuthenticationCollectorAuthenticate() {
+    @MainActor // Ensure UI-related code runs on main actor
+    func testFidoAuthenticationCollectorAuthenticate() async throws {
         let mockFido = MockFido()
         let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
-        collector.fido = mockFido
+        collector.fido = mockFido // Inject mock
         
-        // Test success
+        // --- Test success ---
         let successResponse: [String: Any] = [
             FidoConstants.FIELD_RAW_ID: "rawId".data(using: .utf8)!,
             FidoConstants.FIELD_CLIENT_DATA_JSON: "clientDataJSON".data(using: .utf8)!,
@@ -85,31 +87,29 @@ class FidoCollectorTests: XCTestCase {
         ]
         mockFido.authenticationResult = .success(successResponse)
         
-        let expectation = self.expectation(description: "FIDO authentication success")
-        collector.authenticate(window: MockASPresentationAnchor()) { result in
-            switch result {
-            case .success(let response):
-                XCTAssertNotNil(response)
-                expectation.fulfill()
-            case .failure:
-                XCTFail("Expected success, got failure")
-            }
-        }
-        waitForExpectations(timeout: 1, handler: nil)
+        // Call the async version and assert success
+        let resultAssertionValue = try await collector.authenticate(window: MockASPresentationAnchor())
         
-        // Test failure
+        // Check if the returned value matches expectations (based on internal logic)
+        XCTAssertNotNil(resultAssertionValue)
+        XCTAssertEqual(resultAssertionValue[FidoConstants.FIELD_ID] as? String, "cmF3SWQ") // Example check
+        
+        // Also verify the internal state was set for payload()
+        XCTAssertNotNil(collector.assertionValue)
+        XCTAssertEqual(collector.assertionValue?[FidoConstants.FIELD_ID] as? String, resultAssertionValue[FidoConstants.FIELD_ID] as? String)
+        
+        // --- Test failure ---
         mockFido.authenticationResult = .failure(FidoError.invalidChallenge)
-        let failureExpectation = self.expectation(description: "FIDO authentication failure")
-        collector.authenticate(window: MockASPresentationAnchor()) { result in
-            switch result {
-            case .success:
-                XCTFail("Expected failure, got success")
-            case .failure(let error):
-                XCTAssertEqual(error as? FidoError, .invalidChallenge)
-                failureExpectation.fulfill()
-            }
+        
+        // Assert that the specific error is thrown
+        do {
+            _ = try await collector.authenticate(window: MockASPresentationAnchor())
+            XCTFail("Expected authenticate to throw FidoError.invalidChallenge, but it did not.")
+        } catch let error as FidoError {
+            XCTAssertEqual(error, .invalidChallenge)
+        } catch {
+            XCTFail("Expected authenticate to throw FidoError.invalidChallenge, but it threw \(error).")
         }
-        waitForExpectations(timeout: 1, handler: nil)
     }
     
     // MARK: - FidoRegistrationCollector Tests
@@ -127,6 +127,7 @@ class FidoCollectorTests: XCTestCase {
     }
     
     func testFidoRegistrationCollectorPayload() {
+        // ... (this test remains unchanged)
         let collector = FidoRegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
         XCTAssertNil(collector.payload())
         
@@ -136,12 +137,13 @@ class FidoCollectorTests: XCTestCase {
         XCTAssertEqual(payload?[FidoConstants.FIELD_ATTESTATION_VALUE] as? [String: String], ["test": "test"])
     }
     
-    func testFidoRegistrationCollectorRegister() {
+    @MainActor // Ensure UI-related code runs on main actor
+    func testFidoRegistrationCollectorRegister() async throws {
         let mockFido = MockFido()
         let collector = FidoRegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
-        collector.fido = mockFido
+        collector.fido = mockFido // Inject mock
         
-        // Test success
+        // --- Test success ---
         let successResponse: [String: Any] = [
             FidoConstants.FIELD_RAW_ID: "rawId".data(using: .utf8)!,
             FidoConstants.FIELD_CLIENT_DATA_JSON: "clientDataJSON".data(using: .utf8)!,
@@ -149,30 +151,28 @@ class FidoCollectorTests: XCTestCase {
         ]
         mockFido.registrationResult = .success(successResponse)
         
-        let expectation = self.expectation(description: "FIDO registration success")
-        collector.register(window: MockASPresentationAnchor()) { result in
-            switch result {
-            case .success(let response):
-                XCTAssertNotNil(response)
-                expectation.fulfill()
-            case .failure:
-                XCTFail("Expected success, got failure")
-            }
-        }
-        waitForExpectations(timeout: 1, handler: nil)
+        // Call the async version and assert success
+        let resultAttestationValue = try await collector.register(window: MockASPresentationAnchor())
         
-        // Test failure
+        // Check if the returned value matches expectations
+        XCTAssertNotNil(resultAttestationValue)
+        XCTAssertEqual(resultAttestationValue[FidoConstants.FIELD_ID] as? String, "cmF3SWQ") // Example check
+
+        // Also verify the internal state was set for payload()
+        XCTAssertNotNil(collector.attestationValue)
+        XCTAssertEqual(collector.attestationValue?[FidoConstants.FIELD_ID] as? String, resultAttestationValue[FidoConstants.FIELD_ID] as? String)
+
+        // --- Test failure ---
         mockFido.registrationResult = .failure(FidoError.invalidChallenge)
-        let failureExpectation = self.expectation(description: "FIDO registration failure")
-        collector.register(window: MockASPresentationAnchor()) { result in
-            switch result {
-            case .success:
-                XCTFail("Expected failure, got success")
-            case .failure(let error):
-                XCTAssertEqual(error as? FidoError, .invalidChallenge)
-                failureExpectation.fulfill()
-            }
+        
+        // Assert that the specific error is thrown
+        do {
+            _ = try await collector.register(window: MockASPresentationAnchor())
+            XCTFail("Expected register to throw FidoError.invalidChallenge, but it did not.")
+        } catch let error as FidoError {
+            XCTAssertEqual(error, .invalidChallenge)
+        } catch {
+            XCTFail("Expected register to throw FidoError.invalidChallenge, but it threw \(error).")
         }
-        waitForExpectations(timeout: 1, handler: nil)
     }
 }
