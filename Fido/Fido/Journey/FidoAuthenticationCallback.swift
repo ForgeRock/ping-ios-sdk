@@ -41,24 +41,21 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
     /// - Parameter window: The `ASPresentationAnchor` to present the FIDO UI.
     /// - Throws: An error if the authentication process fails.
     @MainActor
-    public func authenticate(window: ASPresentationAnchor) async throws {
-        logger?.d("Starting FIDO authentication (async)")
+    public func authenticate(window: ASPresentationAnchor) async -> Result<[String: Any], Error> {
+        logger?.d("Starting FIDO authentication (async Result)")
         
         do {
             // 1. Wrap the closure-based fido.authenticate in a continuation
+            //    This still throws internally within the 'do' block if the continuation resumes with an error.
             let response = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[String: Any], Error>) in
+                // Assuming 'fido' instance is accessible
                 fido.authenticate(options: publicKeyCredentialRequestOptions, window: window) { result in
-                    switch result {
-                    case .success(let response):
-                        continuation.resume(returning: response)
-                    case .failure(let error):
-                        continuation.resume(throwing: error)
-                    }
+                    continuation.resume(with: result) // Resume with the Result<[String: Any], Error>
                 }
             }
             
-            // 2. Handle the successful response
-            self.logger?.d("FIDO authentication successful")
+            // 2. Handle the successful response data extraction
+            self.logger?.d("FIDO authentication successful, processing response...")
             
             guard let signatureData = response[FidoConstants.FIELD_SIGNATURE] as? Data,
                   let clientData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
@@ -66,13 +63,13 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
                   let credIDData = response[FidoConstants.FIELD_RAW_ID] as? Data,
                   let userHandleData = response[FidoConstants.FIELD_USER_HANDLE] as? Data else {
                 
-                let error = FidoError.invalidResponse
+                let error = FidoError.invalidResponse // Define your error type
                 self.logger?.e(error.localizedDescription, error: error)
-                self.handleError(error: error)
-                throw error
+                self.handleError(error: error) // Keep existing error handling side-effect
+                return .failure(error) // Return failure
             }
             
-            // For older servers, a concatenated string is sent.
+            // 3. Process data and set callback value (side effect)
             let legacyData = [
                 String(decoding: clientData, as: UTF8.self),
                 convertInt8ArrToStr(authenticatorData.bytesArray.map { Int8(bitPattern: $0) }),
@@ -83,30 +80,34 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
             
             let callbackValue: String
             if self.supportsJsonResponse {
-                // For newer servers, a JSON object is sent.
                 let jsonResponse: [String: Any] = [
                     FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: FidoConstants.AUTHENTICATOR_PLATFORM,
                     FidoConstants.FIELD_LEGACY_DATA: legacyData
                 ]
+                // Safely create JSON string
                 if let jsonData = try? JSONSerialization.data(withJSONObject: jsonResponse, options: []),
                    let jsonString = String(data: jsonData, encoding: .utf8) {
                     callbackValue = jsonString
                 } else {
+                    // Handle potential JSON serialization error if needed
                     callbackValue = ""
+                    logger?.w("Failed to serialize FIDO JSON response", error: nil)
                 }
             } else {
                 callbackValue = legacyData
             }
             
             self.logger?.d("Setting authentication callback value")
-            self.valueCallback(value: callbackValue)
-            // On success, the function simply returns.
+            self.valueCallback(value: callbackValue) // Perform side effect
+            
+            // 4. Return success with the original response dictionary
+            return .success(response)
             
         } catch {
-            // 3. Handle any error (from the continuation or the guard)
+            // 5. Handle any error caught from the continuation
             self.logger?.e("FIDO authentication failed", error: error)
-            self.handleError(error: error)
-            throw error // Re-throw to the caller
+            self.handleError(error: error) // Keep existing error handling side-effect
+            return .failure(error) // Return failure
         }
     }
     
@@ -119,25 +120,25 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
     func transform(_ input: [String: Any]) -> [String: Any] {
         logger?.d("Transforming FIDO authentication request options")
         var output: [String: Any] = [:]
-
+        
         if let challenge = input[FidoConstants.FIELD_CHALLENGE] as? String {
             output[FidoConstants.FIELD_CHALLENGE] = challenge
         }
-
+        
         if let timeoutStr = input[FidoConstants.FIELD_TIMEOUT] as? String, let timeout = Int(timeoutStr) {
             output[FidoConstants.FIELD_TIMEOUT] = timeout
         }
-
+        
         if let userVerification = input[FidoConstants.FIELD_USER_VERIFICATION] as? String {
             output[FidoConstants.FIELD_USER_VERIFICATION] = userVerification
         } else {
             output[FidoConstants.FIELD_USER_VERIFICATION] = FidoConstants.DEFAULT_USER_VERIFICATION
         }
-
+        
         if let rpId = input[FidoConstants.FIELD_RELYING_PARTY_ID_INTERNAL] as? String {
             output[FidoConstants.FIELD_RP_ID] = rpId
         }
-
+        
         if let allowCredentials = input[FidoConstants.FIELD_ALLOW_CREDENTIALS_INTERNAL] as? [[String: Any]] {
             output[FidoConstants.FIELD_ALLOW_CREDENTIALS] = allowCredentials.map { credential -> [String: Any] in
                 var newCredential: [String: Any] = [:]
@@ -151,7 +152,7 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
                 return newCredential
             }
         }
-
+        
         return output
     }
 }

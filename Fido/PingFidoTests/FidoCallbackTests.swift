@@ -14,7 +14,7 @@ import XCTest
 @testable import PingJourney
 
 class FidoCallbackTests: XCTestCase {
-
+    
     var mockFido: MockFido!
     
     override func setUp() {
@@ -29,7 +29,7 @@ class FidoCallbackTests: XCTestCase {
     
     
     @MainActor // Mark test as running on MainActor
-    func testFidoRegistrationCallbackRegister() async throws {
+    func testFidoRegistrationCallbackRegister() async { // Removed 'throws'
         let callback = FidoRegistrationCallback()
         callback.fido = mockFido // Inject mock
         
@@ -49,32 +49,42 @@ class FidoCallbackTests: XCTestCase {
         ]
         mockFido.registrationResult = .success(successResponse)
         
-        // Call the async version and expect it not to throw
-        try await callback.register(window: MockASPresentationAnchor())
+        // Call the async version and check the Result
+        let result = await callback.register(window: MockASPresentationAnchor())
         
-        // Verify the hidden value callback was set correctly (example check)
-        XCTAssertFalse((hiddenValueCallback.value).starts(with: "ERROR::")) // Should not be an error
-        XCTAssertTrue((hiddenValueCallback.value).contains("clientDataJSON")) // Contains expected data part
-
+        switch result {
+        case .success(let responseDict):
+            // Optional: Assert specific things about the response if needed
+            XCTAssertEqual(responseDict[FidoConstants.FIELD_RAW_ID] as? Data, "rawId".data(using: .utf8)!)
+            // Verify the side effect on hiddenValueCallback
+            XCTAssertFalse((hiddenValueCallback.value ?? "").starts(with: "ERROR::"))
+            XCTAssertTrue((hiddenValueCallback.value ?? "").contains("clientDataJSON"))
+        case .failure(let error):
+            XCTFail("Expected register to succeed, but it failed with \(error).")
+        }
+        
         // --- Test failure ---
         mockFido.registrationResult = .failure(FidoError.invalidChallenge)
         
-        // Assert that the specific error is thrown
-        do {
-            try await callback.register(window: MockASPresentationAnchor())
-            XCTFail("Expected register to throw FidoError.invalidChallenge, but it did not.")
-        } catch let error as FidoError {
-            XCTAssertEqual(error, .invalidChallenge)
-            // Verify the hidden value callback was set to an error string
-             XCTAssertTrue((hiddenValueCallback.value).starts(with: "ERROR::"))
-        } catch {
-            XCTFail("Expected register to throw FidoError.invalidChallenge, but it threw \(error).")
+        // Call the async version and check the Result for failure
+        let failureResult = await callback.register(window: MockASPresentationAnchor())
+        
+        switch failureResult {
+        case .success:
+            XCTFail("Expected register to fail with FidoError.invalidChallenge, but it succeeded.")
+        case .failure(let error):
+            guard let fidoError = error as? FidoError else {
+                XCTFail("Expected FidoError.invalidChallenge, but got \(error).")
+                return
+            }
+            XCTAssertEqual(fidoError, .invalidChallenge)
+            // Verify the side effect on hiddenValueCallback
+            XCTAssertTrue((hiddenValueCallback.value ?? "").starts(with: "ERROR::"))
         }
     }
     
-    // Updated test using async/await
     @MainActor // Mark test as running on MainActor
-    func testFidoAuthenticationCallbackAuthenticate() async throws {
+    func testFidoAuthenticationCallbackAuthenticate() async { // Removed 'throws'
         let callback = FidoAuthenticationCallback()
         callback.fido = mockFido // Inject mock
         
@@ -96,26 +106,37 @@ class FidoCallbackTests: XCTestCase {
         ]
         mockFido.authenticationResult = .success(successResponse)
         
-        // Call the async version and expect it not to throw
-        try await callback.authenticate(window: MockASPresentationAnchor())
+        // Call the async version and check the Result
+        let result = await callback.authenticate(window: MockASPresentationAnchor())
         
-        // Verify the hidden value callback was set correctly
-        XCTAssertFalse((hiddenValueCallback.value).starts(with: "ERROR::"))
-        XCTAssertTrue((hiddenValueCallback.value).contains("clientDataJSON"))
-
+        switch result {
+        case .success(let responseDict):
+            // Optional: Assert specific things about the response if needed
+            XCTAssertEqual(responseDict[FidoConstants.FIELD_RAW_ID] as? Data, "rawId".data(using: .utf8)!)
+            // Verify the side effect on hiddenValueCallback
+            XCTAssertFalse((hiddenValueCallback.value ?? "").starts(with: "ERROR::"))
+            XCTAssertTrue((hiddenValueCallback.value ?? "").contains("clientDataJSON"))
+        case .failure(let error):
+            XCTFail("Expected authenticate to succeed, but it failed with \(error).")
+        }
+        
         // --- Test failure ---
         mockFido.authenticationResult = .failure(FidoError.invalidChallenge)
         
-        // Assert that the specific error is thrown
-        do {
-            try await callback.authenticate(window: MockASPresentationAnchor())
-            XCTFail("Expected authenticate to throw FidoError.invalidChallenge, but it did not.")
-        } catch let error as FidoError {
-            XCTAssertEqual(error, .invalidChallenge)
-            // Verify the hidden value callback was set to an error string
-            XCTAssertTrue((hiddenValueCallback.value).starts(with: "ERROR::"))
-        } catch {
-            XCTFail("Expected authenticate to throw FidoError.invalidChallenge, but it threw \(error).")
+        // Call the async version and check the Result for failure
+        let failureResult = await callback.authenticate(window: MockASPresentationAnchor())
+        
+        switch failureResult {
+        case .success:
+            XCTFail("Expected authenticate to fail with FidoError.invalidChallenge, but it succeeded.")
+        case .failure(let error):
+            guard let fidoError = error as? FidoError else {
+                XCTFail("Expected FidoError.invalidChallenge, but got \(error).")
+                return
+            }
+            XCTAssertEqual(fidoError, .invalidChallenge)
+            // Verify the side effect on hiddenValueCallback
+            XCTAssertTrue((hiddenValueCallback.value ?? "").starts(with: "ERROR::"))
         }
     }
 }

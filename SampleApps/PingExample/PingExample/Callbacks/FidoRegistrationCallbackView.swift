@@ -24,33 +24,39 @@ struct FidoRegistrationCallbackView: View {
             TextField("Device Name (Optional)", text: $deviceName)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
+            
+            // 1. Button action still creates a Task
             Button(action: {
-                // 1. Create a Task to handle async code
                 Task {
-                    do {
-                        // 2. Get the window (same as before)
-                        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                              let window = windowScene.windows.first else {
-                            print("Could not find active window scene.")
-                            return
-                        }
-                        
-                        // 3. Use 'try await' to call the async function
-                        // We pass nil if the deviceName is empty, otherwise pass the name
-                        let name = deviceName.isEmpty ? nil : deviceName
-                        try await callback.register(deviceName: name, window: window)
-                        
-                        // 4. Handle success by calling onNext()
+                    // 2. Get the window
+                    guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                          let window = windowScene.windows.first else {
+                        print("Could not find active window scene.")
+                        // Consider how to handle this UI-wise, maybe disable the button or show an alert
+                        return // Exit if no window found
+                    }
+                    
+                    // 3. Call the async function and await its Result
+                    //    We pass nil if the deviceName is empty, otherwise pass the name
+                    let name = deviceName.isEmpty ? nil : deviceName
+                    let result = await callback.register(deviceName: name, window: window)
+                    
+                    // 4. Handle the Result
+                    switch result {
+                    case .success(let responseDict):
+                        // Optional: Use responseDict if needed
+                        print("FIDO Registration successful: \(responseDict)")
+                        // Call onNext on success
                         onNext()
-                        
-                    } catch {
-                        // 5. Handle errors in the catch block by calling onNext()
+                    case .failure(let error):
+                        // Handle errors
                         print("FIDO Registration failed: \(error.localizedDescription)")
+                        // Optionally: show an alert to the user here
                         onNext()
                     }
                 }
             }) {
-                Text("Register with FIDO") // This text is from your provided code
+                Text("Register with FIDO")
             }
         }
     }

@@ -58,33 +58,34 @@ public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendab
     /// - Returns: A dictionary representing the `attestationValue`.
     /// - Throws: An error if the registration process fails or the response is invalid.
     @MainActor
-    public func register(window: ASPresentationAnchor) async throws -> [String: Any] {
-        logger?.d("Starting FIDO registration (async)")
-
+    public func register(window: ASPresentationAnchor) async -> Result<[String: Any], Error> {
+        logger?.d("Starting FIDO registration (async Result)")
+        
         do {
             // 1. Wrap the closure-based fido.register in a continuation
+            //    This still throws internally within the 'do' block if the continuation resumes with an error.
             let response = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[String: Any], Error>) in
-                 // Assuming 'fido' is accessible
+                // Assuming 'fido' instance is accessible
                 fido.register(options: publicKeyCredentialCreationOptions, window: window) { result in
-                    continuation.resume(with: result)
+                    continuation.resume(with: result) // Resume with the Result<[String: Any], Error>
                 }
             }
-
-            // 2. Process the successful response
+            
+            // 2. Process the successful response data extraction
             logger?.d("FIDO registration successful, building attestationValue object...")
-
+            
             guard let rawIdData = response[FidoConstants.FIELD_RAW_ID] as? Data,
                   let clientDataJSONData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
                   let attestationObjectData = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? Data else {
                 
-                let error = FidoError.invalidResponse
+                let error = FidoError.invalidResponse // Define your error type
                 logger?.e(error.localizedDescription, error: error)
-                throw error // Throw directly in async context
+                // Note: No call to self.handleError here as it's specific to the callback context
+                return .failure(error) // Return failure
             }
             
+            // 3. Construct the attestationValue payload
             let authenticatorAttachment = "platform"
-
-            // Construct the attestationValue payload
             let newAttestationValue: [String: Any] = [
                 FidoConstants.FIELD_ID: rawIdData.base64urlEncodedString(),
                 FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,
@@ -97,13 +98,16 @@ public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendab
             ]
             
             logger?.d("attestationValue object created successfully")
-            self.attestationValue = newAttestationValue // Store the value
-            return newAttestationValue // Return the value
+            self.attestationValue = newAttestationValue // Store the value (side effect)
+            
+            // 4. Return success with the constructed attestationValue
+            return .success(newAttestationValue)
             
         } catch {
-            // 3. Handle errors from the continuation or guard statement
+            // 5. Handle any error caught from the continuation
             logger?.e("FIDO registration failed", error: error)
-            throw error // Re-throw the error
+            // Note: No call to self.handleError here
+            return .failure(error) // Return failure
         }
     }
     

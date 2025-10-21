@@ -19,25 +19,30 @@ struct FidoAuthenticationCallbackView: View {
         VStack {
             Text("FIDO Authentication")
                 .font(.title)
+            
+            // 1. Button action still creates a Task
             Button(action: {
-                // 1. Create a Task to handle async code
                 Task {
-                    do {
-                        // 2. Get the window
-                        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                              let window = windowScene.windows.first else {
-                            print("Could not find active window scene.")
-                            return
-                        }
-                        
-                        // 3. Use 'try await' to call the async function
-                        try await callback.authenticate(window: window)
-                        
-                        // 4. Handle success by calling onNext()
+                    // 2. Get the window
+                    guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                          let window = windowScene.windows.first else {
+                        print("Could not find active window scene.")
+                        // Consider how to handle this UI-wise
+                        return // Exit if no window found
+                    }
+                    
+                    // 3. Call the async function and await its Result
+                    let result = await callback.authenticate(window: window)
+                    
+                    // 4. Handle the Result
+                    switch result {
+                    case .success(let responseDict):
+                        // Optional: Use responseDict if needed
+                        print("FIDO Authentication successful: \(responseDict)")
+                        // Call onNext success
                         onNext()
-                        
-                    } catch {
-                        // 5. Handle errors in the catch block
+                    case .failure(let error):
+                        // Handle errors
                         print("FIDO Authentication failed: \(error.localizedDescription)")
                         onNext()
                     }

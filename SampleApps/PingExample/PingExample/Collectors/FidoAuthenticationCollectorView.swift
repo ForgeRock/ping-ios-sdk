@@ -20,26 +20,30 @@ struct FidoAuthenticationCollectorView: View {
             Text("FIDO Authentication")
                 .font(.title)
             
-            // 1. Button action now creates a Task
+            // 1. Button action still creates a Task
             Button(action: {
                 Task {
-                    do {
-                        // 2. Get the window (same as before)
-                        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                              let window = windowScene.windows.first else {
-                            print("Could not find active window scene.")
-                            return // Exit if no window found
-                        }
-                        
-                        // 3. Use 'try await' to call the async version
-                        _ = try await collector.authenticate(window: window) // Result is returned, but we might not need it here if state is updated internally
-                        
-                        // 4. Handle success by calling onNext()
+                    // 2. Get the window (same as before)
+                    guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                          let window = windowScene.windows.first else {
+                        print("Could not find active window scene.")
+                        return // Exit if no window found
+                    }
+                    
+                    // 3. Call the async function and await its Result
+                    let result = await collector.authenticate(window: window)
+                    
+                    // 4. Handle the Result
+                    switch result {
+                    case .success(let assertionValue):
+                        // Optional: Use assertionValue if needed, e.g., logging
+                        print("FIDO Authentication successful: \(assertionValue)")
+                        // Call onNext only on success
                         onNext()
-                        
-                    } catch {
-                        // 5. Handle errors in the catch block
+                    case .failure(let error):
+                        // Handle errors
                         print("FIDO Authentication failed: \(error.localizedDescription)")
+                        // Optionally: show an alert to the user here
                     }
                 }
             }) {
