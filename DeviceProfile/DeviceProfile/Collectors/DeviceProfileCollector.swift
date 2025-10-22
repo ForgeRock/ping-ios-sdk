@@ -121,6 +121,9 @@ public class DeviceProfileCollector: DeviceCollector {
 /// This structure represents the complete device profile, including the unique
 /// identifier, device metadata, and geographic location if available.
 public struct DeviceProfileResult: Codable, Sendable {
+    /// Version of Device Collector structure
+    let version: String
+    
     /// Unique device identifier string
     let identifier: String
     
@@ -131,6 +134,9 @@ public struct DeviceProfileResult: Codable, Sendable {
     /// Device location coordinates if available and permitted
     let location: LocationInfo?
     
+    /// Current version of Device Collector structure
+    static let deviceCollectorVersion: String = "1.0"
+    
     /// Initializes a device profile result with collected data
     /// - Parameters:
     ///   - identifier: Unique device identifier
@@ -140,6 +146,7 @@ public struct DeviceProfileResult: Codable, Sendable {
         self.identifier = identifier
         self.metadata = metadata?.mapValues(AnyValue.init)
         self.location = location
+        self.version = DeviceProfileResult.deviceCollectorVersion
     }
     
     /// Convenience property to get metadata as [String: Any]
@@ -148,4 +155,3 @@ public struct DeviceProfileResult: Codable, Sendable {
         return metadata?.mapValues(\.value)
     }
 }
-

@@ -27,7 +27,7 @@ class NetworkCollector: DeviceCollector {
     /// Collects current network connectivity information
     /// - Returns: NetworkInfo containing connectivity status
     func collect() async -> NetworkInfo? {
-        return NetworkInfo()
+        return await NetworkInfo()
     }
 }
 
@@ -43,8 +43,8 @@ struct NetworkInfo: Codable {
     let connected: Bool
     
     /// Initializes network information by checking current connectivity
-    init() {
-        self.connected = Self.isConnectedToNetwork()
+    init() async {
+        self.connected = await Self.isConnectedToNetwork()
     }
     
     /// Determines current network connectivity status
@@ -63,7 +63,7 @@ struct NetworkInfo: Codable {
     /// ## Connectivity States
     /// - `true`: Device has active network path
     /// - `false`: No network connectivity available
-    private static func isConnectedToNetwork() -> Bool {
+    private static func isConnectedToNetwork() async -> Bool {
         let monitor = NetworkPathMonitor()
         
         // Start monitoring to get current path status
@@ -74,6 +74,12 @@ struct NetworkInfo: Codable {
         }
         
         // Return current connectivity status
-        return monitor.isConnected
+        return await withCheckedContinuation { continuation in
+            monitor.statusUpdateCallback = { status in
+                monitor.stopMonitoring()
+                continuation.resume(returning: status == .satisfied)
+            }
+            monitor.startMonitoring()
+        }
     }
 }
