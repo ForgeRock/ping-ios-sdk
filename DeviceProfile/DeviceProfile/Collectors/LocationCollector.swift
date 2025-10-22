@@ -17,7 +17,7 @@ import CoreLocation
 ///
 /// This structure contains the device's current geographic coordinates
 /// as determined by the location services system.
-struct LocationInfo: Codable {
+public struct LocationInfo: Codable {
     /// Latitude coordinate in decimal degrees
     /// - Note: Positive values represent northern hemisphere, negative for southern
     /// - Range: -90.0 to +90.0 degrees
@@ -55,19 +55,19 @@ struct LocationInfo: Codable {
 /// - App must include location usage descriptions in Info.plist
 /// - User must grant location permissions
 /// - Location services must be enabled on device
-class LocationCollector: NSObject, DeviceCollector {
-    typealias DataType = LocationInfo
+public class LocationCollector: NSObject, DeviceCollector {
+    public typealias DataType = LocationInfo
     
     /// Unique identifier for location data
-    let key = "location"
+    public let key = "location"
     
     /// LocationManager instance for handling location requests
     /// - Note: Defaults to shared singleton, but can be injected for testing
-    var locationManager: LocationManager
+    public var locationManager: LocationManager
     
     /// Initializes the collector with optional dependency injection
     /// - Parameter locationManager: LocationManager instance (defaults to shared)
-    init(locationManager: LocationManager = LocationManager.shared) {
+    public init(locationManager: LocationManager = LocationManager.shared) {
         self.locationManager = locationManager
         super.init()
     }
@@ -85,7 +85,7 @@ class LocationCollector: NSObject, DeviceCollector {
     /// - Catches and handles all location-related errors internally
     /// - Returns nil rather than throwing for unavailable location
     /// - Logs errors for debugging purposes
-    func collect() async -> LocationInfo? {
+    public func collect() async -> LocationInfo? {
         return await getCurrentLocation()
     }
     
