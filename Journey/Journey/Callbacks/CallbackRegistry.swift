@@ -83,6 +83,9 @@ public class CallbackRegistry: @unchecked Sendable {
         if let c: NSObject.Type = NSClassFromString("PingDeviceProfile.DeviceProfile") as? NSObject.Type {
             c.perform(Selector(("registerCallbacks")))
         }
+        if let c: NSObject.Type = NSClassFromString("PingFido.CallbackInitializer") as? NSObject.Type {
+            c.perform(Selector(("registerCallbacks")))
+        }
     }
 
     /// Registers a new type of Callback.
@@ -103,7 +106,10 @@ public class CallbackRegistry: @unchecked Sendable {
         var list = Callbacks()
         for item in array {
             if let type = item[JourneyConstants.type] as? String, let callbackType = callbacks[type] {
-                list.append(callbackType.init().initialize(with: item))
+                let callback = callbackType.init().initialize(with: item)
+                if !(callback is MetadataCallback) {
+                    list.append(callback)
+                }
             }
         }
         return list

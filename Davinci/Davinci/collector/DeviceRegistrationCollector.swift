@@ -34,7 +34,7 @@ open class DeviceRegistrationCollector: FieldCollector<String>, Submittable, @un
     }
     
     /// Return event type
-    func eventType() -> String {
+    public func eventType() -> String {
         return Constants.submit
     }
     

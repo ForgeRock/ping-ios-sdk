@@ -16,7 +16,7 @@ import Foundation
 /// It is used to collect data in a flow.
 public class FlowCollector: SingleValueCollector, Submittable, @unchecked Sendable {
     /// Return event type
-    func eventType() -> String {
+    public func eventType() -> String {
         return Constants.ACTION.lowercased()
     }
 }

@@ -14,6 +14,7 @@ import PingOrchestrate
 import PingDavinci
 import PingExternalIdP
 import PingProtect
+import PingFido
 
 struct ContinueNodeView: View {
     var continueNode: ContinueNode
@@ -72,13 +73,17 @@ struct ContinueNodeView: View {
                     PhoneNumberView(field: phoneNumberCollector, onNodeUpdated: onNodeUpdated)
                 case let protectCollector as ProtectCollector:
                     ProtectView(field: protectCollector, onNodeUpdated: onNodeUpdated)
+                case let fidoRegistrationCollector as FidoRegistrationCollector:
+                    FidoRegistrationCollectorView(collector: fidoRegistrationCollector, onNext: { onNext(true) })
+                case let fidoAuthenticationCollector as FidoAuthenticationCollector:
+                    FidoAuthenticationCollectorView(collector: fidoAuthenticationCollector, onNext: { onNext(true) })
                 default:
                     EmptyView()
                 }
             }
 
             // Fallback Next Button
-            if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector || $0 is DeviceRegistrationCollector || $0 is DeviceAuthenticationCollector }) {
+            if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector || $0 is DeviceRegistrationCollector || $0 is DeviceAuthenticationCollector || $0 is FidoRegistrationCollector || $0 is FidoAuthenticationCollector }) {
                 Button(action: { onNext(false) }) {
                     Text("Next")
                         .frame(maxWidth: .infinity)

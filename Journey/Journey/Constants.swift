@@ -64,6 +64,8 @@ public enum JourneyConstants {
     public static let textOutputCallback = "TextOutputCallback"
     public static let validatedPasswordCallback = "ValidatedCreatePasswordCallback"
     public static let validatedUsernameCallback = "ValidatedCreateUsernameCallback"
+    public static let fidoRegistrationCallback = "FidoRegistrationCallback"
+    public static let fidoAuthenticationCallback = "FidoAuthenticationCallback"
 
     // Response keys
     public static let message = "message"

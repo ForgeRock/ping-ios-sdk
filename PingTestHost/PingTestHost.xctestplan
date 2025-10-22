@@ -18,9 +18,47 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:..\/Orchestrate\/Orchestrate.xcodeproj",
-        "identifier" : "3A54417D2BCDF1D900385131",
-        "name" : "OrchestrateTests"
+        "containerPath" : "container:..\/Logger\/Logger.xcodeproj",
+        "identifier" : "A5A796B52BE04E68004D0F2D",
+        "name" : "LoggerTests"
+      }
+    },
+    {
+      "skippedTests" : [
+        "StorageDelegateTests\/testConcurrentAccess()"
+      ],
+      "target" : {
+        "containerPath" : "container:..\/Storage\/Storage.xcodeproj",
+        "identifier" : "A5A797032BE1782F004D0F2D",
+        "name" : "StorageTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/DeviceProfile\/DeviceProfile.xcodeproj",
+        "identifier" : "A569DBA82E789BD200F4D7A8",
+        "name" : "DeviceProfileTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Oath\/Oath.xcodeproj",
+        "identifier" : "1B29338F2E7DF20A004D1D38",
+        "name" : "OathTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/TamperDetector\/TamperDetector.xcodeproj",
+        "identifier" : "EC59E1612E7AD21700A91E66",
+        "name" : "TamplerDetectorTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/DeviceId\/DeviceId.xcodeproj",
+        "identifier" : "EC23D5852E2FD12100C43D42",
+        "name" : "DeviceIdTests"
       }
     },
     {
@@ -32,9 +70,37 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Browser\/Browser.xcodeproj",
-        "identifier" : "ECB7C6682D5A1FAB0006F1C8",
-        "name" : "PingBrowserTests"
+        "containerPath" : "container:..\/ExternalIdPApple\/ExternalIdPApple.xcodeproj",
+        "identifier" : "ECA7A2AB2DC24BC60011E59C",
+        "name" : "ExternalIdPAppleTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/ExternalIdPFacebook\/ExternalIdPFacebook.xcodeproj",
+        "identifier" : "EC5EA5432DC2295E000C2737",
+        "name" : "ExternalIdPFacebookTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Orchestrate\/Orchestrate.xcodeproj",
+        "identifier" : "3A54417D2BCDF1D900385131",
+        "name" : "OrchestrateTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/MfaCommons\/MfaCommons.xcodeproj",
+        "identifier" : "1B75AC322E8210E1002B5DDD",
+        "name" : "MfaCommonsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Fido\/Fido.xcodeproj",
+        "identifier" : "ECD780452EA24F1B0050E60F",
+        "name" : "PingFidoTests"
       }
     },
     {
@@ -59,30 +125,6 @@
       }
     },
     {
-      "skippedTests" : [
-        "StorageDelegateTests\/testConcurrentAccess()"
-      ],
-      "target" : {
-        "containerPath" : "container:..\/Storage\/Storage.xcodeproj",
-        "identifier" : "A5A797032BE1782F004D0F2D",
-        "name" : "StorageTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Logger\/Logger.xcodeproj",
-        "identifier" : "A5A796B52BE04E68004D0F2D",
-        "name" : "LoggerTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/ExternalIdP\/ExternalIdP.xcodeproj",
-        "identifier" : "ECB7C6972D5A2C1F0006F1C8",
-        "name" : "PingExternalIdPTests"
-      }
-    },
-    {
       "target" : {
         "containerPath" : "container:..\/Protect\/Protect.xcodeproj",
         "identifier" : "A5A31CA32E0A37C700ABBEF7",
@@ -91,23 +133,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Journey\/Journey.xcodeproj",
-        "identifier" : "EC727A2C2E019243005D9E28",
-        "name" : "JourneyTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/ExternalIdPApple\/ExternalIdPApple.xcodeproj",
-        "identifier" : "ECA7A2AB2DC24BC60011E59C",
-        "name" : "ExternalIdPAppleTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/ExternalIdPFacebook\/ExternalIdPFacebook.xcodeproj",
-        "identifier" : "EC5EA5432DC2295E000C2737",
-        "name" : "ExternalIdPFacebookTests"
+        "containerPath" : "container:..\/Browser\/Browser.xcodeproj",
+        "identifier" : "ECB7C6682D5A1FAB0006F1C8",
+        "name" : "PingBrowserTests"
       }
     },
     {
@@ -119,37 +147,16 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/DeviceId\/DeviceId.xcodeproj",
-        "identifier" : "EC23D5852E2FD12100C43D42",
-        "name" : "DeviceIdTests"
+        "containerPath" : "container:..\/ExternalIdP\/ExternalIdP.xcodeproj",
+        "identifier" : "ECB7C6972D5A2C1F0006F1C8",
+        "name" : "PingExternalIdPTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/TamperDetector\/TamperDetector.xcodeproj",
-        "identifier" : "EC59E1612E7AD21700A91E66",
-        "name" : "TamplerDetectorTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/DeviceProfile\/DeviceProfile.xcodeproj",
-        "identifier" : "A569DBA82E789BD200F4D7A8",
-        "name" : "DeviceProfileTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Oath\/Oath.xcodeproj",
-        "identifier" : "1B29338F2E7DF20A004D1D38",
-        "name" : "OathTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/MfaCommons\/MfaCommons.xcodeproj",
-        "identifier" : "1B75AC322E8210E1002B5DDD",
-        "name" : "MfaCommonsTests"
+        "containerPath" : "container:..\/Journey\/Journey.xcodeproj",
+        "identifier" : "EC727A2C2E019243005D9E28",
+        "name" : "JourneyTests"
       }
     }
   ],

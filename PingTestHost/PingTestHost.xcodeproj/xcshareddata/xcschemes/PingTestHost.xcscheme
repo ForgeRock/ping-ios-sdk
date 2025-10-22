@@ -369,6 +369,16 @@
                ReferencedContainer = "container:../MfaCommons/MfaCommons.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ECD5A2A42E8FE40C00A27205"
+               BuildableName = "Fido2Tests.xctest"
+               BlueprintName = "Fido2Tests"
+               ReferencedContainer = "container:../Fido2/Fido2.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

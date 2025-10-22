@@ -33,7 +33,7 @@ open class DeviceAuthenticationCollector: FieldCollector<[String: Any]>, Submitt
     }
     
     /// Return event type
-    func eventType() -> String {
+    public func eventType() -> String {
         return Constants.submit
     }
     

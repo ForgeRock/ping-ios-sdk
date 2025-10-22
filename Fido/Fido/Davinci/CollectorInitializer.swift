@@ -1,0 +1,24 @@
+//
+//  CollectorInitializer.swift
+//  Fido
+//
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
+//
+
+import Foundation
+import PingDavinci
+
+/// A class responsible for registering FIDO callbacks with the Davinci framework.
+public class CollectorInitializer: NSObject {
+    /// Registers the FIDO callbacks with the `CollectorFactory`.
+    @objc public static func registerCollectors() {
+        Task {
+            await CollectorFactory.shared.register(type: "FIDO2", closure: { json in
+                return try? AbstractFidoCollector.getCollector(with: json)
+            })
+        }
+    }
+}
