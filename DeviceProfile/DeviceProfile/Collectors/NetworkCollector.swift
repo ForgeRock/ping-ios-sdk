@@ -66,9 +66,6 @@ struct NetworkInfo: Codable {
     private static func isConnectedToNetwork() async -> Bool {
         let monitor = NetworkPathMonitor()
         
-        // Start monitoring to get current path status
-        monitor.startMonitoring()
-        
         defer {
             monitor.stopMonitoring()
         }
