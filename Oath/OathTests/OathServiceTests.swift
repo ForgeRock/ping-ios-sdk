@@ -125,25 +125,118 @@ final class OathServiceTests: XCTestCase {
     }
 
     func testAddCredentialWithPolicyViolation() async throws {
+        // Create a mock policy that always fails
+        let failingPolicy = MockFailingPolicy()
+        let failingEvaluator = MfaPolicyEvaluator.create { config in
+            config.policies = [failingPolicy]
+        }
+        
+        let configuration = OathConfiguration.build { config in
+            config.storage = inMemoryStorage
+            config.logger = testLogger
+            config.enableCredentialCache = false
+        }
+        
+        let serviceWithFailingPolicy = OathService(
+            configuration: configuration,
+            policyEvaluator: failingEvaluator
+        )
+        
         let credential = OathCredential(
             issuer: "Example",
             accountName: "user@example.com",
             oathType: .totp,
-            policies: "{\"lockPolicy\": true}",
+            policies: "{\"mockFailing\": {}}",
             secretKey: "JBSWY3DPEHPK3PXP"
         )
-
-        guard let service = oathService else {
-            XCTFail("OathService not initialized")
-            return
-        }
-
-        let storedCredential = try await service.addCredential(credential)
-        XCTAssertNotNil(storedCredential)
         
-        // Should still store credential (policies don't fail by default with empty evaluator)
+        // Runtime policy failure should LOCK the credential but still add it
+        let storedCredential = try await serviceWithFailingPolicy.addCredential(credential)
+        XCTAssertNotNil(storedCredential)
+        XCTAssertTrue(storedCredential.isLocked, "Credential should be locked due to policy failure")
+        XCTAssertEqual(storedCredential.lockingPolicy, "mockFailing")
+        
+        // Should still be stored
         let credentialCount = await inMemoryStorage.credentialCount
         XCTAssertEqual(credentialCount, 1)
+    }
+    
+    func testParseUriWithPolicyViolationBlocks() async {
+        // Create a mock policy that always fails
+        let failingPolicy = MockFailingPolicy()
+        let failingEvaluator = MfaPolicyEvaluator.create { config in
+            config.policies = [failingPolicy]
+        }
+        
+        let configuration = OathConfiguration.build { config in
+            config.storage = inMemoryStorage
+            config.logger = testLogger
+            config.enableCredentialCache = false
+        }
+        
+        let serviceWithFailingPolicy = OathService(
+            configuration: configuration,
+            policyEvaluator: failingEvaluator
+        )
+        
+        // Use mfauth scheme with policies parameter (base64 encoded JSON: {"mockFailing": {}})
+        let uri = "mfauth://totp/Example:user@example.com?secret=JBSWY3DPEHPK3PXP&issuer=RXhhbXBsZQ&policies=eyJtb2NrRmFpbGluZyI6IHt9fQ=="
+        
+        // Registration-time policy failure should BLOCK completely
+        do {
+            _ = try await serviceWithFailingPolicy.parseUri(uri)
+            XCTFail("Expected policyViolation error during registration")
+        } catch let error as OathError {
+            if case .policyViolation(let message, _) = error {
+                XCTAssertTrue(message.contains("cannot be registered"), "Error should mention registration blocking")
+            } else {
+                XCTFail("Expected policyViolation error, got \(error)")
+            }
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+    
+    func testCredentialUnlocksWhenPolicyPasses() async throws {
+        // Create a togglable policy
+        let togglablePolicy = MockTogglablePolicy(shouldPass: false)
+        let togglableEvaluator = MfaPolicyEvaluator.create { config in
+            config.policies = [togglablePolicy]
+        }
+        
+        let configuration = OathConfiguration.build { config in
+            config.storage = inMemoryStorage
+            config.logger = testLogger
+            config.enableCredentialCache = false
+        }
+        
+        let serviceWithTogglablePolicy = OathService(
+            configuration: configuration,
+            policyEvaluator: togglableEvaluator
+        )
+        
+        let credential = OathCredential(
+            issuer: "Example",
+            accountName: "user@example.com",
+            oathType: .totp,
+            policies: "{\"mockTogglable\": {}}",
+            secretKey: "JBSWY3DPEHPK3PXP"
+        )
+        
+        // Add credential with failing policy - should be locked
+        let lockedCredential = try await serviceWithTogglablePolicy.addCredential(credential)
+        XCTAssertTrue(lockedCredential.isLocked, "Credential should be locked initially")
+        
+        // Now make policy pass
+        togglablePolicy.shouldPass = true
+        
+        // Retrieve credentials - should trigger policy re-evaluation and unlock
+        let credentials = try await serviceWithTogglablePolicy.getCredentials()
+        XCTAssertEqual(credentials.count, 1)
+        
+        let unlockedCredential = credentials[0]
+        XCTAssertFalse(unlockedCredential.isLocked, "Credential should be unlocked when policy passes")
+        XCTAssertNil(unlockedCredential.lockingPolicy, "Locking policy should be cleared")
     }
 
     func testGetCredentials() async throws {
@@ -472,5 +565,30 @@ final class OathServiceTests: XCTestCase {
         let credentials = try await service.getCredentials()
         XCTAssertNotNil(credentials)
         XCTAssertEqual(credentials.count, 0) // Empty storage initially
+    }
+}
+
+// MARK: - Mock Policies for Testing
+
+/// Mock policy that always fails for testing policy violations
+private struct MockFailingPolicy: MfaPolicy, Sendable {
+    var name: String { "mockFailing" }
+    
+    func evaluate(data: [String: Any]?) async throws -> Bool {
+        return false
+    }
+}
+
+/// Mock policy that can be toggled between pass/fail for testing unlocking
+private class MockTogglablePolicy: MfaPolicy, @unchecked Sendable {
+    var name: String { "mockTogglable" }
+    var shouldPass: Bool
+    
+    init(shouldPass: Bool) {
+        self.shouldPass = shouldPass
+    }
+    
+    func evaluate(data: [String: Any]?) async throws -> Bool {
+        return shouldPass
     }
 }

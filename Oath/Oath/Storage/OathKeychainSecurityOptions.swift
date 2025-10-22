@@ -10,6 +10,7 @@
 
 import Foundation
 import Security
+import LocalAuthentication
 
 /// Security options for OATH keychain storage.
 /// Provides enhanced security configurations including biometric authentication.
@@ -96,7 +97,7 @@ public struct OathKeychainSecurityOptions: Sendable {
     /// - Returns: Dictionary of keychain attributes.
     internal func keychainAttributes() -> [String: Any] {
         var attributes: [String: Any] = [
-            kSecAttrAccessible as String: accessibility as CFString
+            kSecAttrAccessible as String: accessibility
         ]
 
         if let accessGroup = accessGroup {
@@ -105,18 +106,16 @@ public struct OathKeychainSecurityOptions: Sendable {
 
         // Add biometric authentication if required
         if requireBiometrics {
-            if #available(iOS 11.3, *) {
-                let accessControl = SecAccessControlCreateWithFlags(
-                    kCFAllocatorDefault,
-                    accessibility as CFString,
-                    requireDevicePasscode ? .biometryCurrentSet : .biometryCurrentSet,
-                    nil
-                )
+            let accessControl = SecAccessControlCreateWithFlags(
+                kCFAllocatorDefault,
+                accessibility as CFString,
+                requireDevicePasscode ? .biometryCurrentSet : .biometryAny,
+                nil
+            )
 
-                if accessControl != nil {
-                    attributes[kSecAttrAccessControl as String] = accessControl
-                    attributes.removeValue(forKey: kSecAttrAccessible as String)
-                }
+            if accessControl != nil {
+                attributes[kSecAttrAccessControl as String] = accessControl
+                attributes.removeValue(forKey: kSecAttrAccessible as String)
             }
         }
 
@@ -125,27 +124,13 @@ public struct OathKeychainSecurityOptions: Sendable {
 
     /// Creates authentication context for biometric operations.
     /// - Returns: LAContext configured for this security level.
-    internal func authenticationContext() -> Any? {
+    internal func authenticationContext() -> LAContext? {
         guard requireBiometrics else { return nil }
 
-        if #available(iOS 8.0, *) {
-            let context = LAContext()
-            if let prompt = biometricPrompt {
-                context.localizedReason = prompt
-            }
-            return context
+        let context = LAContext()
+        if let prompt = biometricPrompt {
+            context.localizedReason = prompt
         }
-
-        return nil
+        return context
     }
-}
-
-
-// MARK: - LocalAuthentication Support
-
-import LocalAuthentication
-
-@available(iOS 8.0, *)
-private class LAContext: NSObject {
-    var localizedReason: String = ""
 }

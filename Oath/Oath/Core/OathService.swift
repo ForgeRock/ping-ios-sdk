@@ -62,12 +62,32 @@ actor OathService {
     /// - Parameter uri: The URI string to parse.
     /// - Returns: A new OathCredential instance.
     /// - Throws: `OathError.invalidUri` if the URI is malformed.
+    /// - Throws: `OathError.policyViolation` if policies are violated during registration.
     func parseUri(_ uri: String) async throws -> OathCredential {
         logger.d("Parsing OATH URI")
 
         do {
             let credential = try await OathUriParser.parse(uri)
             logger.d("Successfully parsed OATH URI for issuer: \(credential.issuer)")
+            
+            // Evaluate policies during registration if policies are present
+            // Block registration if policies fail
+            if let policiesString = credential.policies, !policiesString.isEmpty {
+                logger.d("Evaluating policies for new OATH credential")
+                let policyResult = await policyEvaluator.evaluate(credentialPolicies: policiesString)
+                
+                if policyResult.isFailure {
+                    let policyName = policyResult.nonCompliancePolicyName ?? "unknown"
+                    logger.w("OATH credential registration blocked by policy: \(policyName)", error: nil)
+                    throw OathError.policyViolation(
+                        "This credential cannot be registered on this device. It violates the following policy: \(policyName)",
+                        credential.id
+                    )
+                } else {
+                    logger.d("All policies passed for new OATH credential")
+                }
+            }
+            
             return credential
         } catch {
             logger.e("Failed to parse OATH URI: \(error)", error: error)
@@ -129,16 +149,20 @@ actor OathService {
         do {
             let credentials = try await storage.getAllOathCredentials()
 
-            // Update cache if enabled
-            if configuration.enableCredentialCache {
-                credentialsCache.removeAll()
-                for credential in credentials {
-                    credentialsCache[credential.id] = credential
+            // Evaluate policies for each credential at runtime (following Android pattern)
+            var updatedCredentials: [OathCredential] = []
+            for credential in credentials {
+                let updatedCredential = try await evaluateAndUpdateCredentialPolicies(credential, store: true)
+                updatedCredentials.append(updatedCredential)
+                
+                // Update cache if enabled
+                if configuration.enableCredentialCache {
+                    credentialsCache[updatedCredential.id] = updatedCredential
                 }
             }
 
-            logger.d("Successfully retrieved \(credentials.count) OATH credentials")
-            return credentials
+            logger.d("Successfully retrieved \(updatedCredentials.count) OATH credentials")
+            return updatedCredentials
         } catch {
             logger.e("Failed to retrieve OATH credentials: \(error)", error: error)
             throw error
@@ -269,34 +293,62 @@ actor OathService {
     
     // MARK: - Policy Evaluation
 
-    /// Evaluate and update credential policies.
-    /// - Parameter credential: The credential to evaluate.
+    /// Evaluate and update credential policies at runtime.
+    /// Following Android pattern: locks credentials that violate policies but doesn't throw.
+    /// This allows graceful degradation - locked credentials are stored but cannot generate codes.
+    /// - Parameters:
+    ///   - credential: The credential to evaluate.
+    ///   - store: Whether to store the updated credential (default: true).
     /// - Returns: Updated credential with policy results.
-    /// - Throws: `OathError.policyViolation` if critical policies fail.
     private func evaluateAndUpdateCredentialPolicies(
-        _ credential: OathCredential
+        _ credential: OathCredential,
+        store: Bool = true
     ) async throws -> OathCredential {
         logger.d("Evaluating policies for credential: \(credential.id)")
 
+        // If no policies, return credential as-is
+        guard let policiesString = credential.policies, !policiesString.isEmpty else {
+            return credential
+        }
+
         var updatedCredential = credential
+        let result = await policyEvaluator.evaluate(credentialPolicies: policiesString)
 
-        // Evaluate policies if present
-        if let policiesString = credential.policies {
-            let result = await policyEvaluator.evaluate(credentialPolicies: policiesString)
-
-            // Handle policy evaluation result
-            if result.isFailure {
-                logger.w("Policy violation for credential \(credential.id): \(result.nonCompliancePolicyName ?? "unknown")", error: nil)
-
-                // Handle locking policy
-                if let policyName = result.nonCompliancePolicyName, policyName.lowercased().contains("lock") {
-                    updatedCredential.isLocked = true
-                    updatedCredential.lockingPolicy = policyName
+        // If credential is not locked but policies fail, lock it
+        if !updatedCredential.isLocked && result.isFailure {
+            let policyName = result.nonCompliancePolicyName ?? "unknown"
+            logger.w("Locking OATH credential \(credential.id) due to policy violation: \(policyName)", error: nil)
+            updatedCredential.isLocked = true
+            updatedCredential.lockingPolicy = policyName
+            
+            // Update storage with locked status
+            if store {
+                try await storage.storeOathCredential(updatedCredential)
+            }
+        }
+        // If credential is locked but policies are now compliant, unlock it
+        else if updatedCredential.isLocked && result.isSuccess {
+            logger.i("Unlocking previously locked OATH credential \(credential.id): all policies are compliant")
+            updatedCredential.isLocked = false
+            updatedCredential.lockingPolicy = nil
+            
+            // Update storage with unlocked status
+            if store {
+                try await storage.storeOathCredential(updatedCredential)
+            }
+        }
+        // If credential is locked and policies fail with a different policy, update the locking policy
+        else if updatedCredential.isLocked && result.isFailure {
+            let newPolicyName = result.nonCompliancePolicyName ?? "unknown"
+            let currentLockingPolicy = updatedCredential.lockingPolicy
+            
+            if newPolicyName != currentLockingPolicy {
+                logger.w("Updating locking policy for OATH credential \(credential.id) from '\(currentLockingPolicy ?? "nil")' to '\(newPolicyName)'", error: nil)
+                updatedCredential.lockingPolicy = newPolicyName
+                
+                if store {
+                    try await storage.storeOathCredential(updatedCredential)
                 }
-
-                // For now, we'll log policy violations but not throw errors to avoid blocking
-                // This matches the Android implementation approach
-                logger.i("Policy violation logged for credential \(credential.id), continuing with operation")
             }
         }
 

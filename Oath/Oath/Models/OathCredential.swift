@@ -190,18 +190,31 @@ public struct OathCredential: Codable, Identifiable, Sendable, CustomStringConve
             }
         }
 
-        // Validate secret key is not empty
+        // Validate secret key is not empty and within length limits
         guard !secretKey.isEmpty else {
             throw OathError.invalidSecret("Secret key cannot be empty")
         }
 
-        // Validate issuer and account name are not empty
+        guard secretKey.count <= OathUriParser.maxSecretLength else {
+            throw OathError.invalidSecret("Secret key exceeds maximum length of \(OathUriParser.maxSecretLength)")
+        }
+
+        // Validate issuer is not empty and within length limits
         guard !issuer.isEmpty else {
             throw OathError.invalidParameterValue("Issuer cannot be empty")
         }
+        
+        guard issuer.count <= OathUriParser.maxParameterLength else {
+            throw OathError.invalidParameterValue("Issuer exceeds maximum length of \(OathUriParser.maxParameterLength)")
+        }
 
+        // Validate account name is not empty and within length limits
         guard !accountName.isEmpty else {
             throw OathError.invalidParameterValue("Account name cannot be empty")
+        }
+        
+        guard accountName.count <= OathUriParser.maxParameterLength else {
+            throw OathError.invalidParameterValue("Account name exceeds maximum length of \(OathUriParser.maxParameterLength)")
         }
     }
 
@@ -209,6 +222,21 @@ public struct OathCredential: Codable, Identifiable, Sendable, CustomStringConve
     // MARK: - Codable Implementation
 
     /// Coding keys for JSON serialization, excluding the secret key for security.
+    ///
+    /// This credential uses Swift's standard `Codable` protocol for JSON serialization.
+    /// You can use `JSONEncoder` and `JSONDecoder` directly:
+    /// ```swift
+    /// // Encoding
+    /// let encoder = JSONEncoder()
+    /// let data = try encoder.encode(credential)
+    ///
+    /// // Decoding (note: secret key must be loaded separately from secure storage)
+    /// let decoder = JSONDecoder()
+    /// let credential = try decoder.decode(OathCredential.self, from: data)
+    /// ```
+    ///
+    /// - Important: The secret key is never included in JSON serialization for security reasons.
+    ///   It must be stored and retrieved separately using secure storage.
     private enum CodingKeys: String, CodingKey {
         case id
         case userId

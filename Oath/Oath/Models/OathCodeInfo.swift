@@ -101,6 +101,15 @@ public struct OathCodeInfo: Codable, Sendable {
     // MARK: - JSON Serialization
 
     /// Converts this code info to a JSON string representation.
+    ///
+    /// This is a convenience method for cross-platform API consistency.
+    /// You can also use Swift's standard `JSONEncoder` directly:
+    /// ```swift
+    /// let encoder = JSONEncoder()
+    /// let data = try encoder.encode(codeInfo)
+    /// let jsonString = String(data: data, encoding: .utf8)
+    /// ```
+    ///
     /// - Returns: A JSON string representing this code info.
     /// - Throws: `EncodingError` if serialization fails.
     public func toJson() throws -> String {
@@ -110,6 +119,14 @@ public struct OathCodeInfo: Codable, Sendable {
     }
 
     /// Creates an OathCodeInfo from a JSON string.
+    ///
+    /// This is a convenience method for cross-platform API consistency.
+    /// You can also use Swift's standard `JSONDecoder` directly:
+    /// ```swift
+    /// let decoder = JSONDecoder()
+    /// let codeInfo = try decoder.decode(OathCodeInfo.self, from: jsonData)
+    /// ```
+    ///
     /// - Parameter jsonString: The JSON string to parse.
     /// - Returns: An OathCodeInfo instance.
     /// - Throws: `DecodingError` if the JSON is invalid.

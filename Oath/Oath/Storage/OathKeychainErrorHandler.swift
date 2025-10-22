@@ -10,6 +10,7 @@
 
 import Foundation
 import Security
+import LocalAuthentication
 import PingLogger
 
 /// Enhanced error handling for keychain operations.
@@ -55,7 +56,7 @@ internal enum OathKeychainErrorHandler {
             logger?.e("Keychain authentication failed - incorrect credentials or access denied", error: nil)
             return .accessDenied("Authentication failed for keychain access")
 
-        case -errSecUserCanceled:
+        case errSecUserCanceled:
             logger?.w("User cancelled keychain operation", error: nil)
             return .accessDenied("User cancelled authentication")
 
@@ -94,20 +95,20 @@ internal enum OathKeychainErrorHandler {
             return .storageFailure("Invalid keychain request")
 
         // Biometric authentication errors
-        case -25293: // errSecPasscodeNotSet (not always available in Security framework)
+        case OSStatus(LAError.passcodeNotSet.rawValue):
             logger?.e("Device passcode not set - required for secure keychain access", error: nil)
             return .accessDenied("Device passcode required")
 
         // iOS-specific Touch ID/Face ID errors
-        case -25300: // kLAErrorTouchIDNotAvailable
+        case OSStatus(LAError.biometryNotAvailable.rawValue):
             logger?.e("Touch ID/Face ID not available", error: nil)
             return .accessDenied("Biometric authentication not available")
 
-        case -25301: // kLAErrorTouchIDNotEnrolled
+        case OSStatus(LAError.biometryNotEnrolled.rawValue):
             logger?.e("Touch ID/Face ID not enrolled", error: nil)
             return .accessDenied("Biometric authentication not enrolled")
 
-        case -25308: // kLAErrorTouchIDLockout
+        case OSStatus(LAError.biometryLockout.rawValue):
             logger?.e("Touch ID/Face ID locked out", error: nil)
             return .accessDenied("Biometric authentication locked out")
 

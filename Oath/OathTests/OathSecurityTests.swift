@@ -229,7 +229,7 @@ final class OathSecurityTests: XCTestCase {
         var codes: [OathCodeInfo] = []
         for offset in 0..<10 {
             let timeOffset = TimeInterval(offset * 30) // 30-second intervals
-            let code = try await OathAlgorithmHelper.generateCode(for: credential)
+            let code = try await OathAlgorithmHelper.generateCode(for: credential, timeIntervalSince1970: timeOffset)
             codes.append(code)
         }
 
@@ -308,10 +308,9 @@ final class OathSecurityTests: XCTestCase {
         ]
 
         for invalidInput in invalidBase32Inputs {
-            let result = Base32.decode(invalidInput)
-            // Base32.decode should return nil or empty data for invalid inputs
-            XCTAssertTrue(result == nil || result?.isEmpty == true,
-                         "Base32.decode should handle invalid input gracefully: \(invalidInput)")
+            let result = Base32.decode(invalidInput, strict: true)
+            // Base32.decode in strict mode should return nil for invalid inputs
+            XCTAssertNil(result, "Base32.decode should reject invalid input in strict mode: \(invalidInput)")
         }
     }
 
@@ -324,10 +323,9 @@ final class OathSecurityTests: XCTestCase {
         ]
 
         for attack in paddingAttacks {
-            let result = Base32.decode(attack)
-            // Base32.decode should handle padding attacks gracefully by returning nil or empty data
-            XCTAssertTrue(result == nil || result?.isEmpty == true,
-                         "Base32.decode should handle padding attack gracefully: \(attack)")
+            let result = Base32.decode(attack, strict: true)
+            // Base32.decode in strict mode should reject padding attacks
+            XCTAssertNil(result, "Base32.decode should reject padding attack in strict mode: \(attack)")
         }
     }
 
@@ -355,7 +353,7 @@ final class OathSecurityTests: XCTestCase {
         )
 
         for testVector in testVectors {
-            let generatedCode = try await OathAlgorithmHelper.generateCode(for: credential)
+            let generatedCode = try await OathAlgorithmHelper.generateCode(for: credential, timeIntervalSince1970: TimeInterval(testVector.time))
 
             XCTAssertEqual(generatedCode.code, testVector.expectedSha1,
                           "Generated TOTP code should match RFC 6238 test vector for time \(testVector.time)")

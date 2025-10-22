@@ -27,6 +27,7 @@ enum OathUriParser {
     private static let periodParam = "period"
     private static let counterParam = "counter"
     private static let resourceIdParam = "oid" // OATH Resource ID parameter
+    private static let policiesParam = "policies" // MFA policies (base64-encoded JSON)
 
     /// Default values for optional parameters
     private static let defaultAlgorithm = OathAlgorithm.sha1.rawValue
@@ -35,9 +36,9 @@ enum OathUriParser {
     private static let defaultCounter = 0
     
     /// Security constants
-    private static let maxSecretLength = 1024
-    private static let maxParameterLength = 256
-    private static let maxUriLength = 4096
+    static let maxSecretLength = 1024
+    static let maxParameterLength = 256
+    static let maxUriLength = 4096
 
     
     // MARK: - Public Methods
@@ -59,6 +60,7 @@ enum OathUriParser {
     /// - `oid`: OATH resource/device ID
     /// - `image`: URL for issuer logo
     /// - `b`: Background color (hex format)
+    /// - `policies`: Base64-encoded JSON policies (mfauth scheme only)
     static func parse(_ uri: String) async throws -> OathCredential {
         // Security check: URI length validation
         guard uri.count <= maxUriLength else {
@@ -164,6 +166,16 @@ enum OathUriParser {
             }
         }
         
+        // Policies - typically base64-encoded JSON string
+        var policies: String?
+        if let policiesParam = parameters[Self.policiesParam] {
+            if Base64.isBase64Encoded(policiesParam) {
+                policies = try Base64.decodeBase64Url(policiesParam)
+            } else {
+                policies = policiesParam
+            }
+        }
+        
         // Image URL
         let imageURL = parameters[UriParser.imageUrlParam]
 
@@ -185,6 +197,7 @@ enum OathUriParser {
             counter: counter,
             imageURL: imageURL,
             backgroundColor: backgroundColor,
+            policies: policies,
             secretKey: secret
         )
     }

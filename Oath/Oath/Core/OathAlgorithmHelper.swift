@@ -22,14 +22,16 @@ enum OathAlgorithmHelper {
     // MARK: - Public Methods
 
     /// Generate an OTP code for an OATH credential.
-    /// - Parameter credential: The OathCredential to generate code for.
+    /// - Parameters:
+    ///   - credential: The OathCredential to generate code for.
+    ///   - timeIntervalSince1970: Optional custom time for TOTP generation. Uses current time if nil.
     /// - Returns: OathCodeInfo containing the code and validity information.
     /// - Throws: `OathError.invalidSecret` if the secret key is invalid.
     /// - Throws: `OathError.codeGenerationFailed` if cryptographic operations fail.
-    static func generateCode(for credential: OathCredential) async throws -> OathCodeInfo {
+    static func generateCode(for credential: OathCredential, timeIntervalSince1970: TimeInterval? = nil) async throws -> OathCodeInfo {
         switch credential.oathType {
         case .totp:
-            return try generateTotpCode(credential)
+            return try generateTotpCode(credential, timeIntervalSince1970: timeIntervalSince1970)
         case .hotp:
             return try generateHotpCode(credential)
         }
@@ -39,12 +41,14 @@ enum OathAlgorithmHelper {
     // MARK: - Private TOTP Methods
 
     /// Generate a TOTP code for a credential.
-    /// - Parameter credential: The TOTP credential.
+    /// - Parameters:
+    ///   - credential: The TOTP credential.
+    ///   - timeIntervalSince1970: Optional custom time for TOTP generation. Uses current time if nil.
     /// - Returns: OathCodeInfo for TOTP with timing information.
     /// - Throws: `OathError.codeGenerationFailed` if generation fails.
-    private static func generateTotpCode(_ credential: OathCredential) throws -> OathCodeInfo {
+    private static func generateTotpCode(_ credential: OathCredential, timeIntervalSince1970: TimeInterval? = nil) throws -> OathCodeInfo {
         let period = Int64(credential.period)
-        let now = Int64(Date().timeIntervalSince1970)
+        let now = Int64(timeIntervalSince1970 ?? Date().timeIntervalSince1970)
         let counter = now / period
 
         let code = try generateOtpCode(credential, counter: counter)
@@ -104,7 +108,7 @@ enum OathAlgorithmHelper {
 
         // Convert counter to 8-byte big-endian data (matching legacy SDK format)
         let counterUInt64 = UInt64(counter)
-        let counterData = counterUInt64.bigEndian.data
+        let counterData = counterUInt64.bigEndianData
 
         // Generate HMAC
         let hmacData = try hmac(algorithm: credential.oathAlgorithm, key: secretData, data: counterData)
@@ -225,12 +229,11 @@ enum OathAlgorithmHelper {
 
 // MARK: - UInt64 Extension
 
-/// Extension to match legacy SDK data conversion behavior
+/// Extension for converting UInt64 to Data with big-endian byte order (required by RFC 4226/6238)
 extension UInt64 {
-    /// Data converted from UInt64 (matching legacy SDK format)
-    var data: Data {
-        var int = self
-        let intData = Data(bytes: &int, count: MemoryLayout.size(ofValue: self))
-        return intData
+    /// Data converted from UInt64 in big-endian format
+    var bigEndianData: Data {
+        var bigEndianValue = self.bigEndian
+        return withUnsafeBytes(of: &bigEndianValue) { Data($0) }
     }
 }

@@ -32,20 +32,64 @@ enum Base32 {
     // MARK: - Public Methods
 
     /// Decodes a Base32 encoded string to Data.
-    /// - Parameter base32String: The Base32 encoded string to decode.
+    /// - Parameters:
+    ///   - base32String: The Base32 encoded string to decode.
+    ///   - strict: If true, requires proper padding (multiple of 8 chars). Default is false for compatibility.
     /// - Returns: The decoded Data, or nil if the string is invalid.
-    static func decode(_ base32String: String) -> Data? {
+    static func decode(_ base32String: String, strict: Bool = false) -> Data? {
         // Remove whitespace and convert to uppercase
         let cleanString = base32String
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .uppercased()
 
+        // Security: Reject extremely long inputs (DoS protection)
+        // Use 9999 as the limit to reject inputs >= 10000
+        guard cleanString.count < 10000 else {
+            return nil
+        }
+
+        // Security: Validate padding
+        // Padding must only appear at the end (if at all)
+        if let firstPaddingIndex = cleanString.firstIndex(of: "=") {
+            let paddingStart = cleanString.distance(from: cleanString.startIndex, to: firstPaddingIndex)
+            let paddingSubstring = cleanString[firstPaddingIndex...]
+
+            // All characters after first padding must also be padding
+            guard paddingSubstring.allSatisfy({ $0 == "=" }) else {
+                return nil // Padding in middle or invalid padding pattern
+            }
+
+            // Validate padding length (RFC 4648: padding to make length multiple of 8)
+            let paddingLength = paddingSubstring.count
+            let totalLength = cleanString.count
+            guard totalLength % 8 == 0 else {
+                return nil // Invalid padding - total length must be multiple of 8
+            }
+
+            // Padding can only be 0, 1, 3, 4, or 6 characters (based on RFC 4648 Base32)
+            let validPaddingLengths: Set<Int> = [0, 1, 3, 4, 6]
+            guard validPaddingLengths.contains(paddingLength) else {
+                return nil // Invalid padding length
+            }
+        }
+
+        // Security: In strict mode, require proper padding
+        // The input string (before removing padding) must be a multiple of 8 characters
+        // This prevents accepting malformed or truncated Base32 strings
+        if strict {
+            guard cleanString.count % 8 == 0 || cleanString.isEmpty else {
+                return nil // Improperly padded Base32 string
+            }
+        }
+
         // Remove padding characters
         let trimmedString = cleanString.trimmingCharacters(in: CharacterSet(charactersIn: "="))
 
-        // Check if string is empty
+        // Check if string is empty or only padding
         guard !trimmedString.isEmpty else {
-            return Data()
+            // In strict mode, reject empty/all-padding strings
+            // In lenient mode, return empty Data for backward compatibility
+            return strict ? nil : Data()
         }
 
         // Validate characters
