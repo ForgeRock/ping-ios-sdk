@@ -18,17 +18,20 @@ import CoreBluetooth
 /// This collector determines whether the device supports Bluetooth Low Energy
 /// by checking the CoreBluetooth framework's central manager state.
 /// It provides information about BLE support without requiring location permissions.
-class BluetoothCollector: DeviceCollector {
-    typealias DataType = BluetoothInfo
+public class BluetoothCollector: DeviceCollector {
+    public typealias DataType = BluetoothInfo
     
     /// Unique identifier for bluetooth capability data
-    let key = "bluetooth"
+    public let key = "bluetooth"
     
     /// Collects Bluetooth capability information
     /// - Returns: BluetoothInfo containing support status
-    func collect() async -> BluetoothInfo? {
+    public func collect() async -> BluetoothInfo? {
         return await BluetoothInfo()
     }
+    
+    /// Initializes a new instance
+    public init() {}
 }
 
 // MARK: - BluetoothInfo
@@ -37,7 +40,7 @@ class BluetoothCollector: DeviceCollector {
 ///
 /// This structure contains the results of Bluetooth capability detection,
 /// indicating whether the device supports BLE functionality.
-struct BluetoothInfo: Codable {
+public struct BluetoothInfo: Codable {
     /// Whether the device supports Bluetooth Low Energy
     /// - Note: This indicates hardware support, not current power state or permissions
     let supported: Bool

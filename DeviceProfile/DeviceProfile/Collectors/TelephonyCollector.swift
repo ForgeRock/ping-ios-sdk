@@ -18,17 +18,20 @@ import CoreTelephony
 /// This collector gathers information about the device's cellular capabilities
 /// including carrier name and network country information from available
 /// cellular service providers.
-class TelephonyCollector: DeviceCollector {
-    typealias DataType = TelephonyInfo
+public class TelephonyCollector: DeviceCollector {
+    public typealias DataType = TelephonyInfo
     
     /// Unique identifier for telephony information data
-    let key = "telephony"
+    public let key = "telephony"
     
     /// Collects cellular network and carrier information
     /// - Returns: TelephonyInfo containing carrier and network details
-    func collect() async -> TelephonyInfo? {
+    public func collect() async -> TelephonyInfo? {
         return TelephonyInfo()
     }
+    
+    /// Initializes a new instance
+    public init() {}
 }
 
 // MARK: - TelephonyInfo
@@ -37,7 +40,7 @@ class TelephonyCollector: DeviceCollector {
 ///
 /// This structure contains details about the cellular service provider
 /// and network country code, extracted from available cellular subscriptions.
-struct TelephonyInfo: Codable {
+public struct TelephonyInfo: Codable {
     /// ISO country code of the cellular network (e.g., "US", "GB", "JP")
     /// - Note: Returns "Unknown" if no carrier information is available
     let networkCountryIso: String?

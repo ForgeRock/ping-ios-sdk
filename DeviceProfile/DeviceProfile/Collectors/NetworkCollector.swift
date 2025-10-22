@@ -18,17 +18,20 @@ import Network
 /// This collector determines the current network connectivity status
 /// using the modern Network framework available in iOS 13+.
 /// It provides a snapshot of connectivity at collection time.
-class NetworkCollector: DeviceCollector {
-    typealias DataType = NetworkInfo
+public class NetworkCollector: DeviceCollector {
+    public typealias DataType = NetworkInfo
     
     /// Unique identifier for network connectivity data
-    let key = "network"
+    public let key = "network"
     
     /// Collects current network connectivity information
     /// - Returns: NetworkInfo containing connectivity status
-    func collect() async -> NetworkInfo? {
-        return NetworkInfo()
+    public func collect() async -> NetworkInfo? {
+        return await NetworkInfo()
     }
+    
+    /// Initializes a new instance
+    public init() {}
 }
 
 // MARK: - NetworkInfo
@@ -37,14 +40,14 @@ class NetworkCollector: DeviceCollector {
 ///
 /// This structure contains the basic connectivity state determined
 /// at the time of collection using the Network framework.
-struct NetworkInfo: Codable {
+public struct NetworkInfo: Codable {
     /// Whether the device currently has network connectivity
     /// - Note: This represents the connectivity status at collection time
     let connected: Bool
     
     /// Initializes network information by checking current connectivity
-    init() {
-        self.connected = Self.isConnectedToNetwork()
+    init() async {
+        self.connected = await Self.isConnectedToNetwork()
     }
     
     /// Determines current network connectivity status
@@ -63,17 +66,20 @@ struct NetworkInfo: Codable {
     /// ## Connectivity States
     /// - `true`: Device has active network path
     /// - `false`: No network connectivity available
-    private static func isConnectedToNetwork() -> Bool {
+    private static func isConnectedToNetwork() async -> Bool {
         let monitor = NetworkPathMonitor()
-        
-        // Start monitoring to get current path status
-        monitor.startMonitoring()
         
         defer {
             monitor.stopMonitoring()
         }
         
         // Return current connectivity status
-        return monitor.isConnected
+        return await withCheckedContinuation { continuation in
+            monitor.statusUpdateCallback = { status in
+                monitor.stopMonitoring()
+                continuation.resume(returning: status == .satisfied)
+            }
+            monitor.startMonitoring()
+        }
     }
 }

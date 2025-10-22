@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		951773A62EA931A20081AEDE /* DeviceProfileCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951773A52EA931A20081AEDE /* DeviceProfileCallbackE2ETest.swift */; };
+		951773AB2EA934910081AEDE /* PingDeviceProfile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 951773AA2EA934910081AEDE /* PingDeviceProfile.framework */; };
 		95DA7BFC2E4E7DCC00168E1A /* JourneyE2EBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DA7BED2E4E7DCC00168E1A /* JourneyE2EBaseTest.swift */; };
 		95DA7BFD2E4E7DCC00168E1A /* StringAttributeInputCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DA7BF42E4E7DCC00168E1A /* StringAttributeInputCallbackE2ETest.swift */; };
 		95DA7BFE2E4E7DCC00168E1A /* ValidatePasswordCallbackE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DA7BFA2E4E7DCC00168E1A /* ValidatePasswordCallbackE2ETest.swift */; };
@@ -124,6 +126,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		951773A52EA931A20081AEDE /* DeviceProfileCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProfileCallbackE2ETest.swift; sourceTree = "<group>"; };
+		951773AA2EA934910081AEDE /* PingDeviceProfile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDeviceProfile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		95DA7BE82E4E7DCC00168E1A /* BooleanAttributeInputCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanAttributeInputCallbackE2ETest.swift; sourceTree = "<group>"; };
 		95DA7BE92E4E7DCC00168E1A /* ChoiceCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoiceCallbackE2ETest.swift; sourceTree = "<group>"; };
 		95DA7BEA2E4E7DCC00168E1A /* ConfirmationCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationCallbackE2ETest.swift; sourceTree = "<group>"; };
@@ -228,6 +232,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				951773AB2EA934910081AEDE /* PingDeviceProfile.framework in Frameworks */,
 				EC727A2E2E019243005D9E28 /* PingJourney.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -242,6 +247,7 @@
 				95DA7BE92E4E7DCC00168E1A /* ChoiceCallbackE2ETest.swift */,
 				95DA7BEA2E4E7DCC00168E1A /* ConfirmationCallbackE2ETest.swift */,
 				95DA7BEB2E4E7DCC00168E1A /* ConsentMappingCallbackE2ETest.swift */,
+				951773A52EA931A20081AEDE /* DeviceProfileCallbackE2ETest.swift */,
 				95DA7BEC2E4E7DCC00168E1A /* HiddenValueCallbackE2ETest.swift */,
 				95DA7BED2E4E7DCC00168E1A /* JourneyE2EBaseTest.swift */,
 				95DA7BEE2E4E7DCC00168E1A /* JourneyE2ETests.swift */,
@@ -341,6 +347,7 @@
 		EC727A902E02DCA9005D9E28 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				951773AA2EA934910081AEDE /* PingDeviceProfile.framework */,
 				EC727A952E02DCAF005D9E28 /* PingOrchestrate.framework */,
 				EC727A912E02DCA9005D9E28 /* PingOidc.framework */,
 			);
@@ -588,6 +595,7 @@
 				A5CFC8762E43938100CBFC3B /* HiddenValueCallbackTests.swift in Sources */,
 				ECD562A82E0C48A700F0B5A9 /* MockURLProtocol.swift in Sources */,
 				A5CFC8802E439DF300CBFC3B /* SuspendedTextOutputCallbackTests.swift in Sources */,
+				951773A62EA931A20081AEDE /* DeviceProfileCallbackE2ETest.swift in Sources */,
 				A5CFC86C2E4292E900CBFC3B /* AbstractValidatedCallbackTests.swift in Sources */,
 				A5CFC8A02E43A1DA00CBFC3B /* TextOutputCallbackTests.swift in Sources */,
 				A5CFC8A42E43A35300CBFC3B /* ValidatedUsernameCallbackTests.swift in Sources */,

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		95E7555F2EA6A80F008DBFD6 /* PingDeviceProfile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E7555E2EA6A80F008DBFD6 /* PingDeviceProfile.framework */; };
+		95E755602EA6A80F008DBFD6 /* PingDeviceProfile.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 95E7555E2EA6A80F008DBFD6 /* PingDeviceProfile.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A507A2672CEBED9F007F5C16 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A507A2622CEBED9F007F5C16 /* PingDavinci.framework */; };
 		A507A2682CEBED9F007F5C16 /* PingDavinci.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A507A2622CEBED9F007F5C16 /* PingDavinci.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A507A2692CEBED9F007F5C16 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A507A2632CEBED9F007F5C16 /* PingLogger.framework */; };
@@ -49,6 +51,7 @@
 			files = (
 				ECB7C6932D5A27840006F1C8 /* PingBrowser.framework in Embed Frameworks */,
 				EC59E3712E7D8BFC00A91E66 /* PingTamperDetector.framework in Embed Frameworks */,
+				95E755602EA6A80F008DBFD6 /* PingDeviceProfile.framework in Embed Frameworks */,
 				A507A26A2CEBED9F007F5C16 /* PingLogger.framework in Embed Frameworks */,
 				EC2E0D902DE60C42000CC0E2 /* PingExternalIdPApple.framework in Embed Frameworks */,
 				EC2E0D932DE60C49000CC0E2 /* PingExternalIdP.framework in Embed Frameworks */,
@@ -65,6 +68,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		95E7555E2EA6A80F008DBFD6 /* PingDeviceProfile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDeviceProfile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A507A2622CEBED9F007F5C16 /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A507A2632CEBED9F007F5C16 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A507A2642CEBED9F007F5C16 /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,6 +117,7 @@
 				EC2E0D982DE60C55000CC0E2 /* PingExternalIdPGoogle.framework in Frameworks */,
 				ECB7C6922D5A27840006F1C8 /* PingBrowser.framework in Frameworks */,
 				EC2E0D8F2DE60C42000CC0E2 /* PingExternalIdPApple.framework in Frameworks */,
+				95E7555F2EA6A80F008DBFD6 /* PingDeviceProfile.framework in Frameworks */,
 				EC9591062DC116EF005633A1 /* GoogleSignIn in Frameworks */,
 				A507A2692CEBED9F007F5C16 /* PingLogger.framework in Frameworks */,
 				EC2E0D922DE60C49000CC0E2 /* PingExternalIdP.framework in Frameworks */,
@@ -162,6 +167,7 @@
 		A54BF4822BF2E5B800CD24D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				95E7555E2EA6A80F008DBFD6 /* PingDeviceProfile.framework */,
 				EC59E36F2E7D8BFC00A91E66 /* PingTamperDetector.framework */,
 				EC2E0D972DE60C55000CC0E2 /* PingExternalIdPGoogle.framework */,
 				EC2E0D942DE60C50000CC0E2 /* PingExternalIdPFacebook.framework */,
@@ -430,6 +436,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PingTestHost/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "We use Bluetooth in the device profile feature";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location for testing";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -466,6 +473,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PingTestHost/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "We use Bluetooth in the device profile feature";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location for testing";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;

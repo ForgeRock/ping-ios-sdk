@@ -34,14 +34,14 @@ class NetworkCollectorTests: XCTestCase {
     
     // MARK: - NetworkInfo Tests
     
-    func testNetworkInfoInitialization() {
-        let networkInfo = NetworkInfo()
+    func testNetworkInfoInitialization() async {
+        let networkInfo = await NetworkInfo()
         
         XCTAssertNotNil(networkInfo.connected, "NetworkInfo.connected should not be nil")
     }
     
-    func testNetworkInfoCodable() throws {
-        let networkInfo = NetworkInfo()
+    func testNetworkInfoCodable() async throws {
+        let networkInfo = await NetworkInfo()
         
         // Test encoding
         let encoder = JSONEncoder()
@@ -55,8 +55,8 @@ class NetworkCollectorTests: XCTestCase {
         XCTAssertEqual(networkInfo.connected, decodedInfo.connected, "Decoded NetworkInfo should match original")
     }
     
-    func testNetworkInfoJSONStructure() throws {
-        let networkInfo = NetworkInfo()
+    func testNetworkInfoJSONStructure() async throws {
+        let networkInfo = await NetworkInfo()
         
         let encoder = JSONEncoder()
         let data = try encoder.encode(networkInfo)
@@ -67,8 +67,8 @@ class NetworkCollectorTests: XCTestCase {
         XCTAssertTrue(jsonObject?["connected"] is Bool, "connected value should be Bool in JSON")
     }
     
-    func testNetworkInfoBooleanValues() {
-        let networkInfo = NetworkInfo()
+    func testNetworkInfoBooleanValues() async {
+        let networkInfo = await NetworkInfo()
         
         // connected should be a valid boolean value
         let validBooleanValues = [true, false]
@@ -121,9 +121,11 @@ class NetworkCollectorTests: XCTestCase {
         }
     }
     
-    func testNetworkInfoInitializationPerformance() {
+    func testNetworkInfoInitializationPerformance() async {
         measure {
-            _ = NetworkInfo()
+            Task {
+                _ = await NetworkInfo()
+            }
         }
     }
     
@@ -204,10 +206,10 @@ class NetworkCollectorTests: XCTestCase {
     
     // MARK: - Network Status Validation Tests
     
-    func testNetworkInfoEquality() {
+    func testNetworkInfoEquality() async {
         // Create multiple instances and compare
-        let info1 = NetworkInfo()
-        let info2 = NetworkInfo()
+        let info1 = await NetworkInfo()
+        let info2 = await NetworkInfo()
         
         // Values might be equal if network status is stable
         // This is not guaranteed due to potential network changes between instantiation
@@ -233,8 +235,8 @@ class NetworkCollectorTests: XCTestCase {
                      "Description should mention NetworkCollector")
     }
     
-    func testNetworkInfoDescription() {
-        let networkInfo = NetworkInfo()
+    func testNetworkInfoDescription() async {
+        let networkInfo = await NetworkInfo()
         
         // Verify NetworkInfo can be described without crashing
         let description = String(describing: networkInfo)
@@ -243,12 +245,12 @@ class NetworkCollectorTests: XCTestCase {
                      "Description should mention NetworkInfo or connected property")
     }
     
-    func testMultipleNetworkInfoInstances() {
+    func testMultipleNetworkInfoInstances() async {
         // Test creating multiple instances doesn't cause issues
         var networkInfos: [NetworkInfo] = []
         
         for _ in 0..<10 {
-            let networkInfo = NetworkInfo()
+            let networkInfo = await NetworkInfo()
             networkInfos.append(networkInfo)
         }
         
@@ -259,12 +261,12 @@ class NetworkCollectorTests: XCTestCase {
     
     // MARK: - System Integration Tests
     
-    func testNetworkInfoUsesNetworkFramework() {
+    func testNetworkInfoUsesNetworkFramework() async {
         // This test verifies that NetworkInfo actually uses the Network framework
         // We can't easily mock NWPathMonitor in a unit test, but we can verify
         // that the NetworkInfo initialization doesn't crash and produces valid output
         
-        let networkInfo = NetworkInfo()
+        let networkInfo = await NetworkInfo()
         
         // Should complete without crashing
         XCTAssertNotNil(networkInfo, "NetworkInfo should initialize successfully")
@@ -303,8 +305,8 @@ class NetworkCollectorTests: XCTestCase {
     
     // MARK: - JSON Serialization Edge Cases
     
-    func testNetworkInfoJSONRoundTrip() throws {
-        let originalInfo = NetworkInfo()
+    func testNetworkInfoJSONRoundTrip() async throws {
+        let originalInfo = await NetworkInfo()
         
         // Encode to JSON
         let encoder = JSONEncoder()

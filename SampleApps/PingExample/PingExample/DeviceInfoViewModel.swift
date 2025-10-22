@@ -38,6 +38,17 @@ class DeviceInfoViewModel: ObservableObject {
         let config = DeviceProfileConfig()
         config.metadata = true
         config.location = true
+        config.collectors {
+            return [
+                PlatformCollector(),
+                HardwareCollector(),
+                BrowserCollector(),
+                TelephonyCollector(),
+                NetworkCollector(),
+                BluetoothCollector(),
+                LocationCollector()
+            ]
+        }
         
         do {
             // Perform device profile collection
