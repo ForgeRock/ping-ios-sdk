@@ -103,12 +103,12 @@ extension CLLocationManager: LocationManagerProtocol {
 /// Your app's Info.plist must include appropriate usage descriptions:
 /// - `NSLocationWhenInUseUsageDescription` for basic location access
 /// - `NSLocationAlwaysAndWhenInUseUsageDescription` for background location access
-class LocationManager: NSObject, ObservableObject {
+public class LocationManager: NSObject, ObservableObject {
     
     // MARK: - Constants
     
     /// Shared singleton instance of LocationManager for app-wide coordination
-    static let shared = LocationManager()
+    public static let shared = LocationManager()
     
     /// Duration in seconds for which cached location data remains valid
     /// This prevents excessive location requests and preserves battery life
@@ -363,7 +363,7 @@ extension LocationManager: CLLocationManagerDelegate {
     /// Called when the authorization status changes
     /// - Parameter manager: The location manager whose authorization changed
     /// - Parameter status: The new authorization status
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         // Resume any pending authorization continuation
         if let continuation = authorizationContinuation {
             authorizationContinuation = nil
@@ -374,7 +374,7 @@ extension LocationManager: CLLocationManagerDelegate {
     /// Called when location data becomes available
     /// - Parameter manager: The location manager providing the update
     /// - Parameter locations: Array of location objects in chronological order
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         
         // Cache the most recent location for future requests
@@ -390,7 +390,7 @@ extension LocationManager: CLLocationManagerDelegate {
     /// Called when location request fails
     /// - Parameter manager: The location manager that encountered the error
     /// - Parameter error: The error that occurred during location request
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         // Resume any pending location continuation with the error
         if let continuation = locationContinuation {
             locationContinuation = nil

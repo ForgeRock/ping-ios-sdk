@@ -18,17 +18,20 @@ import PingTamperDetector
 ///
 /// This collector gathers comprehensive information about the iOS platform,
 /// device model, system version, localization settings, and security status.
-class PlatformCollector: DeviceCollector {
-    typealias DataType = PlatformInfo
+public class PlatformCollector: DeviceCollector {
+    public typealias DataType = PlatformInfo
     
     /// Unique identifier for platform information data
-    let key = "platform"
+    public let key = "platform"
     
     /// Collects comprehensive platform information
     /// - Returns: PlatformInfo containing system and device details
-    func collect() async -> PlatformInfo? {
+    public func collect() async -> PlatformInfo? {
         return await PlatformInfo()
     }
+    
+    /// Initializes a new instance
+    public init() {}
 }
 
 // MARK: - PlatformInfo
@@ -37,7 +40,7 @@ class PlatformCollector: DeviceCollector {
 ///
 /// This structure contains detailed information about the operating system,
 /// device model, localization settings, and security characteristics.
-struct PlatformInfo: Codable {
+public struct PlatformInfo: Codable {
     /// Operating system name (e.g., "iOS", "iPadOS")
     let platform: String
     

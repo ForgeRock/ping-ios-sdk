@@ -19,17 +19,20 @@ import AVFoundation
 /// This collector gathers comprehensive hardware information including
 /// manufacturer, memory specifications, CPU details, display properties,
 /// and camera capabilities.
-class HardwareCollector: DeviceCollector {
-    typealias DataType = HardwareInfo
+public class HardwareCollector: DeviceCollector {
+    public typealias DataType = HardwareInfo
     
     /// Unique identifier for hardware information data
-    let key = "hardware"
+    public let key = "hardware"
     
     /// Collects comprehensive hardware information
     /// - Returns: HardwareInfo containing device specifications
-    func collect() async -> HardwareInfo? {
+    public func collect() async -> HardwareInfo? {
         return HardwareInfo()
     }
+    
+    /// Initializes a new instance
+    public init() {}
 }
 
 // MARK: - HardwareInfo
@@ -38,7 +41,7 @@ class HardwareCollector: DeviceCollector {
 ///
 /// This structure contains detailed specifications about the device's
 /// physical capabilities and hardware components.
-struct HardwareInfo: Codable {
+public struct HardwareInfo: Codable {
     /// Device manufacturer (always "Apple" for iOS devices)
     let manufacturer: String
     
