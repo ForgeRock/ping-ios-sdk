@@ -64,10 +64,11 @@ public actor MfaPolicyEvaluator: Sendable {
             if policiesJson.keys.contains(policyName) {
                 do {
                     // Get the policy data from JSON configuration
-                    let policyData = policiesJson[policyName] as? [String: Any]
+                    nonisolated(unsafe) let policyData = policiesJson[policyName] as? [String: Any]
 
                     // Evaluate the policy with data as parameter
-                    if try await !policy.evaluate(data: policyData) {
+                    let result = try await policy.evaluate(data: policyData)
+                    if !result {
                         logger.d("Policy '\(policyName)' evaluation failed.")
                         return MfaPolicyResult.failure(policy: policy)
                     }
