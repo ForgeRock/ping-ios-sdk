@@ -96,6 +96,10 @@
 		EC14474C2EA664C300882AF2 /* PingFido.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC1447482EA6647C00882AF2 /* PingFido.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC23D5712E2E8ECF00C43D42 /* OidcLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */; };
 		EC23D5722E2E8ECF00C43D42 /* OidcLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */; };
+		EC4DD3182EABC06800ECC4E1 /* PingBinding.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4DD30E2EABBAE400ECC4E1 /* PingBinding.framework */; };
+		EC4DD3192EABC06800ECC4E1 /* PingBinding.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC4DD30E2EABBAE400ECC4E1 /* PingBinding.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC4DD32F2EABD36E00ECC4E1 /* DeviceBindingCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD32D2EABD36E00ECC4E1 /* DeviceBindingCallbackView.swift */; };
+		EC4DD3302EABD36E00ECC4E1 /* DeviceSigningVerifierCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD32E2EABD36E00ECC4E1 /* DeviceSigningVerifierCallbackView.swift */; };
 		EC5597C92E93EB0D00A07329 /* FidoAuthenticationCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597C82E93EB0D00A07329 /* FidoAuthenticationCallbackView.swift */; };
 		EC5597EF2E93EB1700A07329 /* FidoRegistrationCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597EE2E93EB1700A07329 /* FidoRegistrationCallbackView.swift */; };
 		EC5598032E96799200A07329 /* FidoAuthenticationCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5598012E96799200A07329 /* FidoAuthenticationCollectorView.swift */; };
@@ -359,6 +363,13 @@
 			remoteGlobalIDString = EC4DD2842EABBA5F00ECC4E1;
 			remoteInfo = PingBinding;
 		};
+		EC4DD3322EABD36E00ECC4E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC4DD3072EABBAE400ECC4E1 /* Binding.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC4DD31E2EABCE7600ECC4E1;
+			remoteInfo = PingBindingTests;
+		};
 		EC59E3072E7D7DE300A91E66 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EC59E3002E7D7DE300A91E66 /* TamperDetector.xcodeproj */;
@@ -412,6 +423,7 @@
 				A5560CA12CFE4EDA0076CA8D /* PingDavinci.framework in Embed Frameworks */,
 				A5560CA92CFE4EDA0076CA8D /* PingStorage.framework in Embed Frameworks */,
 				EC14474C2EA664C300882AF2 /* PingFido.framework in Embed Frameworks */,
+				EC4DD3192EABC06800ECC4E1 /* PingBinding.framework in Embed Frameworks */,
 				A5560CA72CFE4EDA0076CA8D /* PingOrchestrate.framework in Embed Frameworks */,
 				A525E7B82DD7647200B02C17 /* PingExternalIdPFacebook.framework in Embed Frameworks */,
 				A525E7BA2DD7647200B02C17 /* PingExternalIdPGoogle.framework in Embed Frameworks */,
@@ -522,6 +534,8 @@
 		EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginView.swift; sourceTree = "<group>"; };
 		EC23D5702E2E8ECF00C43D42 /* OidcLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcLoginViewModel.swift; sourceTree = "<group>"; };
 		EC4DD3072EABBAE400ECC4E1 /* Binding.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Binding.xcodeproj; path = ../../Binding/Binding.xcodeproj; sourceTree = SOURCE_ROOT; };
+		EC4DD32D2EABD36E00ECC4E1 /* DeviceBindingCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceBindingCallbackView.swift; sourceTree = "<group>"; };
+		EC4DD32E2EABD36E00ECC4E1 /* DeviceSigningVerifierCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSigningVerifierCallbackView.swift; sourceTree = "<group>"; };
 		EC5597C82E93EB0D00A07329 /* FidoAuthenticationCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoAuthenticationCallbackView.swift; sourceTree = "<group>"; };
 		EC5597EE2E93EB1700A07329 /* FidoRegistrationCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoRegistrationCallbackView.swift; sourceTree = "<group>"; };
 		EC5598012E96799200A07329 /* FidoAuthenticationCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoAuthenticationCollectorView.swift; sourceTree = "<group>"; };
@@ -563,6 +577,7 @@
 				1B2933CD2E7DF429004D1D38 /* PingOath.framework in Frameworks */,
 				A525E7B32DD7647200B02C17 /* PingExternalIdP.framework in Frameworks */,
 				A525E7B72DD7647200B02C17 /* PingExternalIdPFacebook.framework in Frameworks */,
+				EC4DD3182EABC06800ECC4E1 /* PingBinding.framework in Frameworks */,
 				A5560CA02CFE4EDA0076CA8D /* PingDavinci.framework in Frameworks */,
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
 				EC92B38F2DA03E0700E4246D /* SVGKit in Frameworks */,
@@ -757,6 +772,8 @@
 		A5768CFE2E283F0C000290EE /* Callbacks */ = {
 			isa = PBXGroup;
 			children = (
+				EC4DD32D2EABD36E00ECC4E1 /* DeviceBindingCallbackView.swift */,
+				EC4DD32E2EABD36E00ECC4E1 /* DeviceSigningVerifierCallbackView.swift */,
 				EC5597EE2E93EB1700A07329 /* FidoRegistrationCallbackView.swift */,
 				EC5597C82E93EB0D00A07329 /* FidoAuthenticationCallbackView.swift */,
 				ECF7EB872E464F2C002A5E8E /* SelectIdpCallbackView.swift */,
@@ -920,6 +937,7 @@
 			isa = PBXGroup;
 			children = (
 				EC4DD30E2EABBAE400ECC4E1 /* PingBinding.framework */,
+				EC4DD3332EABD36E00ECC4E1 /* PingBindingTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1369,6 +1387,13 @@
 			remoteRef = EC4DD30D2EABBAE400ECC4E1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		EC4DD3332EABD36E00ECC4E1 /* PingBindingTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = PingBindingTests.xctest;
+			remoteRef = EC4DD3322EABD36E00ECC4E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		EC59E3082E7D7DE300A91E66 /* PingTamperDetector.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -1455,6 +1480,8 @@
 				A5768D082E288DB7000290EE /* ChoiceCallbackView.swift in Sources */,
 				A5E9AEE32D318524000533ED /* FlowButtonView.swift in Sources */,
 				3A8532332BE2D5D800F8619D /* DavinciView.swift in Sources */,
+				EC4DD32F2EABD36E00ECC4E1 /* DeviceBindingCallbackView.swift in Sources */,
+				EC4DD3302EABD36E00ECC4E1 /* DeviceSigningVerifierCallbackView.swift in Sources */,
 				A5EFA9812D360ACC00F771FE /* ContinueNodeView.swift in Sources */,
 				EC92B3882DA02D7400E4246D /* DeviceAuthenticationView.swift in Sources */,
 				EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */,

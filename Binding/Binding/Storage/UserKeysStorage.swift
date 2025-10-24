@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
  *
@@ -13,6 +12,8 @@ class UserKeysStorage {
     
     private let config: UserKeyStorageConfig
     
+    /// Initializes a new `UserKeysStorage`.
+    /// - Parameter config: The configuration to use.
     init(config: UserKeyStorageConfig) {
         self.config = config
     }
@@ -46,19 +47,8 @@ class UserKeysStorage {
         return userKeys.first { $0.userId == userId }
     }
     
-    /// Deletes a user key.
-    ///
-    /// - Parameter userKey: The user key to delete.
-    func delete(userKey: UserKey) throws {
-        var userKeys = try findAll()
-        userKeys.removeAll { $0.keyTag == userKey.keyTag }
-        let data = try JSONEncoder().encode(userKeys)
-        try data.write(to: fileURL)
-    }
-    
-    /// Deletes all user keys for a user ID.
-    ///
-    /// - Parameter userId: The user ID.
+    /// Deletes a user key by user ID.
+    /// - Parameter userId: The user ID of the key to delete.
     func deleteByUserId(_ userId: String) throws {
         var userKeys = try findAll()
         userKeys.removeAll { $0.userId == userId }
@@ -66,8 +56,9 @@ class UserKeysStorage {
         try data.write(to: fileURL)
     }
     
+    /// The URL of the file where the keys are stored.
     private var fileURL: URL {
-        let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        return url.appendingPathComponent(config.fileName)
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return documentsDirectory.appendingPathComponent(config.fileName)
     }
 }

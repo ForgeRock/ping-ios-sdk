@@ -15,10 +15,17 @@ import PingExternalIdPGoogle
 import PingBrowser
 import PingDeviceId
 import PingTamperDetector
+import PingOidc
+import PingProtect
+import PingBinding
 
 /// The main application entry point.
 @main
 struct MyApp: App {
+    
+    init() {
+        BindingModule.register()
+    }
     
     // Create an instance of the manager.
     // @StateObject ensures it's kept alive for the app's lifecycle.

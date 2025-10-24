@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
  *
@@ -23,6 +22,13 @@ public struct UserKey: Codable {
     /// The creation date.
     public let createdAt: Date
     
+    /// Initializes a new `UserKey`.
+    /// - Parameters:
+    ///   - keyTag: The key tag.
+    ///   - userId: The user ID.
+    ///   - username: The username.
+    ///   - kid: The key ID.
+    ///   - authType: The authentication type.
     public init(keyTag: String, userId: String, username: String, kid: String, authType: DeviceBindingAuthenticationType) {
         self.keyTag = keyTag
         self.userId = userId

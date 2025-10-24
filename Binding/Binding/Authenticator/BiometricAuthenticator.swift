@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
  *
@@ -12,18 +11,26 @@ import LocalAuthentication
 /// An authenticator that uses biometrics (Face ID or Touch ID).
 class BiometricAuthenticator: DeviceAuthenticator {
     
+    /// The type of authenticator.
     let type: DeviceBindingAuthenticationType = .biometric
     private let config: BiometricAuthenticatorConfig
     
+    /// Initializes a new `BiometricAuthenticator`.
+    /// - Parameter config: The configuration for the authenticator.
     init(config: BiometricAuthenticatorConfig) {
         self.config = config
     }
     
+    /// Registers a new key pair.
+    /// - Parameter attestation: The attestation to use.
+    /// - Returns: The new key pair.
     func register(attestation: Attestation) async throws -> KeyPair {
         let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
         return try cryptoKey.generateKeyPair(attestation: attestation)
     }
     
+    /// Authenticates the user using biometrics.
+    /// - Returns: The private key.
     func authenticate() async throws -> SecKey {
         let context = LAContext()
         context.localizedCancelTitle = "Cancel"
@@ -55,12 +62,16 @@ class BiometricAuthenticator: DeviceAuthenticator {
         }
     }
     
+    /// Checks if the device supports biometrics.
+    /// - Parameter attestation: The attestation to use.
+    /// - Returns: `true` if the device supports biometrics, `false` otherwise.
     func isSupported(attestation: Attestation) -> Bool {
         let context = LAContext()
         var error: NSError?
         return context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
     }
     
+    /// Deletes all biometric keys.
     func deleteKeys() async throws {
         let userKeys = try UserKeysStorage(config: UserKeyStorageConfig()).findAll()
         for userKey in userKeys {
@@ -70,6 +81,8 @@ class BiometricAuthenticator: DeviceAuthenticator {
         }
     }
     
+    /// Gets the private key from the keychain.
+    /// - Returns: The private key.
     private func getPrivateKey() throws -> SecKey {
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
@@ -80,14 +93,15 @@ class BiometricAuthenticator: DeviceAuthenticator {
         
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
-        guard status == errSecSuccess, let key = item as? SecKey else {
+        guard status == errSecSuccess, let item = item else {
             throw DeviceBindingError.deviceNotRegistered
         }
-        return key
+        return (item as! SecKey)
     }
 }
 
 /// Configuration for the BiometricAuthenticator.
 public struct BiometricAuthenticatorConfig {
+    /// The key tag to use for the key.
     let keyTag: String
 }

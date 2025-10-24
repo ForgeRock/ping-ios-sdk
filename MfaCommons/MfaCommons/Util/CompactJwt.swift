@@ -215,6 +215,40 @@ public final class CompactJwt: Sendable {
         }
     }
 
+    /// Signs given claims using an asymmetric key algorithm.
+    ///
+    /// - Parameters:
+    ///   - claims: The claims to include in the JWT.
+    ///   - privateKey: The private key used to sign the JWT.
+    ///   - algorithm: The algorithm to use for signing (e.g., ES256).
+    ///   - kid: The key ID to include in the JWT header.
+    /// - Returns: The JWT string.
+    /// - Throws: `JwtError.signingFailed` if there is an error signing the JWT.
+    public static func sign(claims: [String: Any], privateKey: SecKey, algorithm: SecKeyAlgorithm, kid: String) throws -> String {
+        let header = [
+            "typ": "JWT",
+            "alg": "ES256",
+            "kid": kid
+        ]
+        
+        let encodedHeader = try encodeToBase64URL(header)
+        let encodedPayload = try encodeToBase64URL(claims)
+        
+        let signingInput = "\(encodedHeader).\(encodedPayload)"
+        guard let signingData = signingInput.data(using: .utf8) else {
+            throw JwtError.signingFailed("Cannot convert signing input to data")
+        }
+        
+        var error: Unmanaged<CFError>?
+        guard let signature = SecKeyCreateSignature(privateKey, algorithm, signingData as CFData, &error) else {
+            throw JwtError.signingFailed("Failed to sign JWT: \(error!.takeRetainedValue().localizedDescription)")
+        }
+        
+        let encodedSignature = (signature as Data).base64URLEncodedString()
+        
+        return "\(encodedHeader).\(encodedPayload).\(encodedSignature)"
+    }
+
     // MARK: - Private Helper Methods
 
     private static func encodeToBase64URL(_ object: Any) throws -> String {

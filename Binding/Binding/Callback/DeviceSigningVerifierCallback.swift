@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
  *
@@ -10,11 +9,7 @@ import Foundation
 import PingJourney
 
 /// A Journey callback for handling device signing verification.
-import Foundation
-import PingJourney
-
-/// A Journey callback for handling device signing verification.
-public class DeviceSigningVerifierCallback: AbstractCallback {
+public class DeviceSigningVerifierCallback: AbstractCallback, @unchecked Sendable {
     
     /// The user ID for the signing.
     public var userId: String?
@@ -29,29 +24,32 @@ public class DeviceSigningVerifierCallback: AbstractCallback {
     /// The timeout for the operation.
     public var timeout: Int = 30
     
-    public required init(json: [String : Any]) throws {
-        try super.init(json: json)
-        userId = getOutputValue(key: Constants.userId)
-        challenge = getOutputValue(key: Constants.challenge) ?? ""
-        title = getOutputValue(key: Constants.title) ?? ""
-        subtitle = getOutputValue(key: Constants.subtitle) ?? ""
-        description = getOutputValue(key: Constants.description) ?? ""
-        timeout = getOutputValue(key: Constants.timeout) ?? 30
-    }
-    
-    required init() {
-        fatalError("init() has not been implemented")
-    }
-    
     /// Sets the JWS value in the callback.
     /// - Parameter jws: The JWS to be set.
     public func setJws(_ jws: String) {
-        self.setInputValue(jws, for: Constants.jws)
+        updateInputValue(jws, for: Constants.jws)
     }
     
     /// Sets the client error value in the callback.
     /// - Parameter clientError: The client error to be set.
     public func setClientError(_ clientError: String) {
-        self.setInputValue(clientError, for: Constants.clientError)
+        updateInputValue(clientError, for: Constants.clientError)
+    }
+    
+    /// Signs a challenge with a previously bound device.
+    /// - Parameter config: A closure to configure the `DeviceBindingConfig`.
+    public func sign(config: (DeviceBindingConfig) -> Void = { _ in }) async throws {
+        _ = try await PingBinder.sign(callback: self, config: config)
+    }
+    
+    private func updateInputValue(_ value: Any, for name: String) {
+        guard var inputArray = json[JourneyConstants.input] as? [[String: Any]] else {
+            return
+        }
+        
+        if let index = inputArray.firstIndex(where: { $0[JourneyConstants.name] as? String == name }) {
+            inputArray[index][JourneyConstants.value] = value
+            json[JourneyConstants.input] = inputArray
+        }
     }
 }

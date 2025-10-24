@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
  *
@@ -28,50 +27,33 @@ protocol DeviceAuthenticator {
     /// Checks if the authenticator is supported.
     ///
     /// - Parameter attestation: The attestation type.
-    /// - Returns: A boolean indicating whether the authenticator is supported.
+    /// - Returns: `true` if the authenticator is supported, `false` otherwise.
     func isSupported(attestation: Attestation) -> Bool
     
-    /// Deletes the keys.
-    func deleteKeys() async throws
-    
-    /// Signs a JWT.
+    /// Signs the given parameters with the key.
     ///
-    /// - Parameter params: The signing parameters.
-    /// - Returns: The signed JWT.
+    /// - Parameter params: The parameters to sign.
+    /// - Returns: The JWS.
     func sign(params: SigningParameters) throws -> String
     
-    /// Signs a JWT.
+    /// Signs the given parameters with the key.
     ///
-    /// - Parameter params: The user key signing parameters.
-    /// - Returns: The signed JWT.
+    /// - Parameter params: The parameters to sign.
+    /// - Returns: The JWS.
     func sign(params: UserKeySigningParameters) throws -> String
+    
+    /// Deletes all keys associated with this authenticator.
+    func deleteKeys() async throws
 }
 
 extension DeviceAuthenticator {
     func sign(params: SigningParameters) throws -> String {
-        let claims: [String: Any] = [
-            Constants.sub: params.userId,
-            Constants.iss: Bundle.main.bundleIdentifier ?? "",
-            Constants.exp: params.expiration,
-            Constants.iat: params.issueTime,
-            Constants.nbf: params.notBeforeTime,
-            Constants.challenge: params.challenge,
-            Constants.platform: "ios"
-        ]
-        return try CompactJwt.signJwtClaims(base64Secret: "", claims: claims)
+        let claims = ["challenge": params.challenge]
+        return try CompactJwt.sign(claims: claims, privateKey: params.keyPair.privateKey, algorithm: .ecdsaSignatureMessageX962SHA256, kid: params.kid)
     }
     
     func sign(params: UserKeySigningParameters) throws -> String {
-        var claims: [String: Any] = [
-            Constants.sub: params.userKey.userId,
-            Constants.iss: Bundle.main.bundleIdentifier ?? "",
-            Constants.exp: params.expiration,
-            Constants.iat: params.issueTime,
-            Constants.nbf: params.notBeforeTime,
-            Constants.challenge: params.challenge,
-            Constants.platform: "ios"
-        ]
-        claims.merge(params.customClaims) { (current, _) in current }
-        return try CompactJwt.signJwtClaims(base64Secret: "", claims: claims)
+        let claims = ["challenge": params.challenge]
+        return try CompactJwt.sign(claims: claims, privateKey: params.privateKey, algorithm: .ecdsaSignatureMessageX962SHA256, kid: params.userKey.kid)
     }
 }

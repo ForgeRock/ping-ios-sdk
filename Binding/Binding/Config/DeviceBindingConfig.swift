@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
  *
@@ -30,6 +29,11 @@ public class DeviceBindingConfig {
     /// The expiration time for the JWT.
     public var expirationTime: (Int) -> Date = { Date(timeIntervalSinceNow: TimeInterval($0)) }
     
+    /// Returns the authenticator for the given type.
+    /// - Parameters:
+    ///   - type: The type of authenticator.
+    ///   - prompt: The prompt to display to the user.
+    /// - Returns: The authenticator.
     func authenticator(type: DeviceBindingAuthenticationType, prompt: Prompt) -> DeviceAuthenticator {
         switch type {
         case .biometric:
@@ -39,6 +43,8 @@ public class DeviceBindingConfig {
         }
     }
     
+    /// Returns the user key storage.
+    /// - Returns: The user key storage.
     func keyStorage() -> UserKeysStorage {
         return UserKeysStorage(config: userKeyStorage)
     }

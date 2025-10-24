@@ -9,7 +9,8 @@ import Foundation
 import PingJourney
 import UIKit
 
-public class PingBinding {
+/// Main class for handling device binding and signing.
+public class PingBinder {
     
     /// Binds a device to a user account.
     /// - Parameters:
@@ -47,7 +48,7 @@ public class PingBinding {
         
         let jws = try deviceAuthenticator.sign(params: signingParams)
         callback.setJws(jws)
-        if let deviceId = UIDevice.current.identifierForVendor?.uuidString {
+        if let deviceId = await UIDevice.current.identifierForVendor?.uuidString {
             callback.setDeviceId(deviceId)
         }
         callback.setDeviceName(deviceBindingConfig.deviceName)
@@ -83,7 +84,11 @@ public class PingBinding {
                       let firstKey = keys.first {
                 userKey = firstKey
             } else {
-                userKey = deviceBindingConfig.userKeySelector(keys)
+                if let selectedKey = deviceBindingConfig.userKeySelector(keys) {
+                    userKey = selectedKey
+                } else {
+                    throw DeviceBindingError.deviceNotRegistered
+                }
             }
         }
         
@@ -106,11 +111,18 @@ public class PingBinding {
         return jws
     }
     
+    /// Clears the keys for a given user.
+    /// - Parameters:
+    ///   - deviceAuthenticator: The `DeviceAuthenticator` to use.
+    ///   - userKeyStorage: The `UserKeysStorage` to use.
+    ///   - userId: The user ID.
     private static func clearKeys(deviceAuthenticator: DeviceAuthenticator, userKeyStorage: UserKeysStorage, userId: String) async throws {
         try await deviceAuthenticator.deleteKeys()
         try userKeyStorage.deleteByUserId(userId)
     }
     
+    /// Validates the custom claims.
+    /// - Parameter customClaims: The custom claims to validate.
     private static func validate(customClaims: [String: Any]) throws {
         let reservedKeys = [Constants.sub, Constants.exp, Constants.iat, Constants.nbf, Constants.iss, Constants.challenge]
         for key in customClaims.keys {

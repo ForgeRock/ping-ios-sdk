@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
  *
@@ -11,21 +10,31 @@ import Foundation
 /// An authenticator that does not require any user interaction.
 class NoneAuthenticator: DeviceAuthenticator {
     
+    /// The type of authenticator.
     let type: DeviceBindingAuthenticationType = .none
     
+    /// Registers a new key pair.
+    /// - Parameter attestation: The attestation to use.
+    /// - Returns: The new key pair.
     func register(attestation: Attestation) async throws -> KeyPair {
         let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
         return try cryptoKey.generateKeyPair(attestation: attestation)
     }
     
+    /// Authenticates the user.
+    /// - Returns: The private key.
     func authenticate() async throws -> SecKey {
         return try getPrivateKey()
     }
     
+    /// Checks if the authenticator is supported.
+    /// - Parameter attestation: The attestation to use.
+    /// - Returns: `true` if the authenticator is supported, `false` otherwise.
     func isSupported(attestation: Attestation) -> Bool {
         return true
     }
     
+    /// Deletes all keys associated with this authenticator.
     func deleteKeys() async throws {
         let userKeys = try UserKeysStorage(config: UserKeyStorageConfig()).findAll()
         for userKey in userKeys {
@@ -35,6 +44,8 @@ class NoneAuthenticator: DeviceAuthenticator {
         }
     }
     
+    /// Gets the private key from the keychain.
+    /// - Returns: The private key.
     private func getPrivateKey() throws -> SecKey {
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
@@ -45,9 +56,9 @@ class NoneAuthenticator: DeviceAuthenticator {
         
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
-        guard status == errSecSuccess, let key = item as? SecKey else {
+        guard status == errSecSuccess, let item = item else {
             throw DeviceBindingError.deviceNotRegistered
         }
-        return key
+        return (item as! SecKey)
     }
 }

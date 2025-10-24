@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
  *
@@ -31,48 +30,71 @@ public class DeviceBindingCallback: AbstractCallback, @unchecked Sendable {
     /// The attestation option.
     public var attestation: Attestation = .none
     
-    public required init(json: [String : Any]) throws {
-        try super.init(json: json)
-        userId = getOutputValue(key: Constants.userId) ?? ""
-        userName = getOutputValue(key: Constants.username) ?? ""
-        challenge = getOutputValue(key: Constants.challenge) ?? ""
-        if let authType: String = getOutputValue(key: Constants.authenticationType) {
-            deviceBindingAuthenticationType = DeviceBindingAuthenticationType(rawValue: authType) ?? .none
-        }
-        title = getOutputValue(key: Constants.title) ?? ""
-        subtitle = getOutputValue(key: Constants.subtitle) ?? ""
-        description = getOutputValue(key: Constants.description) ?? ""
-        timeout = getOutputValue(key: Constants.timeout) ?? 60
-        if let attestationBool: Bool = getOutputValue(key: Constants.attestation), attestationBool {
-            attestation = .challenge(challenge)
+    /// Initializes the callback with the given name and value.
+    /// - Parameters:
+    ///   - name: The name of the value.
+    ///   - value: The value.
+    public override func initValue(name: String, value: Any) {
+        switch name {
+        case Constants.userId:
+            userId = value as? String ?? ""
+        case Constants.username:
+            userName = value as? String ?? ""
+        case Constants.challenge:
+            challenge = value as? String ?? ""
+        case Constants.authenticationType:
+            if let authType = value as? String {
+                deviceBindingAuthenticationType = DeviceBindingAuthenticationType(rawValue: authType) ?? .none
+            }
+        case Constants.title:
+            title = value as? String ?? ""
+        case Constants.subtitle:
+            subtitle = value as? String ?? ""
+        case Constants.description:
+            description = value as? String ?? ""
+        case Constants.timeout:
+            timeout = value as? Int ?? 60
+        case Constants.attestation:
+            if let attestationBool = value as? Bool, attestationBool {
+                attestation = .challenge(challenge)
+            }
+        default:
+            break
         }
     }
     
-    required init() {
-        fatalError("init() has not been implemented")
-    }
-    
-    /// Sets the JWS value in the callback.
-    /// - Parameter jws: The JWS to be set.
+    /// Sets the JWS on the callback.
+    /// - Parameter jws: The JWS to set.
     public func setJws(_ jws: String) {
-        self.setInputValue(jws, for: Constants.jws)
+        updateInputValue(jws, for: Constants.jws)
     }
     
-    /// Sets the device ID value in the callback.
-    /// - Parameter deviceId: The device ID to be set.
+    /// Sets the device ID on the callback.
+    /// - Parameter deviceId: The device ID to set.
     public func setDeviceId(_ deviceId: String) {
-        self.setInputValue(deviceId, for: Constants.deviceId)
+        updateInputValue(deviceId, for: Constants.deviceId)
     }
     
-    /// Sets the device name value in the callback.
-    /// - Parameter deviceName: The device name to be set.
+    /// Sets the device name on the callback.
+    /// - Parameter deviceName: The device name to set.
     public func setDeviceName(_ deviceName: String) {
-        self.setInputValue(deviceName, for: Constants.deviceName)
+        updateInputValue(deviceName, for: Constants.deviceName)
     }
     
-    /// Sets the client error value in the callback.
-    /// - Parameter clientError: The client error to be set.
-    public func setClientError(_ clientError: String) {
-        self.setInputValue(clientError, for: Constants.clientError)
+    /// Binds a device to a user account.
+    /// - Parameter config: A closure to configure the `DeviceBindingConfig`.
+    public func bind(config: (DeviceBindingConfig) -> Void = { _ in }) async throws {
+        _ = try await PingBinder.bind(callback: self, config: config)
+    }
+    
+    private func updateInputValue(_ value: Any, for name: String) {
+        guard var inputArray = json[JourneyConstants.input] as? [[String: Any]] else {
+            return
+        }
+        
+        if let index = inputArray.firstIndex(where: { $0[JourneyConstants.name] as? String == name }) {
+            inputArray[index][JourneyConstants.value] = value
+            json[JourneyConstants.input] = inputArray
+        }
     }
 }

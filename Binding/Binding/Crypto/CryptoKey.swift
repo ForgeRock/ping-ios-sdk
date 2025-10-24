@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
  *
@@ -14,6 +13,8 @@ class CryptoKey {
     
     private let keyTag: String
     
+    /// Initializes a new `CryptoKey`.
+    /// - Parameter keyTag: The key tag to use.
     init(keyTag: String) {
         self.keyTag = keyTag
     }
@@ -39,9 +40,9 @@ class CryptoKey {
             ]
         ]
         
-        if case .challenge(let challenge) = attestation {
+        /*if case .challenge(let challenge) = attestation {
             attributes[kSecAttrApplicationParameters as String] = challenge.data(using: .utf8)
-        }
+        }*/
         
         var error: Unmanaged<CFError>?
         guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
@@ -68,10 +69,10 @@ class CryptoKey {
         
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
-        guard status == errSecSuccess, let key = item as? SecKey else {
+        guard status == errSecSuccess, let item = item else {
             throw DeviceBindingError.deviceNotRegistered
         }
-        return key
+        return (item as! SecKey)
     }
     
     /// Deletes the key pair.

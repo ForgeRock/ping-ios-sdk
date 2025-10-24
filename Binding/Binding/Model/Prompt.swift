@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
  *
@@ -17,6 +16,11 @@ public struct Prompt {
     /// The description of the prompt.
     public let description: String
     
+    /// Initializes a new `Prompt`.
+    /// - Parameters:
+    ///   - title: The title of the prompt.
+    ///   - subtitle: The subtitle of the prompt.
+    ///   - description: The description of the prompt.
     public init(title: String, subtitle: String, description: String) {
         self.title = title
         self.subtitle = subtitle
