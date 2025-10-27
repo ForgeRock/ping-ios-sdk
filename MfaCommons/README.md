@@ -20,8 +20,8 @@ The MFA Commons module is included as a transitive dependency when you add any o
 
 ```ruby
 # Included automatically with other MFA modules
-pod 'PingOath', '~> 1.2.0'
-pod 'PingPush', '~> 1.2.0'
+pod 'PingOath', '~> 1.3.0'
+pod 'PingPush', '~> 1.3.0'
 ```
 
 #### Swift Package Manager
@@ -30,7 +30,7 @@ Add the Ping iOS SDK to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "1.2.0")
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "1.3.0")
 ]
 ```
 
