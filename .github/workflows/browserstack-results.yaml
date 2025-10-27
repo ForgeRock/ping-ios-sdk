@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for BrowserStack tests run to finish...
-        timeout-minutes: 30
+        timeout-minutes: 40
         shell: bash
         run: |
           echo "Polling for build ID: ${{ inputs.browserstack-build-id }}"

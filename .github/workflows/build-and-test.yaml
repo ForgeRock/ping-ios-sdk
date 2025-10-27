@@ -13,7 +13,7 @@ jobs:
       matrix:
         os: [macos-15]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
+    timeout-minutes: 40
 
     env:
       XCODE_VERSION: ${{ vars.XCODE_VERSION }}
