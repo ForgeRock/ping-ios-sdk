@@ -16,6 +16,7 @@ Pod::Spec.new do |s|
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = 'Ping Identity'
+  s.static_framework = true
 
   s.source           = {
       :git => 'https://github.com/ForgeRock/ping-ios-sdk.git',
