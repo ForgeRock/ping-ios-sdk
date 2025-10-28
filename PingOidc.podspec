@@ -34,4 +34,5 @@ Pod::Spec.new do |s|
   }
   
   s.ios.dependency 'PingOrchestrate', '~> 1.3.0-beta2'
+  s.ios.dependency 'PingBrowser', '~> 1.3.0-beta2'
 end
