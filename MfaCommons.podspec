@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingMfaCommons'
-  s.version          = '1.3.0-beta1'
+  s.version          = '1.3.0-beta2'
   s.summary          = 'PingMfaCommons SDK for iOS'
   s.description      = <<-DESC
   The PingMfaCommons SDK provides common functionalities for MFA modules.
@@ -33,5 +33,5 @@ Pod::Spec.new do |s|
     'MfaCommons' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingOrchestrate', '~> 1.3.0-beta1'
+  s.ios.dependency 'PingOrchestrate', '~> 1.3.0-beta2'
 end
