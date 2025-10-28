@@ -34,6 +34,6 @@ Pod::Spec.new do |s|
   }
 
   s.ios.dependency 'PingExternalIdP', '~> 1.3.0-beta2'
-  s.ios.dependency 'GoogleSignIn', '~> 8.1.0-vwg-eap-1.0.0'
+  s.ios.dependency 'GoogleSignIn', '~> 9.0.0'
     
 end
