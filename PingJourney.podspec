@@ -24,6 +24,7 @@ Pod::Spec.new do |s|
 
   s.module_name      = 'PingJourney'
   s.swift_versions   = ['5.0', '5.1', '6.0']
+
   s.ios.deployment_target = '13.0'
 
   # Base directory for source files
@@ -34,5 +35,8 @@ Pod::Spec.new do |s|
   }
 
   # Dependencies
-  s.dependency 'PingOidc', s.version.to_s
+  s.ios.dependency 'PingOidc', '~> 1.2.0'
+  s.ios.dependency 'PingLogger', '~> 1.2.0'
+  s.ios.dependency 'PingOrchestrate', '~> 1.2.0'
+  s.ios.dependency 'PingStorage', '~> 1.2.0'
 end
