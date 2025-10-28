@@ -26,11 +26,13 @@ let package = Package (
         .library(name: "PingMfaCommons", targets: ["PingMfaCommons"]),
         .library(name: "PingOath", targets: ["PingOath"]),
         .library(name: "PingFido", targets: ["PingFido"]),
+        .library(name: "PingReCaptchaEnterprise", targets: ["PingReCaptchaEnterprise"]),
     ],
     dependencies: [
 		.package(url: "https://github.com/pingidentity/pingone-signals-sdk-ios.git", "5.3.0" ..< "5.4.0"),
         .package(url: "https://github.com/facebook/facebook-ios-sdk.git", "16.3.1" ..< "16.4.0"),
         .package(url: "https://github.com/google/GoogleSignIn-iOS.git", "8.1.0-vwg-eap-1.0.0" ..< "8.2.0"),
+        .package(url: "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk.git",  "18.8.1" ..< "18.9.0")
     ],
     targets: [
         .target(name: "PingLogger", dependencies: [], path: "Logger/Logger", exclude: ["Logger.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
@@ -50,5 +52,6 @@ let package = Package (
         .target(name: "PingMfaCommons", dependencies: [.target(name: "PingLogger"), .target(name: "PingStorage"), .target(name: "PingOrchestrate")], path: "MfaCommons/MfaCommons", exclude: ["MfaCommons.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingOath", dependencies: [.target(name: "PingMfaCommons")], path: "Oath/Oath", exclude: ["Oath.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingFido", dependencies: [.target(name: "PingJourney"), .target(name: "PingLogger"), .target(name: "PingDavinci")], path: "Fido/Fido", exclude: ["PingFido.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingReCaptchaEnterprise", dependencies: [.target(name: "PingJourney"), .target(name: "PingLogger"), .product(name: "RecaptchaEnterprise", package: "recaptcha-enterprise-mobile-sdk")], path: "ReCaptchaEnterprise/ReCaptchaEnterprise", exclude: ["ReCaptchaEnterprise.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
     ]
 )

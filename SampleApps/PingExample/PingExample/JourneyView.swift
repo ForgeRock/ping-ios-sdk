@@ -16,6 +16,7 @@ import PingProtect
 import PingExternalIdP
 import PingDeviceProfile
 import PingFido
+import PingReCaptchaEnterprise
 
 struct JourneyView: View {
     /// The view model that manages the Journey flow logic.
@@ -223,6 +224,9 @@ struct JourneyNodeView: View {
                     
                 case let fidoAuthenticationCallback as FidoAuthenticationCallback:
                     FidoAuthenticationCallbackView(callback: fidoAuthenticationCallback, onNext: onNext)
+                    
+                case let reCaptchaEnterpriseCallback as ReCaptchaEnterpriseCallback:
+                    ReCaptchaEnterpriseCallbackView(callback: reCaptchaEnterpriseCallback, onNext: onNext).id(reCaptchaEnterpriseCallback.id)
 
                 default:
                     EmptyView()

@@ -56,6 +56,26 @@ open class AbstractCallback: Callback, @unchecked Sendable {
         json[JourneyConstants.input] = updatedInput
         return json
     }
+    
+    //
+    /// Update input value with specified index
+    /// - Parameters:
+    ///   - index: Index of the input to be updated
+    ///   - value: Value of the input to be updates
+    /// - Returns: The Updated json dictionary
+    public func updateInput(at index: Int, value: Any) -> [String: Any] {
+        guard var inputArray = json[JourneyConstants.input] as? [[String: Any]],
+              index < inputArray.count else {
+            return json
+        }
+        
+        if value is Int || value is String || value is Bool || value is Double {
+            inputArray[index][JourneyConstants.value] = value
+        }
+        
+        json[JourneyConstants.input] = inputArray
+        return json
+    }
 
     /// Returns the full JSON payload
     open func payload() -> [String: Any] {
