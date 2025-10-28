@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		955861232EB0657300DD55A6 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955861222EB0657300DD55A6 /* PingDavinci.framework */; };
 		EC5597FB2E95445800A07329 /* FidoRegistrationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597F92E95445800A07329 /* FidoRegistrationCollector.swift */; };
 		EC5597FC2E95445800A07329 /* CollectorInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597F72E95445800A07329 /* CollectorInitializer.swift */; };
 		EC5597FD2E95445800A07329 /* AbstractFidoCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597F62E95445800A07329 /* AbstractFidoCollector.swift */; };
@@ -62,6 +63,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		955861222EB0657300DD55A6 /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5597F62E95445800A07329 /* AbstractFidoCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractFidoCollector.swift; sourceTree = "<group>"; };
 		EC5597F72E95445800A07329 /* CollectorInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectorInitializer.swift; sourceTree = "<group>"; };
 		EC5597F82E95445800A07329 /* FidoAuthenticationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoAuthenticationCollector.swift; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECD5A3112E901C1300A27205 /* PingOrchestrate.framework in Frameworks */,
+				955861232EB0657300DD55A6 /* PingDavinci.framework in Frameworks */,
 				ECD5A30A2E901C0400A27205 /* PingLogger.framework in Frameworks */,
 				ECD5A30E2E901C0900A27205 /* PingJourney.framework in Frameworks */,
 			);
@@ -169,6 +172,7 @@
 		ECD5A3082E901C0400A27205 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				955861222EB0657300DD55A6 /* PingDavinci.framework */,
 				ECD5A3102E901C1300A27205 /* PingOrchestrate.framework */,
 				ECD5A30D2E901C0900A27205 /* PingJourney.framework */,
 				ECD5A3092E901C0400A27205 /* PingLogger.framework */,
