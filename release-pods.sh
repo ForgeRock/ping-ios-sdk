@@ -12,7 +12,7 @@ NC='\033[0m' # No Color
 
 # Array of libraries to release in order of dependency
 # First items should be the ones with no dependencies
-LIBRARIES=("PingLogger" "PingStorage" "PingBrowser" "PingOrchestrate" "PingOidc" "PingDavinci" "PingBrowser" "PingExternalIdP" "PingExternalIdPApple" "PingExternalIdPGoogle" "PingExternalIdPFacebook" "PingProtect")
+LIBRARIES=("PingLogger" "PingStorage" "PingBrowser" "PingOrchestrate" "PingOidc" "PingDavinci" "PingExternalIdP" "PingExternalIdPApple" "PingExternalIdPGoogle" "PingExternalIdPFacebook" "PingProtect")
 
 # Version being published for all libraries
 VERSION="1.3.0-beta2"
