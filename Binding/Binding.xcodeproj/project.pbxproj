@@ -40,6 +40,7 @@
 		EC4DD3862EB0E0B200ECC4E1 /* ApplicationPinDeviceAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD37F2EB0E0B200ECC4E1 /* ApplicationPinDeviceAuthenticator.swift */; };
 		EC6F658E2EB119C600D4686D /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4DD3102EABBB0000ECC4E1 /* PingJourney.framework */; };
 		EC6F65912EB119D700D4686D /* PingMfaCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4DD3342EABD57F00ECC4E1 /* PingMfaCommons.framework */; };
+		EC6F65D22EB2470F00D4686D /* PingStorage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC6F65D12EB2470F00D4686D /* PingStorage.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +90,7 @@
 		EC4DD3812EB0E0B200ECC4E1 /* BiometricOnlyAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricOnlyAuthenticator.swift; sourceTree = "<group>"; };
 		EC4DD3822EB0E0B200ECC4E1 /* DefaultDeviceAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDeviceAuthenticator.swift; sourceTree = "<group>"; };
 		EC6F65892EB1197200D4686D /* AlarmKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AlarmKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/System/iOSSupport/System/Library/Frameworks/AlarmKit.framework; sourceTree = DEVELOPER_DIR; };
+		EC6F65D12EB2470F00D4686D /* PingStorage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingStorage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 				EC4DD3162EABBB1D00ECC4E1 /* PingLogger.framework in Frameworks */,
 				EC4DD3552EAF961500ECC4E1 /* PingOrchestrate.framework in Frameworks */,
 				EC6F65912EB119D700D4686D /* PingMfaCommons.framework in Frameworks */,
+				EC6F65D22EB2470F00D4686D /* PingStorage.framework in Frameworks */,
 				EC6F658E2EB119C600D4686D /* PingJourney.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -233,6 +236,7 @@
 		EC4DD30F2EABBB0000ECC4E1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EC6F65D12EB2470F00D4686D /* PingStorage.framework */,
 				EC6F65892EB1197200D4686D /* AlarmKit.framework */,
 				EC4DD3542EAF961500ECC4E1 /* PingOrchestrate.framework */,
 				EC4DD3342EABD57F00ECC4E1 /* PingMfaCommons.framework */,

@@ -1,4 +1,3 @@
-
 //
 //  DeviceBindingConfig.swift
 //  PingBinding
@@ -10,7 +9,10 @@
 //
 
 import Foundation
+
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// Configuration for device binding.
 /// This class allows you to customize the behavior of the device binding and signing process.
@@ -18,9 +20,13 @@ public class DeviceBindingConfig {
     /// The signing algorithm to use for the JWS.
     /// The default is `ES256`.
     public var signingAlgorithm: String = "ES256"
+    #if canImport(UIKit)
     /// The name of the device.
     /// The default is the current device name.
     public var deviceName: String = UIDevice.current.name
+    #else
+    public var deviceName: String = "Apple"
+    #endif
     /// The configuration for the user key storage.
     public var userKeyStorage = UserKeyStorageConfig()
     /// Custom claims to be included in the JWS.

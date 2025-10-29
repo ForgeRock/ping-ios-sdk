@@ -1,10 +1,14 @@
-
+#if canImport(UIKit)
 import UIKit
+#endif
 import LocalAuthentication
 
 /// An authenticator that uses an application PIN for user verification.
 /// This class provides an implementation for generating PIN-protected keys and authenticating the user by prompting for the PIN.
+#if canImport(UIKit)
 class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
+    
+    private var pin: String?
     
     /// The type of authenticator, specifically `.applicationPin`.
     override func type() -> DeviceBindingAuthenticationType {
@@ -16,19 +20,28 @@ class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
     /// - Throws: `DeviceBindingError.unknown` if access control creation fails.
     ///           `CryptoKeyError` if key generation fails.
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
-    override func generateKeys() throws -> KeyPair {
+    override func generateKeys() async throws -> KeyPair {
         let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
-        
-        // Create access control flags that require an application password for private key usage.
-        guard let accessControl = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
-                                                                  kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
-                                                                  .applicationPassword,
-                                                                  nil) else {
-            throw DeviceBindingError.unknown
+
+        let userPin: String?
+        if let pin = self.pin, !pin.isEmpty {
+            userPin = pin
+        } else {
+            userPin = await promptForPin()
         }
         
+        // Create access control flags that require an application password for private key usage.
+#if !targetEnvironment(simulator)
+        guard let accessControl = SecAccessControlCreateWithFlags(kCFAllocatorDefault, kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly, [.applicationPassword, .privateKeyUsage], nil) else {
+            throw DeviceBindingError.unknown
+        }
+#else
+        guard let accessControl =  SecAccessControlCreateWithFlags(kCFAllocatorDefault, kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly, [.applicationPassword], nil) else {
+            throw DeviceBindingError.unknown
+        }
+#endif
         // Generate the key pair with the specified access control.
-        return try cryptoKey.generateKeyPair(attestation: .none, accessControl: accessControl)
+        return try cryptoKey.generateKeyPair(attestation: .none, accessControl: accessControl, pin: userPin)
     }
     
     /// Authenticates the user by prompting for their application PIN.
@@ -39,15 +52,14 @@ class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
     ///           `DeviceBindingError.unknown` for other unexpected errors.
     override func authenticate(keyTag: String) async throws -> SecKey {
         // The UI must be presented on the main thread.
-        guard let pin = await promptForPin() else {
-            throw DeviceBindingError.authenticationFailed
+        let userPin: String?
+        if let pin = self.pin, !pin.isEmpty {
+            userPin = pin
+        } else {
+            userPin = await promptForPin()
         }
         
-        guard !pin.isEmpty else {
-            throw DeviceBindingError.authenticationFailed
-        }
-        
-        guard let pinData = pin.data(using: .utf8) else {
+        guard let pinData = userPin?.data(using: .utf8) else {
             throw DeviceBindingError.unknown
         }
         
@@ -55,6 +67,7 @@ class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
         let context = LAContext()
         context.setCredential(pinData, type: .applicationPassword)
         
+        //        let context = LAContext()
         // When getPrivateKey is called, it will use the context to authorize access.
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
@@ -84,7 +97,7 @@ class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
     /// Deletes all keys associated with the application PIN authenticator.
     /// - Throws: `UserKeysStorageError` or `CryptoKeyError` if deletion fails.
     override func deleteKeys() async throws {
-        let userKeys = try UserKeysStorage(config: UserKeyStorageConfig()).findAll()
+        let userKeys = try await UserKeysStorage(config: UserKeyStorageConfig()).findAll()
         for userKey in userKeys {
             if userKey.authType == .applicationPin {
                 try CryptoKey(keyTag: userKey.keyTag).deleteKeyPair()
@@ -96,26 +109,21 @@ class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
     /// - Returns: The entered PIN string, or `nil` if the user cancels.
     @MainActor
     private func promptForPin() async -> String? {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let rootViewController = windowScene.windows.first?.rootViewController else {
+        guard let windowScene =  UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController =  windowScene.windows.first?.rootViewController else {
             return nil
         }
         
-        let title = prompt?.title ?? "Enter PIN"
-        let message = prompt?.description ?? "Please enter your application PIN to continue."
-        
         return await withCheckedContinuation { continuation in
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let alert = UIAlertController(title: "Enter PIN", message: "Please enter your application PIN to continue.", preferredStyle: .alert)
             
             alert.addTextField { textField in
-                textField.placeholder = "PIN"
                 textField.isSecureTextEntry = true
                 textField.keyboardType = .numberPad
             }
             
             let okAction = UIAlertAction(title: "OK", style: .default) { _ in
-                let pin = alert.textFields?.first?.text
-                continuation.resume(returning: pin)
+                continuation.resume(returning: alert.textFields?.first?.text)
             }
             
             let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
@@ -129,3 +137,4 @@ class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
         }
     }
 }
+#endif

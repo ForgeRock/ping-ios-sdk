@@ -25,7 +25,7 @@ class BiometricAndDeviceCredentialAuthenticator: DefaultDeviceAuthenticator {
     /// The key is stored in the Secure Enclave (if available) and associated with a unique key tag.
     /// - Throws: `CryptoKeyError` if key generation fails.
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
-    override func generateKeys() throws -> KeyPair {
+    override func generateKeys() async throws -> KeyPair {
         let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
         guard let accessControl = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
                                                             kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
@@ -82,7 +82,7 @@ class BiometricAndDeviceCredentialAuthenticator: DefaultDeviceAuthenticator {
     /// - Throws: `CryptoKeyError` if key deletion fails.
     override func deleteKeys() async throws {
         // Retrieve all stored user keys
-        let userKeys = try UserKeysStorage(config: UserKeyStorageConfig()).findAll()
+        let userKeys = try await UserKeysStorage(config: UserKeyStorageConfig()).findAll()
         for userKey in userKeys {
             // Delete key pairs for biometric authentication types
             if userKey.authType == .biometricOnly || userKey.authType == .biometricAllowFallback {

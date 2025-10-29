@@ -11,6 +11,7 @@
 
 import Foundation
 import Security
+import LocalAuthentication
 
 /// A class for managing cryptographic keys in the Keychain.
 /// This class provides methods for generating, retrieving, and deleting key pairs.
@@ -31,13 +32,13 @@ class CryptoKey {
     /// - Parameter accessControl: The access control flags for the key. If nil, a default will be used.
     /// - Returns: The generated `KeyPair`.
     /// - Throws: A `DeviceBindingError` if the key generation fails.
-    func generateKeyPair(attestation: Attestation, accessControl: SecAccessControl? = nil) throws -> KeyPair {
+    func generateKeyPair(attestation: Attestation, accessControl: SecAccessControl? = nil, pin: String? = nil) throws -> KeyPair {
         let access = accessControl ?? SecAccessControlCreateWithFlags(kCFAllocatorDefault,
-                                                                     kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
-                                                                     .privateKeyUsage,
-                                                                     nil)!
+                                                                      kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+                                                                      .privateKeyUsage,
+                                                                      nil)!
         
-        let attributes: [String: Any] = [
+        var attributes: [String: Any] = [
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
             kSecAttrKeySizeInBits as String: 256,
             kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
@@ -48,9 +49,19 @@ class CryptoKey {
             ]
         ]
         
+        
+        if let pinData = pin?.data(using: .utf8) {
+#if !targetEnvironment(simulator)
+            let context = LAContext()
+            let credentialIsSet = context.setCredential(pinData, type: .applicationPassword)
+            guard credentialIsSet == true else { throw NSError() }
+            attributes[String(kSecUseAuthenticationContext)] = context
+#endif
+        }
+        
         /*if case .challenge(let challenge) = attestation {
-            attributes[kSecAttrApplicationParameters as String] = challenge.data(using: .utf8)
-        }*/
+         attributes[kSecAttrApplicationParameters as String] = challenge.data(using: .utf8)
+         }*/
         
         var error: Unmanaged<CFError>?
         guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {

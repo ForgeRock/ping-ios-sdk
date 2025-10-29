@@ -24,7 +24,7 @@ class NoneAuthenticator: DefaultDeviceAuthenticator {
     /// Generates a new key pair without any specific access control.
     /// - Returns: A new `KeyPair`.
     /// - Throws: A `CryptoKeyError` if key generation fails.
-    override func generateKeys() throws -> KeyPair {
+    override func generateKeys() async throws -> KeyPair {
         let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
         return try cryptoKey.generateKeyPair(attestation: .none)
     }
@@ -59,7 +59,7 @@ class NoneAuthenticator: DefaultDeviceAuthenticator {
     
     /// Deletes all keys associated with this authenticator.
     override func deleteKeys() async throws {
-        let userKeys = try UserKeysStorage(config: UserKeyStorageConfig()).findAll()
+        let userKeys = try await UserKeysStorage(config: UserKeyStorageConfig()).findAll()
         for userKey in userKeys {
             if userKey.authType == .none {
                 try CryptoKey(keyTag: userKey.keyTag).deleteKeyPair()

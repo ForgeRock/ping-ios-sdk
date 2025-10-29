@@ -34,7 +34,7 @@ open class DefaultDeviceAuthenticator: DeviceAuthenticator {
     /// Default implementation throws `DeviceBindingStatus.unsupported`, requiring subclasses to provide concrete implementation.
     /// - Throws: `DeviceBindingStatus.unsupported` if not overridden by a subclass.
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
-    open func generateKeys() throws -> KeyPair {
+    open func generateKeys() async throws -> KeyPair {
          throw DeviceBindingStatus.unsupported(errorMessage: "Cannot use DefaultDeviceAuthenticator. Must be subclassed")
     }
     

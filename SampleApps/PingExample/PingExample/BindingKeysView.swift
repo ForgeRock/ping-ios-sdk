@@ -45,18 +45,27 @@ struct BindingKeysView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Delete All", role: .destructive) {
-                    viewModel.deleteAllKeys()
+                    Task {
+                        await viewModel.deleteAllKeys()
+                    }
                 }
                 .disabled(viewModel.userKeys.isEmpty)
             }
         }
         .onAppear {
-            viewModel.fetchKeys()
+            Task {
+                await viewModel.fetchKeys()
+            }
         }
     }
     
     private func delete(at offsets: IndexSet) {
-        offsets.map { viewModel.userKeys[$0] }.forEach(viewModel.deleteKey)
+        Task {
+            for index in offsets {
+                let key = viewModel.userKeys[index]
+                await viewModel.deleteKey(key: key)
+            }
+        }
     }
 }
 

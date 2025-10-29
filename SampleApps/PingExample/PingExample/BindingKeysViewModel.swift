@@ -17,27 +17,27 @@ class BindingKeysViewModel: ObservableObject {
     
     @Published var userKeys: [UserKey] = []
     
-    func fetchKeys() {
+    func fetchKeys() async {
         do {
-            self.userKeys = try BindingModule.getAllKeys()
+            self.userKeys = try await BindingModule.getAllKeys()
         } catch {
             print("Error fetching keys: \(error)")
         }
     }
     
-    func deleteKey(key: UserKey) {
+    func deleteKey(key: UserKey) async {
         do {
-            try BindingModule.deleteKey(key)
-            fetchKeys()
+            try await BindingModule.deleteKey(key)
+            await fetchKeys()
         } catch {
             print("Error deleting key: \(error)")
         }
     }
     
-    func deleteAllKeys() {
+    func deleteAllKeys() async {
         do {
-            try BindingModule.deleteAllKeys()
-            fetchKeys()
+            try await BindingModule.deleteAllKeys()
+            await fetchKeys()
         } catch {
             print("Error deleting all keys: \(error)")
         }

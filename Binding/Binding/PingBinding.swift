@@ -10,7 +10,9 @@
 
 import Foundation
 import PingJourney
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// Main class for handling device binding and signing.
 class PingBinder {
@@ -51,13 +53,13 @@ class PingBinder {
         var userKey: UserKey?
         do {
             // Generate a new key pair and authenticate the user.
-            let keyPair = try deviceAuthenticator.generateKeys()
+            let keyPair = try await deviceAuthenticator.generateKeys()
             _ = try await deviceAuthenticator.authenticate(keyTag: keyPair.keyTag)
             
             // Store the new user key.
             let newUserKey = UserKey(keyTag: keyPair.keyTag, userId: callback.userId, username: callback.userName, kid: keyPair.keyTag, authType: callback.deviceBindingAuthenticationType)
             userKey = newUserKey
-            try userKeyStorage.save(userKey: newUserKey)
+            try await userKeyStorage.save(userKey: newUserKey)
             
             // Create and sign a JWS with the new key.
             let signingParams = SigningParameters(algorithm: deviceBindingConfig.signingAlgorithm,
@@ -74,16 +76,18 @@ class PingBinder {
             
             // Set the JWS, device ID, and device name on the callback.
             callback.setJws(jws)
+            #if canImport(UIKit)
             if let deviceId = await UIDevice.current.identifierForVendor?.uuidString {
                 callback.setDeviceId(deviceId)
             }
+            #endif
             callback.setDeviceName(deviceBindingConfig.deviceName)
             
             return jws
         } catch {
             // Clean up in case of an error.
             if let userKey = userKey {
-                try? userKeyStorage.deleteByUserId(userKey.userId)
+                try? await userKeyStorage.deleteByUserId(userKey.userId)
             }
             try? await deviceAuthenticator.deleteKeys()
             throw error
@@ -120,12 +124,12 @@ class PingBinder {
             // Retrieve the user key from storage.
             let retrievedUserKey: UserKey
             if let userId = callback.userId, !userId.isEmpty {
-                guard let key = try storage.findByUserId(userId) else {
+                guard let key = try await storage.findByUserId(userId) else {
                     throw DeviceBindingError.deviceNotRegistered
                 }
                 retrievedUserKey = key
             } else {
-                let keys = try storage.findAll()
+                let keys = try await storage.findAll()
                 if keys.isEmpty {
                     throw DeviceBindingError.deviceNotRegistered
                 } else if keys.count == 1,
@@ -170,7 +174,7 @@ class PingBinder {
         } catch {
             // Clean up in case of an error.
             if let userKey = userKey {
-                try? storage.deleteByUserId(userKey.userId)
+                try? await storage.deleteByUserId(userKey.userId)
             }
             throw error
         }
@@ -182,7 +186,7 @@ class PingBinder {
     ///   - userKeyStorage: The `UserKeysStorage` to use.
     ///   - userId: The user ID.
     static func clearKeys(deviceAuthenticator: DeviceAuthenticator, userKeyStorage: UserKeysStorage, userId: String) async throws {
-        try userKeyStorage.deleteByUserId(userId)
+        try await userKeyStorage.deleteByUserId(userId)
     }
     
     /// Validates the custom claims.

@@ -10,9 +10,19 @@
 //
 
 import Foundation
+import PingStorage
 
-/// A struct representing the configuration for the user key storage.
-public struct UserKeyStorageConfig {
-    /// The name of the file to store the user keys in.
-    public var fileName: String = "user_keys"
+private let deviceBindingV1UserKeys = "com.pingidentity.device.binding.v1.userkeys"
+
+public class UserKeyStorageConfig {
+    
+    public var storage: any Storage<[UserKey]>
+    
+    public init() {
+        self.storage = KeychainStorage(account: deviceBindingV1UserKeys, encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
+    }
+    
+    public init(storage: any Storage<[UserKey]>) {
+        self.storage = storage
+    }
 }
