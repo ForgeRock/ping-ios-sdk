@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingJourney'
-  s.version          = '1.2.0'
+  s.version          = '1.3.0-beta2'
   s.summary          = 'PingJourney SDK for iOS'
   s.description      = <<-DESC
   The PingJourney SDK provides APIs to orchestrate authentication journeys using the Ping Identity platform.
@@ -35,8 +35,8 @@ Pod::Spec.new do |s|
   }
 
   # Dependencies
-  s.ios.dependency 'PingOidc', '~> 1.2.0'
-  s.ios.dependency 'PingLogger', '~> 1.2.0'
-  s.ios.dependency 'PingOrchestrate', '~> 1.2.0'
-  s.ios.dependency 'PingStorage', '~> 1.2.0'
+  s.ios.dependency 'PingOidc', '~> 1.3.0-beta2'
+  s.ios.dependency 'PingLogger', '~> 1.3.0-beta2'
+  s.ios.dependency 'PingOrchestrate', '~> 1.3.0-beta2'
+  s.ios.dependency 'PingStorage', '~> 1.3.0-beta2'
 end
