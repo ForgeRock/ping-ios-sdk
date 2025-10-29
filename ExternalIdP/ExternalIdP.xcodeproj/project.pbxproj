@@ -12,17 +12,15 @@
 		EC0815E92D4939EB00F1AD02 /* IdpHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0815E82D4939E400F1AD02 /* IdpHandler.swift */; };
 		EC0815ED2D493A1F00F1AD02 /* IdpResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0815EC2D493A1E00F1AD02 /* IdpResult.swift */; };
 		EC0815EF2D493DC900F1AD02 /* IdpExceptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0815EE2D493DC900F1AD02 /* IdpExceptions.swift */; };
+		EC4DD3762EAFD0F000ECC4E1 /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53F8F2D635C53002B35D4 /* PingBrowser.framework */; };
+		EC4DD3772EAFD0F000ECC4E1 /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53F8F2D635C53002B35D4 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC5016122E436FEE006D8C3A /* IdpCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5016112E436FE7006D8C3A /* IdpCallback.swift */; };
 		EC5016142E436FFE006D8C3A /* SelectIdpCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5016132E436FF1006D8C3A /* SelectIdpCallback.swift */; };
 		EC5016162E437052006D8C3A /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5016152E437052006D8C3A /* PingJourney.framework */; };
-		EC5016172E437052006D8C3A /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5016152E437052006D8C3A /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC9F9FC42D5E1B2100E2A31D /* IdpRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9F9FC32D5E1B1900E2A31D /* IdpRequestHandler.swift */; };
 		EC9F9FC62D5E1E2C00E2A31D /* IdpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9F9FC52D5E1E2800E2A31D /* IdpClient.swift */; };
-		ECA53F902D635C53002B35D4 /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53F8F2D635C53002B35D4 /* PingBrowser.framework */; };
-		ECA53F912D635C53002B35D4 /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53F8F2D635C53002B35D4 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECA53F952D635CF8002B35D4 /* ExternalIdPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA53F932D635CF8002B35D4 /* ExternalIdPTests.swift */; };
 		ECA53FD52D63A48A002B35D4 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53FD42D63A48A002B35D4 /* PingDavinci.framework */; };
-		ECA53FD62D63A48A002B35D4 /* PingDavinci.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53FD42D63A48A002B35D4 /* PingDavinci.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECB7C5C22D54D9100006F1C8 /* IdpCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */; };
 		ECB7C69C2D5A2C1F0006F1C8 /* PingExternalIdP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0815B72D49377500F1AD02 /* PingExternalIdP.framework */; };
 		ECBF06492D50ED7A0066A3BD /* BrowserHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06482D50ED750066A3BD /* BrowserHandler.swift */; };
@@ -42,15 +40,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		ECA53F922D635C53002B35D4 /* Embed Frameworks */ = {
+		EC4DD3782EAFD0F000ECC4E1 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				ECA53F912D635C53002B35D4 /* PingBrowser.framework in Embed Frameworks */,
-				ECA53FD62D63A48A002B35D4 /* PingDavinci.framework in Embed Frameworks */,
-				EC5016172E437052006D8C3A /* PingJourney.framework in Embed Frameworks */,
+				EC4DD3772EAFD0F000ECC4E1 /* PingBrowser.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -86,8 +82,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECA53F902D635C53002B35D4 /* PingBrowser.framework in Frameworks */,
 				ECA53FD52D63A48A002B35D4 /* PingDavinci.framework in Frameworks */,
+				EC4DD3762EAFD0F000ECC4E1 /* PingBrowser.framework in Frameworks */,
 				EC5016162E437052006D8C3A /* PingJourney.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -192,7 +188,7 @@
 				EC0815B32D49377500F1AD02 /* Sources */,
 				EC0815B42D49377500F1AD02 /* Frameworks */,
 				EC0815B52D49377500F1AD02 /* Resources */,
-				ECA53F922D635C53002B35D4 /* Embed Frameworks */,
+				EC4DD3782EAFD0F000ECC4E1 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

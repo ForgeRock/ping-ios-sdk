@@ -1,32 +1,41 @@
-/*
- * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
- *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
- */
+
+//
+//  DeviceBindingConfig.swift
+//  PingBinding
+//
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
+//
 
 import Foundation
 import UIKit
 
 /// Configuration for device binding.
+/// This class allows you to customize the behavior of the device binding and signing process.
 public class DeviceBindingConfig {
-    /// The signing algorithm to use.
+    /// The signing algorithm to use for the JWS.
+    /// The default is `ES256`.
     public var signingAlgorithm: String = "ES256"
-    /// The device name.
+    /// The name of the device.
+    /// The default is the current device name.
     public var deviceName: String = UIDevice.current.name
-    /// The user key storage configuration.
+    /// The configuration for the user key storage.
     public var userKeyStorage = UserKeyStorageConfig()
-    /// The biometric authenticator configuration.
-    public var biometricAuthenticatorConfig = BiometricAuthenticatorConfig(keyTag: "")
-    /// The claims to include in the JWT.
+    /// Custom claims to be included in the JWS.
     public var claims: [String: Any] = [:]
-    /// A closure to select a user key when multiple are available.
+    /// A closure that selects a user key when multiple keys are available for signing.
+    /// The default implementation selects the first key in the list.
     public var userKeySelector: ([UserKey]) -> UserKey? = { $0.first }
-    /// The issue time for the JWT.
+    /// A closure that returns the issue time for the JWS.
+    /// The default implementation returns the current date.
     public var issueTime: () -> Date = { Date() }
-    /// The not-before time for the JWT.
+    /// A closure that returns the not-before time for the JWS.
+    /// The default implementation returns the current date.
     public var notBeforeTime: () -> Date = { Date() }
-    /// The expiration time for the JWT.
+    /// A closure that returns the expiration time for the JWS.
+    /// The default implementation returns the current date plus the given timeout in seconds.
     public var expirationTime: (Int) -> Date = { Date(timeIntervalSinceNow: TimeInterval($0)) }
     
     /// Returns the authenticator for the given type.
@@ -35,12 +44,9 @@ public class DeviceBindingConfig {
     ///   - prompt: The prompt to display to the user.
     /// - Returns: The authenticator.
     func authenticator(type: DeviceBindingAuthenticationType, prompt: Prompt) -> DeviceAuthenticator {
-        switch type {
-        case .biometric:
-            return BiometricAuthenticator(config: biometricAuthenticatorConfig)
-        case .none:
-            return NoneAuthenticator()
-        }
+        let authenticator = type.getAuthType()
+        authenticator.setPrompt(prompt)
+        return authenticator
     }
     
     /// Returns the user key storage.
@@ -49,3 +55,4 @@ public class DeviceBindingConfig {
         return UserKeysStorage(config: userKeyStorage)
     }
 }
+

@@ -20,12 +20,18 @@ struct DeviceSigningVerifierCallbackView: View {
     
     private func handleDeviceSigning() {
         Task {
-            do {
-                try await callback.sign()
-                onNext()
-            } catch {
-                print("Device signing failed: \(error)")
+            let result = await callback.sign()
+            switch result {
+            case .success(let json):
+                print("Device signing success: \(json)")
+            case .failure(let error):
+                if let deviceBindingStatus = error as? DeviceBindingStatus {
+                    print("Device signing failed: \(deviceBindingStatus.errorMessage)")
+                } else {
+                    print("Device signing failed: \(error.localizedDescription)")
+                }
             }
+            onNext()
         }
     }
 }

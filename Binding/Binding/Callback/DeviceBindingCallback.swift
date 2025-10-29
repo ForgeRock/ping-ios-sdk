@@ -1,15 +1,23 @@
-/*
- * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
- *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
- */
+
+//
+//  DeviceBindingCallback.swift
+//  PingBinding
+//
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
+//
 
 import Foundation
 import PingJourney
+import PingOrchestrate
 
 /// A Journey callback for handling device binding.
-public class DeviceBindingCallback: AbstractCallback, @unchecked Sendable {
+/// This callback is received from the PingFederate authentication flow when a device needs to be bound to a user account.
+public class DeviceBindingCallback: AbstractCallback, @unchecked Sendable, JourneyAware, ContinueNodeAware {
+    public var journey: Journey?
+    public var continueNode: ContinueNode?
     
     /// The user ID for the binding.
     public var userId: String = ""
@@ -31,6 +39,7 @@ public class DeviceBindingCallback: AbstractCallback, @unchecked Sendable {
     public var attestation: Attestation = .none
     
     /// Initializes the callback with the given name and value.
+    /// This method is called by the `Journey` framework to initialize the callback with the values from the server.
     /// - Parameters:
     ///   - name: The name of the value.
     ///   - value: The value.
@@ -64,37 +73,86 @@ public class DeviceBindingCallback: AbstractCallback, @unchecked Sendable {
     }
     
     /// Sets the JWS on the callback.
+    /// This method is called by the `PingBinder` after successfully signing the challenge.
     /// - Parameter jws: The JWS to set.
     public func setJws(_ jws: String) {
         updateInputValue(jws, for: Constants.jws)
     }
     
     /// Sets the device ID on the callback.
+    /// This method is called by the `PingBinder` after successfully binding the device.
     /// - Parameter deviceId: The device ID to set.
     public func setDeviceId(_ deviceId: String) {
         updateInputValue(deviceId, for: Constants.deviceId)
     }
     
     /// Sets the device name on the callback.
+    /// This method is called by the `PingBinder` after successfully binding the device.
     /// - Parameter deviceName: The device name to set.
     public func setDeviceName(_ deviceName: String) {
         updateInputValue(deviceName, for: Constants.deviceName)
     }
     
-    /// Binds a device to a user account.
-    /// - Parameter config: A closure to configure the `DeviceBindingConfig`.
-    public func bind(config: (DeviceBindingConfig) -> Void = { _ in }) async throws {
-        _ = try await PingBinder.bind(callback: self, config: config)
+    /// Sets the client error on the callback.
+    /// This method is called when an error occurs during the binding process.
+    /// - Parameter error: The error to set.
+    private func setClientError(_ error: String) {
+        updateInputValue(error, for: Constants.clientError)
     }
     
+    /// Binds a device to a user account.
+    /// This method calls the `PingBinder` to perform the binding operation.
+    /// - Parameter config: A closure to configure the `DeviceBindingConfig`.
+    /// - Returns: A `Result` containing the callback's JSON representation or an `Error`.
+    public func bind(config: (DeviceBindingConfig) -> Void = { _ in }) async -> Result<[String: Any], Error> {
+        do {
+            _ = try await PingBinder.bind(callback: self, journey: self.journey, config: config)
+            return .success(self.json)
+        } catch {
+            let deviceBindingStatus = mapError(error)
+            setClientError(deviceBindingStatus.clientError)
+            return .failure(deviceBindingStatus)
+        }
+    }
+    
+    /// Maps an `Error` to a `DeviceBindingStatus`.
+    /// - Parameter error: The error to map.
+    /// - Returns: A `DeviceBindingStatus` representing the error.
+    private func mapError(_ error: Error) -> DeviceBindingStatus {
+        if let deviceBindingError = error as? DeviceBindingError {
+            switch deviceBindingError {
+            case .deviceNotSupported:
+                return .unsupported(errorMessage: nil)
+            case .deviceNotRegistered:
+                return .clientNotRegistered
+            case .invalidClaim:
+                return .invalidCustomClaims
+            case .biometricError:
+                return .unAuthorize
+            case .userCanceled:
+                return .abort
+            case .unknown:
+                return .unsupported(errorMessage: "An unknown error occurred.")
+            case .authenticationFailed:
+                return .unAuthorize
+            }
+        }
+        return .unsupported(errorMessage: error.localizedDescription)
+    }
+    
+    /// Updates an input value in the callback's JSON representation.
+    /// - Parameters:
+    ///   - value: The new value.
+    ///   - name: The name of the input value to update.
     private func updateInputValue(_ value: Any, for name: String) {
         guard var inputArray = json[JourneyConstants.input] as? [[String: Any]] else {
             return
         }
         
-        if let index = inputArray.firstIndex(where: { $0[JourneyConstants.name] as? String == name }) {
+        if let index = inputArray.firstIndex(where: { ($0[JourneyConstants.name] as? String)?.hasSuffix(name) ?? false }) {
             inputArray[index][JourneyConstants.value] = value
             json[JourneyConstants.input] = inputArray
         }
     }
 }
+

@@ -69,7 +69,7 @@ enum MenuSection: CaseIterable, Identifiable {
         case .userManagement:
             return [.token, .user, .logout]
         case .developerTools:
-            return [.deviceInfo, .logger, .storage, .configuration]
+            return [.deviceInfo, .logger, .storage, .bindingKeys, .configuration]
         }
     }
 }
@@ -85,6 +85,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case deviceInfo = "DeviceInfo"
     case logger = "Logger"
     case storage = "Storage"
+    case bindingKeys = "Binding Keys"
     case configuration = "Configuration"
     
     var id: String { rawValue }
@@ -100,6 +101,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .deviceInfo: return "iphone"
         case .logger: return "doc.text.magnifyingglass"
         case .storage: return "externaldrive.fill"
+        case .bindingKeys: return "key.icloud.fill"
         case .configuration: return "gearshape.fill"
         }
     }
@@ -115,6 +117,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .deviceInfo: return "Device Info"
         case .logger: return "Logger"
         case .storage: return "Storage"
+        case .bindingKeys: return "Binding Keys"
         case .configuration: return "Configuration"
         }
     }
@@ -130,6 +133,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .deviceInfo: return "Collect device data"
         case .logger: return "Test logging"
         case .storage: return "Test storage"
+        case .bindingKeys: return "Manage stored binding keys"
         case .configuration: return "Edit configuration"
         }
     }
@@ -188,6 +192,8 @@ struct ContentView: View {
                     LoggerView(menuItem: item)
                 case .storage:
                     StorageView(menuItem: item)
+                case .bindingKeys:
+                    BindingKeysView()
                 case .deviceInfo:
                     DeviceInfoView(menuItem: item)
                 }

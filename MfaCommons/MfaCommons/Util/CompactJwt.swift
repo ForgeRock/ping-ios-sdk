@@ -10,12 +10,167 @@
 
 import Foundation
 import CryptoKit
+import Security
+
+// MARK: - SecKey to JWK Conversion
+
+enum SecKeyToJWKError: Error, LocalizedError {
+    case notECKey
+    case externalRepresentationFailed
+    case invalidECKeyDataFormat
+    case unsupportedKeySize
+
+    var errorDescription: String? {
+        switch self {
+        case .notECKey:
+            return "The provided SecKey is not an Elliptic Curve key."
+        case .externalRepresentationFailed:
+            return "Failed to get external representation of the SecKey."
+        case .invalidECKeyDataFormat:
+            return "Invalid format for the external representation of the EC key."
+        case .unsupportedKeySize:
+            return "Unsupported elliptic curve key size."
+        }
+    }
+}
 
 /// CompactJwt is a utility class responsible to perform simple, and specific JWT operation within MFA modules for JWT-related operations.
 /// Provides methods for generating and validating JWTs using the HS256 algorithm.
 public final class CompactJwt: Sendable {
 
     private init() {} // Utility class - prevent instantiation
+
+    // MARK: - ASN.1 Parsing Helpers
+
+    enum ASN1Error: Error {
+        case invalidFormat
+        case unexpectedTag
+        case lengthMismatch
+    }
+
+    struct ASN1 {
+        static func parse(data: Data) throws -> (tag: UInt8, length: Int, value: Data, remainder: Data) {
+            var offset = 0
+            
+            guard offset < data.count else { throw ASN1Error.invalidFormat }
+            let tag = data[offset]
+            offset += 1
+            
+            guard offset < data.count else { throw ASN1Error.invalidFormat }
+            var length = Int(data[offset])
+            offset += 1
+            
+            if length > 0x7F { // Long form length
+                let lengthBytesCount = Int(length & 0x7F)
+                guard offset + lengthBytesCount <= data.count else { throw ASN1Error.invalidFormat }
+                length = 0
+                for i in 0..<lengthBytesCount {
+                    length = (length << 8) | Int(data[offset + i])
+                }
+                offset += lengthBytesCount
+            }
+            
+            guard offset + length <= data.count else { throw ASN1Error.lengthMismatch }
+            let value = data.subdata(in: offset..<(offset + length))
+            let remainder = data.subdata(in: (offset + length)..<data.count)
+            
+            return (tag, length, value, remainder)
+        }
+        
+        static func readInteger(from data: Data) throws -> (Data, Data) {
+            let (tag, _, value, remainder) = try parse(data: data)
+            guard tag == 0x02 else { throw ASN1Error.unexpectedTag } // 0x02 is INTEGER tag
+            return (value, remainder)
+        }
+        
+        static func readSequence(from data: Data) throws -> (Data, Data) {
+            let (tag, _, value, remainder) = try parse(data: data)
+            guard tag == 0x30 else { throw ASN1Error.unexpectedTag } // 0x30 is SEQUENCE tag
+            return (value, remainder)
+        }
+        
+        static func toRaw(data: Data, length: Int) -> Data {
+            var raw = data
+            if raw.count > length {
+                raw = raw.subdata(in: (raw.count - length)..<raw.count)
+            } else if raw.count < length {
+                let padding = Data(repeating: 0x00, count: length - raw.count)
+                raw = padding + raw
+            }
+            return raw
+        }
+    }
+
+    /// Converts an EC public SecKey to its JWK (JSON Web Key) components.
+    ///
+    /// - Parameter publicKey: The `SecKey` object representing the EC public key.
+    /// - Parameter kid: The key ID to include in the JWK.
+    /// - Returns: A dictionary representing the JWK components, or `nil` if the conversion fails.
+    private static func secKeyToJwkEC(publicKey: SecKey, kid: String) throws -> [String: Any] {
+        // 1. Get key attributes to determine key type and size
+        guard let attributes = SecKeyCopyAttributes(publicKey) as? [CFString: Any] else {
+            throw SecKeyToJWKError.externalRepresentationFailed
+        }
+
+        guard let keyType = attributes[kSecAttrKeyType] as? String,
+              (keyType == kSecAttrKeyTypeEC as String || keyType == kSecAttrKeyTypeECSECPrimeRandom as String) else {
+            throw SecKeyToJWKError.notECKey
+        }
+
+        guard let keySizeInBits = attributes[kSecAttrKeySizeInBits] as? Int else {
+            throw SecKeyToJWKError.unsupportedKeySize
+        }
+
+        let crv: String
+        let coordinateLength: Int // Length in bytes for x and y coordinates
+        switch keySizeInBits {
+        case 256:
+            crv = "P-256"
+            coordinateLength = 32
+        case 384:
+            crv = "P-384"
+            coordinateLength = 48
+        case 521:
+            crv = "P-521"
+            coordinateLength = 66 // P-521 uses 66 bytes for coordinates
+        default:
+            throw SecKeyToJWKError.unsupportedKeySize
+        }
+
+        // 2. Get the external representation of the public key
+        var error: Unmanaged<CFError>?
+        guard let externalRepresentation = SecKeyCopyExternalRepresentation(publicKey, &error) as Data? else {
+            throw SecKeyToJWKError.externalRepresentationFailed
+        }
+
+        // 3. Parse the external representation (ANSI X9.63 format: 04 || X || Y)
+        // Expected format: 0x04 followed by X and Y coordinates
+        let expectedLength = 1 + (2 * coordinateLength)
+        guard externalRepresentation.count == expectedLength,
+              externalRepresentation.first == 0x04 else {
+            throw SecKeyToJWKError.invalidECKeyDataFormat
+        }
+
+        let xCoordinateData = externalRepresentation.subdata(in: 1..<(1 + coordinateLength))
+        let yCoordinateData = externalRepresentation.subdata(in: (1 + coordinateLength)..<expectedLength)
+
+        // 4. Base64URL encode x and y coordinates
+        let x = xCoordinateData.base64URLEncodedString()
+        let y = yCoordinateData.base64URLEncodedString()
+
+        // 5. Construct the JWK dictionary
+        let jwk: [String: Any] = [
+            "crv": crv,
+            "kty": "EC",
+            "use": "sig",
+            "y": y,
+            "kid": kid,
+            "x": x,
+            "alg": "ES256"
+        ]
+
+        return jwk
+    }
 
     
     // MARK: - JWT Generation
@@ -157,7 +312,6 @@ public final class CompactJwt: Sendable {
             let key = SymmetricKey(data: secretData)
             let expectedSignature = HMAC<SHA256>.authenticationCode(for: signingData, using: key)
             let expectedSignatureData = Data(expectedSignature)
-            let expectedEncodedSignature = expectedSignatureData.base64URLEncodedString()
             
             // Decode the provided signature for comparison
             guard let providedSignatureData = Base64.decodeBase64UrlToData(signatureString) else {
@@ -224,12 +378,17 @@ public final class CompactJwt: Sendable {
     ///   - kid: The key ID to include in the JWT header.
     /// - Returns: The JWT string.
     /// - Throws: `JwtError.signingFailed` if there is an error signing the JWT.
-    public static func sign(claims: [String: Any], privateKey: SecKey, algorithm: SecKeyAlgorithm, kid: String) throws -> String {
-        let header = [
-            "typ": "JWT",
+    public static func sign(claims: [String: Any], privateKey: SecKey, publicKey: SecKey?, algorithm: SecKeyAlgorithm, kid: String) throws -> String {
+        var header: [String: Any] = [
+            "typ": "JWS",
             "alg": "ES256",
             "kid": kid
         ]
+        
+        if let publicKey = publicKey {
+            let jwk = try secKeyToJwkEC(publicKey: publicKey, kid: kid)
+            header["jwk"] = jwk
+        }
         
         let encodedHeader = try encodeToBase64URL(header)
         let encodedPayload = try encodeToBase64URL(claims)
@@ -244,7 +403,31 @@ public final class CompactJwt: Sendable {
             throw JwtError.signingFailed("Failed to sign JWT: \(error!.takeRetainedValue().localizedDescription)")
         }
         
-        let encodedSignature = (signature as Data).base64URLEncodedString()
+        // Unpack BER encoded ASN.1 signature to raw format as specified for JWS
+        let ecSignatureTLV = signature as Data
+        let (sequenceValue, _) = try ASN1.readSequence(from: ecSignatureTLV)
+        let (rValue, rRemainder) = try ASN1.readInteger(from: sequenceValue)
+        let (sValue, _) = try ASN1.readInteger(from: rRemainder)
+        
+        // Determine coordinate length based on algorithm (ES256 -> P-256 -> 32 bytes)
+        let coordinateLength: Int
+        switch algorithm {
+        case .ecdsaSignatureMessageX962SHA256:
+            coordinateLength = 32
+        case .ecdsaSignatureMessageX962SHA384:
+            coordinateLength = 48
+        case .ecdsaSignatureMessageX962SHA512:
+            coordinateLength = 66 // P-521 uses 66 bytes for coordinates
+        default:
+            throw JwtError.unsupportedAlgorithm("Unsupported EC algorithm for signature unpacking")
+        }
+        
+        let fixlenR = ASN1.toRaw(data: rValue, length: coordinateLength)
+        let fixlenS = ASN1.toRaw(data: sValue, length: coordinateLength)
+        
+        let rawSignature = fixlenR + fixlenS
+        
+        let encodedSignature = rawSignature.base64URLEncodedString()
         
         return "\(encodedHeader).\(encodedPayload).\(encodedSignature)"
     }

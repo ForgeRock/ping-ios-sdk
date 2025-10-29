@@ -20,12 +20,18 @@ struct DeviceBindingCallbackView: View {
     
     private func handleDeviceBinding() {
         Task {
-            do {
-                try await callback.bind()
-                onNext()
-            } catch {
-                print("Device binding failed: \(error)")
+            let result = await callback.bind()
+            switch result {
+            case .success(let json):
+                print("Device binding success: \(json)")
+            case .failure(let error):
+                if let deviceBindingStatus = error as? DeviceBindingStatus {
+                    print("Device binding failed: \(deviceBindingStatus.errorMessage)")
+                } else {
+                    print("Device binding failed: \(error.localizedDescription)")
+                }
             }
+            onNext()
         }
     }
 }

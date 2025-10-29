@@ -1,42 +1,50 @@
-/*
- * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
- *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
- */
+
+//
+//  CryptoKey.swift
+//  PingBinding
+//
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
+//
 
 import Foundation
 import Security
 
 /// A class for managing cryptographic keys in the Keychain.
+/// This class provides methods for generating, retrieving, and deleting key pairs.
 class CryptoKey {
     
-    private let keyTag: String
+    /// The tag that uniquely identifies the key in the Keychain.
+    let keyTag: String
     
-    /// Initializes a new `CryptoKey`.
+    /// Initializes a new `CryptoKey` with the given key tag.
     /// - Parameter keyTag: The key tag to use.
     init(keyTag: String) {
         self.keyTag = keyTag
     }
     
-    /// Generates a new key pair.
+    /// Generates a new elliptic curve key pair and stores it in the Secure Enclave.
     ///
-    /// - Parameter attestation: The attestation type.
-    /// - Returns: The generated key pair.
-    func generateKeyPair(attestation: Attestation) throws -> KeyPair {
-        let access = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
-                                                     kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
-                                                     .privateKeyUsage,
-                                                     nil)
+    /// - Parameter attestation: The attestation type. Currently, this parameter is not used.
+    /// - Parameter accessControl: The access control flags for the key. If nil, a default will be used.
+    /// - Returns: The generated `KeyPair`.
+    /// - Throws: A `DeviceBindingError` if the key generation fails.
+    func generateKeyPair(attestation: Attestation, accessControl: SecAccessControl? = nil) throws -> KeyPair {
+        let access = accessControl ?? SecAccessControlCreateWithFlags(kCFAllocatorDefault,
+                                                                     kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+                                                                     .privateKeyUsage,
+                                                                     nil)!
         
-        var attributes: [String: Any] = [
+        let attributes: [String: Any] = [
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
             kSecAttrKeySizeInBits as String: 256,
             kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
             kSecPrivateKeyAttrs as String: [
                 kSecAttrIsPermanent as String: true,
                 kSecAttrApplicationTag as String: keyTag.data(using: .utf8) ?? Data(),
-                kSecAttrAccessControl as String: access as Any
+                kSecAttrAccessControl as String: access
             ]
         ]
         
@@ -56,9 +64,10 @@ class CryptoKey {
         return KeyPair(publicKey: publicKey, privateKey: privateKey, keyTag: keyTag)
     }
     
-    /// Gets the public key.
+    /// Gets the public key from the Keychain.
     ///
-    /// - Returns: The public key.
+    /// - Returns: The public key as a `SecKey`.
+    /// - Throws: A `DeviceBindingError.deviceNotRegistered` if the key is not found.
     func getPublicKey() throws -> SecKey {
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
@@ -75,7 +84,8 @@ class CryptoKey {
         return (item as! SecKey)
     }
     
-    /// Deletes the key pair.
+    /// Deletes the key pair from the Keychain.
+    /// - Throws: A `DeviceBindingError.unknown` if the deletion fails for any reason other than the item not being found.
     func deleteKeyPair() throws {
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
@@ -88,3 +98,4 @@ class CryptoKey {
         }
     }
 }
+

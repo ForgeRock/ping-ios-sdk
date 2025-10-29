@@ -1,59 +1,157 @@
-/*
- * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
- *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
- */
+
+//
+//  DeviceAuthenticator.swift
+//  PingBinding
+//
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
+//
 
 import Foundation
 import PingMfaCommons
+import PingJourney
 
-/// A protocol for device authenticators.
+/// A protocol defining the capabilities and requirements for any device authenticator.
+/// Authenticators conforming to this protocol are responsible for key management (generation, authentication, deletion)
+/// and JWT signing operations specific to their authentication type (e.g., biometrics, PIN).
 protocol DeviceAuthenticator {
-    /// The type of device binding authentication.
-    var type: DeviceBindingAuthenticationType { get }
+    /// An optional `Journey` object providing context for the authentication flow.
+    var journey: Journey? { get set }
     
-    /// Registers a new key pair.
-    ///
-    /// - Parameter attestation: The attestation type.
-    /// - Returns: The generated key pair.
-    func register(attestation: Attestation) async throws -> KeyPair
+    /// Generates a new public and private key pair for the authenticator.
+    /// - Throws: `KeyPairGenerationError` if key generation fails.
+    /// - Returns: A `KeyPair` containing the newly generated public and private keys.
+    func generateKeys() throws -> KeyPair
     
-    /// Authenticates the user.
-    ///
-    /// - Returns: The private key.
-    func authenticate() async throws -> SecKey
+    /// Authenticates the user using the authenticator's mechanism.
+    /// - Parameter keyTag: The unique identifier for the key to be used for authentication.
+    /// - Returns: The private key associated with the authenticated user.
+    /// - Throws: `AuthenticationError` if authentication fails.
+    func authenticate(keyTag: String) async throws -> SecKey
     
-    /// Checks if the authenticator is supported.
-    ///
-    /// - Parameter attestation: The attestation type.
+    /// Checks if the authenticator is supported on the current device.
+    /// - Parameter attestation: The attestation type to consider for support.
     /// - Returns: `true` if the authenticator is supported, `false` otherwise.
     func isSupported(attestation: Attestation) -> Bool
     
-    /// Signs the given parameters with the key.
-    ///
-    /// - Parameter params: The parameters to sign.
-    /// - Returns: The JWS.
-    func sign(params: SigningParameters) throws -> String
+    /// Returns the specific type of device binding authentication this authenticator handles.
+    func type() -> DeviceBindingAuthenticationType
     
-    /// Signs the given parameters with the key.
-    ///
-    /// - Parameter params: The parameters to sign.
-    /// - Returns: The JWS.
-    func sign(params: UserKeySigningParameters) throws -> String
+    /// Provides the access control settings for the authenticator's keys.
+    /// - Returns: A `SecAccessControl` object defining key access policies, or `nil` if not applicable.
+    func accessControl() -> SecAccessControl?
+    
+    /// Sets the prompt information to be displayed to the user during authentication.
+    /// - Parameter prompt: A `Prompt` struct containing title, subtitle, and description.
+    func setPrompt(_ prompt: Prompt)
+    
+    /// Initializes the authenticator with a user ID and prompt.
+    /// - Parameters:
+    ///   - userId: The ID of the user associated with the authenticator.
+    ///   - prompt: The prompt to display to the user.
+    func initialize(userId: String, prompt: Prompt)
+    
+    /// Initializes the authenticator with a user ID.
+    /// - Parameter userId: The ID of the user associated with the authenticator.
+    func initialize(userId: String)
     
     /// Deletes all keys associated with this authenticator.
+    /// - Throws: `KeyDeletionError` if key deletion fails.
     func deleteKeys() async throws
+    
+    /// Returns the issue time for a token, typically the current date.
+    /// - Returns: A `Date` object representing the issue time.
+    func issueTime() -> Date
+    
+    /// Returns the not-before time for a token, typically the current date.
+    /// - Returns: A `Date` object representing the not-before time.
+    func notBeforeTime() -> Date
+    
+    /// Validates custom claims against a list of reserved JWT claim names.
+    /// - Parameter customClaims: A dictionary of custom claims to be validated.
+    /// - Returns: `true` if no custom claims conflict with reserved names, `false` otherwise.
+    func validateCustomClaims(_ customClaims: [String: Any]) -> Bool
+    
+    /// Signs the given parameters to generate a JWS (JSON Web Signature).
+    /// This method is used for initial device binding where a new key pair is generated.
+    /// - Parameters:
+    ///   - params: The `SigningParameters` containing all necessary data for signing.
+    ///   - journey: An optional `Journey` object for context, used to derive the issuer.
+    /// - Returns: The compact serialized JWS string.
+    /// - Throws: `JwtError` if JWT signing fails.
+    func sign(params: SigningParameters, journey: Journey?) throws -> String
+    
+    /// Signs the given parameters to generate a JWS (JSON Web Signature).
+    /// This method is used for subsequent signing operations with an already bound user key.
+    /// - Parameters:
+    ///   - params: The `UserKeySigningParameters` containing all necessary data for signing.
+    ///   - journey: An optional `Journey` object for context, used to derive the issuer.
+    /// - Returns: The compact serialized JWS string.
+    /// - Throws: `JwtError` if JWT signing fails.
+    func sign(params: UserKeySigningParameters, journey: Journey?) throws -> String
 }
 
 extension DeviceAuthenticator {
-    func sign(params: SigningParameters) throws -> String {
-        let claims = ["challenge": params.challenge]
-        return try CompactJwt.sign(claims: claims, privateKey: params.keyPair.privateKey, algorithm: .ecdsaSignatureMessageX962SHA256, kid: params.kid)
+    /// Default implementation for a signing method that generates a JWS.
+    /// This constructs the JWT payload with standard claims and signs it using the provided key pair.
+    /// - Parameters:
+    ///   - params: The `SigningParameters` containing data like challenge, expiration, user ID, and key pair.
+    ///   - journey: An optional `Journey` object to provide context for the issuer claim.
+    /// - Returns: The compact serialized JWS string.
+    /// - Throws: `JwtError` if JWT signing fails or `SecKeyToJWKError` if JWK conversion fails.
+    func sign(params: SigningParameters, journey: Journey?) throws -> String {
+        // Initialize claims dictionary with standard JWT claims
+        var claims: [String: Any] = [
+            Constants.challenge: params.challenge,
+            Constants.exp: Int(params.expiration.timeIntervalSince1970),
+            Constants.iat: Int(params.issueTime.timeIntervalSince1970),
+            Constants.nbf: Int(params.notBeforeTime.timeIntervalSince1970),
+            Constants.sub: params.userId,
+            Constants.platform: Constants.ios
+        ]
+        
+        // Add iss claim using the bundle identifier
+        if let bundleIdentifier = Bundle.main.bundleIdentifier {
+            claims[Constants.iss] = bundleIdentifier
+        }
+        
+        // Sign the JWT using CompactJwt utility
+        return try CompactJwt.sign(claims: claims, privateKey: params.keyPair.privateKey, publicKey: params.keyPair.publicKey, algorithm: .ecdsaSignatureMessageX962SHA256, kid: params.kid)
     }
     
-    func sign(params: UserKeySigningParameters) throws -> String {
-        let claims = ["challenge": params.challenge]
-        return try CompactJwt.sign(claims: claims, privateKey: params.privateKey, algorithm: .ecdsaSignatureMessageX962SHA256, kid: params.userKey.kid)
+    
+    /// Signs the given parameters with an existing user key to generate a JWS.
+    /// This constructs the JWT payload with standard and custom claims and signs it using the provided keys.
+    /// - Parameters:
+    ///   - params: The `UserKeySigningParameters` containing data like challenge, expiration, user key, and private/public keys.
+    ///   - journey: An optional `Journey` object to provide context for the issuer claim.
+    /// - Returns: The compact serialized JWS string.
+    /// - Throws: `JwtError` if JWT signing fails or `SecKeyToJWKError` if JWK conversion fails.
+    func sign(params: UserKeySigningParameters, journey: Journey?) throws -> String {
+        // Initialize claims dictionary with standard JWT claims
+        var claims: [String: Any] = [
+            Constants.challenge: params.challenge,
+            Constants.exp: Int(params.expiration.timeIntervalSince1970),
+            Constants.iat: Int(params.issueTime.timeIntervalSince1970),
+            Constants.nbf: Int(params.notBeforeTime.timeIntervalSince1970),
+            Constants.sub: params.userKey.userId,
+            Constants.platform: Constants.ios
+        ]
+        
+        // Add custom claims from parameters
+        for (key, value) in params.customClaims {
+            claims[key] = value
+        }
+        
+        // Add iss claim using the bundle identifier
+        if let bundleIdentifier = Bundle.main.bundleIdentifier {
+            claims[Constants.iss] = bundleIdentifier
+        }
+        
+        // Sign the JWT using CompactJwt utility
+        return try CompactJwt.sign(claims: claims, privateKey: params.privateKey, publicKey: params.publicKey, algorithm: .ecdsaSignatureMessageX962SHA256, kid: params.userKey.kid)
     }
 }
+

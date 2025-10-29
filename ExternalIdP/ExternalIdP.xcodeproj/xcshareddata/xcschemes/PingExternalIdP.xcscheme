@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1620"
+   LastUpgradeVersion = "2600"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EC0815B62D49377500F1AD02"
-               BuildableName = "PingExternal_idp.framework"
-               BlueprintName = "PingExternal-idp"
-               ReferencedContainer = "container:External-i.xcodeproj">
+               BuildableName = "PingExternalIdP.framework"
+               BlueprintName = "PingExternalIdP"
+               ReferencedContainer = "container:ExternalIdP.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -51,9 +51,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EC0815B62D49377500F1AD02"
-            BuildableName = "PingExternal_idp.framework"
-            BlueprintName = "PingExternal-idp"
-            ReferencedContainer = "container:External-i.xcodeproj">
+            BuildableName = "PingExternalIdP.framework"
+            BlueprintName = "PingExternalIdP"
+            ReferencedContainer = "container:ExternalIdP.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

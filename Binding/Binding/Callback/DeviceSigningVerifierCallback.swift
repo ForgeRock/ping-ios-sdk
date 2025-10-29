@@ -1,15 +1,23 @@
-/*
- * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
- *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
- */
+
+//
+//  DeviceSigningVerifierCallback.swift
+//  PingBinding
+//
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
+//
 
 import Foundation
 import PingJourney
+import PingOrchestrate
 
 /// A Journey callback for handling device signing verification.
-public class DeviceSigningVerifierCallback: AbstractCallback, @unchecked Sendable {
+/// This callback is received from the PingFederate authentication flow when a challenge needs to be signed by a bound device.
+public class DeviceSigningVerifierCallback: AbstractCallback, @unchecked Sendable, JourneyAware, ContinueNodeAware {
+    public var journey: Journey?
+    public var continueNode: ContinueNode?
     
     /// The user ID for the signing.
     public var userId: String?
@@ -24,32 +32,94 @@ public class DeviceSigningVerifierCallback: AbstractCallback, @unchecked Sendabl
     /// The timeout for the operation.
     public var timeout: Int = 30
     
+    public override func initValue(name: String, value: Any) {
+        switch name {
+        case Constants.userId:
+            userId = value as? String ?? ""
+        case Constants.challenge:
+            challenge = value as? String ?? ""
+        case Constants.title:
+            title = value as? String ?? ""
+        case Constants.subtitle:
+            subtitle = value as? String ?? ""
+        case Constants.description:
+            description = value as? String ?? ""
+        case Constants.timeout:
+            timeout = value as? Int ?? 30
+        case "authenticate", "sign":
+             break
+        default:
+            break
+        }
+    }
+    
     /// Sets the JWS value in the callback.
+    /// This method is called by the `PingBinder` after successfully signing the challenge.
     /// - Parameter jws: The JWS to be set.
     public func setJws(_ jws: String) {
         updateInputValue(jws, for: Constants.jws)
     }
     
     /// Sets the client error value in the callback.
+    /// This method is called when an error occurs during the signing process.
     /// - Parameter clientError: The client error to be set.
-    public func setClientError(_ clientError: String) {
+    private func setClientError(_ clientError: String) {
         updateInputValue(clientError, for: Constants.clientError)
     }
     
     /// Signs a challenge with a previously bound device.
+    /// This method calls the `PingBinder` to perform the signing operation.
     /// - Parameter config: A closure to configure the `DeviceBindingConfig`.
-    public func sign(config: (DeviceBindingConfig) -> Void = { _ in }) async throws {
-        _ = try await PingBinder.sign(callback: self, config: config)
+    /// - Returns: A `Result` containing the callback's JSON representation or an `Error`.
+    public func sign(config: (DeviceBindingConfig) -> Void = { _ in }) async -> Result<[String: Any], Error> {
+        do {
+            _ = try await PingBinder.sign(callback: self, journey: self.journey, config: config)
+            return .success(self.json)
+        } catch {
+            let deviceBindingStatus = mapError(error)
+            setClientError(deviceBindingStatus.clientError)
+            return .failure(deviceBindingStatus)
+        }
     }
     
+    /// Maps an `Error` to a `DeviceBindingStatus`.
+    /// - Parameter error: The error to map.
+    /// - Returns: A `DeviceBindingStatus` representing the error.
+    private func mapError(_ error: Error) -> DeviceBindingStatus {
+        if let deviceBindingError = error as? DeviceBindingError {
+            switch deviceBindingError {
+            case .deviceNotSupported:
+                return .unsupported(errorMessage: nil)
+            case .deviceNotRegistered:
+                return .clientNotRegistered
+            case .invalidClaim:
+                return .invalidCustomClaims
+            case .biometricError:
+                return .unAuthorize
+            case .userCanceled:
+                return .abort
+            case .unknown:
+                return .unsupported(errorMessage: "An unknown error occurred.")
+            case .authenticationFailed:
+                return .unAuthorize
+            }
+        }
+        return .unsupported(errorMessage: error.localizedDescription)
+    }
+    
+    /// Updates an input value in the callback's JSON representation.
+    /// - Parameters:
+    ///   - value: The new value.
+    ///   - name: The name of the input value to update.
     private func updateInputValue(_ value: Any, for name: String) {
         guard var inputArray = json[JourneyConstants.input] as? [[String: Any]] else {
             return
         }
         
-        if let index = inputArray.firstIndex(where: { $0[JourneyConstants.name] as? String == name }) {
+        if let index = inputArray.firstIndex(where: { ($0[JourneyConstants.name] as? String)?.hasSuffix(name) ?? false }) {
             inputArray[index][JourneyConstants.value] = value
             json[JourneyConstants.input] = inputArray
         }
     }
 }
+

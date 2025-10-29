@@ -1,55 +1,43 @@
-/*
- * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
- *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
- */
+
+//
+//  NoneAuthenticator.swift
+//  PingBinding
+//
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
+//
 
 import Foundation
+import PingJourney
 
 /// An authenticator that does not require any user interaction.
-class NoneAuthenticator: DeviceAuthenticator {
+/// This authenticator is used when the authentication type is `none`.
+class NoneAuthenticator: DefaultDeviceAuthenticator {
     
-    /// The type of authenticator.
-    let type: DeviceBindingAuthenticationType = .none
+    /// The type of authenticator, which is `.none`.
+    override func type() -> DeviceBindingAuthenticationType {
+        return .none
+    }
     
-    /// Registers a new key pair.
-    /// - Parameter attestation: The attestation to use.
-    /// - Returns: The new key pair.
-    func register(attestation: Attestation) async throws -> KeyPair {
+    /// Generates a new key pair without any specific access control.
+    /// - Returns: A new `KeyPair`.
+    /// - Throws: A `CryptoKeyError` if key generation fails.
+    override func generateKeys() throws -> KeyPair {
         let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
-        return try cryptoKey.generateKeyPair(attestation: attestation)
+        return try cryptoKey.generateKeyPair(attestation: .none)
     }
     
-    /// Authenticates the user.
-    /// - Returns: The private key.
-    func authenticate() async throws -> SecKey {
-        return try getPrivateKey()
-    }
-    
-    /// Checks if the authenticator is supported.
-    /// - Parameter attestation: The attestation to use.
-    /// - Returns: `true` if the authenticator is supported, `false` otherwise.
-    func isSupported(attestation: Attestation) -> Bool {
-        return true
-    }
-    
-    /// Deletes all keys associated with this authenticator.
-    func deleteKeys() async throws {
-        let userKeys = try UserKeysStorage(config: UserKeyStorageConfig()).findAll()
-        for userKey in userKeys {
-            if userKey.authType == .none {
-                try CryptoKey(keyTag: userKey.keyTag).deleteKeyPair()
-            }
-        }
-    }
-    
-    /// Gets the private key from the keychain.
-    /// - Returns: The private key.
-    private func getPrivateKey() throws -> SecKey {
+    /// Authenticates the user by retrieving the private key from the keychain.
+    /// No user interaction is required.
+    /// - Parameter keyTag: The tag of the key to retrieve.
+    /// - Returns: The `SecKey` if found.
+    /// - Throws: A `DeviceBindingError.deviceNotRegistered` if the key is not found.
+    override func authenticate(keyTag: String) async throws -> SecKey {
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
-            kSecAttrApplicationTag as String: "".data(using: .utf8) ?? Data(),
+            kSecAttrApplicationTag as String: keyTag.data(using: .utf8) ?? Data(),
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
             kSecReturnRef as String: true
         ]
@@ -61,4 +49,22 @@ class NoneAuthenticator: DeviceAuthenticator {
         }
         return (item as! SecKey)
     }
+    
+    /// Checks if the authenticator is supported.
+    /// Since this authenticator has no special requirements, it is always supported.
+    /// - Returns: `true`
+    override func isSupported(attestation: Attestation) -> Bool {
+        return true
+    }
+    
+    /// Deletes all keys associated with this authenticator.
+    override func deleteKeys() async throws {
+        let userKeys = try UserKeysStorage(config: UserKeyStorageConfig()).findAll()
+        for userKey in userKeys {
+            if userKey.authType == .none {
+                try CryptoKey(keyTag: userKey.keyTag).deleteKeyPair()
+            }
+        }
+    }
 }
+
