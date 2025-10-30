@@ -15,7 +15,7 @@ import UIKit
 #endif
 
 /// Main class for handling device binding and signing.
-class PingBinder {
+public class Binding {
     
     /// Binds a device to a user account.
     ///
@@ -34,7 +34,7 @@ class PingBinder {
     ///   - config: A closure to configure the `DeviceBindingConfig`.
     /// - Returns: The JWS signed with the new key.
     /// - Throws: A `DeviceBindingError` if the device is not supported, or if any other error occurs during the binding process.
-    static func bind(callback: DeviceBindingCallback, journey: Journey?, config: (DeviceBindingConfig) -> Void = { _ in }) async throws -> String {
+    public static func bind(callback: DeviceBindingCallback, journey: Journey?, config: (DeviceBindingConfig) -> Void = { _ in }) async throws -> String {
         let deviceBindingConfig = DeviceBindingConfig()
         config(deviceBindingConfig)
         
@@ -48,7 +48,7 @@ class PingBinder {
         }
         
         // Clear any existing keys for the user.
-        try await PingBinder.clearKeys(deviceAuthenticator: deviceAuthenticator, userKeyStorage: userKeyStorage, userId: callback.userId)
+        try await Binding.clearKeys(deviceAuthenticator: deviceAuthenticator, userKeyStorage: userKeyStorage, userId: callback.userId)
         
         var userKey: UserKey?
         do {
@@ -110,7 +110,7 @@ class PingBinder {
     ///   - config: A closure to configure the `DeviceBindingConfig`.
     /// - Returns: The JWS signed with the device key.
     /// - Throws: A `DeviceBindingError` if the device is not registered, or if any other error occurs during the signing process.
-    static func sign(callback: DeviceSigningVerifierCallback, journey: Journey?, config: (DeviceBindingConfig) -> Void = { _ in }) async throws -> String {
+    public static func sign(callback: DeviceSigningVerifierCallback, journey: Journey?, config: (DeviceBindingConfig) -> Void = { _ in }) async throws -> String {
         let deviceBindingConfig = DeviceBindingConfig()
         config(deviceBindingConfig)
         
@@ -185,7 +185,7 @@ class PingBinder {
     ///   - deviceAuthenticator: The `DeviceAuthenticator` to use.
     ///   - userKeyStorage: The `UserKeysStorage` to use.
     ///   - userId: The user ID.
-    static func clearKeys(deviceAuthenticator: DeviceAuthenticator, userKeyStorage: UserKeysStorage, userId: String) async throws {
+    public static func clearKeys(deviceAuthenticator: DeviceAuthenticator, userKeyStorage: UserKeysStorage, userId: String) async throws {
         try await userKeyStorage.deleteByUserId(userId)
     }
     

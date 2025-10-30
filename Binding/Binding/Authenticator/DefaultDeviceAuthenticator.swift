@@ -22,11 +22,11 @@ open class DefaultDeviceAuthenticator: DeviceAuthenticator {
     public var journey: Journey?
     
     /// An optional `Prompt` object containing information to display to the user during authentication.
-    var prompt: Prompt?
+    public var prompt: Prompt?
     
     /// Returns the specific type of device binding authentication this authenticator handles.
     /// Default implementation returns `.none`. Subclasses should override this.
-    func type() -> DeviceBindingAuthenticationType {
+    open func type() -> DeviceBindingAuthenticationType {
         return .none
     }
     

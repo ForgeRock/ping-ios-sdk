@@ -16,7 +16,7 @@ import PingJourney
 /// A protocol defining the capabilities and requirements for any device authenticator.
 /// Authenticators conforming to this protocol are responsible for key management (generation, authentication, deletion)
 /// and JWT signing operations specific to their authentication type (e.g., biometrics, PIN).
-protocol DeviceAuthenticator {
+public protocol DeviceAuthenticator {
     /// An optional `Journey` object providing context for the authentication flow.
     var journey: Journey? { get set }
     
@@ -93,7 +93,7 @@ protocol DeviceAuthenticator {
     func sign(params: UserKeySigningParameters, journey: Journey?) throws -> String
 }
 
-extension DeviceAuthenticator {
+public extension DeviceAuthenticator {
     /// Default implementation for a signing method that generates a JWS.
     /// This constructs the JWT payload with standard claims and signs it using the provided key pair.
     /// - Parameters:

@@ -25,6 +25,8 @@ public class DeviceBindingConfig {
     /// The default is the current device name.
     public var deviceName: String = UIDevice.current.name
     #else
+    /// The name of the device.
+    /// The default is "Apple".
     public var deviceName: String = "Apple"
     #endif
     /// The configuration for the user key storage.

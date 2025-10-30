@@ -12,38 +12,62 @@
 import Foundation
 
 /// Constants used throughout the PingBinding SDK.
-struct Constants {
+public struct Constants {
     
     // MARK: - Callback Input Keys
     
-    static let jws = "jws"
-    static let deviceId = "deviceId"
-    static let deviceName = "deviceName"
-    static let clientError = "clientError"
+    /// The JWS (JSON Web Signature) key.
+    public static let jws = "jws"
+    /// The device ID key.
+    public static let deviceId = "deviceId"
+    /// The device name key.
+    public static let deviceName = "deviceName"
+    /// The client error key.
+    public static let clientError = "clientError"
     
     // MARK: - Callback Output Keys
     
-    static let userId = "userId"
-    static let username = "username"
-    static let challenge = "challenge"
-    static let authenticationType = "authenticationType"
-    static let title = "title"
-    static let subtitle = "subtitle"
-    static let description = "description"
-    static let timeout = "timeout"
-    static let attestation = "attestation"
+    /// The user ID key.
+    public static let userId = "userId"
+    /// The username key.
+    public static let username = "username"
+    /// The challenge key.
+    public static let challenge = "challenge"
+    /// The authentication type key.
+    public static let authenticationType = "authenticationType"
+    /// The title key.
+    public static let title = "title"
+    /// The subtitle key.
+    public static let subtitle = "subtitle"
+    /// The description key.
+    public static let description = "description"
+    /// The timeout key.
+    public static let timeout = "timeout"
+    /// The attestation key.
+    public static let attestation = "attestation"
     
     // MARK: - JWT Constants
     
-    static let sig: String = "sig"
-    static let alg: String = "alg"
-    static let ES256: String = "ES256"
-    static let JWS: String = "JWS"
-    static let sub: String = "sub"
-    static let exp: String = "exp"
-    static let iat: String = "iat"
-    static let nbf: String = "nbf"
-    static let platform: String = "platform"
-    static let ios: String = "ios"
-    static let iss: String = "iss"
+    /// The signature key.
+    public static let sig: String = "sig"
+    /// The algorithm key.
+    public static let alg: String = "alg"
+    /// The ES256 algorithm name.
+    public static let ES256: String = "ES256"
+    /// The JWS type.
+    public static let JWS: String = "JWS"
+    /// The subject key.
+    public static let sub: String = "sub"
+    /// The expiration time key.
+    public static let exp: String = "exp"
+    /// The issued at key.
+    public static let iat: String = "iat"
+    /// The not before key.
+    public static let nbf: String = "nbf"
+    /// The platform key.
+    public static let platform: String = "platform"
+    /// The iOS platform name.
+    public static let ios: String = "ios"
+    /// The issuer key.
+    public static let iss: String = "iss"
 }

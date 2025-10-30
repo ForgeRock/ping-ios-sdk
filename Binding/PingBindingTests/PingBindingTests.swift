@@ -16,21 +16,23 @@ final class PingBindingTests: XCTestCase {
     
     var userKeyStorage: UserKeysStorage!
     
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        let config = UserKeyStorageConfig(fileName: "test_user_keys.json")
+    override func setUp() async throws {
+        try await super.setUp()
+        let config = UserKeyStorageConfig()
         userKeyStorage = UserKeysStorage(config: config)
+        
         // Clean up before each test
-        try? userKeyStorage.deleteByUserId("testUser")
-        try? userKeyStorage.deleteByUserId("testUser2")
+        try? await userKeyStorage.deleteByUserId("testUser")
+        try? await userKeyStorage.deleteByUserId("testUser2")
     }
     
-    override func tearDownWithError() throws {
+    override func tearDown() async throws {
         // Clean up after each test
-        try? userKeyStorage.deleteByUserId("testUser")
-        try? userKeyStorage.deleteByUserId("testUser2")
+        try? await userKeyStorage.deleteByUserId("testUser")
+        try? await userKeyStorage.deleteByUserId("testUser2")
         userKeyStorage = nil
-        try super.tearDownWithError()
+        
+        try await super.tearDown()
     }
     
     // MARK: - PingBinder Tests
@@ -45,12 +47,12 @@ final class PingBindingTests: XCTestCase {
         
         // When
         do {
-            let jws = try await PingBinder.bind(callback: callback, journey: nil)
+            let jws = try await Binding.bind(callback: callback, journey: nil)
             
             // Then
             XCTAssertFalse(jws.isEmpty)
             
-            let storedKey = try userKeyStorage.findByUserId("testUser")
+            let storedKey = try await userKeyStorage.findByUserId("testUser")
             XCTAssertNotNil(storedKey)
             XCTAssertEqual(storedKey?.userId, "testUser")
         } catch {
@@ -70,7 +72,7 @@ final class PingBindingTests: XCTestCase {
             bindCallback.userName = "Test User"
             bindCallback.challenge = "challenge"
             bindCallback.deviceBindingAuthenticationType = .none
-            _ = try await PingBinder.bind(callback: bindCallback, journey: nil)
+            _ = try await Binding.bind(callback: bindCallback, journey: nil)
             
             // Now, prepare for signing
             let signCallback = DeviceSigningVerifierCallback()
@@ -78,7 +80,7 @@ final class PingBindingTests: XCTestCase {
             signCallback.challenge = "anotherChallenge"
             
             // When
-            let jws = try await PingBinder.sign(callback: signCallback, journey: nil)
+            let jws = try await Binding.sign(callback: signCallback, journey: nil)
             
             // Then
             XCTAssertFalse(jws.isEmpty)
@@ -99,7 +101,7 @@ final class PingBindingTests: XCTestCase {
         
         // When
         do {
-            _ = try await PingBinder.sign(callback: signCallback, journey: nil)
+            _ = try await Binding.sign(callback: signCallback, journey: nil)
             XCTFail("Signing should have failed because the device is not registered.")
         } catch {
             // Then
@@ -118,9 +120,9 @@ final class PingBindingTests: XCTestCase {
             firstBindCallback.userId = "testUser"
             firstBindCallback.userName = "Test User"
             firstBindCallback.challenge = "firstChallenge"
-            _ = try await PingBinder.bind(callback: firstBindCallback, journey: nil)
+            _ = try await Binding.bind(callback: firstBindCallback, journey: nil)
             
-            let firstKey = try userKeyStorage.findByUserId("testUser")
+            let firstKey = try await userKeyStorage.findByUserId("testUser")
             XCTAssertNotNil(firstKey, "First key should be stored.")
             
             // When: Bind the same user again
@@ -128,10 +130,10 @@ final class PingBindingTests: XCTestCase {
             secondBindCallback.userId = "testUser"
             secondBindCallback.userName = "Test User"
             secondBindCallback.challenge = "secondChallenge"
-            _ = try await PingBinder.bind(callback: secondBindCallback, journey: nil)
+            _ = try await Binding.bind(callback: secondBindCallback, journey: nil)
             
             // Then
-            let allKeys = try userKeyStorage.findAll()
+            let allKeys = try await userKeyStorage.findAll()
             let userKeys = allKeys.filter { $0.userId == "testUser" }
             
             XCTAssertEqual(userKeys.count, 1, "There should be only one key for the user.")
@@ -148,30 +150,30 @@ final class PingBindingTests: XCTestCase {
     
     // MARK: - UserKeysStorage Tests
     
-    func testUserKeysStorage_SaveAndFindAll() throws {
+    func testUserKeysStorage_SaveAndFindAll() async throws {
         // Given
         let userKey1 = UserKey(keyTag: "tag1", userId: "testUser", username: "Test User", kid: "kid1", authType: .none)
         let userKey2 = UserKey(keyTag: "tag2", userId: "testUser2", username: "Test User 2", kid: "kid2", authType: .none)
         
         // When
-        try userKeyStorage.save(userKey: userKey1)
-        try userKeyStorage.save(userKey: userKey2)
+        try await userKeyStorage.save(userKey: userKey1)
+        try await userKeyStorage.save(userKey: userKey2)
         
         // Then
-        let allKeys = try userKeyStorage.findAll()
+        let allKeys = try await userKeyStorage.findAll()
         XCTAssertEqual(allKeys.count, 2)
         XCTAssertTrue(allKeys.contains(where: { $0.userId == "testUser" }))
         XCTAssertTrue(allKeys.contains(where: { $0.userId == "testUser2" }))
     }
     
-    func testUserKeysStorage_FindByUserId() throws {
+    func testUserKeysStorage_FindByUserId() async throws {
         // Given
         let userKey = UserKey(keyTag: "tag1", userId: "testUser", username: "Test User", kid: "kid1", authType: .none)
-        try userKeyStorage.save(userKey: userKey)
+        try await userKeyStorage.save(userKey: userKey)
         
         // When
-        let foundKey = try userKeyStorage.findByUserId("testUser")
-        let notFoundKey = try userKeyStorage.findByUserId("nonExistentUser")
+        let foundKey = try await userKeyStorage.findByUserId("testUser")
+        let notFoundKey = try await userKeyStorage.findByUserId("nonExistentUser")
         
         // Then
         XCTAssertNotNil(foundKey)
@@ -179,18 +181,18 @@ final class PingBindingTests: XCTestCase {
         XCTAssertNil(notFoundKey)
     }
     
-    func testUserKeysStorage_DeleteByUserId() throws {
+    func testUserKeysStorage_DeleteByUserId() async throws {
         // Given
         let userKey1 = UserKey(keyTag: "tag1", userId: "testUser", username: "Test User", kid: "kid1", authType: .none)
         let userKey2 = UserKey(keyTag: "tag2", userId: "testUser2", username: "Test User 2", kid: "kid2", authType: .none)
-        try userKeyStorage.save(userKey: userKey1)
-        try userKeyStorage.save(userKey: userKey2)
+        try await userKeyStorage.save(userKey: userKey1)
+        try await userKeyStorage.save(userKey: userKey2)
         
         // When
-        try userKeyStorage.deleteByUserId("testUser")
+        try await userKeyStorage.deleteByUserId("testUser")
         
         // Then
-        let remainingKeys = try userKeyStorage.findAll()
+        let remainingKeys = try await userKeyStorage.findAll()
         XCTAssertEqual(remainingKeys.count, 1)
         XCTAssertEqual(remainingKeys.first?.userId, "testUser2")
     }
@@ -202,7 +204,7 @@ final class PingBindingTests: XCTestCase {
         
         // When
         do {
-            _ = try await PingBinder.sign(callback: signCallback, journey: nil, config: { config in
+            _ = try await Binding.sign(callback: signCallback, journey: nil, config: { config in
                 config.claims = ["sub": "newSubject"] // "sub" is a reserved claim
             })
             XCTFail("Signing should have failed due to invalid custom claim.")

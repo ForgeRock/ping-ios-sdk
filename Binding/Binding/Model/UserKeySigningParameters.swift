@@ -14,22 +14,22 @@ import Foundation
 /// A struct representing the parameters for signing a JWS with a previously bound user key.
 public struct UserKeySigningParameters {
     /// The signing algorithm.
-    let algorithm: String
+    public let algorithm: String
     /// The user key to use for signing.
-    let userKey: UserKey
+    public let userKey: UserKey
     /// The private key to use for signing.
-    let privateKey: SecKey
+    public let privateKey: SecKey
     /// The public key to use for signing.
-    let publicKey: SecKey
+    public let publicKey: SecKey
     /// The challenge to sign.
-    let challenge: String
+    public let challenge: String
     /// The issue time of the JWT.
-    let issueTime: Date
+    public let issueTime: Date
     /// The not-before time of the JWT.
-    let notBeforeTime: Date
+    public let notBeforeTime: Date
     /// The expiration time of the JWT.
-    let expiration: Date
+    public let expiration: Date
     /// The custom claims to include in the JWT.
-    let customClaims: [String: Any]
+    public let customClaims: [String: Any]
 }
 

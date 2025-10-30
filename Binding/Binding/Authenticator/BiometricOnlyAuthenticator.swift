@@ -16,10 +16,10 @@ import PingJourney
 /// An authenticator that uses biometrics (Face ID or Touch ID) for user authentication.
 /// This class extends `DefaultDeviceAuthenticator` and provides specific implementations
 /// for biometric-only key generation, authentication, and support checks.
-class BiometricOnlyAuthenticator: DefaultDeviceAuthenticator {
+public class BiometricOnlyAuthenticator: DefaultDeviceAuthenticator {
     
     /// The type of authenticator, specifically `.biometricOnly`.
-    override func type() -> DeviceBindingAuthenticationType {
+    public override func type() -> DeviceBindingAuthenticationType {
         return .biometricOnly
     }
     
@@ -27,7 +27,7 @@ class BiometricOnlyAuthenticator: DefaultDeviceAuthenticator {
     /// The key is stored in the Secure Enclave (if available) and associated with a unique key tag.
     /// - Throws: `CryptoKeyError` if key generation fails.
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
-    override func generateKeys() async throws -> KeyPair {
+    public override func generateKeys() async throws -> KeyPair {
         // Create a new CryptoKey with a unique identifier
         let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
         
@@ -48,7 +48,7 @@ class BiometricOnlyAuthenticator: DefaultDeviceAuthenticator {
     ///   - `DeviceBindingError.deviceNotSupported` if the device does not support biometrics.
     ///   - `DeviceBindingError.biometricError` if biometric authentication fails.
     ///   - `DeviceBindingError.unknown` for other unexpected errors.
-    override func authenticate(keyTag: String) async throws -> SecKey {
+    public override func authenticate(keyTag: String) async throws -> SecKey {
         // Initialize LAContext for Local Authentication
         let context = LAContext()
         // Customize the cancel button title for the biometric prompt
@@ -77,7 +77,7 @@ class BiometricOnlyAuthenticator: DefaultDeviceAuthenticator {
     /// Checks if the device supports biometrics for authentication.
     /// - Parameter attestation: The attestation type (currently ignored).
     /// - Returns: `true` if the device supports biometric authentication, `false` otherwise.
-    override func isSupported(attestation: Attestation) -> Bool {
+    public override func isSupported(attestation: Attestation) -> Bool {
         let context = LAContext()
         var error: NSError?
         // Check if the device can evaluate the biometric policy
@@ -87,7 +87,7 @@ class BiometricOnlyAuthenticator: DefaultDeviceAuthenticator {
     /// Deletes all biometric keys associated with this authenticator.
     /// It iterates through all stored user keys and deletes those with `.biometricOnly` or `.biometricAllowFallback` authentication types.
     /// - Throws: `CryptoKeyError` if key deletion fails.
-    override func deleteKeys() async throws {
+    public override func deleteKeys() async throws {
         // Retrieve all stored user keys
         let userKeys = try await UserKeysStorage(config: UserKeyStorageConfig()).findAll()
         for userKey in userKeys {

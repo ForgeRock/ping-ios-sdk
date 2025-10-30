@@ -11,7 +11,7 @@
 import Foundation
 
 /// A struct representing a user's key.
-public struct UserKey: Codable, Identifiable {
+public struct UserKey: Codable, Identifiable, Sendable {
     public var id: String { kid }
     /// The key tag.
     public let keyTag: String

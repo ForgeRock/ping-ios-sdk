@@ -14,22 +14,22 @@ import Foundation
 /// A struct representing the parameters for signing a JWS during a device binding operation.
 public struct SigningParameters {
     /// The signing algorithm.
-    let algorithm: String
+    public let algorithm: String
     /// The key pair to use for signing.
-    let keyPair: KeyPair
+    public let keyPair: KeyPair
     /// The key ID.
-    let kid: String
+    public let kid: String
     /// The user ID.
-    let userId: String
+    public let userId: String
     /// The challenge to sign.
-    let challenge: String
+    public let challenge: String
     /// The issue time of the JWT.
-    let issueTime: Date
+    public let issueTime: Date
     /// The not-before time of the JWT.
-    let notBeforeTime: Date
+    public let notBeforeTime: Date
     /// The expiration time of the JWT.
-    let expiration: Date
+    public let expiration: Date
     /// The attestation to include in the JWT.
-    let attestation: Attestation
+    public let attestation: Attestation
 }
 

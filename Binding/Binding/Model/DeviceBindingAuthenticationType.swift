@@ -12,7 +12,7 @@
 import Foundation
 
 /// An enum representing the type of device binding authentication.
-public enum DeviceBindingAuthenticationType: String, Codable {
+public enum DeviceBindingAuthenticationType: String, Codable, Sendable {
     /// Biometric authentication (Face ID or Touch ID) is required.
     case biometricOnly = "BIOMETRIC_ONLY"
     /// Biometric authentication (Face ID or Touch ID) with fallback to the device passcode.

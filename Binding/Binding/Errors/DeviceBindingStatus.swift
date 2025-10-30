@@ -32,11 +32,9 @@ public enum DeviceBindingStatus: Error {
     case unAuthorize
     /// The custom claims are invalid.
     case invalidCustomClaims
-}
-
-public extension DeviceBindingStatus {
+    
     /// A client error string that can be sent to the server.
-    var clientError: String {
+    public var clientError: String {
         switch self {
         case .timeout:
             return BindingStatusConstants.timeout
@@ -54,7 +52,7 @@ public extension DeviceBindingStatus {
     }
     
     /// A user-facing error message.
-    var errorMessage: String {
+    public var errorMessage: String {
         switch self {
         case .timeout:
             return "Authentication Timeout"

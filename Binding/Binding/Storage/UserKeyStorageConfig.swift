@@ -12,16 +12,23 @@
 import Foundation
 import PingStorage
 
-private let deviceBindingV1UserKeys = "com.pingidentity.device.binding.v1.userkeys"
 
+/// Configuration for `UserKeysStorage`.
 public class UserKeyStorageConfig {
     
+    /// The underlying storage mechanism.
     public var storage: any Storage<[UserKey]>
     
+    /// The default account name for keychain storage.
+    var deviceBindingV1UserKeys = "com.pingidentity.device.binding.v1.userkeys"
+    
+    /// Initializes a new `UserKeyStorageConfig` with default keychain storage.
     public init() {
         self.storage = KeychainStorage(account: deviceBindingV1UserKeys, encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
     }
     
+    /// Initializes a new `UserKeyStorageConfig` with custom storage.
+    /// - Parameter storage: The storage to use.
     public init(storage: any Storage<[UserKey]>) {
         self.storage = storage
     }

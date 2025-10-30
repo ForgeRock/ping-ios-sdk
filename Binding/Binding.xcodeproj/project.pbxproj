@@ -17,7 +17,7 @@
 		EC4DD2FA2EABBAB800ECC4E1 /* NoneAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2D52EABBAB800ECC4E1 /* NoneAuthenticator.swift */; };
 		EC4DD2FB2EABBAB800ECC4E1 /* UserKeysStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2EE2EABBAB800ECC4E1 /* UserKeysStorage.swift */; };
 		EC4DD2FC2EABBAB800ECC4E1 /* CryptoKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2DD2EABBAB800ECC4E1 /* CryptoKey.swift */; };
-		EC4DD2FD2EABBAB800ECC4E1 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2E82EABBAB800ECC4E1 /* Binding.swift */; };
+		EC4DD2FD2EABBAB800ECC4E1 /* BindingModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2E82EABBAB800ECC4E1 /* BindingModule.swift */; };
 		EC4DD2FE2EABBAB800ECC4E1 /* UserKeyStorageConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2EF2EABBAB800ECC4E1 /* UserKeyStorageConfig.swift */; };
 		EC4DD2FF2EABBAB800ECC4E1 /* UserKeySigningParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2E62EABBAB800ECC4E1 /* UserKeySigningParameters.swift */; };
 		EC4DD3002EABBAB800ECC4E1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2DC2EABBAB800ECC4E1 /* Constants.swift */; };
@@ -69,7 +69,7 @@
 		EC4DD2E42EABBAB800ECC4E1 /* Prompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prompt.swift; sourceTree = "<group>"; };
 		EC4DD2E52EABBAB800ECC4E1 /* SigningParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningParameters.swift; sourceTree = "<group>"; };
 		EC4DD2E62EABBAB800ECC4E1 /* UserKeySigningParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserKeySigningParameters.swift; sourceTree = "<group>"; };
-		EC4DD2E82EABBAB800ECC4E1 /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
+		EC4DD2E82EABBAB800ECC4E1 /* BindingModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindingModule.swift; sourceTree = "<group>"; };
 		EC4DD2EA2EABBAB800ECC4E1 /* PingBinding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PingBinding.h; sourceTree = "<group>"; };
 		EC4DD2EC2EABBAB800ECC4E1 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		EC4DD2ED2EABBAB800ECC4E1 /* UserKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserKey.swift; sourceTree = "<group>"; };
@@ -218,7 +218,7 @@
 		EC4DD2E92EABBAB800ECC4E1 /* Module */ = {
 			isa = PBXGroup;
 			children = (
-				EC4DD2E82EABBAB800ECC4E1 /* Binding.swift */,
+				EC4DD2E82EABBAB800ECC4E1 /* BindingModule.swift */,
 			);
 			path = Module;
 			sourceTree = "<group>";
@@ -386,7 +386,7 @@
 				EC4DD2FA2EABBAB800ECC4E1 /* NoneAuthenticator.swift in Sources */,
 				EC4DD2FB2EABBAB800ECC4E1 /* UserKeysStorage.swift in Sources */,
 				EC4DD2FC2EABBAB800ECC4E1 /* CryptoKey.swift in Sources */,
-				EC4DD2FD2EABBAB800ECC4E1 /* Binding.swift in Sources */,
+				EC4DD2FD2EABBAB800ECC4E1 /* BindingModule.swift in Sources */,
 				EC4DD2FE2EABBAB800ECC4E1 /* UserKeyStorageConfig.swift in Sources */,
 				EC4DD2FF2EABBAB800ECC4E1 /* UserKeySigningParameters.swift in Sources */,
 				EC4DD3002EABBAB800ECC4E1 /* Constants.swift in Sources */,
@@ -635,6 +635,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
 			};
 			name = Debug;
 		};
@@ -654,6 +655,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
 			};
 			name = Release;
 		};

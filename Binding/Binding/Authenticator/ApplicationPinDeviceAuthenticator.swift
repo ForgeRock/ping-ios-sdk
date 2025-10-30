@@ -6,12 +6,12 @@ import LocalAuthentication
 /// An authenticator that uses an application PIN for user verification.
 /// This class provides an implementation for generating PIN-protected keys and authenticating the user by prompting for the PIN.
 #if canImport(UIKit)
-class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
+public class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
     
     private var pin: String?
     
     /// The type of authenticator, specifically `.applicationPin`.
-    override func type() -> DeviceBindingAuthenticationType {
+    public override func type() -> DeviceBindingAuthenticationType {
         return .applicationPin
     }
     
@@ -20,7 +20,7 @@ class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
     /// - Throws: `DeviceBindingError.unknown` if access control creation fails.
     ///           `CryptoKeyError` if key generation fails.
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
-    override func generateKeys() async throws -> KeyPair {
+    public override func generateKeys() async throws -> KeyPair {
         let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
 
         let userPin: String?
@@ -28,6 +28,7 @@ class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
             userPin = pin
         } else {
             userPin = await promptForPin()
+            self.pin = userPin
         }
         
         // Create access control flags that require an application password for private key usage.
@@ -50,13 +51,14 @@ class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
     /// - Returns: The `SecKey` representing the private key if authentication is successful.
     /// - Throws: `DeviceBindingError.authenticationFailed` if the user cancels or provides an incorrect PIN.
     ///           `DeviceBindingError.unknown` for other unexpected errors.
-    override func authenticate(keyTag: String) async throws -> SecKey {
+    public override func authenticate(keyTag: String) async throws -> SecKey {
         // The UI must be presented on the main thread.
         let userPin: String?
         if let pin = self.pin, !pin.isEmpty {
             userPin = pin
         } else {
             userPin = await promptForPin()
+            self.pin = userPin
         }
         
         guard let pinData = userPin?.data(using: .utf8) else {
@@ -90,13 +92,13 @@ class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
     /// Checks if the authenticator is supported. Since it's a software-based PIN, it is always supported.
     /// - Parameter attestation: The attestation type (currently ignored).
     /// - Returns: `true`.
-    override func isSupported(attestation: Attestation) -> Bool {
+    public override func isSupported(attestation: Attestation) -> Bool {
         return true
     }
     
     /// Deletes all keys associated with the application PIN authenticator.
     /// - Throws: `UserKeysStorageError` or `CryptoKeyError` if deletion fails.
-    override func deleteKeys() async throws {
+    public override func deleteKeys() async throws {
         let userKeys = try await UserKeysStorage(config: UserKeyStorageConfig()).findAll()
         for userKey in userKeys {
             if userKey.authType == .applicationPin {

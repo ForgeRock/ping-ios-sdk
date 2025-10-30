@@ -14,17 +14,17 @@ import PingJourney
 
 /// An authenticator that does not require any user interaction.
 /// This authenticator is used when the authentication type is `none`.
-class NoneAuthenticator: DefaultDeviceAuthenticator {
+public class NoneAuthenticator: DefaultDeviceAuthenticator {
     
     /// The type of authenticator, which is `.none`.
-    override func type() -> DeviceBindingAuthenticationType {
+    public override func type() -> DeviceBindingAuthenticationType {
         return .none
     }
     
     /// Generates a new key pair without any specific access control.
     /// - Returns: A new `KeyPair`.
     /// - Throws: A `CryptoKeyError` if key generation fails.
-    override func generateKeys() async throws -> KeyPair {
+    public override func generateKeys() async throws -> KeyPair {
         let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
         return try cryptoKey.generateKeyPair(attestation: .none)
     }
@@ -34,7 +34,7 @@ class NoneAuthenticator: DefaultDeviceAuthenticator {
     /// - Parameter keyTag: The tag of the key to retrieve.
     /// - Returns: The `SecKey` if found.
     /// - Throws: A `DeviceBindingError.deviceNotRegistered` if the key is not found.
-    override func authenticate(keyTag: String) async throws -> SecKey {
+    public override func authenticate(keyTag: String) async throws -> SecKey {
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
             kSecAttrApplicationTag as String: keyTag.data(using: .utf8) ?? Data(),
@@ -53,12 +53,12 @@ class NoneAuthenticator: DefaultDeviceAuthenticator {
     /// Checks if the authenticator is supported.
     /// Since this authenticator has no special requirements, it is always supported.
     /// - Returns: `true`
-    override func isSupported(attestation: Attestation) -> Bool {
+    public override func isSupported(attestation: Attestation) -> Bool {
         return true
     }
     
     /// Deletes all keys associated with this authenticator.
-    override func deleteKeys() async throws {
+    public override func deleteKeys() async throws {
         let userKeys = try await UserKeysStorage(config: UserKeyStorageConfig()).findAll()
         for userKey in userKeys {
             if userKey.authType == .none {

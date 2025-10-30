@@ -16,7 +16,9 @@ import PingOrchestrate
 /// A Journey callback for handling device binding.
 /// This callback is received from the PingFederate authentication flow when a device needs to be bound to a user account.
 public class DeviceBindingCallback: AbstractCallback, @unchecked Sendable, JourneyAware, ContinueNodeAware {
+    /// The `Journey` object associated with the current authentication flow.
     public var journey: Journey?
+    /// The `ContinueNode` object that can be used to continue the authentication flow.
     public var continueNode: ContinueNode?
     
     /// The user ID for the binding.
@@ -106,7 +108,7 @@ public class DeviceBindingCallback: AbstractCallback, @unchecked Sendable, Journ
     /// - Returns: A `Result` containing the callback's JSON representation or an `Error`.
     public func bind(config: (DeviceBindingConfig) -> Void = { _ in }) async -> Result<[String: Any], Error> {
         do {
-            _ = try await PingBinder.bind(callback: self, journey: self.journey, config: config)
+            _ = try await Binding.bind(callback: self, journey: self.journey, config: config)
             return .success(self.json)
         } catch {
             let deviceBindingStatus = mapError(error)

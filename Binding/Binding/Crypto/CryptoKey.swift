@@ -15,14 +15,14 @@ import LocalAuthentication
 
 /// A class for managing cryptographic keys in the Keychain.
 /// This class provides methods for generating, retrieving, and deleting key pairs.
-class CryptoKey {
+public class CryptoKey {
     
     /// The tag that uniquely identifies the key in the Keychain.
-    let keyTag: String
+    public let keyTag: String
     
     /// Initializes a new `CryptoKey` with the given key tag.
     /// - Parameter keyTag: The key tag to use.
-    init(keyTag: String) {
+    public init(keyTag: String) {
         self.keyTag = keyTag
     }
     
@@ -32,7 +32,7 @@ class CryptoKey {
     /// - Parameter accessControl: The access control flags for the key. If nil, a default will be used.
     /// - Returns: The generated `KeyPair`.
     /// - Throws: A `DeviceBindingError` if the key generation fails.
-    func generateKeyPair(attestation: Attestation, accessControl: SecAccessControl? = nil, pin: String? = nil) throws -> KeyPair {
+    public func generateKeyPair(attestation: Attestation, accessControl: SecAccessControl? = nil, pin: String? = nil) throws -> KeyPair {
         let access = accessControl ?? SecAccessControlCreateWithFlags(kCFAllocatorDefault,
                                                                       kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
                                                                       .privateKeyUsage,
@@ -79,7 +79,7 @@ class CryptoKey {
     ///
     /// - Returns: The public key as a `SecKey`.
     /// - Throws: A `DeviceBindingError.deviceNotRegistered` if the key is not found.
-    func getPublicKey() throws -> SecKey {
+    public func getPublicKey() throws -> SecKey {
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
             kSecAttrApplicationTag as String: keyTag.data(using: .utf8) ?? Data(),
@@ -97,7 +97,7 @@ class CryptoKey {
     
     /// Deletes the key pair from the Keychain.
     /// - Throws: A `DeviceBindingError.unknown` if the deletion fails for any reason other than the item not being found.
-    func deleteKeyPair() throws {
+    public func deleteKeyPair() throws {
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
             kSecAttrApplicationTag as String: keyTag.data(using: .utf8) ?? Data()

@@ -16,7 +16,9 @@ import PingOrchestrate
 /// A Journey callback for handling device signing verification.
 /// This callback is received from the PingFederate authentication flow when a challenge needs to be signed by a bound device.
 public class DeviceSigningVerifierCallback: AbstractCallback, @unchecked Sendable, JourneyAware, ContinueNodeAware {
+    /// The `Journey` object associated with the current authentication flow.
     public var journey: Journey?
+    /// The `ContinueNode` object that can be used to continue the authentication flow.
     public var continueNode: ContinueNode?
     
     /// The user ID for the signing.
@@ -32,6 +34,11 @@ public class DeviceSigningVerifierCallback: AbstractCallback, @unchecked Sendabl
     /// The timeout for the operation.
     public var timeout: Int = 30
     
+    /// Initializes the callback with the given name and value.
+    /// This method is called by the `Journey` framework to initialize the callback with the values from the server.
+    /// - Parameters:
+    ///   - name: The name of the value.
+    ///   - value: The value.
     public override func initValue(name: String, value: Any) {
         switch name {
         case Constants.userId:
@@ -73,7 +80,7 @@ public class DeviceSigningVerifierCallback: AbstractCallback, @unchecked Sendabl
     /// - Returns: A `Result` containing the callback's JSON representation or an `Error`.
     public func sign(config: (DeviceBindingConfig) -> Void = { _ in }) async -> Result<[String: Any], Error> {
         do {
-            _ = try await PingBinder.sign(callback: self, journey: self.journey, config: config)
+            _ = try await Binding.sign(callback: self, journey: self.journey, config: config)
             return .success(self.json)
         } catch {
             let deviceBindingStatus = mapError(error)
