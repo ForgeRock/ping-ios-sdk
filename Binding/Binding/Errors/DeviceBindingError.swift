@@ -24,8 +24,23 @@ public enum DeviceBindingError: Error, Equatable {
     case biometricError(Error)
     /// The user cancelled the operation.
     case userCanceled
+    /// The operation timed out.
+    case timeout
     /// An unknown or unexpected error occurred.
     case unknown
+    
+    public func toClientError() -> String {
+        switch self {
+        case .deviceNotRegistered:
+            return DeviceBindingStatus.clientNotRegistered.clientError
+        case .authenticationFailed, .invalidClaim, .biometricError, .userCanceled, .unknown:
+            return DeviceBindingStatus.abort.clientError
+        case .timeout:
+            return DeviceBindingStatus.timeout.clientError
+        case .deviceNotSupported:
+            return DeviceBindingStatus.unsupported(errorMessage: "Device not supported").clientError
+        }
+    }
     
     public static func == (lhs: DeviceBindingError, rhs: DeviceBindingError) -> Bool {
         switch (lhs, rhs) {
@@ -38,6 +53,8 @@ public enum DeviceBindingError: Error, Equatable {
         case (.invalidClaim, .invalidClaim):
             return true
         case (.userCanceled, .userCanceled):
+            return true
+        case (.timeout, .timeout):
             return true
         case (.unknown, .unknown):
             return true

@@ -154,6 +154,8 @@ public class DeviceBindingCallback: AbstractCallback, @unchecked Sendable, Journ
                 return .unsupported(errorMessage: "An unknown error occurred.")
             case .authenticationFailed:
                 return .unAuthorize
+            case .timeout:
+                return .timeout
             }
         }
         return .unsupported(errorMessage: error.localizedDescription)

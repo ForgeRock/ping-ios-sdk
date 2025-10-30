@@ -12,10 +12,10 @@ import Foundation
 
 /// Constants for the client error strings.
 struct BindingStatusConstants {
-    static let timeout = "timeout"
-    static let abort = "abort"
-    static let unsupported = "unsupported"
-    static let clientNotRegistered = "client_not_registered"
+    static let timeout = "Timeout"
+    static let abort = "Abort"
+    static let unsupported = "Unsupported"
+    static let clientNotRegistered = "ClientNotRegistered"
 }
 
 /// An enum representing the status of a device binding operation, which can be used to convey more specific information about the outcome of a binding or signing attempt.

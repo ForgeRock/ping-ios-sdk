@@ -126,6 +126,8 @@ public class DeviceSigningVerifierCallback: AbstractCallback, @unchecked Sendabl
                 return .unsupported(errorMessage: "An unknown error occurred.")
             case .authenticationFailed:
                 return .unAuthorize
+            case .timeout:
+                return .timeout
             }
         }
         return .unsupported(errorMessage: error.localizedDescription)

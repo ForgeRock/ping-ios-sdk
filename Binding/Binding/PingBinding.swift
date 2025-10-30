@@ -50,48 +50,38 @@ class Binding {
         // Clear any existing keys for the user.
         try await Binding.clearKeys(deviceAuthenticator: deviceAuthenticator, userKeyStorage: userKeyStorage, userId: callback.userId)
         
-        var userKey: UserKey?
-        do {
-            // Generate a new key pair and authenticate the user.
-            let keyPair = try await deviceAuthenticator.generateKeys()
-            _ = try await deviceAuthenticator.authenticate(keyTag: keyPair.keyTag)
-            
-            // Store the new user key.
-            let newUserKey = UserKey(keyTag: keyPair.keyTag, userId: callback.userId, username: callback.userName, kid: keyPair.keyTag, authType: callback.deviceBindingAuthenticationType)
-            userKey = newUserKey
-            try await userKeyStorage.save(userKey: newUserKey)
-            
-            // Create and sign a JWS with the new key.
-            let signingParams = SigningParameters(algorithm: deviceBindingConfig.signingAlgorithm,
-                                                  keyPair: keyPair,
-                                                  kid: keyPair.keyTag,
-                                                  userId: callback.userId,
-                                                  challenge: callback.challenge,
-                                                  issueTime: deviceBindingConfig.issueTime(),
-                                                  notBeforeTime: deviceBindingConfig.notBeforeTime(),
-                                                  expiration: deviceBindingConfig.expirationTime(callback.timeout),
-                                                  attestation: callback.attestation)
-            
-            let jws = try deviceAuthenticator.sign(params: signingParams, journey: journey)
-            
-            // Set the JWS, device ID, and device name on the callback.
-            callback.setJws(jws)
-            #if canImport(UIKit)
-            if let deviceId = await UIDevice.current.identifierForVendor?.uuidString {
-                callback.setDeviceId(deviceId)
-            }
-            #endif
-            callback.setDeviceName(deviceBindingConfig.deviceName)
-            
-            return jws
-        } catch {
-            // Clean up in case of an error.
-            if let userKey = userKey {
-                try? await userKeyStorage.deleteByUserId(userKey.userId)
-            }
-            try? await deviceAuthenticator.deleteKeys()
-            throw error
+        // Generate a new key pair and authenticate the user.
+        let keyPair = try await deviceAuthenticator.generateKeys()
+        _ = try await deviceAuthenticator.authenticate(keyTag: keyPair.keyTag)
+        
+        // Store the new user key.
+        let newUserKey = UserKey(keyTag: keyPair.keyTag, userId: callback.userId, username: callback.userName, kid: keyPair.keyTag, authType: callback.deviceBindingAuthenticationType)
+        
+        try await userKeyStorage.save(userKey: newUserKey)
+        
+        // Create and sign a JWS with the new key.
+        let signingParams = SigningParameters(algorithm: deviceBindingConfig.signingAlgorithm,
+                                              keyPair: keyPair,
+                                              kid: keyPair.keyTag,
+                                              userId: callback.userId,
+                                              challenge: callback.challenge,
+                                              issueTime: deviceBindingConfig.issueTime(),
+                                              notBeforeTime: deviceBindingConfig.notBeforeTime(),
+                                              expiration: deviceBindingConfig.expirationTime(callback.timeout),
+                                              attestation: callback.attestation)
+        
+        let jws = try deviceAuthenticator.sign(params: signingParams, journey: journey)
+        
+        // Set the JWS, device ID, and device name on the callback.
+        callback.setJws(jws)
+        #if canImport(UIKit)
+        if let deviceId = await UIDevice.current.identifierForVendor?.uuidString {
+            callback.setDeviceId(deviceId)
         }
+        #endif
+        callback.setDeviceName(deviceBindingConfig.deviceName)
+        
+        return jws
     }
     
     /// Signs a challenge with a previously bound device.
@@ -119,70 +109,61 @@ class Binding {
         
         let storage = deviceBindingConfig.keyStorage()
         
-        var userKey: UserKey?
-        do {
-            // Retrieve the user key from storage.
-            let retrievedUserKey: UserKey
-            if let userId = callback.userId, !userId.isEmpty {
-                guard let key = try await storage.findByUserId(userId) else {
-                    throw DeviceBindingError.deviceNotRegistered
-                }
-                retrievedUserKey = key
+        // Retrieve the user key from storage.
+        let retrievedUserKey: UserKey
+        if let userId = callback.userId, !userId.isEmpty {
+            guard let key = try await storage.findByUserId(userId) else {
+                throw DeviceBindingError.deviceNotRegistered
+            }
+            retrievedUserKey = key
+        } else {
+            let keys = try await storage.findAll()
+            if keys.isEmpty {
+                throw DeviceBindingError.deviceNotRegistered
+            } else if keys.count == 1,
+                      let firstKey = keys.first {
+                retrievedUserKey = firstKey
             } else {
-                let keys = try await storage.findAll()
-                if keys.isEmpty {
-                    throw DeviceBindingError.deviceNotRegistered
-                } else if keys.count == 1,
-                          let firstKey = keys.first {
-                    retrievedUserKey = firstKey
+                if let selectedKey = deviceBindingConfig.userKeySelector(keys) {
+                    retrievedUserKey = selectedKey
                 } else {
-                    if let selectedKey = deviceBindingConfig.userKeySelector(keys) {
-                        retrievedUserKey = selectedKey
-                    } else {
-                        throw DeviceBindingError.deviceNotRegistered
-                    }
+                    throw DeviceBindingError.deviceNotRegistered
                 }
             }
-            userKey = retrievedUserKey
-            var deviceAuthenticator: DeviceAuthenticator
-            if let customAuthenticator = deviceBindingConfig.deviceAuthenticator {
-                deviceAuthenticator = customAuthenticator
-            } else {
-                deviceAuthenticator = deviceBindingConfig.authenticator(type: retrievedUserKey.authType, prompt: Prompt(title: callback.title, subtitle: callback.subtitle, description: callback.description))
-            }
-            
-            deviceAuthenticator.journey = callback.journey
-            
-            // Authenticate the user.
-            let privateKey = try await deviceAuthenticator.authenticate(keyTag: retrievedUserKey.keyTag)
-            guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
-                throw DeviceBindingError.unknown
-            }
-            
-            // Create and sign a JWS with the user's key.
-            let signingParams = UserKeySigningParameters(algorithm: deviceBindingConfig.signingAlgorithm,
-                                                         userKey: retrievedUserKey,
-                                                         privateKey: privateKey,
-                                                         publicKey: publicKey,
-                                                         challenge: callback.challenge,
-                                                         issueTime: deviceBindingConfig.issueTime(),
-                                                         notBeforeTime: deviceBindingConfig.notBeforeTime(),
-                                                         expiration: deviceBindingConfig.expirationTime(callback.timeout),
-                                                         customClaims: claims)
-            
-            let jws = try deviceAuthenticator.sign(params: signingParams, journey: journey)
-            
-            // Set the JWS on the callback.
-            callback.setJws(jws)
-            
-            return jws
-        } catch {
-            // Clean up in case of an error.
-            if let userKey = userKey {
-                try? await storage.deleteByUserId(userKey.userId)
-            }
-            throw error
         }
+        
+        var deviceAuthenticator: DeviceAuthenticator
+        if let customAuthenticator = deviceBindingConfig.deviceAuthenticator {
+            deviceAuthenticator = customAuthenticator
+        } else {
+            deviceAuthenticator = deviceBindingConfig.authenticator(type: retrievedUserKey.authType, prompt: Prompt(title: callback.title, subtitle: callback.subtitle, description: callback.description))
+        }
+        
+        deviceAuthenticator.journey = callback.journey
+        
+        // Authenticate the user.
+        let privateKey = try await deviceAuthenticator.authenticate(keyTag: retrievedUserKey.keyTag)
+        guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
+            throw DeviceBindingError.unknown
+        }
+        
+        // Create and sign a JWS with the user's key.
+        let signingParams = UserKeySigningParameters(algorithm: deviceBindingConfig.signingAlgorithm,
+                                                     userKey: retrievedUserKey,
+                                                     privateKey: privateKey,
+                                                     publicKey: publicKey,
+                                                     challenge: callback.challenge,
+                                                     issueTime: deviceBindingConfig.issueTime(),
+                                                     notBeforeTime: deviceBindingConfig.notBeforeTime(),
+                                                     expiration: deviceBindingConfig.expirationTime(callback.timeout),
+                                                     customClaims: claims)
+        
+        let jws = try deviceAuthenticator.sign(params: signingParams, journey: journey)
+        
+        // Set the JWS on the callback.
+        callback.setJws(jws)
+        
+        return jws
     }
     
     /// Clears the keys for a given user.
