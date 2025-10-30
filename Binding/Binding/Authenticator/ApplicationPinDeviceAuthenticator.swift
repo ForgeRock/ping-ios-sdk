@@ -5,10 +5,17 @@ import LocalAuthentication
 
 /// An authenticator that uses an application PIN for user verification.
 /// This class provides an implementation for generating PIN-protected keys and authenticating the user by prompting for the PIN.
-#if canImport(UIKit)
 public class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
     
     private var pin: String?
+    private let pinCollector: PinCollector
+    
+    /// Initializes the authenticator with a `PinCollector`.
+    /// - Parameter pinCollector: The `PinCollector` to use for gathering the user's PIN.
+    public init(pinCollector: PinCollector? = nil) {
+        self.pinCollector = pinCollector ?? DefaultPinCollector()
+        super.init()
+    }
     
     /// The type of authenticator, specifically `.applicationPin`.
     public override func type() -> DeviceBindingAuthenticationType {
@@ -29,6 +36,10 @@ public class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
         } else {
             userPin = await promptForPin()
             self.pin = userPin
+        }
+        
+        guard let userPin = userPin, !userPin.isEmpty else {
+            throw DeviceBindingError.authenticationFailed
         }
         
         // Create access control flags that require an application password for private key usage.
@@ -62,14 +73,13 @@ public class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
         }
         
         guard let pinData = userPin?.data(using: .utf8) else {
-            throw DeviceBindingError.unknown
+            throw DeviceBindingError.authenticationFailed
         }
         
         // The LAContext will hold the PIN credential.
         let context = LAContext()
         context.setCredential(pinData, type: .applicationPassword)
         
-        //        let context = LAContext()
         // When getPrivateKey is called, it will use the context to authorize access.
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
@@ -109,34 +119,12 @@ public class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
     
     /// Presents a `UIAlertController` to the user to enter their PIN.
     /// - Returns: The entered PIN string, or `nil` if the user cancels.
-    @MainActor
     private func promptForPin() async -> String? {
-        guard let windowScene =  UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let rootViewController =  windowScene.windows.first?.rootViewController else {
-            return nil
-        }
-        
         return await withCheckedContinuation { continuation in
-            let alert = UIAlertController(title: "Enter PIN", message: "Please enter your application PIN to continue.", preferredStyle: .alert)
-            
-            alert.addTextField { textField in
-                textField.isSecureTextEntry = true
-                textField.keyboardType = .numberPad
+            let prompt = Prompt(title: "Enter PIN", subtitle: "", description: "Please enter your application PIN to continue.")
+            self.pinCollector.collectPin(prompt: prompt) { pin in
+                continuation.resume(returning: pin)
             }
-            
-            let okAction = UIAlertAction(title: "OK", style: .default) { _ in
-                continuation.resume(returning: alert.textFields?.first?.text)
-            }
-            
-            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                continuation.resume(returning: nil)
-            }
-            
-            alert.addAction(okAction)
-            alert.addAction(cancelAction)
-            
-            rootViewController.present(alert, animated: true)
         }
     }
 }
-#endif

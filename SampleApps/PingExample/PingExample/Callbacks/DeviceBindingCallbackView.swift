@@ -1,4 +1,3 @@
-
 import SwiftUI
 import PingBinding
 
@@ -20,6 +19,18 @@ struct DeviceBindingCallbackView: View {
     
     private func handleDeviceBinding() {
         Task {
+            /*
+             For using a custom view for PIN collection create a CustomPinCollector and inject it in the
+             ApplicationPinDeviceAuthenticator as shown below.
+             
+            let result: Result<[String: Any], Error>
+            if callback.deviceBindingAuthenticationType == .applicationPin {
+                let pinAuthenticator = ApplicationPinDeviceAuthenticator(pinCollector: CustomPinCollector())
+                result = await callback.bind(authenticator: pinAuthenticator)
+            } else {
+                result = await callback.bind()
+            }
+             */
             let result = await callback.bind()
             switch result {
             case .success(let json):

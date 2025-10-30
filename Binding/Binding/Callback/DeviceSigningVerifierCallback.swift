@@ -1,4 +1,3 @@
-
 //
 //  DeviceSigningVerifierCallback.swift
 //  PingBinding
@@ -81,6 +80,24 @@ public class DeviceSigningVerifierCallback: AbstractCallback, @unchecked Sendabl
     public func sign(config: (DeviceBindingConfig) -> Void = { _ in }) async -> Result<[String: Any], Error> {
         do {
             _ = try await Binding.sign(callback: self, journey: self.journey, config: config)
+            return .success(self.json)
+        } catch {
+            let deviceBindingStatus = mapError(error)
+            setClientError(deviceBindingStatus.clientError)
+            return .failure(deviceBindingStatus)
+        }
+    }
+    
+    /// Signs a challenge with a previously bound device using a custom authenticator.
+    /// This method calls the `PingBinder` to perform the signing operation.
+    /// - Parameters:
+    ///   - authenticator: The custom `DeviceAuthenticator` to use for signing.
+    /// - Returns: A `Result` containing the callback's JSON representation or an `Error`.
+    public func sign(authenticator: DeviceAuthenticator) async -> Result<[String: Any], Error> {
+        do {
+            _ = try await Binding.sign(callback: self, journey: self.journey) { config in
+                config.deviceAuthenticator = authenticator
+            }
             return .success(self.json)
         } catch {
             let deviceBindingStatus = mapError(error)

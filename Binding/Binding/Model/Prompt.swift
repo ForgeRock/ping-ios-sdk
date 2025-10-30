@@ -1,4 +1,3 @@
-
 //
 //  Prompt.swift
 //  PingBinding
@@ -12,7 +11,7 @@
 import Foundation
 
 /// A struct representing the prompt to be displayed to the user during an authentication ceremony.
-public struct Prompt {
+public struct Prompt: Sendable {
     /// The title of the prompt.
     public let title: String
     /// The subtitle of the prompt.

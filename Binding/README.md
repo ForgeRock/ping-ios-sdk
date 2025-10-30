@@ -66,19 +66,157 @@ To sign a transaction, you'll receive a `DeviceSigningVerifierCallback`. Call th
 import PingBinding
 import PingJourney
 
-func handleDeviceSigning(callback: DeviceSigningVerifierCallback, viewModel: JourneyViewModel) {
+func handleDeviceSigning(callback: DeviceSigningVerifierCallback, onNext: @escaping () -> Void) {
     Task {
-        do {
-            try await callback.sign()
+        let result = await callback.sign()
+        switch result {
+        case .success:
             print("Signing successful")
-            viewModel.advance()
-        } catch {
+        case .failure(let error):
             print("Signing failed: \(error.localizedDescription)")
-            viewModel.error = error
+        }
+        onNext()
+    }
+}
+```
+
+### Advanced Usage & Customization
+
+The SDK allows for customization of the device authentication process, particularly for handling Application PIN authentication with a custom user interface.
+
+#### Using a Custom PIN Collector
+
+By default, if Application PIN authentication is required, the SDK presents a system alert to collect the PIN. You can override this behavior by providing a custom implementation of the `PinCollector` protocol. This allows you to present your own UI for PIN entry.
+
+Here is a step-by-step guide to implementing a custom PIN collector:
+
+**Step 1: Create a Custom UI for PIN Collection**
+
+First, create a view that will serve as your PIN entry screen. This example uses SwiftUI to create a simple view that collects a 4-digit PIN.
+
+```swift
+// In your application, e.g., PinCollectorView.swift
+import SwiftUI
+import PingBinding
+
+struct PinCollectorView: View {
+    let prompt: Prompt
+    let completion: (String?) -> Void
+    
+    @State private var pin: String = ""
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Text(prompt.title)
+                .font(.title)
+            Text(prompt.description)
+                .font(.subheadline)
+            
+            TextField("4-digit PIN", text: $pin)
+                .keyboardType(.numberPad)
+                .padding()
+            
+            HStack {
+                Button("Cancel") { completion(nil) }
+                Button("Submit") { completion(pin) }
+                    .disabled(pin.count != 4)
+            }
+        }
+        .padding()
+    }
+}
+```
+
+**Step 2: Implement the `PinCollector` Protocol**
+
+Next, create a class that conforms to the `PinCollector` protocol. This class is responsible for presenting your custom UI and returning the collected PIN via the completion handler.
+
+```swift
+// In your application, e.g., CustomPinCollector.swift
+import UIKit
+import SwiftUI
+import PingBinding
+
+class CustomPinCollector: PinCollector {
+    func collectPin(prompt: Prompt, completion: @escaping @Sendable (String?) -> Void) {
+        DispatchQueue.main.async {
+            guard let topVC = UIApplication.shared.windows.first?.rootViewController else {
+                completion(nil)
+                return
+            }
+            
+            let pinView = PinCollectorView(prompt: prompt) { pin in
+                topVC.dismiss(animated: true) {
+                    completion(pin)
+                }
+            }
+            
+            let hostingController = UIHostingController(rootView: pinView)
+            topVC.present(hostingController, animated: true)
         }
     }
 }
 ```
+
+**Step 3: Use the Custom Collector During Binding and Signing**
+
+Finally, when you handle the `DeviceBindingCallback` or `DeviceSigningVerifierCallback`, check if the authentication method is `.applicationPin`. If it is, create an instance of `ApplicationPinDeviceAuthenticator` with your custom collector and pass it to the `bind(authenticator:)` or `sign(authenticator:)` method.
+
+**For Device Binding:**
+
+```swift
+// In your view that handles the DeviceBindingCallback
+import PingBinding
+
+func handleDeviceBinding(callback: DeviceBindingCallback, onNext: @escaping () -> Void) {
+    Task {
+        let result: Result<[String: Any], Error>
+        
+        if callback.deviceBindingAuthenticationType == .applicationPin {
+            // Initialize the authenticator with your custom collector
+            let pinAuthenticator = ApplicationPinDeviceAuthenticator(pinCollector: CustomPinCollector())
+            result = await callback.bind(authenticator: pinAuthenticator)
+        } else {
+            result = await callback.bind()
+        }
+        
+        // Handle result...
+        onNext()
+    }
+}
+```
+
+**For Device Signing:**
+
+```swift
+// In your view that handles the DeviceSigningVerifierCallback
+import PingBinding
+
+func handleDeviceSigning(callback: DeviceSigningVerifierCallback, onNext: @escaping () -> Void) {
+    Task {
+        let result: Result<[String: Any], Error>
+        
+        // For signing, you need to know which key to use.
+        // This example assumes you have a way to check if the relevant key requires a PIN.
+        let keyRequiresPin = true // Replace with your actual logic
+        
+        if keyRequiresPin {
+            // Initialize the authenticator with your custom collector
+            let pinAuthenticator = ApplicationPinDeviceAuthenticator(pinCollector: CustomPinCollector())
+            result = await callback.sign(authenticator: pinAuthenticator)
+        } else {
+            result = await callback.sign()
+        }
+        
+        // Handle result...
+        onNext()
+    }
+}
+```
+
+## License
+
+The PingBinding SDK is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 ### Customization
 

@@ -15,7 +15,7 @@ import UIKit
 #endif
 
 /// Main class for handling device binding and signing.
-public class Binding {
+class Binding {
     
     /// Binds a device to a user account.
     ///
@@ -34,7 +34,7 @@ public class Binding {
     ///   - config: A closure to configure the `DeviceBindingConfig`.
     /// - Returns: The JWS signed with the new key.
     /// - Throws: A `DeviceBindingError` if the device is not supported, or if any other error occurs during the binding process.
-    public static func bind(callback: DeviceBindingCallback, journey: Journey?, config: (DeviceBindingConfig) -> Void = { _ in }) async throws -> String {
+    static func bind(callback: DeviceBindingCallback, journey: Journey?, config: (DeviceBindingConfig) -> Void = { _ in }) async throws -> String {
         let deviceBindingConfig = DeviceBindingConfig()
         config(deviceBindingConfig)
         
@@ -110,7 +110,7 @@ public class Binding {
     ///   - config: A closure to configure the `DeviceBindingConfig`.
     /// - Returns: The JWS signed with the device key.
     /// - Throws: A `DeviceBindingError` if the device is not registered, or if any other error occurs during the signing process.
-    public static func sign(callback: DeviceSigningVerifierCallback, journey: Journey?, config: (DeviceBindingConfig) -> Void = { _ in }) async throws -> String {
+    static func sign(callback: DeviceSigningVerifierCallback, journey: Journey?, config: (DeviceBindingConfig) -> Void = { _ in }) async throws -> String {
         let deviceBindingConfig = DeviceBindingConfig()
         config(deviceBindingConfig)
         
@@ -144,8 +144,13 @@ public class Binding {
                 }
             }
             userKey = retrievedUserKey
+            var deviceAuthenticator: DeviceAuthenticator
+            if let customAuthenticator = deviceBindingConfig.deviceAuthenticator {
+                deviceAuthenticator = customAuthenticator
+            } else {
+                deviceAuthenticator = deviceBindingConfig.authenticator(type: retrievedUserKey.authType, prompt: Prompt(title: callback.title, subtitle: callback.subtitle, description: callback.description))
+            }
             
-            var deviceAuthenticator = deviceBindingConfig.authenticator(type: retrievedUserKey.authType, prompt: Prompt(title: callback.title, subtitle: callback.subtitle, description: callback.description))
             deviceAuthenticator.journey = callback.journey
             
             // Authenticate the user.
@@ -185,7 +190,7 @@ public class Binding {
     ///   - deviceAuthenticator: The `DeviceAuthenticator` to use.
     ///   - userKeyStorage: The `UserKeysStorage` to use.
     ///   - userId: The user ID.
-    public static func clearKeys(deviceAuthenticator: DeviceAuthenticator, userKeyStorage: UserKeysStorage, userId: String) async throws {
+    static func clearKeys(deviceAuthenticator: DeviceAuthenticator, userKeyStorage: UserKeysStorage, userId: String) async throws {
         try await userKeyStorage.deleteByUserId(userId)
     }
     

@@ -46,15 +46,33 @@ public class DeviceBindingConfig {
     /// The default implementation returns the current date plus the given timeout in seconds.
     public var expirationTime: (Int) -> Date = { Date(timeIntervalSinceNow: TimeInterval($0)) }
     
+    /// The algorithm to be used for signing.
+    public var algorithm: SecKeyAlgorithm = .ecdsaSignatureMessageX962SHA256
+    /// The timeout for the operation.
+    public var timeout: Int = 60
+    /// The attestation option.
+    public var attestation: Attestation = .none
+    /// The type of authentication to be used.
+    public var deviceBindingAuthenticationType: DeviceBindingAuthenticationType = .none
+    /// The custom device authenticator to be used.
+    public var deviceAuthenticator: DeviceAuthenticator?
+    
+    /// Initializes a new `DeviceBindingConfig`.
+    public init() { }
+    
     /// Returns the authenticator for the given type.
     /// - Parameters:
     ///   - type: The type of authenticator.
     ///   - prompt: The prompt to display to the user.
     /// - Returns: The authenticator.
     func authenticator(type: DeviceBindingAuthenticationType, prompt: Prompt) -> DeviceAuthenticator {
-        let authenticator = type.getAuthType()
-        authenticator.setPrompt(prompt)
-        return authenticator
+        /// If a custom device authenticator is provided, use it.
+        guard let deviceAuthenticator = deviceAuthenticator else {
+            let authenticator = type.getAuthType()
+            authenticator.setPrompt(prompt)
+            return authenticator
+        }
+        return deviceAuthenticator
     }
     
     /// Returns the user key storage.

@@ -1,4 +1,3 @@
-
 //
 //  DeviceBindingCallback.swift
 //  PingBinding
@@ -109,6 +108,24 @@ public class DeviceBindingCallback: AbstractCallback, @unchecked Sendable, Journ
     public func bind(config: (DeviceBindingConfig) -> Void = { _ in }) async -> Result<[String: Any], Error> {
         do {
             _ = try await Binding.bind(callback: self, journey: self.journey, config: config)
+            return .success(self.json)
+        } catch {
+            let deviceBindingStatus = mapError(error)
+            setClientError(deviceBindingStatus.clientError)
+            return .failure(deviceBindingStatus)
+        }
+    }
+    
+    /// Binds a device to a user account with a custom authenticator.
+    /// This method calls the `PingBinder` to perform the binding operation.
+    /// - Parameters:
+    ///   - authenticator: The custom `DeviceAuthenticator` to use for binding.
+    /// - Returns: A `Result` containing the callback's JSON representation or an `Error`.
+    public func bind(authenticator: DeviceAuthenticator) async -> Result<[String: Any], Error> {
+        do {
+            _ = try await Binding.bind(callback: self, journey: self.journey) { config in
+                config.deviceAuthenticator = authenticator
+            }
             return .success(self.json)
         } catch {
             let deviceBindingStatus = mapError(error)
