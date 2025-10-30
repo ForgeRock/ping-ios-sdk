@@ -137,9 +137,9 @@ enum OathAlgorithmHelper {
     }
     
 
-    // MARK: - CryptoKit Implementation (iOS 13+)
+    // MARK: - CryptoKit Implementation
 
-    /// Perform HMAC using CryptoKit (iOS 13+).
+    /// Perform HMAC using CryptoKit.
     /// - Parameters:
     ///   - algorithm: The OATH algorithm.
     ///   - key: The secret key data.
