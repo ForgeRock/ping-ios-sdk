@@ -112,7 +112,6 @@
       "skippedTests" : [
         "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
         "DaVinciIntegrationTests\/testInvalidPassword()",
-        "DaVinciIntegrationTests\/testUserRegistrationFailureInvalidPassword()",
         "FormFieldValidationTest\/testPasswordValidation()",
         "FormFieldValidationTests\/testPasswordValidation()",
         "MFADeviceTests\/testDeviceAuthenticationForm()",
