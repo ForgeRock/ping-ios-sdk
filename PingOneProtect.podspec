@@ -7,7 +7,7 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'PingProtect'
+  s.name             = 'PingOneProtect'
   s.version          = '1.3.0-beta2'
   s.summary          = 'PingProtect module for the Ping iOS SDK'
   s.description      = <<-DESC
@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
       :tag => s.version.to_s
   }
 
-  s.module_name = 'PingProtect'
+  s.module_name = 'PingOneProtect'
   s.swift_versions = ['5.0', '5.1', '6.0']
 
   s.ios.deployment_target = '13.0'
