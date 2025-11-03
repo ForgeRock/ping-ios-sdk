@@ -16,6 +16,15 @@ import LocalAuthentication
 /// for key generation, authentication, and support checks for this combined authentication type.
 public class BiometricDeviceCredentialAuthenticator: DefaultDeviceAuthenticator {
     
+    private let config: BiometricAuthenticatorConfig
+    
+    /// Initializes the authenticator with a `BiometricAuthenticatorConfig`.
+    /// - Parameter config: The configuration object for the authenticator.
+    public init(config: BiometricAuthenticatorConfig) {
+        self.config = config
+        super.init()
+    }
+    
     /// The type of authenticator, specifically `.biometricAllowFallback`.
     public override func type() -> DeviceBindingAuthenticationType {
         return .biometricAllowFallback
@@ -26,7 +35,7 @@ public class BiometricDeviceCredentialAuthenticator: DefaultDeviceAuthenticator 
     /// - Throws: `CryptoKeyError` if key generation fails.
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
     public override func register() async throws -> KeyPair {
-        let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
+        let cryptoKey = CryptoKey(keyTag: config.keyTag)
         guard let accessControl = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
                                                             kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
                                                             [.biometryCurrentSet, .or, .devicePasscode, .privateKeyUsage],

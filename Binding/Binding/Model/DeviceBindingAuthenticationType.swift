@@ -24,14 +24,14 @@ public enum DeviceBindingAuthenticationType: String, Codable, Sendable {
     
     #if canImport(UIKit)
     /// Returns the appropriate `DeviceAuthenticator` for the authentication type.
-    func getAuthType(pinCollector: PinCollector? = nil) -> DeviceAuthenticator {
+    func getAuthType(config: AuthenticatorConfig? = nil) -> DeviceAuthenticator {
         switch self {
         case .biometricOnly:
-            return BiometricOnlyAuthenticator()
+            return BiometricOnlyAuthenticator(config: config as? BiometricAuthenticatorConfig ?? BiometricAuthenticatorConfig())
         case .biometricAllowFallback:
-            return BiometricDeviceCredentialAuthenticator()
+            return BiometricDeviceCredentialAuthenticator(config: config as? BiometricAuthenticatorConfig ?? BiometricAuthenticatorConfig())
         case .applicationPin:
-            return AppPinAuthenticator(pinCollector: pinCollector ?? DefaultPinCollector())
+            return AppPinAuthenticator(config: config as? AppPinConfig ?? AppPinConfig())
         case .none:
             return NoneAuthenticator()
         }

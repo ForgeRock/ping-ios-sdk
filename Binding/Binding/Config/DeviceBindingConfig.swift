@@ -53,8 +53,8 @@ public class DeviceBindingConfig {
     public var deviceBindingAuthenticationType: DeviceBindingAuthenticationType = .none
     /// The custom device authenticator to be used.
     public var deviceAuthenticator: DeviceAuthenticator?
-    /// The custom pin collector to be used.
-    public var pinCollector: PinCollector?
+    /// The custom authenticator configuration to be used.
+    public var authenticatorConfig: AuthenticatorConfig?
     
     /// The algorithm to be used for signing. It is derived from `signingAlgorithm`.
     internal func getSecKeyAlgorithm() throws -> SecKeyAlgorithm {
@@ -79,7 +79,7 @@ public class DeviceBindingConfig {
     func authenticator(type: DeviceBindingAuthenticationType, prompt: Prompt) -> DeviceAuthenticator {
         /// If a custom device authenticator is provided, use it.
         guard let deviceAuthenticator = deviceAuthenticator else {
-            let authenticator = type.getAuthType(pinCollector: pinCollector)
+            let authenticator = type.getAuthType(config: authenticatorConfig)
             authenticator.setPrompt(prompt)
             return authenticator
         }

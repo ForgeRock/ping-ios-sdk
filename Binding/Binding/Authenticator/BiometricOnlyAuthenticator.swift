@@ -18,6 +18,15 @@ import PingJourney
 /// for biometric-only key generation, authentication, and support checks.
 public class BiometricOnlyAuthenticator: DefaultDeviceAuthenticator {
     
+    private let config: BiometricAuthenticatorConfig
+    
+    /// Initializes the authenticator with a `BiometricAuthenticatorConfig`.
+    /// - Parameter config: The configuration object for the authenticator.
+    public init(config: BiometricAuthenticatorConfig) {
+        self.config = config
+        super.init()
+    }
+    
     /// The type of authenticator, specifically `.biometricOnly`.
     public override func type() -> DeviceBindingAuthenticationType {
         return .biometricOnly
@@ -29,7 +38,7 @@ public class BiometricOnlyAuthenticator: DefaultDeviceAuthenticator {
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
     public override func register() async throws -> KeyPair {
         // Create a new CryptoKey with a unique identifier
-        let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
+        let cryptoKey = CryptoKey(keyTag: config.keyTag)
         
         guard let accessControl = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
                                                             kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
@@ -48,8 +57,6 @@ public class BiometricOnlyAuthenticator: DefaultDeviceAuthenticator {
         context.localizedCancelTitle = "Cancel"
         var error: NSError?
         
-        // Determine the reason string for the biometric prompt
-        let reason = prompt?.description ?? "Authenticate to access your keys"
         // Define the biometric authentication policy
         let policy: LAPolicy = .deviceOwnerAuthenticationWithBiometrics
         

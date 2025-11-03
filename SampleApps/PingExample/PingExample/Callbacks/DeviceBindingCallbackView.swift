@@ -20,13 +20,47 @@ struct DeviceBindingCallbackView: View {
     private func handleDeviceBinding() {
         Task {
             /*
-             For using a custom view for PIN collection create a CustomPinCollector and inject it in the
-             AppPinAuthenticator as shown below.
+             For using a custom view for PIN collection, you can provide a CustomPinCollector
+             through the configuration as shown below:
              
             let result = await callback.bind { config in
-                if callback.deviceBindingAuthenticationType == .applicationPin {
-                    config.deviceAuthenticator = AppPinAuthenticator(pinCollector: CustomPinCollector())
-                }
+                config.pinCollector = CustomPinCollector()
+            }
+             
+             For more advanced configuration, you can create a custom AppPinConfig:
+             
+            let result = await callback.bind { config in
+                let appPinConfig = AppPinConfig(
+                    prompt: Prompt(title: "Enter PIN", subtitle: "Security", description: "Enter your 4-digit PIN"),
+                    pinRetry: 5,
+                    pinCollector: CustomPinCollector()
+                )
+                config.deviceAuthenticator = AppPinAuthenticator(config: appPinConfig)
+            }
+             
+             For biometric authenticators, you can also use BiometricAuthenticatorConfig:
+             
+            let result = await callback.bind { config in
+                let biometricConfig = BiometricAuthenticatorConfig(
+                    keyTag: "my-custom-biometric-key"
+                )
+                
+                // Set the authenticator config - the appropriate authenticator will be used based on callback type
+                config.authenticatorConfig = biometricConfig
+            }
+             
+             You can also configure with a logger for debugging:
+             
+            let result = await callback.bind { config in
+                // Create a custom logger instance
+                let customLogger = Logger.logger // or your custom logger implementation
+                
+                let biometricConfig = BiometricAuthenticatorConfig(
+                    logger: customLogger,
+                    keyTag: "secure-biometric-key-\(callback.userId)"
+                )
+                
+                config.authenticatorConfig = biometricConfig
             }
              */
             let result = await callback.bind()

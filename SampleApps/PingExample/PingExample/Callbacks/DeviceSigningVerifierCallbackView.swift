@@ -21,11 +21,46 @@ struct DeviceSigningVerifierCallbackView: View {
     private func handleDeviceSigning() {
         Task {
             /*
-            For using a custom view for PIN collection create a CustomPinCollector and inject it in the
-            configuration as shown below.
+            For using a custom view for PIN collection, you can provide a CustomPinCollector
+            through the configuration as shown below:
             
             let result = await callback.sign { config in
                 config.pinCollector = CustomPinCollector()
+            }
+             
+             For more advanced configuration with retry logic and custom prompts:
+             
+            let result = await callback.sign { config in
+                let appPinConfig = AppPinConfig(
+                    prompt: Prompt(title: "Verify Identity", subtitle: "Sign Transaction", description: "Enter your PIN to sign"),
+                    pinRetry: 3,
+                    pinCollector: CustomPinCollector()
+                )
+                config.deviceAuthenticator = AppPinAuthenticator(config: appPinConfig)
+            }
+             
+             For biometric authenticators during signing, you can also use BiometricAuthenticatorConfig:
+             
+            let result = await callback.sign { config in
+                let biometricConfig = BiometricAuthenticatorConfig(
+                    keyTag: "my-custom-signing-key"
+                )
+                
+                // Set the authenticator config - the appropriate authenticator will be used based on callback type
+                config.authenticatorConfig = biometricConfig
+            }
+             
+             You can also configure with a logger for monitoring signing operations:
+             
+            let result = await callback.sign { config in
+                let customLogger = Logger.logger // or your custom logger implementation
+                
+                let biometricConfig = BiometricAuthenticatorConfig(
+                    logger: customLogger,
+                    keyTag: "signing-key-\(callback.userId ?? "default")"
+                )
+                
+                config.authenticatorConfig = biometricConfig
             }
              */
             let result = await callback.sign()

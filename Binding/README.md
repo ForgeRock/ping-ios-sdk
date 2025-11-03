@@ -160,7 +160,7 @@ class CustomPinCollector: PinCollector {
 
 **Step 3: Use the Custom Collector During Binding and Signing**
 
-Finally, when you handle the `DeviceBindingCallback` or `DeviceSigningVerifierCallback`, check if the authentication method is `.applicationPin`. If it is, create an instance of `ApplicationPinDeviceAuthenticator` with your custom collector and pass it to the `bind(authenticator:)` or `sign(authenticator:)` method.
+Finally, when you handle the `DeviceBindingCallback` or `DeviceSigningVerifierCallback`, you can provide a custom PIN collector through the configuration.
 
 **For Device Binding:**
 
@@ -171,10 +171,8 @@ import PingBinding
 func handleDeviceBinding(callback: DeviceBindingCallback, onNext: @escaping () -> Void) {
     Task {
         let result = await callback.bind { config in
-            if callback.deviceBindingAuthenticationType == .applicationPin {
-                // Initialize the authenticator with your custom collector
-                config.deviceAuthenticator = ApplicationPinDeviceAuthenticator(pinCollector: CustomPinCollector())
-            }
+            // Customize the PIN collector for application PIN authentication
+            config.pinCollector = CustomPinCollector()
         }
         
         // Handle result...
@@ -191,23 +189,56 @@ import PingBinding
 
 func handleDeviceSigning(callback: DeviceSigningVerifierCallback, onNext: @escaping () -> Void) {
     Task {
-        let result: Result<[String: Any], Error>
-        
-        // For signing, you need to know which key to use.
-        // This example assumes you have a way to check if the relevant key requires a PIN.
-        let keyRequiresPin = true // Replace with your actual logic
-        
-        if keyRequiresPin {
-            // Initialize the authenticator with your custom collector
-            let pinAuthenticator = ApplicationPinDeviceAuthenticator(pinCollector: CustomPinCollector())
-            result = await callback.sign(authenticator: pinAuthenticator)
-        } else {
-            result = await callback.sign()
+        let result = await callback.sign { config in
+            // Customize the PIN collector for application PIN authentication
+            config.pinCollector = CustomPinCollector()
         }
         
         // Handle result...
         onNext()
     }
+}
+```
+
+### Advanced Authenticator Configuration
+
+You can further customize authenticators by providing configuration objects:
+
+**AppPinAuthenticator Configuration:**
+
+```swift
+import PingBinding
+
+let result = await callback.bind { config in
+    // Create a custom AppPinConfig
+    let appPinConfig = AppPinConfig(
+        logger: myCustomLogger,
+        prompt: Prompt(title: "Enter PIN", subtitle: "Security", description: "Enter your 4-digit PIN"),
+        pinRetry: 5,
+        keyTag: "my-custom-key-tag",
+        pinCollector: CustomPinCollector()
+    )
+    
+    // Use the custom authenticator with the config
+    config.deviceAuthenticator = AppPinAuthenticator(config: appPinConfig)
+}
+```
+
+**BiometricAuthenticator Configuration:**
+
+```swift
+import PingBinding
+
+let result = await callback.bind { config in
+    // Create a custom BiometricAuthenticatorConfig
+    let biometricConfig = BiometricAuthenticatorConfig(
+        logger: myCustomLogger,
+        keyTag: "my-biometric-key-tag"
+    )
+    
+    // Set the authenticator config - the appropriate authenticator (BiometricOnlyAuthenticator 
+    // or BiometricDeviceCredentialAuthenticator) will be used based on the callback type
+    config.authenticatorConfig = biometricConfig
 }
 ```
 

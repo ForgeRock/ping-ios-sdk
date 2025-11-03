@@ -42,6 +42,9 @@
 		EC6F65912EB119D700D4686D /* PingMfaCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4DD3342EABD57F00ECC4E1 /* PingMfaCommons.framework */; };
 		EC6F65D22EB2470F00D4686D /* PingStorage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC6F65D12EB2470F00D4686D /* PingStorage.framework */; };
 		EC6F660A2EB3782100D4686D /* PinCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6F66092EB3782100D4686D /* PinCollector.swift */; };
+		ECB255E82EB90CEF00F25CBE /* AppPinConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255E72EB90CEF00F25CBE /* AppPinConfig.swift */; };
+		ECB255EA2EB9125600F25CBE /* BiometricAuthenticatorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255E92EB9125600F25CBE /* BiometricAuthenticatorConfig.swift */; };
+		ECB255EC2EB9141800F25CBE /* AuthenticatorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255EB2EB9141100F25CBE /* AuthenticatorConfig.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +96,9 @@
 		EC6F65892EB1197200D4686D /* AlarmKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AlarmKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/System/iOSSupport/System/Library/Frameworks/AlarmKit.framework; sourceTree = DEVELOPER_DIR; };
 		EC6F65D12EB2470F00D4686D /* PingStorage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingStorage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC6F66092EB3782100D4686D /* PinCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinCollector.swift; sourceTree = "<group>"; };
+		ECB255E72EB90CEF00F25CBE /* AppPinConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPinConfig.swift; sourceTree = "<group>"; };
+		ECB255E92EB9125600F25CBE /* BiometricAuthenticatorConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuthenticatorConfig.swift; sourceTree = "<group>"; };
+		ECB255EB2EB9141100F25CBE /* AuthenticatorConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatorConfig.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,6 +189,9 @@
 		EC4DD2DB2EABBAB800ECC4E1 /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				ECB255E92EB9125600F25CBE /* BiometricAuthenticatorConfig.swift */,
+				ECB255EB2EB9141100F25CBE /* AuthenticatorConfig.swift */,
+				ECB255E72EB90CEF00F25CBE /* AppPinConfig.swift */,
 				EC4DD2DA2EABBAB800ECC4E1 /* DeviceBindingConfig.swift */,
 			);
 			path = Config;
@@ -384,13 +393,16 @@
 				EC4DD3862EB0E0B200ECC4E1 /* AppPinAuthenticator.swift in Sources */,
 				EC4DD2F72EABBAB800ECC4E1 /* DeviceBindingError.swift in Sources */,
 				EC4DD37E2EB0DAFB00ECC4E1 /* PingBinding.swift in Sources */,
+				ECB255EA2EB9125600F25CBE /* BiometricAuthenticatorConfig.swift in Sources */,
 				EC4DD2F82EABBAB800ECC4E1 /* DeviceBindingAuthenticationType.swift in Sources */,
 				EC4DD2F92EABBAB800ECC4E1 /* DeviceBindingConfig.swift in Sources */,
 				EC4DD2FA2EABBAB800ECC4E1 /* NoneAuthenticator.swift in Sources */,
 				EC6F660A2EB3782100D4686D /* PinCollector.swift in Sources */,
 				EC4DD2FB2EABBAB800ECC4E1 /* UserKeysStorage.swift in Sources */,
 				EC4DD2FC2EABBAB800ECC4E1 /* CryptoKey.swift in Sources */,
+				ECB255EC2EB9141800F25CBE /* AuthenticatorConfig.swift in Sources */,
 				EC4DD2FD2EABBAB800ECC4E1 /* BindingModule.swift in Sources */,
+				ECB255E82EB90CEF00F25CBE /* AppPinConfig.swift in Sources */,
 				EC4DD2FE2EABBAB800ECC4E1 /* UserKeyStorageConfig.swift in Sources */,
 				EC4DD2FF2EABBAB800ECC4E1 /* UserKeySigningParameters.swift in Sources */,
 				EC4DD3002EABBAB800ECC4E1 /* Constants.swift in Sources */,
