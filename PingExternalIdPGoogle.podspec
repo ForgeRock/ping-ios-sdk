@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingExternalIdPGoogle'
-  s.version          = '1.3.0-beta2'
+  s.version          = '1.3.0-beta3'
   s.summary          = 'PingExternalIdPGoogle module for the Ping iOS SDK'
   s.description      = <<-DESC
   The PingExternalIdPGoogle module for the Ping iOS SDK is a library for Authentication with external IDP Google when using the Ping iOS SDK.
@@ -33,7 +33,7 @@ Pod::Spec.new do |s|
     'External-idp' => [base_dir + '/*.xcprivacy']
   }
 
-  s.ios.dependency 'PingExternalIdP', '~> 1.3.0-beta2'
+  s.ios.dependency 'PingExternalIdP', '~> 1.3.0-beta3'
   s.ios.dependency 'GoogleSignIn', '~> 9.0.0'
     
 end

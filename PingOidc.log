@@ -1,6 +1,7 @@
 
   CDN: trunk Relative path: CocoaPods-version.yml exists! Returning local because checking is only performed in repo update
- -> PingOidc  PingOidc (1.3.0-beta2) - Analyzing on iOS 13.0 platform.
+ -> PingOidc1.3.0-beta3
+  PingOidc (1.3.0-beta2) - Analyzing on iOS 13.0 platform.
   - Generating Info.plist file at `../../../../../var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-66739-lcs9ic-PingOidc/App/App-Info.plist`
   Preparing
 
@@ -14,14 +15,14 @@ Fetching external sources
 
 Resolving dependencies of 
   CDN: trunk Relative path: CocoaPods-version.yml exists! Returning local because checking is only performed in repo update
-  CDN: trunk Relative path: all_pods_versions_2_0_d.txt exists! Returning local because checking is only performed in repo update
+  CDN: trunk Relative path: all_pods_versions_2_0_d.txt 1.3.0-beta3urning local because checking is only performed in repo update
+  CDN: trunk Relative path: Specs/2/0/d/PingOrchestrate/1.3.0-beta3/PingOrchestrate.podspec.json exists! Returning local because checking is only performed in repo update
   CDN: trunk Relative path: Specs/2/0/d/PingOrchestrate/1.3.0-beta2/PingOrchestrate.podspec.json exists! Returning local because checking is only performed in repo update
-  CDN: trunk Relative path: Specs/2/0/d/PingOrchestrate/1.3.0-beta2/PingOrchestrate.podspec.json exists! Returning local because checking is only performed in repo update
-  CDN: trunk Relative path: all_pods_versions_d_5_7.txt exists! Returning local because checking is only performed in repo update
+  CDN: trunk Relative path: all_pods_versions_d_5_71.3.0-beta3! Returning local because checking is only performed in repo update
   CDN: trunk Relative path: Specs/d/5/7/PingLogger/1.3.0-beta2/PingLogger.podspec.json exists! Returning local because checking is only performed in repo update
-  CDN: trunk Relative path: all_pods_versions_6_b_0.txt exists! Returning local because checking is only performed in repo update
-  CDN: trunk Relative path: Specs/6/b/0/PingStorage/1.3.0-beta2/PingStorage.podspec.json exists! Returning local because checking is only performed in repo update
-  CDN: trunk Relative path: Specs/d/5/7/PingLogger/1.3.0-beta2/PingLogger.podspec.json exists! Returning local because checking is only performed in repo update
+  CDN: trunk Relative path: all_pods_versions_6_b_0.1.3.0-beta3 Returning local because checking is only performed in repo update
+  CDN: trunk Relative path: Specs/6/b/0/PingStorage1.3.0-beta32/PingStorage.podspec.json exists! Returning local because checking is only performed in repo update
+  CDN: trunk Relative path: Specs/d/5/7/PingLogger/11.3.0-beta3PingLogger.podspec.json exists! Returning local because checking is only performed in repo update
   CDN: trunk Relative path: Specs/6/b/0/PingStorage/1.3.0-beta2/PingStorage.podspec.json exists! Returning local because checking is only performed in repo update
 
 Comparing resolved specification to the sandbox manifest
@@ -31,17 +32,17 @@ Comparing resolved specification to the sandbox manifest
   A PingStorage
 
 Downloading dependencies
-
--> Installing PingLogger (1.3.0-beta2)
+1.3.0-beta3
+-> Installing PingLogger (1.3.0-beta2)1.3.0-beta3
   > Copying PingLogger from `/Users/stoyan.petrov/Library/Caches/CocoaPods/Pods/Release/PingLogger/1.3.0-beta2-ed7c7` to `../../../../../private/var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-66739-lcs9ic-PingOidc/Pods/PingLogger`
-
+1.3.0-beta3
 -> Installing PingOidc (1.3.0-beta2)
   > Copying PingOidc from `/Users/stoyan.petrov/Library/Caches/CocoaPods/Pods/External/PingOidc/9b0a4f0c29c77c6de8dc20c35b5a4656-1d288` to `../../../../../private/var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-66739-lcs9ic-PingOidc/Pods/PingOidc`
-
--> Installing PingOrchestrate (1.3.0-beta2)
+1.3.0-beta3
+-> Installing PingOrchestrate (1.3.0-beta2)1.3.0-beta3
   > Copying PingOrchestrate from `/Users/stoyan.petrov/Library/Caches/CocoaPods/Pods/Release/PingOrchestrate/1.3.0-beta2-26f77` to `../../../../../private/var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-66739-lcs9ic-PingOidc/Pods/PingOrchestrate`
-
--> Installing PingStorage (1.3.0-beta2)
+1.3.0-beta3
+-> Installing PingStorage (1.3.0-beta2)1.3.0-beta3
   > Copying PingStorage from `/Users/stoyan.petrov/Library/Caches/CocoaPods/Pods/Release/PingStorage/1.3.0-beta2-6ae8d` to `../../../../../private/var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-66739-lcs9ic-PingOidc/Pods/PingStorage`
   - Running pre install hooks
   - Writing Lockfile in `../../../../../var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-66739-lcs9ic-PingOidc/Podfile.lock`
@@ -2081,7 +2082,7 @@ Integrating target `Pods-App` (`../../../../../var/folders/yl/72ft0y056gx0nhm_pp
     note: Disabling previews because SWIFT_VERSION is set and SWIFT_OPTIMIZATION_LEVEL=-O, expected -Onone (in target 'PingOidc' from project 'Pods')
     note: Disabling previews because SWIFT_VERSION is set and SWIFT_OPTIMIZATION_LEVEL=-O, expected -Onone (in target 'PingLogger-Logger' from project 'Pods')
     note: Disabling previews because SWIFT_VERSION is set and SWIFT_OPTIMIZATION_LEVEL=-O, expected -Onone (in target 'PingLogger' from project 'Pods')
-  Testing with `xcodebuild`.
+  Testing with1.3.0-beta3d`.
  -> PingOidc (1.3.0-beta2)
     - ERROR | [iOS] xcodebuild: Returned an unsuccessful exit code.
     - NOTE  | xcodebuild:  note: Using codesigning identity override: -
@@ -2110,8 +2111,9 @@ Analyzed 1 podspec.
 /Users/stoyan.petrov/.rbenv/versions/3.0.0/bin/pod:23:in `load'
 /Users/stoyan.petrov/.rbenv/versions/3.0.0/bin/pod:23:in `<main>'
 
-  CDN: trunk Relative path: CocoaPods-version.yml exists! Returning local because checking is only performed in repo update
- -> PingOidc  PingOidc (1.3.0-beta2) - Analyzing on iOS 13.0 platform.
+  CDN: trunk Relative pat1.3.0-beta3s-version.yml exists! Returning local because checking is only performed in repo update
+ -> PingOidc
+  PingOidc (1.3.0-beta2) - Analyzing on iOS 13.0 platform.
   - Generating Info.plist file at `../../../../../var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-71255-4195g8-PingOidc/App/App-Info.plist`
   Preparing
 
@@ -2124,14 +2126,14 @@ Fetching external sources
 -> Fetching podspec for `PingOidc` from `/Users/stoyan.petrov/Dev/Repos/ping-ios-sdk/PingOidc.podspec`
 
 Resolving dependencies of 
-  CDN: trunk Relative path: CocoaPods-version.yml exists! Returning local because checking is only performed in repo update
-  CDN: trunk Relative path: all_pods_versions_2_0_d.txt exists! Returning local because checking is only performed in repo update
+  CDN: trunk Relative path: CocoaPods-version.yml exists1.3.0-beta3 local because checking is only performed in repo update
+  CDN: trunk Relative path: all_pods_versions_2_0_d.txt 1.3.0-beta3urning local because checking is only performed in repo update
   CDN: trunk Relative path: Specs/2/0/d/PingOrchestrate/1.3.0-beta2/PingOrchestrate.podspec.json exists! Returning local because checking is only performed in repo update
-  CDN: trunk Relative path: Specs/2/0/d/PingOrchestrate/1.3.0-beta2/PingOrchestrate.podspec.json exists! Returning local because checking is only performed in repo update
+  CDN: trunk Relative path: Specs/2/0/d/PingOrchest1.3.0-beta3beta2/PingOrchestrate.podspec.json exists! Returning local because checking is only performed in repo update
   CDN: trunk Relative path: all_pods_versions_d_5_7.txt exists! Returning local because checking is only performed in repo update
-  CDN: trunk Relative path: Specs/d/5/7/PingLogger/1.3.0-beta2/PingLogger.podspec.json exists! Returning local because checking is only performed in repo update
-  CDN: trunk Relative path: all_pods_versions_6_b_0.txt exists! Returning local because checking is only performed in repo update
-  CDN: trunk Relative path: Specs/6/b/0/PingStorage/1.3.0-beta2/PingStorage.podspec.json exists! Returning local because checking is only performed in repo update
+  CDN: trunk Relative path: Specs/d/5/7/PingLogger/11.3.0-beta3PingLogger.podspec.json exists! Returning local because checking is only performed in repo update
+  CDN: trunk Relative path: all_pods_versions_6_b_01.3.0-beta3! Returning local because checking is only performed in repo update
+  CDN: trunk Relative path: Specs/6/b/0/PingStorage/1.3.0-beta3/PingStorage.podspec.json exists! Returning local because checking is only performed in repo update
   CDN: trunk Relative path: Specs/d/5/7/PingLogger/1.3.0-beta2/PingLogger.podspec.json exists! Returning local because checking is only performed in repo update
   CDN: trunk Relative path: Specs/6/b/0/PingStorage/1.3.0-beta2/PingStorage.podspec.json exists! Returning local because checking is only performed in repo update
 
@@ -2141,17 +2143,17 @@ Comparing resolved specification to the sandbox manifest
   A PingOrchestrate
   A PingStorage
 
-Downloading dependencies
-
+Downloading dependencies1.3.0-beta3
+1.3.0-beta3
 -> Installing PingLogger (1.3.0-beta2)
-  > Copying PingLogger from `/Users/stoyan.petrov/Library/Caches/CocoaPods/Pods/Release/PingLogger/1.3.0-beta2-ed7c7` to `../../../../../private/var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-71255-4195g8-PingOidc/Pods/PingLogger`
+  > Copying PingLogger f1.3.0-beta3/stoyan.petrov/Library/Caches/CocoaPods/Pods/Release/PingLogger/1.3.0-beta2-ed7c7` to `../../../../../private/var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-71255-4195g8-PingOidc/Pods/PingLogger`
 
 -> Installing PingOidc (1.3.0-beta2)
-  > Copying PingOidc from `/Users/stoyan.petrov/Library/Caches/CocoaPods/Pods/External/PingOidc/9b0a4f0c29c77c6de8dc20c35b5a4656-1d288` to `../../../../../private/var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-71255-4195g8-PingOidc/Pods/PingOidc`
-
+  > Copying PingOidc from `/Use1.3.0-beta3etrov/Library/Caches/CocoaPods/Pods/External/PingOidc/9b0a4f0c29c77c6de8dc20c35b5a4656-1d288` to `../../../../../private/var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-71255-4195g8-PingOidc/Pods/PingOidc`
+1.3.0-beta3
 -> Installing PingOrchestrate (1.3.0-beta2)
-  > Copying PingOrchestrate from `/Users/stoyan.petrov/Library/Caches/CocoaPods/Pods/Release/PingOrchestrate/1.3.0-beta2-26f77` to `../../../../../private/var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-71255-4195g8-PingOidc/Pods/PingOrchestrate`
-
+  > Copying PingOrchestrate1.3.0-beta3rs/stoyan.petrov/Library/Caches/CocoaPods/Pods/Release/PingOrchestrate/1.3.0-beta2-26f77` to `../../../../../private/var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-71255-4195g8-PingOidc/Pods/PingOrchestrate`
+1.3.0-beta3
 -> Installing PingStorage (1.3.0-beta2)
   > Copying PingStorage from `/Users/stoyan.petrov/Library/Caches/CocoaPods/Pods/Release/PingStorage/1.3.0-beta2-6ae8d` to `../../../../../private/var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-71255-4195g8-PingOidc/Pods/PingStorage`
   - Running pre install hooks
@@ -4393,7 +4395,7 @@ Integrating target `Pods-App` (`../../../../../var/folders/yl/72ft0y056gx0nhm_pp
     CpResource /Users/stoyan.petrov/tmp/App-bafnlzwfxjnkrybscdfrlhajhawc/Build/Products/Release-iphonesimulator/PingOidc/PingOidc.framework/Oidc.bundle /Users/stoyan.petrov/tmp/App-bafnlzwfxjnkrybscdfrlhajhawc/Build/Products/Release-iphonesimulator/PingOidc/Oidc.bundle (in target 'PingOidc' from project 'Pods')
         cd /var/folders/yl/72ft0y056gx0nhm_ppxl6qtr0000gp/T/CocoaPods-Lint-20251028-71255-4195g8-PingOidc/Pods
         builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/stoyan.petrov/tmp/App-bafnlzwfxjnkrybscdfrlhajhawc/Build/Products/Release-iphonesimulator/PingOidc/Oidc.bundle /Users/stoyan.petrov/tmp/App-bafnlzwfxjnkrybscdfrlhajhawc/Build/Products/Release-iphonesimulator/PingOidc/PingOidc.framework
-    
+    1.3.0-beta3
   Testing with `xcodebuild`.
  -> PingOidc (1.3.0-beta2)
     - ERROR | [iOS] xcodebuild: Returned an unsuccessful exit code.
