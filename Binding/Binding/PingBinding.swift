@@ -65,7 +65,7 @@ class Binding {
         }
         
         // Create and sign a JWS with the new key.
-        let signingParams = SigningParameters(algorithm: try deviceBindingConfig.getSecKeyAlgorithm(),
+        let signingParams = SigningParameters(algorithm: deviceBindingConfig.getSecKeyAlgorithm(),
                                               keyPair: keyPair,
                                               kid: keyPair.keyTag,
                                               userId: callback.userId,
@@ -162,7 +162,7 @@ class Binding {
         }
         
         // Create and sign a JWS with the user's key.
-        let signingParams = UserKeySigningParameters(algorithm: try deviceBindingConfig.getSecKeyAlgorithm(),
+        let signingParams = UserKeySigningParameters(algorithm: deviceBindingConfig.getSecKeyAlgorithm(),
                                                      userKey: retrievedUserKey,
                                                      privateKey: privateKey,
                                                      publicKey: publicKey,

@@ -159,6 +159,19 @@ public final class CompactJwt: Sendable {
         let y = yCoordinateData.base64URLEncodedString()
 
         // 5. Construct the JWK dictionary
+        // Determine the algorithm name based on the curve
+        let algName: String
+        switch crv {
+        case "P-256":
+            algName = "ES256"
+        case "P-384":
+            algName = "ES384"
+        case "P-521":
+            algName = "ES512"
+        default:
+            algName = "ES256" // Fallback, though this shouldn't be reached
+        }
+        
         let jwk: [String: Any] = [
             "crv": crv,
             "kty": "EC",
@@ -166,7 +179,7 @@ public final class CompactJwt: Sendable {
             "y": y,
             "kid": kid,
             "x": x,
-            "alg": "ES256"
+            "alg": algName
         ]
 
         return jwk
@@ -379,9 +392,22 @@ public final class CompactJwt: Sendable {
     /// - Returns: The JWT string.
     /// - Throws: `JwtError.signingFailed` if there is an error signing the JWT.
     public static func sign(claims: [String: Any], privateKey: SecKey, publicKey: SecKey?, algorithm: SecKeyAlgorithm, kid: String) throws -> String {
+        // Determine the algorithm name based on the SecKeyAlgorithm
+        let algName: String
+        switch algorithm {
+        case .ecdsaSignatureMessageX962SHA256:
+            algName = "ES256"
+        case .ecdsaSignatureMessageX962SHA384:
+            algName = "ES384"
+        case .ecdsaSignatureMessageX962SHA512:
+            algName = "ES512"
+        default:
+            throw JwtError.unsupportedAlgorithm("Unsupported algorithm: \(algorithm)")
+        }
+        
         var header: [String: Any] = [
             "typ": "JWS",
-            "alg": "ES256",
+            "alg": algName,
             "kid": kid
         ]
         

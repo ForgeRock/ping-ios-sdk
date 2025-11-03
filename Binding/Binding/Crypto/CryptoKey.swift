@@ -30,9 +30,10 @@ public class CryptoKey {
     ///
     /// - Parameter attestation: The attestation type. Currently, this parameter is not used.
     /// - Parameter accessControl: The access control flags for the key. If nil, a default will be used.
+    /// - Parameter keySizeInBits: The key size in bits (256 for P-256, 521 for P-521). Defaults to 256.
     /// - Returns: The generated `KeyPair`.
     /// - Throws: A `DeviceBindingError` if the key generation fails.
-    public func generateKeyPair(attestation: Attestation, accessControl: SecAccessControl? = nil, pin: String? = nil) throws -> KeyPair {
+    public func generateKeyPair(attestation: Attestation, accessControl: SecAccessControl? = nil, keySizeInBits: Int = 256, pin: String? = nil) throws -> KeyPair {
         let access = accessControl ?? SecAccessControlCreateWithFlags(kCFAllocatorDefault,
                                                                       kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
                                                                       .privateKeyUsage,
@@ -40,7 +41,7 @@ public class CryptoKey {
         
         var attributes: [String: Any] = [
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
-            kSecAttrKeySizeInBits as String: 256,
+            kSecAttrKeySizeInBits as String: keySizeInBits,
             kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
             kSecPrivateKeyAttrs as String: [
                 kSecAttrIsPermanent as String: true,

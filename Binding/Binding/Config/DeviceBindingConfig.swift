@@ -17,9 +17,6 @@ import UIKit
 /// Configuration for device binding.
 /// This class allows you to customize the behavior of the device binding and signing process.
 public class DeviceBindingConfig {
-    /// The signing algorithm to use for the JWS.
-    /// The default is `ES512`. Allowed values are "ES256" and "ES512".
-    public var signingAlgorithm: String = "ES512"
     #if canImport(UIKit)
     /// The name of the device.
     /// The default is the current device name.
@@ -56,16 +53,14 @@ public class DeviceBindingConfig {
     /// The custom authenticator configuration to be used.
     public var authenticatorConfig: AuthenticatorConfig?
     
-    /// The algorithm to be used for signing. It is derived from `signingAlgorithm`.
-    internal func getSecKeyAlgorithm() throws -> SecKeyAlgorithm {
-        switch signingAlgorithm {
-        case "ES256":
-            return .ecdsaSignatureMessageX962SHA256
-        case "ES512":
-            return .ecdsaSignatureMessageX962SHA512
-        default:
-            throw DeviceBindingError.unsupported(errorMessage: "Unsupported signing algorithm: \(signingAlgorithm). Only ES256 and ES512 are supported.")
-        }
+    /// The algorithm to be used for signing. Always uses ES256 with P-256 curve.
+    internal func getSecKeyAlgorithm() -> SecKeyAlgorithm {
+        return .ecdsaSignatureMessageX962SHA256
+    }
+    
+    /// Gets the key size in bits. Always returns 256 for P-256 curve (ES256).
+    internal func getKeySizeInBits() -> Int {
+        return 256
     }
     
     /// Initializes a new `DeviceBindingConfig`.
@@ -79,9 +74,28 @@ public class DeviceBindingConfig {
     func authenticator(type: DeviceBindingAuthenticationType, prompt: Prompt) -> DeviceAuthenticator {
         /// If a custom device authenticator is provided, use it.
         guard let deviceAuthenticator = deviceAuthenticator else {
-            let authenticator = type.getAuthType(config: authenticatorConfig)
+            #if canImport(UIKit)
+            // If no custom config is provided, create a default one with the appropriate key size
+            var config = authenticatorConfig
+            if config == nil {
+                switch type {
+                case .biometricOnly, .biometricAllowFallback:
+                    config = BiometricAuthenticatorConfig()
+                case .applicationPin:
+                    config = AppPinConfig()
+                case .none:
+                    break
+                }
+            }
+            
+            let authenticator = type.getAuthType(config: config)
             authenticator.setPrompt(prompt)
             return authenticator
+            #else
+            let authenticator = type.getAuthType()
+            authenticator.setPrompt(prompt)
+            return authenticator
+            #endif
         }
         return deviceAuthenticator
     }
