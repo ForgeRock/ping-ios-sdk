@@ -57,15 +57,20 @@ open class AbstractCallback: Callback, @unchecked Sendable {
         return json
     }
     
-    //
-    /// Update input value with specified index
+    /// Update input value with specified key
     /// - Parameters:
-    ///   - index: Index of the input to be updated
-    ///   - value: Value of the input to be updates
-    /// - Returns: The Updated json dictionary
-    public func updateInput(at index: Int, value: Any) -> [String: Any] {
-        guard var inputArray = json[JourneyConstants.input] as? [[String: Any]],
-              index < inputArray.count else {
+    ///   - value: Value of the input to be updated
+    ///   - key: The name/key of the input to be updated
+    /// - Returns: The updated json dictionary
+    public func input(_ value: Any, forKey key: String) -> [String: Any] {
+        guard var inputArray = json[JourneyConstants.input] as? [[String: Any]] else {
+            return json
+        }
+        
+        // Find the index of the input with matching name
+        guard let index = inputArray.firstIndex(where: {
+            ($0[JourneyConstants.name] as? String) == key
+        }) else {
             return json
         }
         

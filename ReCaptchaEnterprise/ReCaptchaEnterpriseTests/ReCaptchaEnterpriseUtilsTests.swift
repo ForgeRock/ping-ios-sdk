@@ -23,7 +23,7 @@ class ReCaptchaEnterpriseUtilsTests: XCTestCase {
         ]
         
         // When: Converting to JSON string
-        let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: testData as AnyObject)
+        let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: testData)
         
         // Then: Should produce valid JSON string
         XCTAssertFalse(jsonString.isEmpty)
@@ -38,7 +38,7 @@ class ReCaptchaEnterpriseUtilsTests: XCTestCase {
         let testData: [Any] = ["item1", "item2", 123, true]
         
         // When: Converting to JSON string
-        let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: testData as AnyObject)
+        let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: testData)
         
         // Then: Should produce valid JSON string
         XCTAssertFalse(jsonString.isEmpty)
@@ -60,7 +60,7 @@ class ReCaptchaEnterpriseUtilsTests: XCTestCase {
         ]
         
         // When: Converting to JSON string
-        let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: testData as AnyObject)
+        let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: testData)
         
         // Then: Should handle nested structure
         XCTAssertFalse(jsonString.isEmpty)
@@ -79,7 +79,7 @@ class ReCaptchaEnterpriseUtilsTests: XCTestCase {
         
         // When: Converting with pretty print
         let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(
-            value: testData as AnyObject,
+            value: testData,
             prettyPrinted: true
         )
         
@@ -96,7 +96,7 @@ class ReCaptchaEnterpriseUtilsTests: XCTestCase {
         let invalidObject = InvalidObject()
         
         // When: Attempting to convert invalid object
-        let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: invalidObject as AnyObject)
+        let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: invalidObject)
         
         // Then: Should return empty string
         XCTAssertEqual(jsonString, "")
@@ -107,7 +107,7 @@ class ReCaptchaEnterpriseUtilsTests: XCTestCase {
         let emptyDict: [String: Any] = [:]
         
         // When: Converting empty dictionary
-        let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: emptyDict as AnyObject)
+        let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: emptyDict)
         
         // Then: Should produce valid empty JSON object
         XCTAssertEqual(jsonString, "{}")
@@ -118,7 +118,7 @@ class ReCaptchaEnterpriseUtilsTests: XCTestCase {
         let emptyArray: [Any] = []
         
         // When: Converting empty array
-        let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: emptyArray as AnyObject)
+        let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: emptyArray)
         
         // Then: Should produce valid empty JSON array
         XCTAssertEqual(jsonString, "[]")
@@ -135,7 +135,7 @@ class ReCaptchaEnterpriseUtilsTests: XCTestCase {
         ]
         
         // When: Converting to JSON
-        let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: testData as AnyObject)
+        let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: testData)
         
         // Then: Should preserve all data types
         XCTAssertFalse(jsonString.isEmpty)

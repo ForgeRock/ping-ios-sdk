@@ -39,10 +39,10 @@ public struct ReCaptchaEnterpriseUtils {
     /// ## Usage Example
     /// ```swift
     /// let data = ["action": "login", "score": 0.9]
-    /// let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: data as AnyObject)
+    /// let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: data as Any)
     /// ```
     public static func jsonStringify(
-        value: AnyObject,
+        value: Any,
         prettyPrinted: Bool = false
     ) -> String {
         let options: JSONSerialization.WritingOptions = prettyPrinted ? .prettyPrinted : []

@@ -109,7 +109,7 @@ node.callbacks.forEach { callback in
 
             // Execute reCAPTCHA assessment
             let result = await recaptchaCallback.verify { config in
-                // Opionally customize the configuration
+                // Optionally customize the configuration
                 config.action = "login"
                 config.timeout = 20000
                 config.logger = LogManager.error
@@ -154,7 +154,7 @@ node.callbacks.forEach { callback in
 
             // Execute reCAPTCHA assessment
             let result = await recaptchaCallback.verify { config in
-                // Opionally customize the configuration
+                // Optionally customize the configuration
                 config.action = "purchase"
                 config.timeout = 20000
                 config.logger = LogManager.error

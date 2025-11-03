@@ -30,24 +30,21 @@ extension JourneyConstants {
     /// Key for reCAPTCHA site key configuration property
     static let recaptchaSiteKey = "recaptchaSiteKey"
     
-//    /// Key for token input property
-//    static let token = "token"
-//    
-//    /// Key for action input property
-//    static let action = "action"
-//    
-//    /// Key for client error input property
-//    static let clientError = "clientError"
-//    
-//    /// Key for additional payload input property
-//    static let payload = "payload"
+    /// Key for token input property
+    static let token = "token"
+    
+    /// Key for action input property
+    static let action = "action"
+    
+    /// Key for client error input property
+    static let clientError = "clientError"
+    
+    /// Key for additional payload input property
+    static let payload = "payload"
 }
 
 /// Represents various constants used in ReCaptchaEnterprise module
 public enum ReCaptchaEnterpriseConstants {
-//    /// Domain identifier for reCAPTCHA errors
-//    public static let domain = "com.google.recaptcha"
-    
     /// Error message for invalid token
     public static let invalidToken = "INVALID_CAPTCHA_TOKEN"
     

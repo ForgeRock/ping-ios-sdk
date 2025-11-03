@@ -60,6 +60,29 @@ public class ReCaptchaEnterpriseCallback: AbstractCallback, @unchecked Sendable 
     
     // MARK: - Initialization
     
+    /// Initializes a new instance of `ReCaptchaEnterpriseCallback` with the provided JSON.
+    public override func initialize(with json: [String: Any]) -> any Callback {
+        _ = super.initialize(with: json)
+        
+        // Assign input keys
+        if let inputItems = json[JourneyConstants.input] as? [[String: Any]] {
+            for item in inputItems {
+                if let name = item[JourneyConstants.name] as? String{
+                    if name.contains(JourneyConstants.token) {
+                        self.tokenKey = name
+                    } else if name.contains(JourneyConstants.action) {
+                        self.actionKey = name
+                    } else if name.contains(JourneyConstants.clientError) {
+                        self.clientErrorKey = name
+                    } else if name.contains(JourneyConstants.payload) {
+                        self.payloadKey = name
+                    }
+                }
+            }
+        }
+        return self
+    }
+    
     /// Initializes callback properties based on server-provided configuration.
     ///
     /// This method is called automatically during callback initialization to set up
@@ -157,33 +180,36 @@ public class ReCaptchaEnterpriseCallback: AbstractCallback, @unchecked Sendable 
     // MARK: - Input Setting Methods
     
     /// Sets the reCAPTCHA token value in the callback response.
-    /// - Parameter value: String value of the reCAPTCHA token
-    public func setToken(_ value: String) {
-        _ = updateInput(at: 0, value: value)
-    }
-    
-    /// Sets the action value in the callback response.
-    /// - Parameter value: String value of the action
-    internal func setAction(_ value: String) {
-        _ = updateInput(at: 1, value: value)
-    }
-    
-    /// Sets the client error value in the callback response.
-    /// - Parameter value: String value of the error message
-    public func setClientError(_ value: String) {
-        _ = updateInput(at: 2, value: value)
-    }
-    
-    /// Sets additional payload value for the reCAPTCHA in callback response.
-    /// - Parameter value: Dictionary value of additional data
-    public func setPayload(_ value: [String: Any]? = nil) {
-        if let payload = value, !payload.isEmpty {
-            let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(
-                value: payload as AnyObject
-            )
-            _ = updateInput(at: 3, value: jsonString)
+        /// - Parameter value: String value of the reCAPTCHA token
+        public func setToken(_ value: String) {
+            guard !tokenKey.isEmpty else { return }
+            _ = input(value, forKey: tokenKey)
         }
-    }
+        
+        /// Sets the action value in the callback response.
+        /// - Parameter value: String value of the action
+        internal func setAction(_ value: String) {
+            guard !actionKey.isEmpty else { return }
+            _ = input(value, forKey: actionKey)
+        }
+        
+        /// Sets the client error value in the callback response.
+        /// - Parameter value: String value of the error message
+        public func setClientError(_ value: String) {
+            guard !clientErrorKey.isEmpty else { return }
+            _ = input(value, forKey: clientErrorKey)
+        }
+        
+        /// Sets additional payload value for the reCAPTCHA in callback response.
+        /// - Parameter value: Dictionary value of additional data
+        public func setPayload(_ value: [String: Any]? = nil) {
+            guard !payloadKey.isEmpty else { return }
+            
+            if let payload = value, !payload.isEmpty {
+                let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: payload)
+                _ = input(jsonString, forKey: payloadKey)
+            }
+        }
     
     /// Returns the payload for the callback submission.
     /// - Returns: JSON dictionary for server submission
