@@ -7,6 +7,8 @@
 
 # PingProtect Module: Advanced Security Integration
 
+> **Note:** The module name differs depending on the dependency manager. Use **`PingProtect`** for Swift Package Manager (SPM), and **`PingOneProtect`** for CocoaPods.
+
 ## Overview
 
 The `PingProtect` module is a powerful component of the Ping Identity iOS SDK, designed to seamlessly integrate Ping
@@ -20,10 +22,11 @@ user-friendly authentication experience.
 ### Add dependency to your project
 
 To integrate the PingProtect module into your iOS project, add the following dependency to your
-`Podfile` or `Package.swift` file:
+`Podfile` or `Package.swift` file. 
+> **Note:** The module name differs depending on the dependency manager. Use **`PingProtect`** for SPM, and **`PingOneProtect`** for CocoaPods.
 
 ```ruby
-pod 'PingProtect', '<version>'
+pod 'PingOneProtect', '<version>'
 ```
 
 or for Swift Package Manager:
