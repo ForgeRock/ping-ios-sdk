@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingFido'
-  s.version          = '1.3.0-beta3'
+  s.version          = '1.3.0'
   s.summary          = 'PingFido SDK for iOS'
   s.description      = <<-DESC
   The PingFido SDK provides Fido2 functionality for PingOne and ForgeRock platform.
@@ -22,6 +22,6 @@ Pod::Spec.new do |s|
 
   s.source_files = 'Fido/Fido/**/*.swift'
   
-  s.ios.dependency 'PingJourney', '~> 1.3.0-beta3'
-  s.ios.dependency 'PingLogger', '~> 1.3.0-beta3'
+  s.ios.dependency 'PingJourney', '~> 1.3.0'
+  s.ios.dependency 'PingLogger', '~> 1.3.0'
 end
