@@ -72,7 +72,7 @@ class ConfirmationCallbackTests: XCTestCase {
         XCTAssertEqual(callback.messageType, MessageType.information)
         XCTAssertEqual(callback.options, ["Yes", "No"])
         XCTAssertEqual(callback.optionType, OptionType.unspecified)
-        XCTAssertEqual(callback.defaultOption, 1)
+        XCTAssertEqual(callback.defaultOption, OptionType.yesNoCancel)
     }
 
     func testPayloadReturnsCorrectly() {
@@ -158,7 +158,7 @@ class ConfirmationCallbackTests: XCTestCase {
         XCTAssertEqual(newCallback.messageType, MessageType.unknown)
         XCTAssertEqual(newCallback.options, [])
         XCTAssertEqual(newCallback.optionType, OptionType.unknown)
-        XCTAssertEqual(newCallback.defaultOption, -1)
+        XCTAssertEqual(newCallback.defaultOption, OptionType.unspecified)
     }
 
     func testInitValueWithUnknownProperty() {
@@ -172,7 +172,7 @@ class ConfirmationCallbackTests: XCTestCase {
         XCTAssertEqual(newCallback.messageType, MessageType.unknown)
         XCTAssertEqual(newCallback.options, [])
         XCTAssertEqual(newCallback.optionType, OptionType.unknown)
-        XCTAssertEqual(newCallback.defaultOption, -1)
+        XCTAssertEqual(newCallback.defaultOption, OptionType.unspecified)
         XCTAssertNil(newCallback.selectedIndex)
     }
 
@@ -239,7 +239,7 @@ class ConfirmationCallbackTests: XCTestCase {
         XCTAssertEqual(callback.messageType, MessageType.warning)
         XCTAssertEqual(callback.optionType, OptionType.yesNoCancel)
         XCTAssertEqual(callback.options, ["Yes", "No", "Cancel"])
-        XCTAssertEqual(callback.defaultOption, 2)
+        XCTAssertEqual(callback.defaultOption, OptionType.okCancel)
         XCTAssertNil(callback.selectedIndex) // Should be nil until user makes selection
 
         // User makes a selection
@@ -262,7 +262,7 @@ class ConfirmationCallbackTests: XCTestCase {
         // Test that default values are correct before any initialization
         XCTAssertEqual(newCallback.prompt, "")
         XCTAssertEqual(newCallback.options, [])
-        XCTAssertEqual(newCallback.defaultOption, -1)
+        XCTAssertEqual(newCallback.defaultOption, OptionType.unspecified)
         XCTAssertEqual(newCallback.optionType, OptionType.unknown)
         XCTAssertEqual(newCallback.messageType, MessageType.unknown)
         XCTAssertNil(newCallback.selectedIndex)
@@ -300,6 +300,6 @@ class ConfirmationCallbackTests: XCTestCase {
         let newCallback = ConfirmationCallback()
         newCallback.initValue(name: JourneyConstants.defaultOption, value: -5)
 
-        XCTAssertEqual(newCallback.defaultOption, -5)
+        XCTAssertEqual(newCallback.defaultOption, OptionType.unspecified)
     }
 }
