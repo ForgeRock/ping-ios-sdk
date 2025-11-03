@@ -45,6 +45,8 @@
 		ECB255E82EB90CEF00F25CBE /* AppPinConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255E72EB90CEF00F25CBE /* AppPinConfig.swift */; };
 		ECB255EA2EB9125600F25CBE /* BiometricAuthenticatorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255E92EB9125600F25CBE /* BiometricAuthenticatorConfig.swift */; };
 		ECB255EC2EB9141800F25CBE /* AuthenticatorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255EB2EB9141100F25CBE /* AuthenticatorConfig.swift */; };
+		ECB255F02EB92E9C00F25CBE /* DefaultUserKeySelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255ED2EB92E9C00F25CBE /* DefaultUserKeySelector.swift */; };
+		ECB255F12EB92E9C00F25CBE /* UserKeySelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255EE2EB92E9C00F25CBE /* UserKeySelector.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,6 +101,8 @@
 		ECB255E72EB90CEF00F25CBE /* AppPinConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPinConfig.swift; sourceTree = "<group>"; };
 		ECB255E92EB9125600F25CBE /* BiometricAuthenticatorConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuthenticatorConfig.swift; sourceTree = "<group>"; };
 		ECB255EB2EB9141100F25CBE /* AuthenticatorConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatorConfig.swift; sourceTree = "<group>"; };
+		ECB255ED2EB92E9C00F25CBE /* DefaultUserKeySelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultUserKeySelector.swift; sourceTree = "<group>"; };
+		ECB255EE2EB92E9C00F25CBE /* UserKeySelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserKeySelector.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +151,7 @@
 		EC4DD29D2EABBA7E00ECC4E1 /* Binding */ = {
 			isa = PBXGroup;
 			children = (
+				ECB255EF2EB92E9C00F25CBE /* UserKeySelector */,
 				EC4DD2EA2EABBAB800ECC4E1 /* PingBinding.h */,
 				EC4DD37D2EB0DAFB00ECC4E1 /* PingBinding.swift */,
 				EC4DD2EC2EABBAB800ECC4E1 /* PrivacyInfo.xcprivacy */,
@@ -266,6 +271,15 @@
 				EC4DD3282EABCE7D00ECC4E1 /* PingBindingTests.swift */,
 			);
 			path = PingBindingTests;
+			sourceTree = "<group>";
+		};
+		ECB255EF2EB92E9C00F25CBE /* UserKeySelector */ = {
+			isa = PBXGroup;
+			children = (
+				ECB255ED2EB92E9C00F25CBE /* DefaultUserKeySelector.swift */,
+				ECB255EE2EB92E9C00F25CBE /* UserKeySelector.swift */,
+			);
+			path = UserKeySelector;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -389,6 +403,8 @@
 				EC4DD2F62EABBAB800ECC4E1 /* DeviceBindingCallback.swift in Sources */,
 				EC4DD3832EB0E0B200ECC4E1 /* DefaultDeviceAuthenticator.swift in Sources */,
 				EC4DD3842EB0E0B200ECC4E1 /* BiometricDeviceCredentialAuthenticator.swift in Sources */,
+				ECB255F02EB92E9C00F25CBE /* DefaultUserKeySelector.swift in Sources */,
+				ECB255F12EB92E9C00F25CBE /* UserKeySelector.swift in Sources */,
 				EC4DD3852EB0E0B200ECC4E1 /* BiometricOnlyAuthenticator.swift in Sources */,
 				EC4DD3862EB0E0B200ECC4E1 /* AppPinAuthenticator.swift in Sources */,
 				EC4DD2F72EABBAB800ECC4E1 /* DeviceBindingError.swift in Sources */,

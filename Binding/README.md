@@ -2,6 +2,10 @@
 
 The PingBinding SDK provides device binding and signing capabilities for native applications.
 
+## Cryptographic Algorithm
+
+The PingBinding SDK uses **ES256** (ECDSA with P-256 curve and SHA-256) for all signing operations. This algorithm is compatible with iOS Secure Enclave, providing hardware-backed security for private keys.
+
 ## Installation
 
 The PingBinding SDK is available via Swift Package Manager. To install it, add the following dependency to your `Package.swift` file:
@@ -216,6 +220,7 @@ let result = await callback.bind { config in
         prompt: Prompt(title: "Enter PIN", subtitle: "Security", description: "Enter your 4-digit PIN"),
         pinRetry: 5,
         keyTag: "my-custom-key-tag",
+        keySizeInBits: 256, // P-256 curve for ES256 algorithm
         pinCollector: CustomPinCollector()
     )
     
@@ -223,6 +228,8 @@ let result = await callback.bind { config in
     config.deviceAuthenticator = AppPinAuthenticator(config: appPinConfig)
 }
 ```
+
+**Note:** The `keySizeInBits` parameter should always be set to `256` for compatibility with iOS Secure Enclave. This is the default value and typically doesn't need to be specified.
 
 **BiometricAuthenticator Configuration:**
 
@@ -233,7 +240,8 @@ let result = await callback.bind { config in
     // Create a custom BiometricAuthenticatorConfig
     let biometricConfig = BiometricAuthenticatorConfig(
         logger: myCustomLogger,
-        keyTag: "my-biometric-key-tag"
+        keyTag: "my-biometric-key-tag",
+        keySizeInBits: 256 // P-256 curve for ES256 algorithm
     )
     
     // Set the authenticator config - the appropriate authenticator (BiometricOnlyAuthenticator 
@@ -242,46 +250,156 @@ let result = await callback.bind { config in
 }
 ```
 
-## License
+**Note:** The `keySizeInBits` parameter should always be set to `256` for compatibility with iOS Secure Enclave. This is the default value and typically doesn't need to be specified.
 
-The PingBinding SDK is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+### Custom User Key Selection
 
-### Customization
+When signing with a device and the callback doesn't specify a userId, or when multiple keys are available for the same user, the SDK needs to determine which key to use. By default, the SDK presents a system alert (UIAlertController with action sheet) for the user to choose. You can customize this behavior by implementing the `UserKeySelector` protocol.
 
-The `PingBinder` can be configured with custom storage and device authenticators.
+This is particularly useful when:
+- Multiple users have bound their devices on the same physical device
+- You want to provide a branded UI for key selection
+- You need to display additional context about each key
 
-#### Custom Storage
+**Step 1: Create a Custom UI for Key Selection**
 
-By default, `PingBinder` uses a `UserKeysStorage` instance that stores keys in the keychain. You can provide your own implementation of the `UserKeysStorageProtocol`.
+First, create a SwiftUI view that will display the available keys and allow the user to select one:
 
 ```swift
-public protocol UserKeysStorageProtocol {
-    func save(userKey: UserKey) throws
-    func find(userId: String) throws -> UserKey?
-    func delete(userId: String) throws
-    func getAll() throws -> [UserKey]
+// In your application, e.g., UserKeySelectorView.swift
+import SwiftUI
+import PingBinding
+
+struct UserKeySelectorView: View {
+    let userKeys: [UserKey]
+    let prompt: Prompt
+    let completion: (UserKey?) -> Void
+    
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 20) {
+                if !prompt.description.isEmpty {
+                    Text(prompt.description)
+                        .font(.body)
+                        .multilineTextAlignment(.center)
+                        .padding()
+                }
+                
+                List(userKeys, id: \.id) { userKey in
+                    Button(action: {
+                        completion(userKey)
+                    }) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            if !userKey.username.isEmpty {
+                                Text(userKey.username)
+                                    .font(.headline)
+                            }
+                            if !userKey.userId.isEmpty {
+                                Text("User ID: \(userKey.userId)")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Text("Auth: \(userKey.authType.rawValue)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+            }
+            .navigationTitle(prompt.title.isEmpty ? "Select Device Key" : prompt.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        completion(nil)
+                    }
+                }
+            }
+        }
+    }
 }
 ```
 
-#### Custom Device Authenticator
+**Step 2: Implement the `UserKeySelector` Protocol**
 
-The SDK uses the device's local authentication (Face ID, Touch ID, or passcode) by default. You can provide a custom authenticator by implementing the `DeviceAuthenticatorProtocol`.
+Create a class that conforms to the `UserKeySelector` protocol. This class is responsible for presenting your custom UI and returning the selected key:
 
 ```swift
-public protocol DeviceAuthenticatorProtocol {
-    func
-	authenticate(completion: @escaping (Result<Void, Error>) -> Void)
+// In your application, e.g., CustomUserKeySelector.swift
+import UIKit
+import SwiftUI
+import PingBinding
+
+class CustomUserKeySelector: UserKeySelector {
+    func selectKey(userKeys: [UserKey], prompt: Prompt) async -> UserKey? {
+        return await withCheckedContinuation { continuation in
+            DispatchQueue.main.async {
+                guard let topVC = self.getTopViewController() else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                
+                let selectorView = UserKeySelectorView(
+                    userKeys: userKeys,
+                    prompt: prompt
+                ) { selectedKey in
+                    topVC.dismiss(animated: true) {
+                        continuation.resume(returning: selectedKey)
+                    }
+                }
+                
+                let hostingController = UIHostingController(rootView: selectorView)
+                hostingController.modalPresentationStyle = .formSheet
+                topVC.present(hostingController, animated: true)
+            }
+        }
+    }
+    
+    private func getTopViewController() -> UIViewController? {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first(where: { $0.isKeyWindow }),
+              let rootViewController = window.rootViewController else {
+            return nil
+        }
+        
+        var topViewController = rootViewController
+        while let presentedViewController = topViewController.presentedViewController {
+            topViewController = presentedViewController
+        }
+        
+        return topViewController
+    }
 }
 ```
 
-You can then initialize `PingBinder` with your custom implementations:
+**Step 3: Use the Custom Selector During Signing**
+
+When handling the `DeviceSigningVerifierCallback`, provide your custom key selector through the configuration:
 
 ```swift
-let customStorage = MyCustomKeyStorage()
-let customAuthenticator = MyCustomAuthenticator()
-let config = DeviceBindingConfig(userKeysStorage: customStorage, deviceAuthenticator: customAuthenticator)
-let binder = PingBinder(config: config)
+import PingBinding
+
+func handleDeviceSigning(callback: DeviceSigningVerifierCallback, onNext: @escaping () -> Void) {
+    Task {
+        let result = await callback.sign { config in
+            // Use custom UI for selecting from multiple device keys
+            config.userKeySelector = CustomUserKeySelector()
+        }
+        
+        switch result {
+        case .success:
+            print("Signing successful")
+        case .failure(let error):
+            print("Signing failed: \(error.localizedDescription)")
+        }
+        
+        onNext()
+    }
+}
 ```
+
+**Note:** The default `DefaultUserKeySelector` presents a system alert with an action sheet showing the available keys. You only need to implement a custom selector if you want a different UI experience.
 
 ## License
 

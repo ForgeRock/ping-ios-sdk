@@ -30,9 +30,11 @@ public class DeviceBindingConfig {
     public var userKeyStorage = UserKeyStorageConfig()
     /// Custom claims to be included in the JWS.
     public var claims: [String: Any] = [:]
-    /// A closure that selects a user key when multiple keys are available for signing.
-    /// The default implementation selects the first key in the list.
-    public var userKeySelector: ([UserKey]) -> UserKey? = { $0.first }
+    #if canImport(UIKit)
+    /// A custom user key selector for choosing from multiple keys.
+    /// The default implementation uses a system alert.
+    public var userKeySelector: UserKeySelector = DefaultUserKeySelector()
+    #endif
     /// A closure that returns the issue time for the JWS.
     /// The default implementation returns the current date.
     public var issueTime: () -> Date = { Date() }

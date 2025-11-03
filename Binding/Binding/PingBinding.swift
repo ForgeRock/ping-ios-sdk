@@ -129,11 +129,20 @@ class Binding {
                       let firstKey = keys.first {
                 retrievedUserKey = firstKey
             } else {
-                if let selectedKey = deviceBindingConfig.userKeySelector(keys) {
-                    retrievedUserKey = selectedKey
-                } else {
+                // Multiple keys available - use the selector to choose
+                #if canImport(UIKit)
+                let prompt = Prompt(title: callback.title, subtitle: callback.subtitle, description: callback.description)
+                guard let selectedKey = await deviceBindingConfig.userKeySelector.selectKey(userKeys: keys, prompt: prompt) else {
+                    throw DeviceBindingError.userCanceled
+                }
+                retrievedUserKey = selectedKey
+                #else
+                // On non-UIKit platforms, default to first key
+                guard let firstKey = keys.first else {
                     throw DeviceBindingError.deviceNotRegistered
                 }
+                retrievedUserKey = firstKey
+                #endif
             }
         }
         

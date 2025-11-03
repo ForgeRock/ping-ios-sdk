@@ -62,6 +62,13 @@ struct DeviceSigningVerifierCallbackView: View {
                 
                 config.authenticatorConfig = biometricConfig
             }
+             
+             For custom user key selection when multiple keys are available:
+             
+            let result = await callback.sign { config in
+                // Use a custom UI for selecting from multiple device keys
+                config.userKeySelector = CustomUserKeySelector()
+            }
              */
             let result = await callback.sign()
             switch result {

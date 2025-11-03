@@ -50,7 +50,7 @@ public class AppPinAuthenticator: DefaultDeviceAuthenticator {
     
     /// - Returns: A `Result` containing the `SecKey` on success, or an `Error` on failure.
     public override func authenticate(keyTag: String) async -> Result<SecKey, Error> {
-        for i in 0..<config.pinRetry {
+        for _ in 0..<config.pinRetry {
             let userPin = await promptForPin(prompt: config.prompt)
             
             guard let pinData = userPin?.data(using: .utf8) else {
