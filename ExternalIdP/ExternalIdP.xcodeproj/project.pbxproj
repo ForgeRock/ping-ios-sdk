@@ -12,23 +12,16 @@
 		EC0815E92D4939EB00F1AD02 /* IdpHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0815E82D4939E400F1AD02 /* IdpHandler.swift */; };
 		EC0815ED2D493A1F00F1AD02 /* IdpResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0815EC2D493A1E00F1AD02 /* IdpResult.swift */; };
 		EC0815EF2D493DC900F1AD02 /* IdpExceptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0815EE2D493DC900F1AD02 /* IdpExceptions.swift */; };
-		EC5016122E436FEE006D8C3A /* IdpCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5016112E436FE7006D8C3A /* IdpCallback.swift */; };
-		EC5016142E436FFE006D8C3A /* SelectIdpCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5016132E436FF1006D8C3A /* SelectIdpCallback.swift */; };
-		EC5016162E437052006D8C3A /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5016152E437052006D8C3A /* PingJourney.framework */; };
-		EC5016172E437052006D8C3A /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5016152E437052006D8C3A /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC9F9FC42D5E1B2100E2A31D /* IdpRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9F9FC32D5E1B1900E2A31D /* IdpRequestHandler.swift */; };
 		EC9F9FC62D5E1E2C00E2A31D /* IdpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9F9FC52D5E1E2800E2A31D /* IdpClient.swift */; };
 		ECA53F902D635C53002B35D4 /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53F8F2D635C53002B35D4 /* PingBrowser.framework */; };
 		ECA53F912D635C53002B35D4 /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53F8F2D635C53002B35D4 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECA53F952D635CF8002B35D4 /* ExternalIdPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA53F932D635CF8002B35D4 /* ExternalIdPTests.swift */; };
 		ECA53FD52D63A48A002B35D4 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53FD42D63A48A002B35D4 /* PingDavinci.framework */; };
-		ECA53FD62D63A48A002B35D4 /* PingDavinci.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53FD42D63A48A002B35D4 /* PingDavinci.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECB7C5C22D54D9100006F1C8 /* IdpCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */; };
 		ECB7C69C2D5A2C1F0006F1C8 /* PingExternalIdP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0815B72D49377500F1AD02 /* PingExternalIdP.framework */; };
 		ECBF06492D50ED7A0066A3BD /* BrowserHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06482D50ED750066A3BD /* BrowserHandler.swift */; };
 		ECF7EB842E46262D002A5E8E /* IdpValidationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB832E462626002A5E8E /* IdpValidationUtils.swift */; };
-		ECF7EB8A2E46553B002A5E8E /* IdpCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB892E465536002A5E8E /* IdpCallbackTests.swift */; };
-		ECF7EB8C2E4656F5002A5E8E /* SelectIdpCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB8B2E4656EA002A5E8E /* SelectIdpCallbackTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,8 +42,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				ECA53F912D635C53002B35D4 /* PingBrowser.framework in Embed Frameworks */,
-				ECA53FD62D63A48A002B35D4 /* PingDavinci.framework in Embed Frameworks */,
-				EC5016172E437052006D8C3A /* PingJourney.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -64,8 +55,6 @@
 		EC0815E82D4939E400F1AD02 /* IdpHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpHandler.swift; sourceTree = "<group>"; };
 		EC0815EC2D493A1E00F1AD02 /* IdpResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpResult.swift; sourceTree = "<group>"; };
 		EC0815EE2D493DC900F1AD02 /* IdpExceptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpExceptions.swift; sourceTree = "<group>"; };
-		EC5016112E436FE7006D8C3A /* IdpCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpCallback.swift; sourceTree = "<group>"; };
-		EC5016132E436FF1006D8C3A /* SelectIdpCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectIdpCallback.swift; sourceTree = "<group>"; };
 		EC5016152E437052006D8C3A /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC9F9FC32D5E1B1900E2A31D /* IdpRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpRequestHandler.swift; sourceTree = "<group>"; };
 		EC9F9FC52D5E1E2800E2A31D /* IdpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpClient.swift; sourceTree = "<group>"; };
@@ -77,8 +66,6 @@
 		ECBF06442D50EBF60066A3BD /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF06482D50ED750066A3BD /* BrowserHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserHandler.swift; sourceTree = "<group>"; };
 		ECF7EB832E462626002A5E8E /* IdpValidationUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpValidationUtils.swift; sourceTree = "<group>"; };
-		ECF7EB892E465536002A5E8E /* IdpCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpCallbackTests.swift; sourceTree = "<group>"; };
-		ECF7EB8B2E4656EA002A5E8E /* SelectIdpCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectIdpCallbackTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,7 +75,6 @@
 			files = (
 				ECA53F902D635C53002B35D4 /* PingBrowser.framework in Frameworks */,
 				ECA53FD52D63A48A002B35D4 /* PingDavinci.framework in Frameworks */,
-				EC5016162E437052006D8C3A /* PingJourney.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,11 +116,9 @@
 				ECBF06402D50E99E0066A3BD /* Handlers */,
 				EC9F9FC52D5E1E2800E2A31D /* IdpClient.swift */,
 				ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */,
-				EC5016112E436FE7006D8C3A /* IdpCallback.swift */,
 				ECF7EB832E462626002A5E8E /* IdpValidationUtils.swift */,
 				EC0815EE2D493DC900F1AD02 /* IdpExceptions.swift */,
 				EC0815EC2D493A1E00F1AD02 /* IdpResult.swift */,
-				EC5016132E436FF1006D8C3A /* SelectIdpCallback.swift */,
 			);
 			path = ExternalIdP;
 			sourceTree = "<group>";
@@ -143,8 +127,6 @@
 			isa = PBXGroup;
 			children = (
 				ECA53F932D635CF8002B35D4 /* ExternalIdPTests.swift */,
-				ECF7EB892E465536002A5E8E /* IdpCallbackTests.swift */,
-				ECF7EB8B2E4656EA002A5E8E /* SelectIdpCallbackTests.swift */,
 			);
 			path = ExternalIdPTests;
 			sourceTree = "<group>";
@@ -296,9 +278,7 @@
 				EC9F9FC62D5E1E2C00E2A31D /* IdpClient.swift in Sources */,
 				ECBF06492D50ED7A0066A3BD /* BrowserHandler.swift in Sources */,
 				EC0815E92D4939EB00F1AD02 /* IdpHandler.swift in Sources */,
-				EC5016122E436FEE006D8C3A /* IdpCallback.swift in Sources */,
 				EC0815ED2D493A1F00F1AD02 /* IdpResult.swift in Sources */,
-				EC5016142E436FFE006D8C3A /* SelectIdpCallback.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,8 +286,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECF7EB8C2E4656F5002A5E8E /* SelectIdpCallbackTests.swift in Sources */,
-				ECF7EB8A2E46553B002A5E8E /* IdpCallbackTests.swift in Sources */,
 				ECA53F952D635CF8002B35D4 /* ExternalIdPTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -339,13 +317,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = "1.3.0-beta3";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExtrernalIdP;
@@ -375,13 +353,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = "1.3.0-beta3";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExtrernalIdP;
@@ -528,8 +506,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = "1.3.0-beta3";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -546,8 +524,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = "1.3.0-beta3";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;

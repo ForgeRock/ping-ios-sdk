@@ -7,19 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A50F945C2E27FA9D00C74086 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50F945B2E27FA9D00C74086 /* PingJourney.framework */; };
-		A50F945D2E27FA9D00C74086 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A50F945B2E27FA9D00C74086 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A5768D302E2ED0A8000290EE /* ProtectCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D2F2E2ED09D000290EE /* ProtectCallbacks.swift */; };
 		A5A31CA52E0A37C700ABBEF7 /* PingProtect.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A31C9C2E0A37C700ABBEF7 /* PingProtect.framework */; };
 		A5A31CC62E0A3C6600ABBEF7 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A31CC52E0A3C6600ABBEF7 /* PingDavinci.framework */; };
-		A5A31CC72E0A3C6600ABBEF7 /* PingDavinci.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5A31CC52E0A3C6600ABBEF7 /* PingDavinci.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5A31CE82E0A41C600ABBEF7 /* PingOneSignals in Frameworks */ = {isa = PBXBuildFile; productRef = A5A31CE72E0A41C600ABBEF7 /* PingOneSignals */; };
-		A5AB90632E26B7D3000E1089 /* AbstractProtectCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90622E26B7D1000E1089 /* AbstractProtectCallback.swift */; };
-		A5AB90652E26B80F000E1089 /* PingOneProtectInitializeCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90642E26B80A000E1089 /* PingOneProtectInitializeCallback.swift */; };
-		A5AB90672E26B842000E1089 /* PingOneProtectEvaluationCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AB90662E26B83E000E1089 /* PingOneProtectEvaluationCallback.swift */; };
 		A5B38B822E4C0B4400692B2B /* MockProtect.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5B38B812E4C0B3D00692B2B /* MockProtect.swift */; };
-		A5CFC8E42E44F3E000CBFC3B /* PingOneProtectEvaluationCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5CFC8E32E44F3DD00CBFC3B /* PingOneProtectEvaluationCallbackTests.swift */; };
-		A5CFC8E72E44FBAA00CBFC3B /* PingOneProtectInitializeCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5CFC8E62E44FBA800CBFC3B /* PingOneProtectInitializeCallbackTests.swift */; };
 		A5F7A4ED2E0E27620033F8B6 /* ProtectLifecycleModuleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5F7A4EA2E0E27620033F8B6 /* ProtectLifecycleModuleTests.swift */; };
 		A5F7A4EE2E0E27620033F8B6 /* ProtectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5F7A4EB2E0E27620033F8B6 /* ProtectTests.swift */; };
 		A5F7A4F62E0E276A0033F8B6 /* Protect.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5F7A4F22E0E276A0033F8B6 /* Protect.swift */; };
@@ -41,33 +32,12 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		A5A31CC82E0A3C6600ABBEF7 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				A5A31CC72E0A3C6600ABBEF7 /* PingDavinci.framework in Embed Frameworks */,
-				A50F945D2E27FA9D00C74086 /* PingJourney.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		A50F945B2E27FA9D00C74086 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A5768D2F2E2ED09D000290EE /* ProtectCallbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectCallbacks.swift; sourceTree = "<group>"; };
 		A5A31C9C2E0A37C700ABBEF7 /* PingProtect.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingProtect.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A31CA42E0A37C700ABBEF7 /* ProtectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProtectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A31CC52E0A3C6600ABBEF7 /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A5AB90622E26B7D1000E1089 /* AbstractProtectCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractProtectCallback.swift; sourceTree = "<group>"; };
-		A5AB90642E26B80A000E1089 /* PingOneProtectInitializeCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneProtectInitializeCallback.swift; sourceTree = "<group>"; };
-		A5AB90662E26B83E000E1089 /* PingOneProtectEvaluationCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneProtectEvaluationCallback.swift; sourceTree = "<group>"; };
 		A5B38B812E4C0B3D00692B2B /* MockProtect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockProtect.swift; sourceTree = "<group>"; };
-		A5CFC8E32E44F3DD00CBFC3B /* PingOneProtectEvaluationCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneProtectEvaluationCallbackTests.swift; sourceTree = "<group>"; };
-		A5CFC8E62E44FBA800CBFC3B /* PingOneProtectInitializeCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneProtectInitializeCallbackTests.swift; sourceTree = "<group>"; };
 		A5F7A4EA2E0E27620033F8B6 /* ProtectLifecycleModuleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectLifecycleModuleTests.swift; sourceTree = "<group>"; };
 		A5F7A4EB2E0E27620033F8B6 /* ProtectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectTests.swift; sourceTree = "<group>"; };
 		A5F7A4EF2E0E276A0033F8B6 /* ProtectError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectError.swift; sourceTree = "<group>"; };
@@ -86,7 +56,6 @@
 			files = (
 				A5A31CC62E0A3C6600ABBEF7 /* PingDavinci.framework in Frameworks */,
 				A5A31CE82E0A41C600ABBEF7 /* PingOneSignals in Frameworks */,
-				A50F945C2E27FA9D00C74086 /* PingJourney.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,25 +98,12 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		A5AB90612E26B7B4000E1089 /* Journey */ = {
-			isa = PBXGroup;
-			children = (
-				A5768D2F2E2ED09D000290EE /* ProtectCallbacks.swift */,
-				A5AB90622E26B7D1000E1089 /* AbstractProtectCallback.swift */,
-				A5AB90642E26B80A000E1089 /* PingOneProtectInitializeCallback.swift */,
-				A5AB90662E26B83E000E1089 /* PingOneProtectEvaluationCallback.swift */,
-			);
-			path = Journey;
-			sourceTree = "<group>";
-		};
 		A5F7A4EC2E0E27620033F8B6 /* ProtectTests */ = {
 			isa = PBXGroup;
 			children = (
 				A5F7A4EB2E0E27620033F8B6 /* ProtectTests.swift */,
 				A5F7A4EA2E0E27620033F8B6 /* ProtectLifecycleModuleTests.swift */,
 				A5F7A4FC2E0E2AAF0033F8B6 /* ProtectCollectorTests.swift */,
-				A5CFC8E32E44F3DD00CBFC3B /* PingOneProtectEvaluationCallbackTests.swift */,
-				A5CFC8E62E44FBA800CBFC3B /* PingOneProtectInitializeCallbackTests.swift */,
 				A5B38B812E4C0B3D00692B2B /* MockProtect.swift */,
 			);
 			path = ProtectTests;
@@ -158,7 +114,6 @@
 			children = (
 				A5F7A4F02E0E276A0033F8B6 /* PrivacyInfo.xcprivacy */,
 				A5F7A4F12E0E276A0033F8B6 /* Protect.h */,
-				A5AB90612E26B7B4000E1089 /* Journey */,
 				A5F7A4F22E0E276A0033F8B6 /* Protect.swift */,
 				A5F7A4F32E0E276A0033F8B6 /* ProtectCollector.swift */,
 				A5F7A4EF2E0E276A0033F8B6 /* ProtectError.swift */,
@@ -189,7 +144,6 @@
 				A5A31C982E0A37C700ABBEF7 /* Sources */,
 				A5A31C992E0A37C700ABBEF7 /* Frameworks */,
 				A5A31C9A2E0A37C700ABBEF7 /* Resources */,
-				A5A31CC82E0A3C6600ABBEF7 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -288,14 +242,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5AB90632E26B7D3000E1089 /* AbstractProtectCallback.swift in Sources */,
 				A5F7A4F62E0E276A0033F8B6 /* Protect.swift in Sources */,
-				A5768D302E2ED0A8000290EE /* ProtectCallbacks.swift in Sources */,
 				A5F7A4F72E0E276A0033F8B6 /* ProtectCollector.swift in Sources */,
 				A5F7A4F82E0E276A0033F8B6 /* ProtectLifecycleModule.swift in Sources */,
 				A5F7A4F92E0E276A0033F8B6 /* ProtectError.swift in Sources */,
-				A5AB90652E26B80F000E1089 /* PingOneProtectInitializeCallback.swift in Sources */,
-				A5AB90672E26B842000E1089 /* PingOneProtectEvaluationCallback.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,8 +254,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5F7A4ED2E0E27620033F8B6 /* ProtectLifecycleModuleTests.swift in Sources */,
-				A5CFC8E42E44F3E000CBFC3B /* PingOneProtectEvaluationCallbackTests.swift in Sources */,
-				A5CFC8E72E44FBAA00CBFC3B /* PingOneProtectInitializeCallbackTests.swift in Sources */,
 				A5F7A4FD2E0E2ABB0033F8B6 /* ProtectCollectorTests.swift in Sources */,
 				A5F7A4EE2E0E27620033F8B6 /* ProtectTests.swift in Sources */,
 				A5B38B822E4C0B4400692B2B /* MockProtect.swift in Sources */,
@@ -339,7 +287,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -375,7 +323,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -527,7 +475,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ProtectTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -544,7 +492,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ProtectTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
