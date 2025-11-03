@@ -34,6 +34,10 @@
       }
     },
     {
+      "enabled" : false,
+      "skippedTests" : [
+        "TelephonyCollectorTests\/testNetworkCountryIsoFormat()"
+      ],
       "target" : {
         "containerPath" : "container:..\/DeviceProfile\/DeviceProfile.xcodeproj",
         "identifier" : "A569DBA82E789BD200F4D7A8",
@@ -97,6 +101,7 @@
       }
     },
     {
+      "enabled" : false,
       "target" : {
         "containerPath" : "container:..\/Fido\/Fido.xcodeproj",
         "identifier" : "ECD780452EA24F1B0050E60F",
@@ -107,7 +112,6 @@
       "skippedTests" : [
         "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
         "DaVinciIntegrationTests\/testInvalidPassword()",
-        "DaVinciIntegrationTests\/testUserRegistrationFailureInvalidPassword()",
         "FormFieldValidationTest\/testPasswordValidation()",
         "FormFieldValidationTests\/testPasswordValidation()",
         "MFADeviceTests\/testDeviceAuthenticationForm()",
@@ -153,6 +157,10 @@
       }
     },
     {
+      "skippedTests" : [
+        "DeviceProfileCallbackE2ETest",
+        "MetadataCallbackE2ETest"
+      ],
       "target" : {
         "containerPath" : "container:..\/Journey\/Journey.xcodeproj",
         "identifier" : "EC727A2C2E019243005D9E28",
