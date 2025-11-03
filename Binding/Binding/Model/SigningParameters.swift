@@ -14,7 +14,7 @@ import Foundation
 /// A struct representing the parameters for signing a JWS during a device binding operation.
 public struct SigningParameters {
     /// The signing algorithm.
-    public let algorithm: String
+    public let algorithm: SecKeyAlgorithm
     /// The key pair to use for signing.
     public let keyPair: KeyPair
     /// The key ID.

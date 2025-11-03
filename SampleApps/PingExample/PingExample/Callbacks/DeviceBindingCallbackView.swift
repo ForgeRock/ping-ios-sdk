@@ -21,14 +21,12 @@ struct DeviceBindingCallbackView: View {
         Task {
             /*
              For using a custom view for PIN collection create a CustomPinCollector and inject it in the
-             ApplicationPinDeviceAuthenticator as shown below.
+             AppPinAuthenticator as shown below.
              
-            let result: Result<[String: Any], Error>
-            if callback.deviceBindingAuthenticationType == .applicationPin {
-                let pinAuthenticator = ApplicationPinDeviceAuthenticator(pinCollector: CustomPinCollector())
-                result = await callback.bind(authenticator: pinAuthenticator)
-            } else {
-                result = await callback.bind()
+            let result = await callback.bind { config in
+                if callback.deviceBindingAuthenticationType == .applicationPin {
+                    config.deviceAuthenticator = AppPinAuthenticator(pinCollector: CustomPinCollector())
+                }
             }
              */
             let result = await callback.bind()

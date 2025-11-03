@@ -34,17 +34,13 @@ open class DefaultDeviceAuthenticator: DeviceAuthenticator {
     /// Default implementation throws `DeviceBindingStatus.unsupported`, requiring subclasses to provide concrete implementation.
     /// - Throws: `DeviceBindingStatus.unsupported` if not overridden by a subclass.
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
-    open func generateKeys() async throws -> KeyPair {
+    open func register() async throws -> KeyPair {
          throw DeviceBindingStatus.unsupported(errorMessage: "Cannot use DefaultDeviceAuthenticator. Must be subclassed")
     }
     
-    /// Authenticates the user using the authenticator's mechanism.
-    /// Default implementation throws `DeviceBindingError.unknown`, requiring subclasses to provide concrete implementation.
-    /// - Parameter keyTag: The unique identifier for the key to be used for authentication.
-    /// - Returns: The private key associated with the authenticated user.
-    /// - Throws: `DeviceBindingError.unknown` if not overridden by a subclass.
-    open func authenticate(keyTag: String) async throws -> SecKey {
-        throw DeviceBindingError.unknown // Should be implemented by subclasses
+    /// - Returns: A `Result` containing the `SecKey` on success, or an `Error` on failure.
+    open func authenticate(keyTag: String) async -> Result<SecKey, Error> {
+        return .failure(DeviceBindingError.unknown) // Should be implemented by subclasses
     }
     
     /// Checks if the authenticator is supported on the current device.
@@ -92,7 +88,7 @@ open class DefaultDeviceAuthenticator: DeviceAuthenticator {
         }
         
         // Sign the JWT using CompactJwt utility
-        return try CompactJwt.sign(claims: claims, privateKey: params.keyPair.privateKey, publicKey: params.keyPair.publicKey, algorithm: .ecdsaSignatureMessageX962SHA256, kid: params.kid)
+        return try CompactJwt.sign(claims: claims, privateKey: params.keyPair.privateKey, publicKey: params.keyPair.publicKey, algorithm: params.algorithm, kid: params.kid)
     }
     
     
@@ -125,7 +121,7 @@ open class DefaultDeviceAuthenticator: DeviceAuthenticator {
         }
         
         // Sign the JWT using CompactJwt utility
-        return try CompactJwt.sign(claims: claims, privateKey: params.privateKey, publicKey: params.publicKey, algorithm: .ecdsaSignatureMessageX962SHA256, kid: params.userKey.kid)
+        return try CompactJwt.sign(claims: claims, privateKey: params.privateKey, publicKey: params.publicKey, algorithm: params.algorithm, kid: params.userKey.kid)
     }
     
     

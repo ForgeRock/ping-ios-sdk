@@ -22,9 +22,11 @@ struct DeviceSigningVerifierCallbackView: View {
         Task {
             /*
             For using a custom view for PIN collection create a CustomPinCollector and inject it in the
-            ApplicationPinDeviceAuthenticator as shown below.
-            let pinAuthenticator = ApplicationPinDeviceAuthenticator(pinCollector: CustomPinCollector())
-            let result = await callback.sign(authenticator: pinAuthenticator)
+            configuration as shown below.
+            
+            let result = await callback.sign { config in
+                config.pinCollector = CustomPinCollector()
+            }
              */
             let result = await callback.sign()
             switch result {

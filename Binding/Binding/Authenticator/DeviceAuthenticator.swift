@@ -23,13 +23,10 @@ public protocol DeviceAuthenticator {
     /// Generates a new public and private key pair for the authenticator.
     /// - Throws: `KeyPairGenerationError` if key generation fails.
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
-    func generateKeys() async throws -> KeyPair
+    func register() async throws -> KeyPair
     
-    /// Authenticates the user using the authenticator's mechanism.
-    /// - Parameter keyTag: The unique identifier for the key to be used for authentication.
-    /// - Returns: The private key associated with the authenticated user.
-    /// - Throws: `AuthenticationError` if authentication fails.
-    func authenticate(keyTag: String) async throws -> SecKey
+    /// - Returns: A `Result` containing the `SecKey` on success, or an `Error` on failure.
+    func authenticate(keyTag: String) async -> Result<SecKey, Error>
     
     /// Checks if the authenticator is supported on the current device.
     /// - Parameter attestation: The attestation type to consider for support.

@@ -22,17 +22,33 @@ public enum DeviceBindingAuthenticationType: String, Codable, Sendable {
     /// No user authentication is required.
     case none = "NONE"
     
+    #if canImport(UIKit)
     /// Returns the appropriate `DeviceAuthenticator` for the authentication type.
-    func getAuthType() -> DeviceAuthenticator {
+    func getAuthType(pinCollector: PinCollector? = nil) -> DeviceAuthenticator {
         switch self {
         case .biometricOnly:
             return BiometricOnlyAuthenticator()
         case .biometricAllowFallback:
-            return BiometricAndDeviceCredentialAuthenticator()
+            return BiometricDeviceCredentialAuthenticator()
         case .applicationPin:
-            return ApplicationPinDeviceAuthenticator()
+            return AppPinAuthenticator(pinCollector: pinCollector ?? DefaultPinCollector())
         case .none:
             return NoneAuthenticator()
         }
     }
+    #else
+    /// Returns the appropriate `DeviceAuthenticator` for the authentication type.
+    func getAuthType(pinCollector: PinCollector? = nil) -> DeviceAuthenticator {
+        switch self {
+        case .biometricOnly:
+            return BiometricOnlyAuthenticator()
+        case .biometricAllowFallback:
+            return BiometricDeviceCredentialAuthenticator()
+        case .applicationPin:
+            fatalError("Application PIN is not supported on this platform.")
+        case .none:
+            return NoneAuthenticator()
+        }
+    }
+    #endif
 }

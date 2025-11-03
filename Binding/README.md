@@ -170,14 +170,11 @@ import PingBinding
 
 func handleDeviceBinding(callback: DeviceBindingCallback, onNext: @escaping () -> Void) {
     Task {
-        let result: Result<[String: Any], Error>
-        
-        if callback.deviceBindingAuthenticationType == .applicationPin {
-            // Initialize the authenticator with your custom collector
-            let pinAuthenticator = ApplicationPinDeviceAuthenticator(pinCollector: CustomPinCollector())
-            result = await callback.bind(authenticator: pinAuthenticator)
-        } else {
-            result = await callback.bind()
+        let result = await callback.bind { config in
+            if callback.deviceBindingAuthenticationType == .applicationPin {
+                // Initialize the authenticator with your custom collector
+                config.deviceAuthenticator = ApplicationPinDeviceAuthenticator(pinCollector: CustomPinCollector())
+            }
         }
         
         // Handle result...

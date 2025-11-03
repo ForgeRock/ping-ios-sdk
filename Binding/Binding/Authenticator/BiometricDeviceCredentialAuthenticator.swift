@@ -14,7 +14,7 @@ import LocalAuthentication
 /// An authenticator that uses biometrics (Face ID or Touch ID) with a fallback to device credentials (passcode/PIN).
 /// This class extends `DefaultDeviceAuthenticator` and provides specific implementations
 /// for key generation, authentication, and support checks for this combined authentication type.
-public class BiometricAndDeviceCredentialAuthenticator: DefaultDeviceAuthenticator {
+public class BiometricDeviceCredentialAuthenticator: DefaultDeviceAuthenticator {
     
     /// The type of authenticator, specifically `.biometricAllowFallback`.
     public override func type() -> DeviceBindingAuthenticationType {
@@ -25,7 +25,7 @@ public class BiometricAndDeviceCredentialAuthenticator: DefaultDeviceAuthenticat
     /// The key is stored in the Secure Enclave (if available) and associated with a unique key tag.
     /// - Throws: `CryptoKeyError` if key generation fails.
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
-    public override func generateKeys() async throws -> KeyPair {
+    public override func register() async throws -> KeyPair {
         let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
         guard let accessControl = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
                                                             kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
@@ -36,15 +36,8 @@ public class BiometricAndDeviceCredentialAuthenticator: DefaultDeviceAuthenticat
         return try cryptoKey.generateKeyPair(attestation: .none, accessControl: accessControl)
     }
     
-    /// Authenticates the user using biometrics with a fallback to device credentials (passcode/PIN).
-    /// This method prompts the user for verification to access the private key.
-    /// - Parameter keyTag: The unique identifier of the private key to be accessed.
-    /// - Returns: The `SecKey` representing the private key if authentication is successful.
-    /// - Throws:
-    ///   - `DeviceBindingError.deviceNotSupported` if the device does not support the authentication policy.
-    ///   - `DeviceBindingError.biometricError` if biometric authentication fails.
-    ///   - `DeviceBindingError.unknown` for other unexpected errors.
-    public override func authenticate(keyTag: String) async throws -> SecKey {
+    /// - Returns: A `Result` containing the `SecKey` on success, or an `Error` on failure.
+    public override func authenticate(keyTag: String) async -> Result<SecKey, Error> {
         // Initialize LAContext for Local Authentication
         let context = LAContext()
         // Customize the cancel button title for the authentication prompt
@@ -55,15 +48,15 @@ public class BiometricAndDeviceCredentialAuthenticator: DefaultDeviceAuthenticat
         
         // Check if the device can evaluate the defined policy
         guard context.canEvaluatePolicy(policy, error: &error) else {
-            throw DeviceBindingError.deviceNotSupported
+            return .failure(DeviceBindingError.deviceNotSupported)
         }
         do {
             let privateKey = try self.getPrivateKey(keyTag: keyTag)
-            return privateKey
+            return .success(privateKey)
         }
         catch {
             // Propagate any errors during private key retrieval
-            throw DeviceBindingError.biometricError(error)
+            return .failure(DeviceBindingError.biometricError(error))
         }
     }
     

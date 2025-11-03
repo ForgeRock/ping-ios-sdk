@@ -116,24 +116,6 @@ public class DeviceBindingCallback: AbstractCallback, @unchecked Sendable, Journ
         }
     }
     
-    /// Binds a device to a user account with a custom authenticator.
-    /// This method calls the `PingBinder` to perform the binding operation.
-    /// - Parameters:
-    ///   - authenticator: The custom `DeviceAuthenticator` to use for binding.
-    /// - Returns: A `Result` containing the callback's JSON representation or an `Error`.
-    public func bind(authenticator: DeviceAuthenticator) async -> Result<[String: Any], Error> {
-        do {
-            _ = try await Binding.bind(callback: self, journey: self.journey) { config in
-                config.deviceAuthenticator = authenticator
-            }
-            return .success(self.json)
-        } catch {
-            let deviceBindingStatus = mapError(error)
-            setClientError(deviceBindingStatus.clientError)
-            return .failure(deviceBindingStatus)
-        }
-    }
-    
     /// Maps an `Error` to a `DeviceBindingStatus`.
     /// - Parameter error: The error to map.
     /// - Returns: A `DeviceBindingStatus` representing the error.
@@ -156,6 +138,8 @@ public class DeviceBindingCallback: AbstractCallback, @unchecked Sendable, Journ
                 return .unAuthorize
             case .timeout:
                 return .timeout
+            case .unsupported(errorMessage: let errorMessage):
+                return .unsupported(errorMessage: errorMessage)
             }
         }
         return .unsupported(errorMessage: error.localizedDescription)

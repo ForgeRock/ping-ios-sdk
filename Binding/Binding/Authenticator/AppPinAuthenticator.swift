@@ -5,15 +5,15 @@ import LocalAuthentication
 
 /// An authenticator that uses an application PIN for user verification.
 /// This class provides an implementation for generating PIN-protected keys and authenticating the user by prompting for the PIN.
-public class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
+public class AppPinAuthenticator: DefaultDeviceAuthenticator {
     
     private var pin: String?
     private let pinCollector: PinCollector
     
     /// Initializes the authenticator with a `PinCollector`.
     /// - Parameter pinCollector: The `PinCollector` to use for gathering the user's PIN.
-    public init(pinCollector: PinCollector? = nil) {
-        self.pinCollector = pinCollector ?? DefaultPinCollector()
+    public init(pinCollector: PinCollector) {
+        self.pinCollector = pinCollector
         super.init()
     }
     
@@ -27,7 +27,7 @@ public class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
     /// - Throws: `DeviceBindingError.unknown` if access control creation fails.
     ///           `CryptoKeyError` if key generation fails.
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
-    public override func generateKeys() async throws -> KeyPair {
+    public override func register() async throws -> KeyPair {
         let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
 
         let userPin: String?
@@ -56,13 +56,8 @@ public class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
         return try cryptoKey.generateKeyPair(attestation: .none, accessControl: accessControl, pin: userPin)
     }
     
-    /// Authenticates the user by prompting for their application PIN.
-    /// This method displays a `UIAlertController` to get the PIN from the user and then uses it to access the private key.
-    /// - Parameter keyTag: The unique identifier of the private key to be accessed.
-    /// - Returns: The `SecKey` representing the private key if authentication is successful.
-    /// - Throws: `DeviceBindingError.authenticationFailed` if the user cancels or provides an incorrect PIN.
-    ///           `DeviceBindingError.unknown` for other unexpected errors.
-    public override func authenticate(keyTag: String) async throws -> SecKey {
+    /// - Returns: A `Result` containing the `SecKey` on success, or an `Error` on failure.
+    public override func authenticate(keyTag: String) async -> Result<SecKey, Error> {
         // The UI must be presented on the main thread.
         let userPin: String?
         if let pin = self.pin, !pin.isEmpty {
@@ -73,7 +68,7 @@ public class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
         }
         
         guard let pinData = userPin?.data(using: .utf8) else {
-            throw DeviceBindingError.authenticationFailed
+            return .failure(DeviceBindingError.authenticationFailed)
         }
         
         // The LAContext will hold the PIN credential.
@@ -93,10 +88,10 @@ public class ApplicationPinDeviceAuthenticator: DefaultDeviceAuthenticator {
         let status = SecItemCopyMatching(query as CFDictionary, &item)
         
         guard status == errSecSuccess, let keyItem = item else {
-            throw DeviceBindingError.authenticationFailed
+            return .failure(DeviceBindingError.authenticationFailed)
         }
         
-        return keyItem as! SecKey
+        return .success(keyItem as! SecKey)
     }
     
     /// Checks if the authenticator is supported. Since it's a software-based PIN, it is always supported.

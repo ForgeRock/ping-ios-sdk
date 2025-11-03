@@ -51,16 +51,21 @@ class Binding {
         try await Binding.clearKeys(deviceAuthenticator: deviceAuthenticator, userKeyStorage: userKeyStorage, userId: callback.userId)
         
         // Generate a new key pair and authenticate the user.
-        let keyPair = try await deviceAuthenticator.generateKeys()
-        _ = try await deviceAuthenticator.authenticate(keyTag: keyPair.keyTag)
+        let keyPair = try await deviceAuthenticator.register()
+        let authResult = await deviceAuthenticator.authenticate(keyTag: keyPair.keyTag)
         
-        // Store the new user key.
-        let newUserKey = UserKey(keyTag: keyPair.keyTag, userId: callback.userId, username: callback.userName, kid: keyPair.keyTag, authType: callback.deviceBindingAuthenticationType)
-        
-        try await userKeyStorage.save(userKey: newUserKey)
+        switch authResult {
+        case .success:
+            // Store the new user key.
+            let newUserKey = UserKey(keyTag: keyPair.keyTag, userId: callback.userId, username: callback.userName, kid: keyPair.keyTag, authType: callback.deviceBindingAuthenticationType)
+            
+            try await userKeyStorage.save(userKey: newUserKey)
+        case .failure(let error):
+            throw error
+        }
         
         // Create and sign a JWS with the new key.
-        let signingParams = SigningParameters(algorithm: deviceBindingConfig.signingAlgorithm,
+        let signingParams = SigningParameters(algorithm: try deviceBindingConfig.getSecKeyAlgorithm(),
                                               keyPair: keyPair,
                                               kid: keyPair.keyTag,
                                               userId: callback.userId,
@@ -142,13 +147,22 @@ class Binding {
         deviceAuthenticator.journey = callback.journey
         
         // Authenticate the user.
-        let privateKey = try await deviceAuthenticator.authenticate(keyTag: retrievedUserKey.keyTag)
+        let authResult = await deviceAuthenticator.authenticate(keyTag: retrievedUserKey.keyTag)
+        
+        let privateKey: SecKey
+        switch authResult {
+        case .success(let key):
+            privateKey = key
+        case .failure(let error):
+            throw error
+        }
+
         guard let publicKey = SecKeyCopyPublicKey(privateKey) else {
             throw DeviceBindingError.unknown
         }
         
         // Create and sign a JWS with the user's key.
-        let signingParams = UserKeySigningParameters(algorithm: deviceBindingConfig.signingAlgorithm,
+        let signingParams = UserKeySigningParameters(algorithm: try deviceBindingConfig.getSecKeyAlgorithm(),
                                                      userKey: retrievedUserKey,
                                                      privateKey: privateKey,
                                                      publicKey: publicKey,

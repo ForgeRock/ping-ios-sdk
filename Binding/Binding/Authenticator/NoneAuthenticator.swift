@@ -24,17 +24,13 @@ public class NoneAuthenticator: DefaultDeviceAuthenticator {
     /// Generates a new key pair without any specific access control.
     /// - Returns: A new `KeyPair`.
     /// - Throws: A `CryptoKeyError` if key generation fails.
-    public override func generateKeys() async throws -> KeyPair {
+    public override func register() async throws -> KeyPair {
         let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
         return try cryptoKey.generateKeyPair(attestation: .none)
     }
     
-    /// Authenticates the user by retrieving the private key from the keychain.
-    /// No user interaction is required.
-    /// - Parameter keyTag: The tag of the key to retrieve.
-    /// - Returns: The `SecKey` if found.
-    /// - Throws: A `DeviceBindingError.deviceNotRegistered` if the key is not found.
-    public override func authenticate(keyTag: String) async throws -> SecKey {
+    /// - Returns: A `Result` containing the `SecKey` on success, or an `Error` on failure.
+    public override func authenticate(keyTag: String) async -> Result<SecKey, Error> {
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
             kSecAttrApplicationTag as String: keyTag.data(using: .utf8) ?? Data(),
@@ -45,9 +41,9 @@ public class NoneAuthenticator: DefaultDeviceAuthenticator {
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
         guard status == errSecSuccess, let item = item else {
-            throw DeviceBindingError.deviceNotRegistered
+            return .failure(DeviceBindingError.deviceNotRegistered)
         }
-        return (item as! SecKey)
+        return .success(item as! SecKey)
     }
     
     /// Checks if the authenticator is supported.

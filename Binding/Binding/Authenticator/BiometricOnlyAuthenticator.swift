@@ -27,7 +27,7 @@ public class BiometricOnlyAuthenticator: DefaultDeviceAuthenticator {
     /// The key is stored in the Secure Enclave (if available) and associated with a unique key tag.
     /// - Throws: `CryptoKeyError` if key generation fails.
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
-    public override func generateKeys() async throws -> KeyPair {
+    public override func register() async throws -> KeyPair {
         // Create a new CryptoKey with a unique identifier
         let cryptoKey = CryptoKey(keyTag: UUID().uuidString)
         
@@ -40,15 +40,8 @@ public class BiometricOnlyAuthenticator: DefaultDeviceAuthenticator {
         return try cryptoKey.generateKeyPair(attestation: .none, accessControl: accessControl)
     }
     
-    /// Authenticates the user using biometrics (Face ID or Touch ID).
-    /// This method prompts the user for biometric verification to access the private key.
-    /// - Parameter keyTag: The unique identifier of the private key to be accessed.
-    /// - Returns: The `SecKey` representing the private key if authentication is successful.
-    /// - Throws:
-    ///   - `DeviceBindingError.deviceNotSupported` if the device does not support biometrics.
-    ///   - `DeviceBindingError.biometricError` if biometric authentication fails.
-    ///   - `DeviceBindingError.unknown` for other unexpected errors.
-    public override func authenticate(keyTag: String) async throws -> SecKey {
+    /// - Returns: A `Result` containing the `SecKey` on success, or an `Error` on failure.
+    public override func authenticate(keyTag: String) async -> Result<SecKey, Error> {
         // Initialize LAContext for Local Authentication
         let context = LAContext()
         // Customize the cancel button title for the biometric prompt
@@ -62,15 +55,15 @@ public class BiometricOnlyAuthenticator: DefaultDeviceAuthenticator {
         
         // Check if the device can evaluate the biometric policy
         guard context.canEvaluatePolicy(policy, error: &error) else {
-            throw DeviceBindingError.deviceNotSupported
+            return .failure(DeviceBindingError.deviceNotSupported)
         }
         
         do {
             let privateKey = try self.getPrivateKey(keyTag: keyTag)
-            return privateKey
+            return .success(privateKey)
         }
         catch {
-            throw DeviceBindingError.biometricError(error)
+            return .failure(DeviceBindingError.biometricError(error))
         }
     }
     

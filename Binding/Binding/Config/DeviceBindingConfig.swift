@@ -18,8 +18,8 @@ import UIKit
 /// This class allows you to customize the behavior of the device binding and signing process.
 public class DeviceBindingConfig {
     /// The signing algorithm to use for the JWS.
-    /// The default is `ES256`.
-    public var signingAlgorithm: String = "ES256"
+    /// The default is `ES512`. Allowed values are "ES256" and "ES512".
+    public var signingAlgorithm: String = "ES512"
     #if canImport(UIKit)
     /// The name of the device.
     /// The default is the current device name.
@@ -45,9 +45,6 @@ public class DeviceBindingConfig {
     /// A closure that returns the expiration time for the JWS.
     /// The default implementation returns the current date plus the given timeout in seconds.
     public var expirationTime: (Int) -> Date = { Date(timeIntervalSinceNow: TimeInterval($0)) }
-    
-    /// The algorithm to be used for signing.
-    public var algorithm: SecKeyAlgorithm = .ecdsaSignatureMessageX962SHA256
     /// The timeout for the operation.
     public var timeout: Int = 60
     /// The attestation option.
@@ -56,6 +53,20 @@ public class DeviceBindingConfig {
     public var deviceBindingAuthenticationType: DeviceBindingAuthenticationType = .none
     /// The custom device authenticator to be used.
     public var deviceAuthenticator: DeviceAuthenticator?
+    /// The custom pin collector to be used.
+    public var pinCollector: PinCollector?
+    
+    /// The algorithm to be used for signing. It is derived from `signingAlgorithm`.
+    internal func getSecKeyAlgorithm() throws -> SecKeyAlgorithm {
+        switch signingAlgorithm {
+        case "ES256":
+            return .ecdsaSignatureMessageX962SHA256
+        case "ES512":
+            return .ecdsaSignatureMessageX962SHA512
+        default:
+            throw DeviceBindingError.unsupported(errorMessage: "Unsupported signing algorithm: \(signingAlgorithm). Only ES256 and ES512 are supported.")
+        }
+    }
     
     /// Initializes a new `DeviceBindingConfig`.
     public init() { }
@@ -68,7 +79,7 @@ public class DeviceBindingConfig {
     func authenticator(type: DeviceBindingAuthenticationType, prompt: Prompt) -> DeviceAuthenticator {
         /// If a custom device authenticator is provided, use it.
         guard let deviceAuthenticator = deviceAuthenticator else {
-            let authenticator = type.getAuthType()
+            let authenticator = type.getAuthType(pinCollector: pinCollector)
             authenticator.setPrompt(prompt)
             return authenticator
         }

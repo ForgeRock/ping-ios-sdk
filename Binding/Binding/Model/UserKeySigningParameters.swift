@@ -14,7 +14,7 @@ import Foundation
 /// A struct representing the parameters for signing a JWS with a previously bound user key.
 public struct UserKeySigningParameters {
     /// The signing algorithm.
-    public let algorithm: String
+    public let algorithm: SecKeyAlgorithm
     /// The user key to use for signing.
     public let userKey: UserKey
     /// The private key to use for signing.

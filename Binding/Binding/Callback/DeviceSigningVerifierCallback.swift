@@ -128,6 +128,8 @@ public class DeviceSigningVerifierCallback: AbstractCallback, @unchecked Sendabl
                 return .unAuthorize
             case .timeout:
                 return .timeout
+            case .unsupported(errorMessage: let errorMessage):
+                return .unsupported(errorMessage: errorMessage)
             }
         }
         return .unsupported(errorMessage: error.localizedDescription)
