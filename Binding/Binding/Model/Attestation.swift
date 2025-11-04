@@ -12,7 +12,7 @@
 import Foundation
 
 /// An enum representing the type of attestation to be performed when generating a new key pair.
-public enum Attestation {
+public enum Attestation: Equatable {
     /// No attestation is performed.
     case none
     /// Attestation is performed with the given challenge.
