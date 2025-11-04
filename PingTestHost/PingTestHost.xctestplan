@@ -190,6 +190,13 @@
         "identifier" : "A5C0ABFC2EAFFFDF00846D16",
         "name" : "ReCaptchaEnterpriseTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Push\/Push.xcodeproj",
+        "identifier" : "1B7C49B82EAAB6E300E3C0AC",
+        "name" : "PushTests"
+      }
     }
   ],
   "version" : 1
