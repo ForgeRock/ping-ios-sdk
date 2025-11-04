@@ -55,7 +55,7 @@ jobs:
           MEND_USER_KEY: ${{ secrets.MEND_USER_KEY }}
           MEND_URL: ${{ vars.MEND_SERVER_URL }}
         shell: bash
-        timeout-minutes: 30
+        timeout-minutes: 40
         run: |
           mend dep --no-color -s ${{ vars.MEND_PRODUCT_NAME }}//${{ vars.MEND_PROJECT_NAME }} -u > mend-sca-scan-result.txt
 
@@ -122,7 +122,7 @@ jobs:
           MEND_URL: ${{ vars.MEND_SERVER_URL }}
           MEND_SAST_PATH_EXCLUSIONS: ${{ vars.MEND_SAST_PATH_EXCLUSIONS }}
         shell: bash
-        timeout-minutes: 30
+        timeout-minutes: 40
         if: always()
         run: |
           mend code --report --filename ${{ vars.MEND_SAST_REPORT_NAME }} --formats json --non-interactive --scope ${{ vars.MEND_PRODUCT_NAME }}//${{ vars.MEND_PROJECT_NAME }} > mend-sast-scan-result.txt || true

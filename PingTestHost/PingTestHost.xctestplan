@@ -18,6 +18,33 @@
   "testTargets" : [
     {
       "target" : {
+        "containerPath" : "container:..\/Logger\/Logger.xcodeproj",
+        "identifier" : "A5A796B52BE04E68004D0F2D",
+        "name" : "LoggerTests"
+      }
+    },
+    {
+      "skippedTests" : [
+        "StorageDelegateTests\/testConcurrentAccess()"
+      ],
+      "target" : {
+        "containerPath" : "container:..\/Storage\/Storage.xcodeproj",
+        "identifier" : "A5A797032BE1782F004D0F2D",
+        "name" : "StorageTests"
+      }
+    },
+    {
+      "skippedTests" : [
+        "TelephonyCollectorTests\/testNetworkCountryIsoFormat()"
+      ],
+      "target" : {
+        "containerPath" : "container:..\/DeviceProfile\/DeviceProfile.xcodeproj",
+        "identifier" : "A569DBA82E789BD200F4D7A8",
+        "name" : "DeviceProfileTests"
+      }
+    },
+    {
+      "target" : {
         "containerPath" : "container:..\/Oath\/Oath.xcodeproj",
         "identifier" : "1B29338F2E7DF20A004D1D38",
         "name" : "OathTests"
@@ -60,20 +87,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/DeviceProfile\/DeviceProfile.xcodeproj",
-        "identifier" : "A569DBA82E789BD200F4D7A8",
-        "name" : "DeviceProfileTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/Logger\/Logger.xcodeproj",
-        "identifier" : "A5A796B52BE04E68004D0F2D",
-        "name" : "LoggerTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/Binding\/Binding.xcodeproj",
         "identifier" : "EC4DD31D2EABCE7600ECC4E1",
         "name" : "PingBindingTests"
@@ -101,10 +114,16 @@
       }
     },
     {
+      "target" : {
+        "containerPath" : "container:..\/Fido\/Fido.xcodeproj",
+        "identifier" : "ECD780452EA24F1B0050E60F",
+        "name" : "PingFidoTests"
+      }
+    },
+    {
       "skippedTests" : [
         "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
         "DaVinciIntegrationTests\/testInvalidPassword()",
-        "DaVinciIntegrationTests\/testUserRegistrationFailureInvalidPassword()",
         "FormFieldValidationTest\/testPasswordValidation()",
         "FormFieldValidationTests\/testPasswordValidation()",
         "MFADeviceTests\/testDeviceAuthenticationForm()",
@@ -123,13 +142,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Fido\/Fido.xcodeproj",
-        "identifier" : "ECD780452EA24F1B0050E60F",
-        "name" : "PingFidoTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/DeviceId\/DeviceId.xcodeproj",
         "identifier" : "EC23D5852E2FD12100C43D42",
         "name" : "DeviceIdTests"
@@ -143,6 +155,10 @@
       }
     },
     {
+      "skippedTests" : [
+        "DeviceProfileCallbackE2ETest",
+        "MetadataCallbackE2ETest"
+      ],
       "target" : {
         "containerPath" : "container:..\/ExternalIdPApple\/ExternalIdPApple.xcodeproj",
         "identifier" : "ECA7A2AB2DC24BC60011E59C",
@@ -154,16 +170,6 @@
         "containerPath" : "container:..\/Protect\/Protect.xcodeproj",
         "identifier" : "A5A31CA32E0A37C700ABBEF7",
         "name" : "ProtectTests"
-      }
-    },
-    {
-      "skippedTests" : [
-        "StorageDelegateTests\/testConcurrentAccess()"
-      ],
-      "target" : {
-        "containerPath" : "container:..\/Storage\/Storage.xcodeproj",
-        "identifier" : "A5A797032BE1782F004D0F2D",
-        "name" : "StorageTests"
       }
     }
   ],

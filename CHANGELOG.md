@@ -1,3 +1,13 @@
+## [1.3.0]
+#### Added
+- New `PingProtect` module [SDKS-4071]
+- Support for the `Protect` collector and integration with DaVinci [SDKS-4073]
+- New `PingOidc` login module with integrated browser support [SDKS-4149]
+
+#### Updated
+- Country code format for the `PhoneNumber` collector in DaVinci [SDKS-4199]
+- Redesigned and improved PingExample app [SDKS-4104]
+
 ## [1.2.0]
 
 #### Added
