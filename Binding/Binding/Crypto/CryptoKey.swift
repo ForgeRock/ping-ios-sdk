@@ -39,16 +39,21 @@ public class CryptoKey {
                                                                       .privateKeyUsage,
                                                                       nil)!
         
+        
         var attributes: [String: Any] = [
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
             kSecAttrKeySizeInBits as String: keySizeInBits,
-            kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
             kSecPrivateKeyAttrs as String: [
                 kSecAttrIsPermanent as String: true,
                 kSecAttrApplicationTag as String: keyTag.data(using: .utf8) ?? Data(),
                 kSecAttrAccessControl as String: access
             ]
         ]
+
+        // Only add the Secure Enclave attribute if we are NOT in the simulator
+        #if !targetEnvironment(simulator)
+            attributes[kSecAttrTokenID as String] = kSecAttrTokenIDSecureEnclave
+        #endif
         
         
         if let pinData = pin?.data(using: .utf8) {

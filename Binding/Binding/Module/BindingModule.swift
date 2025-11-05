@@ -14,17 +14,21 @@ import PingJourney
 import PingMfaCommons
 
 /// A module for handling device binding and signing callbacks.
-/// This module registers the `DeviceBindingCallback` and `DeviceSigningVerifierCallback` with the `CallbackRegistry`.
-public class BindingModule {
+/// The callbacks are automatically registered when `CallbackRegistry.shared.registerDefaultCallbacks()` is called.
+/// Manual registration using `BindingModule.register()` is optional and only needed if you're not using the Journey framework.
+public class BindingModule: NSObject {
     
     /// Initializes a new `BindingModule`.
-    public init() {}
+    public override init() {}
     
     /// Registers the device binding and signing callbacks with the `CallbackRegistry`.
-    /// This method should be called once at application startup.
-    public static func register() {
-        CallbackRegistry.shared.register(type: "DeviceBindingCallback", callback: DeviceBindingCallback.self)
-        CallbackRegistry.shared.register(type: "DeviceSigningVerifierCallback", callback: DeviceSigningVerifierCallback.self)
+    /// 
+    /// **Note:** This method is optional when using the Journey framework, as callbacks are automatically
+    /// registered when `CallbackRegistry.shared.registerDefaultCallbacks()` is called.
+    /// Only call this method if you need to register callbacks manually outside of the Journey flow.
+    @objc public static func registerCallbacks() {
+        CallbackRegistry.shared.register(type: Constants.deviceBindingCallback, callback: DeviceBindingCallback.self)
+        CallbackRegistry.shared.register(type: Constants.deviceSigningVerifierCallback, callback: DeviceSigningVerifierCallback.self)
     }
     
     /// Retrieves all stored binding keys.

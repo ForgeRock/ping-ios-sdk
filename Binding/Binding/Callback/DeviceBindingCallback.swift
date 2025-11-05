@@ -13,7 +13,7 @@ import PingJourney
 import PingOrchestrate
 
 /// A Journey callback for handling device binding.
-/// This callback is received from the PingFederate authentication flow when a device needs to be bound to a user account.
+/// This callback is received from the AIC authentication flow when a device needs to be bound to a user account.
 public class DeviceBindingCallback: AbstractCallback, @unchecked Sendable, JourneyAware, ContinueNodeAware {
     /// The `Journey` object associated with the current authentication flow.
     public var journey: Journey?

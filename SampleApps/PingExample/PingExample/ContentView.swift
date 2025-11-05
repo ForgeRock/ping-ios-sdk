@@ -23,10 +23,6 @@ import PingBinding
 @main
 struct MyApp: App {
     
-    init() {
-        BindingModule.register()
-    }
-    
     // Create an instance of the manager.
     // @StateObject ensures it's kept alive for the app's lifecycle.
     @StateObject private var sceneManager = ScenePhaseManager()

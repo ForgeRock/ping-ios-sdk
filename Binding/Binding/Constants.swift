@@ -11,7 +11,7 @@
 
 import Foundation
 
-/// Constants used throughout the PingBinding SDK.
+/// Constants used throughout the PingBinding Module.
 public struct Constants {
     
     // MARK: - Callback Input Keys
@@ -70,4 +70,8 @@ public struct Constants {
     public static let ios: String = "ios"
     /// The issuer key.
     public static let iss: String = "iss"
+    /// The DeviceBindingCallback key
+    public static let deviceBindingCallback: String = "DeviceBindingCallback"
+    /// The deviceSigningVerifierCallback key
+    public static let deviceSigningVerifierCallback: String = "DeviceSigningVerifierCallback"
 }

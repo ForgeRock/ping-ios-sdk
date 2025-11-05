@@ -29,7 +29,7 @@ public class AppPinAuthenticator: DefaultDeviceAuthenticator {
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
     public override func register() async throws -> KeyPair {
         let cryptoKey = CryptoKey(keyTag: config.keyTag)
-
+        
         guard let userPin = await promptForPin(prompt: config.prompt), !userPin.isEmpty else {
             throw DeviceBindingError.authenticationFailed
         }
@@ -58,11 +58,17 @@ public class AppPinAuthenticator: DefaultDeviceAuthenticator {
             }
             
             let context = LAContext()
-            context.setCredential(pinData, type: .applicationPassword)
+            let success = context.setCredential(pinData, type: .applicationPassword)
+            
+            if !success {
+                // The call succeeded but returned false (e.g., credential could not be set)
+                return .failure(DeviceBindingError.deviceNotSupported)
+            }
+            
             
             let query: [String: Any] = [
                 kSecClass as String: kSecClassKey,
-                kSecAttrApplicationTag as String: keyTag.data(using: .utf8)!,
+                kSecAttrApplicationTag as String: keyTag.data(using: .utf8) ?? Data(),
                 kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
                 kSecReturnRef as String: true,
                 kSecUseAuthenticationContext as String: context
@@ -102,14 +108,14 @@ public class AppPinAuthenticator: DefaultDeviceAuthenticator {
     /// Presents a UI to the user to enter their PIN.
     /// - Returns: The entered PIN string, or `nil` if the user cancels.
     private func promptForPin(prompt: Prompt) async -> String? {
-        #if canImport(UIKit)
+#if canImport(UIKit)
         return await withCheckedContinuation { continuation in
             config.pinCollector.collectPin(prompt: prompt) { pin in
                 continuation.resume(returning: pin)
             }
         }
-        #else
+#else
         return nil
-        #endif
+#endif
     }
 }

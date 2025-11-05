@@ -1,26 +1,80 @@
-# PingBinding SDK
+# PingBinding Module
 
-The PingBinding SDK provides device binding and signing capabilities for native applications.
+The PingBinding Module provides device binding and signing capabilities for native applications. 
 
 ## Cryptographic Algorithm
 
-The PingBinding SDK uses **ES256** (ECDSA with P-256 curve and SHA-256) for all signing operations. This algorithm is compatible with iOS Secure Enclave, providing hardware-backed security for private keys.
+The PingBinding Module uses **ES256** (ECDSA with P-256 curve and SHA-256) for all signing operations. This algorithm is compatible with iOS Secure Enclave, providing hardware-backed security for private keys.
 
 ## Installation
 
-The PingBinding SDK is available via Swift Package Manager. To install it, add the following dependency to your `Package.swift` file:
+The PingBinding Module is available via Swift Package Manager and CocoaPods.
+
+### Swift Package Manager
+
+Add the following dependency to your `Package.swift` file:
 
 ```swift
-.package(url: "https://github.com/pingidentity/pingidentity-ios-sdk.git", from: "1.2.0")
+.package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "1.3.0")
 ```
 
-Then, add `PingBinding` to your target's dependencies.
+Then, add `PingBinding` to your target's dependencies:
+
+```swift
+.target(
+    name: "YourTarget",
+    dependencies: [
+        .product(name: "PingBinding", package: "ping-ios-sdk")
+    ]
+)
+```
+
+Alternatively, in Xcode:
+1. Go to **File** > **Add Package Dependencies...**
+2. Enter the repository URL: `https://github.com/ForgeRock/ping-ios-sdk.git`
+3. Select the version (1.3.0 or later)
+4. Add the `PingBinding` library to your target
+
+### CocoaPods
+
+Add the following to your `Podfile`:
+
+```ruby
+pod 'PingBinding', '~> 1.3.0'
+```
+
+Then run:
+
+```bash
+pod install
+```
+
+#### Dependencies
+
+PingBinding has the following dependencies which will be automatically installed:
+
+| Dependency | Version | Description |
+|------------|---------|-------------|
+| `PingOrchestrate` | ~> 1.3.0 | Core orchestration framework |
+| `PingOidc` | ~> 1.3.0 | OIDC authentication support |
+| `PingJourney` | ~> 1.3.0 | Journey-based authentication flow management |
+| `PingMfaCommons` | ~> 1.3.0 | Common MFA utilities including JWT signing |
+| `PingStorage` | ~> 1.3.0 | Secure storage capabilities |
+| `PingLogger` | ~> 1.3.0 | Logging framework |
+
+These dependencies provide the foundation for device binding operations, including secure key storage, JWT signing, and authentication flow management.
 
 ## Usage
 
-### Registering the Binding Module
+### Callback Registration
 
-Before using any of the PingBinding features, you must register the module with the `CallbackRegistry`. This is typically done in your `AppDelegate` or main `App` struct:
+PingBinding callbacks (`DeviceBindingCallback` and `DeviceSigningVerifierCallback`) are **automatically registered** when you use the Journey framework. The callbacks are registered when `CallbackRegistry.shared.registerDefaultCallbacks()` is called internally by the Journey initialization.
+
+**No explicit registration is required** in your application code when using Journey flows.
+
+#### Manual Registration (Optional)
+
+If you need to use PingBinding callbacks outside of the Journey framework, you can manually register them:
 
 ```swift
 import PingBinding
@@ -29,7 +83,8 @@ import PingBinding
 struct MyApp: App {
     
     init() {
-        BindingModule.register()
+        // Only needed if NOT using Journey framework
+        BindingModule.registerCallbacks()
     }
     
     var body: some Scene {
@@ -42,22 +97,23 @@ struct MyApp: App {
 
 ### Binding a Device
 
-To bind a device, you'll receive a `DeviceBindingCallback` from the PingFederate authentication flow. You can then call the `bind()` method on the callback to handle the binding process.
+To bind a device, you'll receive a `DeviceBindingCallback` from the AIC authentication flow. You can then call the `bind()` method on the callback to handle the binding process.
 
 ```swift
 import PingBinding
 import PingJourney
 
-func handleDeviceBinding(callback: DeviceBindingCallback, viewModel: JourneyViewModel) {
+func handleDeviceBinding(callback: DeviceBindingCallback, onNext: @escaping () -> Void) {
     Task {
         do {
             try await callback.bind()
             print("Device bound successfully")
-            viewModel.advance()
         } catch {
             print("Device binding failed: \(error.localizedDescription)")
             viewModel.error = error
         }
+        // Continue to the next node
+        onNext()
     }
 }
 ```
@@ -79,6 +135,7 @@ func handleDeviceSigning(callback: DeviceSigningVerifierCallback, onNext: @escap
         case .failure(let error):
             print("Signing failed: \(error.localizedDescription)")
         }
+        // Continue to the next node
         onNext()
     }
 }

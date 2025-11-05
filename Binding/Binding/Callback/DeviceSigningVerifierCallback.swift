@@ -13,7 +13,7 @@ import PingJourney
 import PingOrchestrate
 
 /// A Journey callback for handling device signing verification.
-/// This callback is received from the PingFederate authentication flow when a challenge needs to be signed by a bound device.
+/// This callback is received from the AIC authentication flow when a challenge needs to be signed by a bound device.
 public class DeviceSigningVerifierCallback: AbstractCallback, @unchecked Sendable, JourneyAware, ContinueNodeAware {
     /// The `Journey` object associated with the current authentication flow.
     public var journey: Journey?

@@ -29,7 +29,9 @@ public class DefaultPinCollector: NSObject, PinCollector {
         
         DispatchQueue.main.async {
             
-            let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+            let keyWindow = UIApplication .shared .connectedScenes
+                .flatMap { ($0 as? UIWindowScene)?.windows ?? [] }
+                .first { $0.isKeyWindow }
             var topVC = keyWindow?.rootViewController
             while let presentedViewController = topVC?.presentedViewController {
                 topVC = presentedViewController
