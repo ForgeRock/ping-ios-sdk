@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9512229E2EAFEB6400421313 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9512229D2EAFEB6400421313 /* PingJourney.framework */; };
+		9512229F2EAFEB6400421313 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9512229D2EAFEB6400421313 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		951222A12EAFEE6E00421313 /* PingProtect.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 951222A02EAFEE6E00421313 /* PingProtect.framework */; };
+		951222A22EAFEE6E00421313 /* PingProtect.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 951222A02EAFEE6E00421313 /* PingProtect.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		951222A42EAFEEC300421313 /* PingMfaCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 951222A32EAFEEC300421313 /* PingMfaCommons.framework */; };
+		951222A52EAFEEC300421313 /* PingMfaCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 951222A32EAFEEC300421313 /* PingMfaCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		951222A72EAFF02B00421313 /* PingOath.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 951222A62EAFF02B00421313 /* PingOath.framework */; };
+		951222A82EAFF02B00421313 /* PingOath.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 951222A62EAFF02B00421313 /* PingOath.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		95E7555F2EA6A80F008DBFD6 /* PingDeviceProfile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95E7555E2EA6A80F008DBFD6 /* PingDeviceProfile.framework */; };
+		95E755602EA6A80F008DBFD6 /* PingDeviceProfile.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 95E7555E2EA6A80F008DBFD6 /* PingDeviceProfile.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A507A2672CEBED9F007F5C16 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A507A2622CEBED9F007F5C16 /* PingDavinci.framework */; };
 		A507A2682CEBED9F007F5C16 /* PingDavinci.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A507A2622CEBED9F007F5C16 /* PingDavinci.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A507A2692CEBED9F007F5C16 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A507A2632CEBED9F007F5C16 /* PingLogger.framework */; };
@@ -31,6 +41,8 @@
 		EC2E0D962DE60C50000CC0E2 /* PingExternalIdPFacebook.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC2E0D942DE60C50000CC0E2 /* PingExternalIdPFacebook.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC2E0D982DE60C55000CC0E2 /* PingExternalIdPGoogle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC2E0D972DE60C55000CC0E2 /* PingExternalIdPGoogle.framework */; };
 		EC2E0D992DE60C55000CC0E2 /* PingExternalIdPGoogle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC2E0D972DE60C55000CC0E2 /* PingExternalIdPGoogle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC59E3702E7D8BFC00A91E66 /* PingTamperDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E36F2E7D8BFC00A91E66 /* PingTamperDetector.framework */; };
+		EC59E3712E7D8BFC00A91E66 /* PingTamperDetector.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E36F2E7D8BFC00A91E66 /* PingTamperDetector.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC9591062DC116EF005633A1 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = EC9591052DC116EF005633A1 /* GoogleSignIn */; };
 		ECB7C6922D5A27840006F1C8 /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECB7C6912D5A27840006F1C8 /* PingBrowser.framework */; };
 		ECB7C6932D5A27840006F1C8 /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECB7C6912D5A27840006F1C8 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -46,14 +58,20 @@
 			dstSubfolderSpec = 10;
 			files = (
 				ECB7C6932D5A27840006F1C8 /* PingBrowser.framework in Embed Frameworks */,
+				EC59E3712E7D8BFC00A91E66 /* PingTamperDetector.framework in Embed Frameworks */,
+				95E755602EA6A80F008DBFD6 /* PingDeviceProfile.framework in Embed Frameworks */,
 				A507A26A2CEBED9F007F5C16 /* PingLogger.framework in Embed Frameworks */,
 				EC2E0D902DE60C42000CC0E2 /* PingExternalIdPApple.framework in Embed Frameworks */,
 				EC2E0D932DE60C49000CC0E2 /* PingExternalIdP.framework in Embed Frameworks */,
+				951222A22EAFEE6E00421313 /* PingProtect.framework in Embed Frameworks */,
 				A507A26C2CEBED9F007F5C16 /* PingOidc.framework in Embed Frameworks */,
+				951222A82EAFF02B00421313 /* PingOath.framework in Embed Frameworks */,
 				A507A2682CEBED9F007F5C16 /* PingDavinci.framework in Embed Frameworks */,
 				A507A2702CEBED9F007F5C16 /* PingStorage.framework in Embed Frameworks */,
 				EC2E0D962DE60C50000CC0E2 /* PingExternalIdPFacebook.framework in Embed Frameworks */,
+				951222A52EAFEEC300421313 /* PingMfaCommons.framework in Embed Frameworks */,
 				EC2E0D992DE60C55000CC0E2 /* PingExternalIdPGoogle.framework in Embed Frameworks */,
+				9512229F2EAFEB6400421313 /* PingJourney.framework in Embed Frameworks */,
 				A507A26E2CEBED9F007F5C16 /* PingOrchestrate.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -62,6 +80,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9512229D2EAFEB6400421313 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		951222A02EAFEE6E00421313 /* PingProtect.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingProtect.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		951222A32EAFEEC300421313 /* PingMfaCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingMfaCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		951222A62EAFF02B00421313 /* PingOath.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOath.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		95E7555E2EA6A80F008DBFD6 /* PingDeviceProfile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDeviceProfile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A507A2622CEBED9F007F5C16 /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A507A2632CEBED9F007F5C16 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A507A2642CEBED9F007F5C16 /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -91,6 +114,7 @@
 		EC2E0D912DE60C49000CC0E2 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC2E0D942DE60C50000CC0E2 /* PingExternalIdPFacebook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdPFacebook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC2E0D972DE60C55000CC0E2 /* PingExternalIdPGoogle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdPGoogle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC59E36F2E7D8BFC00A91E66 /* PingTamperDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingTamperDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A3212DC258700011E59C /* PingExternal_idp_Apple.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp_Apple.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A3242DC258770011E59C /* PingExternal_idp_Google.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp_Google.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A3272DC2587E0011E59C /* PingExternal_idp_Facebook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternal_idp_Facebook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,14 +129,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECED512E2DC1111800FA39A7 /* FacebookLogin in Frameworks */,
+				EC59E3702E7D8BFC00A91E66 /* PingTamperDetector.framework in Frameworks */,
+				951222A72EAFF02B00421313 /* PingOath.framework in Frameworks */,
 				EC2E0D982DE60C55000CC0E2 /* PingExternalIdPGoogle.framework in Frameworks */,
 				ECB7C6922D5A27840006F1C8 /* PingBrowser.framework in Frameworks */,
 				EC2E0D8F2DE60C42000CC0E2 /* PingExternalIdPApple.framework in Frameworks */,
+				95E7555F2EA6A80F008DBFD6 /* PingDeviceProfile.framework in Frameworks */,
 				EC9591062DC116EF005633A1 /* GoogleSignIn in Frameworks */,
 				A507A2692CEBED9F007F5C16 /* PingLogger.framework in Frameworks */,
+				951222A42EAFEEC300421313 /* PingMfaCommons.framework in Frameworks */,
 				EC2E0D922DE60C49000CC0E2 /* PingExternalIdP.framework in Frameworks */,
 				A507A26B2CEBED9F007F5C16 /* PingOidc.framework in Frameworks */,
 				EC2E0D952DE60C50000CC0E2 /* PingExternalIdPFacebook.framework in Frameworks */,
+				951222A12EAFEE6E00421313 /* PingProtect.framework in Frameworks */,
+				9512229E2EAFEB6400421313 /* PingJourney.framework in Frameworks */,
 				A507A2672CEBED9F007F5C16 /* PingDavinci.framework in Frameworks */,
 				A507A26F2CEBED9F007F5C16 /* PingStorage.framework in Frameworks */,
 				ECED512C2DC1111800FA39A7 /* FacebookCore in Frameworks */,
@@ -157,6 +187,12 @@
 		A54BF4822BF2E5B800CD24D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				951222A62EAFF02B00421313 /* PingOath.framework */,
+				951222A32EAFEEC300421313 /* PingMfaCommons.framework */,
+				951222A02EAFEE6E00421313 /* PingProtect.framework */,
+				9512229D2EAFEB6400421313 /* PingJourney.framework */,
+				95E7555E2EA6A80F008DBFD6 /* PingDeviceProfile.framework */,
+				EC59E36F2E7D8BFC00A91E66 /* PingTamperDetector.framework */,
 				EC2E0D972DE60C55000CC0E2 /* PingExternalIdPGoogle.framework */,
 				EC2E0D942DE60C50000CC0E2 /* PingExternalIdPFacebook.framework */,
 				EC2E0D912DE60C49000CC0E2 /* PingExternalIdP.framework */,
@@ -424,6 +460,8 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PingTestHost/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "We use Bluetooth in the device profile feature";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location for testing";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -434,7 +472,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = "1.3.0";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -459,6 +497,8 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PingTestHost/Info.plist;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "We use Bluetooth in the device profile feature";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location for testing";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -469,7 +509,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = "1.3.0";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

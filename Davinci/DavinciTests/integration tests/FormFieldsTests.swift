@@ -26,7 +26,7 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
         
         daVinci = DaVinci.createDaVinci { config in
             config.logger = LogManager.standard
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -251,6 +251,49 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
         XCTAssertTrue(validationResult2.isEmpty)
     }
     
+    // TestRailCase(26027, 31735)
+    func testPhoneNumberCollector() async throws {
+        // Go to the "Form Fields" form
+        var node = await daVinci.start() as! ContinueNode
+        (node.collectors[0] as? SubmitCollector)?.value = "click"
+        node = await node.next() as! ContinueNode
+        
+        XCTAssertTrue(node.collectors[7] is PhoneNumberCollector)
+        let phone = node.collectors[7] as! PhoneNumberCollector
+        
+        XCTAssertEqual("PHONE_NUMBER", phone.type)
+        XCTAssertEqual("Phone Collector", phone.label)
+        XCTAssertEqual("phone-field", phone.key)
+        
+        XCTAssertEqual(true, phone.required)
+        XCTAssertEqual(true, phone.validatePhoneNumber)
+        XCTAssertEqual("BF", phone.defaultCountryCode) // Burkina Faso (set in the form)
+        XCTAssertEqual("GB", phone.countryCode) // Great Britain (set in DV form connector)
+        XCTAssertEqual("(555)555-1234", phone.phoneNumber) // Set in DV form connector
+        
+        // Clear the value of the phone number
+        phone.phoneNumber = ""
+        
+        // validate() should fail since the phone number is empty but required
+        var validationResult = phone.validate()
+        XCTAssertFalse(validationResult.isEmpty)
+        XCTAssertEqual("This field cannot be empty.", validationResult[0].errorMessage)
+        
+        // Provide a phone number without country code and validate again
+        phone.countryCode = ""
+        phone.phoneNumber = "7783177184"
+        
+        validationResult = phone.validate() // Should fail
+        XCTAssertFalse(validationResult.isEmpty)
+        XCTAssertEqual("This field cannot be empty.", validationResult[0].errorMessage)
+        
+        // Providing a phone number and country code should pass the validation
+        phone.countryCode = "CA"
+        phone.phoneNumber = "7783177184"
+        validationResult = phone.validate() // Should pass...
+        XCTAssertTrue(validationResult.isEmpty)
+    }
+    
     // TestRailCase(26033)
     func testFlowButtonCollector() async throws {
         // Go to the "Form Fields" form
@@ -259,8 +302,8 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
         node = await node.next() as! ContinueNode
         
         // Make sure that FlowButton is present
-        XCTAssertTrue(node.collectors[7] is FlowCollector)
-        let flowButton = node.collectors[7] as! FlowCollector
+        XCTAssertTrue(node.collectors[8] is FlowCollector)
+        let flowButton = node.collectors[8] as! FlowCollector
         
         XCTAssertEqual("FLOW_BUTTON", flowButton.type)
         XCTAssertEqual("Flow Button", flowButton.label)
@@ -281,8 +324,8 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
         node = await node.next() as! ContinueNode
         
         // Make sure that FlowLink is present
-        XCTAssertTrue(node.collectors[8] is FlowCollector)
-        let flowLink = node.collectors[8] as! FlowCollector
+        XCTAssertTrue(node.collectors[9] is FlowCollector)
+        let flowLink = node.collectors[9] as! FlowCollector
         
         XCTAssertEqual("FLOW_LINK", flowLink.type)
         XCTAssertEqual("Flow Link", flowLink.label)

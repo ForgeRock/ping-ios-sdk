@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		A525E7AC2DD7640D00B02C17 /* PingExternalIdP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7AB2DD7640D00B02C17 /* PingExternalIdP.framework */; };
 		A525E7AD2DD7640D00B02C17 /* PingExternalIdP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7AB2DD7640D00B02C17 /* PingExternalIdP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC5016472E43B35F006D8C3A /* GoogleHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5016462E43B35A006D8C3A /* GoogleHandler.swift */; };
 		ECA7A2F12DC251870011E59C /* PingExternalIdPGoogle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2E72DC251860011E59C /* PingExternalIdPGoogle.framework */; };
 		ECA7A3142DC251F10011E59C /* ExternalIdPGoogleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A3122DC251F10011E59C /* ExternalIdPGoogleTests.swift */; };
 		ECA7A3172DC252590011E59C /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = ECA7A3162DC252590011E59C /* GoogleSignIn */; };
 		ECA7A3192DC252BD0011E59C /* GoogleRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A3182DC252BD0011E59C /* GoogleRequestHandler.swift */; };
 		ECA7A31F2DC253710011E59C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = ECA7A31E2DC253710011E59C /* PrivacyInfo.xcprivacy */; };
 		ECA7A3202DC253710011E59C /* ExternalIdPGoogle.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA7A31D2DC253710011E59C /* ExternalIdPGoogle.h */; };
+		ECF7EBC02E4C995C002A5E8E /* GoogleHandlerUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EBBF2E4C9952002A5E8E /* GoogleHandlerUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,12 +45,14 @@
 
 /* Begin PBXFileReference section */
 		A525E7AB2DD7640D00B02C17 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC5016462E43B35A006D8C3A /* GoogleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleHandler.swift; sourceTree = "<group>"; };
 		ECA7A2E72DC251860011E59C /* PingExternalIdPGoogle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingExternalIdPGoogle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A2F02DC251870011E59C /* ExternalIdPGoogleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExternalIdPGoogleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A3122DC251F10011E59C /* ExternalIdPGoogleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalIdPGoogleTests.swift; sourceTree = "<group>"; };
 		ECA7A3182DC252BD0011E59C /* GoogleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleRequestHandler.swift; sourceTree = "<group>"; };
 		ECA7A31D2DC253710011E59C /* ExternalIdPGoogle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalIdPGoogle.h; sourceTree = "<group>"; };
 		ECA7A31E2DC253710011E59C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		ECF7EBBF2E4C9952002A5E8E /* GoogleHandlerUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleHandlerUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,7 +124,9 @@
 		ECA7A31A2DC252C40011E59C /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
+				EC5016462E43B35A006D8C3A /* GoogleHandler.swift */,
 				ECA7A3182DC252BD0011E59C /* GoogleRequestHandler.swift */,
+				ECF7EBBF2E4C9952002A5E8E /* GoogleHandlerUtils.swift */,
 			);
 			path = Handlers;
 			sourceTree = "<group>";
@@ -246,6 +252,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECA7A3192DC252BD0011E59C /* GoogleRequestHandler.swift in Sources */,
+				EC5016472E43B35F006D8C3A /* GoogleHandler.swift in Sources */,
+				ECF7EBC02E4C995C002A5E8E /* GoogleHandlerUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -468,7 +476,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
@@ -486,7 +494,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
@@ -537,7 +545,7 @@
 			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
 			requirement = {
 				kind = exactVersion;
-				version = "8.1.0-vwg-eap-1.1.0";
+				version = 9.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

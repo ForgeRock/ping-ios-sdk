@@ -29,7 +29,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         super.setUp()
         
         self.davinci = DaVinci.createDaVinci { config in
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -89,7 +89,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         let davinci1 = DaVinci.createDaVinci { config in
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -113,7 +113,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.testClientId
                 oidcValue.scopes = Set(self.testScopes)
                 oidcValue.redirectUri = self.testRedirectUri
@@ -144,7 +144,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.testClientId
                 oidcValue.scopes = Set(self.testScopes)
                 oidcValue.redirectUri = self.testRedirectUri
@@ -212,7 +212,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         }
         //            XCTAssertEqual((user?.token() as? Result.Success)?.value.accessToken, "Dummy AccessToken")
         
-        let u = await daVinci.user()
+        let u = await daVinci.daVinciUser()
         await u?.logout()
         let revoke = MockURLProtocol.requestHistory[4]
         XCTAssertEqual(revoke.url!.absoluteString, "https://auth.test-one-pingone.com/revoke")
@@ -228,7 +228,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         XCTAssertNil(storedToken)
         let storedCokie = try await cookieStorage.get()
         XCTAssertNil(storedCokie)
-        let storedUser = await daVinci.user()
+        let storedUser = await daVinci.daVinciUser()
         XCTAssertNil(storedUser)
     }
     
@@ -236,7 +236,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.testClientId
                 oidcValue.scopes = Set(self.testScopes)
                 oidcValue.redirectUri = self.testRedirectUri
@@ -287,7 +287,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.testClientId
                 oidcValue.scopes = Set(self.testScopes)
                 oidcValue.redirectUri = self.testRedirectUri
@@ -312,7 +312,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         node = await connector.next()
         XCTAssertTrue(node is SuccessNode)
         
-        let u = await daVinci.user()
+        let u = await daVinci.daVinciUser()
         await u?.revoke()
         let storedToken = try await tokenStorage.get()
         XCTAssertNil(storedToken)
@@ -336,7 +336,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.testClientId
                 oidcValue.scopes = Set(self.testScopes)
                 oidcValue.redirectUri = self.testRedirectUri

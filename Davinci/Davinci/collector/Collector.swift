@@ -22,7 +22,7 @@ import Foundation
 public protocol Collector<T>: Action, Identifiable, Sendable {
     associatedtype T
     var id: String { get }
-    init(with json: [String: Any])
+    init(with json: [String: Any]) 
     func initialize(with value: Any)
     func payload() -> T?
 }

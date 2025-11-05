@@ -14,10 +14,20 @@ import PingOrchestrate
 
 extension DaVinci {
     /// Retrieve the user.
+    /// This method is now Deprecated. Please call `daVinciUser()` directly
+    /// Calling `user()` instead might cause issues when both DaVinci and the Journey module is used
     /// If cookies are available, it prepares a new user and returns it.
     /// If no user is found and no cookies are available, it returns nil.
     /// - Returns: The user if found, otherwise nil.
+    @available(*, deprecated)
     public func user() async -> User? {
+        return await daVinciUser()
+    }
+    /// Retrieve the user.
+    /// If cookies are available, it prepares a new user and returns it.
+    /// If no user is found and no cookies are available, it returns nil.
+    /// - Returns: The user if found, otherwise nil.
+    public func daVinciUser() async -> User? {
         try? await initialize()
         
         if let cachedUser = self.sharedContext.get(key: SharedContext.Keys.userKey) as? User {
@@ -30,12 +40,6 @@ extension DaVinci {
             }
         }
         return nil
-    }
-    
-    /// Alias for the DaVinci.user() method.
-    /// - Returns: The user if found, otherwise nil.
-    public func daVinciUser() async -> User? {
-        return await user()
     }
     
     /// Method to prepare the user.
@@ -92,18 +96,32 @@ struct UserDelegate: User, Session, Sendable {
         _ = await daVinci.signOff()
     }
     
+    /// Method to get the user token.
+    /// - Returns: A Result containing the Token or an OidcError.
     func token() async -> Result<Token, OidcError> {
         return await user.token()
     }
     
+    /// Method to refresh the user token.
+    /// - Returns: A Result containing the refreshed Token or an OidcError.
+    func refresh() async -> Result<Token, OidcError> {
+        await user.refresh()
+    }
+    
+    /// Method to revoke the user token.
+    /// - Returns: A Result containing the success or an OidcError.
     func revoke() async {
         await user.revoke()
     }
     
+    /// Method to get the user info.
+    /// - Parameter cache: A Boolean indicating whether to use the cache.
+    /// - Returns: A Result containing the UserInfo or an OidcError.
     func userinfo(cache: Bool) async -> Result<UserInfo, OidcError> {
         await user.userinfo(cache: cache)
     }
     
+    /// Method to get the session value
     var value: String {
         get {
             return session.value

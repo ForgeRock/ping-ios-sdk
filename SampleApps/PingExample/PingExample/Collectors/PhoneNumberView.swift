@@ -96,7 +96,14 @@ struct PhoneNumberView: View {
                         if let selectedCountry = selectedCountry {
                             selectedCountryCode = Country.countryCodeForCountryCodeNumber(selectedCountry.countryCodeNumber, listOfCountries: listOfCountries)
                         }
-                        let code = selectedCountryCode ?? field.defaultCountryCode
+                        
+                        let code: String
+                        if !field.countryCode.isEmpty {
+                            code = field.countryCode
+                        } else {
+                            code = selectedCountryCode ?? field.defaultCountryCode
+                        }
+                        
                         let codeNumber = Country.countryCodeNumberForCountryCode(code, listOfCountries: listOfCountries)
                         if !code.isEmpty {
                             field.countryCode = code

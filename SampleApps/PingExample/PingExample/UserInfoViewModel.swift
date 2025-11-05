@@ -11,6 +11,7 @@
 
 import SwiftUI
 import PingLogger
+import PingOidc
 
 /// A view model responsible for fetching and managing user information.
 /// - Provides a published `userInfo` property that is updated with user information or error messages.
@@ -33,7 +34,20 @@ class UserInfoViewModel: ObservableObject {
     /// - Updates the `userInfo` property with the fetched data or an error message.
     /// - Logs success and error messages using `PingLogger`.
     func fetchUserInfo() async {
-        let userInfo = try? await ConfigurationManager.shared.currentUser?.userinfo(cache: false)
+        let userInfo: Result<UserInfo, OidcError>?
+        
+        let journeyUser = await ConfigurationManager.shared.journeyUser
+        let davinci = await ConfigurationManager.shared.davinciUser
+        let oidcLoginUser = await ConfigurationManager.shared.oidcUser
+        
+        if journeyUser != nil {
+            userInfo = await journeyUser?.userinfo(cache: false)
+        } else if davinci != nil {
+            userInfo = await davinci?.userinfo(cache: false)
+        } else {
+            userInfo = await oidcLoginUser?.userinfo(cache: false)
+        }
+        
         switch userInfo {
         case .success(let userInfoDictionary):
             // On success, format the dictionary into a string and update `userInfo`.

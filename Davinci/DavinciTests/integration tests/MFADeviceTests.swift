@@ -58,7 +58,7 @@ class MFADeviceTests: XCTestCase {
         phoneNumber2 = "888123457"
         
         // Start with a clean session
-        await daVinci.user()?.logout()
+        await daVinci.daVinciUser()?.logout()
         try await registerUser(username: username, password: password)
     }
     
@@ -277,7 +277,7 @@ class MFADeviceTests: XCTestCase {
         }
         
         // Logout the user
-        guard let u = await daVinci.user() else {
+        guard let u = await daVinci.daVinciUser() else {
             throw NSError(domain: "TestError", code: 1, userInfo: [NSLocalizedDescriptionKey: "User is null"])
         }
         await u.logout()
@@ -392,11 +392,11 @@ class MFADeviceTests: XCTestCase {
         XCTAssertTrue(node.collectors.count == 4)
         XCTAssertTrue(node.collectors[0] is LabelCollector)
         XCTAssertTrue(node.collectors[1] is SingleSelectCollector)
-        XCTAssertTrue(node.collectors[2] is TextCollector)
+        XCTAssertTrue(node.collectors[2] is PhoneNumberCollector)
         XCTAssertTrue(node.collectors[3] is SubmitCollector)
         
-        // We have a label collector with the text "Enter Phone Number"
-        XCTAssertEqual("Enter Phone Number", (node.collectors[0] as! LabelCollector).content)
+        // We have a label collector with the text "Phone Number Collector"
+        XCTAssertEqual("Phone Number Collector", (node.collectors[0] as! LabelCollector).content)
         
         // Followed by a Dropdown collector with country codes
         let dropdown = node.collectors[1] as! SingleSelectCollector
@@ -405,22 +405,22 @@ class MFADeviceTests: XCTestCase {
         XCTAssertEqual("Country Code", dropdown.label)
         XCTAssertEqual(true, dropdown.required)
         XCTAssertEqual(4, dropdown.options.count)
-        XCTAssertEqual("India (91)", dropdown.options[0].label)
-        XCTAssertEqual("United States (1)", dropdown.options[1].label)
-        XCTAssertEqual("United Kingdom (44)", dropdown.options[2].label)
-        XCTAssertEqual("Bulgaria (359)", dropdown.options[3].label)
-        XCTAssertEqual("91", dropdown.options[0].value)
-        XCTAssertEqual("1", dropdown.options[1].value)
-        XCTAssertEqual("44", dropdown.options[2].value)
-        XCTAssertEqual("359", dropdown.options[3].value)
+        XCTAssertEqual("United States", dropdown.options[0].label)
+        XCTAssertEqual("India", dropdown.options[1].label)
+        XCTAssertEqual("Brazil", dropdown.options[2].label)
+        XCTAssertEqual("Canada", dropdown.options[3].label)
+        XCTAssertEqual("US", dropdown.options[0].value)
+        XCTAssertEqual("IN", dropdown.options[1].value)
+        XCTAssertEqual("BR", dropdown.options[2].value)
+        XCTAssertEqual("CA", dropdown.options[3].value)
         
-        // Then a text collector for the phone number
-        let phoneNumberCollector = node.collectors[2] as! TextCollector
-        XCTAssertEqual("Enter Phone Number", phoneNumberCollector.label)
+        // Then a phone number collector for the phone number
+        let phoneNumberCollector = node.collectors[2] as! PhoneNumberCollector
         
         // Select a country code and enter a valid phone number:...
         dropdown.value = "359"  // Select Bulgaria...
-        phoneNumberCollector.value = phone
+        phoneNumberCollector.phoneNumber = phone
+        phoneNumberCollector.countryCode = "BG"
         
         // Submit the form
         (node.collectors[3] as? SubmitCollector)?.value = "click"

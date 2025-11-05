@@ -18,10 +18,20 @@ class LogOutViewModel: ObservableObject {
     @Published var logout: String = ""
     
     /// Performs the user logout process using the DaVinci SDK.
-    /// - Executes the `logout()` method from the DaVinci user object asynchronously.
+    /// - Executes the `logout()` method from the DaVinci or Journey user object asynchronously.
     /// - Updates the `logout` property with a completion message upon success.
     func logout() async {
-        try? await ConfigurationManager.shared.currentUser?.logout()
+        let journeyUser = await ConfigurationManager.shared.journeyUser
+        let davinci = await ConfigurationManager.shared.davinciUser
+        
+        if journeyUser != nil {
+            await ConfigurationManager.shared.journeyUser?.logout()
+        } else if davinci != nil {
+            await ConfigurationManager.shared.davinciUser?.logout()
+        } else {
+            await ConfigurationManager.shared.oidcUser?.logout()
+        }
+        
         await MainActor.run {
             logout =  "Logout completed"
         }

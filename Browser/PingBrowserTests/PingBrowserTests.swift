@@ -183,7 +183,7 @@ class WorkflowMock: Workflow, @unchecked Sendable {
     }
 }
 
-class FlowContextMock: FlowContext {}
+class FlowContextMock: FlowContext, @unchecked Sendable {}
 
 final class NodeMock: Node {}
 
@@ -197,6 +197,10 @@ class RequestMock: Request, @unchecked Sendable {}
 
 /// A mock BrowserLauncher that you can control in tests.
 class MockBrowserLauncher: BrowserLauncherProtocol {
+    func handleAppActivation() {
+        // No-op for mock
+    }
+    
     func reset() {
         self.isInProgress = false
     }
@@ -206,7 +210,7 @@ class MockBrowserLauncher: BrowserLauncherProtocol {
     /// A closure that will be called when `launch` is invoked.
     var launchHandler: ((URL, BrowserType, String) async throws -> URL)?
     
-    func launch(url: URL, browserType: BrowserType, callbackURLScheme: String) async throws -> URL {
+    func launch(url: URL, customParams: [String : String]?, browserType: PingBrowser.BrowserType, browserMode: PingBrowser.BrowserMode, callbackURLScheme: String) async throws -> URL {
         if let handler = launchHandler {
             return try await handler(url, browserType, callbackURLScheme)
         }

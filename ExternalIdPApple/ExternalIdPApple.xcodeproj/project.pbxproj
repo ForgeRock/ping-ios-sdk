@@ -9,8 +9,9 @@
 /* Begin PBXBuildFile section */
 		A525E7A82DD7640400B02C17 /* PingExternalIdP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7A72DD7640400B02C17 /* PingExternalIdP.framework */; };
 		A525E7A92DD7640400B02C17 /* PingExternalIdP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7A72DD7640400B02C17 /* PingExternalIdP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC5016422E43A735006D8C3A /* AppleHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5016412E43A731006D8C3A /* AppleHandler.swift */; };
+		EC5016452E43A853006D8C3A /* SIWAHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5016442E43A847006D8C3A /* SIWAHelpers.swift */; };
 		ECA7A2AD2DC24BC60011E59C /* PingExternalIdPApple.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA7A2A32DC24BC60011E59C /* PingExternalIdPApple.framework */; };
-		ECA7A2C82DC24C540011E59C /* ExternalIdPApple.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A2C62DC24C540011E59C /* ExternalIdPApple.swift */; };
 		ECA7A2CB2DC24C580011E59C /* ExternalIdPAppleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A2C92DC24C580011E59C /* ExternalIdPAppleTests.swift */; };
 		ECA7A2D22DC24C7D0011E59C /* ExternalIdPApple.h in Headers */ = {isa = PBXBuildFile; fileRef = ECA7A2D12DC24C7D0011E59C /* ExternalIdPApple.h */; };
 		ECA7A2D42DC24CA00011E59C /* AppleRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA7A2D32DC24CA00011E59C /* AppleRequestHandler.swift */; };
@@ -43,9 +44,10 @@
 
 /* Begin PBXFileReference section */
 		A525E7A72DD7640400B02C17 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC5016412E43A731006D8C3A /* AppleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleHandler.swift; sourceTree = "<group>"; };
+		EC5016442E43A847006D8C3A /* SIWAHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SIWAHelpers.swift; sourceTree = "<group>"; };
 		ECA7A2A32DC24BC60011E59C /* PingExternalIdPApple.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingExternalIdPApple.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A2AC2DC24BC60011E59C /* ExternalIdPAppleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExternalIdPAppleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		ECA7A2C62DC24C540011E59C /* ExternalIdPApple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalIdPApple.swift; sourceTree = "<group>"; };
 		ECA7A2C92DC24C580011E59C /* ExternalIdPAppleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalIdPAppleTests.swift; sourceTree = "<group>"; };
 		ECA7A2D12DC24C7D0011E59C /* ExternalIdPApple.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalIdPApple.h; sourceTree = "<group>"; };
 		ECA7A2D32DC24CA00011E59C /* AppleRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleRequestHandler.swift; sourceTree = "<group>"; };
@@ -72,6 +74,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EC5016432E43A82C006D8C3A /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				EC5016442E43A847006D8C3A /* SIWAHelpers.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		ECA7A2992DC24BC60011E59C = {
 			isa = PBXGroup;
 			children = (
@@ -94,10 +104,10 @@
 		ECA7A2C72DC24C540011E59C /* ExternalIdPApple */ = {
 			isa = PBXGroup;
 			children = (
+				EC5016432E43A82C006D8C3A /* Helpers */,
 				ECA7A2D52DC24CA50011E59C /* Handlers */,
 				ECA7A2D12DC24C7D0011E59C /* ExternalIdPApple.h */,
 				ECA7A2D62DC24CB80011E59C /* PrivacyInfo.xcprivacy */,
-				ECA7A2C62DC24C540011E59C /* ExternalIdPApple.swift */,
 			);
 			path = ExternalIdPApple;
 			sourceTree = "<group>";
@@ -122,6 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				ECA7A2D32DC24CA00011E59C /* AppleRequestHandler.swift */,
+				EC5016412E43A731006D8C3A /* AppleHandler.swift */,
 			);
 			path = Handlers;
 			sourceTree = "<group>";
@@ -242,8 +253,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECA7A2C82DC24C540011E59C /* ExternalIdPApple.swift in Sources */,
+				EC5016452E43A853006D8C3A /* SIWAHelpers.swift in Sources */,
 				ECA7A2D42DC24CA00011E59C /* AppleRequestHandler.swift in Sources */,
+				EC5016422E43A735006D8C3A /* AppleHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,8 +478,9 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPAppleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -483,8 +496,9 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 24J8Y2KTAV;
+				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPAppleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

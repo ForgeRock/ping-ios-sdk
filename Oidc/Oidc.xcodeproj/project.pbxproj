@@ -16,6 +16,8 @@
 		3AB1CA352BD884E4003FCE3C /* OidcClientConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CA342BD884E4003FCE3C /* OidcClientConfig.swift */; };
 		3AB1CA3B2BD96089003FCE3C /* OidcUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CA3A2BD96089003FCE3C /* OidcUser.swift */; };
 		3AB1CA3D2BD961A2003FCE3C /* OidcClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CA3C2BD961A2003FCE3C /* OidcClient.swift */; };
+		951773A82EA932A10081AEDE /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 951773A72EA932A10081AEDE /* PingBrowser.framework */; };
+		951773A92EA932A10081AEDE /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 951773A72EA932A10081AEDE /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A50966B62C4C342800A4E5B5 /* OidcError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50966B52C4C342800A4E5B5 /* OidcError.swift */; };
 		A50966B82C4C34CB00A4E5B5 /* AuthCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50966B72C4C34CB00A4E5B5 /* AuthCode.swift */; };
 		A50966BA2C4C3E7300A4E5B5 /* OpenIdConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50966B92C4C3E7300A4E5B5 /* OpenIdConfiguration.swift */; };
@@ -30,6 +32,10 @@
 		A50981BE2CEBDF1700F4B487 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */; };
 		A50981BF2CEBDF1700F4B487 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5A712442CAC520500B7DD58 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */; };
+		EC0CB5922E266D7100A82D6C /* OidcWeb.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5912E266D6C00A82D6C /* OidcWeb.swift */; };
+		EC0CB5952E266F3900A82D6C /* Oidc.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5942E266F3400A82D6C /* Oidc.swift */; };
+		EC23D5132E295AAE00C43D42 /* Web.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5122E295AAB00C43D42 /* Web.swift */; };
+		EC23D5152E2E7A1700C43D42 /* OidcWebTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5142E2E7A1100C43D42 /* OidcWebTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +56,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				A50981BF2CEBDF1700F4B487 /* PingOrchestrate.framework in Embed Frameworks */,
+				951773A92EA932A10081AEDE /* PingBrowser.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -67,6 +74,7 @@
 		3AB1CA342BD884E4003FCE3C /* OidcClientConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcClientConfig.swift; sourceTree = "<group>"; };
 		3AB1CA3A2BD96089003FCE3C /* OidcUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcUser.swift; sourceTree = "<group>"; };
 		3AB1CA3C2BD961A2003FCE3C /* OidcClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcClient.swift; sourceTree = "<group>"; };
+		951773A72EA932A10081AEDE /* PingBrowser.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingBrowser.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A50966B52C4C342800A4E5B5 /* OidcError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcError.swift; sourceTree = "<group>"; };
 		A50966B72C4C34CB00A4E5B5 /* AuthCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCode.swift; sourceTree = "<group>"; };
 		A50966B92C4C3E7300A4E5B5 /* OpenIdConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenIdConfiguration.swift; sourceTree = "<group>"; };
@@ -80,6 +88,10 @@
 		A50967082C50843E00A4E5B5 /* MockAPIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIEndpoint.swift; sourceTree = "<group>"; };
 		A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		EC0CB5912E266D6C00A82D6C /* OidcWeb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcWeb.swift; sourceTree = "<group>"; };
+		EC0CB5942E266F3400A82D6C /* Oidc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Oidc.swift; sourceTree = "<group>"; };
+		EC23D5122E295AAB00C43D42 /* Web.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Web.swift; sourceTree = "<group>"; };
+		EC23D5142E2E7A1100C43D42 /* OidcWebTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcWebTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +100,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A50981BE2CEBDF1700F4B487 /* PingOrchestrate.framework in Frameworks */,
+				951773A82EA932A10081AEDE /* PingBrowser.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +118,7 @@
 		3A8532272BE2C5DB00F8619D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				951773A72EA932A10081AEDE /* PingBrowser.framework */,
 				A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */,
 			);
 			name = Frameworks;
@@ -132,6 +146,7 @@
 		3AB1CA092BD6F99C003FCE3C /* Oidc */ = {
 			isa = PBXGroup;
 			children = (
+				EC0CB5932E266F2D00A82D6C /* Module */,
 				A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */,
 				3AB1CA0A2BD6F99C003FCE3C /* Oidc.h */,
 				3AB1CA322BD8823C003FCE3C /* Agent.swift */,
@@ -140,6 +155,7 @@
 				3AB1CA342BD884E4003FCE3C /* OidcClientConfig.swift */,
 				A50966B52C4C342800A4E5B5 /* OidcError.swift */,
 				3AB1CA3A2BD96089003FCE3C /* OidcUser.swift */,
+				EC0CB5912E266D6C00A82D6C /* OidcWeb.swift */,
 				A50966B92C4C3E7300A4E5B5 /* OpenIdConfiguration.swift */,
 				3AB1CA2B2BD7727B003FCE3C /* Pkce.swift */,
 				3AB1CA2A2BD7727B003FCE3C /* Token.swift */,
@@ -154,6 +170,7 @@
 				A509D1CC2C6D04E9003A0006 /* mock */,
 				A50966DE2C4DF3CD00A4E5B5 /* OidcClientConfigTests.swift */,
 				A50966E22C4F2F4300A4E5B5 /* OidcClientTests.swift */,
+				EC23D5142E2E7A1100C43D42 /* OidcWebTests.swift */,
 				A50966DA2C4DDFAE00A4E5B5 /* PkceTests.swift */,
 				A50966D42C4DD79000A4E5B5 /* TokenTests.swift */,
 			);
@@ -169,6 +186,15 @@
 				A50966EE2C4FF75400A4E5B5 /* MockStorage.swift */,
 			);
 			path = mock;
+			sourceTree = "<group>";
+		};
+		EC0CB5932E266F2D00A82D6C /* Module */ = {
+			isa = PBXGroup;
+			children = (
+				EC23D5122E295AAB00C43D42 /* Web.swift */,
+				EC0CB5942E266F3400A82D6C /* Oidc.swift */,
+			);
+			path = Module;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -285,11 +311,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				3AB1CA312BD859BC003FCE3C /* User.swift in Sources */,
+				EC0CB5952E266F3900A82D6C /* Oidc.swift in Sources */,
 				3AB1CA3D2BD961A2003FCE3C /* OidcClient.swift in Sources */,
 				3AB1CA332BD8823C003FCE3C /* Agent.swift in Sources */,
 				A50966B82C4C34CB00A4E5B5 /* AuthCode.swift in Sources */,
 				3AB1CA3B2BD96089003FCE3C /* OidcUser.swift in Sources */,
+				EC23D5132E295AAE00C43D42 /* Web.swift in Sources */,
 				A50966BA2C4C3E7300A4E5B5 /* OpenIdConfiguration.swift in Sources */,
+				EC0CB5922E266D7100A82D6C /* OidcWeb.swift in Sources */,
 				3AB1CA2E2BD7727B003FCE3C /* Pkce.swift in Sources */,
 				A50966B62C4C342800A4E5B5 /* OidcError.swift in Sources */,
 				3AB1CA2D2BD7727B003FCE3C /* Token.swift in Sources */,
@@ -303,6 +332,7 @@
 			files = (
 				A50967092C50843E00A4E5B5 /* MockAPIEndpoint.swift in Sources */,
 				A50966DB2C4DDFAE00A4E5B5 /* PkceTests.swift in Sources */,
+				EC23D5152E2E7A1700C43D42 /* OidcWebTests.swift in Sources */,
 				A50966EF2C4FF75400A4E5B5 /* MockStorage.swift in Sources */,
 				A50966DF2C4DF3CD00A4E5B5 /* OidcClientConfigTests.swift in Sources */,
 				A50966E12C4F1D9D00A4E5B5 /* MockURLProtocol.swift in Sources */,
@@ -473,7 +503,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = "1.3.0";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Oidc;
@@ -507,7 +537,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = "1.3.0";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Oidc;
@@ -529,7 +559,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = "1.3.0";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.OidcTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -550,7 +580,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = "1.3.0";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.OidcTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;

@@ -1,4 +1,4 @@
-// 
+//
 //  PhoneNumberCollector.swift
 //  Davinci
 //
@@ -19,18 +19,25 @@ open class PhoneNumberCollector: FieldCollector<[String: Any]>, @unchecked Senda
     public var countryCode: String = ""
     /// phone number
     public var phoneNumber: String = ""
-
+    
     /// Initializes a new instance of `PhoneNumberCollector` with the given JSON input.
     public required init(with json: [String : Any]) {
         self.defaultCountryCode = json[Constants.defaultCountryCode] as? String ?? ""
         self.validatePhoneNumber = json[Constants.validatePhoneNumber] as? Bool ?? false
-        super.init(with: json)
+        try super.init(with: json)
     }
     
-    /// Initializes the `PhoneNumberCollector` with the given phone number.
-    /// - Parameter phoneNumber: The phone number to initialize the collector with.
-    public override func initialize(with phoneNumber: Any) {
-        if let stringValue = phoneNumber as? String {
+    /// Initializes the collector's values. The input can be a dictionary containing
+    /// both phone number and country code, or a simple string for just the phone number.
+    /// - Parameter input: The value to initialize the collector with.
+    public override func initialize(with input: Any) {
+        // Check for the new structure (a dictionary with phone and country code)
+        if let dictValue = input as? [String: Any] {
+            self.phoneNumber = dictValue[Constants.phoneNumber] as? String ?? ""
+            self.countryCode = dictValue[Constants.countryCode] as? String ?? ""
+        }
+        // Fallback to the legacy structure (a simple string)
+        else if let stringValue = input as? String {
             self.phoneNumber = stringValue
         }
     }

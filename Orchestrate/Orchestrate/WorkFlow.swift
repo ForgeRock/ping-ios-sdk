@@ -57,10 +57,14 @@ public class Workflow: @unchecked Sendable {
     internal var nextHandlers = [@Sendable (FlowContext, ContinueNode, Request) async throws -> Request]()
     internal var responseHandlers = [@Sendable (FlowContext, Response) async throws -> Void]()
     internal var nodeHandlers = [@Sendable (FlowContext, Node) async throws -> Node]()
-    internal var successHandlers = [@Sendable (FlowContext, SuccessNode) async throws -> SuccessNode]()
-    internal var signOffHandlers = [@Sendable (Request) async throws -> Request]()
-    // Transform response to Node, we can only have one transform
+    public var successHandlers = [@Sendable (FlowContext, SuccessNode) async throws -> SuccessNode]()
+    public var signOffHandlers = [@Sendable (Request) async throws -> Request]()
+    /// Transform response to Node, we can only have one transform
     internal var transformHandler: @Sendable (FlowContext, Response) async throws -> Node = { _, _ in EmptyNode() }
+    /// A handler for sending requests and receiving responses.
+    internal lazy var transportHandler: @Sendable (FlowContext, Request) async throws -> Response = { [unowned self] flowContext, request in
+        try await self.send(flowContext, request: request)
+    }
     
     ///  Initializes the workflow.
     /// - Parameter config: The configuration for the workflow.
@@ -92,6 +96,7 @@ public class Workflow: @unchecked Sendable {
     /// Starts the workflow with the provided request.
     /// - Parameter request: The request to start the workflow with.
     /// - Returns: The resulting `Node` after processing the workflow.
+    /// - Throws an error if the workflow fails to start.
     private func start(request: Request) async throws -> Node {
         // Before we start, make sure all the module init has been completed
         try await initialize()
@@ -101,7 +106,8 @@ public class Workflow: @unchecked Sendable {
         for handler in startHandlers {
             currentRequest = try await handler(context, currentRequest)
         }
-        let response = try await send(context, request: currentRequest)
+        
+        let response = try await transportHandler(context, currentRequest)
         
         let transform = try await transformHandler(context, response)
         
@@ -113,6 +119,17 @@ public class Workflow: @unchecked Sendable {
         return try await next(context, initialNode)
     }
     
+    /// Starts the workflow with the provided request.
+    /// - Parameter request: The request to start the workflow with.
+    /// - Returns: The resulting `Node` after processing the workflow.
+    public func start(_ request: Request) async -> Node {
+        do {
+            return try await start(request: request)
+        }
+        catch {
+            return FailureNode(cause: error)
+        }
+    }
     
     /// Starts the workflow with a default request.
     /// - Returns: The resulting `Node` after processing the workflow.
@@ -132,7 +149,7 @@ public class Workflow: @unchecked Sendable {
     /// - Returns: The response received.
     private func send(_ context: FlowContext, request: Request) async throws -> Response {
         let (data, urlResponse) = try await config.httpClient.sendRequest(request: request)
-        let response = Response(data: data, response: urlResponse)
+        let response = HttpResponse(data: data, response: urlResponse)
         for handler in responseHandlers {
             try await handler(context, response)
         }
@@ -145,7 +162,7 @@ public class Workflow: @unchecked Sendable {
     private func send(_ request: Request) async throws -> Response {
         // semaphore
         let (data, urlResponse) = try await config.httpClient.sendRequest(request: request)
-        return Response(data: data, response: urlResponse)
+        return HttpResponse(data: data, response: urlResponse)
     }
     
     /// Processes the next node if it is a success node.
@@ -179,7 +196,7 @@ public class Workflow: @unchecked Sendable {
                 request = try await handler(context, current, request)
             }
             current.close()
-            let initialNode = try await transformHandler(context, try await send(context, request: request))
+            let initialNode = try await transformHandler(context, try await transportHandler(context, request))
             var node = initialNode
             for handler in nodeHandlers {
                 node = try await handler(context, node)

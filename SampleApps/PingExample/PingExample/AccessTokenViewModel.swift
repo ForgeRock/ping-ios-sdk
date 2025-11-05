@@ -20,7 +20,7 @@ import PingOidc
 class AccessTokenViewModel: ObservableObject {
     /// Published property to hold the current access token.
     /// - Updates are published to the UI whenever the value changes.
-    @Published var accessToken: String = ""
+    @Published var token: String = ""
     
     /// Initializes the `TokenViewModel` and fetches the access token asynchronously.
     init() {
@@ -33,16 +33,29 @@ class AccessTokenViewModel: ObservableObject {
     /// - The method checks for a successful token retrieval and updates the `accessToken` property.
     /// - Logs the success or failure result using `PingLogger`.
     func accessToken() async {
-        let token = try? await ConfigurationManager.shared.currentUser?.token()
+        let token: Result<Token, OidcError>?
+        
+        let journeyUser = await ConfigurationManager.shared.journeyUser
+        let davinci = await ConfigurationManager.shared.davinciUser
+        let oidcLoginUser = await ConfigurationManager.shared.oidcUser
+        
+        if journeyUser != nil {
+            token = await journeyUser?.token()
+        } else if davinci != nil {
+            token = await davinci?.token()
+        } else {
+            token = await oidcLoginUser?.token()
+        }
+
         switch token {
-        case .success(let accessToken):
+        case .success(let token):
             await MainActor.run {
-                self.accessToken = String(describing: accessToken)
+                self.token = String(describing: token)
             }
-            LogManager.standard.i("AccessToken: \(self.accessToken)")
+            LogManager.standard.i("AccessToken: \(self.token)")
         case .failure(let error):
             await MainActor.run {
-                self.accessToken = "Error: \(error.localizedDescription)"
+                self.token = "Error: \(error.localizedDescription)"
             }
             LogManager.standard.e("", error: error)
         case .none:

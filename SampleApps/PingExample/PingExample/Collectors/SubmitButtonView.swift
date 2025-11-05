@@ -33,5 +33,9 @@ struct SubmitButtonView: View {
         }
         .padding()
         .frame(maxWidth: .infinity)
+        .onDisappear {
+            field.value = ""
+        }
     }
+        
 }

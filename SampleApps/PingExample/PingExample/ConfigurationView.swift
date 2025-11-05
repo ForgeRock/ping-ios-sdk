@@ -11,6 +11,7 @@
 import SwiftUI
 
 struct ConfigurationView: View {
+    let menuItem: MenuItem
     @Binding var configurationViewModel: ConfigurationViewModel
     @State private var scopes: String = ""
     @State private var environments = ["AIC", "PingOne"]
@@ -18,6 +19,34 @@ struct ConfigurationView: View {
     
     var body: some View {
         Form {
+            Section(header: Text("Selected Environment")) {
+                Section {
+                    Text("Selected Environment (AIC or PingOne):")
+                    TextField("Selected Environment", text: $configurationViewModel.environment)
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
+                }
+            }
+            Section(header: Text("AIC Server details")) {
+                Section {
+                    Text("Server URL:")
+                    TextField("Server URL", text: $configurationViewModel.serverUrl.toUnwrapped(defaultValue: ""))
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
+                }
+                Section {
+                    Text("Realm name:")
+                    TextField("Realm name", text: $configurationViewModel.realm.toUnwrapped(defaultValue: ""))
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
+                }
+                Section {
+                    Text("Cookie name:")
+                    TextField("Cookie name", text: $configurationViewModel.cookieName.toUnwrapped(defaultValue: ""))
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
+                }
+            }
             Section(header: Text("OAuth 2.0 details")) {
                 Section {
                     Text("Client Id:")
@@ -70,7 +99,7 @@ struct ConfigurationView: View {
                 }
             }
         }
-        .navigationTitle("Edit Configuration")
+        .navigationTitle(menuItem.title)
         .onAppear{
             scopes = $configurationViewModel.scopes.wrappedValue.joined(separator: " ")
             selectedEnvironment = configurationViewModel.environment

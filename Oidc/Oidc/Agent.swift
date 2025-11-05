@@ -35,7 +35,7 @@ public protocol Agent<T>: Sendable {
 
 /// Allow the `Agent` to run on `OidcConfig` so that it can access the configuration object.
 public class OidcConfig<T> {
-     let oidcClientConfig: OidcClientConfig
+     public let oidcClientConfig: OidcClientConfig
      let config: T
      
      /// Initialize the `OidcConfig` with the `OidcClientConfig` and the configuration object.

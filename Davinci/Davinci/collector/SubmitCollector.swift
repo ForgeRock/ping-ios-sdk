@@ -16,7 +16,7 @@ import Foundation
 /// It is used to collect data when a form is submitted.
 public class SubmitCollector: SingleValueCollector, Submittable, @unchecked Sendable {
     /// Return event type
-    func eventType() -> String {
+    public func eventType() -> String {
         return Constants.submit
     }
 }

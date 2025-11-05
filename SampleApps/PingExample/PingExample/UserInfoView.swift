@@ -13,16 +13,17 @@ import SwiftUI
 
 /// A view that displays user information
 struct UserInfoView: View {
+    let menuItem: MenuItem
     /// A state object that manages the user information data.
     /// The `UserInfoViewModel` is responsible for fetching and updating user data.
-    @StateObject var userInfoViewModel = UserInfoViewModel()
+    @StateObject private var userInfoViewModel = UserInfoViewModel()
     
     var body: some View {
         ScrollView {
-            Text($userInfoViewModel.userInfo.wrappedValue)
+            Text(userInfoViewModel.userInfo)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal)
-                .navigationTitle("User Info")
+                .navigationTitle(menuItem.title)
         }
     }
 }

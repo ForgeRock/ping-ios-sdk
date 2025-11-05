@@ -10,7 +10,6 @@
 
 
 import Foundation
-import UIKit
 
 /// Class for a Request. A Request represents a request to be sent over the network.
 public class Request: @unchecked Sendable {
@@ -32,6 +31,10 @@ public class Request: @unchecked Sendable {
             // keeping Default Content type
             self.header(name: Constants.contentType, value: ContentType.json.rawValue)
         }
+    }
+    
+    public func url(_ urlRequest: URLRequest) {
+        self.urlRequest = urlRequest
     }
     
     /// Adds a parameter to the request.
@@ -106,7 +109,7 @@ public class Request: @unchecked Sendable {
         self.urlRequest.setValue(ContentType.urlEncoded.rawValue, forHTTPHeaderField: Constants.contentType)
         self.urlRequest.httpBody = formString.data(using: .utf8)
     }
-    
+        
     /// Represents various content types used in HTTP requests.
     public enum ContentType: String {
         case plainText = "text/plain"

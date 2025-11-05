@@ -51,7 +51,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -102,7 +102,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -150,7 +150,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -198,7 +198,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -245,7 +245,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -292,7 +292,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -334,7 +334,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -386,7 +386,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -437,7 +437,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -478,7 +478,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -515,7 +515,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -571,7 +571,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
@@ -614,7 +614,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = HttpClient(session: .shared)
             
-            config.module(OidcModule.config) { oidcValue in
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri

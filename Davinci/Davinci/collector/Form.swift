@@ -19,12 +19,12 @@ struct Form {
     /// parsing each field into a collector and adding it to a list.
     ///  - Parameter json: The JSON object to parse.
     ///  - Returns:  A list of collectors parsed from the JSON object.
-    static func parse(json: [String: Any]) async -> Collectors {
+    static func parse(daVinci: DaVinci, json: [String: Any]) async -> Collectors {
         var collectors = Collectors()
         if let form = json[Constants.form] as? [String: Any],
            let components = form[Constants.components] as? [String: Any],
            let fields = components[Constants.fields] as? [[String: any Sendable]] {
-            collectors = await CollectorFactory.shared.collector(from: fields)
+            collectors = await CollectorFactory.shared.collector(daVinci: daVinci, from: fields)
         }
         
         // Populate default values for collectors

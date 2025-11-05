@@ -13,6 +13,8 @@ import SwiftUI
 import PingOrchestrate
 import PingDavinci
 import PingExternalIdP
+import PingProtect
+import PingFido
 
 struct ContinueNodeView: View {
     var continueNode: ContinueNode
@@ -36,68 +38,52 @@ struct ContinueNodeView: View {
             
             Divider()
             
-            ForEach(continueNode.collectors , id: \.id) { collector in
+            ForEach(continueNode.collectors, id: \.id) { collector in
                 switch collector {
-                case is FlowCollector:
-                    if let flowCollector = collector as? FlowCollector {
-                        FlowButtonView(field: flowCollector, onNext: onNext)
+                case let flowCollector as FlowCollector:
+                    FlowButtonView(field: flowCollector, onNext: onNext)
+                case let passwordCollector as PasswordCollector:
+                    PasswordView(field: passwordCollector, onNodeUpdated: onNodeUpdated)
+                case let submitCollector as SubmitCollector:
+                    SubmitButtonView(field: submitCollector, onNext: onNext)
+                case let textCollector as TextCollector:
+                    TextView(field: textCollector, onNodeUpdated: onNodeUpdated)
+                case let labelCollector as LabelCollector:
+                    LabelView(field: labelCollector)
+                case let multiSelectCollector as MultiSelectCollector:
+                    if multiSelectCollector.type == "COMBOBOX" {
+                        ComboBoxView(field: multiSelectCollector, onNodeUpdated: onNodeUpdated)
+                    } else {
+                        CheckBoxView(field: multiSelectCollector, onNodeUpdated: onNodeUpdated)
                     }
-                case is PasswordCollector:
-                    if let passwordCollector = collector as? PasswordCollector {
-                        PasswordView(field: passwordCollector, onNodeUpdated: onNodeUpdated)
+                case let singleSelectCollector as SingleSelectCollector:
+                    if singleSelectCollector.type == "DROPDOWN" {
+                        DropdownView(field: singleSelectCollector, onNodeUpdated: onNodeUpdated)
+                    } else {
+                        RadioButtonView(field: singleSelectCollector, onNodeUpdated: onNodeUpdated)
                     }
-                case is SubmitCollector:
-                    if let submitCollector = collector as? SubmitCollector {
-                        SubmitButtonView(field: submitCollector, onNext: onNext)
-                    }
-                case is TextCollector:
-                    if let textCollector = collector as? TextCollector {
-                        TextView(field: textCollector, onNodeUpdated: onNodeUpdated)
-                    }
-                case is LabelCollector:
-                    if let labelCollector = collector as? LabelCollector {
-                        LabelView(field: labelCollector)
-                    }
-                case is MultiSelectCollector:
-                    if let multiSelectCollector = collector as? MultiSelectCollector {
-                        if multiSelectCollector.type == "COMBOBOX" {
-                            ComboBoxView(field: multiSelectCollector, onNodeUpdated: onNodeUpdated)
-                        } else {
-                            CheckBoxView(field: multiSelectCollector, onNodeUpdated: onNodeUpdated)
-                        }
-                    }
-                case is SingleSelectCollector:
-                    if let singleSelectCollector = collector as? SingleSelectCollector {
-                        if singleSelectCollector.type == "DROPDOWN" {
-                            DropdownView(field: singleSelectCollector, onNodeUpdated: onNodeUpdated)
-                        } else {
-                            RadioButtonView(field: singleSelectCollector, onNodeUpdated: onNodeUpdated)
-                        }
-                    }
-                case is IdpCollector:
-                    if let idpCollector = collector as? IdpCollector {
-                        let viewModel = SocialButtonViewModel(idpCollector: idpCollector)
-                        SocialButtonView(socialButtonViewModel: viewModel, onNext: onNext, onStart: onStart)
-                    }
-                case is DeviceRegistrationCollector:
-                    if let deviceRegistrationCollector = collector as? DeviceRegistrationCollector {
-                        DeviceRegistrationView(field: deviceRegistrationCollector, onNext: onNext)
-                    }
-                case is DeviceAuthenticationCollector:
-                    if let deviceAuthenticationCollector = collector as? DeviceAuthenticationCollector {
-                        DeviceAuthenticationView(field: deviceAuthenticationCollector, onNext: onNext)
-                    }
-                case is PhoneNumberCollector:
-                    if let phoneNumberCollector = collector as? PhoneNumberCollector {
-                        PhoneNumberView(field: phoneNumberCollector, onNodeUpdated: onNodeUpdated)
-                    }
+                case let idpCollector as IdpCollector:
+                    let viewModel = SocialButtonViewModel(idpCollector: idpCollector)
+                    SocialButtonView(socialButtonViewModel: viewModel, onNext: onNext, onStart: onStart)
+                case let deviceRegistrationCollector as DeviceRegistrationCollector:
+                    DeviceRegistrationView(field: deviceRegistrationCollector, onNext: onNext)
+                case let deviceAuthenticationCollector as DeviceAuthenticationCollector:
+                    DeviceAuthenticationView(field: deviceAuthenticationCollector, onNext: onNext)
+                case let phoneNumberCollector as PhoneNumberCollector:
+                    PhoneNumberView(field: phoneNumberCollector, onNodeUpdated: onNodeUpdated)
+                case let protectCollector as ProtectCollector:
+                    ProtectView(field: protectCollector, onNodeUpdated: onNodeUpdated)
+                case let fidoRegistrationCollector as FidoRegistrationCollector:
+                    FidoRegistrationCollectorView(collector: fidoRegistrationCollector, onNext: { onNext(true) })
+                case let fidoAuthenticationCollector as FidoAuthenticationCollector:
+                    FidoAuthenticationCollectorView(collector: fidoAuthenticationCollector, onNext: { onNext(true) })
                 default:
                     EmptyView()
                 }
             }
-            
+
             // Fallback Next Button
-            if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector || $0 is DeviceRegistrationCollector || $0 is DeviceAuthenticationCollector }) {
+            if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector || $0 is DeviceRegistrationCollector || $0 is DeviceAuthenticationCollector || $0 is FidoRegistrationCollector || $0 is FidoAuthenticationCollector }) {
                 Button(action: { onNext(false) }) {
                     Text("Next")
                         .frame(maxWidth: .infinity)
