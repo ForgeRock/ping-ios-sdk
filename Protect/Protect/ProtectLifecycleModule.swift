@@ -38,14 +38,14 @@ public class ProtectLifecycleModule {
         
         setup.start { @Sendable context, request in
             if setupConfig.resumeBehavioralDataOnStart {
-                try await Protect.resumeBehavioralData()
+                try Protect.resumeBehavioralData()
             }
             return request
         }
         
         setup.success { @Sendable context, successNode in
             if setupConfig.pauseBehavioralDataOnSuccess {
-                try await Protect.pauseBehavioralData()
+                try Protect.pauseBehavioralData()
             }
             return successNode
         }
