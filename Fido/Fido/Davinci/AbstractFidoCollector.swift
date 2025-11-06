@@ -24,8 +24,14 @@ public class AbstractFidoCollector: FieldCollector<[String: Any]>, DaVinciAware,
         return davinci?.config.logger
     }
     
-    /// The Fido instance, used for Fido operations.
-    var fido: Fido = Fido.shared
+    /// Private storage for the Fido instance
+    private var _fido: Fido?
+    
+    /// Fido manager instance - defaults to shared singleton but can be injected for testing.
+    var fido: Fido {
+        get { _fido ?? Fido.shared }
+        set { _fido = newValue }
+    }
     
     /// Returns the event type for submission.
     public func eventType() -> String {

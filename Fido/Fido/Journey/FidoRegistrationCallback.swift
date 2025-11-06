@@ -49,10 +49,14 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
         do {
             // 1. Wrap the closure-based fido.register in a continuation
             //    This still throws internally within the 'do' block if the continuation resumes with an error.
-            let response = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[String: Any], Error>) in
+            let response: [String: Any] = try await withUnsafeThrowingContinuation { continuation in
                 // Assuming 'fido' instance is accessible
-                fido.register(options: publicKeyCredentialCreationOptions, window: window) { result in
-                    continuation.resume(with: result) // Resume with the Result<[String: Any], Error>
+                fido.register(options: publicKeyCredentialCreationOptions, window: window) { [continuation] result in
+                    Task {
+                        await MainActor.run {
+                            continuation.resume(with: result) // Resume with the Result<[String: Any>, Error>
+                        }
+                    }
                 }
             }
             

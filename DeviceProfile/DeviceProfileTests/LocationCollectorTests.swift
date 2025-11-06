@@ -12,15 +12,25 @@ import XCTest
 import CoreLocation
 @testable import PingDeviceProfile
 
+@MainActor
 class LocationCollectorTests: XCTestCase {
     
     var collector: LocationCollector!
     var mockCLLocationManager: MockLocationManager!
     var mockLocationManager: LocationManager!
     
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         
+        await MainActor.run {
+            self.mainActorInitializer()
+        }
+        
+        // Create collector with mock LocationManager
+        collector = LocationCollector(locationManager: mockLocationManager)
+    }
+    
+    @MainActor private func mainActorInitializer() {
         // Create mock CLLocationManager
         mockCLLocationManager = MockLocationManager()
         mockCLLocationManager.mockLocationServicesEnabled = true
@@ -28,21 +38,21 @@ class LocationCollectorTests: XCTestCase {
         MockLocationManager.shared = mockCLLocationManager
         
         // Create LocationManager with the mock
-        mockLocationManager = LocationManager(
+        let manager = LocationManager(
             locationManager: mockCLLocationManager,
             locationManagerType: MockLocationManager.self
         )
-        
-        // Create collector with mock LocationManager
-        collector = LocationCollector(locationManager: mockLocationManager)
+        mockLocationManager = manager
     }
     
-    override func tearDown() {
-        collector = nil
-        mockLocationManager = nil
-        mockCLLocationManager = nil
-        MockLocationManager.shared = nil
-        super.tearDown()
+    override func tearDown() async throws {
+        await MainActor.run {
+            collector = nil
+            mockLocationManager = nil
+            mockCLLocationManager = nil
+            MockLocationManager.shared = nil
+        }
+        try await super.tearDown()
     }
     
     // MARK: - Basic Properties Tests
@@ -166,6 +176,7 @@ class LocationCollectorTests: XCTestCase {
         XCTAssertEqual(result?.latitude, 37.7749, "Latitude should match expected value")
         XCTAssertEqual(result?.longitude, -122.4194, "Longitude should match expected value")
         XCTAssertEqual(mockCLLocationManager.requestLocationCallCount, 1, "Should call requestLocation once")
+        
     }
     
     func testCollectorCollectFailure() async {
@@ -410,7 +421,7 @@ class LocationCollectorTests: XCTestCase {
     func testCollectorInitializationWithDefaultManager() {
         // Test that collector can be initialized without explicit dependency injection
         let defaultCollector = LocationCollector()
-        
+        defaultCollector.locationManager = LocationManager.shared
         XCTAssertNotNil(defaultCollector, "Should initialize with default manager")
         XCTAssertNotNil(defaultCollector.locationManager, "Should have location manager")
         XCTAssertEqual(defaultCollector.key, "location", "Should have correct key")

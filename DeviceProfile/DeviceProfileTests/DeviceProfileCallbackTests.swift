@@ -292,8 +292,8 @@ class DeviceProfileCallbackTests: XCTestCase {
         
         await withTaskGroup(of: Result<[String: any Sendable], Error>.self) { group in
             for i in 0..<iterations {
-                group.addTask {
-                    return await self.callback.collect { config in
+                group.addTask { [callback] in
+                    return await callback.collect { config in
                         config.collectors {
                             return [MockCollectorForCallbackTests(key: "test-\(i)")]
                         }

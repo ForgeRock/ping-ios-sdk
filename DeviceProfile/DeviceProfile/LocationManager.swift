@@ -103,11 +103,12 @@ extension CLLocationManager: LocationManagerProtocol {
 /// Your app's Info.plist must include appropriate usage descriptions:
 /// - `NSLocationWhenInUseUsageDescription` for basic location access
 /// - `NSLocationAlwaysAndWhenInUseUsageDescription` for background location access
-public class LocationManager: NSObject, ObservableObject {
+public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
     
     // MARK: - Constants
     
     /// Shared singleton instance of LocationManager for app-wide coordination
+    @MainActor
     public static let shared = LocationManager()
     
     /// Duration in seconds for which cached location data remains valid
@@ -170,6 +171,7 @@ public class LocationManager: NSObject, ObservableObject {
         /// - Parameters:
         ///   - locationManager: The location manager implementation (defaults to CLLocationManager)
         ///   - locationManagerType: The type for class methods (defaults to CLLocationManager.self)
+        @MainActor
         init(locationManager: LocationManagerProtocol = CLLocationManager(),
              locationManagerType: LocationManagerProtocol.Type = CLLocationManager.self) {
             self.locationManager = locationManager
@@ -179,6 +181,7 @@ public class LocationManager: NSObject, ObservableObject {
         }
     
     /// Configures the location manager with optimal settings for device profiling
+    @MainActor
     private func setupLocationManager() {
         // Use moderate accuracy to balance precision with battery life
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
@@ -226,14 +229,12 @@ public class LocationManager: NSObject, ObservableObject {
     /// }
     /// ```
     func requestLocation() async throws -> CLLocation? {
-        // Update UI state on main thread
-        await MainActor.run {
-            self.isRequesting = true
-        }
+        // Update UI state on main actor
+        await MainActor.run { isRequesting = true }
         
         defer {
             Task { @MainActor in
-                self.isRequesting = false
+                isRequesting = false
             }
         }
         
@@ -358,11 +359,12 @@ public class LocationManager: NSObject, ObservableObject {
 
 // MARK: - CLLocationManagerDelegate
 
-extension LocationManager: CLLocationManagerDelegate {
+extension LocationManager: @preconcurrency CLLocationManagerDelegate {
     
     /// Called when the authorization status changes
     /// - Parameter manager: The location manager whose authorization changed
     /// - Parameter status: The new authorization status
+    @MainActor
     public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         // Resume any pending authorization continuation
         if let continuation = authorizationContinuation {
@@ -374,6 +376,7 @@ extension LocationManager: CLLocationManagerDelegate {
     /// Called when location data becomes available
     /// - Parameter manager: The location manager providing the update
     /// - Parameter locations: Array of location objects in chronological order
+    @MainActor
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         
@@ -390,6 +393,7 @@ extension LocationManager: CLLocationManagerDelegate {
     /// Called when location request fails
     /// - Parameter manager: The location manager that encountered the error
     /// - Parameter error: The error that occurred during location request
+    @MainActor
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         // Resume any pending location continuation with the error
         if let continuation = locationContinuation {

@@ -12,13 +12,14 @@ import XCTest
 import CoreLocation
 @testable import PingDeviceProfile
 
-class LocationManagerTests: XCTestCase {
+@MainActor
+class LocationManagerTests: XCTestCase, Sendable {
     
     var sut: LocationManager!
     var mockLocationManager: MockLocationManager!
     
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         mockLocationManager = MockLocationManager()
         mockLocationManager.mockLocationServicesEnabled = true
         MockLocationManager.shared = mockLocationManager // Enable static method mocking
@@ -28,11 +29,11 @@ class LocationManagerTests: XCTestCase {
         )
     }
     
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         mockLocationManager = nil
         MockLocationManager.shared = nil // Clean up
-        super.tearDown()
+        try await super.tearDown()
     }
     
     // MARK: - Initialization Tests
@@ -426,7 +427,7 @@ class LocationManagerTests: XCTestCase {
         await withTaskGroup(of: CLAuthorizationStatus.self) { group in
             for _ in 0..<iterations {
                 group.addTask {
-                    return self.sut.authorizationStatus
+                    return await self.sut.authorizationStatus
                 }
             }
             
@@ -630,7 +631,7 @@ class LocationManagerTests: XCTestCase {
 // MARK: - MockLocationManager
 
 /// Mock implementation for testing location scenarios
-class MockLocationManager: LocationManagerProtocol {
+@MainActor class MockLocationManager: @MainActor LocationManagerProtocol {
     weak var delegate: CLLocationManagerDelegate?
     var desiredAccuracy: CLLocationAccuracy = kCLLocationAccuracyBest
     

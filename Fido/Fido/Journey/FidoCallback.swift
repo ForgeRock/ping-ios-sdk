@@ -32,8 +32,14 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
         return journey?.config.logger
     }
     
-    /// Shared instance of the Fido manager.
-    var fido: Fido = Fido.shared
+    /// Private storage for the Fido instance
+    private var _fido: Fido?
+    
+    /// Fido manager instance - defaults to shared singleton but can be injected for testing.
+    var fido: Fido {
+        get { _fido ?? Fido.shared }
+        set { _fido = newValue }
+    }
     
     /// This method is an override from `AbstractCallback` and is not used in this context.
     public override func initValue(name: String, value: Any) {

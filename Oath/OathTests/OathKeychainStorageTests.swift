@@ -26,7 +26,7 @@ final class OathKeychainStorageTests: XCTestCase {
     override func tearDownWithError() throws {
         // Best-effort async cleanup; each test gets its own unique service so leftover
         // data won't clash
-        Task { try? await storage?.clearOathCredentials() }
+        Task { [storage] in try? await storage?.clearOathCredentials() }
         try super.tearDownWithError()
     }
 
@@ -199,8 +199,8 @@ final class OathKeychainStorageTests: XCTestCase {
         // When - store credentials concurrently
         await withThrowingTaskGroup(of: Void.self) { group in
             for credential in credentials {
-                group.addTask {
-                    try await self.storage?.storeOathCredential(credential)
+                group.addTask { [storage] in
+                    try await storage?.storeOathCredential(credential)
                 }
             }
         }
@@ -233,7 +233,7 @@ final class OathKeychainStorageTests: XCTestCase {
         measure {
             let expectation = expectation(description: "Storage operation")
 
-            Task {
+            Task { [storage, credential] in
                 do {
                     try await storage?.storeOathCredential(credential)
                     let credential = try await storage?.retrieveOathCredential(credentialId: credential.id)
@@ -257,7 +257,7 @@ final class OathKeychainStorageTests: XCTestCase {
         measure {
             let expectation = expectation(description: "Large dataset operation")
 
-            Task {
+            Task { [storage, credentials] in
                 do {
                     for credential in credentials {
                         try await storage?.storeOathCredential(credential)

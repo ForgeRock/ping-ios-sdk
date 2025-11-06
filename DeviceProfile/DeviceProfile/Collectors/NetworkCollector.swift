@@ -18,7 +18,7 @@ import Network
 /// This collector determines the current network connectivity status
 /// using the modern Network framework available in iOS 13+.
 /// It provides a snapshot of connectivity at collection time.
-public class NetworkCollector: DeviceCollector {
+public class NetworkCollector: DeviceCollector, @unchecked Sendable {
     public typealias DataType = NetworkInfo
     
     /// Unique identifier for network connectivity data
@@ -40,7 +40,7 @@ public class NetworkCollector: DeviceCollector {
 ///
 /// This structure contains the basic connectivity state determined
 /// at the time of collection using the Network framework.
-public struct NetworkInfo: Codable {
+public struct NetworkInfo: Codable, Sendable {
     /// Whether the device currently has network connectivity
     /// - Note: This represents the connectivity status at collection time
     let connected: Bool

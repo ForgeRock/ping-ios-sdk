@@ -164,7 +164,8 @@ class BrowserCollectorTests: XCTestCase {
     func testCollectorCollectPerformance() {
         measure {
             Task {
-                _ = await collector.collect()
+                let testCollector = BrowserCollector()
+                _ = await testCollector.collect()
             }
         }
     }
@@ -213,9 +214,10 @@ class BrowserCollectorTests: XCTestCase {
         let iterations = 10
         
         await withTaskGroup(of: BrowserInfo?.self) { group in
+            let testCollector = BrowserCollector()
             for _ in 0..<iterations {
                 group.addTask {
-                    return await self.collector.collect()
+                    return await testCollector.collect()
                 }
             }
             

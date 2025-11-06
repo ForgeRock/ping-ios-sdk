@@ -34,7 +34,6 @@
       }
     },
     {
-      "enabled" : false,
       "skippedTests" : [
         "TelephonyCollectorTests\/testNetworkCountryIsoFormat()"
       ],
@@ -101,7 +100,6 @@
       }
     },
     {
-      "enabled" : false,
       "target" : {
         "containerPath" : "container:..\/Fido\/Fido.xcodeproj",
         "identifier" : "ECD780452EA24F1B0050E60F",
