@@ -6,58 +6,134 @@ on:
       SLACK_WEBHOOK:
         description: 'Slack Notifier Webhook'
         required: true
+
 jobs:
   build-and-test:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-15]
+        os: [macos-15] 
     runs-on: ${{ matrix.os }}
     timeout-minutes: 40
 
     env:
-      # XCODE_VERSION: 26.0.1
-      # SIM_DEVICE_NAME: iPhone 16
-      # SIM_OS_VERSION: 18.6
       XCODE_VERSION: ${{ vars.XCODE_VERSION }}
       SIM_DEVICE_NAME: ${{ vars.SIM_DEVICE_NAME }}
       SIM_OS_VERSION: ${{ vars.SIM_OS_VERSION }}
 
     steps:
-      # Clone the repo
-      - name: Clone the repository
+      # Checkout the repository (shallow clone for faster performance)
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
-          fetch-depth: 0
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          fetch-depth: 1
 
-      # Get the architecture of the chip
-      - name: Check chip architecture 
-        run: echo "CHIP_TYPE=$(uname -m)" >> $GITHUB_ENV    
+      # Detect architecture
+      - name: Check chip architecture
+        run: echo "CHIP_TYPE=$(uname -m)" >> $GITHUB_ENV
 
-      # Set target Xcode version. For more details and options see:
-      # https://github.com/actions/runner-images/blob/main/images/macos/macos-15-Readme.md
-      - name: Select Xcode
-        run: sudo xcode-select -switch /Applications/Xcode_$XCODE_VERSION.app && /usr/bin/xcodebuild -version
-        
+      # # Set target Xcode version. For more details and options see:
+      # # https://github.com/actions/runner-images/blob/main/images/macos/macos-15-Readme.md
+      # - name: Select Xcode
+      #   run: sudo xcode-select -switch /Applications/Xcode_$XCODE_VERSION.app && /usr/bin/xcodebuild -version
+
+      # Set up Xcode (faster and cleaner than manual xcode-select)
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      # Cache DerivedData to speed up rebuilds
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: DerivedData
+          key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.xcodeproj/**', '**/*.xcworkspace/**') }}
+
+      # Cache dependencies (SPM or CocoaPods)
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.carthage.CarthageKit
+            ~/Library/Caches/com.apple.dt.Xcode
+            **/Pods
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/Podfile.lock', '**/Package.resolved') }}
+
+      # ------------------------------------------
+      # Simulator Setup (Boot + Diagnostics)
+      # ------------------------------------------
+      - name: List available simulators
+        run: xcrun simctl list devices
+
+      - name: List available runtimes
+        run: xcrun simctl list runtimes
+
+      - name: Boot simulator
+        run: |
+          UDID=$(xcrun simctl create "TestSim" "iPhone 16" "com.apple.CoreSimulator.SimRuntime.iOS-18-6")
+          echo "Simulator UDID: $UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl list | grep Booted
+          echo "SIMULATOR_UDID=$UDID" >> $GITHUB_ENV
+
+      # xcrun simctl boot "$UDID"
+
+      - name: Wait for Simulator to be Ready
+        run: |
+          for i in {1..30}; do
+            BOOTED=$(xcrun simctl list devices | grep "$SIMULATOR_UDID" | grep Booted || true)
+            if [ -n "$BOOTED" ]; then
+              echo "✅ Simulator booted"
+              break
+            fi
+            echo "⏳ Waiting for simulator..."
+            sleep 5
+          done
+          xcrun simctl io "$SIMULATOR_UDID" screenshot boot_check.png
+
+      
+      - name: Build and install app on simulator
+        run: |
+          xcodebuild build \
+            -workspace SampleApps/Ping.xcworkspace \
+            -scheme PingTestHost \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,id=$SIMULATOR_UDID" \
+            -derivedDataPath DerivedData
+
+          xcrun simctl install $SIMULATOR_UDID DerivedData/Build/Products/Debug-iphonesimulator/PingTestHost.app
+
+      - name: Grant Permissions
+        run: |
+          # Pre-authorize typical permissions to avoid UI prompts
+          xcrun simctl privacy "$SIMULATOR_UDID" grant location com.pingidentity.PingTestHost
+
       # Run all tests
       - name: Run tests
         run: |
-          DEST="platform=iOS Simulator,name=${SIM_DEVICE_NAME},OS=${SIM_OS_VERSION}"
+          DEST="platform=iOS Simulator,id=$SIMULATOR_UDID"
           echo "Running tests on $DEST"
-
+        
           xcodebuild test \
-          -scheme PingTestHost \
-          -workspace SampleApps/Ping.xcworkspace \
-          -configuration Debug \
-          -destination "$DEST" \
-          -derivedDataPath DerivedData \
-          -enableCodeCoverage YES \
-          -resultBundlePath TestResults 
-          
+            -workspace SampleApps/Ping.xcworkspace \
+            -scheme PingTestHost \
+            -destination  "$DEST" \
+            -derivedDataPath DerivedData
 
-      # Publish test results
+          # xcodebuild test \
+          # -scheme PingTestHost \
+          # -workspace SampleApps/Ping.xcworkspace \
+          # -configuration Debug \
+          # -destination "$DEST" \
+          # -derivedDataPath DerivedData \
+          # -enableCodeCoverage YES \
+          # -resultBundlePath TestResults 
+
+      # Publish test results (xcresulttool)
       - name: Publish test results
         uses: slidoapp/xcresulttool@v3.1.0
         with:
@@ -66,9 +142,16 @@ jobs:
           show-passed-tests: false
           upload-bundles: never
         if: success() || failure()
- 
-      # Send slack notification with result status
-      - uses: 8398a7/action-slack@v3
+
+      - name: Shutdown simulator
+        if: always()
+        run: |
+          xcrun simctl shutdown "$SIMULATOR_UDID" || true
+          xcrun simctl delete "$SIMULATOR_UDID" || true
+
+      # Send Slack notification
+      - name: Send Slack notification
+        uses: 8398a7/action-slack@v3
         with:
           mention: 'stoyan.petrov'
           if_mention: 'failure,cancelled'
