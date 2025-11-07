@@ -58,8 +58,8 @@ protocol LocationManagerProtocol: AnyObject {
     var delegate: CLLocationManagerDelegate? { get set }
     var desiredAccuracy: CLLocationAccuracy { get set }
     
-    static func locationServicesEnabled() -> Bool
-    static func authorizationStatus() -> CLAuthorizationStatus
+    static func locationServicesEnabled() async -> Bool
+    static func authorizationStatus() async -> CLAuthorizationStatus
     
     func requestLocation() async
     func requestWhenInUseAuthorization() async
@@ -119,7 +119,7 @@ public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
     
     /// LocationManagerProtocol instance for system location services
     private let locationManager: LocationManagerProtocol
-        
+    
     /// LocationManagerProtocol concrete type
     private let locationManagerType: LocationManagerProtocol.Type
     
@@ -143,25 +143,29 @@ public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
     /// Current authorization status using iOS 13+ compatible class method
     /// - Returns: Current location authorization status for the application
     var authorizationStatus: CLAuthorizationStatus {
-        return locationManagerType.authorizationStatus()
+        get async {
+            return await locationManagerType.authorizationStatus()
+        }
     }
     
     /// Human-readable authorization status for debugging and logging
     /// - Returns: String representation of current authorization status
     var authorizationStatusString: String {
-        switch authorizationStatus {
-        case .authorizedAlways:
-            return "authorizedAlways"
-        case .authorizedWhenInUse:
-            return "authorizedWhenInUse"
-        case .denied:
-            return "denied"
-        case .restricted:
-            return "restricted"
-        case .notDetermined:
-            return "notDetermined"
-        @unknown default:
-            return "unknown"
+        get async {
+            switch await authorizationStatus {
+            case .authorizedAlways:
+                return "authorizedAlways"
+            case .authorizedWhenInUse:
+                return "authorizedWhenInUse"
+            case .denied:
+                return "denied"
+            case .restricted:
+                return "restricted"
+            case .notDetermined:
+                return "notDetermined"
+            @unknown default:
+                return "unknown"
+            }
         }
     }
     
@@ -239,12 +243,12 @@ public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
         }
         
         // Verify location services are enabled system-wide
-        guard locationManagerType.locationServicesEnabled() else {
+        guard await locationManagerType.locationServicesEnabled() else {
             throw LocationError.locationServicesDisabled
         }
         
         // Handle different authorization states
-        switch authorizationStatus {
+        switch await authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
             // Already authorized, fetch location
             return try await fetchLocationWithAuthorization()

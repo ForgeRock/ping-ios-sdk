@@ -90,14 +90,14 @@ class LocationManagerTests: XCTestCase, Sendable {
     
     // MARK: - Authorization Status Tests
     
-    func testAuthorizationStatusReflectsMockStatus() {
+    func testAuthorizationStatusReflectsMockStatus() async {
         mockLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
         
-        let status = sut.authorizationStatus
+        let status = await sut.authorizationStatus
         XCTAssertEqual(status, .authorizedWhenInUse, "Should return mock authorization status")
     }
     
-    func testAuthorizationStatusString_AllCases() {
+    func testAuthorizationStatusString_AllCases() async {
         let testCases: [(CLAuthorizationStatus, String)] = [
             (.notDetermined, "notDetermined"),
             (.restricted, "restricted"),
@@ -108,7 +108,7 @@ class LocationManagerTests: XCTestCase, Sendable {
         
         for (status, expectedString) in testCases {
             mockLocationManager.mockAuthorizationStatus = status
-            let statusString = sut.authorizationStatusString
+            let statusString = await sut.authorizationStatusString
             XCTAssertEqual(statusString, expectedString,
                           "Status string should match for \(status)")
         }
@@ -616,13 +616,18 @@ class LocationManagerTests: XCTestCase, Sendable {
     
     func testAuthorizationStatusPerformance() {
         measure {
-            _ = sut.authorizationStatus
+            Task {
+                _ = await sut.authorizationStatus
+            }
         }
     }
     
     func testAuthorizationStatusStringPerformance() {
         measure {
-            _ = sut.authorizationStatusString
+            Task {
+                _ = await sut.authorizationStatusString
+            }
+            
         }
     }
 }
@@ -631,7 +636,7 @@ class LocationManagerTests: XCTestCase, Sendable {
 // MARK: - MockLocationManager
 
 /// Mock implementation for testing location scenarios
-@MainActor class MockLocationManager: @MainActor LocationManagerProtocol {
+@MainActor class MockLocationManager: @preconcurrency LocationManagerProtocol {
     weak var delegate: CLLocationManagerDelegate?
     var desiredAccuracy: CLLocationAccuracy = kCLLocationAccuracyBest
     
@@ -648,13 +653,13 @@ class LocationManagerTests: XCTestCase, Sendable {
     var requestAlwaysAuthorizationCallCount = 0
     
     // Shared state for static methods (used in tests)
-    static var shared: MockLocationManager?
+    @MainActor static var shared: MockLocationManager?
     
-    static func locationServicesEnabled() -> Bool {
+    @MainActor static func locationServicesEnabled() -> Bool {
         return shared?.mockLocationServicesEnabled ?? true
     }
     
-    static func authorizationStatus() -> CLAuthorizationStatus {
+    @MainActor static func authorizationStatus() -> CLAuthorizationStatus {
         return shared?.mockAuthorizationStatus ?? .notDetermined
     }
     
