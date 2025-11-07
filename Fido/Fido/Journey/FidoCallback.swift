@@ -73,6 +73,10 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
                 logger?.d("FIDO operation timed out")
                 setError(error: FidoConstants.ERROR_TIMEOUT, message: "Operation timedout")
                 return
+            case .unsupportedAction(let message):
+                logger?.d("FIDO ERROR NOT SUPPORTED: \(message)")
+                setError(error: FidoConstants.ERROR_NOT_SUPPORTED, message: message)
+                return
             default:
                 break
             }
