@@ -28,6 +28,7 @@ public class AbstractFidoCollector: FieldCollector<[String: Any]>, DaVinciAware,
     private var _fido: Fido?
     
     /// Fido manager instance - defaults to shared singleton but can be injected for testing.
+    @MainActor
     var fido: Fido {
         get { _fido ?? Fido.shared }
         set { _fido = newValue }

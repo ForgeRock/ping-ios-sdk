@@ -187,7 +187,9 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
                     newCredential[FidoConstants.FIELD_TYPE] = type
                 }
                 if let idArray = credential[FidoConstants.FIELD_ID] as? [Int] {
-                    let data = Data(idArray.map { UInt8($0) })
+                    // Convert signed Int values to unsigned UInt8 using bitPattern
+                    // This properly handles negative values (Int8 range: -128 to 127)
+                    let data = Data(idArray.map { UInt8(bitPattern: Int8($0)) })
                     newCredential[FidoConstants.FIELD_ID] = data.base64EncodedString()
                 }
                 return newCredential

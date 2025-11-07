@@ -36,6 +36,7 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
     private var _fido: Fido?
     
     /// Fido manager instance - defaults to shared singleton but can be injected for testing.
+    @MainActor
     var fido: Fido {
         get { _fido ?? Fido.shared }
         set { _fido = newValue }
@@ -64,6 +65,18 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
     /// - Parameter error: The error to handle and convert.
     public func handleError(error: Error) {
         logger?.e("Handling FIDO error: \(error.localizedDescription)", error: error)
+        
+        // Check if it's a FidoError first
+        if let fidoError = error as? FidoError {
+            switch fidoError {
+            case .timeout:
+                logger?.d("FIDO operation timed out")
+                setError(error: FidoConstants.ERROR_TIMEOUT, message: "Operation timedout")
+                return
+            default:
+                break
+            }
+        }
         
         let nsError = error as NSError
         
