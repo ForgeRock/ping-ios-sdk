@@ -61,9 +61,9 @@ protocol LocationManagerProtocol: AnyObject {
     static func locationServicesEnabled() -> Bool
     static func authorizationStatus() -> CLAuthorizationStatus
     
-    func requestLocation()
-    func requestWhenInUseAuthorization()
-    func requestAlwaysAuthorization()
+    func requestLocation() async
+    func requestWhenInUseAuthorization() async
+    func requestAlwaysAuthorization() async
 }
 
 // MARK: - CLLocationManager Conformance
@@ -168,17 +168,17 @@ public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
     // MARK: - Lifecycle
     
     /// Initializes LocationManager with dependency injection support
-        /// - Parameters:
-        ///   - locationManager: The location manager implementation (defaults to CLLocationManager)
-        ///   - locationManagerType: The type for class methods (defaults to CLLocationManager.self)
-        @MainActor
-        init(locationManager: LocationManagerProtocol = CLLocationManager(),
-             locationManagerType: LocationManagerProtocol.Type = CLLocationManager.self) {
-            self.locationManager = locationManager
-            self.locationManagerType = locationManagerType
-            super.init()
-            setupLocationManager()
-        }
+    /// - Parameters:
+    ///   - locationManager: The location manager implementation (defaults to CLLocationManager)
+    ///   - locationManagerType: The type for class methods (defaults to CLLocationManager.self)
+    @MainActor
+    init(locationManager: LocationManagerProtocol = CLLocationManager(),
+         locationManagerType: LocationManagerProtocol.Type = CLLocationManager.self) {
+        self.locationManager = locationManager
+        self.locationManagerType = locationManagerType
+        super.init()
+        setupLocationManager()
+    }
     
     /// Configures the location manager with optimal settings for device profiling
     @MainActor
@@ -313,8 +313,10 @@ public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
         
         // Request fresh location from system
         return try await withCheckedThrowingContinuation { continuation in
-            locationContinuation = continuation
-            locationManager.requestLocation()
+            Task {
+                locationContinuation = continuation
+                await locationManager.requestLocation()
+            }
         }
     }
     
@@ -331,13 +333,15 @@ public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
         }
         
         return await withCheckedContinuation { continuation in
-            authorizationContinuation = continuation
-            
-            // Request appropriate authorization level based on Info.plist configuration
-            if hasAlwaysUsageDescription {
-                locationManager.requestAlwaysAuthorization()
-            } else if hasWhenInUseUsageDescription {
-                locationManager.requestWhenInUseAuthorization()
+            Task {
+                authorizationContinuation = continuation
+                
+                // Request appropriate authorization level based on Info.plist configuration
+                if hasAlwaysUsageDescription {
+                    await locationManager.requestAlwaysAuthorization()
+                } else if hasWhenInUseUsageDescription {
+                    await locationManager.requestWhenInUseAuthorization()
+                }
             }
         }
     }
