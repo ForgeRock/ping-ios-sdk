@@ -76,15 +76,36 @@ jobs:
           -resultBundlePath TestResults 
           
 
-      # Publish test results
-      - name: Publish test results
-        uses: slidoapp/xcresulttool@v3.1.0
-        with:
-          title: "Test Results ${{ matrix.os }} - ${{ env.CHIP_TYPE }}"
-          path: TestResults.xcresult
-          show-passed-tests: false
-          upload-bundles: never
+      # Install xcresultparser (from Homebrew)
+      - name: Install xcresultparser
+        run: |
+          brew install a7ex/tap/xcresultparser
+
+      # Parse and generate JUnit results
+      - name: Convert xcresult to JUnit
+        run: |
+          xcresultparser -o junit TestResults.xcresult > TestResults.xml
+          echo "✅ Parsed test results into TestResults.xml"
+
+      # Publish results to GitHub
+      - name: Publish test results to GitHub summary
+        uses: dorny/test-reporter@v1
         if: success() || failure()
+        with:
+          name: Build and Test Results - ${{ matrix.os }} - ${{ env.CHIP_TYPE }}
+          path: TestResults.xml
+          reporter: java-junit
+
+
+      # # Publish test results
+      # - name: Publish test results
+      #   uses: slidoapp/xcresulttool@v3.1.0
+      #   with:
+      #     title: "Test Results ${{ matrix.os }} - ${{ env.CHIP_TYPE }}"
+      #     path: TestResults.xcresult
+      #     show-passed-tests: false
+      #     upload-bundles: never
+      #   if: success() || failure()
  
       # Send slack notification with result status
       - uses: 8398a7/action-slack@v3
