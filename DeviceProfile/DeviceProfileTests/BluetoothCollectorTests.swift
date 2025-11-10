@@ -14,7 +14,7 @@ import CoreBluetooth
 
 class BluetoothCollectorTests: XCTestCase {
     
-    var collector: BluetoothCollector!
+    nonisolated(unsafe) var collector: BluetoothCollector!
     
     override func setUp() {
         super.setUp()
@@ -106,8 +106,9 @@ class BluetoothCollectorTests: XCTestCase {
     
     func testCollectorCollectPerformance() {
         measure {
-            Task {
-                _ = await collector.collect()
+            Task { @MainActor in
+                let testCollector = BluetoothCollector()
+                _ = await testCollector.collect()
             }
         }
     }
@@ -170,9 +171,10 @@ class BluetoothCollectorTests: XCTestCase {
         let iterations = 10
         
         await withTaskGroup(of: BluetoothInfo?.self) { group in
+            let testCollector = BluetoothCollector()
             for _ in 0..<iterations {
                 group.addTask {
-                    return await self.collector.collect()
+                    return await testCollector.collect()
                 }
             }
             

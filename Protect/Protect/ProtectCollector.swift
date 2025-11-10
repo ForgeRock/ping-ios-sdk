@@ -73,9 +73,9 @@ public class ProtectCollector: NSObject, AnyFieldCollector, Collector, @unchecke
             
             // If when Protect is initialized with behavioralDataCollection set to false, this will be a no-op
             if behavioralDataCollection {
-                try await Protect.resumeBehavioralData()
+                try Protect.resumeBehavioralData()
             } else {
-                try await Protect.pauseBehavioralData()
+                try Protect.pauseBehavioralData()
             }
             
             value =  try await Protect.data()

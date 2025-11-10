@@ -146,8 +146,8 @@ final class ProtectTests: XCTestCase {
         try await Protect.initialize()
 
         // When & Then - Should not throw
-        try await Protect.pauseBehavioralData()
-        try await Protect.resumeBehavioralData()
+        try Protect.pauseBehavioralData()
+        try Protect.resumeBehavioralData()
     }
 
     // MARK: - Thread Safety Tests

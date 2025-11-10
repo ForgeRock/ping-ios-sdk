@@ -34,8 +34,9 @@
       }
     },
     {
-      "enabled" : false,
       "skippedTests" : [
+        "DeviceProfileCollectorTests\/testCollectorCollectWithBothEnabled()",
+        "DeviceProfileCollectorTests\/testCollectorCollectWithLocationEnabled()",
         "TelephonyCollectorTests\/testNetworkCountryIsoFormat()"
       ],
       "target" : {
@@ -101,7 +102,6 @@
       }
     },
     {
-      "enabled" : false,
       "target" : {
         "containerPath" : "container:..\/Fido\/Fido.xcodeproj",
         "identifier" : "ECD780452EA24F1B0050E60F",

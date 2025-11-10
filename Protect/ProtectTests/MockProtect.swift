@@ -12,14 +12,14 @@ import Foundation
 @testable import PingJourney
 
 class MockProtect {
-    static var shouldThrowError = false
-    static var errorMessage = "Operation failed"
-    static var dataReturnValue = "deviceSignals"
-    static var initializeCalled = false
-    static var resumeBehavioralDataCalled = false
-    static var pauseBehavioralDataCalled = false
-    static var configCalled = false
-    static var lastConfig: ProtectConfig?
+    nonisolated(unsafe) static var shouldThrowError = false
+    nonisolated(unsafe) static var errorMessage = "Operation failed"
+    nonisolated(unsafe) static var dataReturnValue = "deviceSignals"
+    nonisolated(unsafe) static var initializeCalled = false
+    nonisolated(unsafe) static var resumeBehavioralDataCalled = false
+    nonisolated(unsafe) static var pauseBehavioralDataCalled = false
+    nonisolated(unsafe) static var configCalled = false
+    nonisolated(unsafe) static var lastConfig: ProtectConfig?
 
     static func reset() {
         shouldThrowError = false

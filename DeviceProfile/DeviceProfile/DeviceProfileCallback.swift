@@ -154,7 +154,10 @@ public class DeviceProfileCallback: AbstractCallback, ObservableObject, @uncheck
             let jsonString = DeviceProfileUtils.jsonStringify(value: profileDict as AnyObject)
             _ = input(jsonString)
             
-            return .success(profileDict)
+            // JSON serialization produces only Sendable types (String, Number, Bool, Array, Dictionary)
+            // Use unsafeBitCast to convert [String: Any] to [String: any Sendable]
+            let sendableDict = unsafeBitCast(profileDict, to: [String: any Sendable].self)
+            return .success(sendableDict)
             
         } catch {
             return .failure(error)

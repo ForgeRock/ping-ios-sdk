@@ -87,7 +87,7 @@ final class CallbackRegistryTests: XCTestCase {
         XCTAssertTrue(type2 is AnotherCallback.Type)
     }
 
-    func testConcurrentRegistration() {
+    @MainActor func testConcurrentRegistration() {
         let registry = CallbackRegistry()
         let expectation = self.expectation(description: "Concurrent registration completes")
         let iterations = 1000 // Increase iterations to make race conditions more likely
@@ -98,7 +98,7 @@ final class CallbackRegistryTests: XCTestCase {
             let queue = DispatchQueue(label: "test.queue.\(queueIndex)", qos: .userInitiated)
             group.enter()
 
-            queue.async {
+            queue.async { [registry] in
                 DispatchQueue.concurrentPerform(iterations: iterations / 10) { index in
                     let key = "callback_\(queueIndex)_\(index)"
                     registry.register(type: key, callback: CustomCallback.self)
@@ -107,7 +107,7 @@ final class CallbackRegistryTests: XCTestCase {
             }
         }
 
-        group.notify(queue: .main) {
+        group.notify(queue: .main) { [expectation] in
             expectation.fulfill()
         }
 
@@ -124,7 +124,7 @@ final class CallbackRegistryTests: XCTestCase {
         XCTAssertEqual(actualKeys, expectedKeys)
     }
 
-    func testConcurrentReadWrite() {
+    @MainActor func testConcurrentReadWrite() {
         let registry = CallbackRegistry()
         let expectation = self.expectation(description: "Concurrent read/write completes")
         let iterations = 500
@@ -135,7 +135,7 @@ final class CallbackRegistryTests: XCTestCase {
 
         // Writer queue
         group.enter()
-        DispatchQueue.global().async {
+        DispatchQueue.global().async { [registry] in
             DispatchQueue.concurrentPerform(iterations: iterations) { index in
                 registry.register(type: "callback_\(index)", callback: CustomCallback.self)
             }
@@ -144,7 +144,7 @@ final class CallbackRegistryTests: XCTestCase {
 
         // Reader queue
         group.enter()
-        DispatchQueue.global().async {
+        DispatchQueue.global().async { [registry, resultsQueue] in
             DispatchQueue.concurrentPerform(iterations: iterations) { _ in
                 let count = registry.callbacks.count
                 resultsQueue.async {
@@ -154,7 +154,7 @@ final class CallbackRegistryTests: XCTestCase {
             group.leave()
         }
 
-        group.notify(queue: .main) {
+        group.notify(queue: .main) { [expectation] in
             expectation.fulfill()
         }
 
