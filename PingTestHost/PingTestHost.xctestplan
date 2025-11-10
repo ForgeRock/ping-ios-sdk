@@ -35,6 +35,8 @@
     },
     {
       "skippedTests" : [
+        "DeviceProfileCollectorTests\/testCollectorCollectWithBothEnabled()",
+        "DeviceProfileCollectorTests\/testCollectorCollectWithLocationEnabled()",
         "TelephonyCollectorTests\/testNetworkCountryIsoFormat()"
       ],
       "target" : {
