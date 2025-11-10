@@ -24,23 +24,42 @@ jobs:
       SIM_OS_VERSION: ${{ vars.SIM_OS_VERSION }}
 
     steps:
-      # Clone the repo
+      # Clone the repository
       - name: Clone the repository
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
-          fetch-depth: 0
+          fetch-depth: 1
 
       # Get the architecture of the chip
       - name: Check chip architecture 
         run: echo "CHIP_TYPE=$(uname -m)" >> $GITHUB_ENV    
 
-      # Set target Xcode version. For more details and options see:
-      # https://github.com/actions/runner-images/blob/main/images/macos/macos-15-Readme.md
-      - name: Select Xcode
-        run: sudo xcode-select -switch /Applications/Xcode_$XCODE_VERSION.app && /usr/bin/xcodebuild -version
-        
+      # Set up Xcode (faster and cleaner than manual xcode-select)
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      # Cache DerivedData to speed up rebuilds
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: DerivedData
+          key: ${{ runner.os }}-deriveddata-${{ hashFiles('**/*.xcodeproj/**', '**/*.xcworkspace/**') }}
+
+      # Cache dependencies (SPM or CocoaPods)
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Developer/Xcode/DerivedData
+            ~/Library/Caches/org.carthage.CarthageKit
+            ~/Library/Caches/com.apple.dt.Xcode
+            **/Pods
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/Podfile.lock', '**/Package.resolved') }}
+
       # Run all tests
       - name: Run tests
         run: |
@@ -57,15 +76,36 @@ jobs:
           -resultBundlePath TestResults 
           
 
-      # Publish test results
-      - name: Publish test results
-        uses: slidoapp/xcresulttool@v3.1.0
-        with:
-          title: "Test Results ${{ matrix.os }} - ${{ env.CHIP_TYPE }}"
-          path: TestResults.xcresult
-          show-passed-tests: false
-          upload-bundles: never
+      # Install xcresultparser (from Homebrew)
+      - name: Install xcresultparser
+        run: |
+          brew install a7ex/tap/xcresultparser
+
+      # Parse and generate JUnit results
+      - name: Convert xcresult to JUnit
+        run: |
+          xcresultparser -o junit TestResults.xcresult > TestResults.xml
+          echo "✅ Parsed test results into TestResults.xml"
+
+      # Publish results to GitHub
+      - name: Publish test results to GitHub summary
+        uses: dorny/test-reporter@v1
         if: success() || failure()
+        with:
+          name: Build and Test Results - ${{ matrix.os }} - ${{ env.CHIP_TYPE }}
+          path: TestResults.xml
+          reporter: java-junit
+
+
+      # # Publish test results
+      # - name: Publish test results
+      #   uses: slidoapp/xcresulttool@v3.1.0
+      #   with:
+      #     title: "Test Results ${{ matrix.os }} - ${{ env.CHIP_TYPE }}"
+      #     path: TestResults.xcresult
+      #     show-passed-tests: false
+      #     upload-bundles: never
+      #   if: success() || failure()
  
       # Send slack notification with result status
       - uses: 8398a7/action-slack@v3
