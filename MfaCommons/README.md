@@ -16,13 +16,22 @@ The MFA Commons module provides the core foundation and shared functionality for
 
 #### CocoaPods
 
-The MFA Commons module is included as a transitive dependency when you add any of the other MFA modules. You do not need to add it explicitly to your `Podfile`.
+The MFA Commons module is typically included as a transitive dependency when you add other MFA or binding modules. However, you can also add it explicitly to your `Podfile`:
 
 ```ruby
-# Included automatically with other MFA modules
-pod 'PingOath', '~> 1.3.0'
-pod 'PingPush', '~> 1.3.0'
+pod 'PingMfaCommons', '~> 1.3.0'
 ```
+
+Then run:
+
+```bash
+pod install
+```
+
+**Note:** This module is automatically included when you install:
+- `PingBinding` - Device binding and signing
+- `PingOath` - OATH-based MFA
+- `PingPush` - Push notification MFA
 
 #### Swift Package Manager
 
@@ -46,6 +55,14 @@ targets: [
     )
 ]
 ```
+
+Alternatively, in Xcode:
+1. Go to **File** > **Add Package Dependencies...**
+2. Enter the repository URL: `https://github.com/ForgeRock/ping-ios-sdk.git`
+3. Select version 1.3.0 or later
+4. Add the `PingMfaCommons` library to your target
+
+**Dependencies:** PingMfaCommons depends on `PingLogger` which will be automatically installed.
 
 ## Usage
 

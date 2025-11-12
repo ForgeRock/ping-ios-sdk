@@ -8,8 +8,7 @@
 	</array>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>webcredentials:openam-bafaloukas.forgeblocks.com</string>
-		<string>webcredentials:openam-bafaloukas.forgeblocks.com?mode=developer</string>
+		<string>example.com</string>
 	</array>
 </dict>
 </plist>
