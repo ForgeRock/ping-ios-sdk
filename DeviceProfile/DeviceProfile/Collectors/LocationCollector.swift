@@ -17,7 +17,7 @@ import CoreLocation
 ///
 /// This structure contains the device's current geographic coordinates
 /// as determined by the location services system.
-public struct LocationInfo: Codable {
+public struct LocationInfo: Codable, Sendable {
     /// Latitude coordinate in decimal degrees
     /// - Note: Positive values represent northern hemisphere, negative for southern
     /// - Range: -90.0 to +90.0 degrees
@@ -55,7 +55,7 @@ public struct LocationInfo: Codable {
 /// - App must include location usage descriptions in Info.plist
 /// - User must grant location permissions
 /// - Location services must be enabled on device
-public class LocationCollector: NSObject, DeviceCollector {
+public class LocationCollector: NSObject, DeviceCollector, @unchecked Sendable {
     public typealias DataType = LocationInfo
     
     /// Unique identifier for location data
@@ -63,11 +63,11 @@ public class LocationCollector: NSObject, DeviceCollector {
     
     /// LocationManager instance for handling location requests
     /// - Note: Defaults to shared singleton, but can be injected for testing
-    public var locationManager: LocationManager
+    var locationManager: LocationManager?
     
     /// Initializes the collector with optional dependency injection
     /// - Parameter locationManager: LocationManager instance (defaults to shared)
-    public init(locationManager: LocationManager = LocationManager.shared) {
+    public init(locationManager: LocationManager? = nil) {
         self.locationManager = locationManager
         super.init()
     }
@@ -93,14 +93,22 @@ public class LocationCollector: NSObject, DeviceCollector {
     /// - Returns: LocationInfo if successful, nil if failed or unauthorized
     ///
     /// ## Implementation Details
-    /// - Uses the injected LocationManager instance
+    /// - Uses the injected LocationManager instance or defaults to shared
     /// - Handles all error cases gracefully
     /// - Converts CLLocation to LocationInfo structure
     /// - Maintains privacy by returning nil on denial
     private func getCurrentLocation() async -> LocationInfo? {
         do {
+            // Get the location manager (injected or shared)
+            let manager: LocationManager
+            if let injectedManager = locationManager {
+                manager = injectedManager
+            } else {
+                manager = await MainActor.run { LocationManager.shared }
+            }
+            
             // Attempt to request location from LocationManager
-            if let location = try await locationManager.requestLocation() {
+            if let location = try await manager.requestLocation() {
                 return LocationInfo(
                     latitude: location.coordinate.latitude,
                     longitude: location.coordinate.longitude

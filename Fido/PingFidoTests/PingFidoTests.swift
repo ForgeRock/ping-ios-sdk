@@ -28,7 +28,7 @@ class PingFidoTests: XCTestCase {
         super.tearDown()
     }
 
-    func testRegisterAssosiatedDomainError() {
+    @MainActor func testRegisterAssosiatedDomainError() {
         let options: [String: Any] = [
             "rp": [
                 "id": "example.com",
@@ -68,7 +68,7 @@ class PingFidoTests: XCTestCase {
         waitForExpectations(timeout: 1, handler: nil)
     }
 
-    func testAuthenticateAssosiatedDomainError() {
+    @MainActor func testAuthenticateAssosiatedDomainError() {
         let options: [String: Any] = [
             "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
             "rpId": "example.com"

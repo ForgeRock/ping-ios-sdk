@@ -244,7 +244,8 @@ class TelephonyCollectorTests: XCTestCase {
     func testCollectorCollectPerformance() {
         measure {
             Task {
-                _ = await collector.collect()
+                let testCollector =  TelephonyCollector()
+                _ = await testCollector.collect()
             }
         }
     }
@@ -317,9 +318,10 @@ class TelephonyCollectorTests: XCTestCase {
         let iterations = 10
         
         await withTaskGroup(of: TelephonyInfo?.self) { group in
+            let testCollector =  TelephonyCollector()
             for _ in 0..<iterations {
                 group.addTask {
-                    return await self.collector.collect()
+                    return await testCollector.collect()
                 }
             }
             

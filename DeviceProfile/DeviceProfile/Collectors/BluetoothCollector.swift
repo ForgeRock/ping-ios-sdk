@@ -18,7 +18,7 @@ import CoreBluetooth
 /// This collector determines whether the device supports Bluetooth Low Energy
 /// by checking the CoreBluetooth framework's central manager state.
 /// It provides information about BLE support without requiring location permissions.
-public class BluetoothCollector: DeviceCollector {
+public class BluetoothCollector: DeviceCollector, @unchecked Sendable {
     public typealias DataType = BluetoothInfo
     
     /// Unique identifier for bluetooth capability data
@@ -40,7 +40,7 @@ public class BluetoothCollector: DeviceCollector {
 ///
 /// This structure contains the results of Bluetooth capability detection,
 /// indicating whether the device supports BLE functionality.
-public struct BluetoothInfo: Codable {
+public struct BluetoothInfo: Codable, Sendable {
     /// Whether the device supports Bluetooth Low Energy
     /// - Note: This indicates hardware support, not current power state or permissions
     let supported: Bool

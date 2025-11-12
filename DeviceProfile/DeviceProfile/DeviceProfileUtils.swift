@@ -57,7 +57,7 @@ public struct DeviceProfileUtils {
 /// let anyValue = AnyValue("Hello World")
 /// let originalValue = anyValue.value as? String
 /// ```
-struct AnyValue: Codable {
+struct AnyValue: Codable, @unchecked Sendable {
     let value: Any
     
     init(_ value: Any) {

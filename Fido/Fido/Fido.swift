@@ -10,20 +10,25 @@
 
 import Foundation
 import AuthenticationServices
+import UIKit
 
 /// Fido is a class that provides FIDO registration and authentication functionalities.
 public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
     
     /// The shared singleton FIDO instance.
+    @MainActor
     public static let shared = Fido()
     
     var window: ASPresentationAnchor?
     var completion: ((Result<[String: Any], Error>) -> Void)?
+    var timeoutTask: Task<Void, Never>?
+    var authorizationController: ASAuthorizationController?
     
     func makeAuthorizationController(requests: [ASAuthorizationRequest]) -> ASAuthorizationController {
         let authorizationController = ASAuthorizationController(authorizationRequests: requests)
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = self
+        self.authorizationController = authorizationController
         return authorizationController
     }
     
@@ -77,10 +82,18 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
                 requests.append(securityKeyRequest)
             }
             
-            // 4. Perform requests
-            let authorizationController = makeAuthorizationController(requests: requests)
-            authorizationController.performRequests()
-            
+            if requests.isEmpty {
+                completion(.failure(FidoError.unsupportedAction("No suitable authentication methods available")))
+            } else {
+                // 4. Start timeout if specified
+                if let timeout = registrationOptions.timeout, timeout > 0 {
+                    startTimeout(milliseconds: timeout)
+                }
+                
+                // 5. Perform requests
+                let authorizationController = makeAuthorizationController(requests: requests)
+                authorizationController.performRequests()
+            }
         } catch {
             completion(.failure(error))
         }
@@ -125,6 +138,11 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
                 requests.append(securityKeyRequest)
             }
             
+            // Start timeout if specified
+            if let timeout = authenticationOptions.timeout, timeout > 0 {
+                startTimeout(milliseconds: timeout)
+            }
+            
             let authorizationController = makeAuthorizationController(requests: requests)
             authorizationController.performRequests()
         } catch {
@@ -150,6 +168,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     ///   - controller: The authorization controller.
     ///   - authorization: The authorization object containing the credential.
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        cancelTimeout()
         didComplete(with: authorization.credential)
     }
     
@@ -159,7 +178,55 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     ///   - controller: The authorization controller.
     ///   - error: The error that occurred.
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        cancelTimeout()
         completion?(.failure(error))
+        cleanup()
+    }
+    
+    // MARK: - Timeout Management
+    
+    /// Starts a timeout task that will cancel the authorization after the specified duration
+    ///
+    /// - Parameter milliseconds: The timeout duration in milliseconds
+    private func startTimeout(milliseconds: Int) {
+        // Cancel any existing timeout
+        cancelTimeout()
+        
+        let timeoutSeconds = Double(milliseconds) / 1000.0
+        
+        timeoutTask = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: UInt64(timeoutSeconds * 1_000_000_000))
+            
+            guard !Task.isCancelled else { return }
+            
+            await MainActor.run { [weak self] in
+                guard let self = self else { return }
+                
+                // Cancel the authorization controller if still active
+                self.authorizationController?.cancel()
+                
+                // Call completion with timeout error
+                let timeoutError = FidoError.timeout
+                self.completion?(.failure(timeoutError))
+                
+                // Clean up
+                self.cleanup()
+            }
+        }
+    }
+    
+    /// Cancels the timeout task if one is active
+    private func cancelTimeout() {
+        timeoutTask?.cancel()
+        timeoutTask = nil
+    }
+    
+    /// Cleans up the state after completion
+    private func cleanup() {
+        authorizationController = nil
+        window = nil
+        completion = nil
+        cancelTimeout()
     }
     
     // MARK: - Private Request Builders
@@ -173,7 +240,19 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     private func createPlatformRequest(from options: PublicKeyCredentialCreationOptions, challenge: Data, userID: Data) -> ASAuthorizationRequest {
         let relyingParty = options.rp.id ?? ""
         let provider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier: relyingParty)
-        let request = provider.createCredentialRegistrationRequest(challenge: challenge, name: options.user.name, userID: userID)
+        let request: ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest = provider.createCredentialRegistrationRequest(challenge: challenge, name: options.user.name, userID: userID)
+        
+        // Map excludeCredentials to ASAuthorizationPlatformPublicKeyCredentialDescriptor
+        if let excludeCredentials = options.excludeCredentials {
+            if #available(iOS 17.4, *) {
+                request.excludedCredentials = excludeCredentials.compactMap { descriptor -> ASAuthorizationPlatformPublicKeyCredentialDescriptor? in
+                    guard let credentialIDData = Data(base64Encoded: descriptor.id, options: .ignoreUnknownCharacters) else {
+                        return nil
+                    }
+                    return ASAuthorizationPlatformPublicKeyCredentialDescriptor(credentialID: credentialIDData)
+                }
+            }
+        }
         
         let authSelection = options.authenticatorSelection
         request.userVerificationPreference = ASAuthorizationPublicKeyCredentialUserVerificationPreference(
@@ -201,6 +280,16 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
             name: options.user.name,
             userID: userID
         )
+        
+        // Map excludeCredentials to ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor
+        if let excludeCredentials = options.excludeCredentials {
+            request.excludedCredentials = excludeCredentials.compactMap { descriptor -> ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor? in
+                guard let credentialIDData = Data(base64Encoded: descriptor.id, options: .ignoreUnknownCharacters) else {
+                    return nil
+                }
+                return ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor(credentialID: credentialIDData, transports: [])
+            }
+        }
         
         let authSelection = options.authenticatorSelection
         request.residentKeyPreference = (authSelection?.requireResidentKey == true) ? .required : .discouraged
@@ -238,6 +327,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
                 FidoConstants.FIELD_ATTESTATION_OBJECT: credential.rawAttestationObject as Any
             ]
             completion?(.success(result))
+            cleanup()
         case let credential as ASAuthorizationPublicKeyCredentialAssertion:
             let result: [String: Any] = [
                 FidoConstants.FIELD_CLIENT_DATA_JSON: credential.rawClientDataJSON,
@@ -247,6 +337,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
                 FidoConstants.FIELD_USER_HANDLE: credential.userID ?? Data()
             ]
             completion?(.success(result))
+            cleanup()
             
         default:
             break
@@ -262,4 +353,24 @@ public enum FidoError: Error, Equatable {
     case invalidAction
     case unsupportedAction(String)
     case missingParameters(String)
+    case timeout
+    
+    public var localizedDescription: String {
+        switch self {
+        case .timeout:
+            return "ERROR::TimeoutError:Operation timedout"
+        case .invalidChallenge:
+            return "Invalid challenge"
+        case .invalidWindow:
+            return "Invalid window"
+        case .invalidResponse:
+            return "Invalid response"
+        case .invalidAction:
+            return "Invalid action"
+        case .unsupportedAction(let message):
+            return "Unsupported action: \(message)"
+        case .missingParameters(let message):
+            return "Missing parameters: \(message)"
+        }
+    }
 }
