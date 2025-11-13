@@ -57,7 +57,11 @@ struct FidoRegistrationCollectorView: View {
                     }
                 }
             }) {
-                Text("Register with FIDO")
+                if collector.label.isEmpty {
+                    Text("Register with FIDO")
+                } else {
+                    Text(collector.label)
+                }
             }
         }
     }
