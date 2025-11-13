@@ -107,9 +107,9 @@ class ReCaptchaViewModel: ObservableObject {
         
         task = Task { [weak self] in
             guard let self = self else { return }
-            let result = await self.callback.verify{config in
+            let result = await self.callback.verify{ config in
                 // Optionally customize the configuration
-                config.payload = ["firewallPolicyEvaluation": true,
+                config.payload = ["firewallPolicyEvaluation": false,
                     "transactionData": [
                         "transactionId": "TXN-12345",
                         "paymentMethod": "CREDIT_CARD",
@@ -120,7 +120,6 @@ class ReCaptchaViewModel: ObservableObject {
                     ],
                     "userInfo": [
                         "accountId": "user-abc123",
-                        "creationMs": "1609459200000"
                     ]
                 ]}
             

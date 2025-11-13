@@ -65,7 +65,7 @@ sequenceDiagram
 
 ## Usage
 
-`RecaptchaEnterpriseConfig` allows the developer to customize how `ReCaptchaEnterpriseCallback` is executed. If no config is provided, the callback will use the default values as shown below:
+`ReCaptchaEnterpriseConfig` allows the developer to customize how `ReCaptchaEnterpriseCallback` is executed. If no config is provided, the callback will use the default values as shown below:
 
 ```swift
 /// Configuration object for customizing reCAPTCHA Enterprise execution.
