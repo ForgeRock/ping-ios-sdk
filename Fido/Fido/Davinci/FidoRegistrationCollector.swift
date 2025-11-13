@@ -89,7 +89,7 @@ public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendab
             }
             
             // 3. Construct the attestationValue payload
-            let authenticatorAttachment = "platform"
+            let authenticatorAttachment = response[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String ?? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
             let newAttestationValue: [String: Any] = [
                 FidoConstants.FIELD_ID: rawIdData.base64urlEncodedString(),
                 FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,

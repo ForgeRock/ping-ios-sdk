@@ -83,9 +83,10 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
             ].joined(separator: FidoConstants.DATA_SEPARATOR)
             
             let callbackValue: String
+            let authenticatorAttachment = response[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String ?? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
             if self.supportsJsonResponse {
                 let jsonResponse: [String: Any] = [
-                    FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: FidoConstants.AUTHENTICATOR_PLATFORM,
+                    FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: authenticatorAttachment,
                     FidoConstants.FIELD_LEGACY_DATA: legacyData
                 ]
                 // Safely create JSON string
