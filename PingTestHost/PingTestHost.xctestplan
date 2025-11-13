@@ -173,6 +173,13 @@
         "identifier" : "A5A31CA32E0A37C700ABBEF7",
         "name" : "ProtectTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/ReCaptchaEnterprise\/ReCaptchaEnterprise.xcodeproj",
+        "identifier" : "A5C0ABFC2EAFFFDF00846D16",
+        "name" : "ReCaptchaEnterpriseTests"
+      }
     }
   ],
   "version" : 1

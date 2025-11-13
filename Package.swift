@@ -23,11 +23,13 @@ let package = Package (
         .library(name: "PingExternalIdPGoogle", targets: ["PingExternalIdPGoogle"]),
         .library(name: "PingExternalIdPFacebook", targets: ["PingExternalIdPFacebook"]),
         .library(name: "PingProtect", targets: ["PingProtect"]),
+        .library(name: "PingReCaptchaEnterprise", targets: ["PingReCaptchaEnterprise"]),
     ],
     dependencies: [
 		.package(url: "https://github.com/pingidentity/pingone-signals-sdk-ios.git", "5.3.0" ..< "5.4.0"),
         .package(url: "https://github.com/facebook/facebook-ios-sdk.git", "16.3.1" ..< "16.4.0"),
         .package(url: "https://github.com/google/GoogleSignIn-iOS.git", "9.0.0" ..< "9.0.0"),
+        .package(url: "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk.git",  "18.8.1" ..< "18.9.0"),
     ],
     targets: [
         .target(name: "PingLogger", dependencies: [], path: "Logger/Logger", exclude: ["Logger.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
@@ -44,5 +46,6 @@ let package = Package (
         .target(name: "PingExternalIdPGoogle", dependencies: [.target(name: "PingExternalIdP"), .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")], path: "ExternalIdPGoogle/ExternalIdPGoogle", exclude: ["ExternalIdPGoogle.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
     	.target(name: "PingExternalIdPFacebook", dependencies: [.target(name: "PingExternalIdP"), .product(name: "FacebookLogin", package: "facebook-ios-sdk")], path: "ExternalIdPFacebook/ExternalIdPFacebook", exclude: ["ExternalIdPFacebook.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
     	.target(name: "PingProtect", dependencies: [.target(name: "PingDavinci"), .product(name: "PingOneSignals", package: "pingone-signals-sdk-ios")], path: "Protect/Protect", exclude: ["Protect.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingReCaptchaEnterprise", dependencies: [.target(name: "PingJourney"), .target(name: "PingLogger"), .product(name: "RecaptchaEnterprise", package: "recaptcha-enterprise-mobile-sdk")], path: "ReCaptchaEnterprise/ReCaptchaEnterprise", exclude: ["ReCaptchaEnterprise.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
     ]
 )

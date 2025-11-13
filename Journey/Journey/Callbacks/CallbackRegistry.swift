@@ -86,6 +86,9 @@ public class CallbackRegistry: @unchecked Sendable {
         if let c: NSObject.Type = NSClassFromString("PingFido.CallbackInitializer") as? NSObject.Type {
             c.perform(Selector(("registerCallbacks")))
         }
+        if let c: NSObject.Type = NSClassFromString("PingReCaptchaEnterprise.ReCaptchaEnterprise") as? NSObject.Type {
+            c.perform(Selector(("registerCallbacks")))
+        }
         if let c: NSObject.Type = NSClassFromString("PingBinding.BindingModule") as? NSObject.Type {
             c.perform(Selector(("registerCallbacks")))
         }

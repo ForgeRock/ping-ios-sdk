@@ -16,6 +16,7 @@ import PingProtect
 import PingExternalIdP
 import PingDeviceProfile
 import PingFido
+import PingReCaptchaEnterprise
 import PingBinding
 import PingMfaCommons
 
@@ -229,6 +230,9 @@ struct JourneyNodeView: View {
                     
                 case let fidoAuthenticationCallback as FidoAuthenticationCallback:
                     FidoAuthenticationCallbackView(callback: fidoAuthenticationCallback, onNext: onNext)
+                    
+                case let reCaptchaEnterpriseCallback as ReCaptchaEnterpriseCallback:
+                    ReCaptchaEnterpriseCallbackView(callback: reCaptchaEnterpriseCallback, onNext: onNext).id(reCaptchaEnterpriseCallback.id)
                     
                 case let deviceBindingCallback as DeviceBindingCallback:
                     DeviceBindingCallbackView(callback: deviceBindingCallback, onNext: onNext)
