@@ -52,11 +52,7 @@ public class OidcModule {
         
         // Handles sign off of the module.
         setup.signOff { @Sendable request in
-            request.url(config.openId?.endSessionEndpoint ?? "")
-            
             _ = await OidcClient(config: config).endSession { idToken in
-                request.parameter(name: OidcClient.Constants.id_token_hint, value: idToken)
-                request.parameter(name: OidcClient.Constants.client_id, value: config.clientId)
                 return true
             }
             

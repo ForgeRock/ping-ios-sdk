@@ -120,37 +120,6 @@ public extension Journey {
         return await signOff()
     }
     
-    /// Journey sign off method.
-    /// This method executes the sign-off process by invoking all registered sign-off handlers.
-    ///  - Returns: A `Result` indicating success or failure of the sign-off process.
-    func signOff() async -> Result<Void, Error> {
-        self.config.logger.i("SignOff...")
-        do {
-            try await initialize()
-            
-            var requestsArray: [Request] = []
-            
-            for handler in signOffHandlers {
-                let request = Request()
-                let updatedRequest = try await handler(request)
-                requestsArray.append(updatedRequest)
-            }
-            
-            if !requestsArray.isEmpty {
-                for request in requestsArray {
-                    _ = try await send(request)
-                }
-            } else {
-                _ = try await send(Request())
-            }
-            return .success(())
-        }
-        catch {
-            config.logger.e("Error during sign off", error: error)
-            return .failure(error)
-        }
-    }
-    
     /// Sends a request and returns the response.
     /// - Parameter request: The request to be sent.
     /// - Returns: The response received.
