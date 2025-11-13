@@ -1,0 +1,121 @@
+//
+//  PingBinderTests.swift
+//  PingBinding
+//
+//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
+//
+
+import XCTest
+@testable import PingBinding
+@testable import PingJourney
+import PingStorage
+
+class PingBinderTests: XCTestCase {
+
+    override func setUp() {
+        super.setUp()
+        Task {
+            let storage = KeychainStorage<[UserKey]>(account: "testKeys", encryptor: NoEncryptor())
+            let config = UserKeyStorageConfig(storage: storage)
+            let userKeyStorage = UserKeysStorage(config: config)
+            try? await userKeyStorage.deleteAll()
+        }
+    }
+    
+    override func tearDown() {
+        super.tearDown()
+        Task {
+            let storage = KeychainStorage<[UserKey]>(account: "testKeys", encryptor: NoEncryptor())
+            let config = UserKeyStorageConfig(storage: storage)
+            let userKeyStorage = UserKeysStorage(config: config)
+            try? await userKeyStorage.deleteAll()
+        }
+    }
+
+    func testBind() {
+        let jsonString = """
+                {"type":"DeviceBindingCallback","output":[{"name":"userId","value":"id=8ae8fada-3663-4d37-87c3-f3286d9cb75b,ou=user,o=alpha,ou=services,ou=am-config"},{"name":"username","value":"gbafal"},{"name":"authenticationType","value":"NONE"},{"name":"challenge","value":"AZrz80IwNkYoXMcmlEBZa29mRwwsGI/PkJb6xLRAZVo="},{"name":"title","value":"Authentication required"},{"name":"subtitle","value":"Cryptography device binding"},{"name":"description","value":"Please complete with biometric to proceed"},{"name":"timeout","value":60},{"name":"attestation","value":true}],"input":[{"name":"IDToken1jws","value":""},{"name":"IDToken1deviceName","value":""},{"name":"IDToken1deviceId","value":""},{"name":"IDToken1clientError","value":""}]}
+        """
+        let data = jsonString.toDictionary()!
+        let callback = DeviceBindingCallback().initialize(with: data) as! DeviceBindingCallback
+        
+        // When
+        let expectation = self.expectation(description: "Bind completes")
+        Task {
+            do {
+                let jws = try await Binding.bind(callback: callback, journey: nil) { config in
+                    let storage = KeychainStorage<[UserKey]>(account: "testKeys", encryptor: NoEncryptor())
+                    config.userKeyStorage = UserKeyStorageConfig(storage: storage)
+                }
+                XCTAssertNotNil(jws)
+                
+                let callbackJws = (callback.json[JourneyConstants.input] as? [[String: Any]])?.first(where: { $0[JourneyConstants.name] as? String == "IDToken1jws" })?["value"]
+                XCTAssertNotNil(callbackJws)
+                XCTAssertEqual(jws, callbackJws as? String)
+                
+                expectation.fulfill()
+            } catch {
+                XCTFail("Bind failed with error: \(error)")
+                expectation.fulfill()
+            }
+        }
+        
+        // Then
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+    
+    func testSign() {
+        let jsonString = """
+                {"type":"DeviceBindingCallback","output":[{"name":"userId","value":"id=8ae8fada-3663-4d37-87c3-f3286d9cb75b,ou=user,o=alpha,ou=services,ou=am-config"},{"name":"username","value":"gbafal"},{"name":"authenticationType","value":"NONE"},{"name":"challenge","value":"AZrz80IwNkYoXMcmlEBZa29mRwwsGI/PkJb6xLRAZVo="},{"name":"title","value":"Authentication required"},{"name":"subtitle","value":"Cryptography device binding"},{"name":"description","value":"Please complete with biometric to proceed"},{"name":"timeout","value":60},{"name":"attestation","value":true}],"input":[{"name":"IDToken1jws","value":""},{"name":"IDToken1deviceName","value":""},{"name":"IDToken1deviceId","value":""},{"name":"IDToken1clientError","value":""}]}
+        """
+        let data = jsonString.toDictionary()!
+        let bindCallback = DeviceBindingCallback().initialize(with: data) as! DeviceBindingCallback
+        
+        let signJsonString = """
+                {"type":"DeviceSigningVerifierCallback","output":[{"name":"userId","value":"id=8ae8fada-3663-4d37-87c3-f3286d9cb75b,ou=user,o=alpha,ou=services,ou=am-config"},{"name":"challenge","value":"gSP9Qx1tIfj7a/ryMwl4jVWOZRkKErMFyQz8KAWtLdo="},{"name":"title","value":"Authentication required"},{"name":"subtitle","value":"Cryptography device binding"},{"name":"description","value":"Please complete with biometric to proceed"},{"name":"timeout","value":60}],"input":[{"name":"IDToken1jws","value":""},{"name":"IDToken1clientError","value":""}]}
+        """
+        let signData = signJsonString.toDictionary()!
+        let signCallback = DeviceSigningVerifierCallback().initialize(with: data) as! DeviceSigningVerifierCallback
+        
+        let expectation = self.expectation(description: "Bind and Sign completes")
+        Task {
+            do {
+                _ = try await Binding.bind(callback: bindCallback, journey: nil) { config in
+                    let storage = KeychainStorage<[UserKey]>(account: "testKeys", encryptor: NoEncryptor())
+                    config.userKeyStorage = UserKeyStorageConfig(storage: storage)
+                }
+                
+                // When
+                let jws = try await Binding.sign(callback: signCallback, journey: nil) { config in
+                    let storage = KeychainStorage<[UserKey]>(account: "testKeys", encryptor: NoEncryptor())
+                    config.userKeyStorage = UserKeyStorageConfig(storage: storage)
+                }
+                XCTAssertNotNil(jws)
+                
+                // Then
+                let callbackJws = (signCallback.json[JourneyConstants.input] as? [[String: Any]])?.first(where: { $0[JourneyConstants.name] as? String == "IDToken1jws" })?["value"]
+                XCTAssertNotNil(callbackJws)
+                XCTAssertEqual(jws, callbackJws as? String)
+                
+                expectation.fulfill()
+            } catch {
+                XCTFail("Sign failed with error: \(error)")
+                expectation.fulfill()
+            }
+        }
+        
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+}
+
+extension String {
+    func toDictionary() -> [String: Any]? {
+        if let data = self.data(using: .utf8) {
+            return try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+        }
+        return nil
+    }
+}

@@ -15,6 +15,7 @@ public enum MessageType: Int {
     case information = 0
     case warning = 1
     case error = 2
+    case script = 4
     case unknown = -1
 }
 
@@ -45,6 +46,6 @@ public class TextOutputCallback: AbstractCallback, ObservableObject, @unchecked 
     
     /// Returns the original JSON payload as this callback doesn't require input.
     public override func payload() -> [String: Any] {
-        return messageType == .unknown ? [:] : json
+        return messageType == .script || messageType == .unknown ? [:] : json
     }
 }

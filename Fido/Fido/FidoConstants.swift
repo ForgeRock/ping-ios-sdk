@@ -150,6 +150,8 @@ public struct FidoConstants {
     
     /// An unsupported error type.
     public static let ERROR_UNSUPPORTED = "unsupported"
+    /// A timeout error type.
+    public static let ERROR_TIMEOUT = "TimeoutError"
     /// The error code for a cancelled operation.
     public static let ERROR_NOT_ALLOWED = "NotAllowedError"
     /// The error code for an unknown error.

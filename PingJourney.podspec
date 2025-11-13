@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint PingTamperDetector.podspec` to ensure this is a
+# Be sure to run `pod lib lint PingJourney.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -7,11 +7,11 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'PingTamperDetector'
-  s.version          = '1.0.0'
-  s.summary          = 'PingTamperDetector module for the Ping iOS SDK'
+  s.name             = 'PingJourney'
+  s.version          = '1.3.0'
+  s.summary          = 'PingJourney SDK for iOS'
   s.description      = <<-DESC
-  The PingTamperDetector module for the Ping iOS SDK is a library for detecting tampered devices.
+  The PingJourney SDK provides journey-based authentication flow management with callback handling.
                        DESC
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
@@ -22,15 +22,16 @@ Pod::Spec.new do |s|
       :tag => s.version.to_s
   }
 
-  s.module_name   = 'PingTamperDetector'
+  s.module_name   = 'PingJourney'
   s.swift_versions = ['5.0', '5.1', '6.0']
 
   s.ios.deployment_target = '13.0'
 
-  base_dir = "TamperDetector/TamperDetector"
-  s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.c', base_dir + '/**/*.h'
+  base_dir = "Journey/Journey"
+  s.source_files = base_dir + '/**/*.swift'
   s.resource_bundles = {
-    'PingTamperDetector' => [base_dir + '/*.xcprivacy']
+    'PingJourney' => [base_dir + '/PrivacyInfo.xcprivacy']
   }
   
+  s.ios.dependency 'PingOrchestrate', '~> 1.3.0'
 end

@@ -24,7 +24,7 @@ public class ConfirmationCallback: AbstractCallback, ObservableObject, @unchecke
     /// An array of string for available option(s)
     private(set) public var options: [String] = []
     /// Default option
-    private(set) public var defaultOption: Int = -1
+    private(set) public var defaultOption: OptionType = .unspecified
     /// Confirmation OptionType enum; defaulted to .unknown when the value is not provided
     private(set) public var optionType: OptionType = .unknown
     /// Confirmation MessageType enum; defaulted to .unknown when the value is not provided
@@ -55,7 +55,7 @@ public class ConfirmationCallback: AbstractCallback, ObservableObject, @unchecke
             }
         case JourneyConstants.defaultOption:
             if let intValue = value as? Int {
-                self.defaultOption = intValue
+                self.defaultOption = OptionType(rawValue: intValue) ?? .unspecified
             }
         default:
             break

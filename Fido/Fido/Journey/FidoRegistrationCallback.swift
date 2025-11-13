@@ -49,10 +49,14 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
         do {
             // 1. Wrap the closure-based fido.register in a continuation
             //    This still throws internally within the 'do' block if the continuation resumes with an error.
-            let response = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[String: Any], Error>) in
+            let response: [String: Any] = try await withUnsafeThrowingContinuation { continuation in
                 // Assuming 'fido' instance is accessible
-                fido.register(options: publicKeyCredentialCreationOptions, window: window) { result in
-                    continuation.resume(with: result) // Resume with the Result<[String: Any], Error>
+                fido.register(options: publicKeyCredentialCreationOptions, window: window) { [continuation] result in
+                    Task {
+                        await MainActor.run {
+                            continuation.resume(with: result) // Resume with the Result<[String: Any>, Error>
+                        }
+                    }
                 }
             }
             
@@ -183,7 +187,9 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
                     newCredential[FidoConstants.FIELD_TYPE] = type
                 }
                 if let idArray = credential[FidoConstants.FIELD_ID] as? [Int] {
-                    let data = Data(idArray.map { UInt8($0) })
+                    // Convert signed Int values to unsigned UInt8 using bitPattern
+                    // This properly handles negative values (Int8 range: -128 to 127)
+                    let data = Data(idArray.map { UInt8(bitPattern: Int8($0)) })
                     newCredential[FidoConstants.FIELD_ID] = data.base64EncodedString()
                 }
                 return newCredential

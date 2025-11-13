@@ -48,15 +48,46 @@ For a deeper understanding of PingOne AIC Journeys, refer to the official docume
 To integrate Journey into your iOS project, add the following dependency to your
 `Podfile` or `Package.swift` file:
 
+#### CocoaPods
+
+Add to your `Podfile`:
+
 ```ruby
-pod 'PingJourney', '<version>'
-```
-or for Swift Package Manager:
-```swift
-.package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+pod 'PingJourney', '~> 1.3.0'
 ```
 
-Replace `<version>` with the latest version of the Journey SDK.
+Then run:
+
+```bash
+pod install
+```
+
+#### Swift Package Manager
+
+Add the following dependency to your `Package.swift` file:
+
+```swift
+.package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "1.3.0")
+```
+
+Then add `PingJourney` to your target's dependencies:
+
+```swift
+.target(
+    name: "YourTarget",
+    dependencies: [
+        .product(name: "PingJourney", package: "ping-ios-sdk")
+    ]
+)
+```
+
+Alternatively, in Xcode:
+1. Go to **File** > **Add Package Dependencies...**
+2. Enter the repository URL: `https://github.com/ForgeRock/ping-ios-sdk.git`
+3. Select version 1.3.0 or later
+4. Add the `PingJourney` library to your target
+
+**Note:** PingJourney depends on `PingOrchestrate` which will be automatically installed.
 
 ## Getting Started
 

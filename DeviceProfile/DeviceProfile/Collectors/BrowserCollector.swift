@@ -18,7 +18,7 @@ import WebKit
 /// This collector retrieves the user agent string from the device's WebKit engine,
 /// which provides information about the browser, device, and system version
 /// that web applications would see when making requests.
-public class BrowserCollector: DeviceCollector {
+public class BrowserCollector: DeviceCollector, @unchecked Sendable {
     public typealias DataType = BrowserInfo
 
     /// Unique identifier for browser information data
@@ -40,7 +40,7 @@ public class BrowserCollector: DeviceCollector {
 ///
 /// This structure contains the user agent string that identifies the browser,
 /// device type, operating system, and other capabilities to web servers.
-public struct BrowserInfo: Codable {
+public struct BrowserInfo: Codable, Sendable {
     /// The browser user agent string
     /// - Note: This is the same user agent that would be sent in HTTP requests
     let userAgent: String

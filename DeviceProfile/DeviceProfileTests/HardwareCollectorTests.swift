@@ -13,18 +13,19 @@ import UIKit
 import AVFoundation
 @testable import PingDeviceProfile
 
+@MainActor
 class HardwareCollectorTests: XCTestCase {
     
     var collector: HardwareCollector!
     
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         collector = HardwareCollector()
     }
     
-    override func tearDown() {
+    override func tearDown() async throws {
         collector = nil
-        super.tearDown()
+        try await super.tearDown()
     }
     
     // MARK: - Basic Properties Tests
@@ -240,9 +241,10 @@ class HardwareCollectorTests: XCTestCase {
         let iterations = 10
         
         await withTaskGroup(of: HardwareInfo?.self) { group in
+            let testCollector = HardwareCollector()
             for _ in 0..<iterations {
                 group.addTask {
-                    return await self.collector.collect()
+                    return await testCollector.collect()
                 }
             }
             

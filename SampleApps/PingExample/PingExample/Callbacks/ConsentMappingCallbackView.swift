@@ -48,7 +48,7 @@ struct ConsentMappingCallbackView: View {
             }
 
             // Is Required
-            Text("IsRequired: \(callback.isRequired)")
+            Text("IsRequired: \(callback.isRequired.description)")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 

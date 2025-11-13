@@ -77,29 +77,25 @@ jobs:
           cp $PP_FILENAME ~/Library/MobileDevice/Provisioning\ Profiles
 
       # Set target Xcode version. For more details and options see:
-      # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md
+      # https://github.com/actions/runner-images/blob/main/images/macos/macos-15-Readme.md
       - name: Select Xcode
         run: 
-          echo "Selecting Xcode version $XCODE_VERSION"
           sudo xcode-select -switch /Applications/Xcode_$XCODE_VERSION.app
-          /usr/bin/xcodebuild -version
 
-      
-      - name: List available SDKs
-        run: xcodebuild -showsdks
-        
+      - name: Show Xcode version
+        run: xcodebuild -version
+            
       - name: build-for-testing and sign
         run: |
           echo "Building with SDK $SDK_VERSION"
           xcodebuild \
             -scheme PingTestHost \
-            -sdk $SDK_VERSION \
+            -sdk iphoneos \
             -workspace SampleApps/Ping.xcworkspace \
             -configuration Debug clean build \
             BUILD_DIR=/tmp/build/ \
             DEVELOPMENT_TEAM=9QSE66762D \
             -allowProvisioningUpdates \
-            -destination generic/platform=iOS \
             -derivedDataPath /tmp/build/derivedData/ \
             build-for-testing
 

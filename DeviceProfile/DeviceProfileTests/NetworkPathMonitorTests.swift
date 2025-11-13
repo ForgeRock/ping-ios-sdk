@@ -288,9 +288,9 @@ class NetworkPathMonitorTests: XCTestCase {
         
         await withTaskGroup(of: Void.self) { group in
             for _ in 0..<iterations {
-                group.addTask {
-                    self.monitor.startMonitoring()
-                    self.monitor.stopMonitoring()
+                group.addTask { [monitor] in
+                    monitor?.startMonitoring()
+                    monitor?.stopMonitoring()
                 }
             }
         }
@@ -303,11 +303,11 @@ class NetworkPathMonitorTests: XCTestCase {
         
         await withTaskGroup(of: (Bool, NetworkInterfaceType, NetworkStatus).self) { group in
             for _ in 0..<iterations {
-                group.addTask {
+                group.addTask { [monitor] in
                     return (
-                        self.monitor.isConnected,
-                        self.monitor.connectionType,
-                        self.monitor.status
+                        monitor.isConnected,
+                        monitor.connectionType,
+                        monitor.status
                     )
                 }
             }

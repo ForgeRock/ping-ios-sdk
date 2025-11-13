@@ -36,12 +36,12 @@ public class Protect {
     /// This method should be called before using any other methods in the Protect SDK.
     ///
     /// - Throws: `ProtectError` if initialization fails.
-    public static func initialize() async throws {
-        if isInitialized {
+    public nonisolated static func initialize() async throws {
+        if await isInitialized {
             return
         }
 
-        guard let config = protectConfig else {
+        guard let config = await protectConfig else {
             throw ProtectError("Protect SDK not configured. Call config() first.")
         }
         
@@ -75,7 +75,7 @@ public class Protect {
     ///
     /// - Returns: A string containing the behavioral data.
     /// - Throws: `ProtectError` if data retrieval fails.
-    public static func data() async throws -> String {
+    public nonisolated static func data() async throws -> String {
         return try await withCheckedThrowingContinuation { continuation in
             guard let sharedInstance = PingOneSignals.sharedInstance() else {
                 continuation.resume(throwing: ProtectError("PingOneSignals shared instance is not available"))
@@ -96,7 +96,7 @@ public class Protect {
 
     /// Pause behavioral data collection
     /// - Throws: `ProtectError` if SDK is not initialized
-    public static func pauseBehavioralData() throws {
+    public nonisolated static func pauseBehavioralData() throws {
         guard let sharedInstance = PingOneSignals.sharedInstance() else {
             throw ProtectError("PingOneSignals shared instance is not available")
         }
@@ -106,7 +106,7 @@ public class Protect {
 
     /// Resume behavioral data collection
     /// - Throws: `ProtectError` if SDK is not initialized
-    public static func resumeBehavioralData() throws {
+    public nonisolated static func resumeBehavioralData() throws {
         guard let sharedInstance = PingOneSignals.sharedInstance() else {
             throw ProtectError("PingOneSignals shared instance is not available")
         }
@@ -122,7 +122,7 @@ public class Protect {
 }
 
 /// Class to provide Protect SDK configuration attributes.
-public class ProtectConfig {
+public class ProtectConfig: @unchecked Sendable  {
     /// The environment ID for the Protect SDK.
     public var envId: String?
 

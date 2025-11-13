@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint PingOath.podspec' to ensure this is a
+# Be sure to run `pod lib lint PingMfaCommons.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -7,11 +7,11 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'PingOath'
-  s.version          = '1.2.0'
-  s.summary          = 'PingOath SDK for iOS'
+  s.name             = 'PingMfaCommons'
+  s.version          = '1.3.0'
+  s.summary          = 'PingMfaCommons SDK for iOS'
   s.description      = <<-DESC
-  The PingOath SDK provides OATH client for PingOne and ForgeRock platform.
+  The PingMfaCommons SDK provides common utilities for MFA operations including JWT signing and verification.
                        DESC
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
@@ -22,16 +22,16 @@ Pod::Spec.new do |s|
       :tag => s.version.to_s
   }
 
-  s.module_name   = 'PingOath'
+  s.module_name   = 'PingMfaCommons'
   s.swift_versions = ['5.0', '5.1', '6.0']
 
   s.ios.deployment_target = '13.0'
 
-  base_dir = "Oath/Oath"
-  s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.h'
+  base_dir = "MfaCommons/MfaCommons"
+  s.source_files = base_dir + '/**/*.swift'
   s.resource_bundles = {
-    'Oath' => [base_dir + '/*.xcprivacy']
+    'PingMfaCommons' => [base_dir + '/PrivacyInfo.xcprivacy']
   }
   
-  s.ios.dependency 'PingOrchestrate', '~> 1.2.0'
+  s.ios.dependency 'PingLogger', '~> 1.3.0'
 end

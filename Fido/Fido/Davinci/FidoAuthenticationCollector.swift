@@ -65,10 +65,14 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, @unchecked Send
         do {
             // 1. Wrap the closure-based fido.authenticate in a continuation
             //    This still throws internally within the 'do' block if the continuation resumes with an error.
-            let response = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[String: Any], Error>) in
+            let response: [String: Any] = try await withUnsafeThrowingContinuation { continuation in
                 // Assuming 'fido' instance is accessible
-                fido.authenticate(options: publicKeyCredentialRequestOptions, window: window) { result in
-                    continuation.resume(with: result) // Resume with the Result<[String: Any], Error>
+                fido.authenticate(options: publicKeyCredentialRequestOptions, window: window) { [continuation] result in
+                    Task {
+                        await MainActor.run {
+                            continuation.resume(with: result) // Resume with the Result<[String: Any>, Error>
+                        }
+                    }
                 }
             }
             
