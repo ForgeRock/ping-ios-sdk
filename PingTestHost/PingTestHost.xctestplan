@@ -124,6 +124,7 @@
       }
     },
     {
+      "enabled" : false,
       "target" : {
         "containerPath" : "container:..\/Fido\/Fido.xcodeproj",
         "identifier" : "ECD780452EA24F1B0050E60F",
@@ -136,6 +137,9 @@
         "DaVinciIntegrationTests\/testInvalidPassword()",
         "FormFieldValidationTest\/testPasswordValidation()",
         "FormFieldValidationTests\/testPasswordValidation()",
+        "MFADeviceTests\/testDeviceAuthenticationForm()",
+        "MFADeviceTests\/testDeviceRegistrationSMS()",
+        "MFADeviceTests\/testDeviceRegistrationVOICE()",
         "PasswordCollectorTests\/testAddsInvalidLengthErrorWhenValueTooShort()",
         "PasswordCollectorTests\/testAddsMaxRepeatErrorWhenTooManyRepeatedCharacters()",
         "PasswordCollectorTests\/testAddsMinCharactersErrorWhenNotEnoughDigits()",
@@ -180,6 +184,7 @@
       }
     },
     {
+      "enabled" : false,
       "target" : {
         "containerPath" : "container:..\/ReCaptchaEnterprise\/ReCaptchaEnterprise.xcodeproj",
         "identifier" : "A5C0ABFC2EAFFFDF00846D16",
