@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingMfaCommons'
-  s.version          = '1.3.0'
+  s.version          = '1.3.1'
   s.summary          = 'PingMfaCommons SDK for iOS'
   s.description      = <<-DESC
   The PingMfaCommons SDK provides common utilities for MFA operations including JWT signing and verification.
@@ -33,5 +33,5 @@ Pod::Spec.new do |s|
     'PingMfaCommons' => [base_dir + '/PrivacyInfo.xcprivacy']
   }
   
-  s.ios.dependency 'PingLogger', '~> 1.3.0'
+  s.ios.dependency 'PingLogger', '~> 1.3.1'
 end

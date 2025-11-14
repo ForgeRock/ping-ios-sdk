@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingJourney'
-  s.version          = '1.3.0'
+  s.version          = '1.3.1'
   s.summary          = 'PingJourney SDK for iOS'
   s.description      = <<-DESC
   The PingJourney SDK provides journey-based authentication flow management with callback handling.
@@ -33,5 +33,5 @@ Pod::Spec.new do |s|
     'PingJourney' => [base_dir + '/PrivacyInfo.xcprivacy']
   }
   
-  s.ios.dependency 'PingOrchestrate', '~> 1.3.0'
+  s.ios.dependency 'PingOrchestrate', '~> 1.3.1'
 end

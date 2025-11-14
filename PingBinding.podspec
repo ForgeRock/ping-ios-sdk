@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingBinding'
-  s.version          = '1.3.0'
+  s.version          = '1.3.1'
   s.summary          = 'PingBinding Module for iOS'
   s.description      = <<-DESC
   The PingBinding Module provides device binding and signing capabilities for native applications.
@@ -34,10 +34,10 @@ Pod::Spec.new do |s|
     'PingBinding' => [base_dir + '/PrivacyInfo.xcprivacy']
   }
   
-  s.ios.dependency 'PingOrchestrate', '~> 1.3.0'
-  s.ios.dependency 'PingOidc', '~> 1.3.0'
-  s.ios.dependency 'PingJourney', '~> 1.3.0'
-  s.ios.dependency 'PingMfaCommons', '~> 1.3.0'
-  s.ios.dependency 'PingStorage', '~> 1.3.0'
-  s.ios.dependency 'PingLogger', '~> 1.3.0'
+  s.ios.dependency 'PingOrchestrate', '~> 1.3.1'
+  s.ios.dependency 'PingOidc', '~> 1.3.1'
+  s.ios.dependency 'PingJourney', '~> 1.3.1'
+  s.ios.dependency 'PingMfaCommons', '~> 1.3.1'
+  s.ios.dependency 'PingStorage', '~> 1.3.1'
+  s.ios.dependency 'PingLogger', '~> 1.3.1'
 end
