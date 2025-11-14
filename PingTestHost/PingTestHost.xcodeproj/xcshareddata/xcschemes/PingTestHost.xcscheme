@@ -389,16 +389,6 @@
                ReferencedContainer = "container:../Fido2/Fido2.xcodeproj">
             </BuildableReference>
          </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A5C0ABFC2EAFFFDF00846D16"
-               BuildableName = "ReCaptchaEnterpriseTests.xctest"
-               BlueprintName = "ReCaptchaEnterpriseTests"
-               ReferencedContainer = "container:../ReCaptchaEnterprise/ReCaptchaEnterprise.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
