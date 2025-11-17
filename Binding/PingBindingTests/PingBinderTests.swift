@@ -35,7 +35,7 @@ class PingBinderTests: XCTestCase {
         }
     }
 
-    func testBind() {
+    func testBind() async throws {
         let jsonString = """
                 {"type":"DeviceBindingCallback","output":[{"name":"userId","value":"id=8ae8fada-3663-4d37-87c3-f3286d9cb75b,ou=user,o=alpha,ou=services,ou=am-config"},{"name":"username","value":"gbafal"},{"name":"authenticationType","value":"NONE"},{"name":"challenge","value":"AZrz80IwNkYoXMcmlEBZa29mRwwsGI/PkJb6xLRAZVo="},{"name":"title","value":"Authentication required"},{"name":"subtitle","value":"Cryptography device binding"},{"name":"description","value":"Please complete with biometric to proceed"},{"name":"timeout","value":60},{"name":"attestation","value":true}],"input":[{"name":"IDToken1jws","value":""},{"name":"IDToken1deviceName","value":""},{"name":"IDToken1deviceId","value":""},{"name":"IDToken1clientError","value":""}]}
         """
@@ -43,31 +43,20 @@ class PingBinderTests: XCTestCase {
         let callback = DeviceBindingCallback().initialize(with: data) as! DeviceBindingCallback
         
         // When
-        let expectation = self.expectation(description: "Bind completes")
-        Task {
-            do {
-                let jws = try await Binding.bind(callback: callback, journey: nil) { config in
-                    let storage = KeychainStorage<[UserKey]>(account: "testKeys", encryptor: NoEncryptor())
-                    config.userKeyStorage = UserKeyStorageConfig(storage: storage)
-                }
-                XCTAssertNotNil(jws)
-                
-                let callbackJws = (callback.json[JourneyConstants.input] as? [[String: Any]])?.first(where: { $0[JourneyConstants.name] as? String == "IDToken1jws" })?["value"]
-                XCTAssertNotNil(callbackJws)
-                XCTAssertEqual(jws, callbackJws as? String)
-                
-                expectation.fulfill()
-            } catch {
-                XCTFail("Bind failed with error: \(error)")
-                expectation.fulfill()
-            }
+        let jws = try await Binding.bind(callback: callback, journey: nil) { config in
+            let storage = KeychainStorage<[UserKey]>(account: "testKeys", encryptor: NoEncryptor())
+            config.userKeyStorage = UserKeyStorageConfig(storage: storage)
         }
         
         // Then
-        waitForExpectations(timeout: 10, handler: nil)
+        XCTAssertNotNil(jws)
+        
+        let callbackJws = (callback.json[JourneyConstants.input] as? [[String: Any]])?.first(where: { $0[JourneyConstants.name] as? String == "IDToken1jws" })?["value"]
+        XCTAssertNotNil(callbackJws)
+        XCTAssertEqual(jws, callbackJws as? String)
     }
     
-    func testSign() {
+    func testSign() async throws {
         let jsonString = """
                 {"type":"DeviceBindingCallback","output":[{"name":"userId","value":"id=8ae8fada-3663-4d37-87c3-f3286d9cb75b,ou=user,o=alpha,ou=services,ou=am-config"},{"name":"username","value":"gbafal"},{"name":"authenticationType","value":"NONE"},{"name":"challenge","value":"AZrz80IwNkYoXMcmlEBZa29mRwwsGI/PkJb6xLRAZVo="},{"name":"title","value":"Authentication required"},{"name":"subtitle","value":"Cryptography device binding"},{"name":"description","value":"Please complete with biometric to proceed"},{"name":"timeout","value":60},{"name":"attestation","value":true}],"input":[{"name":"IDToken1jws","value":""},{"name":"IDToken1deviceName","value":""},{"name":"IDToken1deviceId","value":""},{"name":"IDToken1clientError","value":""}]}
         """
@@ -80,34 +69,24 @@ class PingBinderTests: XCTestCase {
         let signData = signJsonString.toDictionary()!
         let signCallback = DeviceSigningVerifierCallback().initialize(with: data) as! DeviceSigningVerifierCallback
         
-        let expectation = self.expectation(description: "Bind and Sign completes")
-        Task {
-            do {
-                _ = try await Binding.bind(callback: bindCallback, journey: nil) { config in
-                    let storage = KeychainStorage<[UserKey]>(account: "testKeys", encryptor: NoEncryptor())
-                    config.userKeyStorage = UserKeyStorageConfig(storage: storage)
-                }
-                
-                // When
-                let jws = try await Binding.sign(callback: signCallback, journey: nil) { config in
-                    let storage = KeychainStorage<[UserKey]>(account: "testKeys", encryptor: NoEncryptor())
-                    config.userKeyStorage = UserKeyStorageConfig(storage: storage)
-                }
-                XCTAssertNotNil(jws)
-                
-                // Then
-                let callbackJws = (signCallback.json[JourneyConstants.input] as? [[String: Any]])?.first(where: { $0[JourneyConstants.name] as? String == "IDToken1jws" })?["value"]
-                XCTAssertNotNil(callbackJws)
-                XCTAssertEqual(jws, callbackJws as? String)
-                
-                expectation.fulfill()
-            } catch {
-                XCTFail("Sign failed with error: \(error)")
-                expectation.fulfill()
-            }
+        // Given - Bind first
+        _ = try await Binding.bind(callback: bindCallback, journey: nil) { config in
+            let storage = KeychainStorage<[UserKey]>(account: "testKeys", encryptor: NoEncryptor())
+            config.userKeyStorage = UserKeyStorageConfig(storage: storage)
         }
         
-        waitForExpectations(timeout: 10, handler: nil)
+        // When - Sign
+        let jws = try await Binding.sign(callback: signCallback, journey: nil) { config in
+            let storage = KeychainStorage<[UserKey]>(account: "testKeys", encryptor: NoEncryptor())
+            config.userKeyStorage = UserKeyStorageConfig(storage: storage)
+        }
+        
+        // Then
+        XCTAssertNotNil(jws)
+        
+        let callbackJws = (signCallback.json[JourneyConstants.input] as? [[String: Any]])?.first(where: { $0[JourneyConstants.name] as? String == "IDToken1jws" })?["value"]
+        XCTAssertNotNil(callbackJws)
+        XCTAssertEqual(jws, callbackJws as? String)
     }
 }
 

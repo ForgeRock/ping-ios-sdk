@@ -209,6 +209,51 @@ public class BindingMigration {
         }
     }
     
+    /// Checks if migration is needed without performing it.
+    ///
+    /// This method checks if legacy data exists in the keychain without attempting migration.
+    /// It can be used to determine if migration will be necessary.
+    ///
+    /// - Parameters:
+    ///   - accessGroup: The keychain access group that was configured in the legacy app, if any.
+    ///   - logger: Optional logger for debugging.
+    /// - Returns: `true` if legacy data exists and migration is needed, `false` otherwise.
+    public static func isMigrationNeeded(
+        accessGroup: String? = nil,
+        logger: Logger? = nil
+    ) async -> Bool {
+        let legacyStorage = LegacyUserKeysStorage(accessGroup: accessGroup, logger: logger)
+        return await legacyStorage.exists()
+    }
+    
+    /// Attempts to migrate legacy data if it exists and hasn't been migrated yet.
+    ///
+    /// This is a convenience method that silently handles the case where no legacy data exists.
+    /// It's designed to be called before bind or sign operations.
+    ///
+    /// - Parameters:
+    ///   - accessGroup: The keychain access group that was configured in the legacy app, if any.
+    ///   - logger: Optional logger for debugging and monitoring migration progress.
+    ///   - cleanupLegacyData: Whether to delete legacy keychain data after successful migration.
+    /// - Returns: `true` if migration was performed, `false` if no migration was needed.
+    public static func migrateIfNeeded(
+        accessGroup: String? = nil,
+        logger: Logger? = nil,
+        cleanupLegacyData: Bool = true
+    ) async -> Bool {
+        do {
+            try await migrate(accessGroup: accessGroup, logger: logger, cleanupLegacyData: cleanupLegacyData)
+            return true
+        } catch MigrationError.noLegacyDataFound {
+            // No migration needed
+            return false
+        } catch {
+            // Migration failed but don't throw - log and continue
+            logger?.e("Migration failed but continuing with operation", error: error)
+            return false
+        }
+    }
+    
     /// Resets the migration attempted flag for testing purposes.
     /// - Warning: This should only be used in test environments.
     public static func resetMigrationState() async {

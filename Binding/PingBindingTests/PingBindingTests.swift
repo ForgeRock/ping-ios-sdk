@@ -426,15 +426,15 @@ final class PingBindingTests: XCTestCase {
         let keyId = UUID().uuidString
         let userId = "testUser3"
         let userName = "Test User"
-        let createdAt = Date()
+        
         let keyAlias = "test.key.alias"
         
         let userKey = UserKey(keyTag: keyAlias, userId: userId, username: userName, kid: keyId, authType: .none)
-        
+        let createdAt = Date()
+        XCTAssertEqual(userKey.createdAt, createdAt)
         XCTAssertEqual(userKey.id, keyId)
         XCTAssertEqual(userKey.userId, userId)
         XCTAssertEqual(userKey.username, userName)
-        XCTAssertEqual(userKey.createdAt, createdAt)
         XCTAssertEqual(userKey.authType, .none)
         XCTAssertEqual(userKey.keyTag, keyAlias)
     }

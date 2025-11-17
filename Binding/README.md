@@ -78,12 +78,30 @@ The migration process handles:
 
 ### Automatic Migration
 
-Migration is **automatically triggered** when the PingBinding module is initialized. This happens when:
+Migration is **automatically triggered** in the following scenarios:
 
-1. The Journey framework registers callbacks internally, OR
-2. You manually call `BindingModule.registerCallbacks()`
+1. When the Journey framework registers callbacks internally, OR
+2. When you manually call `BindingModule.registerCallbacks()`, OR
+3. **When performing bind or sign operations** - Migration is checked before each operation to ensure legacy keys are available
 
 The migration runs in the background and does not block your application. If no legacy data is found, the migration is silently skipped.
+
+#### Migration During Bind and Sign Operations
+
+The SDK automatically checks for and migrates legacy data before performing bind or sign operations. This ensures:
+
+- **Seamless Upgrade**: When signing with a device after upgrading your SDK, legacy keys are automatically migrated and used
+- **No Manual Intervention**: Users don't need to re-bind their devices after an SDK upgrade
+- **Backward Compatibility**: Existing device bindings continue to work without interruption
+
+```swift
+// Legacy keys are automatically checked and migrated during bind
+try await callback.bind()
+
+// Legacy keys are automatically checked and migrated during sign
+// If legacy keys exist for the user, they're migrated and used for signing
+let result = await callback.sign()
+```
 
 ### Migration Process
 
@@ -114,6 +132,34 @@ Task {
     }
 }
 ```
+
+### Conditional Migration
+
+You can check if migration is needed before performing it:
+
+```swift
+import PingBinding
+
+Task {
+    // Check if legacy data exists
+    if await BindingMigration.isMigrationNeeded() {
+        print("Legacy data found, migration will be performed")
+        
+        // Migrate without throwing errors if no data exists
+        let migrated = await BindingMigration.migrateIfNeeded()
+        if migrated {
+            print("Migration completed successfully")
+        }
+    } else {
+        print("No legacy data to migrate")
+    }
+}
+```
+
+The `migrateIfNeeded()` method is particularly useful as it:
+- Returns `true` if migration was performed
+- Returns `false` if no migration was needed
+- Silently handles errors and logs them without throwing exceptions
 
 ### Advanced Migration Options
 
