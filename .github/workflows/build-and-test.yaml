@@ -53,7 +53,8 @@ jobs:
           -configuration Debug \
           -destination "$DEST" \
           -derivedDataPath DerivedData \
-          -enableCodeCoverage YES
+          -enableCodeCoverage YES \
+          -resultBundlePath TestResults 
           
       # Force stop test host
       - name: Force stop test host (avoid hangs)
