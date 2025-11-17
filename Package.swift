@@ -29,7 +29,7 @@ let package = Package (
 		.package(url: "https://github.com/pingidentity/pingone-signals-sdk-ios.git", "5.3.0" ..< "5.4.0"),
         .package(url: "https://github.com/facebook/facebook-ios-sdk.git", "16.3.1" ..< "16.4.0"),
         .package(url: "https://github.com/google/GoogleSignIn-iOS.git", "9.0.0" ..< "9.0.0"),
-        .package(url: "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk.git",  "18.8.1" ..< "18.9.0"),
+        .package(url: "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk.git",  .upToNextMinor(from: "18.7.0")),
     ],
     targets: [
         .target(name: "PingLogger", dependencies: [], path: "Logger/Logger", exclude: ["Logger.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
