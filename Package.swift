@@ -27,8 +27,8 @@ let package = Package (
     ],
     dependencies: [
 		.package(url: "https://github.com/pingidentity/pingone-signals-sdk-ios.git", .upToNextMinor(from: "5.2.7")),
-        .package(url: "https://github.com/facebook/facebook-ios-sdk.git", "16.3.1" ..< "16.4.0"),
-        .package(url: "https://github.com/google/GoogleSignIn-iOS.git", "9.0.0" ..< "9.0.0"),
+        .package(url: "https://github.com/facebook/facebook-ios-sdk.git", .upToNextMinor(from: "16.0.1")),
+        .package(url: "https://github.com/google/GoogleSignIn-iOS.git", .upToNextMinor(from: "9.0.0")),
         .package(url: "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk.git",  .upToNextMinor(from: "18.7.0")),
     ],
     targets: [
