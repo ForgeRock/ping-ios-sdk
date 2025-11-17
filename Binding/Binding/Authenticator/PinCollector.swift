@@ -17,7 +17,7 @@ public protocol PinCollector: AnyObject {
 
 #if canImport(UIKit)
 /// A default implementation of `PinCollector` that uses a `UIAlertController` to prompt the user for their PIN.
-public class DefaultPinCollector: NSObject, PinCollector {
+public class DefaultPinCollector: NSObject, PinCollector, @unchecked Sendable {
     
     var alert: UIAlertController!
     
@@ -27,7 +27,11 @@ public class DefaultPinCollector: NSObject, PinCollector {
     ///   - completion: The closure to call with the collected PIN.
     public func collectPin(prompt: Prompt, completion: @escaping @Sendable (String?) -> Void) {
         
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else {
+                completion(nil)
+                return
+            }
             
             let keyWindow = UIApplication .shared .connectedScenes
                 .flatMap { ($0 as? UIWindowScene)?.windows ?? [] }

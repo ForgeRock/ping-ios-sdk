@@ -20,7 +20,25 @@ public class DeviceBindingConfig {
     #if canImport(UIKit)
     /// The name of the device.
     /// The default is the current device name.
-    public var deviceName: String = UIDevice.current.name
+    private var _deviceName: String?
+    
+    public var deviceName: String {
+        get {
+            if let name = _deviceName {
+                return name
+            }
+            if Thread.isMainThread {
+                return UIDevice.current.name
+            } else {
+                return DispatchQueue.main.sync {
+                    UIDevice.current.name
+                }
+            }
+        }
+        set {
+            _deviceName = newValue
+        }
+    }
     #else
     /// The name of the device.
     /// The default is "Apple".
