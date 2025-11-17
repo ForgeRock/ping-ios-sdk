@@ -43,7 +43,7 @@ class LegacyUserKeysStorage {
     private let accessGroup: String?
     
     /// The account name used for the legacy user keys in keychain
-    private let legacyAccount = "devicebinding.userkeys"
+    //private let legacyAccount = "devicebinding.userkeys"
     
     /// Initializes a new `LegacyUserKeysStorage`.
     /// - Parameters:
@@ -64,7 +64,7 @@ class LegacyUserKeysStorage {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: legacyKeychainServiceIdentifier,
-            kSecAttrAccount as String: legacyAccount,
+            //kSecAttrAccount as String: legacyAccount,
             kSecMatchLimit as String: kSecMatchLimitOne,
             kSecReturnData as String: false
         ]
@@ -97,7 +97,7 @@ class LegacyUserKeysStorage {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: legacyKeychainServiceIdentifier,
-            kSecAttrAccount as String: legacyAccount,
+            //kSecAttrAccount as String: legacyAccount,
             kSecMatchLimit as String: kSecMatchLimitOne,
             kSecReturnData as String: true
         ]
@@ -136,7 +136,7 @@ class LegacyUserKeysStorage {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: legacyKeychainServiceIdentifier,
-            kSecAttrAccount as String: legacyAccount
+            //kSecAttrAccount as String: legacyAccount
         ]
         
         if let accessGroup = accessGroup {
