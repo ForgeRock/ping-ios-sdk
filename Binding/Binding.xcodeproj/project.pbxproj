@@ -159,9 +159,7 @@
 		EC4DD29D2EABBA7E00ECC4E1 /* Binding */ = {
 			isa = PBXGroup;
 			children = (
-				EC9CC3822EC751FB00795E4F /* BindingMigration.swift */,
-				EC9CC3832EC751FB00795E4F /* LegacyUserKeysStorage.swift */,
-				EC9CC3842EC751FB00795E4F /* MigrationError.swift */,
+				EC9A6B452ECB78E300B1082D /* Migration */,
 				ECB255EF2EB92E9C00F25CBE /* UserKeySelector */,
 				EC4DD2EA2EABBAB800ECC4E1 /* PingBinding.h */,
 				EC4DD37D2EB0DAFB00ECC4E1 /* PingBinding.swift */,
@@ -283,6 +281,16 @@
 				EC4DD3282EABCE7D00ECC4E1 /* PingBindingTests.swift */,
 			);
 			path = PingBindingTests;
+			sourceTree = "<group>";
+		};
+		EC9A6B452ECB78E300B1082D /* Migration */ = {
+			isa = PBXGroup;
+			children = (
+				EC9CC3822EC751FB00795E4F /* BindingMigration.swift */,
+				EC9CC3832EC751FB00795E4F /* LegacyUserKeysStorage.swift */,
+				EC9CC3842EC751FB00795E4F /* MigrationError.swift */,
+			);
+			path = Migration;
 			sourceTree = "<group>";
 		};
 		ECB255EF2EB92E9C00F25CBE /* UserKeySelector */ = {
