@@ -19,7 +19,7 @@ The MFA Commons module provides the core foundation and shared functionality for
 The MFA Commons module is typically included as a transitive dependency when you add other MFA or binding modules. However, you can also add it explicitly to your `Podfile`:
 
 ```ruby
-pod 'PingMfaCommons', '~> 1.3.1'
+pod 'PingMfaCommons', '~> 1.3.1-beta1'
 ```
 
 Then run:
@@ -39,7 +39,7 @@ Add the Ping iOS SDK to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "1.3.1")
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "1.3.1-beta1")
 ]
 ```
 
@@ -59,7 +59,7 @@ targets: [
 Alternatively, in Xcode:
 1. Go to **File** > **Add Package Dependencies...**
 2. Enter the repository URL: `https://github.com/ForgeRock/ping-ios-sdk.git`
-3. Select version 1.3.1 or later
+3. Select version 1.3.1-beta1 or later
 4. Add the `PingMfaCommons` library to your target
 
 **Dependencies:** PingMfaCommons depends on `PingLogger` which will be automatically installed.

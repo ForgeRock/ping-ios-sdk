@@ -34,7 +34,7 @@ Add the following to your `Package.swift` file:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "1.3.1")
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "1.3.1-beta1")
 ]
 ```
 
@@ -43,7 +43,7 @@ dependencies: [
 Add the following to your `Podfile`:
 
 ```ruby
-pod 'PingFido', '~> 1.3.1'
+pod 'PingFido', '~> 1.3.1-beta1'
 ```
 
 Then run `pod install`.

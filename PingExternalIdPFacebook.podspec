@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingExternalIdPFacebook'
-  s.version          = '1.3.1'
+  s.version          = '1.3.1-beta1'
   s.summary          = 'PingExternalIdPFacebook module for the Ping iOS SDK'
   s.description      = <<-DESC
   The PingExternalIdPFacebook module for the Ping iOS SDK is a library for Authentication with external IDP Facebook when using the Ping iOS SDK.
@@ -33,7 +33,7 @@ Pod::Spec.new do |s|
     'External-idp' => [base_dir + '/*.xcprivacy']
   }
 
-  s.ios.dependency 'PingExternalIdP', '~> 1.3.1'
+  s.ios.dependency 'PingExternalIdP', '~> 1.3.1-beta1'
   s.ios.dependency 'FBSDKLoginKit', '~> 16.3.1'
     
 end
