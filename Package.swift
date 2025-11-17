@@ -38,7 +38,7 @@ let package = Package (
         .target(name: "PingOidc", dependencies: [.target(name: "PingOrchestrate"), .target(name: "PingBrowser")], path: "Oidc/Oidc", exclude: ["Oidc.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingDavinci", dependencies: [.target(name: "PingOidc"),], path: "Davinci/Davinci", exclude: ["Davinci.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingBrowser", dependencies: [.target(name: "PingLogger"),], path: "Browser/Browser", exclude: ["Browser.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingJourney", dependencies: [.target(name: "PingOrchestrate")], path: "Journey/Journey", exclude: ["Journey.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingJourney", dependencies: [.target(name: "PingOidc"), .target(name: "PingOrchestrate")], path: "Journey/Journey", exclude: ["Journey.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingMfaCommons", dependencies: [.target(name: "PingLogger")], path: "MfaCommons/MfaCommons", exclude: ["MfaCommons.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingBinding", dependencies: [.target(name: "PingOrchestrate"), .target(name: "PingOidc"), .target(name: "PingJourney"), .target(name: "PingMfaCommons"), .target(name: "PingStorage"), .target(name: "PingLogger")], path: "Binding/Binding", exclude: ["Binding.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingExternalIdP", dependencies: [.target(name: "PingDavinci"), .target(name: "PingBrowser")], path: "ExternalIdP/ExternalIdP", exclude: ["ExternalIdP.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
