@@ -77,6 +77,7 @@ final class JourneyContinueNode: ContinueNode, @unchecked Sendable {
         var request = Request()
         request.url("\(baseURL)/json/realms/\(realm)/authenticate")
         request.header(name: JourneyConstants.contentType,  value: JourneyConstants.applicationJson)
+        request.header(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource21Protocol10)
         request.body(body: asJson())
         
         for callback in actions {

@@ -19,7 +19,7 @@ import AVFoundation
 /// This collector gathers comprehensive hardware information including
 /// manufacturer, memory specifications, CPU details, display properties,
 /// and camera capabilities.
-public class HardwareCollector: DeviceCollector {
+public class HardwareCollector: DeviceCollector, @unchecked Sendable {
     public typealias DataType = HardwareInfo
     
     /// Unique identifier for hardware information data
@@ -28,7 +28,7 @@ public class HardwareCollector: DeviceCollector {
     /// Collects comprehensive hardware information
     /// - Returns: HardwareInfo containing device specifications
     public func collect() async -> HardwareInfo? {
-        return HardwareInfo()
+        return await MainActor.run { HardwareInfo() }
     }
     
     /// Initializes a new instance
@@ -41,7 +41,7 @@ public class HardwareCollector: DeviceCollector {
 ///
 /// This structure contains detailed specifications about the device's
 /// physical capabilities and hardware components.
-public struct HardwareInfo: Codable {
+public struct HardwareInfo: Codable, Sendable {
     /// Device manufacturer (always "Apple" for iOS devices)
     let manufacturer: String
     
@@ -61,6 +61,7 @@ public struct HardwareInfo: Codable {
     let camera: [String: Int]?
     
     /// Initializes hardware information by collecting device specifications
+    @MainActor
     init() {
         self.manufacturer = "Apple"
         self.memory = Self.getMemoryInfo()
@@ -90,6 +91,7 @@ public struct HardwareInfo: Codable {
     /// - Values are in UIKit points, not pixels
     /// - Orientation is determined at collection time
     /// - Values represent logical screen dimensions
+    @MainActor
     private static func getDisplayInfo() -> [String: Int] {
         let screenBounds = UIScreen.main.bounds
         let isPortrait = UIDevice.current.orientation.isPortrait

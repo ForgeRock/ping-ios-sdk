@@ -17,7 +17,7 @@ import Foundation
 /// This collector serves as the root coordinator for gathering all device profile
 /// information based on a specified configuration. It manages the collection process,
 /// handles conditional data gathering, and combines results into a unified profile.
-public class DeviceProfileCollector: DeviceCollector {
+public class DeviceProfileCollector: DeviceCollector, @unchecked Sendable {
     
     public typealias DataType = DeviceProfileResult
     
@@ -84,7 +84,7 @@ public class DeviceProfileCollector: DeviceCollector {
     }
     
     /// Configures logging for all collectors that support it
-    private func configureCollectorLoggers() {
+    nonisolated private func configureCollectorLoggers() {
         for collector in config.collectors {
             if var loggerAware = collector as? LoggerAware {
                 loggerAware.logger = config.logger
@@ -108,7 +108,6 @@ public class DeviceProfileCollector: DeviceCollector {
     
     /// Collects location information if available
     /// - Returns: LocationInfo if successful, nil if unavailable or unauthorized
-    @MainActor
     private func collectLocation() async -> LocationInfo? {
         return await LocationCollector().collect()
     }

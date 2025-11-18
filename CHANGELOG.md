@@ -1,3 +1,8 @@
+## [1.3.1]
+#### Fixed
+- Fixed an issue in the `PingProtect` module causing a crash on iOS 17+ due to an incorrect actor executor assumption [SDKS-4494] 
+- Updated all targets to use the Swift 6 compiler [SDKS-4499]
+
 ## [1.3.0]
 #### Added
 - New `PingProtect` module [SDKS-4071]

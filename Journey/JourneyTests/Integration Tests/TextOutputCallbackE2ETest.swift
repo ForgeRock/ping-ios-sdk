@@ -76,7 +76,7 @@ class TextOutputCallbackE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
         }
         XCTAssertEqual("TextOutput Type 4 (SCRIPT)", callback.message)
         // ToDo: Align the "Type 4" value later... see SDKS-4194
-        XCTAssertEqual(MessageType.unknown, callback.messageType)
+        XCTAssertEqual(MessageType.script, callback.messageType)
 
         // Submit callback and expect SuccessNode
         guard let result = await node.next() as? SuccessNode else {

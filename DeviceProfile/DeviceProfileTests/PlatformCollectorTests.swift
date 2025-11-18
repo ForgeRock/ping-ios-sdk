@@ -260,6 +260,7 @@ class PlatformCollectorTests: XCTestCase {
     func testCollectorCollectPerformance() {
         measure {
             Task {
+                let collector = PlatformCollector()
                 _ = await collector.collect()
             }
         }
@@ -304,9 +305,10 @@ class PlatformCollectorTests: XCTestCase {
         let iterations = 10
         
         await withTaskGroup(of: PlatformInfo?.self) { group in
+            let testCollector = PlatformCollector()
             for _ in 0..<iterations {
                 group.addTask {
-                    return await self.collector.collect()
+                    return await testCollector.collect()
                 }
             }
             

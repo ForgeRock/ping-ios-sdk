@@ -116,7 +116,8 @@ class NetworkCollectorTests: XCTestCase {
     func testCollectorCollectPerformance() {
         measure {
             Task {
-                _ = await collector.collect()
+                let testCollector =  NetworkCollector()
+                _ = await testCollector.collect()
             }
         }
     }
@@ -162,9 +163,10 @@ class NetworkCollectorTests: XCTestCase {
         let iterations = 10
         
         await withTaskGroup(of: NetworkInfo?.self) { group in
+            let testCollector = NetworkCollector()
             for _ in 0..<iterations {
                 group.addTask {
-                    return await self.collector.collect()
+                    return await testCollector.collect()
                 }
             }
             

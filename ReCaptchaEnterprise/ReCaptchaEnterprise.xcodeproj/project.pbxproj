@@ -1,0 +1,576 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A58CFBF02EB00508007C4A31 /* RecaptchaEnterprise in Frameworks */ = {isa = PBXBuildFile; productRef = A58CFBEF2EB00508007C4A31 /* RecaptchaEnterprise */; };
+		A58CFBF22EB00600007C4A31 /* ReCaptchaEnterpriseCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58CFBF12EB005FF007C4A31 /* ReCaptchaEnterpriseCallback.swift */; };
+		A58CFBF52EB00637007C4A31 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A58CFBF42EB00637007C4A31 /* PingJourney.framework */; };
+		A58CFBF62EB00637007C4A31 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A58CFBF42EB00637007C4A31 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A58CFBF92EB009AC007C4A31 /* ReCaptchaEnterpriseUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58CFBF82EB009AB007C4A31 /* ReCaptchaEnterpriseUtils.swift */; };
+		A58CFBFD2EB03693007C4A31 /* ReCaptchaEnterpriseConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58CFBFC2EB03692007C4A31 /* ReCaptchaEnterpriseConfigTests.swift */; };
+		A58CFBFF2EB03860007C4A31 /* ReCaptchaEnterpriseUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58CFBFE2EB0385D007C4A31 /* ReCaptchaEnterpriseUtilsTests.swift */; };
+		A5C0ABFE2EAFFFDF00846D16 /* PingReCaptchaEnterprise.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5C0ABF42EAFFFDE00846D16 /* PingReCaptchaEnterprise.framework */; };
+		A5C0AC3D2EAFFFF000846D16 /* ReCaptchaEnterprise.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5C0AC3B2EAFFFF000846D16 /* ReCaptchaEnterprise.swift */; };
+		A5C0AC402EAFFFF300846D16 /* ReCaptchaEnterpriseCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5C0AC3E2EAFFFF300846D16 /* ReCaptchaEnterpriseCallbackTests.swift */; };
+		A5C0AC432EB000C600846D16 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5C0AC422EB000C600846D16 /* PrivacyInfo.xcprivacy */; };
+		A5C0AC452EB0013600846D16 /* ReCaptchaEnterprise.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C0AC442EB0013600846D16 /* ReCaptchaEnterprise.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A5C0ABFF2EAFFFDF00846D16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A5C0ABEB2EAFFFDE00846D16 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A5C0ABF32EAFFFDE00846D16;
+			remoteInfo = ReCaptchaEnterprise;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A58CFBF72EB00637007C4A31 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A58CFBF62EB00637007C4A31 /* PingJourney.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		A58CFBF12EB005FF007C4A31 /* ReCaptchaEnterpriseCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReCaptchaEnterpriseCallback.swift; sourceTree = "<group>"; };
+		A58CFBF42EB00637007C4A31 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A58CFBF82EB009AB007C4A31 /* ReCaptchaEnterpriseUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReCaptchaEnterpriseUtils.swift; sourceTree = "<group>"; };
+		A58CFBFC2EB03692007C4A31 /* ReCaptchaEnterpriseConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReCaptchaEnterpriseConfigTests.swift; sourceTree = "<group>"; };
+		A58CFBFE2EB0385D007C4A31 /* ReCaptchaEnterpriseUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReCaptchaEnterpriseUtilsTests.swift; sourceTree = "<group>"; };
+		A5C0ABF42EAFFFDE00846D16 /* PingReCaptchaEnterprise.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingReCaptchaEnterprise.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5C0ABFD2EAFFFDF00846D16 /* ReCaptchaEnterpriseTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReCaptchaEnterpriseTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5C0AC3B2EAFFFF000846D16 /* ReCaptchaEnterprise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReCaptchaEnterprise.swift; sourceTree = "<group>"; };
+		A5C0AC3E2EAFFFF300846D16 /* ReCaptchaEnterpriseCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReCaptchaEnterpriseCallbackTests.swift; sourceTree = "<group>"; };
+		A5C0AC412EB0009100846D16 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		A5C0AC422EB000C600846D16 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A5C0AC442EB0013600846D16 /* ReCaptchaEnterprise.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReCaptchaEnterprise.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A5C0ABF12EAFFFDE00846D16 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A58CFBF02EB00508007C4A31 /* RecaptchaEnterprise in Frameworks */,
+				A58CFBF52EB00637007C4A31 /* PingJourney.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A5C0ABFA2EAFFFDF00846D16 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A5C0ABFE2EAFFFDF00846D16 /* PingReCaptchaEnterprise.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A58CFBF32EB00637007C4A31 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A58CFBF42EB00637007C4A31 /* PingJourney.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A5C0ABEA2EAFFFDE00846D16 = {
+			isa = PBXGroup;
+			children = (
+				A5C0AC412EB0009100846D16 /* README.md */,
+				A5C0AC3C2EAFFFF000846D16 /* ReCaptchaEnterprise */,
+				A5C0AC3F2EAFFFF300846D16 /* ReCaptchaEnterpriseTests */,
+				A58CFBF32EB00637007C4A31 /* Frameworks */,
+				A5C0ABF52EAFFFDE00846D16 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A5C0ABF52EAFFFDE00846D16 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A5C0ABF42EAFFFDE00846D16 /* PingReCaptchaEnterprise.framework */,
+				A5C0ABFD2EAFFFDF00846D16 /* ReCaptchaEnterpriseTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A5C0AC3C2EAFFFF000846D16 /* ReCaptchaEnterprise */ = {
+			isa = PBXGroup;
+			children = (
+				A5C0AC422EB000C600846D16 /* PrivacyInfo.xcprivacy */,
+				A5C0AC442EB0013600846D16 /* ReCaptchaEnterprise.h */,
+				A5C0AC3B2EAFFFF000846D16 /* ReCaptchaEnterprise.swift */,
+				A58CFBF12EB005FF007C4A31 /* ReCaptchaEnterpriseCallback.swift */,
+				A58CFBF82EB009AB007C4A31 /* ReCaptchaEnterpriseUtils.swift */,
+			);
+			path = ReCaptchaEnterprise;
+			sourceTree = "<group>";
+		};
+		A5C0AC3F2EAFFFF300846D16 /* ReCaptchaEnterpriseTests */ = {
+			isa = PBXGroup;
+			children = (
+				A5C0AC3E2EAFFFF300846D16 /* ReCaptchaEnterpriseCallbackTests.swift */,
+				A58CFBFC2EB03692007C4A31 /* ReCaptchaEnterpriseConfigTests.swift */,
+				A58CFBFE2EB0385D007C4A31 /* ReCaptchaEnterpriseUtilsTests.swift */,
+			);
+			path = ReCaptchaEnterpriseTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		A5C0ABEF2EAFFFDE00846D16 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A5C0AC452EB0013600846D16 /* ReCaptchaEnterprise.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		A5C0ABF32EAFFFDE00846D16 /* PingReCaptchaEnterprise */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A5C0AC062EAFFFDF00846D16 /* Build configuration list for PBXNativeTarget "PingReCaptchaEnterprise" */;
+			buildPhases = (
+				A5C0ABEF2EAFFFDE00846D16 /* Headers */,
+				A5C0ABF02EAFFFDE00846D16 /* Sources */,
+				A5C0ABF12EAFFFDE00846D16 /* Frameworks */,
+				A5C0ABF22EAFFFDE00846D16 /* Resources */,
+				A58CFBF72EB00637007C4A31 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PingReCaptchaEnterprise;
+			packageProductDependencies = (
+				A58CFBEF2EB00508007C4A31 /* RecaptchaEnterprise */,
+			);
+			productName = ReCaptchaEnterprise;
+			productReference = A5C0ABF42EAFFFDE00846D16 /* PingReCaptchaEnterprise.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		A5C0ABFC2EAFFFDF00846D16 /* ReCaptchaEnterpriseTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A5C0AC092EAFFFDF00846D16 /* Build configuration list for PBXNativeTarget "ReCaptchaEnterpriseTests" */;
+			buildPhases = (
+				A5C0ABF92EAFFFDF00846D16 /* Sources */,
+				A5C0ABFA2EAFFFDF00846D16 /* Frameworks */,
+				A5C0ABFB2EAFFFDF00846D16 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A5C0AC002EAFFFDF00846D16 /* PBXTargetDependency */,
+			);
+			name = ReCaptchaEnterpriseTests;
+			packageProductDependencies = (
+			);
+			productName = ReCaptchaEnterpriseTests;
+			productReference = A5C0ABFD2EAFFFDF00846D16 /* ReCaptchaEnterpriseTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A5C0ABEB2EAFFFDE00846D16 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					A5C0ABF32EAFFFDE00846D16 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+					A5C0ABFC2EAFFFDF00846D16 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+				};
+			};
+			buildConfigurationList = A5C0ABEE2EAFFFDE00846D16 /* Build configuration list for PBXProject "ReCaptchaEnterprise" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A5C0ABEA2EAFFFDE00846D16;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A58CFBEE2EB00508007C4A31 /* XCRemoteSwiftPackageReference "recaptcha-enterprise-mobile-sdk" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A5C0ABF52EAFFFDE00846D16 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A5C0ABF32EAFFFDE00846D16 /* PingReCaptchaEnterprise */,
+				A5C0ABFC2EAFFFDF00846D16 /* ReCaptchaEnterpriseTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A5C0ABF22EAFFFDE00846D16 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A5C0AC432EB000C600846D16 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A5C0ABFB2EAFFFDF00846D16 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A5C0ABF02EAFFFDE00846D16 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A5C0AC3D2EAFFFF000846D16 /* ReCaptchaEnterprise.swift in Sources */,
+				A58CFBF92EB009AC007C4A31 /* ReCaptchaEnterpriseUtils.swift in Sources */,
+				A58CFBF22EB00600007C4A31 /* ReCaptchaEnterpriseCallback.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A5C0ABF92EAFFFDF00846D16 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A58CFBFF2EB03860007C4A31 /* ReCaptchaEnterpriseUtilsTests.swift in Sources */,
+				A5C0AC402EAFFFF300846D16 /* ReCaptchaEnterpriseCallbackTests.swift in Sources */,
+				A58CFBFD2EB03693007C4A31 /* ReCaptchaEnterpriseConfigTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A5C0AC002EAFFFDF00846D16 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A5C0ABF32EAFFFDE00846D16 /* PingReCaptchaEnterprise */;
+			targetProxy = A5C0ABFF2EAFFFDF00846D16 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		A5C0AC042EAFFFDF00846D16 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		A5C0AC052EAFFFDF00846D16 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		A5C0AC072EAFFFDF00846D16 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ReCaptchaEnterprise;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A5C0AC082EAFFFDF00846D16 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ReCaptchaEnterprise;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		A5C0AC0A2EAFFFDF00846D16 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ReCaptchaEnterpriseTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
+			};
+			name = Debug;
+		};
+		A5C0AC0B2EAFFFDF00846D16 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ReCaptchaEnterpriseTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A5C0ABEE2EAFFFDE00846D16 /* Build configuration list for PBXProject "ReCaptchaEnterprise" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A5C0AC042EAFFFDF00846D16 /* Debug */,
+				A5C0AC052EAFFFDF00846D16 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A5C0AC062EAFFFDF00846D16 /* Build configuration list for PBXNativeTarget "PingReCaptchaEnterprise" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A5C0AC072EAFFFDF00846D16 /* Debug */,
+				A5C0AC082EAFFFDF00846D16 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A5C0AC092EAFFFDF00846D16 /* Build configuration list for PBXNativeTarget "ReCaptchaEnterpriseTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A5C0AC0A2EAFFFDF00846D16 /* Debug */,
+				A5C0AC0B2EAFFFDF00846D16 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A58CFBEE2EB00508007C4A31 /* XCRemoteSwiftPackageReference "recaptcha-enterprise-mobile-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 18.8.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A58CFBEF2EB00508007C4A31 /* RecaptchaEnterprise */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A58CFBEE2EB00508007C4A31 /* XCRemoteSwiftPackageReference "recaptcha-enterprise-mobile-sdk" */;
+			productName = RecaptchaEnterprise;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A5C0ABEB2EAFFFDE00846D16 /* Project object */;
+}

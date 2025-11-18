@@ -58,12 +58,12 @@ protocol LocationManagerProtocol: AnyObject {
     var delegate: CLLocationManagerDelegate? { get set }
     var desiredAccuracy: CLLocationAccuracy { get set }
     
-    static func locationServicesEnabled() -> Bool
-    static func authorizationStatus() -> CLAuthorizationStatus
+    static func locationServicesEnabled() async -> Bool
+    static func authorizationStatus() async -> CLAuthorizationStatus
     
-    func requestLocation()
-    func requestWhenInUseAuthorization()
-    func requestAlwaysAuthorization()
+    func requestLocation() async
+    func requestWhenInUseAuthorization() async
+    func requestAlwaysAuthorization() async
 }
 
 // MARK: - CLLocationManager Conformance
@@ -103,11 +103,12 @@ extension CLLocationManager: LocationManagerProtocol {
 /// Your app's Info.plist must include appropriate usage descriptions:
 /// - `NSLocationWhenInUseUsageDescription` for basic location access
 /// - `NSLocationAlwaysAndWhenInUseUsageDescription` for background location access
-public class LocationManager: NSObject, ObservableObject {
+public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
     
     // MARK: - Constants
     
     /// Shared singleton instance of LocationManager for app-wide coordination
+    @MainActor
     public static let shared = LocationManager()
     
     /// Duration in seconds for which cached location data remains valid
@@ -118,7 +119,7 @@ public class LocationManager: NSObject, ObservableObject {
     
     /// LocationManagerProtocol instance for system location services
     private let locationManager: LocationManagerProtocol
-        
+    
     /// LocationManagerProtocol concrete type
     private let locationManagerType: LocationManagerProtocol.Type
     
@@ -142,43 +143,49 @@ public class LocationManager: NSObject, ObservableObject {
     /// Current authorization status using iOS 13+ compatible class method
     /// - Returns: Current location authorization status for the application
     var authorizationStatus: CLAuthorizationStatus {
-        return locationManagerType.authorizationStatus()
+        get async {
+            return await locationManagerType.authorizationStatus()
+        }
     }
     
     /// Human-readable authorization status for debugging and logging
     /// - Returns: String representation of current authorization status
     var authorizationStatusString: String {
-        switch authorizationStatus {
-        case .authorizedAlways:
-            return "authorizedAlways"
-        case .authorizedWhenInUse:
-            return "authorizedWhenInUse"
-        case .denied:
-            return "denied"
-        case .restricted:
-            return "restricted"
-        case .notDetermined:
-            return "notDetermined"
-        @unknown default:
-            return "unknown"
+        get async {
+            switch await authorizationStatus {
+            case .authorizedAlways:
+                return "authorizedAlways"
+            case .authorizedWhenInUse:
+                return "authorizedWhenInUse"
+            case .denied:
+                return "denied"
+            case .restricted:
+                return "restricted"
+            case .notDetermined:
+                return "notDetermined"
+            @unknown default:
+                return "unknown"
+            }
         }
     }
     
     // MARK: - Lifecycle
     
     /// Initializes LocationManager with dependency injection support
-        /// - Parameters:
-        ///   - locationManager: The location manager implementation (defaults to CLLocationManager)
-        ///   - locationManagerType: The type for class methods (defaults to CLLocationManager.self)
-        init(locationManager: LocationManagerProtocol = CLLocationManager(),
-             locationManagerType: LocationManagerProtocol.Type = CLLocationManager.self) {
-            self.locationManager = locationManager
-            self.locationManagerType = locationManagerType
-            super.init()
-            setupLocationManager()
-        }
+    /// - Parameters:
+    ///   - locationManager: The location manager implementation (defaults to CLLocationManager)
+    ///   - locationManagerType: The type for class methods (defaults to CLLocationManager.self)
+    @MainActor
+    init(locationManager: LocationManagerProtocol = CLLocationManager(),
+         locationManagerType: LocationManagerProtocol.Type = CLLocationManager.self) {
+        self.locationManager = locationManager
+        self.locationManagerType = locationManagerType
+        super.init()
+        setupLocationManager()
+    }
     
     /// Configures the location manager with optimal settings for device profiling
+    @MainActor
     private func setupLocationManager() {
         // Use moderate accuracy to balance precision with battery life
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
@@ -226,24 +233,22 @@ public class LocationManager: NSObject, ObservableObject {
     /// }
     /// ```
     func requestLocation() async throws -> CLLocation? {
-        // Update UI state on main thread
-        await MainActor.run {
-            self.isRequesting = true
-        }
+        // Update UI state on main actor
+        await MainActor.run { isRequesting = true }
         
         defer {
             Task { @MainActor in
-                self.isRequesting = false
+                isRequesting = false
             }
         }
         
         // Verify location services are enabled system-wide
-        guard locationManagerType.locationServicesEnabled() else {
+        guard await locationManagerType.locationServicesEnabled() else {
             throw LocationError.locationServicesDisabled
         }
         
         // Handle different authorization states
-        switch authorizationStatus {
+        switch await authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
             // Already authorized, fetch location
             return try await fetchLocationWithAuthorization()
@@ -312,8 +317,10 @@ public class LocationManager: NSObject, ObservableObject {
         
         // Request fresh location from system
         return try await withCheckedThrowingContinuation { continuation in
-            locationContinuation = continuation
-            locationManager.requestLocation()
+            Task {
+                locationContinuation = continuation
+                await locationManager.requestLocation()
+            }
         }
     }
     
@@ -330,13 +337,15 @@ public class LocationManager: NSObject, ObservableObject {
         }
         
         return await withCheckedContinuation { continuation in
-            authorizationContinuation = continuation
-            
-            // Request appropriate authorization level based on Info.plist configuration
-            if hasAlwaysUsageDescription {
-                locationManager.requestAlwaysAuthorization()
-            } else if hasWhenInUseUsageDescription {
-                locationManager.requestWhenInUseAuthorization()
+            Task {
+                authorizationContinuation = continuation
+                
+                // Request appropriate authorization level based on Info.plist configuration
+                if hasAlwaysUsageDescription {
+                    await locationManager.requestAlwaysAuthorization()
+                } else if hasWhenInUseUsageDescription {
+                    await locationManager.requestWhenInUseAuthorization()
+                }
             }
         }
     }
@@ -358,11 +367,12 @@ public class LocationManager: NSObject, ObservableObject {
 
 // MARK: - CLLocationManagerDelegate
 
-extension LocationManager: CLLocationManagerDelegate {
+extension LocationManager: @preconcurrency CLLocationManagerDelegate {
     
     /// Called when the authorization status changes
     /// - Parameter manager: The location manager whose authorization changed
     /// - Parameter status: The new authorization status
+    @MainActor
     public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         // Resume any pending authorization continuation
         if let continuation = authorizationContinuation {
@@ -374,6 +384,7 @@ extension LocationManager: CLLocationManagerDelegate {
     /// Called when location data becomes available
     /// - Parameter manager: The location manager providing the update
     /// - Parameter locations: Array of location objects in chronological order
+    @MainActor
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         
@@ -390,6 +401,7 @@ extension LocationManager: CLLocationManagerDelegate {
     /// Called when location request fails
     /// - Parameter manager: The location manager that encountered the error
     /// - Parameter error: The error that occurred during location request
+    @MainActor
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         // Resume any pending location continuation with the error
         if let continuation = locationContinuation {

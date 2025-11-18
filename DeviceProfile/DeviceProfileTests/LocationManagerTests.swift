@@ -12,13 +12,14 @@ import XCTest
 import CoreLocation
 @testable import PingDeviceProfile
 
-class LocationManagerTests: XCTestCase {
+@MainActor
+class LocationManagerTests: XCTestCase, Sendable {
     
     var sut: LocationManager!
     var mockLocationManager: MockLocationManager!
     
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         mockLocationManager = MockLocationManager()
         mockLocationManager.mockLocationServicesEnabled = true
         MockLocationManager.shared = mockLocationManager // Enable static method mocking
@@ -28,11 +29,11 @@ class LocationManagerTests: XCTestCase {
         )
     }
     
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         mockLocationManager = nil
         MockLocationManager.shared = nil // Clean up
-        super.tearDown()
+        try await super.tearDown()
     }
     
     // MARK: - Initialization Tests
@@ -89,14 +90,14 @@ class LocationManagerTests: XCTestCase {
     
     // MARK: - Authorization Status Tests
     
-    func testAuthorizationStatusReflectsMockStatus() {
+    func testAuthorizationStatusReflectsMockStatus() async {
         mockLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
         
-        let status = sut.authorizationStatus
+        let status = await sut.authorizationStatus
         XCTAssertEqual(status, .authorizedWhenInUse, "Should return mock authorization status")
     }
     
-    func testAuthorizationStatusString_AllCases() {
+    func testAuthorizationStatusString_AllCases() async {
         let testCases: [(CLAuthorizationStatus, String)] = [
             (.notDetermined, "notDetermined"),
             (.restricted, "restricted"),
@@ -107,7 +108,7 @@ class LocationManagerTests: XCTestCase {
         
         for (status, expectedString) in testCases {
             mockLocationManager.mockAuthorizationStatus = status
-            let statusString = sut.authorizationStatusString
+            let statusString = await sut.authorizationStatusString
             XCTAssertEqual(statusString, expectedString,
                           "Status string should match for \(status)")
         }
@@ -426,7 +427,7 @@ class LocationManagerTests: XCTestCase {
         await withTaskGroup(of: CLAuthorizationStatus.self) { group in
             for _ in 0..<iterations {
                 group.addTask {
-                    return self.sut.authorizationStatus
+                    return await self.sut.authorizationStatus
                 }
             }
             
@@ -615,13 +616,18 @@ class LocationManagerTests: XCTestCase {
     
     func testAuthorizationStatusPerformance() {
         measure {
-            _ = sut.authorizationStatus
+            Task {
+                _ = await sut.authorizationStatus
+            }
         }
     }
     
     func testAuthorizationStatusStringPerformance() {
         measure {
-            _ = sut.authorizationStatusString
+            Task {
+                _ = await sut.authorizationStatusString
+            }
+            
         }
     }
 }
@@ -630,7 +636,7 @@ class LocationManagerTests: XCTestCase {
 // MARK: - MockLocationManager
 
 /// Mock implementation for testing location scenarios
-class MockLocationManager: LocationManagerProtocol {
+@MainActor class MockLocationManager: @preconcurrency LocationManagerProtocol {
     weak var delegate: CLLocationManagerDelegate?
     var desiredAccuracy: CLLocationAccuracy = kCLLocationAccuracyBest
     
@@ -647,13 +653,13 @@ class MockLocationManager: LocationManagerProtocol {
     var requestAlwaysAuthorizationCallCount = 0
     
     // Shared state for static methods (used in tests)
-    static var shared: MockLocationManager?
+    @MainActor static var shared: MockLocationManager?
     
-    static func locationServicesEnabled() -> Bool {
+    @MainActor static func locationServicesEnabled() -> Bool {
         return shared?.mockLocationServicesEnabled ?? true
     }
     
-    static func authorizationStatus() -> CLAuthorizationStatus {
+    @MainActor static func authorizationStatus() -> CLAuthorizationStatus {
         return shared?.mockAuthorizationStatus ?? .notDetermined
     }
     

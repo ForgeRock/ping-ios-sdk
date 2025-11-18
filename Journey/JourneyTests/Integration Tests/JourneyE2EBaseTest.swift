@@ -53,18 +53,26 @@ open class JourneyE2EBaseTest: XCTestCase {
         scopes = try XCTUnwrap(config.scopes, "Missing 'scopes' in config")
         redirectUri = try XCTUnwrap(config.redirectUri, "Missing 'redirectUri' in config")
                 
+        // Capture values locally to avoid capturing self in @Sendable closures
+        let serverUrl = self.serverUrl!
+        let realm = self.realm!
+        let cookie = self.cookie!
+        let discoveryEndpoint = self.discoveryEndpoint!
+        let clientId = self.clientId!
+        let scopes = self.scopes!
+        let redirectUri = self.redirectUri!
         
         defaultJourney = Journey.createJourney { config in
             config.timeout = 30
             config.logger = LogManager.standard
-            config.serverUrl = self.serverUrl
-            config.realm = self.realm
-            config.cookie = self.cookie
+            config.serverUrl = serverUrl
+            config.realm = realm
+            config.cookie = cookie
             config.module(PingJourney.OidcModule.config) { oidcValue in
-                oidcValue.discoveryEndpoint = self.discoveryEndpoint
-                oidcValue.clientId = self.clientId
-                oidcValue.scopes = Set(self.scopes)
-                oidcValue.redirectUri = self.redirectUri
+                oidcValue.discoveryEndpoint = discoveryEndpoint
+                oidcValue.clientId = clientId
+                oidcValue.scopes = Set(scopes)
+                oidcValue.redirectUri = redirectUri
             }
         }
         

@@ -120,7 +120,7 @@ enum NetworkInterfaceType: String {
 ///     }
 /// }
 /// ```
-class NetworkPathMonitor: ObservableObject {
+class NetworkPathMonitor: ObservableObject, @unchecked Sendable {
 
     // MARK: - Private Properties
 

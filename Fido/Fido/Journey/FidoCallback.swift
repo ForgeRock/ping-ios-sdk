@@ -32,8 +32,15 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
         return journey?.config.logger
     }
     
-    /// Shared instance of the Fido manager.
-    var fido: Fido = Fido.shared
+    /// Private storage for the Fido instance
+    private var _fido: Fido?
+    
+    /// Fido manager instance - defaults to shared singleton but can be injected for testing.
+    @MainActor
+    var fido: Fido {
+        get { _fido ?? Fido.shared }
+        set { _fido = newValue }
+    }
     
     /// This method is an override from `AbstractCallback` and is not used in this context.
     public override func initValue(name: String, value: Any) {
@@ -58,6 +65,22 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
     /// - Parameter error: The error to handle and convert.
     public func handleError(error: Error) {
         logger?.e("Handling FIDO error: \(error.localizedDescription)", error: error)
+        
+        // Check if it's a FidoError first
+        if let fidoError = error as? FidoError {
+            switch fidoError {
+            case .timeout:
+                logger?.d("FIDO operation timed out")
+                setError(error: FidoConstants.ERROR_TIMEOUT, message: "Operation timedout")
+                return
+            case .unsupportedAction(let message):
+                logger?.d("FIDO ERROR NOT SUPPORTED: \(message)")
+                setError(error: FidoConstants.ERROR_NOT_SUPPORTED, message: message)
+                return
+            default:
+                break
+            }
+        }
         
         let nsError = error as NSError
         

@@ -16,6 +16,9 @@ import PingProtect
 import PingExternalIdP
 import PingDeviceProfile
 import PingFido
+import PingReCaptchaEnterprise
+import PingBinding
+import PingMfaCommons
 
 struct JourneyView: View {
     /// The view model that manages the Journey flow logic.
@@ -146,14 +149,16 @@ struct JourneyNodeView: View {
 //            callback is PingOneProtectEvaluationCallback ||
 //            callback is IdpCallback ||
             callback is FidoRegistrationCallback ||
-            callback is FidoAuthenticationCallback
+            callback is FidoAuthenticationCallback ||
+            callback is DeviceBindingCallback ||
+            callback is DeviceSigningVerifierCallback
         }
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             
-            ForEach(continueNode.callbacks, id: \.id) { callback in
+            ForEach(Array(continueNode.callbacks.enumerated()), id: \.offset) { index, callback in
                 switch callback {
                 case let booleanCallback as BooleanAttributeInputCallback:
                     BooleanAttributeInputCallbackView(callback: booleanCallback, onNodeUpdated: onNodeUpdated)
@@ -225,9 +230,21 @@ struct JourneyNodeView: View {
                     
                 case let fidoAuthenticationCallback as FidoAuthenticationCallback:
                     FidoAuthenticationCallbackView(callback: fidoAuthenticationCallback, onNext: onNext)
+                    
+                case let reCaptchaEnterpriseCallback as ReCaptchaEnterpriseCallback:
+                    ReCaptchaEnterpriseCallbackView(callback: reCaptchaEnterpriseCallback, onNext: onNext).id(reCaptchaEnterpriseCallback.id)
+                    
+                case let deviceBindingCallback as DeviceBindingCallback:
+                    DeviceBindingCallbackView(callback: deviceBindingCallback, onNext: onNext)
 
-                default:
+                case let deviceSigningVerifierCallback as DeviceSigningVerifierCallback:
+                    DeviceSigningVerifierCallbackView(callback: deviceSigningVerifierCallback, onNext: onNext)
+                    
+                case _ as HiddenValueCallback:
                     EmptyView()
+                    
+                default:
+                    Text("Unsupported callback type")
                 }
             }
             

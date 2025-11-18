@@ -1,0 +1,727 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		EC4DD2F12EABBAB800ECC4E1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC4DD2EC2EABBAB800ECC4E1 /* PrivacyInfo.xcprivacy */; };
+		EC4DD2F22EABBAB800ECC4E1 /* SigningParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2E52EABBAB800ECC4E1 /* SigningParameters.swift */; };
+		EC4DD2F32EABBAB800ECC4E1 /* DeviceAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2D42EABBAB800ECC4E1 /* DeviceAuthenticator.swift */; };
+		EC4DD2F62EABBAB800ECC4E1 /* DeviceBindingCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2D72EABBAB800ECC4E1 /* DeviceBindingCallback.swift */; };
+		EC4DD2F72EABBAB800ECC4E1 /* DeviceBindingError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2E02EABBAB800ECC4E1 /* DeviceBindingError.swift */; };
+		EC4DD2F82EABBAB800ECC4E1 /* DeviceBindingAuthenticationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2E32EABBAB800ECC4E1 /* DeviceBindingAuthenticationType.swift */; };
+		EC4DD2F92EABBAB800ECC4E1 /* DeviceBindingConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2DA2EABBAB800ECC4E1 /* DeviceBindingConfig.swift */; };
+		EC4DD2FA2EABBAB800ECC4E1 /* NoneAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2D52EABBAB800ECC4E1 /* NoneAuthenticator.swift */; };
+		EC4DD2FB2EABBAB800ECC4E1 /* UserKeysStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2EE2EABBAB800ECC4E1 /* UserKeysStorage.swift */; };
+		EC4DD2FC2EABBAB800ECC4E1 /* CryptoKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2DD2EABBAB800ECC4E1 /* CryptoKey.swift */; };
+		EC4DD2FD2EABBAB800ECC4E1 /* BindingModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2E82EABBAB800ECC4E1 /* BindingModule.swift */; };
+		EC4DD2FE2EABBAB800ECC4E1 /* UserKeyStorageConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2EF2EABBAB800ECC4E1 /* UserKeyStorageConfig.swift */; };
+		EC4DD2FF2EABBAB800ECC4E1 /* UserKeySigningParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2E62EABBAB800ECC4E1 /* UserKeySigningParameters.swift */; };
+		EC4DD3002EABBAB800ECC4E1 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2DC2EABBAB800ECC4E1 /* Constants.swift */; };
+		EC4DD3012EABBAB800ECC4E1 /* DeviceSigningVerifierCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2D82EABBAB800ECC4E1 /* DeviceSigningVerifierCallback.swift */; };
+		EC4DD3022EABBAB800ECC4E1 /* KeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2DE2EABBAB800ECC4E1 /* KeyPair.swift */; };
+		EC4DD3032EABBAB800ECC4E1 /* Attestation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2E22EABBAB800ECC4E1 /* Attestation.swift */; };
+		EC4DD3042EABBAB800ECC4E1 /* Prompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2E42EABBAB800ECC4E1 /* Prompt.swift */; };
+		EC4DD3052EABBAB800ECC4E1 /* UserKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2ED2EABBAB800ECC4E1 /* UserKey.swift */; };
+		EC4DD3062EABBAB800ECC4E1 /* PingBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = EC4DD2EA2EABBAB800ECC4E1 /* PingBinding.h */; };
+		EC4DD3162EABBB1D00ECC4E1 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4DD3152EABBB1D00ECC4E1 /* PingLogger.framework */; };
+		EC4DD3222EABCE7600ECC4E1 /* PingBinding.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4DD2842EABBA5F00ECC4E1 /* PingBinding.framework */; };
+		EC4DD32A2EABCE7D00ECC4E1 /* PingBindingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD3282EABCE7D00ECC4E1 /* PingBindingTests.swift */; };
+		EC4DD32C2EABCE8F00ECC4E1 /* PingBinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD32B2EABCE8F00ECC4E1 /* PingBinderTests.swift */; };
+		EC4DD3552EAF961500ECC4E1 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4DD3542EAF961500ECC4E1 /* PingOrchestrate.framework */; };
+		EC4DD3732EAFA26D00ECC4E1 /* DeviceBindingStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD3722EAFA26D00ECC4E1 /* DeviceBindingStatus.swift */; };
+		EC4DD37E2EB0DAFB00ECC4E1 /* PingBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD37D2EB0DAFB00ECC4E1 /* PingBinding.swift */; };
+		EC4DD3832EB0E0B200ECC4E1 /* DefaultDeviceAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD3822EB0E0B200ECC4E1 /* DefaultDeviceAuthenticator.swift */; };
+		EC4DD3842EB0E0B200ECC4E1 /* BiometricDeviceCredentialAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD3802EB0E0B200ECC4E1 /* BiometricDeviceCredentialAuthenticator.swift */; };
+		EC4DD3852EB0E0B200ECC4E1 /* BiometricOnlyAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD3812EB0E0B200ECC4E1 /* BiometricOnlyAuthenticator.swift */; };
+		EC4DD3862EB0E0B200ECC4E1 /* AppPinAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD37F2EB0E0B200ECC4E1 /* AppPinAuthenticator.swift */; };
+		EC6F658E2EB119C600D4686D /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4DD3102EABBB0000ECC4E1 /* PingJourney.framework */; };
+		EC6F65912EB119D700D4686D /* PingMfaCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4DD3342EABD57F00ECC4E1 /* PingMfaCommons.framework */; };
+		EC6F65D22EB2470F00D4686D /* PingStorage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC6F65D12EB2470F00D4686D /* PingStorage.framework */; };
+		EC6F660A2EB3782100D4686D /* PinCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6F66092EB3782100D4686D /* PinCollector.swift */; };
+		ECB255E82EB90CEF00F25CBE /* AppPinConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255E72EB90CEF00F25CBE /* AppPinConfig.swift */; };
+		ECB255EA2EB9125600F25CBE /* BiometricAuthenticatorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255E92EB9125600F25CBE /* BiometricAuthenticatorConfig.swift */; };
+		ECB255EC2EB9141800F25CBE /* AuthenticatorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255EB2EB9141100F25CBE /* AuthenticatorConfig.swift */; };
+		ECB255F02EB92E9C00F25CBE /* DefaultUserKeySelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255ED2EB92E9C00F25CBE /* DefaultUserKeySelector.swift */; };
+		ECB255F12EB92E9C00F25CBE /* UserKeySelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255EE2EB92E9C00F25CBE /* UserKeySelector.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EC4DD3232EABCE7600ECC4E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC4DD27B2EABBA5F00ECC4E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EC4DD2832EABBA5F00ECC4E1;
+			remoteInfo = PingBinding;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		EC4DD2842EABBA5F00ECC4E1 /* PingBinding.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingBinding.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC4DD2D42EABBAB800ECC4E1 /* DeviceAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticator.swift; sourceTree = "<group>"; };
+		EC4DD2D52EABBAB800ECC4E1 /* NoneAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoneAuthenticator.swift; sourceTree = "<group>"; };
+		EC4DD2D72EABBAB800ECC4E1 /* DeviceBindingCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceBindingCallback.swift; sourceTree = "<group>"; };
+		EC4DD2D82EABBAB800ECC4E1 /* DeviceSigningVerifierCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSigningVerifierCallback.swift; sourceTree = "<group>"; };
+		EC4DD2DA2EABBAB800ECC4E1 /* DeviceBindingConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceBindingConfig.swift; sourceTree = "<group>"; };
+		EC4DD2DC2EABBAB800ECC4E1 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		EC4DD2DD2EABBAB800ECC4E1 /* CryptoKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoKey.swift; sourceTree = "<group>"; };
+		EC4DD2DE2EABBAB800ECC4E1 /* KeyPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPair.swift; sourceTree = "<group>"; };
+		EC4DD2E02EABBAB800ECC4E1 /* DeviceBindingError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceBindingError.swift; sourceTree = "<group>"; };
+		EC4DD2E22EABBAB800ECC4E1 /* Attestation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attestation.swift; sourceTree = "<group>"; };
+		EC4DD2E32EABBAB800ECC4E1 /* DeviceBindingAuthenticationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceBindingAuthenticationType.swift; sourceTree = "<group>"; };
+		EC4DD2E42EABBAB800ECC4E1 /* Prompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prompt.swift; sourceTree = "<group>"; };
+		EC4DD2E52EABBAB800ECC4E1 /* SigningParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigningParameters.swift; sourceTree = "<group>"; };
+		EC4DD2E62EABBAB800ECC4E1 /* UserKeySigningParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserKeySigningParameters.swift; sourceTree = "<group>"; };
+		EC4DD2E82EABBAB800ECC4E1 /* BindingModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindingModule.swift; sourceTree = "<group>"; };
+		EC4DD2EA2EABBAB800ECC4E1 /* PingBinding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PingBinding.h; sourceTree = "<group>"; };
+		EC4DD2EC2EABBAB800ECC4E1 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		EC4DD2ED2EABBAB800ECC4E1 /* UserKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserKey.swift; sourceTree = "<group>"; };
+		EC4DD2EE2EABBAB800ECC4E1 /* UserKeysStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserKeysStorage.swift; sourceTree = "<group>"; };
+		EC4DD2EF2EABBAB800ECC4E1 /* UserKeyStorageConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserKeyStorageConfig.swift; sourceTree = "<group>"; };
+		EC4DD3102EABBB0000ECC4E1 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC4DD3142EABBB0900ECC4E1 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC4DD3152EABBB1D00ECC4E1 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC4DD31E2EABCE7600ECC4E1 /* PingBindingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingBindingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC4DD3282EABCE7D00ECC4E1 /* PingBindingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingBindingTests.swift; sourceTree = "<group>"; };
+		EC4DD32B2EABCE8F00ECC4E1 /* PingBinderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingBinderTests.swift; sourceTree = "<group>"; };
+		EC4DD3342EABD57F00ECC4E1 /* PingMfaCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingMfaCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC4DD3542EAF961500ECC4E1 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC4DD3722EAFA26D00ECC4E1 /* DeviceBindingStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceBindingStatus.swift; sourceTree = "<group>"; };
+		EC4DD37D2EB0DAFB00ECC4E1 /* PingBinding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingBinding.swift; sourceTree = "<group>"; };
+		EC4DD37F2EB0E0B200ECC4E1 /* AppPinAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPinAuthenticator.swift; sourceTree = "<group>"; };
+		EC4DD3802EB0E0B200ECC4E1 /* BiometricDeviceCredentialAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricDeviceCredentialAuthenticator.swift; sourceTree = "<group>"; };
+		EC4DD3812EB0E0B200ECC4E1 /* BiometricOnlyAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricOnlyAuthenticator.swift; sourceTree = "<group>"; };
+		EC4DD3822EB0E0B200ECC4E1 /* DefaultDeviceAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDeviceAuthenticator.swift; sourceTree = "<group>"; };
+		EC6F65892EB1197200D4686D /* AlarmKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AlarmKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/System/iOSSupport/System/Library/Frameworks/AlarmKit.framework; sourceTree = DEVELOPER_DIR; };
+		EC6F65D12EB2470F00D4686D /* PingStorage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingStorage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC6F66092EB3782100D4686D /* PinCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinCollector.swift; sourceTree = "<group>"; };
+		ECB255E72EB90CEF00F25CBE /* AppPinConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPinConfig.swift; sourceTree = "<group>"; };
+		ECB255E92EB9125600F25CBE /* BiometricAuthenticatorConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuthenticatorConfig.swift; sourceTree = "<group>"; };
+		ECB255EB2EB9141100F25CBE /* AuthenticatorConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatorConfig.swift; sourceTree = "<group>"; };
+		ECB255ED2EB92E9C00F25CBE /* DefaultUserKeySelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultUserKeySelector.swift; sourceTree = "<group>"; };
+		ECB255EE2EB92E9C00F25CBE /* UserKeySelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserKeySelector.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EC4DD2812EABBA5F00ECC4E1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC4DD3162EABBB1D00ECC4E1 /* PingLogger.framework in Frameworks */,
+				EC4DD3552EAF961500ECC4E1 /* PingOrchestrate.framework in Frameworks */,
+				EC6F65912EB119D700D4686D /* PingMfaCommons.framework in Frameworks */,
+				EC6F65D22EB2470F00D4686D /* PingStorage.framework in Frameworks */,
+				EC6F658E2EB119C600D4686D /* PingJourney.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC4DD31B2EABCE7600ECC4E1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC4DD3222EABCE7600ECC4E1 /* PingBinding.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		EC4DD27A2EABBA5F00ECC4E1 = {
+			isa = PBXGroup;
+			children = (
+				EC4DD29D2EABBA7E00ECC4E1 /* Binding */,
+				EC4DD3292EABCE7D00ECC4E1 /* PingBindingTests */,
+				EC4DD30F2EABBB0000ECC4E1 /* Frameworks */,
+				EC4DD2852EABBA5F00ECC4E1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EC4DD2852EABBA5F00ECC4E1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EC4DD2842EABBA5F00ECC4E1 /* PingBinding.framework */,
+				EC4DD31E2EABCE7600ECC4E1 /* PingBindingTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EC4DD29D2EABBA7E00ECC4E1 /* Binding */ = {
+			isa = PBXGroup;
+			children = (
+				ECB255EF2EB92E9C00F25CBE /* UserKeySelector */,
+				EC4DD2EA2EABBAB800ECC4E1 /* PingBinding.h */,
+				EC4DD37D2EB0DAFB00ECC4E1 /* PingBinding.swift */,
+				EC4DD2EC2EABBAB800ECC4E1 /* PrivacyInfo.xcprivacy */,
+				EC4DD2D62EABBAB800ECC4E1 /* Authenticator */,
+				EC4DD2D92EABBAB800ECC4E1 /* Callback */,
+				EC4DD2DB2EABBAB800ECC4E1 /* Config */,
+				EC4DD2DC2EABBAB800ECC4E1 /* Constants.swift */,
+				EC4DD2DF2EABBAB800ECC4E1 /* Crypto */,
+				EC4DD2E12EABBAB800ECC4E1 /* Errors */,
+				EC4DD2E72EABBAB800ECC4E1 /* Model */,
+				EC4DD2E92EABBAB800ECC4E1 /* Module */,
+				EC4DD2F02EABBAB800ECC4E1 /* Storage */,
+			);
+			path = Binding;
+			sourceTree = "<group>";
+		};
+		EC4DD2D62EABBAB800ECC4E1 /* Authenticator */ = {
+			isa = PBXGroup;
+			children = (
+				EC6F66092EB3782100D4686D /* PinCollector.swift */,
+				EC4DD37F2EB0E0B200ECC4E1 /* AppPinAuthenticator.swift */,
+				EC4DD3802EB0E0B200ECC4E1 /* BiometricDeviceCredentialAuthenticator.swift */,
+				EC4DD3812EB0E0B200ECC4E1 /* BiometricOnlyAuthenticator.swift */,
+				EC4DD3822EB0E0B200ECC4E1 /* DefaultDeviceAuthenticator.swift */,
+				EC4DD2D42EABBAB800ECC4E1 /* DeviceAuthenticator.swift */,
+				EC4DD2D52EABBAB800ECC4E1 /* NoneAuthenticator.swift */,
+			);
+			path = Authenticator;
+			sourceTree = "<group>";
+		};
+		EC4DD2D92EABBAB800ECC4E1 /* Callback */ = {
+			isa = PBXGroup;
+			children = (
+				EC4DD2D72EABBAB800ECC4E1 /* DeviceBindingCallback.swift */,
+				EC4DD2D82EABBAB800ECC4E1 /* DeviceSigningVerifierCallback.swift */,
+			);
+			path = Callback;
+			sourceTree = "<group>";
+		};
+		EC4DD2DB2EABBAB800ECC4E1 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				ECB255E92EB9125600F25CBE /* BiometricAuthenticatorConfig.swift */,
+				ECB255EB2EB9141100F25CBE /* AuthenticatorConfig.swift */,
+				ECB255E72EB90CEF00F25CBE /* AppPinConfig.swift */,
+				EC4DD2DA2EABBAB800ECC4E1 /* DeviceBindingConfig.swift */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		EC4DD2DF2EABBAB800ECC4E1 /* Crypto */ = {
+			isa = PBXGroup;
+			children = (
+				EC4DD2DD2EABBAB800ECC4E1 /* CryptoKey.swift */,
+				EC4DD2DE2EABBAB800ECC4E1 /* KeyPair.swift */,
+			);
+			path = Crypto;
+			sourceTree = "<group>";
+		};
+		EC4DD2E12EABBAB800ECC4E1 /* Errors */ = {
+			isa = PBXGroup;
+			children = (
+				EC4DD3722EAFA26D00ECC4E1 /* DeviceBindingStatus.swift */,
+				EC4DD2E02EABBAB800ECC4E1 /* DeviceBindingError.swift */,
+			);
+			path = Errors;
+			sourceTree = "<group>";
+		};
+		EC4DD2E72EABBAB800ECC4E1 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				EC4DD2E22EABBAB800ECC4E1 /* Attestation.swift */,
+				EC4DD2E32EABBAB800ECC4E1 /* DeviceBindingAuthenticationType.swift */,
+				EC4DD2E42EABBAB800ECC4E1 /* Prompt.swift */,
+				EC4DD2E52EABBAB800ECC4E1 /* SigningParameters.swift */,
+				EC4DD2E62EABBAB800ECC4E1 /* UserKeySigningParameters.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		EC4DD2E92EABBAB800ECC4E1 /* Module */ = {
+			isa = PBXGroup;
+			children = (
+				EC4DD2E82EABBAB800ECC4E1 /* BindingModule.swift */,
+			);
+			path = Module;
+			sourceTree = "<group>";
+		};
+		EC4DD2F02EABBAB800ECC4E1 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				EC4DD2ED2EABBAB800ECC4E1 /* UserKey.swift */,
+				EC4DD2EE2EABBAB800ECC4E1 /* UserKeysStorage.swift */,
+				EC4DD2EF2EABBAB800ECC4E1 /* UserKeyStorageConfig.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		EC4DD30F2EABBB0000ECC4E1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EC6F65D12EB2470F00D4686D /* PingStorage.framework */,
+				EC6F65892EB1197200D4686D /* AlarmKit.framework */,
+				EC4DD3542EAF961500ECC4E1 /* PingOrchestrate.framework */,
+				EC4DD3342EABD57F00ECC4E1 /* PingMfaCommons.framework */,
+				EC4DD3152EABBB1D00ECC4E1 /* PingLogger.framework */,
+				EC4DD3142EABBB0900ECC4E1 /* PingJourney.framework */,
+				EC4DD3102EABBB0000ECC4E1 /* PingJourney.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EC4DD3292EABCE7D00ECC4E1 /* PingBindingTests */ = {
+			isa = PBXGroup;
+			children = (
+				EC4DD32B2EABCE8F00ECC4E1 /* PingBinderTests.swift */,
+				EC4DD3282EABCE7D00ECC4E1 /* PingBindingTests.swift */,
+			);
+			path = PingBindingTests;
+			sourceTree = "<group>";
+		};
+		ECB255EF2EB92E9C00F25CBE /* UserKeySelector */ = {
+			isa = PBXGroup;
+			children = (
+				ECB255ED2EB92E9C00F25CBE /* DefaultUserKeySelector.swift */,
+				ECB255EE2EB92E9C00F25CBE /* UserKeySelector.swift */,
+			);
+			path = UserKeySelector;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		EC4DD27F2EABBA5F00ECC4E1 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC4DD3062EABBAB800ECC4E1 /* PingBinding.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		EC4DD2832EABBA5F00ECC4E1 /* PingBinding */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC4DD2962EABBA5F00ECC4E1 /* Build configuration list for PBXNativeTarget "PingBinding" */;
+			buildPhases = (
+				EC4DD27F2EABBA5F00ECC4E1 /* Headers */,
+				EC4DD2802EABBA5F00ECC4E1 /* Sources */,
+				EC4DD2812EABBA5F00ECC4E1 /* Frameworks */,
+				EC4DD2822EABBA5F00ECC4E1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PingBinding;
+			packageProductDependencies = (
+			);
+			productName = Binding;
+			productReference = EC4DD2842EABBA5F00ECC4E1 /* PingBinding.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		EC4DD31D2EABCE7600ECC4E1 /* PingBindingTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC4DD3252EABCE7600ECC4E1 /* Build configuration list for PBXNativeTarget "PingBindingTests" */;
+			buildPhases = (
+				EC4DD31A2EABCE7600ECC4E1 /* Sources */,
+				EC4DD31B2EABCE7600ECC4E1 /* Frameworks */,
+				EC4DD31C2EABCE7600ECC4E1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EC4DD3242EABCE7600ECC4E1 /* PBXTargetDependency */,
+			);
+			name = PingBindingTests;
+			packageProductDependencies = (
+			);
+			productName = PingBindingTests;
+			productReference = EC4DD31E2EABCE7600ECC4E1 /* PingBindingTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EC4DD27B2EABBA5F00ECC4E1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					EC4DD2832EABBA5F00ECC4E1 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					EC4DD31D2EABCE7600ECC4E1 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+				};
+			};
+			buildConfigurationList = EC4DD27E2EABBA5F00ECC4E1 /* Build configuration list for PBXProject "Binding" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = EC4DD27A2EABBA5F00ECC4E1;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = EC4DD2852EABBA5F00ECC4E1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EC4DD2832EABBA5F00ECC4E1 /* PingBinding */,
+				EC4DD31D2EABCE7600ECC4E1 /* PingBindingTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EC4DD2822EABBA5F00ECC4E1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC4DD2F12EABBAB800ECC4E1 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC4DD31C2EABCE7600ECC4E1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EC4DD2802EABBA5F00ECC4E1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC4DD2F22EABBAB800ECC4E1 /* SigningParameters.swift in Sources */,
+				EC4DD2F32EABBAB800ECC4E1 /* DeviceAuthenticator.swift in Sources */,
+				EC4DD3732EAFA26D00ECC4E1 /* DeviceBindingStatus.swift in Sources */,
+				EC4DD2F62EABBAB800ECC4E1 /* DeviceBindingCallback.swift in Sources */,
+				EC4DD3832EB0E0B200ECC4E1 /* DefaultDeviceAuthenticator.swift in Sources */,
+				EC4DD3842EB0E0B200ECC4E1 /* BiometricDeviceCredentialAuthenticator.swift in Sources */,
+				ECB255F02EB92E9C00F25CBE /* DefaultUserKeySelector.swift in Sources */,
+				ECB255F12EB92E9C00F25CBE /* UserKeySelector.swift in Sources */,
+				EC4DD3852EB0E0B200ECC4E1 /* BiometricOnlyAuthenticator.swift in Sources */,
+				EC4DD3862EB0E0B200ECC4E1 /* AppPinAuthenticator.swift in Sources */,
+				EC4DD2F72EABBAB800ECC4E1 /* DeviceBindingError.swift in Sources */,
+				EC4DD37E2EB0DAFB00ECC4E1 /* PingBinding.swift in Sources */,
+				ECB255EA2EB9125600F25CBE /* BiometricAuthenticatorConfig.swift in Sources */,
+				EC4DD2F82EABBAB800ECC4E1 /* DeviceBindingAuthenticationType.swift in Sources */,
+				EC4DD2F92EABBAB800ECC4E1 /* DeviceBindingConfig.swift in Sources */,
+				EC4DD2FA2EABBAB800ECC4E1 /* NoneAuthenticator.swift in Sources */,
+				EC6F660A2EB3782100D4686D /* PinCollector.swift in Sources */,
+				EC4DD2FB2EABBAB800ECC4E1 /* UserKeysStorage.swift in Sources */,
+				EC4DD2FC2EABBAB800ECC4E1 /* CryptoKey.swift in Sources */,
+				ECB255EC2EB9141800F25CBE /* AuthenticatorConfig.swift in Sources */,
+				EC4DD2FD2EABBAB800ECC4E1 /* BindingModule.swift in Sources */,
+				ECB255E82EB90CEF00F25CBE /* AppPinConfig.swift in Sources */,
+				EC4DD2FE2EABBAB800ECC4E1 /* UserKeyStorageConfig.swift in Sources */,
+				EC4DD2FF2EABBAB800ECC4E1 /* UserKeySigningParameters.swift in Sources */,
+				EC4DD3002EABBAB800ECC4E1 /* Constants.swift in Sources */,
+				EC4DD3012EABBAB800ECC4E1 /* DeviceSigningVerifierCallback.swift in Sources */,
+				EC4DD3022EABBAB800ECC4E1 /* KeyPair.swift in Sources */,
+				EC4DD3032EABBAB800ECC4E1 /* Attestation.swift in Sources */,
+				EC4DD3042EABBAB800ECC4E1 /* Prompt.swift in Sources */,
+				EC4DD3052EABBAB800ECC4E1 /* UserKey.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC4DD31A2EABCE7600ECC4E1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC4DD32A2EABCE7D00ECC4E1 /* PingBindingTests.swift in Sources */,
+				EC4DD32C2EABCE8F00ECC4E1 /* PingBinderTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EC4DD3242EABCE7600ECC4E1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EC4DD2832EABBA5F00ECC4E1 /* PingBinding */;
+			targetProxy = EC4DD3232EABCE7600ECC4E1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		EC4DD2942EABBA5F00ECC4E1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		EC4DD2952EABBA5F00ECC4E1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		EC4DD2972EABBA5F00ECC4E1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Binding;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EC4DD2982EABBA5F00ECC4E1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Binding;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		EC4DD3262EABCE7600ECC4E1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingBindingTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
+			};
+			name = Debug;
+		};
+		EC4DD3272EABCE7600ECC4E1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingBindingTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		EC4DD27E2EABBA5F00ECC4E1 /* Build configuration list for PBXProject "Binding" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC4DD2942EABBA5F00ECC4E1 /* Debug */,
+				EC4DD2952EABBA5F00ECC4E1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EC4DD2962EABBA5F00ECC4E1 /* Build configuration list for PBXNativeTarget "PingBinding" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC4DD2972EABBA5F00ECC4E1 /* Debug */,
+				EC4DD2982EABBA5F00ECC4E1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EC4DD3252EABCE7600ECC4E1 /* Build configuration list for PBXNativeTarget "PingBindingTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC4DD3262EABCE7600ECC4E1 /* Debug */,
+				EC4DD3272EABCE7600ECC4E1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = EC4DD27B2EABBA5F00ECC4E1 /* Project object */;
+}

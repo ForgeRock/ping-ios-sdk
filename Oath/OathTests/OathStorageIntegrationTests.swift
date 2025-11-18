@@ -217,8 +217,8 @@ final class OathStorageIntegrationTests: XCTestCase {
         await withThrowingTaskGroup(of: Void.self) { group in
             // Store credentials concurrently
             for credential in credentials {
-                group.addTask {
-                    try await self.storage?.storeOathCredential(credential)
+                group.addTask { [storage] in
+                    try await storage?.storeOathCredential(credential)
                 }
             }
         }
@@ -230,8 +230,8 @@ final class OathStorageIntegrationTests: XCTestCase {
         // Concurrent retrieval
         try await withThrowingTaskGroup(of: OathCredential?.self) { group in
             for credential in credentials {
-                group.addTask {
-                    return try await self.storage?.retrieveOathCredential(credentialId: credential.id)
+                group.addTask { [storage] in
+                    return try await storage?.retrieveOathCredential(credentialId: credential.id)
                 }
             }
 
@@ -310,7 +310,7 @@ final class OathStorageIntegrationTests: XCTestCase {
         measure {
             let expectation = expectation(description: "Keychain performance test")
 
-            Task {
+            Task { [storage, credentials] in
                 do {
                     // Store all credentials
                     for credential in credentials {

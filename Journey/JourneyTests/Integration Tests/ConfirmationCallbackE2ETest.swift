@@ -39,7 +39,7 @@ class ConfirmationCallbackE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
         }
 
         XCTAssertEqual(confirmationCallback.prompt, "")
-        XCTAssertEqual(confirmationCallback.defaultOption, 1)
+        XCTAssertEqual(confirmationCallback.defaultOption,OptionType.yesNoCancel)
         XCTAssertEqual(confirmationCallback.messageType, MessageType.information)
         XCTAssertEqual(confirmationCallback.optionType, OptionType.unspecified)
         XCTAssertEqual(confirmationCallback.options.count, 2)

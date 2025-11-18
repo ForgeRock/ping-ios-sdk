@@ -39,7 +39,7 @@ struct TextOutputCallbackView: View {
             return "exclamationmark.triangle.fill"
         case .error:
             return "xmark.circle.fill"
-        case .unknown:
+        default:
             return "gear.circle.fill"
         }
     }
@@ -52,7 +52,7 @@ struct TextOutputCallbackView: View {
             return .orange
         case .error:
             return .red
-        case .unknown:
+        default:
             return .gray
         }
     }
