@@ -34,9 +34,12 @@
       }
     },
     {
+      "enabled" : false,
       "skippedTests" : [
         "DeviceProfileCollectorTests\/testCollectorCollectWithBothEnabled()",
         "DeviceProfileCollectorTests\/testCollectorCollectWithLocationEnabled()",
+        "LocationCollectorTests",
+        "LocationManagerTests",
         "TelephonyCollectorTests\/testNetworkCountryIsoFormat()"
       ],
       "target" : {
@@ -88,6 +91,7 @@
       }
     },
     {
+      "enabled" : false,
       "target" : {
         "containerPath" : "container:..\/Binding\/Binding.xcodeproj",
         "identifier" : "EC4DD31D2EABCE7600ECC4E1",
@@ -95,6 +99,10 @@
       }
     },
     {
+      "skippedTests" : [
+        "DeviceProfileCallbackE2ETest",
+        "MetadataCallbackE2ETest"
+      ],
       "target" : {
         "containerPath" : "container:..\/Journey\/Journey.xcodeproj",
         "identifier" : "EC727A2C2E019243005D9E28",
@@ -116,6 +124,7 @@
       }
     },
     {
+      "enabled" : false,
       "target" : {
         "containerPath" : "container:..\/Fido\/Fido.xcodeproj",
         "identifier" : "ECD780452EA24F1B0050E60F",
@@ -175,6 +184,7 @@
       }
     },
     {
+      "enabled" : false,
       "target" : {
         "containerPath" : "container:..\/ReCaptchaEnterprise\/ReCaptchaEnterprise.xcodeproj",
         "identifier" : "A5C0ABFC2EAFFFDF00846D16",

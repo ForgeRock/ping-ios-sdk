@@ -1,3 +1,7 @@
+## [1.3.1]
+#### Fixed
+- Changed Swift Compiler version to Swift 6 for all targets [SDKS-4494]
+
 ## [1.3.0]
 #### Added
 - New `PingProtect` module [SDKS-4071]
