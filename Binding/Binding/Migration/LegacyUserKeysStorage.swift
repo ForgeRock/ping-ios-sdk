@@ -20,7 +20,8 @@ private let legacyKeychainServiceIdentifier = "com.forgerock.ios.devicebinding.k
 /// in the keychain under the service identifier `com.forgerock.ios.devicebinding.keychainservice`.
 /// It's used during the migration process to retrieve all user keys and migrate them to the new storage format.
 ///
-/// The legacy SDK stored an array of `UserKey` objects (or similar structure) as JSON data in the keychain.
+/// The legacy SDK stored each `UserKey` individually as a JSON string in the keychain,
+/// using the service identifier and the user key's ID as the account name.
 ///
 /// ## Usage in Migration
 ///
@@ -34,16 +35,13 @@ private let legacyKeychainServiceIdentifier = "com.forgerock.ios.devicebinding.k
 ///
 /// The legacy data is queried using:
 /// - Service: `com.forgerock.ios.devicebinding.keychainservice`
-/// - Account: `devicebinding.userkeys` (assumed based on Android pattern)
+/// - Account: Each `UserKey.id` (multiple entries, one per key)
 /// - Access Group: Optional, if the app was configured with keychain access group
 ///
 class LegacyUserKeysStorage {
     
     private let logger: Logger?
     private let accessGroup: String?
-    
-    /// The account name used for the legacy user keys in keychain
-    //private let legacyAccount = "devicebinding.userkeys"
     
     /// Initializes a new `LegacyUserKeysStorage`.
     /// - Parameters:
@@ -64,7 +62,6 @@ class LegacyUserKeysStorage {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: legacyKeychainServiceIdentifier,
-            //kSecAttrAccount as String: legacyAccount,
             kSecMatchLimit as String: kSecMatchLimitOne,
             kSecReturnData as String: false
         ]
@@ -82,12 +79,17 @@ class LegacyUserKeysStorage {
     
     /// Retrieves all user keys stored in the legacy keychain location.
     ///
-    /// This method reads the legacy keychain entry, decodes the JSON data into an array
-    /// of `UserKey` objects, and returns them for migration to the new storage format.
+    /// This method queries the keychain for all entries with the legacy service identifier,
+    /// then decodes each individual JSON string into a `UserKey` object.
+    ///
+    /// The legacy SDK stored each key separately with:
+    /// - Service: `com.forgerock.ios.devicebinding.keychainservice`
+    /// - Account: The user key's ID
+    /// - Data: JSON string of the UserKey
     ///
     /// The method performs the following steps:
-    /// 1. Queries the keychain for the legacy data
-    /// 2. Decodes the JSON data into `[UserKey]`
+    /// 1. Queries the keychain for all legacy entries
+    /// 2. Iterates through each entry and decodes the JSON string
     /// 3. Returns the array of user keys
     ///
     /// - Returns: An array of `UserKey` objects from the legacy storage.
@@ -97,46 +99,121 @@ class LegacyUserKeysStorage {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: legacyKeychainServiceIdentifier,
-            //kSecAttrAccount as String: legacyAccount,
-            kSecMatchLimit as String: kSecMatchLimitOne,
-            kSecReturnData as String: true
+            kSecMatchLimit as String: kSecMatchLimitAll,
+            kSecReturnData as String: true,
+            kSecReturnAttributes as String: true
         ]
         
         if let accessGroup = accessGroup {
             query[kSecAttrAccessGroup as String] = accessGroup
         }
         
-        var item: CFTypeRef?
-        let status = SecItemCopyMatching(query as CFDictionary, &item)
+        var items: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &items)
         
-        guard status == errSecSuccess, let data = item as? Data else {
+        guard status == errSecSuccess else {
             logger?.i("No legacy data found in keychain (status: \(status))")
             throw MigrationError.noLegacyDataFound
         }
         
-        logger?.i("Found legacy keychain data (\(data.count) bytes)")
-        
-        do {
-            let userKeys = try JSONDecoder().decode([UserKey].self, from: data)
-            logger?.i("Successfully decoded \(userKeys.count) user keys from legacy storage")
-            return userKeys
-        } catch {
-            logger?.e("Failed to decode legacy user keys", error: error)
-            throw MigrationError.invalidLegacyData("Failed to decode JSON: \(error.localizedDescription)")
+        guard let keychainItems = items as? [[String: Any]] else {
+            logger?.i("No legacy keychain items found")
+            throw MigrationError.noLegacyDataFound
         }
+        
+        logger?.i("Found \(keychainItems.count) legacy keychain entries")
+        
+        var userKeys: [UserKey] = []
+        var failedCount = 0
+        
+        for item in keychainItems {
+            guard let data = item[kSecValueData as String] as? Data else {
+                failedCount += 1
+                continue
+            }
+            
+            do {
+                // The legacy format stored data as a JSON string in the keychain
+                // We need to convert Data -> String -> Data to properly decode
+                guard let jsonString = String(data: data, encoding: .utf8) else {
+                    failedCount += 1
+                    logger?.w("Failed to convert keychain data to string", error: nil)
+                    continue
+                }
+                
+                logger?.i("Decoding legacy key from JSON: \(jsonString.prefix(100))...")
+                
+                // Parse the legacy JSON to transform field names
+                guard let jsonDict = try JSONSerialization.jsonObject(with: Data(jsonString.utf8)) as? [String: Any] else {
+                    failedCount += 1
+                    logger?.w("Failed to parse legacy JSON as dictionary", error: nil)
+                    continue
+                }
+                
+                // Transform the legacy format to match the new UserKey structure
+                // Legacy: {id, userId, userName, kid, authType, createdAt}
+                // New:    {keyTag, userId, username, kid, authType, createdAt}
+                var transformedDict: [String: Any] = [:]
+                
+                // Map legacy field names to new field names
+                if let id = jsonDict["id"] as? String {
+                    transformedDict["keyTag"] = id
+                }
+                if let userId = jsonDict["userId"] as? String {
+                    transformedDict["userId"] = userId
+                }
+                if let userName = jsonDict["userName"] as? String {
+                    transformedDict["username"] = userName  // userName -> username
+                }
+                if let kid = jsonDict["kid"] as? String {
+                    transformedDict["kid"] = kid
+                }
+                if let authType = jsonDict["authType"] as? String {
+                    transformedDict["authType"] = authType
+                }
+                // Convert timestamp (Double) to ISO8601 string for Date decoding
+                if let createdAtTimestamp = jsonDict["createdAt"] as? Double {
+                    let date = Date(timeIntervalSince1970: createdAtTimestamp)
+                    transformedDict["createdAt"] = date.timeIntervalSince1970
+                }
+                
+                // Convert back to JSON data
+                let transformedData = try JSONSerialization.data(withJSONObject: transformedDict)
+                
+                // Decode using a custom decoder that handles the timestamp
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .secondsSince1970
+                
+                let userKey = try decoder.decode(UserKey.self, from: transformedData)
+                userKeys.append(userKey)
+                
+                logger?.i("Successfully decoded legacy key for user: \(userKey.userId)")
+            } catch {
+                failedCount += 1
+                logger?.w("Failed to decode legacy user key: \(error.localizedDescription)", error: error)
+            }
+        }
+        
+        if userKeys.isEmpty {
+            logger?.e("No valid user keys found in legacy storage (failed: \(failedCount))", error: nil)
+            throw MigrationError.invalidLegacyData("Failed to decode any user keys from \(keychainItems.count) entries")
+        }
+        
+        logger?.i("Successfully decoded \(userKeys.count) user keys from legacy storage (failed: \(failedCount))")
+        return userKeys
     }
     
-    /// Deletes the legacy keychain data.
+    /// Deletes all legacy keychain entries.
     ///
-    /// This method should be called after successfully migrating all user keys to the new storage format.
-    /// It removes the legacy keychain entry to ensure clean migration and prevent data duplication.
+    /// This method removes all legacy keychain entries with the legacy service identifier.
+    /// Since the legacy SDK stored each key separately, this will delete all entries
+    /// that match the service identifier (without specifying an account name).
     ///
     /// - Throws: `MigrationError.failedToDeleteLegacyData` if the deletion fails.
     func deleteLegacyData() async throws {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: legacyKeychainServiceIdentifier,
-            //kSecAttrAccount as String: legacyAccount
+            kSecAttrService as String: legacyKeychainServiceIdentifier
         ]
         
         if let accessGroup = accessGroup {
@@ -145,7 +222,7 @@ class LegacyUserKeysStorage {
         
         let status = SecItemDelete(query as CFDictionary)
         
-        // Consider success if item was deleted or didn't exist
+        // Consider success if items were deleted or didn't exist
         guard status == errSecSuccess || status == errSecItemNotFound else {
             logger?.e("Failed to delete legacy keychain data (status: \(status))", error: nil)
             throw MigrationError.failedToDeleteLegacyData(
@@ -155,6 +232,10 @@ class LegacyUserKeysStorage {
             )
         }
         
-        logger?.i("Successfully deleted legacy keychain data")
+        if status == errSecSuccess {
+            logger?.i("Successfully deleted all legacy keychain entries")
+        } else {
+            logger?.i("No legacy keychain entries to delete")
+        }
     }
 }
