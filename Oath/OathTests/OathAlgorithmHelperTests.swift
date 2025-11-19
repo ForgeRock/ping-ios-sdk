@@ -11,6 +11,7 @@
 import XCTest
 import CommonCrypto
 import CryptoKit
+import PingMfaCommons
 
 @testable import PingOath
 

@@ -9,6 +9,7 @@
 //
 
 import XCTest
+@testable import PingMfaCommons
 @testable import PingOath
 
 final class OathSecurityTests: XCTestCase {

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		1B64B3AF2E8B517300B05D20 /* Base64.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B64B3AE2E8B517300B05D20 /* Base64.swift */; };
 		1B64B3B12E8B5F9300B05D20 /* Base64Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B64B3B02E8B5F9300B05D20 /* Base64Tests.swift */; };
+		1B6923382EAC257D0064B4F4 /* Base32.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B6923372EAC257D0064B4F4 /* Base32.swift */; };
+		1B69233A2EAC25A00064B4F4 /* Base32Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B6923392EAC25A00064B4F4 /* Base32Tests.swift */; };
 		1B75AC342E8210E1002B5DDD /* PingMfaCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B75AC2A2E8210E1002B5DDD /* PingMfaCommons.framework */; };
 		1B75AC6B2E8210F2002B5DDD /* MfaCommons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B75AC692E8210F2002B5DDD /* MfaCommons.swift */; };
 		1B75AC712E821207002B5DDD /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1B75AC702E8211DE002B5DDD /* PrivacyInfo.xcprivacy */; };
@@ -55,6 +57,8 @@
 /* Begin PBXFileReference section */
 		1B64B3AE2E8B517300B05D20 /* Base64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Base64.swift; sourceTree = "<group>"; };
 		1B64B3B02E8B5F9300B05D20 /* Base64Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Base64Tests.swift; sourceTree = "<group>"; };
+		1B6923372EAC257D0064B4F4 /* Base32.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Base32.swift; sourceTree = "<group>"; };
+		1B6923392EAC25A00064B4F4 /* Base32Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Base32Tests.swift; sourceTree = "<group>"; };
 		1B75AC2A2E8210E1002B5DDD /* PingMfaCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingMfaCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B75AC332E8210E1002B5DDD /* MfaCommonsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MfaCommonsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B75AC692E8210F2002B5DDD /* MfaCommons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MfaCommons.swift; sourceTree = "<group>"; };
@@ -133,6 +137,7 @@
 		1B75AC6D2E8210F8002B5DDD /* MfaCommonsTests */ = {
 			isa = PBXGroup;
 			children = (
+				1B6923392EAC25A00064B4F4 /* Base32Tests.swift */,
 				1B64B3B02E8B5F9300B05D20 /* Base64Tests.swift */,
 				1BB409612E84C4DD00F4186D /* CompactJwtTests.swift */,
 				1BB4094B2E84AE7900F4186D /* UriParserTests.swift */,
@@ -177,6 +182,7 @@
 			children = (
 				1BB409662E84C84800F4186D /* CompactJwt.swift */,
 				1B64B3AE2E8B517300B05D20 /* Base64.swift */,
+				1B6923372EAC257D0064B4F4 /* Base32.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -297,6 +303,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1B6923382EAC257D0064B4F4 /* Base32.swift in Sources */,
 				1B75AC6B2E8210F2002B5DDD /* MfaCommons.swift in Sources */,
 				1BB4093E2E84A41D00F4186D /* MfaPolicy.swift in Sources */,
 				1BB4093F2E84A41D00F4186D /* DeviceTamperingPolicy.swift in Sources */,
@@ -314,6 +321,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1B69233A2EAC25A00064B4F4 /* Base32Tests.swift in Sources */,
 				1B64B3B12E8B5F9300B05D20 /* Base64Tests.swift in Sources */,
 				1BB4094D2E84AE7900F4186D /* UriParserTests.swift in Sources */,
 				1BB409452E84A43300F4186D /* PolicyTests.swift in Sources */,
