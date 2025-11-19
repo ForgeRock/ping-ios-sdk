@@ -15,7 +15,6 @@ import PingStorage
 final class BindingMigrationTests: XCTestCase {
     
     let legacyKeychainService = "com.forgerock.ios.devicebinding.keychainservice"
-    let legacyAccount = "devicebinding.userkeys"
     let testUserId1 = "test-user-1"
     let testUserId2 = "test-user-2"
     
@@ -39,11 +38,10 @@ final class BindingMigrationTests: XCTestCase {
     
     /// Cleans up all keychain data used in tests
     func cleanupAllData() async {
-        // Delete legacy keychain data
+        // Delete all legacy keychain entries (stored individually)
         let legacyQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: legacyKeychainService,
-            kSecAttrAccount as String: legacyAccount
+            kSecAttrService as String: legacyKeychainService
         ]
         SecItemDelete(legacyQuery as CFDictionary)
         
@@ -58,22 +56,38 @@ final class BindingMigrationTests: XCTestCase {
         }
     }
     
-    /// Creates mock legacy user keys in the keychain
+    /// Creates mock legacy user keys in the keychain.
+    /// Each key is stored individually with its keyTag as the account name,
+    /// matching the legacy SDK storage pattern.
     func createLegacyUserKeys(_ userKeys: [UserKey]) throws {
-        let data = try JSONEncoder().encode(userKeys)
-        
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: legacyKeychainService,
-            kSecAttrAccount as String: legacyAccount,
-            kSecValueData as String: data
-        ]
-        
-        // Delete any existing entry first
-        SecItemDelete(query as CFDictionary)
-        
-        let status = SecItemAdd(query as CFDictionary, nil)
-        XCTAssertEqual(status, errSecSuccess, "Failed to create legacy keychain data")
+        // Store each key individually, as the legacy SDK did
+        for userKey in userKeys {
+            // Create legacy format JSON with field names matching the old SDK
+            let legacyDict: [String: Any] = [
+                "id": userKey.keyTag,
+                "userId": userKey.userId,
+                "userName": userKey.username,  // Legacy used "userName" not "username"
+                "kid": userKey.kid,
+                "authType": userKey.authType.rawValue,
+                "createdAt": userKey.createdAt.timeIntervalSince1970
+            ]
+            
+            let jsonData = try JSONSerialization.data(withJSONObject: legacyDict)
+            let jsonString = String(data: jsonData, encoding: .utf8)!
+            
+            let query: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrService as String: legacyKeychainService,
+                kSecAttrAccount as String: userKey.keyTag,  // Each key stored with its keyTag as account
+                kSecValueData as String: jsonString.data(using: .utf8)!
+            ]
+            
+            // Delete any existing entry first
+            SecItemDelete(query as CFDictionary)
+            
+            let status = SecItemAdd(query as CFDictionary, nil)
+            XCTAssertEqual(status, errSecSuccess, "Failed to create legacy keychain entry for key: \(userKey.keyTag)")
+        }
     }
     
     /// Creates sample user keys for testing
@@ -294,13 +308,13 @@ final class BindingMigrationTests: XCTestCase {
     }
     
     func testMigration_HandlesInvalidLegacyData() async throws {
-        // Create invalid JSON in legacy storage
+        // Create invalid JSON in legacy storage (individual entry)
         let invalidData = "invalid json data".data(using: .utf8)!
         
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: legacyKeychainService,
-            kSecAttrAccount as String: legacyAccount,
+            kSecAttrAccount as String: "invalid-key-id",  // Individual entry
             kSecValueData as String: invalidData
         ]
         
@@ -320,14 +334,15 @@ final class BindingMigrationTests: XCTestCase {
     }
     
     func testMigration_HandlesEmptyLegacyArray() async throws {
-        // Create empty array in legacy storage
-        try createLegacyUserKeys([])
+        // With the new storage format, empty array means no entries are created
+        // So this test verifies migration fails when no legacy data exists
+        try createLegacyUserKeys([])  // Creates nothing
         
         do {
             try await BindingMigration.migrate()
             XCTFail("Should throw MigrationError.noLegacyDataFound")
         } catch MigrationError.noLegacyDataFound {
-            // Expected error
+            // Expected error - no entries were created
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
