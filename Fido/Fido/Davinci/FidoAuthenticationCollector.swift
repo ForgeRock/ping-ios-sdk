@@ -85,10 +85,10 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, @unchecked Send
                   let credIDData = response[FidoConstants.FIELD_RAW_ID] as? Data,
                   let userHandleData = response[FidoConstants.FIELD_USER_HANDLE] as? Data else {
                 
-                let error = FidoError.invalidResponse // Define your error type
+                let error = FidoError.invalidResponse
                 logger?.e(error.localizedDescription, error: error)
-                // Note: No call to self.handleError here as it's specific to the callback context
-                return .failure(error) // Return failure
+                let transformedError = self.handleError(error: error)
+                return .failure(transformedError) // Return failure with transformed error
             }
             
             // 3. Construct the assertionValue payload
@@ -115,8 +115,8 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, @unchecked Send
         } catch {
             // 5. Handle any error caught from the continuation
             logger?.e("FIDO authentication failed", error: error)
-            // Note: No call to self.handleError here
-            return .failure(error) // Return failure
+            let transformedError = self.handleError(error: error)
+            return .failure(transformedError) // Return failure with transformed error
         }
     }
     
@@ -132,6 +132,11 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, @unchecked Send
         if let challenge = output[FidoConstants.FIELD_CHALLENGE] as? [Int] {
             let data = Data(challenge.map { UInt8(bitPattern: Int8($0)) })
             output[FidoConstants.FIELD_CHALLENGE] = data.base64EncodedString()
+        }
+        
+        // Handle timeout field
+        if let timeout = output[FidoConstants.FIELD_TIMEOUT] as? Int {
+            output[FidoConstants.FIELD_TIMEOUT] = timeout
         }
         
         if let allowCredentials = output[FidoConstants.FIELD_ALLOW_CREDENTIALS] as? [[String: Any]] {

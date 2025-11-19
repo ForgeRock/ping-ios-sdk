@@ -80,6 +80,10 @@ public struct FidoConstants {
     public static let FIELD_DISPLAY_NAME = "displayName"
     /// The key for the authenticator attachment type.
     public static let FIELD_AUTHENTICATOR_ATTACHMENT = "authenticatorAttachment"
+    /// The key for the authenticator attachment type platform.
+    public static let FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM = "platform"
+    /// The key for the authenticator attachment type cross-platform.
+    public static let FIELD_AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM = "cross-platform"
     /// The key for the resident key requirement.
     public static let FIELD_REQUIRE_RESIDENT_KEY = "requireResidentKey"
     /// The key for the resident key preference.
@@ -164,11 +168,6 @@ public struct FidoConstants {
     public static let ERROR_NOT_SUPPORTED = "NotSupportedError"
     /// The prefix for error messages.
     public static let ERROR_PREFIX = "ERROR::"
-
-    // MARK: - Authenticator Types
-    
-    /// The platform authenticator type.
-    public static let AUTHENTICATOR_PLATFORM = "platform"
 
     // MARK: - FIDO JSON Response Keys
     
