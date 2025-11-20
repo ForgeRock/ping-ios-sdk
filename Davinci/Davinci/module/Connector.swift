@@ -9,6 +9,7 @@
 
 
 import PingOrchestrate
+import PingDavinciPlugin
 
 extension ContinueNode {
     /// Extension property to get the id of a Connector.

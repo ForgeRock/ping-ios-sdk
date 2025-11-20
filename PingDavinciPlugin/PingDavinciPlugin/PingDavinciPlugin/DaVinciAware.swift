@@ -1,6 +1,6 @@
 //
 //  DaVinciAware.swift
-//  PingDavinci
+//  PingDavinciPlugin
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -9,6 +9,9 @@
 //
 
 import Foundation
+import PingOrchestrate
+
+public typealias DaVinci = Workflow
 
 /// A protocol that defines a type for DaVinciAware.
 /// Exposes the davinci property that can be set.

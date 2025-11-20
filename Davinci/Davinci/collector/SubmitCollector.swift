@@ -10,11 +10,12 @@
 
 
 import Foundation
+import PingDavinciPlugin
 
 /// Class representing a SUBMIT_BUTTON Type.
 /// This class inherits from the SingleValueCollector class and implements the Collector protocol.
 /// It is used to collect data when a form is submitted.
-public class SubmitCollector: SingleValueCollector, Submittable, @unchecked Sendable {
+public class SubmitCollector: SingleValueCollector, SubmitCollectorProtocol, Submittable, @unchecked Sendable {
     /// Return event type
     public func eventType() -> String {
         return Constants.submit

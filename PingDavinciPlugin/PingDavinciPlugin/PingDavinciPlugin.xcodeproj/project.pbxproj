@@ -1,0 +1,567 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		EC5C814F2ECF66D100C91570 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81452ECF66D000C91570 /* PingDavinciPlugin.framework */; };
+		EC5C81622ECF672000C91570 /* PingDavinciPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81602ECF672000C91570 /* PingDavinciPluginTests.swift */; };
+		EC5C81A82ECF6B8400C91570 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81A72ECF6B8400C91570 /* PingOrchestrate.framework */; };
+		EC5C81A92ECF6B8400C91570 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81A72ECF6B8400C91570 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC5C81B62ECF6F7100C91570 /* PingDavinciPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = EC5C81B52ECF6EA200C91570 /* PingDavinciPlugin.h */; };
+		EC5C81B72ECF6F7100C91570 /* Collector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81A52ECF6B6900C91570 /* Collector.swift */; };
+		EC5C81B82ECF6F7100C91570 /* DaVinciAware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81AB2ECF6CC500C91570 /* DaVinciAware.swift */; };
+		EC5C81B92ECF6F7100C91570 /* Validator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81AE2ECF6CC500C91570 /* Validator.swift */; };
+		EC5C81BA2ECF6F7100C91570 /* ContinueNodeAware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81AC2ECF6CC500C91570 /* ContinueNodeAware.swift */; };
+		EC5C81BB2ECF6F7100C91570 /* Submittable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81AD2ECF6CC500C91570 /* Submittable.swift */; };
+		EC5C81BD2ECF6FCC00C91570 /* ValidationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81BC2ECF6FCC00C91570 /* ValidationError.swift */; };
+		EC5C81BF2ECF76B800C91570 /* CollectorFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81BE2ECF76B800C91570 /* CollectorFactory.swift */; };
+		EC5C81C32ECF77C200C91570 /* Collectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81C02ECF77C200C91570 /* Collectors.swift */; };
+		EC5C81C42ECF77C200C91570 /* FlowCollectorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81C12ECF77C200C91570 /* FlowCollectorProtocol.swift */; };
+		EC5C81C52ECF77C200C91570 /* SubmitCollectorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81C22ECF77C200C91570 /* SubmitCollectorProtocol.swift */; };
+		EC5C81C72ECF780F00C91570 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81C62ECF780F00C91570 /* Constants.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EC5C81502ECF66D100C91570 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC5C813C2ECF66D000C91570 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EC5C81442ECF66D000C91570;
+			remoteInfo = PingDavinciPlugin;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EC5C81AA2ECF6B8400C91570 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EC5C81A92ECF6B8400C91570 /* PingOrchestrate.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		EC5C81452ECF66D000C91570 /* PingDavinciPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingDavinciPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC5C814E2ECF66D100C91570 /* PingDavinciPluginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingDavinciPluginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC5C81602ECF672000C91570 /* PingDavinciPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingDavinciPluginTests.swift; sourceTree = "<group>"; };
+		EC5C81A52ECF6B6900C91570 /* Collector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collector.swift; sourceTree = "<group>"; };
+		EC5C81A72ECF6B8400C91570 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC5C81AB2ECF6CC500C91570 /* DaVinciAware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciAware.swift; sourceTree = "<group>"; };
+		EC5C81AC2ECF6CC500C91570 /* ContinueNodeAware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueNodeAware.swift; sourceTree = "<group>"; };
+		EC5C81AD2ECF6CC500C91570 /* Submittable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Submittable.swift; sourceTree = "<group>"; };
+		EC5C81AE2ECF6CC500C91570 /* Validator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validator.swift; sourceTree = "<group>"; };
+		EC5C81B52ECF6EA200C91570 /* PingDavinciPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PingDavinciPlugin.h; sourceTree = "<group>"; };
+		EC5C81BC2ECF6FCC00C91570 /* ValidationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationError.swift; sourceTree = "<group>"; };
+		EC5C81BE2ECF76B800C91570 /* CollectorFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectorFactory.swift; sourceTree = "<group>"; };
+		EC5C81C02ECF77C200C91570 /* Collectors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collectors.swift; sourceTree = "<group>"; };
+		EC5C81C12ECF77C200C91570 /* FlowCollectorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowCollectorProtocol.swift; sourceTree = "<group>"; };
+		EC5C81C22ECF77C200C91570 /* SubmitCollectorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitCollectorProtocol.swift; sourceTree = "<group>"; };
+		EC5C81C62ECF780F00C91570 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EC5C81422ECF66D000C91570 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC5C81A82ECF6B8400C91570 /* PingOrchestrate.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC5C814B2ECF66D100C91570 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC5C814F2ECF66D100C91570 /* PingDavinciPlugin.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		EC5C813B2ECF66D000C91570 = {
+			isa = PBXGroup;
+			children = (
+				EC5C815E2ECF671D00C91570 /* PingDavinciPlugin */,
+				EC5C81612ECF672000C91570 /* PingDavinciPluginTests */,
+				EC5C81A62ECF6B8400C91570 /* Frameworks */,
+				EC5C81462ECF66D000C91570 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EC5C81462ECF66D000C91570 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EC5C81452ECF66D000C91570 /* PingDavinciPlugin.framework */,
+				EC5C814E2ECF66D100C91570 /* PingDavinciPluginTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EC5C815E2ECF671D00C91570 /* PingDavinciPlugin */ = {
+			isa = PBXGroup;
+			children = (
+				EC5C81C62ECF780F00C91570 /* Constants.swift */,
+				EC5C81BE2ECF76B800C91570 /* CollectorFactory.swift */,
+				EC5C81AB2ECF6CC500C91570 /* DaVinciAware.swift */,
+				EC5C81AC2ECF6CC500C91570 /* ContinueNodeAware.swift */,
+				EC5C81AD2ECF6CC500C91570 /* Submittable.swift */,
+				EC5C81AE2ECF6CC500C91570 /* Validator.swift */,
+				EC5C81BC2ECF6FCC00C91570 /* ValidationError.swift */,
+				EC5C81A52ECF6B6900C91570 /* Collector.swift */,
+				EC5C81C02ECF77C200C91570 /* Collectors.swift */,
+				EC5C81C12ECF77C200C91570 /* FlowCollectorProtocol.swift */,
+				EC5C81C22ECF77C200C91570 /* SubmitCollectorProtocol.swift */,
+				EC5C81B52ECF6EA200C91570 /* PingDavinciPlugin.h */,
+			);
+			path = PingDavinciPlugin;
+			sourceTree = "<group>";
+		};
+		EC5C81612ECF672000C91570 /* PingDavinciPluginTests */ = {
+			isa = PBXGroup;
+			children = (
+				EC5C81602ECF672000C91570 /* PingDavinciPluginTests.swift */,
+			);
+			path = PingDavinciPluginTests;
+			sourceTree = "<group>";
+		};
+		EC5C81A62ECF6B8400C91570 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EC5C81A72ECF6B8400C91570 /* PingOrchestrate.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		EC5C81402ECF66D000C91570 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC5C81B62ECF6F7100C91570 /* PingDavinciPlugin.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		EC5C81442ECF66D000C91570 /* PingDavinciPlugin */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC5C81572ECF66D100C91570 /* Build configuration list for PBXNativeTarget "PingDavinciPlugin" */;
+			buildPhases = (
+				EC5C81402ECF66D000C91570 /* Headers */,
+				EC5C81412ECF66D000C91570 /* Sources */,
+				EC5C81422ECF66D000C91570 /* Frameworks */,
+				EC5C81432ECF66D000C91570 /* Resources */,
+				EC5C81AA2ECF6B8400C91570 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PingDavinciPlugin;
+			packageProductDependencies = (
+			);
+			productName = PingDavinciPlugin;
+			productReference = EC5C81452ECF66D000C91570 /* PingDavinciPlugin.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		EC5C814D2ECF66D100C91570 /* PingDavinciPluginTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC5C815A2ECF66D100C91570 /* Build configuration list for PBXNativeTarget "PingDavinciPluginTests" */;
+			buildPhases = (
+				EC5C814A2ECF66D100C91570 /* Sources */,
+				EC5C814B2ECF66D100C91570 /* Frameworks */,
+				EC5C814C2ECF66D100C91570 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EC5C81512ECF66D100C91570 /* PBXTargetDependency */,
+			);
+			name = PingDavinciPluginTests;
+			packageProductDependencies = (
+			);
+			productName = PingDavinciPluginTests;
+			productReference = EC5C814E2ECF66D100C91570 /* PingDavinciPluginTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EC5C813C2ECF66D000C91570 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					EC5C81442ECF66D000C91570 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					EC5C814D2ECF66D100C91570 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+				};
+			};
+			buildConfigurationList = EC5C813F2ECF66D000C91570 /* Build configuration list for PBXProject "PingDavinciPlugin" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = EC5C813B2ECF66D000C91570;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = EC5C81462ECF66D000C91570 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EC5C81442ECF66D000C91570 /* PingDavinciPlugin */,
+				EC5C814D2ECF66D100C91570 /* PingDavinciPluginTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EC5C81432ECF66D000C91570 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC5C814C2ECF66D100C91570 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EC5C81412ECF66D000C91570 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC5C81B72ECF6F7100C91570 /* Collector.swift in Sources */,
+				EC5C81C72ECF780F00C91570 /* Constants.swift in Sources */,
+				EC5C81B82ECF6F7100C91570 /* DaVinciAware.swift in Sources */,
+				EC5C81B92ECF6F7100C91570 /* Validator.swift in Sources */,
+				EC5C81BA2ECF6F7100C91570 /* ContinueNodeAware.swift in Sources */,
+				EC5C81BB2ECF6F7100C91570 /* Submittable.swift in Sources */,
+				EC5C81C32ECF77C200C91570 /* Collectors.swift in Sources */,
+				EC5C81C42ECF77C200C91570 /* FlowCollectorProtocol.swift in Sources */,
+				EC5C81C52ECF77C200C91570 /* SubmitCollectorProtocol.swift in Sources */,
+				EC5C81BF2ECF76B800C91570 /* CollectorFactory.swift in Sources */,
+				EC5C81BD2ECF6FCC00C91570 /* ValidationError.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC5C814A2ECF66D100C91570 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC5C81622ECF672000C91570 /* PingDavinciPluginTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EC5C81512ECF66D100C91570 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EC5C81442ECF66D000C91570 /* PingDavinciPlugin */;
+			targetProxy = EC5C81502ECF66D100C91570 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		EC5C81552ECF66D100C91570 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		EC5C81562ECF66D100C91570 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		EC5C81582ECF66D100C91570 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingDavinciPlugin;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EC5C81592ECF66D100C91570 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingDavinciPlugin;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		EC5C815B2ECF66D100C91570 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingDavinciPluginTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EC5C815C2ECF66D100C91570 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingDavinciPluginTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		EC5C813F2ECF66D000C91570 /* Build configuration list for PBXProject "PingDavinciPlugin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC5C81552ECF66D100C91570 /* Debug */,
+				EC5C81562ECF66D100C91570 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EC5C81572ECF66D100C91570 /* Build configuration list for PBXNativeTarget "PingDavinciPlugin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC5C81582ECF66D100C91570 /* Debug */,
+				EC5C81592ECF66D100C91570 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EC5C815A2ECF66D100C91570 /* Build configuration list for PBXNativeTarget "PingDavinciPluginTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC5C815B2ECF66D100C91570 /* Debug */,
+				EC5C815C2ECF66D100C91570 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = EC5C813C2ECF66D000C91570 /* Project object */;
+}

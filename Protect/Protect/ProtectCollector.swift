@@ -8,7 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 
 import Foundation
-import PingDavinci
+import PingDavinciPlugin
 
 /// A collector class for handling RISK Component.
 /// This class implements the `AnyFieldCollector` and `Collector` protocols to collect data related to the Protect SDK.
@@ -54,7 +54,7 @@ public class ProtectCollector: NSObject, AnyFieldCollector, Collector, @unchecke
     
     /// Validates this collector, returning a list of validation errors if any.
     /// - Returns: An array of `ValidationError`.
-    public func validate() -> [PingDavinci.ValidationError] {
+    public func validate() -> [PingDavinciPlugin.ValidationError] {
         return []
     }
     

@@ -11,6 +11,7 @@
 
 import Foundation
 import XCTest
+import PingDavinciPlugin
 @testable import PingDavinci
 
 final class CollectorRegistryTests: XCTestCase {
@@ -20,8 +21,7 @@ final class CollectorRegistryTests: XCTestCase {
     
     override func setUp() async throws {
         try await super.setUp()
-        collectorFactory = CollectorFactory()
-        await collectorFactory.registerDefaultCollectors()
+        collectorFactory = CollectorFactory.shared
     }
     
     override func tearDown() async throws {

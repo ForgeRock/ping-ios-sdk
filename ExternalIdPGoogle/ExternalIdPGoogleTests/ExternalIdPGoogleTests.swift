@@ -13,13 +13,13 @@ import XCTest
 @testable import PingExternalIdPGoogle
 @testable import PingExternalIdP
 @testable import PingOrchestrate
-@testable import PingDavinci
+@testable import PingDavinciPlugin
 
 final class ExternalIdPGoogleTests: XCTestCase {
 
     override func setUpWithError() throws {
             Task {
-                await CollectorFactory.shared.registerDefaultCollectors()
+                IdpCollector.registerCollector()
             }
         }
         

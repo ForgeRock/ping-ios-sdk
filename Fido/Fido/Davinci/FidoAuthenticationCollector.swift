@@ -10,7 +10,7 @@
 
 
 import Foundation
-import PingDavinci
+import PingDavinciPlugin
 import PingLogger
 import UIKit
 import AuthenticationServices

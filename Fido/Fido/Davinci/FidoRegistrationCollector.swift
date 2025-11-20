@@ -9,10 +9,10 @@
 //
 
 import Foundation
-import PingDavinci
 import PingLogger
 import UIKit
 import AuthenticationServices
+import PingDavinciPlugin
 
 /// A collector for FIDO registration within a DaVinci flow.
 public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendable {

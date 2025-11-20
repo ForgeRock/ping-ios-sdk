@@ -1,6 +1,6 @@
 // 
 //  Collectors.swift
-//  Davinci
+//  PingDavinciPlugin
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -18,7 +18,7 @@ extension Collectors {
     /// Finds the event type from a list of collectors.
     /// This function iterates over the list of collectors and returns the value if the collector's value is not empty.
     /// - Returns: The event type as a String if found, otherwise nil.
-    func eventType() -> String? {
+    public func eventType() -> String? {
         for collector in self {
             if let submittable = collector as? Submittable {
                 if collector.payload() != nil {
@@ -33,16 +33,16 @@ extension Collectors {
     /// This function takes a list of collectors and represents it as a JSON object. It iterates over the list of collectors,
     /// adding each collector's key and value to the JSON object if the collector's value is not empty.
     /// - Returns: JSON object representing the list of collectors.
-    func asJson() -> [String: Any] {
+    public func asJson() -> [String: Any] {
         var jsonObject: [String: Any] = [:]
         var formData: [String: Any] = [:]
         for collector in self {
             switch collector {
-            case let collector as SubmitCollector:
+            case let collector as SubmitCollectorProtocol:
                 if collector.value.isEmpty == false {
                     jsonObject[Constants.actionKey] = collector.id
                 }
-            case let collector as FlowCollector:
+            case let collector as FlowCollectorProtocol:
                 if collector.value.isEmpty == false {
                     jsonObject[Constants.actionKey] = collector.id
                 }

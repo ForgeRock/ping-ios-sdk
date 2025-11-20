@@ -9,7 +9,7 @@
 //
 
 import XCTest
-@testable import PingDavinci
+@testable import PingDavinciPlugin
 @testable import PingExternalIdP
 @testable import PingOrchestrate
 
@@ -18,7 +18,7 @@ final class ExternalIdPTests: XCTestCase {
 
     override func setUpWithError() throws {
         Task {
-            await CollectorFactory.shared.registerDefaultCollectors()
+            IdpCollector.registerCollector()
         }
     }
     

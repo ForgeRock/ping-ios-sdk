@@ -8,6 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 import Foundation
+import PingDavinciPlugin
 
 /// Class representing a device registration collector.
 /// Inherits from `FieldCollector` and is used to collect device information.

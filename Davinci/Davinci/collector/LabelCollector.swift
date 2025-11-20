@@ -10,6 +10,8 @@
 
 
 import Foundation
+import PingDavinciPlugin
+import PingDavinciPlugin
 
 /// Class representing a LABEL type.
 /// It conforms to the `Collector` protocol and displays a label on the form.

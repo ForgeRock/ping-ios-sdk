@@ -11,6 +11,7 @@
 
 import Foundation
 import XCTest
+import PingDavinciPlugin
 @testable import PingOrchestrate
 @testable import PingStorage
 @testable import PingLogger
@@ -29,7 +30,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         self.config.discoveryEndpoint = "http://localhost/.well-known/openid-configuration"
         
         MockURLProtocol.startInterceptingRequests()
-        _ = CollectorFactory()
+        _ = CollectorFactory.shared
     }
     
     override func tearDown() {

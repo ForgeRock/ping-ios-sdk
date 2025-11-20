@@ -414,6 +414,34 @@
 			remoteGlobalIDString = EC59E1622E7AD21700A91E66;
 			remoteInfo = JailbreakDetectorTests;
 		};
+		EC5C816C2ECF678600C91570 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC5C81652ECF678600C91570 /* PingDavinciPlugin.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC5C81452ECF66D000C91570;
+			remoteInfo = PingDavinciPlugin;
+		};
+		EC5C816E2ECF678600C91570 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC5C81652ECF678600C91570 /* PingDavinciPlugin.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC5C814E2ECF66D100C91570;
+			remoteInfo = PingDavinciPluginTests;
+		};
+		EC5C81A12ECF680A00C91570 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC5C819A2ECF680A00C91570 /* PingJourneyPlugin.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC5C817A2ECF67B700C91570;
+			remoteInfo = PingJourneyPlugin;
+		};
+		EC5C81A32ECF680A00C91570 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC5C819A2ECF680A00C91570 /* PingJourneyPlugin.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EC5C81832ECF67B700C91570;
+			remoteInfo = PingJourneyPluginTests;
+		};
 		ECB7C6842D5A24B70006F1C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */;
@@ -590,6 +618,8 @@
 		EC5598012E96799200A07329 /* FidoAuthenticationCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoAuthenticationCollectorView.swift; sourceTree = "<group>"; };
 		EC5598022E96799200A07329 /* FidoRegistrationCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoRegistrationCollectorView.swift; sourceTree = "<group>"; };
 		EC59E3002E7D7DE300A91E66 /* TamperDetector.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TamperDetector.xcodeproj; path = ../../TamperDetector/TamperDetector.xcodeproj; sourceTree = SOURCE_ROOT; };
+		EC5C81652ECF678600C91570 /* PingDavinciPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PingDavinciPlugin.xcodeproj; path = ../../PingDavinciPlugin/PingDavinciPlugin/PingDavinciPlugin.xcodeproj; sourceTree = SOURCE_ROOT; };
+		EC5C819A2ECF680A00C91570 /* PingJourneyPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PingJourneyPlugin.xcodeproj; path = ../../PingJourneyPlugin/PingJourneyPlugin/PingJourneyPlugin.xcodeproj; sourceTree = SOURCE_ROOT; };
 		EC6F65A72EB240C800D4686D /* BindingKeysView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindingKeysView.swift; sourceTree = "<group>"; };
 		EC6F65A82EB240C800D4686D /* BindingKeysViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindingKeysViewModel.swift; sourceTree = "<group>"; };
 		EC6F660B2EB37A2D00D4686D /* CustomPinCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPinCollector.swift; sourceTree = "<group>"; };
@@ -697,6 +727,8 @@
 		3A5441242BCDF10900385131 = {
 			isa = PBXGroup;
 			children = (
+				EC5C819A2ECF680A00C91570 /* PingJourneyPlugin.xcodeproj */,
+				EC5C81652ECF678600C91570 /* PingDavinciPlugin.xcodeproj */,
 				A5C0AC482EB003BB00846D16 /* ReCaptchaEnterprise.xcodeproj */,
 				EC4DD3072EABBAE400ECC4E1 /* Binding.xcodeproj */,
 				1B7C49C82EAAB6E400E3C0AC /* Push.xcodeproj */,
@@ -1023,6 +1055,24 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		EC5C81682ECF678600C91570 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EC5C816D2ECF678600C91570 /* PingDavinciPlugin.framework */,
+				EC5C816F2ECF678600C91570 /* PingDavinciPluginTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EC5C819D2ECF680A00C91570 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EC5C81A22ECF680A00C91570 /* PingJourneyPlugin.framework */,
+				EC5C81A42ECF680A00C91570 /* PingJourneyPluginTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		ECC6AEE12ECF4ADD003527D2 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
@@ -1227,6 +1277,14 @@
 				{
 					ProductGroup = A57A09052CE50FA5006F0CBB /* Products */;
 					ProjectRef = 3A5442212BCE1F3800385131 /* Orchestrate.xcodeproj */;
+				},
+				{
+					ProductGroup = EC5C81682ECF678600C91570 /* Products */;
+					ProjectRef = EC5C81652ECF678600C91570 /* PingDavinciPlugin.xcodeproj */;
+				},
+				{
+					ProductGroup = EC5C819D2ECF680A00C91570 /* Products */;
+					ProjectRef = EC5C819A2ECF680A00C91570 /* PingJourneyPlugin.xcodeproj */;
 				},
 				{
 					ProductGroup = A5A31CB82E0A37C800ABBEF7 /* Products */;
@@ -1524,6 +1582,34 @@
 			fileType = wrapper.cfbundle;
 			path = TamplerDetectorTests.xctest;
 			remoteRef = EC59E3092E7D7DE300A91E66 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		EC5C816D2ECF678600C91570 /* PingDavinciPlugin.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingDavinciPlugin.framework;
+			remoteRef = EC5C816C2ECF678600C91570 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		EC5C816F2ECF678600C91570 /* PingDavinciPluginTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = PingDavinciPluginTests.xctest;
+			remoteRef = EC5C816E2ECF678600C91570 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		EC5C81A22ECF680A00C91570 /* PingJourneyPlugin.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingJourneyPlugin.framework;
+			remoteRef = EC5C81A12ECF680A00C91570 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		EC5C81A42ECF680A00C91570 /* PingJourneyPluginTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = PingJourneyPluginTests.xctest;
+			remoteRef = EC5C81A32ECF680A00C91570 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		ECB7C6852D5A24B70006F1C8 /* PingBrowserTests.xctest */ = {

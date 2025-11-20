@@ -15,8 +15,6 @@
 		3A5441AF2BCDF20700385131 /* DaVinciTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5441AE2BCDF20700385131 /* DaVinciTests.swift */; };
 		3A5441B02BCDF20700385131 /* Davinci.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A5441A42BCDF20700385131 /* Davinci.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A57CB622C44D68C001EC9A0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A57CB612C44D688001EC9A0 /* User.swift */; };
-		3AC13E332C3FFF1000DEF23A /* CollectorFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E2F2C3FFF1000DEF23A /* CollectorFactory.swift */; };
-		3AC13E342C3FFF1000DEF23A /* Collector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E302C3FFF1000DEF23A /* Collector.swift */; };
 		3AC13E352C3FFF1000DEF23A /* Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E322C3FFF1000DEF23A /* Form.swift */; };
 		3AC13E362C3FFF1000DEF23A /* Connector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E312C3FFF1000DEF23A /* Connector.swift */; };
 		959249A72D405A1C00A6DA9C /* FormFieldValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959249A62D405A1C00A6DA9C /* FormFieldValidationTests.swift */; };
@@ -51,7 +49,6 @@
 		A5E9AEBC2D2F2B26000533ED /* Option.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEBB2D2F2B23000533ED /* Option.swift */; };
 		A5E9AEBE2D2F2DAE000533ED /* MultiSelectCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEBD2D2F2DAC000533ED /* MultiSelectCollector.swift */; };
 		A5E9AEC02D2F44CD000533ED /* PasswordPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEBF2D2F44CB000533ED /* PasswordPolicy.swift */; };
-		A5EFA9D12D38B4CF00F771FE /* ContinueNodeAware.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA9D02D38B4C900F771FE /* ContinueNodeAware.swift */; };
 		A5EFAA062D3F304500F771FE /* FlowCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA052D3F303900F771FE /* FlowCollectorTests.swift */; };
 		A5EFAA082D3F30E600F771FE /* LabelCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA072D3F30E200F771FE /* LabelCollectorTests.swift */; };
 		A5EFAA0A2D3F325B00F771FE /* MultiSelectCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA092D3F325800F771FE /* MultiSelectCollectorTests.swift */; };
@@ -61,19 +58,18 @@
 		A5EFAA122D3F518B00F771FE /* SubmitCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA112D3F518800F771FE /* SubmitCollectorTests.swift */; };
 		A5EFAA142D3F51CC00F771FE /* TextCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA132D3F51CA00F771FE /* TextCollectorTests.swift */; };
 		A5EFAA162D3F52F500F771FE /* ValidatedCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA152D3F52F300F771FE /* ValidatedCollectorTests.swift */; };
-		EC5598002E9563E600A07329 /* DaVinciAware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5597FF2E9563E600A07329 /* DaVinciAware.swift */; };
+		EC5C81C92ECF7A1700C91570 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */; };
+		EC5C81CA2ECF7A1700C91570 /* PingDavinciPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC7279AE2DF98CDA005D9E28 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7279AD2DF98CD6005D9E28 /* Config.swift */; };
 		EC7279B02DF9976E005D9E28 /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = EC7279AF2DF99766005D9E28 /* Config.json */; };
 		EC7279B42DF9B295005D9E28 /* DaVinciBaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7279B32DF9B289005D9E28 /* DaVinciBaseTests.swift */; };
 		EC92B3742D9FF67F00E4246D /* DeviceAuthenticationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3732D9FF67E00E4246D /* DeviceAuthenticationCollector.swift */; };
-		EC92B3762D9FF6CD00E4246D /* Submittable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3752D9FF6C800E4246D /* Submittable.swift */; };
 		EC92B3782DA0132100E4246D /* PhoneNumberCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */; };
 		EC92B3A32DA52DAB00E4246D /* DeviceAuthenticatorCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3A22DA52DA200E4246D /* DeviceAuthenticatorCollectorTests.swift */; };
 		EC92B3A52DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3A42DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift */; };
 		ECE2B8712DB7C36800E2C51E /* PhoneNumberCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2B8702DB7C35400E2C51E /* PhoneNumberCollectorTests.swift */; };
 		ECF053222D9C31A3004C9AAE /* DeviceRegistrationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */; };
 		ECF053242D9C4275004C9AAE /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF053232D9C4273004C9AAE /* Device.swift */; };
-		ECF0532D2D9D9966004C9AAE /* Collectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF0532C2D9D9962004C9AAE /* Collectors.swift */; };
 		ECF0532F2D9D99D4004C9AAE /* Validator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF0532E2D9D99D0004C9AAE /* Validator.swift */; };
 /* End PBXBuildFile section */
 
@@ -94,6 +90,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				EC5C81CA2ECF7A1700C91570 /* PingDavinciPlugin.framework in Embed Frameworks */,
 				A50981C32CEBDF2600F4B487 /* PingOidc.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -111,8 +108,6 @@
 		3A5441A92BCDF20700385131 /* DavinciTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DavinciTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A5441AE2BCDF20700385131 /* DaVinciTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciTests.swift; sourceTree = "<group>"; };
 		3A57CB612C44D688001EC9A0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		3AC13E2F2C3FFF1000DEF23A /* CollectorFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectorFactory.swift; sourceTree = "<group>"; };
-		3AC13E302C3FFF1000DEF23A /* Collector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collector.swift; sourceTree = "<group>"; };
 		3AC13E312C3FFF1000DEF23A /* Connector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connector.swift; sourceTree = "<group>"; };
 		3AC13E322C3FFF1000DEF23A /* Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form.swift; sourceTree = "<group>"; };
 		959249A62D405A1C00A6DA9C /* FormFieldValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFieldValidationTests.swift; sourceTree = "<group>"; };
@@ -146,7 +141,6 @@
 		A5E9AEBB2D2F2B23000533ED /* Option.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Option.swift; sourceTree = "<group>"; };
 		A5E9AEBD2D2F2DAC000533ED /* MultiSelectCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelectCollector.swift; sourceTree = "<group>"; };
 		A5E9AEBF2D2F44CB000533ED /* PasswordPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordPolicy.swift; sourceTree = "<group>"; };
-		A5EFA9D02D38B4C900F771FE /* ContinueNodeAware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueNodeAware.swift; sourceTree = "<group>"; };
 		A5EFAA052D3F303900F771FE /* FlowCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowCollectorTests.swift; sourceTree = "<group>"; };
 		A5EFAA072D3F30E200F771FE /* LabelCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelCollectorTests.swift; sourceTree = "<group>"; };
 		A5EFAA092D3F325800F771FE /* MultiSelectCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelectCollectorTests.swift; sourceTree = "<group>"; };
@@ -156,12 +150,11 @@
 		A5EFAA112D3F518800F771FE /* SubmitCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitCollectorTests.swift; sourceTree = "<group>"; };
 		A5EFAA132D3F51CA00F771FE /* TextCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextCollectorTests.swift; sourceTree = "<group>"; };
 		A5EFAA152D3F52F300F771FE /* ValidatedCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedCollectorTests.swift; sourceTree = "<group>"; };
-		EC5597FF2E9563E600A07329 /* DaVinciAware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciAware.swift; sourceTree = "<group>"; };
+		EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinciPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC7279AD2DF98CD6005D9E28 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		EC7279AF2DF99766005D9E28 /* Config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Config.json; sourceTree = "<group>"; };
 		EC7279B32DF9B289005D9E28 /* DaVinciBaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciBaseTests.swift; sourceTree = "<group>"; };
 		EC92B3732D9FF67E00E4246D /* DeviceAuthenticationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticationCollector.swift; sourceTree = "<group>"; };
-		EC92B3752D9FF6C800E4246D /* Submittable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Submittable.swift; sourceTree = "<group>"; };
 		EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberCollector.swift; sourceTree = "<group>"; };
 		EC92B3A22DA52DA200E4246D /* DeviceAuthenticatorCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticatorCollectorTests.swift; sourceTree = "<group>"; };
 		EC92B3A42DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationCollectorTests.swift; sourceTree = "<group>"; };
@@ -169,7 +162,6 @@
 		ECE2B8702DB7C35400E2C51E /* PhoneNumberCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberCollectorTests.swift; sourceTree = "<group>"; };
 		ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationCollector.swift; sourceTree = "<group>"; };
 		ECF053232D9C4273004C9AAE /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
-		ECF0532C2D9D9962004C9AAE /* Collectors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collectors.swift; sourceTree = "<group>"; };
 		ECF0532E2D9D99D0004C9AAE /* Validator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -178,6 +170,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC5C81C92ECF7A1700C91570 /* PingDavinciPlugin.framework in Frameworks */,
 				A50981C22CEBDF2600F4B487 /* PingOidc.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -196,6 +189,7 @@
 		3A203D802BDB13FF0020C995 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */,
 				ECBF06752D525BE20066A3BD /* Extrernal_idp.framework */,
 				A50981C12CEBDF2600F4B487 /* PingOidc.framework */,
 			);
@@ -290,11 +284,6 @@
 		A51D4CE02C62C4BF00FE09E0 /* collector */ = {
 			isa = PBXGroup;
 			children = (
-				EC5597FF2E9563E600A07329 /* DaVinciAware.swift */,
-				3AC13E302C3FFF1000DEF23A /* Collector.swift */,
-				ECF0532C2D9D9962004C9AAE /* Collectors.swift */,
-				3AC13E2F2C3FFF1000DEF23A /* CollectorFactory.swift */,
-				A5EFA9D02D38B4C900F771FE /* ContinueNodeAware.swift */,
 				ECF053232D9C4273004C9AAE /* Device.swift */,
 				EC92B3732D9FF67E00E4246D /* DeviceAuthenticationCollector.swift */,
 				ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */,
@@ -309,7 +298,6 @@
 				EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */,
 				A5E9AEB52D2F243C000533ED /* SingleSelectCollector.swift */,
 				A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */,
-				EC92B3752D9FF6C800E4246D /* Submittable.swift */,
 				A51D4CD62C585E2D00FE09E0 /* SubmitCollector.swift */,
 				A51D4CD82C585E5700FE09E0 /* TextCollector.swift */,
 				ECF0532E2D9D99D0004C9AAE /* Validator.swift */,
@@ -454,9 +442,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5A61E032D4A92BF00767C2D /* ErrorNode.swift in Sources */,
-				EC5598002E9563E600A07329 /* DaVinciAware.swift in Sources */,
 				A51D4CD12C585B4500FE09E0 /* FieldCollector.swift in Sources */,
-				ECF0532D2D9D9966004C9AAE /* Collectors.swift in Sources */,
 				A5E9AEB82D2F2689000533ED /* ValidationError.swift in Sources */,
 				EC92B3782DA0132100E4246D /* PhoneNumberCollector.swift in Sources */,
 				A5E9AEC02D2F44CD000533ED /* PasswordPolicy.swift in Sources */,
@@ -474,8 +460,6 @@
 				3A203D9B2BDE155D0020C995 /* Transform.swift in Sources */,
 				EC92B3742D9FF67F00E4246D /* DeviceAuthenticationCollector.swift in Sources */,
 				A5CCE5E72C85E96B00349A5E /* Constants.swift in Sources */,
-				3AC13E332C3FFF1000DEF23A /* CollectorFactory.swift in Sources */,
-				3AC13E342C3FFF1000DEF23A /* Collector.swift in Sources */,
 				A51D4CD52C585DCD00FE09E0 /* PasswordCollector.swift in Sources */,
 				A5E9AEB22D2F1F93000533ED /* SingleValueCollector.swift in Sources */,
 				A5E9AEBC2D2F2B26000533ED /* Option.swift in Sources */,
@@ -484,9 +468,7 @@
 				A51D4CD92C585E5700FE09E0 /* TextCollector.swift in Sources */,
 				3A57CB622C44D68C001EC9A0 /* User.swift in Sources */,
 				A5E9AEB42D2F2256000533ED /* LabelCollector.swift in Sources */,
-				A5EFA9D12D38B4CF00F771FE /* ContinueNodeAware.swift in Sources */,
 				A5E9AEBA2D2F2731000533ED /* ValidatedCollector.swift in Sources */,
-				EC92B3762D9FF6CD00E4246D /* Submittable.swift in Sources */,
 				3A203D7F2BDB136C0020C995 /* DaVinci.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -681,13 +663,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = "1.3.1";
+				MARKETING_VERSION = 1.3.1;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "-no-verify-emitted-module-interface";
@@ -717,13 +699,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = "1.3.1";
+				MARKETING_VERSION = 1.3.1;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				OTHER_SWIFT_FLAGS = "-no-verify-emitted-module-interface";
@@ -744,8 +726,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = "1.3.1";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingDavinciTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -763,8 +745,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = "1.3.1";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingDavinciTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
