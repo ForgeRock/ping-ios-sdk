@@ -38,6 +38,9 @@ class Binding {
         let deviceBindingConfig = DeviceBindingConfig()
         config(deviceBindingConfig)
         
+        // Check for and migrate legacy data if present
+        _ = await BindingMigration.migrateIfNeeded()
+        
         var deviceAuthenticator = deviceBindingConfig.authenticator(type: callback.deviceBindingAuthenticationType, prompt: Prompt(title: callback.title, subtitle: callback.subtitle, description: callback.description))
         deviceAuthenticator.journey = callback.journey
         let userKeyStorage = deviceBindingConfig.keyStorage()
@@ -113,6 +116,10 @@ class Binding {
         try validate(customClaims: claims)
         
         let storage = deviceBindingConfig.keyStorage()
+        
+        // Check for and migrate legacy data if present
+        // This ensures legacy keys are available for signing
+        _ = await BindingMigration.migrateIfNeeded()
         
         // Retrieve the user key from storage.
         let retrievedUserKey: UserKey

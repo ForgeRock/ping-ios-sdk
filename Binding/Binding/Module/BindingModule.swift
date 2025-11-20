@@ -1,4 +1,3 @@
-
 //
 //  BindingModule.swift
 //  PingBinding
@@ -12,11 +11,42 @@
 import Foundation
 import PingJourney
 import PingMfaCommons
+import PingLogger
+
+/// Actor to manage migration state in a thread-safe manner
+private actor MigrationState {
+    private var migrationTask: Task<Void, Never>?
+    var logger: Logger?
+    
+    func getMigrationTask(createIfNeeded: Bool = true) -> Task<Void, Never>? {
+        if migrationTask == nil && createIfNeeded {
+            migrationTask = Task {
+                do {
+                    try await BindingMigration.migrate(logger: logger)
+                } catch MigrationError.noLegacyDataFound {
+                    // This is expected for new installations or already migrated apps
+                    logger?.i("No legacy data to migrate")
+                } catch {
+                    // Log but don't fail - the app should continue working
+                    logger?.w("Migration failed: \(error.localizedDescription)", error: error)
+                }
+            }
+        }
+        return migrationTask
+    }
+    
+    func setLogger(_ logger: Logger) {
+        self.logger = logger
+    }
+}
 
 /// A module for handling device binding and signing callbacks.
 /// The callbacks are automatically registered when `CallbackRegistry.shared.registerDefaultCallbacks()` is called.
 /// Manual registration using `BindingModule.register()` is optional and only needed if you're not using the Journey framework.
 public class BindingModule: NSObject {
+    
+    /// Shared migration state
+    private static let migrationState = MigrationState()
     
     /// Initializes a new `BindingModule`.
     public override init() {}
@@ -29,6 +59,31 @@ public class BindingModule: NSObject {
     @objc public static func registerCallbacks() {
         CallbackRegistry.shared.register(type: Constants.deviceBindingCallback, callback: DeviceBindingCallback.self)
         CallbackRegistry.shared.register(type: Constants.deviceSigningVerifierCallback, callback: DeviceSigningVerifierCallback.self)
+        
+        // Trigger migration check on callback registration
+        Task {
+            await triggerMigrationIfNeeded()
+        }
+    }
+    
+    /// Triggers the migration check if it hasn't been done yet.
+    /// This is called automatically during module initialization.
+    private static func triggerMigrationIfNeeded() async {
+        // Get or create the migration task - only one task will ever be created
+        guard let migrationTask = await migrationState.getMigrationTask() else {
+            return
+        }
+        
+        // Wait for the migration to complete
+        await migrationTask.value
+    }
+    
+    /// Sets the logger for the BindingModule and migration.
+    /// - Parameter logger: The logger to use.
+    public static func setLogger(_ logger: Logger) {
+        Task {
+            await migrationState.setLogger(logger)
+        }
     }
     
     /// Retrieves all stored binding keys.
