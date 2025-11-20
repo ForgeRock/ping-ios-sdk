@@ -169,7 +169,7 @@ extension Data {
     /// Creates a Data instance from a Base32 encoded string.
     /// - Parameter base32String: The Base32 encoded string.
     /// - Returns: The decoded Data, or nil if the string is invalid.
-    init?(base32Encoded base32String: String) {
+    public init?(base32Encoded base32String: String) {
         guard let decoded = Base32.decode(base32String) else {
             return nil
         }
@@ -178,7 +178,7 @@ extension Data {
 
     /// Returns the Base32 encoded string representation of this data.
     /// - Returns: The Base32 encoded string.
-    func base32EncodedString() -> String {
+    public func base32EncodedString() -> String {
         return Base32.encode(self)
     }
 }

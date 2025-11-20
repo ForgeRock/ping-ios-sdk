@@ -82,14 +82,14 @@ public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendab
                   let clientDataJSONData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
                   let attestationObjectData = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? Data else {
                 
-                let error = FidoError.invalidResponse // Define your error type
+                let error = FidoError.invalidResponse
                 logger?.e(error.localizedDescription, error: error)
-                // Note: No call to self.handleError here as it's specific to the callback context
-                return .failure(error) // Return failure
+                let transformedError = self.handleError(error: error)
+                return .failure(transformedError) // Return failure with transformed error
             }
             
             // 3. Construct the attestationValue payload
-            let authenticatorAttachment = "platform"
+            let authenticatorAttachment = response[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String ?? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
             let newAttestationValue: [String: Any] = [
                 FidoConstants.FIELD_ID: rawIdData.base64urlEncodedString(),
                 FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,
@@ -110,8 +110,8 @@ public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendab
         } catch {
             // 5. Handle any error caught from the continuation
             logger?.e("FIDO registration failed", error: error)
-            // Note: No call to self.handleError here
-            return .failure(error) // Return failure
+            let transformedError = self.handleError(error: error)
+            return .failure(transformedError) // Return failure with transformed error
         }
     }
     
@@ -140,6 +140,13 @@ public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendab
             logger?.d("Challenge: \(challenge)")
             let data = Data(challenge.map { UInt8(bitPattern: Int8($0)) })
             output[FidoConstants.FIELD_CHALLENGE] = data.base64EncodedString()
+        }
+        
+        // Handle timeout field - use default if not provided
+        if let timeout = output[FidoConstants.FIELD_TIMEOUT] as? Int {
+            output[FidoConstants.FIELD_TIMEOUT] = timeout
+        } else {
+            output[FidoConstants.FIELD_TIMEOUT] = FidoConstants.DEFAULT_TIMEOUT
         }
         
         if let excludeCredentials = output[FidoConstants.FIELD_EXCLUDE_CREDENTIALS] as? [[String: Any]] {

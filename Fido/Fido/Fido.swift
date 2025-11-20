@@ -321,20 +321,50 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     func didComplete(with credential: ASAuthorizationCredential) {
         switch credential {
         case let credential as ASAuthorizationPublicKeyCredentialRegistration:
+            // Determine authenticator attachment type
+            var attachmentValue: String = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
+            if let registrationCredential = credential as? ASAuthorizationPlatformPublicKeyCredentialRegistration {
+                if #available(iOS 16.6, *) {
+                    attachmentValue = registrationCredential.attachment == .platform ? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM : FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM
+                } else {
+                    // Fallback for iOS 15 - default to platform since that's the only option on iOS 15
+                    attachmentValue = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
+                }
+            }
+            if let registrationCredential = credential as? ASAuthorizationSecurityKeyPublicKeyCredentialRegistration {
+                attachmentValue = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM
+            }
+            
             let result: [String: Any] = [
                 FidoConstants.FIELD_RAW_ID: credential.credentialID,
                 FidoConstants.FIELD_CLIENT_DATA_JSON: credential.rawClientDataJSON,
-                FidoConstants.FIELD_ATTESTATION_OBJECT: credential.rawAttestationObject as Any
+                FidoConstants.FIELD_ATTESTATION_OBJECT: credential.rawAttestationObject as Any,
+                FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: attachmentValue,
             ]
             completion?(.success(result))
             cleanup()
         case let credential as ASAuthorizationPublicKeyCredentialAssertion:
+            // Determine authenticator attachment type for assertion
+            var attachmentValue: String = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
+            if let assertionCredential = credential as? ASAuthorizationPlatformPublicKeyCredentialAssertion {
+                if #available(iOS 16.6, *) {
+                    attachmentValue = assertionCredential.attachment == .platform ? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM : FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM
+                } else {
+                    // Fallback for iOS 15 - default to platform since that's the only option on iOS 15
+                    attachmentValue = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
+                }
+            }
+            if credential is ASAuthorizationSecurityKeyPublicKeyCredentialAssertion {
+                attachmentValue = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM
+            }
+            
             let result: [String: Any] = [
                 FidoConstants.FIELD_CLIENT_DATA_JSON: credential.rawClientDataJSON,
                 FidoConstants.FIELD_AUTHENTICATOR_DATA: credential.rawAuthenticatorData ?? Data(),
                 FidoConstants.FIELD_SIGNATURE: credential.signature ?? Data(),
                 FidoConstants.FIELD_RAW_ID: credential.credentialID,
-                FidoConstants.FIELD_USER_HANDLE: credential.userID ?? Data()
+                FidoConstants.FIELD_USER_HANDLE: credential.userID ?? Data(),
+                FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: attachmentValue
             ]
             completion?(.success(result))
             cleanup()
