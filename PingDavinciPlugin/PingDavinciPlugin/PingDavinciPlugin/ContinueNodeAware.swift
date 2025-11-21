@@ -15,3 +15,10 @@ import PingOrchestrate
 public protocol ContinueNodeAware {
     var continueNode: ContinueNode? { get set }
 }
+
+extension ContinueNode {
+    /// Returns the list of collectors from the actions.
+    public var collectors: [any Collector] {
+        return actions.compactMap { $0 as? (any Collector) }
+    }
+}

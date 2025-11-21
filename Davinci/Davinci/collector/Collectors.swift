@@ -10,6 +10,7 @@
 
 import PingOrchestrate
 import Foundation
+import PingDavinciPlugin
 
 ///  Type alias for a list of collectors.
 public typealias Collectors = [any Collector]
@@ -57,11 +58,4 @@ extension Collectors {
         return jsonObject
     }
         
-}
-
-extension ContinueNode {
-    /// Returns the list of collectors from the actions.
-    public var collectors: [any Collector] {
-        return actions.compactMap { $0 as? (any Collector) }
-    }
 }

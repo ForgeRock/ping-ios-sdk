@@ -19,7 +19,6 @@
 		EC5C81BB2ECF6F7100C91570 /* Submittable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81AD2ECF6CC500C91570 /* Submittable.swift */; };
 		EC5C81BD2ECF6FCC00C91570 /* ValidationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81BC2ECF6FCC00C91570 /* ValidationError.swift */; };
 		EC5C81BF2ECF76B800C91570 /* CollectorFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81BE2ECF76B800C91570 /* CollectorFactory.swift */; };
-		EC5C81C32ECF77C200C91570 /* Collectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81C02ECF77C200C91570 /* Collectors.swift */; };
 		EC5C81C42ECF77C200C91570 /* FlowCollectorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81C12ECF77C200C91570 /* FlowCollectorProtocol.swift */; };
 		EC5C81C52ECF77C200C91570 /* SubmitCollectorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81C22ECF77C200C91570 /* SubmitCollectorProtocol.swift */; };
 		EC5C81C72ECF780F00C91570 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81C62ECF780F00C91570 /* Constants.swift */; };
@@ -62,7 +61,6 @@
 		EC5C81B52ECF6EA200C91570 /* PingDavinciPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PingDavinciPlugin.h; sourceTree = "<group>"; };
 		EC5C81BC2ECF6FCC00C91570 /* ValidationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationError.swift; sourceTree = "<group>"; };
 		EC5C81BE2ECF76B800C91570 /* CollectorFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectorFactory.swift; sourceTree = "<group>"; };
-		EC5C81C02ECF77C200C91570 /* Collectors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collectors.swift; sourceTree = "<group>"; };
 		EC5C81C12ECF77C200C91570 /* FlowCollectorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowCollectorProtocol.swift; sourceTree = "<group>"; };
 		EC5C81C22ECF77C200C91570 /* SubmitCollectorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitCollectorProtocol.swift; sourceTree = "<group>"; };
 		EC5C81C62ECF780F00C91570 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -118,7 +116,6 @@
 				EC5C81AE2ECF6CC500C91570 /* Validator.swift */,
 				EC5C81BC2ECF6FCC00C91570 /* ValidationError.swift */,
 				EC5C81A52ECF6B6900C91570 /* Collector.swift */,
-				EC5C81C02ECF77C200C91570 /* Collectors.swift */,
 				EC5C81C12ECF77C200C91570 /* FlowCollectorProtocol.swift */,
 				EC5C81C22ECF77C200C91570 /* SubmitCollectorProtocol.swift */,
 				EC5C81B52ECF6EA200C91570 /* PingDavinciPlugin.h */,
@@ -263,7 +260,6 @@
 				EC5C81B92ECF6F7100C91570 /* Validator.swift in Sources */,
 				EC5C81BA2ECF6F7100C91570 /* ContinueNodeAware.swift in Sources */,
 				EC5C81BB2ECF6F7100C91570 /* Submittable.swift in Sources */,
-				EC5C81C32ECF77C200C91570 /* Collectors.swift in Sources */,
 				EC5C81C42ECF77C200C91570 /* FlowCollectorProtocol.swift in Sources */,
 				EC5C81C52ECF77C200C91570 /* SubmitCollectorProtocol.swift in Sources */,
 				EC5C81BF2ECF76B800C91570 /* CollectorFactory.swift in Sources */,

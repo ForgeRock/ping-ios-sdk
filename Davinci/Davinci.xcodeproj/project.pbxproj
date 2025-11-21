@@ -60,6 +60,7 @@
 		A5EFAA162D3F52F500F771FE /* ValidatedCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFAA152D3F52F300F771FE /* ValidatedCollectorTests.swift */; };
 		EC5C81C92ECF7A1700C91570 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */; };
 		EC5C81CA2ECF7A1700C91570 /* PingDavinciPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC5C81FC2ED0CAA100C91570 /* Collectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81FB2ED0CAA100C91570 /* Collectors.swift */; };
 		EC7279AE2DF98CDA005D9E28 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7279AD2DF98CD6005D9E28 /* Config.swift */; };
 		EC7279B02DF9976E005D9E28 /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = EC7279AF2DF99766005D9E28 /* Config.json */; };
 		EC7279B42DF9B295005D9E28 /* DaVinciBaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7279B32DF9B289005D9E28 /* DaVinciBaseTests.swift */; };
@@ -151,6 +152,7 @@
 		A5EFAA132D3F51CA00F771FE /* TextCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextCollectorTests.swift; sourceTree = "<group>"; };
 		A5EFAA152D3F52F300F771FE /* ValidatedCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedCollectorTests.swift; sourceTree = "<group>"; };
 		EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinciPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC5C81FB2ED0CAA100C91570 /* Collectors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collectors.swift; sourceTree = "<group>"; };
 		EC7279AD2DF98CD6005D9E28 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		EC7279AF2DF99766005D9E28 /* Config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Config.json; sourceTree = "<group>"; };
 		EC7279B32DF9B289005D9E28 /* DaVinciBaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciBaseTests.swift; sourceTree = "<group>"; };
@@ -290,6 +292,7 @@
 				A51D4CD02C585B4500FE09E0 /* FieldCollector.swift */,
 				A51D4CD22C585D7C00FE09E0 /* FlowCollector.swift */,
 				3AC13E322C3FFF1000DEF23A /* Form.swift */,
+				EC5C81FB2ED0CAA100C91570 /* Collectors.swift */,
 				A5E9AEB32D2F2252000533ED /* LabelCollector.swift */,
 				A5E9AEBD2D2F2DAC000533ED /* MultiSelectCollector.swift */,
 				A5E9AEBB2D2F2B23000533ED /* Option.swift */,
@@ -458,6 +461,7 @@
 				3A203D972BDB2CD70020C995 /* Oidc.swift in Sources */,
 				ECF0532F2D9D99D4004C9AAE /* Validator.swift in Sources */,
 				3A203D9B2BDE155D0020C995 /* Transform.swift in Sources */,
+				EC5C81FC2ED0CAA100C91570 /* Collectors.swift in Sources */,
 				EC92B3742D9FF67F00E4246D /* DeviceAuthenticationCollector.swift in Sources */,
 				A5CCE5E72C85E96B00349A5E /* Constants.swift in Sources */,
 				A51D4CD52C585DCD00FE09E0 /* PasswordCollector.swift in Sources */,

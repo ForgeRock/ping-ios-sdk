@@ -11,6 +11,9 @@
 import Foundation
 import PingOrchestrate
 
+///  Type alias for a list of collectors.
+public typealias Collectors = [any Collector]
+
 /// The CollectorFactory singleton is responsible for creating and managing Collector instances.
 /// It maintains a dictionary of collector creation functions, keyed by type.
 /// It also provides functions to register new types of collectors and to create collectors from a JSON array.
