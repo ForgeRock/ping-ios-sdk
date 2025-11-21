@@ -9,6 +9,7 @@
 //
 
 import PingOrchestrate
+import PingJourneyPlugin
 
 /// Define the module that transforms the response from Journey to a `Node`.
 public class NodeTransformModule: @unchecked Sendable {

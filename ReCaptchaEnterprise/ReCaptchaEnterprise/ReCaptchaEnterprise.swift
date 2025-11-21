@@ -10,7 +10,7 @@
 
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 
 @objc
 class ReCaptchaEnterprise: NSObject {

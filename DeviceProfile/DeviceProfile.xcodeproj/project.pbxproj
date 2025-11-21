@@ -33,8 +33,6 @@
 		A5BE8CAD2E8C881D007AF0B9 /* PingDeviceId.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5BE8CAC2E8C881D007AF0B9 /* PingDeviceId.framework */; };
 		A5BE8CAE2E8C881D007AF0B9 /* PingDeviceId.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5BE8CAC2E8C881D007AF0B9 /* PingDeviceId.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5D2967E2E79D4BB0093A761 /* DeviceProfileCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D2967D2E79D4BA0093A761 /* DeviceProfileCallback.swift */; };
-		A5D296812E79D5A60093A761 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D296802E79D5A60093A761 /* PingJourney.framework */; };
-		A5D296822E79D5A60093A761 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5D296802E79D5A60093A761 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5D296872E79DD600093A761 /* DeviceCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296862E79DD5C0093A761 /* DeviceCollector.swift */; };
 		A5D296892E79DE170093A761 /* PlatformCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296882E79DE110093A761 /* PlatformCollector.swift */; };
 		A5D2968B2E79DE9B0093A761 /* HardwareCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D2968A2E79DE9A0093A761 /* HardwareCollector.swift */; };
@@ -44,6 +42,8 @@
 		A5D296952E7B46FF0093A761 /* LocationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296942E7B46FD0093A761 /* LocationCollector.swift */; };
 		A5D296972E7B475C0093A761 /* DefaultDeviceCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296962E7B475A0093A761 /* DefaultDeviceCollector.swift */; };
 		A5D296992E7C72350093A761 /* NetworkPathMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296982E7C72330093A761 /* NetworkPathMonitor.swift */; };
+		EC5C81F02ED0851000C91570 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */; };
+		EC5C81F12ED0851000C91570 /* PingJourneyPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,10 +63,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				EC5C81F12ED0851000C91570 /* PingJourneyPlugin.framework in Embed Frameworks */,
 				A5BE8CA82E8C8411007AF0B9 /* PingLogger.framework in Embed Frameworks */,
 				A5BE8CAE2E8C881D007AF0B9 /* PingDeviceId.framework in Embed Frameworks */,
 				A5BE8CAB2E8C8424007AF0B9 /* PingTamperDetector.framework in Embed Frameworks */,
-				A5D296822E79D5A60093A761 /* PingJourney.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -109,6 +109,7 @@
 		A5D296942E7B46FD0093A761 /* LocationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationCollector.swift; sourceTree = "<group>"; };
 		A5D296962E7B475A0093A761 /* DefaultDeviceCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDeviceCollector.swift; sourceTree = "<group>"; };
 		A5D296982E7C72330093A761 /* NetworkPathMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPathMonitor.swift; sourceTree = "<group>"; };
+		EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,10 +117,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC5C81F02ED0851000C91570 /* PingJourneyPlugin.framework in Frameworks */,
 				A5BE8CA72E8C8411007AF0B9 /* PingLogger.framework in Frameworks */,
 				A5BE8CAD2E8C881D007AF0B9 /* PingDeviceId.framework in Frameworks */,
 				A5BE8CAA2E8C8424007AF0B9 /* PingTamperDetector.framework in Frameworks */,
-				A5D296812E79D5A60093A761 /* PingJourney.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,6 +191,7 @@
 		A5D2967F2E79D5A60093A761 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */,
 				A5BE8CAC2E8C881D007AF0B9 /* PingDeviceId.framework */,
 				A5BE8CA92E8C8424007AF0B9 /* PingTamperDetector.framework */,
 				A5BE8CA62E8C8411007AF0B9 /* PingLogger.framework */,

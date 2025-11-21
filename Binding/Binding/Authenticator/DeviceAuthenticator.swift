@@ -11,7 +11,7 @@
 
 import Foundation
 import PingMfaCommons
-import PingJourney
+import PingJourneyPlugin
 
 /// A protocol defining the capabilities and requirements for any device authenticator.
 /// Authenticators conforming to this protocol are responsible for key management (generation, authentication, deletion)

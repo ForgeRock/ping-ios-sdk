@@ -10,7 +10,7 @@
 
 import XCTest
 @testable import PingBinding
-@testable import PingJourney
+@testable import PingJourneyPlugin
 
 final class PingBindingTests: XCTestCase {
     

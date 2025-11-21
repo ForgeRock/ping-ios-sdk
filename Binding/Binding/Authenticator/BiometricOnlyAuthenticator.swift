@@ -11,7 +11,7 @@
 
 import Foundation
 import LocalAuthentication
-import PingJourney
+import PingJourneyPlugin
 
 /// An authenticator that uses biometrics (Face ID or Touch ID) for user authentication.
 /// This class extends `DefaultDeviceAuthenticator` and provides specific implementations

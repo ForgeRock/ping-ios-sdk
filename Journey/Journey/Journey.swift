@@ -13,23 +13,9 @@ import Foundation
 import PingOrchestrate
 import PingOidc
 import PingLogger
+import PingJourneyPlugin
 
 public typealias Journey = Workflow
-
-/// Define a configuration object
-/// that conforms to `WorkflowConfig` and `Sendable`.
-/// This configuration is used to set up the journey with various parameters such as server URL, realm, cookie, and authentication options.
-///  - Parameters:
-///  - serverUrl: The URL of the server.
-///  - realm: The realm to use for the journey.
-///  - cookie: The cookie name to use for the journey.
-///  - forceAuth: A boolean indicating whether to force authentication.
-///  - noSession: A boolean indicating whether to allow the journey to complete without generating a session.
-public class JourneyConfig: WorkflowConfig, @unchecked Sendable {
-    public var serverUrl: String?
-    public var realm: String = JourneyConstants.realm
-    public var cookie: String = JourneyConstants.cookie
-}
 
 /// Define a struct to hold options for the journey.
 /// This struct contains two properties:
@@ -60,9 +46,44 @@ public extension Journey {
         config.module(OidcModule.config)
         
         Task {
-            CallbackRegistry.shared.registerDefaultCallbacks()
+            CallbackRegistry.shared.register(type: JourneyConstants.booleanAttributeInputCallback, callback: BooleanAttributeInputCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.choiceCallback, callback: ChoiceCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.confirmationCallback, callback: ConfirmationCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.consentMappingCallback, callback: ConsentMappingCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.hiddenValueCallback, callback: HiddenValueCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.kbaCreateCallback, callback: KbaCreateCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.metadataCallback, callback: MetadataCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.nameCallback, callback: NameCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.numberAttributeInputCallback, callback: NumberAttributeInputCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.passwordCallback, callback: PasswordCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.pollingWaitCallback, callback: PollingWaitCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.stringAttributeInputCallback, callback: StringAttributeInputCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.suspendedTextOutputCallback, callback: SuspendedTextOutputCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.termsAndConditionsCallback, callback: TermsAndConditionsCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.textInputCallback, callback: TextInputCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.textOutputCallback, callback: TextOutputCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.validatedPasswordCallback, callback: ValidatedPasswordCallback.self)
+            CallbackRegistry.shared.register(type: JourneyConstants.validatedUsernameCallback, callback: ValidatedUsernameCallback.self)
+            
+            if let c: NSObject.Type = NSClassFromString("PingProtect.ProtectCallbacks") as? NSObject.Type {
+                c.perform(Selector(("registerCallbacks")))
+            }
+            if let c: NSObject.Type = NSClassFromString("PingExternalIdP.IdpCallbacks") as? NSObject.Type {
+                c.perform(Selector(("registerCallbacks")))
+            }
+            if let c: NSObject.Type = NSClassFromString("PingDeviceProfile.DeviceProfile") as? NSObject.Type {
+                c.perform(Selector(("registerCallbacks")))
+            }
+            if let c: NSObject.Type = NSClassFromString("PingFido.CallbackInitializer") as? NSObject.Type {
+                c.perform(Selector(("registerCallbacks")))
+            }
+            if let c: NSObject.Type = NSClassFromString("PingReCaptchaEnterprise.ReCaptchaEnterprise") as? NSObject.Type {
+                c.perform(Selector(("registerCallbacks")))
+            }
+            if let c: NSObject.Type = NSClassFromString("PingBinding.BindingModule") as? NSObject.Type {
+                c.perform(Selector(("registerCallbacks")))
+            }
         }
-        
         // Apply custom configuration
         block(config)
         

@@ -1,6 +1,6 @@
 //
 //  CallbackRegistry.swift
-//  Journey
+//  PingJourneyPlugin
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -53,47 +53,6 @@ public class CallbackRegistry: @unchecked Sendable {
 
     init() { }
 
-    /// Registers the default Journey Callbacks.
-    public func registerDefaultCallbacks() {
-        register(type: JourneyConstants.booleanAttributeInputCallback, callback: BooleanAttributeInputCallback.self)
-        register(type: JourneyConstants.choiceCallback, callback: ChoiceCallback.self)
-        register(type: JourneyConstants.confirmationCallback, callback: ConfirmationCallback.self)
-        register(type: JourneyConstants.consentMappingCallback, callback: ConsentMappingCallback.self)
-        register(type: JourneyConstants.hiddenValueCallback, callback: HiddenValueCallback.self)
-        register(type: JourneyConstants.kbaCreateCallback, callback: KbaCreateCallback.self)
-        register(type: JourneyConstants.metadataCallback, callback: MetadataCallback.self)
-        register(type: JourneyConstants.nameCallback, callback: NameCallback.self)
-        register(type: JourneyConstants.numberAttributeInputCallback, callback: NumberAttributeInputCallback.self)
-        register(type: JourneyConstants.passwordCallback, callback: PasswordCallback.self)
-        register(type: JourneyConstants.pollingWaitCallback, callback: PollingWaitCallback.self)
-        register(type: JourneyConstants.stringAttributeInputCallback, callback: StringAttributeInputCallback.self)
-        register(type: JourneyConstants.suspendedTextOutputCallback, callback: SuspendedTextOutputCallback.self)
-        register(type: JourneyConstants.termsAndConditionsCallback, callback: TermsAndConditionsCallback.self)
-        register(type: JourneyConstants.textInputCallback, callback: TextInputCallback.self)
-        register(type: JourneyConstants.textOutputCallback, callback: TextOutputCallback.self)
-        register(type: JourneyConstants.validatedPasswordCallback, callback: ValidatedPasswordCallback.self)
-        register(type: JourneyConstants.validatedUsernameCallback, callback: ValidatedUsernameCallback.self)
-
-        if let c: NSObject.Type = NSClassFromString("PingProtect.ProtectCallbacks") as? NSObject.Type {
-            c.perform(Selector(("registerCallbacks")))
-        }
-        if let c: NSObject.Type = NSClassFromString("PingExternalIdP.IdpCallbacks") as? NSObject.Type {
-            c.perform(Selector(("registerCallbacks")))
-        }
-        if let c: NSObject.Type = NSClassFromString("PingDeviceProfile.DeviceProfile") as? NSObject.Type {
-            c.perform(Selector(("registerCallbacks")))
-        }
-        if let c: NSObject.Type = NSClassFromString("PingFido.CallbackInitializer") as? NSObject.Type {
-            c.perform(Selector(("registerCallbacks")))
-        }
-        if let c: NSObject.Type = NSClassFromString("PingReCaptchaEnterprise.ReCaptchaEnterprise") as? NSObject.Type {
-            c.perform(Selector(("registerCallbacks")))
-        }
-        if let c: NSObject.Type = NSClassFromString("PingBinding.BindingModule") as? NSObject.Type {
-            c.perform(Selector(("registerCallbacks")))
-        }
-    }
-
     /// Registers a new type of Callback.
     /// - Parameters:
     ///   - type: The type of the Callback.
@@ -113,7 +72,7 @@ public class CallbackRegistry: @unchecked Sendable {
         for item in array {
             if let type = item[JourneyConstants.type] as? String, let callbackType = callbacks[type] {
                 let callback = callbackType.init().initialize(with: item)
-                if !(callback is MetadataCallback) {
+                if !(callback is MetadataCallbackProtocol) {
                     list.append(callback)
                 }
             }

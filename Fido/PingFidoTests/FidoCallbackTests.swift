@@ -11,6 +11,7 @@
 
 import XCTest
 @testable import PingFido
+@testable import PingJourneyPlugin
 @testable import PingJourney
 
 class FidoCallbackTests: XCTestCase {

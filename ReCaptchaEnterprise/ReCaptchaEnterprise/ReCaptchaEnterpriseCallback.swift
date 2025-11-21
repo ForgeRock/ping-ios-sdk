@@ -10,7 +10,7 @@
 
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 import PingLogger
 @_exported import RecaptchaEnterprise
 

@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingJourneyPlugin
 
 /// Base implementation of a callback for collection of a single identity object attribute from a user.
 public class AttributeInputCallback: AbstractValidatedCallback, @unchecked Sendable {

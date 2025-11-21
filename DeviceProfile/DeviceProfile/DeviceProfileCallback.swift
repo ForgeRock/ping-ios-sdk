@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 import PingDeviceId
 import PingLogger
 

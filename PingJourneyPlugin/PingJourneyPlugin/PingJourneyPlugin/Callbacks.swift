@@ -1,6 +1,6 @@
 //
 //  Callbacks.swift
-//  Journey
+//  PingJourneyPlugin
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -22,6 +22,17 @@ public protocol Callback: Action, Identifiable, Sendable {
     func payload() -> [String: Any]
 }
 
+public protocol MetadataCallbackProtocol { }
+
+public protocol HiddenValueCallbackProtocol {
+    /// Hidden identifier value
+    var hiddenId: String { get set }
+    /// The hidden value to be sent back
+    var value: String { get }
+    /// Convinience method to set the value
+    func setValue(_ value: String)
+}
+
 ///  Type alias for a list of collectors.
 public typealias Callbacks = [any Callback]
 
@@ -35,7 +46,7 @@ extension ContinueNode {
 /// A class representing a Journey Continue Node.
 /// It inherits from `ContinueNode` and conforms to `Sendable`.
 /// It is used to continue a journey by sending a request with the provided actions.
-final class JourneyContinueNode: ContinueNode, @unchecked Sendable {
+final public class JourneyContinueNode: ContinueNode, @unchecked Sendable {
     /// The key used for the authentication ID in the request payload.
     private let authIdKey = JourneyConstants.authId
     /// A list of callbacks that will be executed in this journey step.
@@ -49,7 +60,7 @@ final class JourneyContinueNode: ContinueNode, @unchecked Sendable {
     /// - workflow: The workflow associated with the journey.
     /// - input: The input data for the journey, which includes the authentication ID.
     /// - actions: The list of callbacks to be executed in this journey step.
-    init(context: FlowContext, workflow: Workflow, input: [String: Any], actions: [any Callback]) {
+    public init(context: FlowContext, workflow: Workflow, input: [String: Any], actions: [any Callback]) {
         self.callbacksList = actions
         self.originalJson = input
         super.init(context: context, workflow: workflow, input: input, actions: actions)
@@ -69,7 +80,7 @@ final class JourneyContinueNode: ContinueNode, @unchecked Sendable {
     }
 
     /// Converts to Request
-    override func asRequest() -> Request {
+    override public func asRequest() -> Request {
         let config = workflow.config as? JourneyConfig
         let realm = config?.realm ?? "root"
         let baseURL = config?.serverUrl ?? ""

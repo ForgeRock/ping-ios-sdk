@@ -10,6 +10,7 @@
 
 import PingOidc
 import PingOrchestrate
+import PingJourneyPlugin
 
 extension Journey {
     /// Retrieves the current user associated with the journey.

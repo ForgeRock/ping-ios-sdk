@@ -9,6 +9,7 @@
 //
 
 import XCTest
+@testable import PingJourneyPlugin
 @testable import PingJourney
 
 class CustomCallback: AbstractCallback, @unchecked Sendable {

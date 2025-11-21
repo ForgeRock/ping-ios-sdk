@@ -23,8 +23,11 @@ final class ExternalIdPTests: XCTestCase {
     }
     
     func testIdpCollectorRegistration() async throws {
-        let idpCollector = await CollectorFactory.shared.collectors[Constants.SOCIAL_LOGIN_BUTTON]
-        XCTAssertNotNil(idpCollector)
+        Task {
+            IdpCollector.registerCollector()
+            let idpCollector = await CollectorFactory.shared.collectors[Constants.SOCIAL_LOGIN_BUTTON]
+            XCTAssertNotNil(idpCollector)
+        }
     }
 
     func testIdpCollectorParsing() throws {

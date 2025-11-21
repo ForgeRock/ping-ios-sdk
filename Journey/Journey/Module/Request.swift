@@ -13,6 +13,7 @@
 
 import Foundation
 import PingOrchestrate
+import PingJourneyPlugin
 
 extension Request {
     /// Initializes a request to the authentication endpoint with the provided parameters.

@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingJourneyPlugin
 
 /// A callback that collects a single string user attribute with validation against given policies.
 public class StringAttributeInputCallback: AttributeInputCallback, @unchecked Sendable {

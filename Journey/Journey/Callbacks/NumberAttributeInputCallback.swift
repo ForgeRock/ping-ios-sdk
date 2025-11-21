@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingJourneyPlugin
 
 /// A callback that collects a double value user attribute with validation against given policies.
 public class NumberAttributeInputCallback: AttributeInputCallback, @unchecked Sendable {

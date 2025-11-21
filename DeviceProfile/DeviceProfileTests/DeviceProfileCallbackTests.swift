@@ -9,7 +9,7 @@
 //
 
 import XCTest
-import PingJourney
+import PingJourneyPlugin
 import PingLogger
 @testable import PingDeviceProfile
 

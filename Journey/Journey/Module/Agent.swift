@@ -11,6 +11,7 @@
 import Foundation
 import PingOidc
 import PingOrchestrate
+import PingJourneyPlugin
 
 /// An agent that handles the creation of an authentication session.
 /// This agent is used to initiate the authentication process for a user.

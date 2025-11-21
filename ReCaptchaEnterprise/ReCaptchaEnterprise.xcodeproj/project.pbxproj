@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		A58CFBF02EB00508007C4A31 /* RecaptchaEnterprise in Frameworks */ = {isa = PBXBuildFile; productRef = A58CFBEF2EB00508007C4A31 /* RecaptchaEnterprise */; };
 		A58CFBF22EB00600007C4A31 /* ReCaptchaEnterpriseCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58CFBF12EB005FF007C4A31 /* ReCaptchaEnterpriseCallback.swift */; };
-		A58CFBF52EB00637007C4A31 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A58CFBF42EB00637007C4A31 /* PingJourney.framework */; };
-		A58CFBF62EB00637007C4A31 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A58CFBF42EB00637007C4A31 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A58CFBF92EB009AC007C4A31 /* ReCaptchaEnterpriseUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58CFBF82EB009AB007C4A31 /* ReCaptchaEnterpriseUtils.swift */; };
 		A58CFBFD2EB03693007C4A31 /* ReCaptchaEnterpriseConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58CFBFC2EB03692007C4A31 /* ReCaptchaEnterpriseConfigTests.swift */; };
 		A58CFBFF2EB03860007C4A31 /* ReCaptchaEnterpriseUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58CFBFE2EB0385D007C4A31 /* ReCaptchaEnterpriseUtilsTests.swift */; };
@@ -19,6 +17,7 @@
 		A5C0AC402EAFFFF300846D16 /* ReCaptchaEnterpriseCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5C0AC3E2EAFFFF300846D16 /* ReCaptchaEnterpriseCallbackTests.swift */; };
 		A5C0AC432EB000C600846D16 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5C0AC422EB000C600846D16 /* PrivacyInfo.xcprivacy */; };
 		A5C0AC452EB0013600846D16 /* ReCaptchaEnterprise.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C0AC442EB0013600846D16 /* ReCaptchaEnterprise.h */; };
+		EC5C81E52ED084E300C91570 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81E42ED084E300C91570 /* PingJourneyPlugin.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,20 +29,6 @@
 			remoteInfo = ReCaptchaEnterprise;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		A58CFBF72EB00637007C4A31 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				A58CFBF62EB00637007C4A31 /* PingJourney.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		A58CFBF12EB005FF007C4A31 /* ReCaptchaEnterpriseCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReCaptchaEnterpriseCallback.swift; sourceTree = "<group>"; };
@@ -58,6 +43,7 @@
 		A5C0AC412EB0009100846D16 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A5C0AC422EB000C600846D16 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A5C0AC442EB0013600846D16 /* ReCaptchaEnterprise.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReCaptchaEnterprise.h; sourceTree = "<group>"; };
+		EC5C81E42ED084E300C91570 /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,8 +51,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC5C81E52ED084E300C91570 /* PingJourneyPlugin.framework in Frameworks */,
 				A58CFBF02EB00508007C4A31 /* RecaptchaEnterprise in Frameworks */,
-				A58CFBF52EB00637007C4A31 /* PingJourney.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +70,7 @@
 		A58CFBF32EB00637007C4A31 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EC5C81E42ED084E300C91570 /* PingJourneyPlugin.framework */,
 				A58CFBF42EB00637007C4A31 /* PingJourney.framework */,
 			);
 			name = Frameworks;
@@ -153,7 +140,6 @@
 				A5C0ABF02EAFFFDE00846D16 /* Sources */,
 				A5C0ABF12EAFFFDE00846D16 /* Frameworks */,
 				A5C0ABF22EAFFFDE00846D16 /* Resources */,
-				A58CFBF72EB00637007C4A31 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

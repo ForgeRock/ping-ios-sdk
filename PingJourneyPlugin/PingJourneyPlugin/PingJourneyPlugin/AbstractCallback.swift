@@ -1,6 +1,6 @@
 //
 //  AbstractCallback.swift
-//  Journey
+//  PingJourneyPlugin
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //

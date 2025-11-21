@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 
 /// A class responsible for registering FIDO callbacks with the Journey framework.
 public class CallbackInitializer: NSObject {
