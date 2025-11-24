@@ -12,7 +12,7 @@ import PingOrchestrate
 import PingStorage
 
 /// A configuration class for managing session-related settings.
-class SessionConfig: @unchecked Sendable {
+public class SessionConfig: @unchecked Sendable {
     /// Optional storage that can be lazily initialized
     var storage: any Storage<SSOTokenImpl>
 

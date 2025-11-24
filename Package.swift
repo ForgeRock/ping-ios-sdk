@@ -24,6 +24,7 @@ let package = Package (
         .library(name: "PingExternalIdPFacebook", targets: ["PingExternalIdPFacebook"]),
         .library(name: "PingProtect", targets: ["PingProtect"]),
         .library(name: "PingReCaptchaEnterprise", targets: ["PingReCaptchaEnterprise"]),
+        .library(name: "PingDeviceClient", targets: ["PingDeviceClient"]),
     ],
     dependencies: [
 		.package(url: "https://github.com/pingidentity/pingone-signals-sdk-ios.git", "5.3.0" ..< "5.4.0"),
@@ -47,5 +48,6 @@ let package = Package (
     	.target(name: "PingExternalIdPFacebook", dependencies: [.target(name: "PingExternalIdP"), .product(name: "FacebookLogin", package: "facebook-ios-sdk")], path: "ExternalIdPFacebook/ExternalIdPFacebook", exclude: ["ExternalIdPFacebook.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
     	.target(name: "PingProtect", dependencies: [.target(name: "PingDavinci"), .product(name: "PingOneSignals", package: "pingone-signals-sdk-ios")], path: "Protect/Protect", exclude: ["Protect.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingReCaptchaEnterprise", dependencies: [.target(name: "PingJourney"), .target(name: "PingLogger"), .product(name: "RecaptchaEnterprise", package: "recaptcha-enterprise-mobile-sdk")], path: "ReCaptchaEnterprise/ReCaptchaEnterprise", exclude: ["ReCaptchaEnterprise.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingDeviceClient", dependencies: [.target(name: "PingOrchestrate"), .target(name: "PingLogger")], path: "DeviceClient/DeviceClient", exclude: ["DeviceClient.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
     ]
 )

@@ -180,6 +180,13 @@
         "identifier" : "A5C0ABFC2EAFFFDF00846D16",
         "name" : "ReCaptchaEnterpriseTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/..\/..\/..\/Desktop\/DeviceClient\/DeviceClient.xcodeproj",
+        "identifier" : "A570D4CB2ECC0D6200CBBCCF",
+        "name" : "DeviceClientTests"
+      }
     }
   ],
   "version" : 1

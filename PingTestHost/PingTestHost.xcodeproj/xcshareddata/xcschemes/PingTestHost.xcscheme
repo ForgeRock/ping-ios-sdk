@@ -399,6 +399,16 @@
                ReferencedContainer = "container:../ReCaptchaEnterprise/ReCaptchaEnterprise.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A570D4CB2ECC0D6200CBBCCF"
+               BuildableName = "DeviceClientTests.xctest"
+               BlueprintName = "DeviceClientTests"
+               ReferencedContainer = "container:../../../../Desktop/DeviceClient/DeviceClient.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -425,6 +435,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "A54BF4642BF2E33C00CD24D4"
+            BuildableName = "PingTestHost.app"
+            BlueprintName = "PingTestHost"
+            ReferencedContainer = "container:PingTestHost.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

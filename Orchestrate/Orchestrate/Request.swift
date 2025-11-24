@@ -109,6 +109,18 @@ public class Request: @unchecked Sendable {
         self.urlRequest.setValue(ContentType.urlEncoded.rawValue, forHTTPHeaderField: Constants.contentType)
         self.urlRequest.httpBody = formString.data(using: .utf8)
     }
+    
+    /// Sets the HTTP method of the request.
+    /// - Parameter method: The HTTP method to be set.
+    public func method(_ method: HTTPMethod) {
+        self.urlRequest.httpMethod = method.rawValue
+    }
+
+    /// Gets the current HTTP method of the request.
+    /// - Returns: The HTTP method as a String, or nil if not set.
+    public func getMethod() -> String? {
+        return self.urlRequest.httpMethod
+    }
         
     /// Represents various content types used in HTTP requests.
     public enum ContentType: String {

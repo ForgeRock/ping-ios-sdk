@@ -19,7 +19,7 @@ public class SessionModule {
     public init() {}
     
     /// Creates a module for managing session configuration.
-    static let config: Module<SessionConfig> = Module.of ({ SessionConfig() }) { setup in
+    public static let config: Module<SessionConfig> = Module.of ({ SessionConfig() }) { setup in
         
         let config: SessionConfig = setup.config
         let journeyFlow: Journey = setup.workflow
@@ -77,7 +77,7 @@ public class SessionModule {
 
 extension Workflow {
     /// Retrieves the SSOToken from the session config in sharedContext
-    func session() async -> SSOToken? {
+    public func session() async -> SSOToken? {
         let config = sharedContext.get(key: SharedContext.Keys.sessionConfigKey) as? SessionConfig
         return try? await config?.storage.get()
     }

@@ -12,7 +12,7 @@ import Foundation
 import PingOrchestrate
 
 /// Define the SSOToken protocol
-protocol SSOToken: Session, Codable {
+public protocol SSOToken: Session, Codable {
     var successUrl: String { get }
     var realm: String { get }
 }
