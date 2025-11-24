@@ -10,6 +10,7 @@
 
 
 import Foundation
+import PingDavinciPlugin
 
 /// A struct representing an option.
 /// - Parameters:

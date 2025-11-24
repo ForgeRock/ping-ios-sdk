@@ -11,43 +11,68 @@
 import Foundation
 import PingOrchestrate
 
-///  Type alias for a list of collectors.
+/// Type alias for a list of collectors created for a ContinueNode.
 public typealias Collectors = [any Collector]
 
-/// The CollectorFactory singleton is responsible for creating and managing Collector instances.
-/// It maintains a dictionary of collector creation functions, keyed by type.
-/// It also provides functions to register new types of collectors and to create collectors from a JSON array.
+/// A factory and registry for Collector types.
+///
+/// CollectorFactory is responsible for:
+/// - Registering collector types by a string key (typically the server-provided "type" or "inputType").
+/// - Creating collectors from JSON dictionaries provided by DaVinci responses.
+/// - Injecting contextual references (e.g., ContinueNode) into collectors that need them.
+/// - Resetting the registry (useful in tests).
+///
+/// The actor ensures thread-safe registration and creation across concurrent tasks.
 public actor CollectorFactory {
-    /// A dictionary to hold the collector creation functions.
+    /// Legacy registry mapping a type key to a Collector metatype.
+    /// Deprecated in favor of `collectorCreationClosures`.
     var collectors: [String: any Collector.Type] = [:]
+    
+    /// Registry mapping a type key to a factory closure that produces a collector from the raw JSON.
     var collectorCreationClosures: [String: ([String: Any]) -> (any Collector)?] = [:]
     
-    /// The shared instance of the CollectorFactory.
+    /// The shared singleton instance of the CollectorFactory.
     public static let shared = CollectorFactory()
     
+    /// Initializes a new CollectorFactory.
+    /// Prefer using the shared instance unless you specifically need isolation (e.g., in tests).
     init() { }
     
-    /// Registers a new type of Collector.
+    /// Registers a Collector metatype for a given key.
+    ///
     /// - Parameters:
-    ///   - type: The type of the Collector.
-    ///   - block: A function that creates a new instance of the Collector.
+    ///   - type: The string key identifying the collector (e.g., "TEXT", "PASSWORD").
+    ///   - collector: The Collector type to instantiate when that key is encountered.
+    ///
+    /// - Note: This API is deprecated. Prefer `register(type:closure:)` to allow flexible construction.
     @available(*, deprecated, message: "Use register(type:closure:) instead")
     public func register(type: String, collector: any Collector.Type) {
         collectors[type] = collector
     }
     
-    /// Registers a new type of Collector.
+    /// Registers a Collector factory closure for a given key.
+    ///
     /// - Parameters:
-    ///   - type: The type of the Collector.
-    ///   - closure: A closure that creates a new instance of the Collector.
+    ///   - type: The string key identifying the collector (e.g., "TEXT", "PASSWORD").
+    ///   - closure: A closure that takes the raw JSON dictionary for a collector and returns an instance,
+    ///              or nil if the JSON cannot be parsed for this type.
     public func register(type: String, closure: @escaping ([String: Any]) -> (any Collector)?) {
         collectorCreationClosures[type] = closure
     }
     
-    /// Creates a list of Collector instances from an array of dictionaries.
-    /// Each dictionary should have a "type" field that matches a registered Collector type.
-    /// - Parameter array: The array of dictionaries to create the Collectors from.
-    /// - Returns: A list of Collector instances.
+    /// Creates a list of collectors from an array of JSON dictionaries.
+    ///
+    /// - Parameters:
+    ///   - daVinci: The DaVinci workflow instance to inject into collectors that are `DaVinciAware`.
+    ///   - array: The array of JSON dictionaries describing each collector. The factory will read
+    ///            `Constants.inputType` first, falling back to `Constants.type`, to identify the collector type.
+    /// - Returns: An ordered list of collectors constructed from the JSON input.
+    ///
+    /// The method attempts construction using:
+    /// 1. A registered metatype in `collectors` (deprecated path).
+    /// 2. A registered closure in `collectorCreationClosures`.
+    ///
+    /// If a collector conforms to `DaVinciAware`, the provided `daVinci` instance is injected.
     public func collector(daVinci: DaVinci, from array: [[String: Any]]) -> Collectors {
         var list: [any Collector] = []
         for item in array {
@@ -68,8 +93,11 @@ public actor CollectorFactory {
         return list
     }
     
-    /// Injects the ContinueNode instances into the collectors.
-    /// - Parameter continueNode: The ContinueNode instance to be injected.
+    /// Injects the provided ContinueNode into any collectors that conform to `ContinueNodeAware`.
+    ///
+    /// - Parameter continueNode: The node whose collectors will receive the node reference.
+    ///
+    /// This enables collectors to call `next()` or otherwise interact with their hosting node.
     public func inject(continueNode: ContinueNode) {
         continueNode.collectors.forEach { collector in
             if var collector = collector as? ContinueNodeAware {
@@ -78,8 +106,12 @@ public actor CollectorFactory {
         }
     }
     
-    /// Resets the CollectorFactory by clearing all registered collectors.
+    /// Clears all registered collectors and factory closures.
+    ///
+    /// Useful for tests to ensure a clean registry between runs.
     public func reset() {
         collectors.removeAll()
+        collectorCreationClosures.removeAll()
     }
 }
+

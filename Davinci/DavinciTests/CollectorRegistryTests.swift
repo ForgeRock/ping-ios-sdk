@@ -14,22 +14,11 @@ import XCTest
 import PingDavinciPlugin
 @testable import PingDavinci
 
+@MainActor
 final class CollectorRegistryTests: XCTestCase {
-    
-    private var collectorFactory: CollectorFactory!
-    let davinci = DaVinci.createDaVinci()
-    
-    override func setUp() async throws {
-        try await super.setUp()
-        collectorFactory = CollectorFactory.shared
-    }
-    
-    override func tearDown() async throws {
-        try await super.tearDown()
-        await collectorFactory.reset()
-    }
-    
+        
     func testShouldRegisterCollector() async {
+        let davinci = DaVinci.createDaVinci()
         let jsonArray: [[String: Any]] = [
             ["type": "TEXT"],
             ["type": "PASSWORD"],
@@ -44,7 +33,7 @@ final class CollectorRegistryTests: XCTestCase {
             ["inputType": "MULTI_SELECT"],
         ]
         
-        let collectors = await collectorFactory.collector(daVinci: davinci, from: jsonArray)
+        let collectors = await CollectorFactory.shared.collector(daVinci: davinci, from: jsonArray)
         XCTAssertTrue(collectors[0] is TextCollector)
         XCTAssertTrue(collectors[1] is PasswordCollector)
         XCTAssertTrue(collectors[2] is SubmitCollector)
@@ -56,9 +45,11 @@ final class CollectorRegistryTests: XCTestCase {
         XCTAssertTrue(collectors[8] is SingleSelectCollector)
         XCTAssertTrue(collectors[9] is MultiSelectCollector)
         XCTAssertTrue(collectors[10] is MultiSelectCollector)
+        await CollectorFactory.shared.reset()
     }
     
     func testShouldIgnoreUnknownCollector() async  {
+        let davinci = DaVinci.createDaVinci()
         let jsonArray: [[String: Any]] = [
             ["type": "TEXT"],
             ["type": "PASSWORD"],
@@ -67,7 +58,9 @@ final class CollectorRegistryTests: XCTestCase {
             ["type": "UNKNOWN"]
         ]
         
-        let collectors = await collectorFactory.collector(daVinci: davinci, from: jsonArray)
+        let collectors = await CollectorFactory.shared.collector(daVinci: davinci, from: jsonArray)
         XCTAssertEqual(collectors.count, 4)
+        
+        await CollectorFactory.shared.reset()
     }
 }

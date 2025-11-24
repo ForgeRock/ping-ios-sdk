@@ -57,11 +57,10 @@ public class BindingModule: NSObject {
     /// registered when `CallbackRegistry.shared.registerDefaultCallbacks()` is called.
     /// Only call this method if you need to register callbacks manually outside of the Journey flow.
     @objc public static func registerCallbacks() {
-        CallbackRegistry.shared.register(type: Constants.deviceBindingCallback, callback: DeviceBindingCallback.self)
-        CallbackRegistry.shared.register(type: Constants.deviceSigningVerifierCallback, callback: DeviceSigningVerifierCallback.self)
-        
-        // Trigger migration check on callback registration
+        // Register Callbacks and trigger migration check on callback registration
         Task {
+            await CallbackRegistry.shared.register(type: Constants.deviceBindingCallback, callback: DeviceBindingCallback.self)
+            await CallbackRegistry.shared.register(type: Constants.deviceSigningVerifierCallback, callback: DeviceSigningVerifierCallback.self)
             await triggerMigrationIfNeeded()
         }
     }

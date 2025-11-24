@@ -96,6 +96,8 @@
 		ECD562A82E0C48A700F0B5A9 /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD562A72E0C489E00F0B5A9 /* MockURLProtocol.swift */; };
 		ECD562AB2E0C494200F0B5A9 /* MockAPIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD562AA2E0C494200F0B5A9 /* MockAPIEndpoint.swift */; };
 		ECD562AC2E0C494200F0B5A9 /* MockResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD562A92E0C494200F0B5A9 /* MockResponse.swift */; };
+		ECEFDC282ED4B0AC00B56E87 /* MetadataCallbackSpecializationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEFDC242ED4AF3C00B56E87 /* MetadataCallbackSpecializationTests.swift */; };
+		ECEFDC292ED4B10E00B56E87 /* MetadataCallbackInjectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEFDC262ED4AF8500B56E87 /* MetadataCallbackInjectionTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -212,6 +214,8 @@
 		ECD562A72E0C489E00F0B5A9 /* MockURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLProtocol.swift; sourceTree = "<group>"; };
 		ECD562A92E0C494200F0B5A9 /* MockResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockResponse.swift; sourceTree = "<group>"; };
 		ECD562AA2E0C494200F0B5A9 /* MockAPIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIEndpoint.swift; sourceTree = "<group>"; };
+		ECEFDC242ED4AF3C00B56E87 /* MetadataCallbackSpecializationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCallbackSpecializationTests.swift; sourceTree = "<group>"; };
+		ECEFDC262ED4AF8500B56E87 /* MetadataCallbackInjectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCallbackInjectionTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -331,7 +335,9 @@
 				ECD562A62E0C45F900F0B5A9 /* Config */,
 				EC2326A72E0D7C7800634A50 /* AgentTests.swift */,
 				EC23269D2E0D5E4700634A50 /* CallbackRegistryTests.swift */,
+				ECEFDC262ED4AF8500B56E87 /* MetadataCallbackInjectionTests.swift */,
 				EC2326A32E0D670D00634A50 /* JourneyContinueNodeTests.swift */,
+				ECEFDC242ED4AF3C00B56E87 /* MetadataCallbackSpecializationTests.swift */,
 				EC727A5E2E019258005D9E28 /* JourneyTests.swift */,
 				EC2326A52E0D744A00634A50 /* JourneyUserTests.swift */,
 				A5CFC86A2E42920A00CBFC3B /* Callbacks */,
@@ -563,6 +569,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECEFDC282ED4B0AC00B56E87 /* MetadataCallbackSpecializationTests.swift in Sources */,
 				95DA7BFC2E4E7DCC00168E1A /* JourneyE2EBaseTest.swift in Sources */,
 				95DA7BFD2E4E7DCC00168E1A /* StringAttributeInputCallbackE2ETest.swift in Sources */,
 				95DA7BFE2E4E7DCC00168E1A /* ValidatePasswordCallbackE2ETest.swift in Sources */,
@@ -607,6 +614,7 @@
 				EC2326A62E0D744F00634A50 /* JourneyUserTests.swift in Sources */,
 				EC2326A82E0D7C7900634A50 /* AgentTests.swift in Sources */,
 				A5CFC8742E4392D900CBFC3B /* ConsentMappingCallbackTests.swift in Sources */,
+				ECEFDC292ED4B10E00B56E87 /* MetadataCallbackInjectionTests.swift in Sources */,
 				ECD562AB2E0C494200F0B5A9 /* MockAPIEndpoint.swift in Sources */,
 				A5CFC87C2E439A9B00CBFC3B /* PollingWaitCallbackTests.swift in Sources */,
 				EC2326A42E0D671700634A50 /* JourneyContinueNodeTests.swift in Sources */,

@@ -37,24 +37,24 @@ final class CallbackRegistryTests: XCTestCase {
     func testRegisterAndRetrieveCallback() async {
         let registry = CallbackRegistry()
         let key = "customCallback"
-        registry.register(type: key, callback: CustomCallback.self)
-        let callbackType = registry.callbacks[key]
+        await registry.register(type: key, callback: CustomCallback.self)
+        let callbackType = await registry.callbacks[key]
         XCTAssertNotNil(callbackType)
         XCTAssertTrue(callbackType is CustomCallback.Type)
     }
     
     func testCallbackNotFound() async {
         let registry = CallbackRegistry()
-        let callbackType = registry.callbacks["nonexistent"]
+        let callbackType = await registry.callbacks["nonexistent"]
         XCTAssertNil(callbackType)
     }
     
     func testClearAllCallbacks() async {
         let registry = CallbackRegistry()
-        registry.register(type: "key1", callback: CustomCallback.self)
-        registry.register(type: "key2", callback: CustomCallback.self)
-        registry.reset()
-        let count = registry.callbacks.count
+        await registry.register(type: "key1", callback: CustomCallback.self)
+        await registry.register(type: "key2", callback: CustomCallback.self)
+        await registry.reset()
+        let count = await registry.callbacks.count
         XCTAssertTrue(count == 0)
     }
     
@@ -78,17 +78,18 @@ final class CallbackRegistryTests: XCTestCase {
                 return input(name)
             }
         }
-        registry.register(type: "type1", callback: CustomCallback.self)
-        registry.register(type: "type2", callback: AnotherCallback.self)
-        let type1 = registry.callbacks["type1"]
-        let type2 = registry.callbacks["type2"]
+        await registry.register(type: "type1", callback: CustomCallback.self)
+        await registry.register(type: "type2", callback: AnotherCallback.self)
+        let type1 = await registry.callbacks["type1"]
+        let type2 = await registry.callbacks["type2"]
         XCTAssertNotNil(type1)
         XCTAssertNotNil(type2)
         XCTAssertTrue(type1 is CustomCallback.Type)
         XCTAssertTrue(type2 is AnotherCallback.Type)
     }
 
-    @MainActor func testConcurrentRegistration() {
+    @MainActor
+    func testConcurrentRegistration() async {
         let registry = CallbackRegistry()
         let expectation = self.expectation(description: "Concurrent registration completes")
         let iterations = 1000 // Increase iterations to make race conditions more likely
@@ -102,7 +103,9 @@ final class CallbackRegistryTests: XCTestCase {
             queue.async { [registry] in
                 DispatchQueue.concurrentPerform(iterations: iterations / 10) { index in
                     let key = "callback_\(queueIndex)_\(index)"
-                    registry.register(type: key, callback: CustomCallback.self)
+                    Task {
+                        await registry.register(type: key, callback: CustomCallback.self)
+                    }
                 }
                 group.leave()
             }
@@ -112,20 +115,23 @@ final class CallbackRegistryTests: XCTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 10.0)
+        // Async XCTest API
+        await fulfillment(of: [expectation], timeout: 10.0)
 
         // Verify count and uniqueness
-        XCTAssertEqual(registry.callbacks.count, iterations)
+        let count = await registry.callbacks.count
+        XCTAssertEqual(count, iterations)
 
         // Verify all keys are present and unique
         let expectedKeys = Set((0..<10).flatMap { queueIndex in
             (0..<(iterations/10)).map { index in "callback_\(queueIndex)_\(index)" }
         })
-        let actualKeys = Set(registry.callbacks.keys)
+        let actualKeys = Set(await registry.callbacks.keys)
         XCTAssertEqual(actualKeys, expectedKeys)
     }
 
-    @MainActor func testConcurrentReadWrite() {
+    @MainActor
+    func testConcurrentReadWrite() async {
         let registry = CallbackRegistry()
         let expectation = self.expectation(description: "Concurrent read/write completes")
         let iterations = 500
@@ -134,11 +140,16 @@ final class CallbackRegistryTests: XCTestCase {
 
         let group = DispatchGroup()
 
-        // Writer queue
+        // Writer: use Swift concurrency to hop onto the actor
         group.enter()
-        DispatchQueue.global().async { [registry] in
-            DispatchQueue.concurrentPerform(iterations: iterations) { index in
-                registry.register(type: "callback_\(index)", callback: CustomCallback.self)
+        Task.detached { [registry] in
+            await withTaskGroup(of: Void.self) { taskGroup in
+                for index in 0..<iterations {
+                    taskGroup.addTask {
+                        await registry.register(type: "callback_\(index)", callback: CustomCallback.self)
+                    }
+                }
+                // Implicitly awaits all child tasks when taskGroup goes out of scope
             }
             group.leave()
         }
@@ -147,9 +158,12 @@ final class CallbackRegistryTests: XCTestCase {
         group.enter()
         DispatchQueue.global().async { [registry, resultsQueue] in
             DispatchQueue.concurrentPerform(iterations: iterations) { _ in
-                let count = registry.callbacks.count
-                resultsQueue.async {
-                    readResults.append(count)
+                // Take a snapshot by hopping to the actor to read count
+                Task {
+                    let count = await registry.callbacks.count
+                    resultsQueue.async {
+                        readResults.append(count)
+                    }
                 }
             }
             group.leave()
@@ -159,10 +173,12 @@ final class CallbackRegistryTests: XCTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectations(timeout: 10.0)
+        // Async XCTest API
+        await fulfillment(of: [expectation], timeout: 10.0)
 
         // Verify final state
-        XCTAssertEqual(registry.callbacks.count, iterations)
+        let finalCount = await registry.callbacks.count
+        XCTAssertEqual(finalCount, iterations)
         XCTAssertFalse(readResults.isEmpty)
     }
 

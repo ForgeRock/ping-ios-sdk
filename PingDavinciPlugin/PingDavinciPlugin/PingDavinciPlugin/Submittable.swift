@@ -8,8 +8,12 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
-/// A protocol representing a self submittable [Collector].
+/// A protocol describing a self-submittable collector or control.
+///
+/// Types conforming to `Submittable` can provide their own event type
+/// to be used when constructing the payload for a "continue" or equivalent submission.
 public protocol Submittable {
-    /// A method returning the eventType of the submittable object.
+    /// Returns the event type string to use for submission.
     func eventType() -> String
 }
+

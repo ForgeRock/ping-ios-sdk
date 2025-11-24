@@ -10,19 +10,26 @@
 
 import PingOrchestrate
 
+/// A typealias mapping Journey to the underlying Workflow type used by the orchestrator.
+/// This provides a convenient name where Journey is exposed to SDK users.
 public typealias Journey = Workflow
 
-/// Define a configuration object
-/// that conforms to `WorkflowConfig` and `Sendable`.
-/// This configuration is used to set up the journey with various parameters such as server URL, realm, cookie, and authentication options.
-///  - Parameters:
-///  - serverUrl: The URL of the server.
-///  - realm: The realm to use for the journey.
-///  - cookie: The cookie name to use for the journey.
-///  - forceAuth: A boolean indicating whether to force authentication.
-///  - noSession: A boolean indicating whether to allow the journey to complete without generating a session.
+/// Configuration for Journey workflows.
+///
+/// Conforms to `WorkflowConfig` and `Sendable`, and holds parameters required
+/// to communicate with the Journey backend.
+/// - Important: Provide `serverUrl` and `realm` appropriate to your deployment.
 public class JourneyConfig: WorkflowConfig, @unchecked Sendable {
+    /// The base URL of the server handling Journey requests, for example:
+    /// https://example.am.com/am
     public var serverUrl: String?
+    
+    /// The realm used for authentication and callback endpoints.
+    /// Defaults to the value in `JourneyConstants.realm`.
     public var realm: String = JourneyConstants.realm
+    
+    /// The cookie name used by the Journey backend.
+    /// Defaults to `JourneyConstants.cookie`.
     public var cookie: String = JourneyConstants.cookie
 }
+

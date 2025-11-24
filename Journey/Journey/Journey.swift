@@ -15,22 +15,32 @@ import PingOidc
 import PingLogger
 import PingJourneyPlugin
 
+/// A typealias mapping Journey to the underlying Workflow type used by the orchestrator.
 public typealias Journey = Workflow
 
-/// Define a struct to hold options for the journey.
-/// This struct contains two properties:
-/// - `forceAuth`: A boolean indicating whether to force authentication.
-/// - `noSession`: A boolean indicating whether to allow the journey to complete without generating a session.
+/// Options that influence how a Journey is initiated or resumed.
+///
+/// - forceAuth: Forces authentication even if a valid session exists.
+/// - noSession: Allows the journey to complete without creating a session.
 public struct Options: Sendable {
+    /// Whether to force authentication even when a valid session exists.
     public var forceAuth: Bool = false
+    /// Whether to allow completion without generating a session.
     public var noSession: Bool = false
 }
 
 // Define the Journey class
 public extension Journey {
-    /// Method to create a Journey instance.
-    /// - Parameter block: The configuration block.
-    /// - Returns: The Journey instance.
+    /// Creates a Journey instance with sensible defaults and optional customization.
+    ///
+    /// This configures:
+    /// - Logging and timeout
+    /// - Default headers via `CustomHeader.config`
+    /// - Node transformation, session management, and OIDC support modules
+    /// - Callback registrations for common Journey callbacks
+    ///
+    /// - Parameter block: An optional configuration closure to customize `JourneyConfig` and modules.
+    /// - Returns: A configured Journey.
     static func createJourney(block: @Sendable (JourneyConfig) -> Void = {_ in }) -> Journey {
         let config = JourneyConfig()
         config.logger = LogManager.standard
@@ -46,25 +56,26 @@ public extension Journey {
         config.module(OidcModule.config)
         
         Task {
-            CallbackRegistry.shared.register(type: JourneyConstants.booleanAttributeInputCallback, callback: BooleanAttributeInputCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.choiceCallback, callback: ChoiceCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.confirmationCallback, callback: ConfirmationCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.consentMappingCallback, callback: ConsentMappingCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.hiddenValueCallback, callback: HiddenValueCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.kbaCreateCallback, callback: KbaCreateCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.metadataCallback, callback: MetadataCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.nameCallback, callback: NameCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.numberAttributeInputCallback, callback: NumberAttributeInputCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.passwordCallback, callback: PasswordCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.pollingWaitCallback, callback: PollingWaitCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.stringAttributeInputCallback, callback: StringAttributeInputCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.suspendedTextOutputCallback, callback: SuspendedTextOutputCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.termsAndConditionsCallback, callback: TermsAndConditionsCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.textInputCallback, callback: TextInputCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.textOutputCallback, callback: TextOutputCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.validatedPasswordCallback, callback: ValidatedPasswordCallback.self)
-            CallbackRegistry.shared.register(type: JourneyConstants.validatedUsernameCallback, callback: ValidatedUsernameCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.booleanAttributeInputCallback, callback: BooleanAttributeInputCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.choiceCallback, callback: ChoiceCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.confirmationCallback, callback: ConfirmationCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.consentMappingCallback, callback: ConsentMappingCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.hiddenValueCallback, callback: HiddenValueCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.kbaCreateCallback, callback: KbaCreateCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.metadataCallback, callback: MetadataCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.nameCallback, callback: NameCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.numberAttributeInputCallback, callback: NumberAttributeInputCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.passwordCallback, callback: PasswordCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.pollingWaitCallback, callback: PollingWaitCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.stringAttributeInputCallback, callback: StringAttributeInputCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.suspendedTextOutputCallback, callback: SuspendedTextOutputCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.termsAndConditionsCallback, callback: TermsAndConditionsCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.textInputCallback, callback: TextInputCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.textOutputCallback, callback: TextOutputCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.validatedPasswordCallback, callback: ValidatedPasswordCallback.self)
+            await CallbackRegistry.shared.register(type: JourneyConstants.validatedUsernameCallback, callback: ValidatedUsernameCallback.self)
             
+            // Optional dynamic registrations for auxiliary modules
             if let c: NSObject.Type = NSClassFromString("PingProtect.ProtectCallbacks") as? NSObject.Type {
                 c.perform(Selector(("registerCallbacks")))
             }
@@ -90,11 +101,12 @@ public extension Journey {
         return Journey(config: config)
     }
     
-    /// Starts the journey with the provided login and configuration block.
+    /// Starts a Journey by name with optional options configuration.
+    ///
     /// - Parameters:
-    /// - login: The login identifier to start the journey.
-    /// - block:  A block to configure the `Options` struct.
-    /// - Returns: A `Node` representing the start of the journey.
+    ///   - journeyName: The name of the Journey (auth tree) to start.
+    ///   - configure: Optional closure to modify `Options` before starting.
+    /// - Returns: The first `Node` returned by the Journey start.
     func start(_ journeyName: String, configure: @Sendable (inout Options) -> Void = { _ in }) async -> Node {
         var options = Options()
         configure(&options)
@@ -111,11 +123,12 @@ public extension Journey {
         return await start(request)
     }
     
-    /// Resumes the journey with the provided URI and configuration block.
+    /// Resumes a Journey from a suspended URI with optional options configuration.
+    ///
     /// - Parameters:
-    /// - uri: The URI to resume the journey.
-    /// - block:  A block to configure the `Options` struct.
-    /// - Returns: A `Node` representing the resumed journey.
+    ///   - uri: The resume URI containing the suspendedId parameter.
+    ///   - configure: Optional closure to modify `Options` before resuming.
+    /// - Returns: The next `Node` returned by the Journey resume, or a `FailureNode` if URI is invalid.
     func resume(_ uri: URL, configure: @Sendable (inout Options) -> Void = { _ in }) async -> Node {
         var options = Options()
         configure(&options)
@@ -137,13 +150,17 @@ public extension Journey {
         }
     }
     
+    /// Signs off the Journey session and performs any configured cleanup.
+    ///
+    /// - Returns: `.success(())` on success or `.failure(Error)` if sign-off fails.
     func journeySignOff() async -> Result<Void, Error> {
         return await signOff()
     }
     
-    /// Sends a request and returns the response.
-    /// - Parameter request: The request to be sent.
-    /// - Returns: The response received.
+    /// Sends a request using the configured HTTP client and wraps the response.
+    ///
+    /// - Parameter request: The request to send.
+    /// - Returns: A `Response` containing the raw data and `HTTPURLResponse`.
     private func send(_ request: Request) async throws -> Response {
         let (data, urlResponse) = try await config.httpClient.sendRequest(request: request)
         return HttpResponse(data: data, response: urlResponse)
@@ -151,19 +168,19 @@ public extension Journey {
 }
 
 extension Locale {
-    /// Returns an array of `Locale` objects corresponding to the user's preferred languages.
+    /// The user's preferred locales, derived from `Locale.preferredLanguages`.
     public static var preferredLocales: [Locale] {
         Locale.preferredLanguages.map {Locale(identifier: $0)}
     }
 }
 
 extension Array where Element == Locale {
-    /// Converts an array of `Locale` objects to an `Accept-Language` header value.
-    /// This method creates a comma-separated string where each locale is represented by its identifier,
-    /// optionally with a quality (`q`) value. The first locale is added without a quality value, and subsequent
-    /// locales are appended with a quality value that decreases by 0.1 for each additional locale.
+    /// Formats locales as a value suitable for the `Accept-Language` HTTP header.
     ///
-    /// - Returns: A `String` formatted as an `Accept-Language` header value.
+    /// Produces a comma-separated list of language tags with descending q-values.
+    /// The first locale is unweighted; subsequent entries decrement by 0.1 down to a minimum of 0.1.
+    ///
+    /// - Returns: A properly formatted `Accept-Language` value, or an empty string if no locales.
     public func toAcceptLanguage() -> String {
         if isEmpty { return "" }
         
@@ -191,3 +208,4 @@ extension Array where Element == Locale {
         return languageTags.joined(separator: ", ")
     }
 }
+

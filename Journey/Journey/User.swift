@@ -2,10 +2,10 @@
 //  User.swift
 //  Journey
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+// Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
-//  This software may be modified and distributed under the terms
-//  of the MIT license. See the LICENSE file for details.
+// This software may be modified and distributed under the terms
+// of the MIT license. See the LICENSE file for details.
 //
 
 import PingOidc
@@ -13,10 +13,14 @@ import PingOrchestrate
 import PingJourneyPlugin
 
 extension Journey {
-    /// Retrieves the current user associated with the journey.
-    /// This method checks if a user is already cached in the shared context.
-    /// If not, it attempts to initialize the journey and retrieve the user from the session.
-    /// - Returns: An optional User instance if available, otherwise nil.
+    /// Returns the current authenticated user for this Journey, if available.
+    ///
+    /// This will:
+    /// - Initialize the Journey if needed
+    /// - Return a cached user if present
+    /// - If a session exists, prepare and cache a `UserDelegate` backed by `OidcUser`
+    ///
+    /// - Returns: A `User` if available, otherwise `nil`.
     public func journeyUser() async -> User? {
         try? await initialize()
         
@@ -32,13 +36,13 @@ extension Journey {
         return nil
     }
     
-    /// Prepares a UserDelegate for the given journey and user.
-    /// This method creates a UserDelegate instance and caches it in the shared context.
+    /// Prepares and caches a `UserDelegate` for this Journey and the provided `User`.
+    ///
     /// - Parameters:
-    /// - journey: The Journey instance.
-    /// - user: The User instance to be prepared.
-    /// - session: The Session instance, defaulting to an empty session.
-    /// - Returns: A UserDelegate instance that wraps the provided user and session.
+    ///   - journey: The Journey instance.
+    ///   - user: The user implementation to wrap (typically `OidcUser`).
+    ///   - session: The session to associate with the user, defaults to `EmptySession()`.
+    /// - Returns: The prepared `UserDelegate`.
     func prepareUser(
         journey: Journey,
         user: User,
@@ -52,38 +56,45 @@ extension Journey {
 }
 
 extension SuccessNode {
-    /// Extension property for SuccessNode to cast the `SuccessNode.session` to a User.
+    /// Convenience accessor that attempts to cast the session to a `User`.
     public var user: User? {
         return session as? User
     }
 }
 
 extension User {
-    /// Extension property for User to cast the `User.session` to a Session.
+    /// Convenience accessor that attempts to cast the user to a `Session`.
     public var session: Session? {
         return self as? Session
     }
 }
 
-/// Struct representing a UserDelegate.
-/// This struct is a delegate for the User and Session interfaces.
-/// It overrides the logout function to remove the cached user from the context and sign off the user.
-/// - property journey: The Journey instance.
-/// - property user: The user.
-/// - property session: The session.
+/// A delegate that adapts a `User` to also conform to `Session` while
+/// providing Journey-aware logout behavior.
+///
+/// On `logout()`, the cached user is removed and `journey.signOff()` is invoked.
 struct UserDelegate: User, Session, Sendable {
+    /// The Journey instance associated with this user.
     private let journey: Journey
+    /// The underlying user implementation (e.g., `OidcUser`).
     private let user: User
+    /// The associated session implementation.
     private let session: Session
     
+    /// Creates a new `UserDelegate`.
+    /// - Parameters:
+    ///   - journey: The Journey instance.
+    ///   - user: The underlying user.
+    ///   - session: The associated session.
     init(journey: Journey, user: User, session: Session) {
         self.journey = journey
         self.user = user
         self.session = session
     }
     
-    /// Method to log out the user.
-    /// This method removes the cached user from the context and signs off the user.
+    /// Logs out the user:
+    /// - Removes the cached user from the shared context
+    /// - Calls `journey.signOff()` to end the Journey session
     func logout() async {
         // remove the cached user from the context
         _ = journey.sharedContext.removeValue(forKey: SharedContext.Keys.userKey)
@@ -91,34 +102,35 @@ struct UserDelegate: User, Session, Sendable {
         _ = await journey.signOff()
     }
     
-    /// User token retrieval method.
-    /// - Returns: A Result containing the Token or an OidcError.
+    /// Retrieves the current token.
+    /// - Returns: A `Result` containing a `Token` on success or `OidcError` on failure.
     func token() async -> Result<Token, OidcError> {
         return await user.token()
     }
     
-    /// Method to refresh the user token.
-    /// - Returns: A Result containing the refreshed Token or an OidcError.
+    /// Refreshes the token.
+    /// - Returns: A `Result` containing the refreshed `Token` or `OidcError` on failure.
     func refresh() async -> Result<Token, OidcError> {
         await user.refresh()
     }
     
-    /// Method to revoke the user's token.
+    /// Revokes the user's token.
     func revoke() async {
         await user.revoke()
     }
     
-    /// Method to retrieve user information.
-    /// - Parameter cache: A Boolean indicating whether to use cached user information.
-    /// - Returns: A Result containing the UserInfo or an OidcError.
+    /// Retrieves user info.
+    /// - Parameter cache: Whether to use cached user info if available.
+    /// - Returns: A `Result` containing `UserInfo` or `OidcError`.
     func userinfo(cache: Bool) async -> Result<UserInfo, OidcError> {
         await user.userinfo(cache: cache)
     }
     
-    /// Getter to retrieve the session value.
+    /// The session value string.
     var value: String {
         get {
             return session.value
         }
     }
 }
+

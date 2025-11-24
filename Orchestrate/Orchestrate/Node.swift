@@ -88,6 +88,11 @@ public struct SuccessNode: Node {
     }
 }
 
+/// An interface that should be implemented by classes that need to be aware of the ContinueNode.
+/// The continueNode will be injected to the classes that implement this interface.
+public protocol ContinueNodeAware {
+    var continueNode: ContinueNode? { get set }
+}
 
 /// Abstract class for a ContinueNode node in the workflow.
 /// - property context: The context for the node.

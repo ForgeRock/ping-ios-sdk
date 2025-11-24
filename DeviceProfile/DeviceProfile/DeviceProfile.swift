@@ -27,7 +27,7 @@ import PingJourneyPlugin
 /// ## Usage Example
 /// ```swift
 /// // In AppDelegate or SceneDelegate
-/// DeviceProfile.registerCallbacks()
+/// Task { await DeviceProfile.registerCallbacks() }
 /// ```
 ///
 /// ## Architecture
@@ -63,17 +63,19 @@ class DeviceProfile: NSObject {
     ///     func application(_ application: UIApplication,
     ///                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     ///         // Register device profiling capability
-    ///         DeviceProfile.registerCallbacks()
+    ///         Task { await DeviceProfile.registerCallbacks() }
     ///         return true
     ///     }
     /// }
     /// ```
     @objc
     public static func registerCallbacks() {
-        CallbackRegistry.shared.register(
-            type: JourneyConstants.deviceProfileCallback,
-            callback: DeviceProfileCallback.self
-        )
+        Task {
+            await CallbackRegistry.shared.register(
+                type: JourneyConstants.deviceProfileCallback,
+                callback: DeviceProfileCallback.self
+            )
+        }
     }
 }
 

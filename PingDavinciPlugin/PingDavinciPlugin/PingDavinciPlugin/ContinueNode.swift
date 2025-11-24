@@ -1,5 +1,5 @@
 // 
-//  ContinueNodeAware.swift
+//  ContinueNode.swift
 //  PingDavinciPlugin
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
@@ -9,12 +9,6 @@
 //
 
 import PingOrchestrate
-
-/// An interface that should be implemented by classes that need to be aware of the ContinueNode.
-/// The continueNode will be injected to the classes that implement this interface.
-public protocol ContinueNodeAware {
-    var continueNode: ContinueNode? { get set }
-}
 
 extension ContinueNode {
     /// Returns the list of collectors from the actions.
