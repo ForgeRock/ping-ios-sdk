@@ -183,7 +183,7 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/..\/..\/..\/Desktop\/DeviceClient\/DeviceClient.xcodeproj",
+        "containerPath" : "container:..\/DeviceClient\/DeviceClient.xcodeproj",
         "identifier" : "A570D4CB2ECC0D6200CBBCCF",
         "name" : "DeviceClientTests"
       }

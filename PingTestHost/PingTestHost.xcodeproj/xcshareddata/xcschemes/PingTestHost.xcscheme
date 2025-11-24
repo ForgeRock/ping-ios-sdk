@@ -406,7 +406,7 @@
                BlueprintIdentifier = "A570D4CB2ECC0D6200CBBCCF"
                BuildableName = "DeviceClientTests.xctest"
                BlueprintName = "DeviceClientTests"
-               ReferencedContainer = "container:../../../../Desktop/DeviceClient/DeviceClient.xcodeproj">
+               ReferencedContainer = "container:../DeviceClient/DeviceClient.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
