@@ -409,6 +409,16 @@
                ReferencedContainer = "container:../DeviceClient/DeviceClient.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B7C49B82EAAB6E300E3C0AC"
+               BuildableName = "PushTests.xctest"
+               BlueprintName = "PushTests"
+               ReferencedContainer = "container:../Push/Push.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

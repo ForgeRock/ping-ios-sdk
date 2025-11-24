@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 LIBRARIES=("PingLogger" "PingStorage" "PingBrowser" "PingOrchestrate" "PingOidc" "PingDavinci" "PingExternalIdP" "PingExternalIdPApple" "PingExternalIdPGoogle" "PingExternalIdPFacebook" "PingOneProtect")
 
 # Version being published for all libraries
-VERSION="1.3.0"
+VERSION="1.3.1"
 
 # Maximum waiting time in seconds (60 minutes = 3600 seconds)
 MAX_WAIT_TIME=3600

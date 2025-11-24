@@ -83,11 +83,11 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
             if let deviceName = deviceName, !deviceName.isEmpty { // Only add if deviceName has content
                 finalData += "\(FidoConstants.DATA_SEPARATOR)\(deviceName)"
             }
-            
+            let authenticatorAttachment = response[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String ?? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
             let callbackValue: String
             if self.supportsJsonResponse {
                 let jsonResponse: [String: Any] = [
-                    FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: FidoConstants.AUTHENTICATOR_PLATFORM,
+                    FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: authenticatorAttachment,
                     FidoConstants.FIELD_LEGACY_DATA: finalData
                 ]
                 // Safely create JSON string

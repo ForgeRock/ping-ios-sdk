@@ -9,7 +9,8 @@
 //
 
 import XCTest
-@testable import PingOath
+@testable import PingMfaCommons
+
 
 final class Base32Tests: XCTestCase {
 

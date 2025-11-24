@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingExternalIdP'
-  s.version          = '1.3.0'
+  s.version          = '1.3.1'
   s.summary          = 'PingExternalIdP module for the Ping iOS SDK'
   s.description      = <<-DESC
   The PingExternalIdP module for the Ping iOS SDK is a library for Authentication with external IDPs when using the Ping iOS SDK.
@@ -33,7 +33,7 @@ Pod::Spec.new do |s|
     'External-idp' => [base_dir + '/*.xcprivacy']
   }
 
-  s.ios.dependency 'PingDavinci', '~> 1.3.0'
-  s.ios.dependency 'PingBrowser', '~> 1.3.0'
+  s.ios.dependency 'PingDavinci', '~> 1.3.1'
+  s.ios.dependency 'PingBrowser', '~> 1.3.1'
     
 end
