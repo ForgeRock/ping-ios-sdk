@@ -26,7 +26,7 @@ occur during the authentication process.
   s.module_name   = 'PingDavinci'
   s.swift_versions = ['5.0', '5.1', '6.0']
 
-  s.ios.deployment_target = '13.0'
+  s.ios.deployment_target = '16.0'
 
   base_dir = "Davinci/Davinci"
   s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.c', base_dir + '/**/*.h'
@@ -34,6 +34,7 @@ occur during the authentication process.
     'Davinci' => [base_dir + '/*.xcprivacy']
   }
   
+  s.ios.dependency 'PingDavinciPlugin', '~> 1.0'
   s.ios.dependency 'PingOidc', '~> 1.3.1'
     
 end

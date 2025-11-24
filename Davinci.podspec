@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint PingExternalIdPFacebook.podspec' to ensure this is a
+# Be sure to run `pod lib lint Davinci.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -7,11 +7,12 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'PingExternalIdPFacebook'
+  s.name             = 'Davinci'
   s.version          = '1.3.1'
-  s.summary          = 'PingExternalIdPFacebook module for the Ping iOS SDK'
+  s.summary          = 'Davinci SDK for iOS'
   s.description      = <<-DESC
-  The PingExternalIdPFacebook module for the Ping iOS SDK is a library for Authentication with external IDP Facebook when using the Ping iOS SDK.
+  The Davinci SDK is a powerful and flexible library for Authentication and Authorization. It is designed to be easy to use and extensible. It provides a simple API for navigating the authentication flow and handling the various states that can
+occur during the authentication process.
                        DESC
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
@@ -22,18 +23,18 @@ Pod::Spec.new do |s|
       :tag => s.version.to_s
   }
 
-  s.module_name = 'PingExternalIdPFacebook'
+  s.module_name   = 'Davinci'
   s.swift_versions = ['5.0', '5.1', '6.0']
 
-  s.ios.deployment_target = '16.0'
+  s.ios.deployment_target = '13.0'
 
-  base_dir = "ExternalIdPFacebook/ExternalIdPFacebook"
+  base_dir = "Davinci/Davinci"
   s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.c', base_dir + '/**/*.h'
   s.resource_bundles = {
-    'External-idp' => [base_dir + '/*.xcprivacy']
+    'Davinci' => [base_dir + '/*.xcprivacy']
   }
-
-  s.ios.dependency 'PingExternalIdP', '~> 1.3.1'
-  s.ios.dependency 'FBSDKLoginKit', '~> 16.3.1'
+  
+  s.ios.dependency 'PingOidc', '~> 1.3.1'
+  s.ios.dependency 'DavinciPlugin', '~> 1.0'
     
 end

@@ -13,6 +13,7 @@ import AuthenticationServices
 import PingLogger
 import SafariServices
 import Combine
+import UIKit
 
 /// BrowserType enum to specify the type of external user-agent;
 /// ASWebAuthenticationSession, Native Browser App,  SFSafariViewController,

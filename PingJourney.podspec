@@ -1,17 +1,9 @@
-#
-# Be sure to run `pod lib lint PingStorage.podspec' to ensure this is a
-# valid spec before submitting.
-#
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see https://guides.cocoapods.org/syntax/podspec.html
-#
-
 Pod::Spec.new do |s|
-  s.name             = 'PingStorage'
+  s.name             = 'PingJourney'
   s.version          = '1.3.1'
-  s.summary          = 'PingStorage SDK for iOS'
+  s.summary          = 'PingJourney SDK for iOS'
   s.description      = <<-DESC
-  The PingStorage SDK provides a flexible storage interface and a set of common storage solutions for the Ping SDKs.
+  The PingJourney SDK is a powerful and flexible library for Authentication and Authorization.
                        DESC
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
@@ -22,14 +14,17 @@ Pod::Spec.new do |s|
       :tag => s.version.to_s
   }
 
-  s.module_name   = 'PingStorage'
+  s.module_name   = 'PingJourney'
   s.swift_versions = ['5.0', '5.1', '6.0']
-
   s.ios.deployment_target = '16.0'
 
-  base_dir = "Storage/Storage"
+  base_dir = "Journey/Journey"
   s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.c', base_dir + '/**/*.h'
   s.resource_bundles = {
-    'Storage' => [base_dir + '/*.xcprivacy']
+    'Journey' => [base_dir + '/*.xcprivacy']
   }
+  
+  s.ios.dependency 'PingJourneyPlugin', '~> 1.0'
+  s.ios.dependency 'PingOidc', '~> 1.3.1'
+  s.ios.dependency 'PingOrchestrate', '~> 1.3.1'
 end

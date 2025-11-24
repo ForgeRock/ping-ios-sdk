@@ -1,3 +1,4 @@
+// swift-tools-version: 5.9
 //
 // Package.swift
 //
@@ -7,7 +8,6 @@
 // of the MIT license. See the LICENSE file for details.
 //
 
-// swift-tools-version: 5.9
 import PackageDescription
 
 let package = Package(
