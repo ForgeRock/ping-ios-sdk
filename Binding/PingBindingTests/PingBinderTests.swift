@@ -67,7 +67,7 @@ class PingBinderTests: XCTestCase {
                 {"type":"DeviceSigningVerifierCallback","output":[{"name":"userId","value":"id=8ae8fada-3663-4d37-87c3-f3286d9cb75b,ou=user,o=alpha,ou=services,ou=am-config"},{"name":"challenge","value":"gSP9Qx1tIfj7a/ryMwl4jVWOZRkKErMFyQz8KAWtLdo="},{"name":"title","value":"Authentication required"},{"name":"subtitle","value":"Cryptography device binding"},{"name":"description","value":"Please complete with biometric to proceed"},{"name":"timeout","value":60}],"input":[{"name":"IDToken1jws","value":""},{"name":"IDToken1clientError","value":""}]}
         """
         let signData = signJsonString.toDictionary()!
-        let signCallback = DeviceSigningVerifierCallback().initialize(with: data) as! DeviceSigningVerifierCallback
+        let signCallback = DeviceSigningVerifierCallback().initialize(with: signData) as! DeviceSigningVerifierCallback
         
         // Given - Bind first
         _ = try await Binding.bind(callback: bindCallback, journey: nil) { config in
