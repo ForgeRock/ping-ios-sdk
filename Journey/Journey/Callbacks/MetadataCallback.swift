@@ -12,10 +12,12 @@ import Foundation
 import PingOrchestrate
 import PingJourneyPlugin
 
+
 /// A callback for providing metadata that can transform into specialized callbacks based on content.
-public class MetadataCallback: AbstractCallback, MetadataCallbackProtocol, ObservableObject, @unchecked Sendable, ContinueNodeAware, JourneyAware {
+public class MetadataCallback: AbstractCallback, MetadataCallbackProtocol,ObservableObject, @unchecked Sendable, ContinueNodeAware, JourneyAware {
     
     public var journey: Journey?
+    
     public var continueNode: ContinueNode?
 
     /// The metadata value
@@ -33,34 +35,78 @@ public class MetadataCallback: AbstractCallback, MetadataCallbackProtocol, Obser
         }
     }
 
-    public override func initialize(with json: [String: Any]) -> any Callback {
-        _ = super.initialize(with: json)
-        // Specialization now occurs in CallbackRegistry.callback(from:).
+    public override func initialize(with json: [String: Any]) async -> any Callback {
+        _ = await super.initialize(with: json)
+
+        // Check if we should create a specialized callback
+        if isProtectInitialize() {
+            if let callbackClass = await CallbackRegistry.shared.type(for: Constants.PING_ONE_PROTECT_INITIALIZE_CALLBACK) {
+                return await callbackClass.init().initialize(with: json)
+            }
+        } else if isProtectEvaluation() {
+            if let callbackClass = await CallbackRegistry.shared.type(for: Constants.PING_ONE_PROTECT_EVALUATION_CALLBACK) {
+                return await callbackClass.init().initialize(with: json)
+            }
+        } else if isFidoRegistration() {
+            if let callbackClass = await CallbackRegistry.shared.type(for: Constants.FIDO_2_REGISTRATION_CALLBACK) {
+                let callback = callbackClass.init()
+                if var journeyAware = callback as? JourneyAware {
+                    journeyAware.journey = self.journey
+                }
+                if var continueNodeAware = callback as? ContinueNodeAware {
+                    continueNodeAware.continueNode = self.continueNode
+                }
+                return await callback.initialize(with: self.json)
+            }
+        } else if isFidoAuthentication() {
+            if let callbackClass = await CallbackRegistry.shared.type(for: Constants.FIDO_2_AUTHENTICATION_CALLBACK) {
+                let callback = callbackClass.init()
+                if var journeyAware = callback as? JourneyAware {
+                    journeyAware.journey = self.journey
+                }
+                if var continueNodeAware = callback as? ContinueNodeAware {
+                    continueNodeAware.continueNode = self.continueNode
+                }
+                return await callback.initialize(with: self.json)
+            }
+        }
+
         return self
     }
 
-    // The following helpers remain in case other parts of the app need them in the future,
-    // but specialization is no longer performed here.
+    /// Checks if this metadata represents FIDO registration
     private func isFidoRegistration() -> Bool {
+        // _action is provided AM version >= AM 7.1
         if let action = value[Constants.ACTION] as? String, action == Constants.WEBAUTHN_REGISTRATION {
             return true
         }
+
+        // Checking for existence and content of _TYPE and either PUB_KEY_CRED_PARAMS
+        // or _PUB_KEY_CRED_PARAMS
         if let type = value[Constants.TYPE] as? String, type == Constants.WEB_AUTHN {
             return value.keys.contains(Constants.PUB_KEY_CRED_PARAMS) || value.keys.contains(Constants._PUB_KEY_CRED_PARAMS)
         }
+
         return false
     }
 
+    /// Checks if this metadata represents FIDO authentication
     private func isFidoAuthentication() -> Bool {
+        // _action is provided AM version >= AM 7.1
         if let action = value[Constants.ACTION] as? String, action == Constants.WEBAUTHN_AUTHENTICATION {
             return true
         }
+
+        // Checking for existence and content of _TYPE and not with PUB_KEY_CRED_PARAMS
+        // and _PUB_KEY_CRED_PARAMS
         if let type = value[Constants.TYPE] as? String, type == Constants.WEB_AUTHN {
             return value.keys.contains(Constants.ALLOW_CREDENTIALS) || value.keys.contains(Constants._ALLOW_CREDENTIALS)
         }
+
         return false
     }
 
+    /// Checks if this metadata represents PingOne Protect initialization
     private func isProtectInitialize() -> Bool {
         guard let type = value[Constants.TYPE] as? String, type == Constants.PING_ONE_PROTECT,
               let action = value[Constants.ACTION] as? String, action == Constants.PROTECT_INITIALIZE else {
@@ -69,6 +115,7 @@ public class MetadataCallback: AbstractCallback, MetadataCallbackProtocol, Obser
         return true
     }
 
+    /// Checks if this metadata represents PingOne Protect evaluation
     private func isProtectEvaluation() -> Bool {
         guard let type = value[Constants.TYPE] as? String, type == Constants.PING_ONE_PROTECT,
               let action = value[Constants.ACTION] as? String, action == Constants.PROTECT_RISK_EVALUATION else {

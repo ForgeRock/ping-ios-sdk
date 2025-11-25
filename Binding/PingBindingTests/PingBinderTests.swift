@@ -40,7 +40,7 @@ class PingBinderTests: XCTestCase {
                 {"type":"DeviceBindingCallback","output":[{"name":"userId","value":"id=8ae8fada-3663-4d37-87c3-f3286d9cb75b,ou=user,o=alpha,ou=services,ou=am-config"},{"name":"username","value":"gbafal"},{"name":"authenticationType","value":"NONE"},{"name":"challenge","value":"AZrz80IwNkYoXMcmlEBZa29mRwwsGI/PkJb6xLRAZVo="},{"name":"title","value":"Authentication required"},{"name":"subtitle","value":"Cryptography device binding"},{"name":"description","value":"Please complete with biometric to proceed"},{"name":"timeout","value":60},{"name":"attestation","value":true}],"input":[{"name":"IDToken1jws","value":""},{"name":"IDToken1deviceName","value":""},{"name":"IDToken1deviceId","value":""},{"name":"IDToken1clientError","value":""}]}
         """
         let data = jsonString.toDictionary()!
-        let callback = DeviceBindingCallback().initialize(with: data) as! DeviceBindingCallback
+        let callback = await DeviceBindingCallback().initialize(with: data) as! DeviceBindingCallback
         
         // When
         let jws = try await Binding.bind(callback: callback, journey: nil) { config in
@@ -61,13 +61,13 @@ class PingBinderTests: XCTestCase {
                 {"type":"DeviceBindingCallback","output":[{"name":"userId","value":"id=8ae8fada-3663-4d37-87c3-f3286d9cb75b,ou=user,o=alpha,ou=services,ou=am-config"},{"name":"username","value":"gbafal"},{"name":"authenticationType","value":"NONE"},{"name":"challenge","value":"AZrz80IwNkYoXMcmlEBZa29mRwwsGI/PkJb6xLRAZVo="},{"name":"title","value":"Authentication required"},{"name":"subtitle","value":"Cryptography device binding"},{"name":"description","value":"Please complete with biometric to proceed"},{"name":"timeout","value":60},{"name":"attestation","value":true}],"input":[{"name":"IDToken1jws","value":""},{"name":"IDToken1deviceName","value":""},{"name":"IDToken1deviceId","value":""},{"name":"IDToken1clientError","value":""}]}
         """
         let data = jsonString.toDictionary()!
-        let bindCallback = DeviceBindingCallback().initialize(with: data) as! DeviceBindingCallback
+        let bindCallback = await DeviceBindingCallback().initialize(with: data) as! DeviceBindingCallback
         
         let signJsonString = """
                 {"type":"DeviceSigningVerifierCallback","output":[{"name":"userId","value":"id=8ae8fada-3663-4d37-87c3-f3286d9cb75b,ou=user,o=alpha,ou=services,ou=am-config"},{"name":"challenge","value":"gSP9Qx1tIfj7a/ryMwl4jVWOZRkKErMFyQz8KAWtLdo="},{"name":"title","value":"Authentication required"},{"name":"subtitle","value":"Cryptography device binding"},{"name":"description","value":"Please complete with biometric to proceed"},{"name":"timeout","value":60}],"input":[{"name":"IDToken1jws","value":""},{"name":"IDToken1clientError","value":""}]}
         """
         let signData = signJsonString.toDictionary()!
-        let signCallback = DeviceSigningVerifierCallback().initialize(with: data) as! DeviceSigningVerifierCallback
+        let signCallback = await DeviceSigningVerifierCallback().initialize(with: signData) as! DeviceSigningVerifierCallback
         
         // Given - Bind first
         _ = try await Binding.bind(callback: bindCallback, journey: nil) { config in

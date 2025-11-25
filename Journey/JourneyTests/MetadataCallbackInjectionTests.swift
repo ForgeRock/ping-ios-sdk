@@ -16,15 +16,21 @@ import XCTest
 private final class TestInjectableProtectInitCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @unchecked Sendable {
     var journey: Journey?
     var continueNode: ContinueNode?
+    public override func initValue(name: String, value: Any) {}
 }
 
 private final class TestInjectableFidoAuthCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @unchecked Sendable {
     var journey: Journey?
     var continueNode: ContinueNode?
+    
+    public override func initValue(name: String, value: Any) {}
 }
 
 // Metadata registration key double
-private final class TestMetadataCallback: MetadataCallback, @unchecked Sendable { }
+private final class TestMetadataCallback: MetadataCallback, @unchecked Sendable {
+    
+    
+}
 
 // Minimal fake Journey. In your codebase, Journey is a typealias to Workflow,
 // so we’ll use a concrete Workflow subclass instead where needed.
@@ -52,6 +58,11 @@ private extension FlowContext {
 private final class FakeContinueNode: ContinueNode, @unchecked Sendable {
     init() {
         super.init(context: .fake(), workflow: FakeWorkflow(), input: [:], actions: [])
+    }
+    
+    // New initializer that carries callbacks into actions so injection can see them
+    init(callbacks: [any Callback]) {
+        super.init(context: .fake(), workflow: FakeWorkflow(), input: [:], actions: callbacks)
     }
 
     override func asRequest() -> Request { Request() }
@@ -86,7 +97,8 @@ final class MetadataCallbackInjectionTests: XCTestCase {
 
         // Use a real Workflow instance (Journey is a typealias to Workflow)
         let journey = Workflow(config: WorkflowConfig())
-        let node = FakeContinueNode()
+        // Provide the produced callbacks to the node so injection can find them
+        let node = FakeContinueNode(callbacks: callbacks)
 
         await CallbackRegistry.shared.inject(continueNode: node, journey: journey)
 
@@ -117,7 +129,8 @@ final class MetadataCallbackInjectionTests: XCTestCase {
 
         // Use a real Workflow instance (Journey is a typealias to Workflow)
         let journey = Workflow(config: WorkflowConfig())
-        let node = FakeContinueNode()
+        // Provide the produced callbacks to the node so injection can find them
+        let node = FakeContinueNode(callbacks: callbacks)
 
         await CallbackRegistry.shared.inject(continueNode: node, journey: journey)
 
@@ -142,3 +155,4 @@ private func makeMetadataItem(typeKey: String, data: [String: Any]) -> [String: 
         JourneyConstants.input: []
     ]
 }
+

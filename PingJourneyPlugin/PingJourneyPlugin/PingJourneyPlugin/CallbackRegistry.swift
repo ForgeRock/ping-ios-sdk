@@ -53,7 +53,7 @@ public actor CallbackRegistry {
     /// Each dictionary should have a "type" field that matches a registered Callback type.
     /// - Parameter array: The array of dictionaries to create the Callbacks from.
     /// - Returns: A list of Callback instances (metadata callbacks are filtered out).
-    public func callback(from array: [[String: Any]]) -> Callbacks {
+    public func callback(from array: [[String: Any]]) async -> Callbacks {
         var list = Callbacks()
         for item in array {
             guard let typeKey = item[JourneyConstants.type] as? String,
@@ -61,18 +61,13 @@ public actor CallbackRegistry {
                 continue
             }
 
-            // If this is a MetadataCallback, attempt to specialize synchronously
-            let concreteType: any Callback.Type
-            if registeredType is MetadataCallbackProtocol.Type,
-               let specialized = specializedType(for: item) {
-                concreteType = specialized
-            } else {
-                concreteType = registeredType
-            }
+            // Instantiate the registered type. If it's a MetadataCallback, it may specialize itself
+            // in its initialize(with:) implementation and return a different concrete instance.
+            let produced = await registeredType.init().initialize(with: item)
 
-            let callback = concreteType.init().initialize(with: item)
-            if !(callback is MetadataCallbackProtocol) {
-                list.append(callback)
+            // Filter out metadata-only callbacks from the returned list
+            if !(produced is MetadataCallbackProtocol) {
+                list.append(produced)
             }
         }
         return list
@@ -97,107 +92,13 @@ public actor CallbackRegistry {
     public func reset() {
         callbacksStorage.removeAll()
     }
-}
 
-// MARK: - Specialization helpers (internal to actor)
-extension CallbackRegistry {
-    /// Attempt to resolve a specialized callback type for a metadata item.
-    /// - Parameter item: Raw JSON dictionary describing the callback.
-    /// - Returns: A registered Callback.Type if a specialization is applicable; otherwise nil.
-    private func specializedType(for item: [String: Any]) -> (any Callback.Type)? {
-        // Extract metadata value from output[data]
-        guard let output = item[JourneyConstants.output] as? [[String: Any]],
-              let dataEntry = output.first(where: { ($0[JourneyConstants.name] as? String) == JourneyConstants.data }),
-              let value = dataEntry[JourneyConstants.value] as? [String: Any] else {
-            return nil
-        }
-
-        // Decide specialization
-        if isProtectInitialize(value: value),
-           let t = callbacksStorage[SpecializationConstants.pingOneProtectInitialize] {
-            return t
-        }
-        if isProtectEvaluation(value: value),
-           let t = callbacksStorage[SpecializationConstants.pingOneProtectEvaluation] {
-            return t
-        }
-        if isFidoRegistration(value: value),
-           let t = callbacksStorage[SpecializationConstants.fidoRegistration] {
-            return t
-        }
-        if isFidoAuthentication(value: value),
-           let t = callbacksStorage[SpecializationConstants.fidoAuthentication] {
-            return t
-        }
-        return nil
+    /// Accessor for a registered metatype by key, used by MetadataCallback specialization.
+    /// - Parameters:
+    ///   - key: String
+    /// - Returns: A Callback type
+    public func type(for key: String) -> (any Callback.Type)? {
+        callbacksStorage[key]
     }
-
-    private func isFidoRegistration(value: [String: Any]) -> Bool {
-        if let action = value[SpecializationConstants.action] as? String,
-           action == SpecializationConstants.webauthnRegistration {
-            return true
-        }
-        if let type = value[SpecializationConstants.type] as? String,
-           type == SpecializationConstants.webAuthn {
-            return value.keys.contains(SpecializationConstants.pubKeyCredParams)
-                || value.keys.contains(SpecializationConstants._pubKeyCredParams)
-        }
-        return false
-    }
-
-    private func isFidoAuthentication(value: [String: Any]) -> Bool {
-        if let action = value[SpecializationConstants.action] as? String,
-           action == SpecializationConstants.webauthnAuthentication {
-            return true
-        }
-        if let type = value[SpecializationConstants.type] as? String,
-           type == SpecializationConstants.webAuthn {
-            return value.keys.contains(SpecializationConstants.allowCredentials)
-                || value.keys.contains(SpecializationConstants._allowCredentials)
-        }
-        return false
-    }
-
-    private func isProtectInitialize(value: [String: Any]) -> Bool {
-        guard let type = value[SpecializationConstants.type] as? String,
-              type == SpecializationConstants.pingOneProtect,
-              let action = value[SpecializationConstants.action] as? String,
-              action == SpecializationConstants.protectInitialize else {
-            return false
-        }
-        return true
-    }
-
-    private func isProtectEvaluation(value: [String: Any]) -> Bool {
-        guard let type = value[SpecializationConstants.type] as? String,
-              type == SpecializationConstants.pingOneProtect,
-              let action = value[SpecializationConstants.action] as? String,
-              action == SpecializationConstants.protectRiskEvaluation else {
-            return false
-        }
-        return true
-    }
-}
-
-private enum SpecializationConstants {
-    // Registry keys for specialized callbacks
-    static let pingOneProtectInitialize = "PingOneProtectInitializeCallback"
-    static let pingOneProtectEvaluation = "PingOneProtectEvaluationCallback"
-    static let fidoRegistration = "FidoRegistrationCallback"
-    static let fidoAuthentication = "FidoAuthenticationCallback"
-
-    // Metadata keys/values
-    static let action = "_action"
-    static let type = "_type"
-    static let webAuthn = "WebAuthn"
-    static let webauthnRegistration = "webauthn_registration"
-    static let webauthnAuthentication = "webauthn_authentication"
-    static let _pubKeyCredParams = "_pubKeyCredParams"
-    static let pubKeyCredParams = "pubKeyCredParams"
-    static let pingOneProtect = "PingOneProtect"
-    static let protectInitialize = "protect_initialize"
-    static let protectRiskEvaluation = "protect_risk_evaluation"
-    static let allowCredentials = "allowCredentials"
-    static let _allowCredentials = "_allowCredentials"
 }
 

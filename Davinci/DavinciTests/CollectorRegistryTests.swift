@@ -34,17 +34,21 @@ final class CollectorRegistryTests: XCTestCase {
         ]
         
         let collectors = await CollectorFactory.shared.collector(daVinci: davinci, from: jsonArray)
-        XCTAssertTrue(collectors[0] is TextCollector)
-        XCTAssertTrue(collectors[1] is PasswordCollector)
-        XCTAssertTrue(collectors[2] is SubmitCollector)
-        XCTAssertTrue(collectors[3] is FlowCollector)
-        XCTAssertTrue(collectors[4] is PasswordCollector)
-        XCTAssertTrue(collectors[5] is FlowCollector)
-        XCTAssertTrue(collectors[6] is LabelCollector)
-        XCTAssertTrue(collectors[7] is SingleSelectCollector)
-        XCTAssertTrue(collectors[8] is SingleSelectCollector)
-        XCTAssertTrue(collectors[9] is MultiSelectCollector)
-        XCTAssertTrue(collectors[10] is MultiSelectCollector)
+        XCTAssertEqual(collectors.count, 11)
+        if collectors.count > 0 {
+            XCTAssertTrue(collectors[0] is TextCollector)
+            XCTAssertTrue(collectors[1] is PasswordCollector)
+            XCTAssertTrue(collectors[2] is SubmitCollector)
+            XCTAssertTrue(collectors[3] is FlowCollector)
+            XCTAssertTrue(collectors[4] is PasswordCollector)
+            XCTAssertTrue(collectors[5] is FlowCollector)
+            XCTAssertTrue(collectors[6] is LabelCollector)
+            XCTAssertTrue(collectors[7] is SingleSelectCollector)
+            XCTAssertTrue(collectors[8] is SingleSelectCollector)
+            XCTAssertTrue(collectors[9] is MultiSelectCollector)
+            XCTAssertTrue(collectors[10] is MultiSelectCollector)
+        }
+        
         await CollectorFactory.shared.reset()
     }
     

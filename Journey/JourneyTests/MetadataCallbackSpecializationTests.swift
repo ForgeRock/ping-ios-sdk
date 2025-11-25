@@ -10,10 +10,18 @@ import XCTest
 @testable import PingJourneyPlugin
 
 // Test doubles for specialized callbacks
-private final class TestPingOneProtectInitializeCallback: AbstractCallback, @unchecked Sendable { }
-private final class TestPingOneProtectEvaluationCallback: AbstractCallback, @unchecked Sendable { }
-private final class TestFidoRegistrationCallback: AbstractCallback, @unchecked Sendable { }
-private final class TestFidoAuthenticationCallback: AbstractCallback, @unchecked Sendable { }
+private final class TestPingOneProtectInitializeCallback: AbstractCallback, @unchecked Sendable {
+    public override func initValue(name: String, value: Any) {}
+}
+private final class TestPingOneProtectEvaluationCallback: AbstractCallback, @unchecked Sendable {
+    public override func initValue(name: String, value: Any) {}
+}
+private final class TestFidoRegistrationCallback: AbstractCallback, @unchecked Sendable {
+    public override func initValue(name: String, value: Any) {}
+}
+private final class TestFidoAuthenticationCallback: AbstractCallback, @unchecked Sendable {
+    public override func initValue(name: String, value: Any) {}
+}
 // A simple MetadataCallback registration key double
 private final class TestMetadataCallback: MetadataCallback, @unchecked Sendable { }
 

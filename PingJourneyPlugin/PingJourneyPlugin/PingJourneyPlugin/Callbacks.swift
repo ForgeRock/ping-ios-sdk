@@ -18,13 +18,29 @@ import PingOrchestrate
 public protocol Callback: Action, Identifiable, Sendable {
     /// Required default initializer.
     init()
-    /// Initializes this callback from a server-provided JSON dictionary and returns `self`.
+    /// Initializes this callback from a server-provided JSON dictionary and returns `self` (synchronous variant).
     /// - Parameter json: The raw JSON dictionary describing this callback instance.
     func initialize(with json: [String: Any]) -> any Callback
+    /// Initializes this callback from a server-provided JSON dictionary and returns `self` (async variant).
+    /// - Parameter json: The raw JSON dictionary describing this callback instance.
+    func initialize(with json: [String: Any]) async -> any Callback
     /// The unique identifier for this callback instance.
     var id: String { get }
     /// A dictionary payload representing this callback's data for submission.
     func payload() -> [String: Any]
+}
+
+/// Default implementation for the async initializer that forwards to the synchronous variant.
+/// Conformers that only implement the synchronous initializer will automatically satisfy the async requirement.
+/// Conformers can override this async implementation when they need to perform asynchronous work.
+public extension Callback {
+    func initialize(with json: [String: Any]) async -> any Callback {
+        return await initialize(with: json)
+    }
+    
+    func initialize(with json: [String: Any]) -> any Callback {
+        return initialize(with: json)
+    }
 }
 
 /// Marker protocol indicating a callback is metadata-only and should not be included in submission payloads.
