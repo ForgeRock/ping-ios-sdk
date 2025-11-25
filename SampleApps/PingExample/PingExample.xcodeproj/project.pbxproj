@@ -148,6 +148,20 @@
 			remoteGlobalIDString = 1B2933902E7DF20A004D1D38;
 			remoteInfo = OathTests;
 		};
+		1B4D66232ECE7C08009B5DA3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A5C0AC482EB003BB00846D16 /* ReCaptchaEnterprise.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A5C0ABF42EAFFFDE00846D16;
+			remoteInfo = PingReCaptchaEnterprise;
+		};
+		1B4D66252ECE7C08009B5DA3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A5C0AC482EB003BB00846D16 /* ReCaptchaEnterprise.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A5C0ABFD2EAFFFDF00846D16;
+			remoteInfo = ReCaptchaEnterpriseTests;
+		};
 		1B75AC652E8210E3002B5DDD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1B75AC422E8210E2002B5DDD /* MfaCommons.xcodeproj */;
@@ -676,6 +690,23 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		1B4D65FA2ECE7C08009B5DA3 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				A58CFBC92EB00434007C4A31 /* PingReCaptchaEnterprise.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		1B4D65FB2ECE7C08009B5DA3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1B4D66242ECE7C08009B5DA3 /* PingReCaptchaEnterprise.framework */,
+				1B4D66262ECE7C08009B5DA3 /* ReCaptchaEnterpriseTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		1B75AC612E8210E2002B5DDD /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -723,7 +754,7 @@
 				3A54414A2BCDF10B00385131 /* PingExampleUITests */,
 				3A54412E2BCDF10900385131 /* Products */,
 				3A5441642BCDF17600385131 /* Frameworks */,
-				ECC6AEE12ECF4ADD003527D2 /* Recovered References */,
+				1B4D65FA2ECE7C08009B5DA3 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1237,7 +1268,7 @@
 					ProjectRef = 1B7C49C82EAAB6E400E3C0AC /* Push.xcodeproj */;
 				},
 				{
-					ProductGroup = ECC6AEE22ECF4ADD003527D2 /* Products */;
+					ProductGroup = 1B4D65FB2ECE7C08009B5DA3 /* Products */;
 					ProjectRef = A5C0AC482EB003BB00846D16 /* ReCaptchaEnterprise.xcodeproj */;
 				},
 				{
@@ -1272,6 +1303,20 @@
 			fileType = wrapper.cfbundle;
 			path = OathTests.xctest;
 			remoteRef = 1B2933BA2E7DF20B004D1D38 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1B4D66242ECE7C08009B5DA3 /* PingReCaptchaEnterprise.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingReCaptchaEnterprise.framework;
+			remoteRef = 1B4D66232ECE7C08009B5DA3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1B4D66262ECE7C08009B5DA3 /* ReCaptchaEnterpriseTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ReCaptchaEnterpriseTests.xctest;
+			remoteRef = 1B4D66252ECE7C08009B5DA3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		1B75AC662E8210E3002B5DDD /* PingMfaCommons.framework */ = {
