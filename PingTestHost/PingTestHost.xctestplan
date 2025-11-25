@@ -91,7 +91,6 @@
       }
     },
     {
-      "enabled" : false,
       "target" : {
         "containerPath" : "container:..\/Binding\/Binding.xcodeproj",
         "identifier" : "EC4DD31D2EABCE7600ECC4E1",

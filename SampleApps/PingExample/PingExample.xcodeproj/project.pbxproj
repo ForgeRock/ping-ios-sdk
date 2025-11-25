@@ -435,6 +435,20 @@
 			remoteGlobalIDString = ECB7C6692D5A1FAB0006F1C8;
 			remoteInfo = PingBrowserTests;
 		};
+		ECC6AF0A2ECF4ADD003527D2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A5C0AC482EB003BB00846D16 /* ReCaptchaEnterprise.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A5C0ABF42EAFFFDE00846D16;
+			remoteInfo = PingReCaptchaEnterprise;
+		};
+		ECC6AF0C2ECF4ADD003527D2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A5C0AC482EB003BB00846D16 /* ReCaptchaEnterprise.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A5C0ABFD2EAFFFDF00846D16;
+			remoteInfo = ReCaptchaEnterpriseTests;
+		};
 		ECCAB3AB2E3B600B00BA1C73 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = ECCAB3A42E3B600B00BA1C73 /* DeviceId.xcodeproj */;
@@ -1040,6 +1054,23 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		ECC6AEE12ECF4ADD003527D2 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				A58CFBC92EB00434007C4A31 /* PingReCaptchaEnterprise.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		ECC6AEE22ECF4ADD003527D2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ECC6AF0B2ECF4ADD003527D2 /* PingReCaptchaEnterprise.framework */,
+				ECC6AF0D2ECF4ADD003527D2 /* ReCaptchaEnterpriseTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		ECCAB3A72E3B600B00BA1C73 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -1545,6 +1576,20 @@
 			fileType = wrapper.cfbundle;
 			path = PingBrowserTests.xctest;
 			remoteRef = ECB7C6842D5A24B70006F1C8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		ECC6AF0B2ECF4ADD003527D2 /* PingReCaptchaEnterprise.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingReCaptchaEnterprise.framework;
+			remoteRef = ECC6AF0A2ECF4ADD003527D2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		ECC6AF0D2ECF4ADD003527D2 /* ReCaptchaEnterpriseTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ReCaptchaEnterpriseTests.xctest;
+			remoteRef = ECC6AF0C2ECF4ADD003527D2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		ECCAB3AC2E3B600B00BA1C73 /* PingDeviceId.framework */ = {
