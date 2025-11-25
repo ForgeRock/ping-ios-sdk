@@ -10,8 +10,8 @@
 
 import XCTest
 @testable import PingBinding
-@testable import PingJourneyPlugin
 import PingStorage
+import PingJourneyPlugin
 
 class PingBinderTests: XCTestCase {
 
