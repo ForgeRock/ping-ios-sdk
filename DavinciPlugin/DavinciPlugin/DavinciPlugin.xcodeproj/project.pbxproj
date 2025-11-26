@@ -89,8 +89,8 @@
 		EC5C813B2ECF66D000C91570 = {
 			isa = PBXGroup;
 			children = (
-				EC5C815E2ECF671D00C91570 /* PingDavinciPlugin */,
-				EC5C81612ECF672000C91570 /* PingDavinciPluginTests */,
+				EC5C815E2ECF671D00C91570 /* DavinciPlugin */,
+				EC5C81612ECF672000C91570 /* DavinciPluginTests */,
 				EC5C81A62ECF6B8400C91570 /* Frameworks */,
 				EC5C81462ECF66D000C91570 /* Products */,
 			);
@@ -105,7 +105,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		EC5C815E2ECF671D00C91570 /* PingDavinciPlugin */ = {
+		EC5C815E2ECF671D00C91570 /* DavinciPlugin */ = {
 			isa = PBXGroup;
 			children = (
 				EC5C81C62ECF780F00C91570 /* Constants.swift */,
@@ -120,15 +120,15 @@
 				EC5C81C22ECF77C200C91570 /* SubmitCollectorProtocol.swift */,
 				EC5C81B52ECF6EA200C91570 /* PingDavinciPlugin.h */,
 			);
-			path = PingDavinciPlugin;
+			path = DavinciPlugin;
 			sourceTree = "<group>";
 		};
-		EC5C81612ECF672000C91570 /* PingDavinciPluginTests */ = {
+		EC5C81612ECF672000C91570 /* DavinciPluginTests */ = {
 			isa = PBXGroup;
 			children = (
 				EC5C81602ECF672000C91570 /* PingDavinciPluginTests.swift */,
 			);
-			path = PingDavinciPluginTests;
+			path = DavinciPluginTests;
 			sourceTree = "<group>";
 		};
 		EC5C81A62ECF6B8400C91570 /* Frameworks */ = {
