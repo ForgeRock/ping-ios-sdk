@@ -19,6 +19,26 @@ The main purpose of this plugin is to decouple modules from the concrete impleme
 
 This setup promotes separation of concerns, improves modularity, and makes consumer modules independent of `PingDavinci`'s implementation details.
 
+## Key Components
+
+The `PingDavinciPlugin` module consists of several key files that define its core functionality:
+
+- **`Collector.swift`**: Defines the fundamental protocols for data collection within a DaVinci flow.
+  - `Collector<T>`: A generic protocol for creating different types of collectors that handle specific data payloads.
+  - `AnyFieldCollector`: A protocol for type-erased collectors, allowing them to be handled generically.
+
+- **`CollectorFactory.swift`**: A thread-safe actor that acts as a factory and registry for `Collector` types. It is responsible for creating collector instances from the JSON responses provided by the DaVinci server.
+
+- **`ContinueNode.swift`**: An extension on `PingOrchestrate`'s `ContinueNode` that adds a convenience property `collectors` to easily access all collector instances within a node.
+
+- **`DaVinciAware.swift`**: Defines the `DaVinciAware` protocol. Types conforming to this protocol can be injected with the main `DaVinci` workflow instance, allowing them to interact with the overall authentication flow.
+
+- **`Validator.swift` & `ValidationError.swift`**: These files provide a simple validation framework. `Validator` is a protocol for objects that can be validated, and `ValidationError` is an enum representing specific validation failures.
+
+- **`SubmitCollectorProtocol.swift` & `FlowCollectorProtocol.swift`**: These protocols define contracts for specific types of collectors, such as buttons that submit a form (`SubmitCollectorProtocol`) or trigger a specific flow (`FlowCollectorProtocol`).
+
+- **`Constants.swift`**: Contains a centralized enumeration of string constants used throughout the DaVinci integration, such as JSON keys, collector types, and event names. This helps avoid typos and magic strings.
+
 ## Installation
 
 ### CocoaPods
@@ -26,53 +46,12 @@ This setup promotes separation of concerns, improves modularity, and makes consu
 `PingDavinciPlugin` is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your `Podfile`:
 
 ```ruby
-pod 'PingDavinciPlugin', '~> 1.0.0'
+pod 'PingDavinciPlugin', '~> 1.3.1'
 ```
 
 Then, run the command:
 ```bash
 pod install
-```
-
-## Usage
-
-Your application modules can interact with the `PingDavinci` functionality through the protocols exposed by this plugin.
-
-### Conceptual Example
-
-Let's assume `PingDavinciPlugin` defines a `DavinciService` protocol:
-
-```swift
-// In PingDavinciPlugin
-public protocol DavinciService {
-    func start(policyId: String, completion: @escaping (Error?) -> Void)
-}
-```
-
-The `PingDavinci` SDK would provide a concrete implementation for this service. Your application can then obtain an instance of this service and use it.
-
-```swift
-import PingDavinciPlugin
-
-class MyViewModel {
-    
-    // The service is injected, providing an implementation from PingDavinci
-    private let davinciService: DavinciService
-
-    init(davinciService: DavinciService) {
-        self.davinciService = davinciService
-    }
-
-    func beginDavinciFlow(policyId: String) {
-        davinciService.start(policyId: policyId) { error in
-            if let error = error {
-                print("Davinci flow failed: \(error.localizedDescription)")
-            } else {
-                print("Davinci flow started successfully.")
-            }
-        }
-    }
-}
 ```
 
 ## Dependencies

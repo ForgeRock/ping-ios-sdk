@@ -212,7 +212,7 @@
 					};
 				};
 			};
-			buildConfigurationList = EC5C813F2ECF66D000C91570 /* Build configuration list for PBXProject "PingDavinciPlugin" */;
+			buildConfigurationList = EC5C813F2ECF66D000C91570 /* Build configuration list for PBXProject "DavinciPlugin" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -530,7 +530,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EC5C813F2ECF66D000C91570 /* Build configuration list for PBXProject "PingDavinciPlugin" */ = {
+		EC5C813F2ECF66D000C91570 /* Build configuration list for PBXProject "DavinciPlugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EC5C81552ECF66D100C91570 /* Debug */,

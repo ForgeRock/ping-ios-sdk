@@ -193,7 +193,7 @@
 					};
 				};
 			};
-			buildConfigurationList = EC5C81742ECF67B700C91570 /* Build configuration list for PBXProject "PingJourneyPlugin" */;
+			buildConfigurationList = EC5C81742ECF67B700C91570 /* Build configuration list for PBXProject "JourneyPlugin" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -506,7 +506,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EC5C81742ECF67B700C91570 /* Build configuration list for PBXProject "PingJourneyPlugin" */ = {
+		EC5C81742ECF67B700C91570 /* Build configuration list for PBXProject "JourneyPlugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EC5C818A2ECF67B700C91570 /* Debug */,

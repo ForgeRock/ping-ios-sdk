@@ -19,6 +19,22 @@ The main purpose of this plugin is to decouple modules from the concrete impleme
 
 This setup promotes separation of concerns, improves modularity, and makes consumer modules independent of `PingJourney`'s implementation details.
 
+## Key Components
+
+The `PingJourneyPlugin` module is built around a few core concepts that enable its functionality:
+
+- **`Callbacks.swift`**: This is the central file defining the `Callback` protocol, which is the base for all Journey callbacks. It also defines `JourneyContinueNode`, a specialized `ContinueNode` for handling Journey-specific payloads and requests.
+
+- **`AbstractCallback.swift`**: A base class that provides common functionality for all callbacks, including handling of input and output values from the JSON payload. Most concrete callback implementations subclass this.
+
+- **`CallbackRegistry.swift`**: A thread-safe actor that serves as a factory and registry for all `Callback` types. It is responsible for instantiating the correct callback objects based on the JSON response from the Journey server.
+
+- **`JourneyAware.swift`**: Defines the `JourneyAware` protocol. Callbacks or other types that conform to this protocol can be injected with the `Journey` workflow instance, allowing them to interact with the authentication flow.
+
+- **`JourneyPlugin.swift`**: This file contains the main `Journey` typealias (which maps to `Workflow`) and the `JourneyConfig` class, which holds configuration parameters like the server URL and realm.
+
+- **`Constants.swift`**: A centralized enum that holds all the string constants used in Journey flows, such as callback type names, JSON keys, and API parameters. This improves code maintainability and reduces errors from typos.
+
 ## Installation
 
 ### CocoaPods
@@ -26,7 +42,7 @@ This setup promotes separation of concerns, improves modularity, and makes consu
 `PingJourneyPlugin` is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your `Podfile`:
 
 ```ruby
-pod 'PingJourneyPlugin', '~> 1.0.0'
+pod 'PingJourneyPlugin', '~> 1.3.1'
 ```
 
 Then, run the command:

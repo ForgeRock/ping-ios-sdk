@@ -18,7 +18,7 @@
                BlueprintIdentifier = "EC5C81792ECF67B700C91570"
                BuildableName = "PingJourneyPlugin.framework"
                BlueprintName = "PingJourneyPlugin"
-               ReferencedContainer = "container:PingJourneyPlugin.xcodeproj">
+               ReferencedContainer = "container:JourneyPlugin.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -53,7 +53,7 @@
             BlueprintIdentifier = "EC5C81792ECF67B700C91570"
             BuildableName = "PingJourneyPlugin.framework"
             BlueprintName = "PingJourneyPlugin"
-            ReferencedContainer = "container:PingJourneyPlugin.xcodeproj">
+            ReferencedContainer = "container:JourneyPlugin.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
