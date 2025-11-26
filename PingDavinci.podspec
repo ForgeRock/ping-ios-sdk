@@ -34,7 +34,7 @@ occur during the authentication process.
     'Davinci' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingDavinciPlugin', '~> 1.0'
+  s.ios.dependency 'PingDavinciPlugin', '~> 1.3.1'
   s.ios.dependency 'PingOidc', '~> 1.3.1'
     
 end

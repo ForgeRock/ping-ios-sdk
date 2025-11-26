@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'PingJourneyPlugin'
-  s.version          = '1.0.0'
+  s.version          = '1.3.1'
   s.summary          = 'Journey Plugin for PingJourney SDK'
   s.description      = <<-DESC
     The PingJourneyPlugin provides plugin functionality for the PingJourney SDK.
@@ -18,11 +18,11 @@ Pod::Spec.new do |s|
   s.swift_versions   = ['5.0', '5.1', '6.0']
   s.ios.deployment_target = '16.0'
 
-  base_dir = "PingJourneyPlugin/PingJourneyPlugin"
-  s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.c', base_dir + '/**/*.h'
+  base_dir = "JourneyPlugin/JourneyPlugin"
+  s.source_files = base_dir + '/PingJourneyPlugin/**/*.swift'
   s.resource_bundles = {
-    'PingJourneyPlugin' => [base_dir + '/*.xcprivacy']
+    'PingJourneyPlugin' => [base_dir + '/PingJourneyPlugin/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingLogger', '~> 1.3.1'
+  s.dependency 'PingOrchestrate', '~> 1.3.1'
 end

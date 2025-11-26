@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   
   s.ios.dependency 'PingOrchestrate', '~> 1.3.1'
   s.ios.dependency 'PingOidc', '~> 1.3.1'
-  s.ios.dependency 'PingJourneyPlugin', '~> 1.0'
+  s.ios.dependency 'PingJourneyPlugin', '~> 1.3.1'
   s.ios.dependency 'PingMfaCommons', '~> 1.3.1'
   s.ios.dependency 'PingStorage', '~> 1.3.1'
   s.ios.dependency 'PingLogger', '~> 1.3.1'
