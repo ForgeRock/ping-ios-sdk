@@ -91,6 +91,7 @@
 		EC727B072E04713A005D9E28 /* PasswordCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727B062E047133005D9E28 /* PasswordCallback.swift */; };
 		EC727B092E059BB9005D9E28 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727B082E059BB5005D9E28 /* User.swift */; };
 		EC727B0B2E05A20D005D9E28 /* Agent.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727B0A2E05A20B005D9E28 /* Agent.swift */; };
+		ECA2E7EA2ED8824A00C32766 /* JourneyContinueNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA2E7E92ED8824500C32766 /* JourneyContinueNode.swift */; };
 		ECD562A42E0C45E300F0B5A9 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD562A32E0C45E300F0B5A9 /* Config.swift */; };
 		ECD562A52E0C45E300F0B5A9 /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = ECD562A22E0C45E300F0B5A9 /* Config.json */; };
 		ECD562A82E0C48A700F0B5A9 /* MockURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD562A72E0C489E00F0B5A9 /* MockURLProtocol.swift */; };
@@ -209,6 +210,7 @@
 		EC727B062E047133005D9E28 /* PasswordCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordCallback.swift; sourceTree = "<group>"; };
 		EC727B082E059BB5005D9E28 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		EC727B0A2E05A20B005D9E28 /* Agent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Agent.swift; sourceTree = "<group>"; };
+		ECA2E7E92ED8824500C32766 /* JourneyContinueNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyContinueNode.swift; sourceTree = "<group>"; };
 		ECD562A22E0C45E300F0B5A9 /* Config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Config.json; sourceTree = "<group>"; };
 		ECD562A32E0C45E300F0B5A9 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		ECD562A72E0C489E00F0B5A9 /* MockURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLProtocol.swift; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 				EC727AD42E04525C005D9E28 /* Callbacks */,
 				EC727A982E02DCF6005D9E28 /* Module */,
 				EC727A5B2E019254005D9E28 /* Journey.swift */,
+				ECA2E7E92ED8824500C32766 /* JourneyContinueNode.swift */,
 				EC727ACE2E042DBB005D9E28 /* SSOToken.swift */,
 				EC727B082E059BB5005D9E28 /* User.swift */,
 			);
@@ -546,6 +549,7 @@
 				A5AB904E2E269BE2000E1089 /* HiddenValueCallback.swift in Sources */,
 				EC727A9A2E02DD04005D9E28 /* Oidc.swift in Sources */,
 				EC727B0B2E05A20D005D9E28 /* Agent.swift in Sources */,
+				ECA2E7EA2ED8824A00C32766 /* JourneyContinueNode.swift in Sources */,
 				A5768D1E2E29B37D000290EE /* ConsentMappingCallback.swift in Sources */,
 				A5AB905E2E26AA55000E1089 /* ValidatedPasswordCallback.swift in Sources */,
 				A5AB90422E2695B8000E1089 /* TextOutputCallback.swift in Sources */,

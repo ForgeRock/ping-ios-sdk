@@ -18,10 +18,8 @@ import XCTest
 final class ExternalIdPGoogleTests: XCTestCase {
 
     override func setUpWithError() throws {
-            Task {
-                IdpCollector.registerCollector()
-            }
-        }
+        IdpCollector.registerCollector()
+    }
         
         
         

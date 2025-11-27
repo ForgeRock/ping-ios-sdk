@@ -1,5 +1,5 @@
 //
-//  JourneyPlugin.swift
+//  ContinueNode.swift
 //  PingJourneyPlugin
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
@@ -10,8 +10,9 @@
 
 import PingOrchestrate
 
-/// A typealias mapping Journey to the underlying Workflow type used by the orchestrator.
-/// This provides a convenient name where Journey is exposed to SDK users.
-public typealias Journey = Workflow
-
-
+extension ContinueNode {
+    /// Returns the list of callbacks from this node's actions.
+    public var callbacks: [any Callback] {
+        return actions.compactMap { $0 as? (any Callback) }
+    }
+}

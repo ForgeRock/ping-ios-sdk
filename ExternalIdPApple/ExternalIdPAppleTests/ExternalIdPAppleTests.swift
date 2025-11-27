@@ -18,9 +18,7 @@ import XCTest
 final class ExternalIdPAppleTests: XCTestCase {
     
     override func setUpWithError() throws {
-        Task {
-            IdpCollector.registerCollector()
-        }
+        IdpCollector.registerCollector()
     }
     
     @MainActor func testidpCollectorParsingApple() throws {

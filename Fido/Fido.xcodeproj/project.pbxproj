@@ -17,6 +17,8 @@
 		EC5C81EE2ED0850500C91570 /* PingJourneyPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81EC2ED0850500C91570 /* PingJourneyPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC5C81F82ED0920300C91570 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81F72ED0920300C91570 /* PingJourney.framework */; };
 		EC5C81F92ED0920300C91570 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81F72ED0920300C91570 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECA2E7DE2ED740E000C32766 /* FidoRegistrationCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA2E7DD2ED740E000C32766 /* FidoRegistrationCollectorTests.swift */; };
+		ECA2E7DF2ED740E000C32766 /* FidoAuthenticationCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA2E7DC2ED740E000C32766 /* FidoAuthenticationCollectorTests.swift */; };
 		ECD5A2F72E8FE49C00A27205 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = ECD5A2F62E8FE49C00A27205 /* PrivacyInfo.xcprivacy */; };
 		ECD5A2F82E8FE49C00A27205 /* FidoConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */; };
 		ECD5A2F92E8FE49C00A27205 /* Fido.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F52E8FE49C00A27205 /* Fido.swift */; };
@@ -87,6 +89,8 @@
 		EC5C81B22ECF6DE400C91570 /* PingDavinciPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinciPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81EC2ED0850500C91570 /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81F72ED0920300C91570 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECA2E7DC2ED740E000C32766 /* FidoAuthenticationCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoAuthenticationCollectorTests.swift; sourceTree = "<group>"; };
+		ECA2E7DD2ED740E000C32766 /* FidoRegistrationCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoRegistrationCollectorTests.swift; sourceTree = "<group>"; };
 		ECD5A29C2E8FE40B00A27205 /* PingFido.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingFido.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoConstants.swift; sourceTree = "<group>"; };
 		ECD5A2F32E8FE49C00A27205 /* FidoModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoModels.swift; sourceTree = "<group>"; };
@@ -207,6 +211,8 @@
 		ECD780582EA24FC40050E60F /* PingFidoTests */ = {
 			isa = PBXGroup;
 			children = (
+				ECA2E7DC2ED740E000C32766 /* FidoAuthenticationCollectorTests.swift */,
+				ECA2E7DD2ED740E000C32766 /* FidoRegistrationCollectorTests.swift */,
 				ECD780512EA24FC40050E60F /* FidoCallbackTests.swift */,
 				ECD780522EA24FC40050E60F /* FidoCollectorTests.swift */,
 				ECD780542EA24FC40050E60F /* FidoExtensionsTests.swift */,
@@ -358,6 +364,8 @@
 				ECD780612EA24FFF0050E60F /* FidoCollectorTests.swift in Sources */,
 				ECD780602EA24FFA0050E60F /* FidoCallbackTests.swift in Sources */,
 				ECD780642EA2500E0050E60F /* Mocks.swift in Sources */,
+				ECA2E7DE2ED740E000C32766 /* FidoRegistrationCollectorTests.swift in Sources */,
+				ECA2E7DF2ED740E000C32766 /* FidoAuthenticationCollectorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

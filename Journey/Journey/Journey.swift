@@ -29,6 +29,25 @@ public struct Options: Sendable {
     public var noSession: Bool = false
 }
 
+/// Configuration for Journey workflows.
+///
+/// Conforms to `WorkflowConfig` and `Sendable`, and holds parameters required
+/// to communicate with the Journey backend.
+/// - Important: Provide `serverUrl` and `realm` appropriate to your deployment.
+public class JourneyConfig: WorkflowConfig, @unchecked Sendable {
+    /// The base URL of the server handling Journey requests, for example:
+    /// https://example.am.com/am
+    public var serverUrl: String?
+    
+    /// The realm used for authentication and callback endpoints.
+    /// Defaults to the value in `JourneyConstants.realm`.
+    public var realm: String = JourneyConstants.realm
+    
+    /// The cookie name used by the Journey backend.
+    /// Defaults to `JourneyConstants.cookie`.
+    public var cookie: String = JourneyConstants.cookie
+}
+
 // Define the Journey class
 public extension Journey {
     /// Creates a Journey instance with sensible defaults and optional customization.

@@ -12,9 +12,9 @@ import Foundation
 import PingJourneyPlugin
 
 /// A callback that handles hidden values in the authentication flow.
-public class HiddenValueCallback: AbstractCallback, HiddenValueCallbackProtocol, ObservableObject, @unchecked Sendable {
+public class HiddenValueCallback: AbstractCallback, ValueCallbackProtocol, ObservableObject, @unchecked Sendable {
     /// Hidden identifier value
-    public var hiddenId: String = ""
+    public var valueId: String = ""
     /// The hidden value to be sent back
     public var value: String = ""
     
@@ -23,7 +23,7 @@ public class HiddenValueCallback: AbstractCallback, HiddenValueCallbackProtocol,
         switch name {
         case JourneyConstants.id:
             if let stringValue = value as? String {
-                self.hiddenId = stringValue
+                self.valueId = stringValue
             }
         case JourneyConstants.value:
             if let stringValue = value as? String {

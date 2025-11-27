@@ -17,14 +17,12 @@ import XCTest
 final class ExternalIdPTests: XCTestCase {
 
     override func setUpWithError() throws {
-        Task {
-            IdpCollector.registerCollector()
-        }
+        IdpCollector.registerCollector()
     }
     
     func testIdpCollectorRegistration() async throws {
+        IdpCollector.registerCollector()
         Task {
-            IdpCollector.registerCollector()
             let idpCollector = await CollectorFactory.shared.collectors[Constants.SOCIAL_LOGIN_BUTTON]
             XCTAssertNotNil(idpCollector)
         }

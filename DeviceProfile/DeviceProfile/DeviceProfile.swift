@@ -37,7 +37,7 @@ import PingJourneyPlugin
 /// - **Config**: Controls what data is collected and how
 /// - **Results**: Structured data containing device profile information
 @objc
-class DeviceProfile: NSObject {
+public class DeviceProfile: NSObject {
     
     /// Registers the DeviceProfile callback with the Ping Journey framework.
     ///
@@ -63,7 +63,7 @@ class DeviceProfile: NSObject {
     ///     func application(_ application: UIApplication,
     ///                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     ///         // Register device profiling capability
-    ///         Task { await DeviceProfile.registerCallbacks() }
+    ///         DeviceProfile.registerCallbacks()
     ///         return true
     ///     }
     /// }

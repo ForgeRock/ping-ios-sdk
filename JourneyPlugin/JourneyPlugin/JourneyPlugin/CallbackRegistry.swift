@@ -11,15 +11,6 @@
 import Foundation
 import PingOrchestrate
 
-/// A protocol that defines a type for JourneyAware.
-/// Exposes the journey property that can be set.
-/// This protocol is used to inject the Journey instance into Callbacks that need it.
-/// - Parameters:
-///  - journey: The Journey instance that the Callback is aware of.
-public protocol JourneyAware {
-    var journey: Journey? { get set }
-}
-
 /// A registry for managing Callback instances.
 /// It holds a dictionary of registered Callback types and provides methods to create and manage them.
 /// It is a singleton actor that can be accessed globally.

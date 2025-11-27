@@ -56,7 +56,7 @@ class HiddenValueCallbackTests: XCTestCase {
 
     func testInitializesCorrectly() {
         XCTAssertEqual(callback.value, "false")
-        XCTAssertEqual(callback.hiddenId, "webAuthnOutcome")
+        XCTAssertEqual(callback.valueId, "webAuthnOutcome")
     }
 
     func testPayloadReturnsCorrectly() {
@@ -99,7 +99,7 @@ class HiddenValueCallbackTests: XCTestCase {
         newCallback.initValue(name: JourneyConstants.id, value: "sessionToken")
         newCallback.initValue(name: JourneyConstants.value, value: "abc123xyz")
 
-        XCTAssertEqual(newCallback.hiddenId, "sessionToken")
+        XCTAssertEqual(newCallback.valueId, "sessionToken")
         XCTAssertEqual(newCallback.value, "abc123xyz")
     }
 
@@ -111,7 +111,7 @@ class HiddenValueCallbackTests: XCTestCase {
         newCallback.initValue(name: JourneyConstants.value, value: 456) // Invalid type
 
         // Should maintain default values
-        XCTAssertEqual(newCallback.hiddenId, "")
+        XCTAssertEqual(newCallback.valueId, "")
         XCTAssertEqual(newCallback.value, "")
     }
 
@@ -123,7 +123,7 @@ class HiddenValueCallbackTests: XCTestCase {
         newCallback.initValue(name: "unknownProperty2", value: 123)
 
         // Should maintain default values for known properties
-        XCTAssertEqual(newCallback.hiddenId, "")
+        XCTAssertEqual(newCallback.valueId, "")
         XCTAssertEqual(newCallback.value, "")
     }
 
@@ -150,7 +150,7 @@ class HiddenValueCallbackTests: XCTestCase {
 
         for hiddenId in hiddenIdValues {
             newCallback.initValue(name: JourneyConstants.id, value: hiddenId)
-            XCTAssertEqual(newCallback.hiddenId, hiddenId, "Failed for hiddenId: \(hiddenId)")
+            XCTAssertEqual(newCallback.valueId, hiddenId, "Failed for hiddenId: \(hiddenId)")
         }
     }
 
@@ -160,7 +160,7 @@ class HiddenValueCallbackTests: XCTestCase {
         callback.initValue(name: JourneyConstants.value, value: "success")
 
         // Verify all properties are set correctly
-        XCTAssertEqual(callback.hiddenId, "authenticationResult")
+        XCTAssertEqual(callback.valueId, "authenticationResult")
         XCTAssertEqual(callback.value, "success")
 
         // System updates the value during authentication flow
@@ -181,7 +181,7 @@ class HiddenValueCallbackTests: XCTestCase {
         let newCallback = HiddenValueCallback()
 
         // Test that default values are correct before any initialization
-        XCTAssertEqual(newCallback.hiddenId, "")
+        XCTAssertEqual(newCallback.valueId, "")
         XCTAssertEqual(newCallback.value, "")
     }
 
@@ -192,7 +192,7 @@ class HiddenValueCallbackTests: XCTestCase {
         newCallback.initValue(name: JourneyConstants.id, value: "")
         newCallback.initValue(name: JourneyConstants.value, value: "")
 
-        XCTAssertEqual(newCallback.hiddenId, "")
+        XCTAssertEqual(newCallback.valueId, "")
         XCTAssertEqual(newCallback.value, "")
     }
 

@@ -39,11 +39,11 @@ extension Collectors {
         var formData: [String: Any] = [:]
         for collector in self {
             switch collector {
-            case let collector as SubmitCollectorProtocol:
+            case let collector as SubmitCollector:
                 if collector.value.isEmpty == false {
                     jsonObject[Constants.actionKey] = collector.id
                 }
-            case let collector as FlowCollectorProtocol:
+            case let collector as FlowCollector:
                 if collector.value.isEmpty == false {
                     jsonObject[Constants.actionKey] = collector.id
                 }
