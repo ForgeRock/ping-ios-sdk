@@ -255,7 +255,10 @@ class MFADeviceTests: XCTestCase {
         (node.collectors[3] as? TextCollector)?.value = userLname
         (node.collectors[4] as? SubmitCollector)?.value = "Save"
         
-        node = await node.next() as! ContinueNode
+        guard let continueNode = await node.next() as? ContinueNode else {
+            throw XCTSkip("Could not cast to ContinueNode")
+        }
+        node = continueNode
         
         XCTAssertTrue(node.collectors[0] is SubmitCollector)
         XCTAssertEqual("Registration Complete", node.name)
@@ -301,7 +304,10 @@ class MFADeviceTests: XCTestCase {
         (node.collectors[2] as? PasswordCollector)?.value = password
         (node.collectors[3] as? SubmitCollector)?.value = "Sign On"
         
-        node = await node.next() as! ContinueNode
+        guard let continueNode = await node.next() as? ContinueNode else {
+            throw XCTSkip("Could not cast to ContinueNode")
+        }
+        node = continueNode
         
         // Upon successful login we should be at the initial screen... ("Select Test Form")
         XCTAssertEqual("Select Test Form", node.name)

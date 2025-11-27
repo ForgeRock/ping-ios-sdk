@@ -10,6 +10,7 @@
 
 import XCTest
 @testable import PingFido
+@testable import PingJourneyPlugin
 @testable import PingJourney
 @testable import PingOrchestrate
 import AuthenticationServices

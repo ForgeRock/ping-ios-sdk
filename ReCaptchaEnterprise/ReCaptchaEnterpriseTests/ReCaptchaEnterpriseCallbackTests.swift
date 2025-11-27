@@ -11,7 +11,7 @@
 
 import XCTest
 @testable import PingReCaptchaEnterprise
-@testable import PingJourney
+@testable import PingJourneyPlugin
 
 
 class ReCaptchaEnterpriseCallbackTests: XCTestCase {

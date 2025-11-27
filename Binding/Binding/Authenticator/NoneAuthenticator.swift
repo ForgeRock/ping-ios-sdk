@@ -10,7 +10,7 @@
 //
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 
 /// An authenticator that does not require any user interaction.
 /// This authenticator is used when the authentication type is `none`.

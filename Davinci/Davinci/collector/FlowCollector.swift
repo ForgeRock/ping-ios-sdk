@@ -10,12 +10,22 @@
 
 
 import Foundation
+import PingDavinciPlugin
+import PingOrchestrate
 
-/// Representing a FLOW_BUTTON, FLOW_LINK Type.
-/// This class inherits from the `SingleValueCollector` class and implements the `Collector` protocol.
-/// It is used to collect data in a flow.
-public class FlowCollector: SingleValueCollector, Submittable, @unchecked Sendable {
-    /// Return event type
+/// A collector for flow control actions, such as buttons or links.
+///
+/// This class is used to handle user interactions that trigger a flow action,
+/// like navigating to a different part of the flow.
+public class FlowCollector: SingleValueCollector, Submittable, Closeable, @unchecked Sendable {
+    
+    /// Resets the collector's state by clearing its value.
+    public func close() {
+        self.value = ""
+    }
+    
+    /// Returns the event type for this collector.
+    /// - Returns: A string representing the event type, which is "action".
     public func eventType() -> String {
         return Constants.ACTION.lowercased()
     }

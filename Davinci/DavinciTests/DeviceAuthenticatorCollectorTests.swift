@@ -55,4 +55,79 @@ class DeviceAuthenticationCollectorTests: XCTestCase {
             ["d******l@gmail.com", "b******l@gmail.com"]
         )
     }
+    
+    func testCloseShouldClearValue() {
+        let input: [String: Any] = [
+            "type": "DEVICE_AUTHENTICATION",
+            "key": "device-authentication",
+            "label": "MFA Device Selection - Authentication",
+            "required": true,
+            "options": [
+                [
+                    "type": "EMAIL",
+                    "iconSrc": "https://assets.pingone.com/ux/end-user/2.10.0/images/icon-outline-mail.svg",
+                    "title": "Email",
+                    "id": "e00e00a2-e0c9-409a-9944-f6c282d6da60",
+                    "default": true,
+                    "description": "d******l@gmail.com"
+                ],
+                [
+                    "type": "EMAIL",
+                    "iconSrc": "https://assets.pingone.com/ux/end-user/2.10.0/images/icon-outline-mail.svg",
+                    "title": "Email",
+                    "id": "e00e00a2-e0c9-409a-9945-f6c282d6da61",
+                    "default": true,
+                    "description": "b******l@gmail.com"
+                ]
+            ]
+        ]
+        let collector = DeviceAuthenticationCollector(with: input)
+        collector.value = collector.devices.first
+        
+        XCTAssertNotNil(collector.value)
+        
+        collector.close()
+        
+        XCTAssertNil(collector.value)
+        XCTAssertNil(collector.payload())
+    }
+    
+    func testCloseShouldAllowReuse() {
+        let input: [String: Any] = [
+            "type": "DEVICE_AUTHENTICATION",
+            "key": "device-authentication",
+            "label": "MFA Device Selection - Authentication",
+            "required": true,
+            "options": [
+                [
+                    "type": "EMAIL",
+                    "iconSrc": "https://assets.pingone.com/ux/end-user/2.10.0/images/icon-outline-mail.svg",
+                    "title": "Email",
+                    "id": "e00e00a2-e0c9-409a-9944-f6c282d6da60",
+                    "default": true,
+                    "description": "d******l@gmail.com"
+                ],
+                [
+                    "type": "EMAIL",
+                    "iconSrc": "https://assets.pingone.com/ux/end-user/2.10.0/images/icon-outline-mail.svg",
+                    "title": "Email",
+                    "id": "e00e00a2-e0c9-409a-9945-f6c282d6da61",
+                    "default": true,
+                    "description": "b******l@gmail.com"
+                ]
+            ]
+        ]
+        let collector = DeviceAuthenticationCollector(with: input)
+        
+        collector.value = collector.devices.first
+        var payload = collector.payload()
+        XCTAssertEqual(payload?["id"] as? String, "e00e00a2-e0c9-409a-9944-f6c282d6da60")
+        
+        collector.close()
+        XCTAssertNil(collector.value)
+        
+        collector.value = collector.devices.last
+        payload = collector.payload()
+        XCTAssertEqual(payload?["id"] as? String, "e00e00a2-e0c9-409a-9945-f6c282d6da61")
+    }
 }

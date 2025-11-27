@@ -11,6 +11,7 @@
 
 import Foundation
 import PingOrchestrate
+import PingDavinciPlugin
 
 /// Extension to provide additional functionality to `ErrorNode`.
 extension ErrorNode {

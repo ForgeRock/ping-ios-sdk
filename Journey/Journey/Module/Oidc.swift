@@ -10,6 +10,7 @@
 
 import PingOidc
 import PingOrchestrate
+import PingJourneyPlugin
 
 /// A module that integrates OIDC capabilities into the Journey workflow.
 public class OidcModule {

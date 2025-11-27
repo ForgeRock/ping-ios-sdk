@@ -1,6 +1,6 @@
 //
 //  AbstractCallback.swift
-//  Journey
+//  PingJourneyPlugin
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -13,11 +13,23 @@ import Foundation
 /// A base class for callbacks that provides a JSON payload and methods to manipulate input values.
 /// This class is designed to be subclassed for specific callback implementations.
 open class AbstractCallback: Callback, @unchecked Sendable {
+   
     /// The JSON payload for the callback, containing input and output data.
     public var json: [String: Any] = [:]
 
     /// Initializes a new instance of `AbstractCallback` with the provided JSON.
+    open func initialize(with json: [String: Any]) async -> any Callback {
+        return self.privateInit(with: json)
+    }
+
+    
+    /// Initializes a new instance of `AbstractCallback` with the provided JSON.
     open func initialize(with json: [String: Any]) -> any Callback {
+        return self.privateInit(with: json)
+    }
+    
+    /// Private convinient initializer, to allow both Async and Sync initializations
+    private func privateInit(with json: [String: Any]) -> any Callback {
         self.json = json
         if let output = json[JourneyConstants.output] as? [[String: Any]] {
             for item in output {
@@ -29,7 +41,7 @@ open class AbstractCallback: Callback, @unchecked Sendable {
         }
         return self
     }
-
+    
     /// Abstract method – must be implemented by subclass
     open func initValue(name: String, value: Any) {
         fatalError("Subclasses must override initValue(name:value:)")
@@ -98,3 +110,4 @@ open class AbstractCallback: Callback, @unchecked Sendable {
     /// Initializer for the callback.
     required public init() {} // Required for registry factory
 }
+

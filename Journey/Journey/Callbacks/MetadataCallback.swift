@@ -2,17 +2,19 @@
 //  MetadataCallback.swift
 //  Journey
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+// Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
-//  This software may be modified and distributed under the terms
-//  of the MIT license. See the LICENSE file for details.
+// This software may be modified and distributed under the terms
+// of the MIT license. See the LICENSE file for details.
 //
 
 import Foundation
 import PingOrchestrate
+import PingJourneyPlugin
+
 
 /// A callback for providing metadata that can transform into specialized callbacks based on content.
-public class MetadataCallback: AbstractCallback, ObservableObject, @unchecked Sendable, ContinueNodeAware, JourneyAware {
+public class MetadataCallback: AbstractCallback, MetadataCallbackProtocol,ObservableObject, @unchecked Sendable, ContinueNodeAware, JourneyAware {
     
     public var journey: Journey?
     
@@ -33,20 +35,20 @@ public class MetadataCallback: AbstractCallback, ObservableObject, @unchecked Se
         }
     }
 
-    public override func initialize(with json: [String: Any]) -> any Callback {
-        _ = super.initialize(with: json)
+    public override func initialize(with json: [String: Any]) async -> any Callback {
+        _ = await super.initialize(with: json)
 
         // Check if we should create a specialized callback
         if isProtectInitialize() {
-            if let callbackClass =  (CallbackRegistry.shared.callbacks[Constants.PING_ONE_PROTECT_INITIALIZE_CALLBACK]) {
-                return callbackClass.init().initialize(with: json)
+            if let callbackClass = await CallbackRegistry.shared.type(for: Constants.PING_ONE_PROTECT_INITIALIZE_CALLBACK) {
+                return await callbackClass.init().initialize(with: json)
             }
         } else if isProtectEvaluation() {
-            if let callbackClass =  (CallbackRegistry.shared.callbacks[Constants.PING_ONE_PROTECT_EVALUATION_CALLBACK]) {
-                return callbackClass.init().initialize(with: json)
+            if let callbackClass = await CallbackRegistry.shared.type(for: Constants.PING_ONE_PROTECT_EVALUATION_CALLBACK) {
+                return await callbackClass.init().initialize(with: json)
             }
         } else if isFidoRegistration() {
-            if let callbackClass =  (CallbackRegistry.shared.callbacks[Constants.FIDO_2_REGISTRATION_CALLBACK]) {
+            if let callbackClass = await CallbackRegistry.shared.type(for: Constants.FIDO_2_REGISTRATION_CALLBACK) {
                 let callback = callbackClass.init()
                 if var journeyAware = callback as? JourneyAware {
                     journeyAware.journey = self.journey
@@ -54,10 +56,10 @@ public class MetadataCallback: AbstractCallback, ObservableObject, @unchecked Se
                 if var continueNodeAware = callback as? ContinueNodeAware {
                     continueNodeAware.continueNode = self.continueNode
                 }
-                return callback.initialize(with: self.json)
+                return await callback.initialize(with: self.json)
             }
         } else if isFidoAuthentication() {
-            if let callbackClass =  (CallbackRegistry.shared.callbacks[Constants.FIDO_2_AUTHENTICATION_CALLBACK]) {
+            if let callbackClass = await CallbackRegistry.shared.type(for: Constants.FIDO_2_AUTHENTICATION_CALLBACK) {
                 let callback = callbackClass.init()
                 if var journeyAware = callback as? JourneyAware {
                     journeyAware.journey = self.journey
@@ -65,7 +67,7 @@ public class MetadataCallback: AbstractCallback, ObservableObject, @unchecked Se
                 if var continueNodeAware = callback as? ContinueNodeAware {
                     continueNodeAware.continueNode = self.continueNode
                 }
-                return callback.initialize(with: self.json)
+                return await callback.initialize(with: self.json)
             }
         }
 
@@ -141,3 +143,4 @@ private enum Constants {
     fileprivate static let ALLOW_CREDENTIALS = "allowCredentials"
     fileprivate static let _ALLOW_CREDENTIALS = "_allowCredentials"
 }
+

@@ -11,6 +11,7 @@
 
 import Foundation
 import XCTest
+import PingDavinciPlugin
 @testable import PingDavinci
 
 class CallbackFactoryTests: XCTestCase {
@@ -54,6 +55,10 @@ class CallbackFactoryTests: XCTestCase {
 
 public class DummyCallback: Collector, @unchecked Sendable {
     
+    public func payload() -> String? {
+        return value
+    }
+    
     public typealias T = String
     
     public var id: String {
@@ -72,6 +77,10 @@ public class DummyCallback: Collector, @unchecked Sendable {
 }
 
 final class Dummy2Callback: Collector, @unchecked Sendable {
+    
+    public func payload() -> String? {
+        return value
+    }
     
     public typealias T = String
     

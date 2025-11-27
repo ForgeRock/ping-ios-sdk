@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingJourneyPlugin
 
 /// A callback that collects a text input from the user.
 public class TextInputCallback: AbstractCallback, ObservableObject, @unchecked Sendable {

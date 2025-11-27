@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 import PingOrchestrate
 import PingLogger
 import AuthenticationServices
@@ -52,8 +52,8 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
     /// - Parameter value: The value to set for the WebAuthn outcome.
     public func valueCallback(value: String) {
         logger?.d("Setting WebAuthn outcome value")
-        if let valueCallback = continueNode?.callbacks.first(where: { ($0 as? HiddenValueCallback)?.hiddenId == FidoConstants.WEB_AUTHN_OUTCOME }) as? HiddenValueCallback {
-            valueCallback.value = value
+        if let valueCallback = continueNode?.callbacks.first(where: { ($0 as? ValueCallbackProtocol)?.valueId == FidoConstants.WEB_AUTHN_OUTCOME }) as? ValueCallbackProtocol {
+            valueCallback.setValue(value)
         } else {
             logger?.w("WebAuthn outcome callback not found", error: nil)
         }
@@ -116,10 +116,10 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
     ///  - message: A descriptive message about the error.
     private func setError(error: String?, message: String?) {
         logger?.d("Setting error - type: \(error ?? "nil"), message: \(message ?? "nil")")
-        if let valueCallback = continueNode?.callbacks.first(where: { ($0 as? HiddenValueCallback)?.hiddenId == FidoConstants.WEB_AUTHN_OUTCOME }) as? HiddenValueCallback {
+        if let valueCallback = continueNode?.callbacks.first(where: { ($0 as? ValueCallbackProtocol)?.valueId == FidoConstants.WEB_AUTHN_OUTCOME }) as? ValueCallbackProtocol {
             let errorValue = "\(FidoConstants.ERROR_PREFIX)\(error ?? ""):\(message ?? "")"
             logger?.d("Setting error value: \(errorValue)")
-            valueCallback.value = errorValue
+            valueCallback.setValue(errorValue)
         } else {
             logger?.e("WebAuthn outcome callback not found for error setting", error: nil)
         }

@@ -9,13 +9,19 @@
 //
 
 import Foundation
-import PingDavinci
 import PingLogger
 import UIKit
 import AuthenticationServices
+import PingDavinciPlugin
+import PingOrchestrate
 
 /// A collector for FIDO registration within a DaVinci flow.
-public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendable {
+public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unchecked Sendable {
+    
+    /// Resets the collector's state by clearing the attestation value.
+    public func close() {
+        self.attestationValue = nil
+    }
     
     /// The public key credential creation options provided by the server.
     public var publicKeyCredentialCreationOptions: [String: Any] = [:]

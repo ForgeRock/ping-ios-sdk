@@ -10,6 +10,7 @@
 
 
 import Foundation
+import PingDavinciPlugin
 
 /// Protocol representing a collector. Inherits from `Sendable`, `Collector`, `Validator`.
 /// - property id: The collector id.

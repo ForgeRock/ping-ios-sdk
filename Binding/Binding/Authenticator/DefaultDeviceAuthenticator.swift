@@ -10,7 +10,7 @@
 //
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 import Security
 import PingMfaCommons
 

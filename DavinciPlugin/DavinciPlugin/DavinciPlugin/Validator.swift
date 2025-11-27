@@ -1,6 +1,6 @@
 // 
 //  Validator.swift
-//  Davinci
+//  PingDavinciPlugin
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //

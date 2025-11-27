@@ -9,11 +9,12 @@
 //
 
 import Foundation
+import PingJourneyPlugin
 
 /// A callback that handles hidden values in the authentication flow.
-public class HiddenValueCallback: AbstractCallback, ObservableObject, @unchecked Sendable {
+public class HiddenValueCallback: AbstractCallback, ValueCallbackProtocol, ObservableObject, @unchecked Sendable {
     /// Hidden identifier value
-    private(set) public var hiddenId: String = ""
+    public var valueId: String = ""
     /// The hidden value to be sent back
     public var value: String = ""
     
@@ -22,7 +23,7 @@ public class HiddenValueCallback: AbstractCallback, ObservableObject, @unchecked
         switch name {
         case JourneyConstants.id:
             if let stringValue = value as? String {
-                self.hiddenId = stringValue
+                self.valueId = stringValue
             }
         case JourneyConstants.value:
             if let stringValue = value as? String {
@@ -31,6 +32,13 @@ public class HiddenValueCallback: AbstractCallback, ObservableObject, @unchecked
         default:
             break
         }
+    }
+    
+    /// Convinience Method for setting the value
+    /// - Parameters:
+    ///   - value: Value of the input to be updated
+    public func setValue(_ value: String) {
+        self.value = value
     }
     
     /// Returns the payload with the hidden value.

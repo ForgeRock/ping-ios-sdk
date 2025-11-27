@@ -10,6 +10,7 @@
 
 
 import XCTest
+import PingDavinciPlugin
 @testable import PingOrchestrate
 @testable import PingLogger
 @testable import PingOidc
@@ -38,7 +39,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         MockURLProtocol.startInterceptingRequests()
-        _ = CollectorFactory()
+        _ = CollectorFactory.shared
         
         MockURLProtocol.requestHandler = { request in
             switch request.url!.path {

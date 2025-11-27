@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingJourneyPlugin
 
 /// A callback that instructs an application to wait for the given period and resubmit the request.
 public class PollingWaitCallback: AbstractCallback, ObservableObject, @unchecked Sendable {

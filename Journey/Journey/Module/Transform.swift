@@ -9,6 +9,7 @@
 //
 
 import PingOrchestrate
+import PingJourneyPlugin
 
 /// Define the module that transforms the response from Journey to a `Node`.
 public class NodeTransformModule: @unchecked Sendable {
@@ -63,11 +64,11 @@ public class NodeTransformModule: @unchecked Sendable {
         
         if json.keys.contains(JourneyConstants.authId) {
             if let callbackArray = json[JourneyConstants.callbacks] as? [[String: any Sendable]] {
-                callbacks.append(contentsOf: CallbackRegistry.shared.callback(from: callbackArray))
+                callbacks.append(contentsOf: await CallbackRegistry.shared.callback(from: callbackArray))
             }
             
             let node = JourneyContinueNode(context: context, workflow: journey, input: json, actions: callbacks)
-            CallbackRegistry.shared.inject(continueNode: node, journey: journey)
+            await CallbackRegistry.shared.inject(continueNode: node, journey: journey)
             
             return node
         } else {

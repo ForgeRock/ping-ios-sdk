@@ -88,7 +88,6 @@ public struct SuccessNode: Node {
     }
 }
 
-
 /// Abstract class for a ContinueNode node in the workflow.
 /// - property context: The context for the node.
 /// - property workflow: The workflow for the node.

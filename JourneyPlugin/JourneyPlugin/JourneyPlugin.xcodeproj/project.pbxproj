@@ -1,0 +1,547 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		EC5C81842ECF67B700C91570 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */; };
+		EC5C81972ECF67C000C91570 /* PingJourneyPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81952ECF67C000C91570 /* PingJourneyPluginTests.swift */; };
+		EC5C81D52ED07FB800C91570 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81D42ED07FA500C91570 /* Constants.swift */; };
+		EC5C81D62ED07FB800C91570 /* Callback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81D32ED07F8A00C91570 /* Callback.swift */; };
+		EC5C81D72ED07FB800C91570 /* CallbackRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81D22ED07F7A00C91570 /* CallbackRegistry.swift */; };
+		EC5C81D92ED07FC400C91570 /* AbstractCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81D82ED07FC400C91570 /* AbstractCallback.swift */; };
+		EC5C81DB2ED0806100C91570 /* JourneyPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81DA2ED0805800C91570 /* JourneyPlugin.swift */; };
+		EC5C81DE2ED0809200C91570 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81DD2ED0809200C91570 /* PingOrchestrate.framework */; };
+		EC5C81DF2ED0809200C91570 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81DD2ED0809200C91570 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECA2E7E62ED875DC00C32766 /* JourneyAware.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA2E7E52ED875D300C32766 /* JourneyAware.swift */; };
+		ECA2E7E82ED87E5F00C32766 /* ContinueNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA2E7E72ED87E5900C32766 /* ContinueNode.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EC5C81852ECF67B700C91570 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EC5C81712ECF67B700C91570 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EC5C81792ECF67B700C91570;
+			remoteInfo = PingJourneyPlugin;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EC5C81E02ED0809200C91570 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EC5C81DF2ED0809200C91570 /* PingOrchestrate.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC5C81832ECF67B700C91570 /* PingJourneyPluginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingJourneyPluginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC5C81952ECF67C000C91570 /* PingJourneyPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingJourneyPluginTests.swift; sourceTree = "<group>"; };
+		EC5C81D22ED07F7A00C91570 /* CallbackRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackRegistry.swift; sourceTree = "<group>"; };
+		EC5C81D32ED07F8A00C91570 /* Callback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Callback.swift; sourceTree = "<group>"; };
+		EC5C81D42ED07FA500C91570 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		EC5C81D82ED07FC400C91570 /* AbstractCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractCallback.swift; sourceTree = "<group>"; };
+		EC5C81DA2ED0805800C91570 /* JourneyPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyPlugin.swift; sourceTree = "<group>"; };
+		EC5C81DD2ED0809200C91570 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECA2E7E52ED875D300C32766 /* JourneyAware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyAware.swift; sourceTree = "<group>"; };
+		ECA2E7E72ED87E5900C32766 /* ContinueNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueNode.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EC5C81772ECF67B700C91570 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC5C81DE2ED0809200C91570 /* PingOrchestrate.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC5C81802ECF67B700C91570 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC5C81842ECF67B700C91570 /* PingJourneyPlugin.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		EC5C81702ECF67B700C91570 = {
+			isa = PBXGroup;
+			children = (
+				EC5C81932ECF67BE00C91570 /* JourneyPlugin */,
+				EC5C81962ECF67C000C91570 /* JourneyPluginTests */,
+				EC5C81DC2ED0809200C91570 /* Frameworks */,
+				EC5C817B2ECF67B700C91570 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EC5C817B2ECF67B700C91570 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */,
+				EC5C81832ECF67B700C91570 /* PingJourneyPluginTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EC5C81932ECF67BE00C91570 /* JourneyPlugin */ = {
+			isa = PBXGroup;
+			children = (
+				ECA2E7E72ED87E5900C32766 /* ContinueNode.swift */,
+				ECA2E7E52ED875D300C32766 /* JourneyAware.swift */,
+				EC5C81DA2ED0805800C91570 /* JourneyPlugin.swift */,
+				EC5C81D82ED07FC400C91570 /* AbstractCallback.swift */,
+				EC5C81D42ED07FA500C91570 /* Constants.swift */,
+				EC5C81D32ED07F8A00C91570 /* Callback.swift */,
+				EC5C81D22ED07F7A00C91570 /* CallbackRegistry.swift */,
+			);
+			path = JourneyPlugin;
+			sourceTree = "<group>";
+		};
+		EC5C81962ECF67C000C91570 /* JourneyPluginTests */ = {
+			isa = PBXGroup;
+			children = (
+				EC5C81952ECF67C000C91570 /* PingJourneyPluginTests.swift */,
+			);
+			path = JourneyPluginTests;
+			sourceTree = "<group>";
+		};
+		EC5C81DC2ED0809200C91570 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EC5C81DD2ED0809200C91570 /* PingOrchestrate.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		EC5C81752ECF67B700C91570 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		EC5C81792ECF67B700C91570 /* PingJourneyPlugin */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC5C818C2ECF67B700C91570 /* Build configuration list for PBXNativeTarget "PingJourneyPlugin" */;
+			buildPhases = (
+				EC5C81752ECF67B700C91570 /* Headers */,
+				EC5C81762ECF67B700C91570 /* Sources */,
+				EC5C81772ECF67B700C91570 /* Frameworks */,
+				EC5C81782ECF67B700C91570 /* Resources */,
+				EC5C81E02ED0809200C91570 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PingJourneyPlugin;
+			packageProductDependencies = (
+			);
+			productName = PingJourneyPlugin;
+			productReference = EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		EC5C81822ECF67B700C91570 /* PingJourneyPluginTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EC5C818F2ECF67B700C91570 /* Build configuration list for PBXNativeTarget "PingJourneyPluginTests" */;
+			buildPhases = (
+				EC5C817F2ECF67B700C91570 /* Sources */,
+				EC5C81802ECF67B700C91570 /* Frameworks */,
+				EC5C81812ECF67B700C91570 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EC5C81862ECF67B700C91570 /* PBXTargetDependency */,
+			);
+			name = PingJourneyPluginTests;
+			packageProductDependencies = (
+			);
+			productName = PingJourneyPluginTests;
+			productReference = EC5C81832ECF67B700C91570 /* PingJourneyPluginTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EC5C81712ECF67B700C91570 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					EC5C81792ECF67B700C91570 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					EC5C81822ECF67B700C91570 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+				};
+			};
+			buildConfigurationList = EC5C81742ECF67B700C91570 /* Build configuration list for PBXProject "JourneyPlugin" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = EC5C81702ECF67B700C91570;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = EC5C817B2ECF67B700C91570 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EC5C81792ECF67B700C91570 /* PingJourneyPlugin */,
+				EC5C81822ECF67B700C91570 /* PingJourneyPluginTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EC5C81782ECF67B700C91570 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC5C81812ECF67B700C91570 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EC5C81762ECF67B700C91570 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC5C81D52ED07FB800C91570 /* Constants.swift in Sources */,
+				EC5C81D62ED07FB800C91570 /* Callback.swift in Sources */,
+				EC5C81D92ED07FC400C91570 /* AbstractCallback.swift in Sources */,
+				ECA2E7E82ED87E5F00C32766 /* ContinueNode.swift in Sources */,
+				EC5C81DB2ED0806100C91570 /* JourneyPlugin.swift in Sources */,
+				EC5C81D72ED07FB800C91570 /* CallbackRegistry.swift in Sources */,
+				ECA2E7E62ED875DC00C32766 /* JourneyAware.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC5C817F2ECF67B700C91570 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EC5C81972ECF67C000C91570 /* PingJourneyPluginTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EC5C81862ECF67B700C91570 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EC5C81792ECF67B700C91570 /* PingJourneyPlugin */;
+			targetProxy = EC5C81852ECF67B700C91570 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		EC5C818A2ECF67B700C91570 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		EC5C818B2ECF67B700C91570 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		EC5C818D2ECF67B700C91570 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingJourneyPlugin;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EC5C818E2ECF67B700C91570 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingJourneyPlugin;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		EC5C81902ECF67B700C91570 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingJourneyPluginTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EC5C81912ECF67B700C91570 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingJourneyPluginTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		EC5C81742ECF67B700C91570 /* Build configuration list for PBXProject "JourneyPlugin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC5C818A2ECF67B700C91570 /* Debug */,
+				EC5C818B2ECF67B700C91570 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EC5C818C2ECF67B700C91570 /* Build configuration list for PBXNativeTarget "PingJourneyPlugin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC5C818D2ECF67B700C91570 /* Debug */,
+				EC5C818E2ECF67B700C91570 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EC5C818F2ECF67B700C91570 /* Build configuration list for PBXNativeTarget "PingJourneyPluginTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EC5C81902ECF67B700C91570 /* Debug */,
+				EC5C81912ECF67B700C91570 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = EC5C81712ECF67B700C91570 /* Project object */;
+}

@@ -9,6 +9,7 @@
 //
 
 import XCTest
+import PingJourneyPlugin
 @testable import PingJourney
 
 class ValidatedPasswordCallbackTests: XCTestCase {

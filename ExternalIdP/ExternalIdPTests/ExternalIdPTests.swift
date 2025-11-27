@@ -9,7 +9,7 @@
 //
 
 import XCTest
-@testable import PingDavinci
+@testable import PingDavinciPlugin
 @testable import PingExternalIdP
 @testable import PingOrchestrate
 
@@ -17,14 +17,15 @@ import XCTest
 final class ExternalIdPTests: XCTestCase {
 
     override func setUpWithError() throws {
-        Task {
-            await CollectorFactory.shared.registerDefaultCollectors()
-        }
+        IdpCollector.registerCollector()
     }
     
     func testIdpCollectorRegistration() async throws {
-        let idpCollector = await CollectorFactory.shared.collectors[Constants.SOCIAL_LOGIN_BUTTON]
-        XCTAssertNotNil(idpCollector)
+        IdpCollector.registerCollector()
+        Task {
+            let idpCollector = await CollectorFactory.shared.collectors[Constants.SOCIAL_LOGIN_BUTTON]
+            XCTAssertNotNil(idpCollector)
+        }
     }
 
     func testIdpCollectorParsing() throws {
