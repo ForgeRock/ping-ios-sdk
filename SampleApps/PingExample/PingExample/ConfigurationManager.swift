@@ -48,6 +48,13 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
         }
     }
     
+    public var journeySession: SSOToken? {
+        get async {
+            let journeySession = await journey.session()
+            return journeySession
+        }
+    }
+    
     public func loadConfigurationViewModel() -> ConfigurationViewModel {
         if self.currentConfigurationViewModel == nil {
             self.currentConfigurationViewModel = defaultConfigurationViewModel()

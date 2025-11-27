@@ -23,6 +23,7 @@ let package = Package (
         .library(name: "PingExternalIdPGoogle", targets: ["PingExternalIdPGoogle"]),
         .library(name: "PingExternalIdPFacebook", targets: ["PingExternalIdPFacebook"]),
         .library(name: "PingProtect", targets: ["PingProtect"]),
+        .library(name: "PingDeviceClient", targets: ["PingDeviceClient"]),
         .library(name: "PingReCaptchaEnterprise", targets: ["PingReCaptchaEnterprise"]),
         .library(name: "PingDavinciPlugin", targets: ["PingDavinciPlugin"]),
         .library(name: "PingJourneyPlugin", targets: ["PingJourneyPlugin"]),
@@ -48,8 +49,5 @@ let package = Package (
         .target(name: "PingExternalIdPGoogle", dependencies: [.target(name: "PingExternalIdP"), .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")], path: "ExternalIdPGoogle/ExternalIdPGoogle", exclude: ["ExternalIdPGoogle.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
     	.target(name: "PingExternalIdPFacebook", dependencies: [.target(name: "PingExternalIdP"), .product(name: "FacebookLogin", package: "facebook-ios-sdk")], path: "ExternalIdPFacebook/ExternalIdPFacebook", exclude: ["ExternalIdPFacebook.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
     	.target(name: "PingProtect", dependencies: [.target(name: "PingDavinci"), .product(name: "PingOneSignals", package: "pingone-signals-sdk-ios")], path: "Protect/Protect", exclude: ["Protect.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingReCaptchaEnterprise", dependencies: [.target(name: "PingJourney"), .target(name: "PingLogger"), .product(name: "RecaptchaEnterprise", package: "recaptcha-enterprise-mobile-sdk")], path: "ReCaptchaEnterprise/ReCaptchaEnterprise", exclude: ["ReCaptchaEnterprise.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingDavinciPlugin", dependencies: [.target(name: "PingOrchestrate")], path: "DavinciPlugin/DavinciPlugin/PingDavinciPlugin", resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingJourneyPlugin", dependencies: [.target(name: "PingOrchestrate")], path: "JourneyPlugin/JourneyPlugin/PingJourneyPlugin", resources: [.copy("PrivacyInfo.xcprivacy")]),
     ]
 )

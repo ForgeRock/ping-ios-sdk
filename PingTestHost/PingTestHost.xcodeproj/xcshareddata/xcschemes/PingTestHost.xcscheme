@@ -389,6 +389,36 @@
                ReferencedContainer = "container:../Fido2/Fido2.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A5C0ABFC2EAFFFDF00846D16"
+               BuildableName = "ReCaptchaEnterpriseTests.xctest"
+               BlueprintName = "ReCaptchaEnterpriseTests"
+               ReferencedContainer = "container:../ReCaptchaEnterprise/ReCaptchaEnterprise.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A570D4CB2ECC0D6200CBBCCF"
+               BuildableName = "DeviceClientTests.xctest"
+               BlueprintName = "DeviceClientTests"
+               ReferencedContainer = "container:../DeviceClient/DeviceClient.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B7C49B82EAAB6E300E3C0AC"
+               BuildableName = "PushTests.xctest"
+               BlueprintName = "PushTests"
+               ReferencedContainer = "container:../Push/Push.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -415,6 +445,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "A54BF4642BF2E33C00CD24D4"
+            BuildableName = "PingTestHost.app"
+            BlueprintName = "PingTestHost"
+            ReferencedContainer = "container:PingTestHost.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

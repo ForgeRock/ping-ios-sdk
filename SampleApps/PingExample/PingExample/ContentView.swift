@@ -63,7 +63,7 @@ enum MenuSection: CaseIterable, Identifiable {
         case .authentication:
             return [.davinci, .journey, .oidc]
         case .userManagement:
-            return [.token, .user, .logout]
+            return [.token, .user, .deviceManagement, .logout]
         case .developerTools:
             return [.deviceInfo, .logger, .storage, .bindingKeys, .configuration]
         }
@@ -78,6 +78,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case token = "Token"
     case user = "User"
     case logout = "Logout"
+    case deviceManagement = "Device Management"
     case deviceInfo = "DeviceInfo"
     case logger = "Logger"
     case storage = "Storage"
@@ -94,6 +95,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .token: return "ticket.fill"
         case .user: return "person.fill"
         case .logout: return "rectangle.portrait.and.arrow.right"
+        case .deviceManagement: return "iphone.and.arrow.forward"
         case .deviceInfo: return "iphone"
         case .logger: return "doc.text.magnifyingglass"
         case .storage: return "externaldrive.fill"
@@ -110,6 +112,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .token: return "Access Token"
         case .user: return "User Info"
         case .logout: return "Logout"
+        case .deviceManagement: return "Device Management"
         case .deviceInfo: return "Device Info"
         case .logger: return "Logger"
         case .storage: return "Storage"
@@ -126,6 +129,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .token: return "View current token"
         case .user: return "View user details"
         case .logout: return "End session"
+        case .deviceManagement: return "Manage registered devices"
         case .deviceInfo: return "Collect device data"
         case .logger: return "Test logging"
         case .storage: return "Test storage"
@@ -182,6 +186,8 @@ struct ContentView: View {
                     AccessTokenView(menuItem: item)
                 case .user:
                     UserInfoView(menuItem: item)
+                case .deviceManagement:
+                    DeviceManagementView(menuItem: item)
                 case .logout:
                     LogOutView(path: $path)
                 case .logger:
