@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingJourneyPlugin
 
 /// Callback that accepts user input often need to validate that input either on the client side, the server side
 /// or both. Such callback should extend this base class.

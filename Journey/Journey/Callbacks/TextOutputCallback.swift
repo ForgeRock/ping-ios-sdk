@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingJourneyPlugin
 
 /// Message types for TextOutputCallback
 public enum MessageType: Int {

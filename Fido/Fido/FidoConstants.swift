@@ -25,7 +25,14 @@ public struct FidoConstants {
     public static let EVENT_TYPE_SUBMIT = "submit"
 
     // MARK: - JSON Fields
-    
+    // Key field
+    public static let key = "key"
+    // Type field
+    public static let type = "type"
+    // Label field
+    public static let label = "label"
+    // Required field
+    public static let required = "required"
     /// The key for the main data payload in a callback.
     public static let FIELD_DATA = "data"
     /// The key for the action to be performed (e.g., "REGISTER" or "AUTHENTICATE").

@@ -10,7 +10,7 @@
 
 import Foundation
 import PingOrchestrate
-import PingDavinci
+import PingDavinciPlugin
 
 /// A collector class for handling Identity Provider (IdP) authorization.
 /// - property continueNode: The continue node.
@@ -72,7 +72,9 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
     @objc
     public static func registerCollector() {
         Task {
-            await CollectorFactory.shared.register(type: Constants.SOCIAL_LOGIN_BUTTON, collector: IdpCollector.self)
+            await CollectorFactory.shared.register(type: Constants.SOCIAL_LOGIN_BUTTON, closure: { json in
+                return IdpCollector(with: json)
+            })
         }
     }
     

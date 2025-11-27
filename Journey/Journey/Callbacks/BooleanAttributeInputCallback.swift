@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingJourneyPlugin
 
 /// A callback that collects a single boolean user attribute with validation against given policies.
 public class BooleanAttributeInputCallback: AttributeInputCallback, @unchecked Sendable {

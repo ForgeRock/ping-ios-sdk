@@ -10,7 +10,7 @@
 
 import XCTest
 @testable import PingProtect
-@testable import PingDavinci
+@testable import PingDavinciPlugin
 @testable import PingOneSignals
 
 final class ProtectTests: XCTestCase {

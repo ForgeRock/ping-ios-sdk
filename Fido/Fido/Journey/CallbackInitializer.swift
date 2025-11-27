@@ -9,13 +9,16 @@
 //
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 
 /// A class responsible for registering FIDO callbacks with the Journey framework.
 public class CallbackInitializer: NSObject {
     /// Registers the FIDO callbacks with the `CallbackRegistry`.
-    @objc public static func registerCallbacks() {
-        CallbackRegistry.shared.register(type: FidoConstants.FIDO_REGISTRATION_CALLBACK, callback: FidoRegistrationCallback.self)
-        CallbackRegistry.shared.register(type: FidoConstants.FIDO_AUTHENTICATION_CALLBACK, callback: FidoAuthenticationCallback.self)
+    @objc
+    public static func registerCallbacks() {
+        Task {
+            await CallbackRegistry.shared.register(type: FidoConstants.FIDO_REGISTRATION_CALLBACK, callback: FidoRegistrationCallback.self)
+            await CallbackRegistry.shared.register(type: FidoConstants.FIDO_AUTHENTICATION_CALLBACK, callback: FidoAuthenticationCallback.self)
+        }
     }
 }

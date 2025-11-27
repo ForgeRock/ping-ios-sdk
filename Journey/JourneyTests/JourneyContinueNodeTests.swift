@@ -9,6 +9,7 @@
 //
 
 import XCTest
+@testable import PingJourneyPlugin
 @testable import PingJourney
 @testable import PingOrchestrate
 
@@ -24,7 +25,7 @@ final class JourneyContinueNodeTests: XCTestCase {
 
         required init() {}
 
-        func initialize(with json: [String : Any]) -> any PingJourney.Callback {
+        func initialize(with json: [String : Any]) -> any Callback {
             self.json = json
             self.id = json["_id"] as? String ?? ""
             return self

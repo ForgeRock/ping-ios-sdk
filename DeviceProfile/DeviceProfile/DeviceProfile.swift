@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 
 // MARK: - DeviceProfile
 
@@ -27,7 +27,7 @@ import PingJourney
 /// ## Usage Example
 /// ```swift
 /// // In AppDelegate or SceneDelegate
-/// DeviceProfile.registerCallbacks()
+/// Task { await DeviceProfile.registerCallbacks() }
 /// ```
 ///
 /// ## Architecture
@@ -37,7 +37,7 @@ import PingJourney
 /// - **Config**: Controls what data is collected and how
 /// - **Results**: Structured data containing device profile information
 @objc
-class DeviceProfile: NSObject {
+public class DeviceProfile: NSObject {
     
     /// Registers the DeviceProfile callback with the Ping Journey framework.
     ///
@@ -70,10 +70,12 @@ class DeviceProfile: NSObject {
     /// ```
     @objc
     public static func registerCallbacks() {
-        CallbackRegistry.shared.register(
-            type: JourneyConstants.deviceProfileCallback,
-            callback: DeviceProfileCallback.self
-        )
+        Task {
+            await CallbackRegistry.shared.register(
+                type: JourneyConstants.deviceProfileCallback,
+                callback: DeviceProfileCallback.self
+            )
+        }
     }
 }
 

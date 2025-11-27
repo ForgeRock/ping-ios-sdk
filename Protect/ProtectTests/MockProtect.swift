@@ -9,7 +9,7 @@
 //
 import Foundation
 @testable import PingProtect
-@testable import PingJourney
+@testable import PingJourneyPlugin
 
 class MockProtect {
     nonisolated(unsafe) static var shouldThrowError = false

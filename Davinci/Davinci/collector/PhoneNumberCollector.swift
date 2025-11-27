@@ -8,6 +8,8 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
+import PingDavinciPlugin
+
 /// A collector for phone number.
 open class PhoneNumberCollector: FieldCollector<[String: Any]>, @unchecked Sendable {
     

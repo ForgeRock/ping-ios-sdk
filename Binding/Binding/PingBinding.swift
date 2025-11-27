@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 #if canImport(UIKit)
 import UIKit
 #endif

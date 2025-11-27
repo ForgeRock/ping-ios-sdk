@@ -10,6 +10,7 @@
 
 
 import XCTest
+import PingJourneyPlugin
 @testable import PingJourney
 @testable import PingLogger
 @testable import PingOrchestrate
@@ -66,7 +67,7 @@ final class JourneyTests: JourneyBaseTests, @unchecked Sendable {
         }
         
         MockURLProtocol.startInterceptingRequests()
-        _ = CallbackRegistry()
+        _ = CallbackRegistry.shared
         
         MockURLProtocol.requestHandler = { request in
             switch request.url!.path {

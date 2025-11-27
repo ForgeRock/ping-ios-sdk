@@ -11,6 +11,7 @@
 
 import Foundation
 import PingOrchestrate
+import PingDavinciPlugin
 
 /// Class representing a PASSWORD Type.
 /// This class inherits from the `ValidatedCollector` class and implements the `Closeable` and `Collector` protocols.

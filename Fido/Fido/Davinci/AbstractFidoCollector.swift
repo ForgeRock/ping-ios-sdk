@@ -9,14 +9,47 @@
 //
 
 import Foundation
-import PingDavinci
+import PingDavinciPlugin
 import PingLogger
 import PingOrchestrate
 import AuthenticationServices
 
 /// An abstract base class for Fido collectors in a DaVinci flow.
-public class AbstractFidoCollector: FieldCollector<[String: Any]>, DaVinciAware, Submittable, @unchecked Sendable {    
+public class AbstractFidoCollector: AnyFieldCollector, DaVinciAware, Submittable, @unchecked Sendable {
     
+    public private(set) var type: String = ""
+    public private(set) var key: String = ""
+    public private(set) var label: String = ""
+    public private(set) var required: Bool = false
+    
+    /// The UUID of the field collector.
+    public var id: String {
+        return key
+    }
+    
+    public func anyPayload() -> Any? {
+        return payload()
+    }
+    
+    public func payload() -> [String: Any]? {
+        fatalError(String(#function) + " must be overridden from subclasses")
+    }
+    
+    public func initialize(with value: Any) {}
+    
+    public required init(with json: [String : Any]) {
+        key = json[FidoConstants.key] as? String ?? ""
+        type = json[FidoConstants.type] as? String ?? ""
+        label = json[FidoConstants.label] as? String ?? ""
+        required = json[FidoConstants.required] as? Bool ?? false
+    }
+    
+    /// Validates this collector, returning a list of validation errors if any.
+    /// - Returns: An array of `ValidationError`.
+    public func validate() -> [ValidationError] {
+        return []
+    }
+
     /// The DaVinci instance, providing access to configuration and logging.
     public var davinci: DaVinci?
     

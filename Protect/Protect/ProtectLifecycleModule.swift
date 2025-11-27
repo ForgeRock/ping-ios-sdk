@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import PingDavinci
+import PingDavinciPlugin
 import PingOrchestrate
 
 /// Module for managing the lifecycle of the Protect SDK.

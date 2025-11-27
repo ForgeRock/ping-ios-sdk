@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingJourneyPlugin
 
 /// A callback that collects a user's acceptance of the configured Terms & Conditions.
 public class TermsAndConditionsCallback: AbstractCallback, ObservableObject, @unchecked Sendable {

@@ -26,7 +26,7 @@ Pod::Spec.new do |s|
   s.module_name = 'PingOneProtect'
   s.swift_versions = ['5.0', '5.1', '6.0']
 
-  s.ios.deployment_target = '13.0'
+  s.ios.deployment_target = '16.0'
 
   base_dir = "Protect/Protect"
   s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.c', base_dir + '/**/*.h'
