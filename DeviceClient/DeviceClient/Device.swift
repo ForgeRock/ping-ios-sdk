@@ -11,24 +11,23 @@
 
 import Foundation
 
-/// Protocol defining immutable device operations.
-public protocol ImmutableDevice<T> {
+/// Protocol defining device operations.
+public protocol DeviceRepository<T> {
     associatedtype T
     
     /// Retrieves a list of devices.
-    /// - Returns: A list of devices of type `T`.
-    func get() async throws -> [T]
+    /// - Returns: A Result containing either the list of devices or an error.
+    func get() async -> Result<[T], DeviceError>
     
     /// Deletes the specified device.
     /// - Parameter device: The device to delete.
-    func delete(_ device: T) async throws
-}
-
-/// Protocol defining mutable device operations.
-public protocol MutableDevice<T>: ImmutableDevice {
+    /// - Returns: A Result containing either success (true) or an error.
+    func delete(_ device: T) async -> Result<Bool, DeviceError>
+    
     /// Updates the specified device.
     /// - Parameter device: The device to update.
-    func update(_ device: T) async throws
+    /// - Returns: A Result containing either success (true) or an error.
+    func update(_ device: T) async -> Result<Bool, DeviceError>
 }
 
 /// Protocol representing a device.
@@ -50,9 +49,9 @@ public struct BoundDevice: Device {
     public let deviceId: String
     /// The UUID of the device.
     public let uuid: String
-    /// The creation date of the device.
+    /// The creation date of the device in seconds (converted from server milliseconds).
     public let createdDate: TimeInterval
-    /// The last access date of the device.
+    /// The last access date of the device in seconds (converted from server milliseconds).
     public let lastAccessDate: TimeInterval
     
     /// Creates a new instance by decoding from the given decoder.
@@ -66,9 +65,29 @@ public struct BoundDevice: Device {
         deviceId = try values.decode(String.self, forKey: .deviceId)
         deviceName = try values.decode(String.self, forKey: .deviceName)
         uuid = try values.decode(String.self, forKey: .uuid)
-        createdDate = try values.decode(TimeInterval.self, forKey: .createdDate)
-        lastAccessDate = try values.decode(TimeInterval.self, forKey: .lastAccessDate)
-        urlSuffix = "devices/2fa/binding"
+        
+        // Convert milliseconds to seconds
+        let createdDateMs = try values.decode(TimeInterval.self, forKey: .createdDate)
+        createdDate = createdDateMs / 1000.0
+        
+        let lastAccessDateMs = try values.decode(TimeInterval.self, forKey: .lastAccessDate)
+        lastAccessDate = lastAccessDateMs / 1000.0
+        
+        urlSuffix = DeviceClientConstants.bindingEndpoint
+    }
+    
+    /// Encodes this value into the given encoder.
+    /// - Parameter encoder: The encoder to write data to.
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(deviceId, forKey: .deviceId)
+        try container.encode(deviceName, forKey: .deviceName)
+        try container.encode(uuid, forKey: .uuid)
+        
+        // Convert seconds back to milliseconds
+        try container.encode(createdDate * 1000.0, forKey: .createdDate)
+        try container.encode(lastAccessDate * 1000.0, forKey: .lastAccessDate)
     }
     
     enum CodingKeys: String, CodingKey {
@@ -82,14 +101,14 @@ public struct OathDevice: Device {
     /// The ID of the device.
     public let id: String
     /// The name of the device.
-    public let deviceName: String
+    public var deviceName: String
     /// The URL suffix for the device.
     public let urlSuffix: String
     /// The UUID of the device.
     public let uuid: String
-    /// The creation date of the device.
+    /// The creation date of the device in seconds (converted from server milliseconds).
     public let createdDate: TimeInterval
-    /// The last access date of the device.
+    /// The last access date of the device in seconds (converted from server milliseconds).
     public let lastAccessDate: TimeInterval
     
     /// Creates a new instance by decoding from the given decoder.
@@ -102,9 +121,28 @@ public struct OathDevice: Device {
         id = try values.decode(String.self, forKey: .id)
         deviceName = try values.decode(String.self, forKey: .deviceName)
         uuid = try values.decode(String.self, forKey: .uuid)
-        createdDate = try values.decode(TimeInterval.self, forKey: .createdDate)
-        lastAccessDate = try values.decode(TimeInterval.self, forKey: .lastAccessDate)
-        urlSuffix = "devices/2fa/oath"
+        
+        // Convert milliseconds to seconds
+        let createdDateMs = try values.decode(TimeInterval.self, forKey: .createdDate)
+        createdDate = createdDateMs / 1000.0
+        
+        let lastAccessDateMs = try values.decode(TimeInterval.self, forKey: .lastAccessDate)
+        lastAccessDate = lastAccessDateMs / 1000.0
+        
+        urlSuffix = DeviceClientConstants.oathEndpoint
+    }
+    
+    /// Encodes this value into the given encoder.
+    /// - Parameter encoder: The encoder to write data to.
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(deviceName, forKey: .deviceName)
+        try container.encode(uuid, forKey: .uuid)
+        
+        // Convert seconds back to milliseconds
+        try container.encode(createdDate * 1000.0, forKey: .createdDate)
+        try container.encode(lastAccessDate * 1000.0, forKey: .lastAccessDate)
     }
     
     enum CodingKeys: String, CodingKey {
@@ -118,14 +156,14 @@ public struct PushDevice: Device {
     /// The ID of the device.
     public let id: String
     /// The name of the device.
-    public let deviceName: String
+    public var deviceName: String
     /// The URL suffix for the device.
     public let urlSuffix: String
     /// The UUID of the device.
     public let uuid: String
-    /// The creation date of the device.
+    /// The creation date of the device in seconds (converted from server milliseconds).
     public let createdDate: TimeInterval
-    /// The last access date of the device.
+    /// The last access date of the device in seconds (converted from server milliseconds).
     public let lastAccessDate: TimeInterval
     
     /// Creates a new instance by decoding from the given decoder.
@@ -138,9 +176,28 @@ public struct PushDevice: Device {
         id = try values.decode(String.self, forKey: .id)
         deviceName = try values.decode(String.self, forKey: .deviceName)
         uuid = try values.decode(String.self, forKey: .uuid)
-        createdDate = try values.decode(TimeInterval.self, forKey: .createdDate)
-        lastAccessDate = try values.decode(TimeInterval.self, forKey: .lastAccessDate)
-        urlSuffix = "devices/2fa/push"
+        
+        // Convert milliseconds to seconds
+        let createdDateMs = try values.decode(TimeInterval.self, forKey: .createdDate)
+        createdDate = createdDateMs / 1000.0
+        
+        let lastAccessDateMs = try values.decode(TimeInterval.self, forKey: .lastAccessDate)
+        lastAccessDate = lastAccessDateMs / 1000.0
+        
+        urlSuffix = DeviceClientConstants.pushEndpoint
+    }
+    
+    /// Encodes this value into the given encoder.
+    /// - Parameter encoder: The encoder to write data to.
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(deviceName, forKey: .deviceName)
+        try container.encode(uuid, forKey: .uuid)
+        
+        // Convert seconds back to milliseconds
+        try container.encode(createdDate * 1000.0, forKey: .createdDate)
+        try container.encode(lastAccessDate * 1000.0, forKey: .lastAccessDate)
     }
     
     enum CodingKeys: String, CodingKey {
@@ -161,9 +218,9 @@ public struct WebAuthnDevice: Device {
     public let uuid: String
     /// The credential ID of the device.
     public let credentialId: String
-    /// The creation date of the device.
+    /// The creation date of the device in seconds (converted from server milliseconds).
     public let createdDate: TimeInterval
-    /// The last access date of the device.
+    /// The last access date of the device in seconds (converted from server milliseconds).
     public let lastAccessDate: TimeInterval
     
     /// Creates a new instance by decoding from the given decoder.
@@ -177,9 +234,29 @@ public struct WebAuthnDevice: Device {
         credentialId = try values.decode(String.self, forKey: .credentialId)
         deviceName = try values.decode(String.self, forKey: .deviceName)
         uuid = try values.decode(String.self, forKey: .uuid)
-        createdDate = try values.decode(TimeInterval.self, forKey: .createdDate)
-        lastAccessDate = try values.decode(TimeInterval.self, forKey: .lastAccessDate)
-        urlSuffix = "devices/2fa/webauthn"
+        
+        // Convert milliseconds to seconds
+        let createdDateMs = try values.decode(TimeInterval.self, forKey: .createdDate)
+        createdDate = createdDateMs / 1000.0
+        
+        let lastAccessDateMs = try values.decode(TimeInterval.self, forKey: .lastAccessDate)
+        lastAccessDate = lastAccessDateMs / 1000.0
+        
+        urlSuffix = DeviceClientConstants.webAuthnEndpoint
+    }
+    
+    /// Encodes this value into the given encoder.
+    /// - Parameter encoder: The encoder to write data to.
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(credentialId, forKey: .credentialId)
+        try container.encode(deviceName, forKey: .deviceName)
+        try container.encode(uuid, forKey: .uuid)
+        
+        // Convert seconds back to milliseconds
+        try container.encode(createdDate * 1000.0, forKey: .createdDate)
+        try container.encode(lastAccessDate * 1000.0, forKey: .lastAccessDate)
     }
     
     enum CodingKeys: String, CodingKey {
@@ -202,7 +279,7 @@ public struct ProfileDevice: Device {
     public let metadata: [String: any Sendable]
     /// The location of the device.
     public let location: Location?
-    /// The last selected date of the device.
+    /// The last selected date of the device in seconds (converted from server milliseconds).
     public let lastSelectedDate: TimeInterval
     
     /// Creates a new instance by decoding from the given decoder.
@@ -216,9 +293,13 @@ public struct ProfileDevice: Device {
         deviceName = try values.decode(String.self, forKey: .deviceName)
         identifier = try values.decode(String.self, forKey: .identifier)
         location = try values.decodeIfPresent(Location.self, forKey: .location)
-        lastSelectedDate = try values.decode(TimeInterval.self, forKey: .lastSelectedDate)
+        
+        // Convert milliseconds to seconds
+        let lastSelectedDateMs = try values.decode(TimeInterval.self, forKey: .lastSelectedDate)
+        lastSelectedDate = lastSelectedDateMs / 1000.0
+        
         metadata = try values.decode([String: any Sendable].self, forKey: .metadata)
-        urlSuffix = "devices/profile"
+        urlSuffix = DeviceClientConstants.profileEndpoint
     }
     
     /// Encodes this value into the given encoder.
@@ -233,7 +314,10 @@ public struct ProfileDevice: Device {
         try? container.encodeIfPresent(deviceName, forKey: .deviceName)
         try? container.encodeIfPresent(identifier, forKey: .identifier)
         try? container.encodeIfPresent(location, forKey: .location)
-        try? container.encodeIfPresent(lastSelectedDate, forKey: .lastSelectedDate)
+        
+        // Convert seconds back to milliseconds
+        try? container.encodeIfPresent(lastSelectedDate * 1000.0, forKey: .lastSelectedDate)
+        
         try? container.encodeIfPresent(metadata, forKey: .metadata)
     }
     
@@ -251,4 +335,3 @@ public struct Location: Codable, Sendable {
     /// The longitude of the location.
     public let longitude: Double
 }
-

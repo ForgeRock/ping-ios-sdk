@@ -1,10 +1,11 @@
-#  # DeviceClient - iOS SDK
+# PingDeviceClient - iOS SDK
 
-Comprehensive device management SDK for Ping AIC, providing type-safe access to user device management operations.
+Comprehensive device management SDK for Ping AIC with Result-based API for robust error handling.
 
 ## Overview
 
-DeviceClient is a module that simplifies device management operations for Ping AIC. It provides a clean, type-safe API for managing authentication devices including OATH, Push, Bound, Profile, and WebAuthn devices.
+PingDeviceClient module simplifies device management operations for Ping AIC. It provides a clean, type-safe, Result-based API for managing authentication devices including OATH, Push, Bound, Profile, and WebAuthn devices.
+
 
 ## Features
 
@@ -12,16 +13,23 @@ DeviceClient is a module that simplifies device management operations for Ping A
 
 | Device Type | Operations | Description |
 |-------------|------------|-------------|
-| **Oath** | Read, Delete | TOTP/HOTP authenticator devices |
-| **Push** | Read, Delete | Push notification devices |
+| **Oath** | Read, Update, Delete | TOTP/HOTP authenticator devices |
+| **Push** | Read, Update, Delete | Push notification devices |
 | **Bound** | Read, Update, Delete | Device binding for 2FA |
 | **Profile** | Read, Update, Delete | Device profiling data |
 | **WebAuthn** | Read, Update, Delete | FIDO2/WebAuthn credentials |
 
-### Dependencies
+### Core Capabilities
 
-- `PingOrchestrate` - HTTP networking
-- `PingLogger` - Logging infrastructure
+- ✅ Fetch all devices for a user by type
+- ✅ Update device properties (name)
+- ✅ Delete devices
+- ✅ Complex metadata handling
+- ✅ Location data support
+- ✅ Async/await throughout
+- ✅ Result-based error handling
+- ✅ Automatic session management with caching
+- ✅ Thread-safe operations
 
 ## Installation
 
@@ -31,14 +39,14 @@ Add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk", from: "<version>")
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk", from: "1.3.0")
 ]
 ```
 
 ### CocoaPods
 
 ```ruby
-pod 'PingDeviceClient', '~> <version>'
+pod 'PingDeviceClient', '~> 1.3.0'
 ```
 
 ## Quick Start
@@ -52,16 +60,12 @@ import PingDeviceClient
 ### 2. Configure and Initialize
 
 ```swift
-// Obtain user ID and session token from your authentication flow
-let userId = "demo"  // From authentication response or userinfo endpoint
+// Obtain session token from your authentication flow
 let sessionToken = "AQIC5w..."  // From successful login
 
-// Create configuration
+// Create configuration (minimal required parameters)
 let config = DeviceClientConfig(
     serverUrl: "https://openam.example.com",
-    realm: "alpha",
-    cookieName: "iPlanetDirectoryPro",
-    userId: userId,
     ssoToken: sessionToken
 )
 
@@ -69,44 +73,68 @@ let config = DeviceClientConfig(
 let deviceClient = DeviceClient(config: config)
 ```
 
-### 3. Perform Operations
+### 3. Perform Operations with Result API
 
 ```swift
-// Fetch devices
-let oathDevices = try await deviceClient.oath.get()
-print("Found \(oathDevices.count) OATH devices")
+// Fetch devices - returns Result
+let result = await deviceClient.oath.get()
 
-// Update a device (for mutable types)
-if var device = boundDevices.first {
+switch result {
+case .success(let devices):
+    print("Found \(devices.count) OATH devices")
+    for device in devices {
+        print("- \(device.deviceName)")
+    }
+    
+case .failure(let error):
+    print("Error: \(error.localizedDescription)")
+    if let suggestion = error.recoverySuggestion {
+        print("Suggestion: \(suggestion)")
+    }
+}
+
+// Update a device
+if case .success(var devices) = await deviceClient.bound.get(),
+   var device = devices.first {
     device.deviceName = "My Updated Device"
-    try await deviceClient.bound.update(device)
+    
+    let updateResult = await deviceClient.bound.update(device)
+    if case .success = updateResult {
+        print("Device updated successfully")
+    }
 }
 
 // Delete a device
-try await deviceClient.oath.delete(oathDevices.first!)
+if case .success(let devices) = await deviceClient.oath.get(),
+   let device = devices.first {
+    let deleteResult = await deviceClient.oath.delete(device)
+    if case .success = deleteResult {
+        print("Device deleted successfully")
+    }
+}
 ```
 
 ## Configuration
 
 ### DeviceClientConfig
 
-The configuration struct contains all parameters needed for device management:
+The configuration struct contains parameters needed for device management:
 
 ```swift
 public struct DeviceClientConfig {
     /// Base URL of the ForgeRock/Ping server
+    /// Example: "https://openam.example.com"
     let serverUrl: String
     
-    /// Realm for authentication
+    /// Realm for authentication (default: "root")
+    /// Example: "alpha", "root"
     let realm: String
     
-    /// HTTP header name for session token
+    /// HTTP header name for session token (default: "iPlanetDirectoryPro")
     let cookieName: String
     
-    /// User ID for device management
-    let userId: String
-    
     /// SSO session token
+    /// Must be valid and non-expired
     let ssoToken: String
     
     /// HTTP client (optional)
@@ -114,79 +142,124 @@ public struct DeviceClientConfig {
 }
 ```
 
-### Obtaining User ID and Session Token
+### Configuration Examples
 
-#### From PingJourney/PingOidc
+#### Basic Configuration (Using Defaults)
 
 ```swift
-import PingJourney
-import PingOidc
+let config = DeviceClientConfig(
+    serverUrl: "https://openam.example.com",
+    ssoToken: sessionToken
+)
+// Uses defaults:
+// - realm: "root"
+// - cookieName: "iPlanetDirectoryPro"
+```
 
-// After successful authentication
-let journeyUser = // ... your authenticated user
+#### Full Configuration
 
-// Get user ID from userinfo endpoint
-let userInfoResult = await journeyUser.userinfo(cache: false)
-switch userInfoResult {
-case .success(let userInfo):
-    let userId = userInfo["sub"] as? String
-    
-case .failure(let error):
-    print("Failed to get user info: \(error)")
-}
-
-// Get session token
-let sessionToken = await journey.session()?.value
-
-// Create configuration
+```swift
 let config = DeviceClientConfig(
     serverUrl: "https://openam.example.com",
     realm: "alpha",
     cookieName: "iPlanetDirectoryPro",
-    userId: userId!,
-    ssoToken: sessionToken!
+    ssoToken: sessionToken
 )
+```
+
+#### With Custom HTTP Client
+
+```swift
+let customHttpClient = HttpClient()
+customHttpClient.timeoutIntervalForRequest = 30
+
+let config = DeviceClientConfig(
+    serverUrl: "https://openam.example.com",
+    realm: "alpha",
+    cookieName: "iPlanetDirectoryPro",
+    ssoToken: sessionToken,
+    httpClient: customHttpClient
+)
+```
+
+### Automatic User ID Fetching
+
+DeviceClient automatically fetches the user ID from the session endpoint on first use and caches it for subsequent requests. You don't need to provide or manage the user ID manually.
+
+```swift
+// First operation - fetches userId from session endpoint
+let result1 = await deviceClient.oath.get()  // Makes 2 calls: session + devices
+
+// Subsequent operations - uses cached userId
+let result2 = await deviceClient.push.get()  // Makes 1 call: devices only
 ```
 
 ## Usage
 
-### Fetching Devices
+### Fetching Devices (Result API)
 
 ```swift
 // Oath devices (authenticator apps)
-let oathDevices = try await deviceClient.oath.get()
-for device in oathDevices {
-    print("Device: \(device.deviceName)")
-    print("  UUID: \(device.uuid)")
-    print("  Created: \(Date(timeIntervalSince1970: device.createdDate / 1000))")
+let result = await deviceClient.oath.get()
+
+switch result {
+case .success(let devices):
+    for device in devices {
+        print("Device: \(device.deviceName)")
+        print("  UUID: \(device.uuid)")
+        print("  Created: \(Date(timeIntervalSince1970: device.createdDate))")
+    }
+    
+case .failure(let error):
+    handleError(error)
 }
 
 // Other device types
-let pushDevices = try await deviceClient.push.get()
-let boundDevices = try await deviceClient.bound.get()
-let profileDevices = try await deviceClient.profile.get()
-let webAuthnDevices = try await deviceClient.webAuthn.get()
+let pushResult = await deviceClient.push.get()
+let boundResult = await deviceClient.bound.get()
+let profileResult = await deviceClient.profile.get()
+let webAuthnResult = await deviceClient.webAuthn.get()
 ```
 
 ### Updating Devices
 
-Only mutable device types (Bound, Profile, WebAuthn) support updates:
+All device types support updates:
 
 ```swift
 // Update a Bound device
-var boundDevice = boundDevices.first!
-boundDevice.deviceName = "My iPhone 15"
-try await deviceClient.bound.update(boundDevice)
+let fetchResult = await deviceClient.bound.get()
+
+if case .success(var devices) = fetchResult,
+   var device = devices.first {
+    device.deviceName = "My iPhone 15"
+    
+    let updateResult = await deviceClient.bound.update(device)
+    
+    switch updateResult {
+    case .success:
+        print("Device updated successfully")
+    case .failure(let error):
+        print("Update failed: \(error.localizedDescription)")
+    }
+}
 
 // Update a Profile device
-var profileDevice = profileDevices.first!
-profileDevice.deviceName = "Updated Profile"
-try await deviceClient.profile.update(profileDevice)
+if case .success(var devices) = await deviceClient.profile.get(),
+   var device = devices.first {
+    device.deviceName = "Updated Profile"
+    
+    let result = await deviceClient.profile.update(device)
+    if case .success = result {
+        print("Profile updated")
+    }
+}
 
 // Update a WebAuthn device
-var webAuthnDevice = webAuthnDevices.first!
-webAuthnDevice.deviceName = "YubiKey 5C"
-try await deviceClient.webAuthn.update(webAuthnDevice)
+if case .success(var devices) = await deviceClient.webAuthn.get(),
+   var device = devices.first {
+    device.deviceName = "YubiKey 5C"
+    await deviceClient.webAuthn.update(device)
+}
 ```
 
 ### Deleting Devices
@@ -194,11 +267,26 @@ try await deviceClient.webAuthn.update(webAuthnDevice)
 All device types support deletion:
 
 ```swift
-try await deviceClient.oath.delete(oathDevice)
-try await deviceClient.push.delete(pushDevice)
-try await deviceClient.bound.delete(boundDevice)
-try await deviceClient.profile.delete(profileDevice)
-try await deviceClient.webAuthn.delete(webAuthnDevice)
+// Delete an Oath device
+let fetchResult = await deviceClient.oath.get()
+
+if case .success(let devices) = fetchResult,
+   let device = devices.first {
+    let deleteResult = await deviceClient.oath.delete(device)
+    
+    switch deleteResult {
+    case .success:
+        print("Device deleted")
+    case .failure(let error):
+        print("Delete failed: \(error)")
+    }
+}
+
+// Delete other device types
+await deviceClient.push.delete(pushDevice)
+await deviceClient.bound.delete(boundDevice)
+await deviceClient.profile.delete(profileDevice)
+await deviceClient.webAuthn.delete(webAuthnDevice)
 ```
 
 ## Device Types
@@ -208,10 +296,19 @@ try await deviceClient.webAuthn.delete(webAuthnDevice)
 ```swift
 struct OathDevice: Device {
     let id: String
-    let deviceName: String
+    var deviceName: String      // Mutable
     let uuid: String
     let createdDate: TimeInterval
     let lastAccessDate: TimeInterval
+    let urlSuffix: String
+}
+
+// Usage
+let result = await client.oath.get()
+if case .success(let devices) = result {
+    for device in devices {
+        print("\(device.deviceName): \(device.uuid)")
+    }
 }
 ```
 
@@ -220,10 +317,11 @@ struct OathDevice: Device {
 ```swift
 struct PushDevice: Device {
     let id: String
-    let deviceName: String
+    var deviceName: String      // Mutable
     let uuid: String
     let createdDate: TimeInterval
     let lastAccessDate: TimeInterval
+    let urlSuffix: String
 }
 ```
 
@@ -237,6 +335,7 @@ struct BoundDevice: Device {
     let uuid: String
     let createdDate: TimeInterval
     let lastAccessDate: TimeInterval
+    let urlSuffix: String
 }
 ```
 
@@ -250,11 +349,21 @@ struct ProfileDevice: Device {
     let metadata: [String: any Sendable]  // Complex metadata
     let location: Location?
     let lastSelectedDate: TimeInterval
+    let urlSuffix: String
 }
 
 struct Location: Codable {
     let latitude: Double
     let longitude: Double
+}
+
+// Usage - Access metadata
+let result = await client.profile.get()
+if case .success(let devices) = result, let device = devices.first {
+    print("Platform: \(device.metadata["platform"] as? String ?? "Unknown")")
+    if let location = device.location {
+        print("Location: \(location.latitude), \(location.longitude)")
+    }
 }
 ```
 
@@ -268,41 +377,59 @@ struct WebAuthnDevice: Device {
     let uuid: String
     let createdDate: TimeInterval
     let lastAccessDate: TimeInterval
+    let urlSuffix: String
 }
 ```
 
 ## Error Handling
 
-All operations throw `DeviceError`:
+### Result-Based Error Handling
+
+All operations return `Result<Success, DeviceError>`:
 
 ```swift
-do {
-    let devices = try await deviceClient.oath.get()
-} catch let error as DeviceError {
+let result = await deviceClient.oath.get()
+
+switch result {
+case .success(let devices):
+    // Handle success
+    processDevices(devices)
+    
+case .failure(let error):
+    // Handle error
     switch error {
     case .networkError(let underlyingError):
-        print("Network error: \(underlyingError)")
+        print("Network error: \(underlyingError.localizedDescription)")
+        showOfflineMessage()
         
     case .requestFailed(let statusCode, let message):
         if statusCode == 401 {
             print("Session expired - please log in again")
+            triggerReAuthentication()
         } else if statusCode == 404 {
             print("Device not found")
         } else {
-            print("Server error: \(message)")
+            print("Server error \(statusCode): \(message)")
         }
         
     case .invalidToken(let message):
         print("Invalid token: \(message)")
+        refreshToken()
+        
+    case .decodingFailed(let error):
+        print("Failed to parse response: \(error)")
+        reportBug()
         
     default:
         print("Error: \(error.localizedDescription)")
-        print("Suggestion: \(error.recoverySuggestion ?? "")")
+        if let suggestion = error.recoverySuggestion {
+            print("Suggestion: \(suggestion)")
+        }
     }
 }
 ```
 
-### Error Types
+### DeviceError Types
 
 ```swift
 public enum DeviceError: LocalizedError {
@@ -315,4 +442,13 @@ public enum DeviceError: LocalizedError {
     case invalidToken(message: String)
     case missingConfiguration(message: String)
 }
+```
+
+### Error Properties
+
+```swift
+// Each error provides:
+error.errorDescription      // Main error message
+error.failureReason        // Why the error occurred
+error.recoverySuggestion   // How to fix it
 ```

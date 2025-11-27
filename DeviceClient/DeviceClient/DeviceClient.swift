@@ -26,7 +26,6 @@ import PingOrchestrate
 ///     serverUrl: "https://openam.example.com",
 ///     realm: "alpha",
 ///     cookieName: "iPlanetDirectoryPro",
-///     userId: "userid",
 ///     ssoToken: "AQIC5w...",
 ///     httpClient: HttpClient()
 /// )
@@ -44,9 +43,6 @@ public struct DeviceClientConfig: Sendable {
     public let cookieName: String
     
     // MARK: Authentication
-    
-    /// The user ID for whom to manage devices
-    public let userId: String
     
     /// The SSO (Single Sign-On) session token
     /// - Note: Token validity is not checked by DeviceClient; ensure token is valid before use
@@ -69,23 +65,20 @@ public struct DeviceClientConfig: Sendable {
     ///   - serverUrl: The base URL of the server (e.g., `"https://openam.example.com"`)
     ///   - realm: The realm for device operations (e.g., `"alpha"`)
     ///   - cookieName: The header name for the SSO token (e.g., `"iPlanetDirectoryPro"`)
-    ///   - userId: The user ID for device management (e.g., `"demo"`)
     ///   - ssoToken: The SSO session token for authentication
     ///   - httpClient: The HTTP client instance (default: `HttpClient()`)
     ///
     /// - Throws: Does not throw, but invalid URLs or tokens will cause runtime errors during API calls
     public init(
         serverUrl: String,
-        realm: String,
-        cookieName: String,
-        userId: String,
+        realm: String = DeviceClientConstants.defaultRealm,
+        cookieName: String = DeviceClientConstants.defaultCookieName,
         ssoToken: String,
         httpClient: HttpClient = HttpClient()
     ) {
         self.serverUrl = serverUrl
         self.realm = realm
         self.cookieName = cookieName
-        self.userId = userId
         self.ssoToken = ssoToken
         self.httpClient = httpClient
     }
@@ -96,16 +89,13 @@ public struct DeviceClientConfig: Sendable {
 /// Client for managing user devices
 ///
 /// `DeviceClient` provides a type-safe interface for managing various types of authentication
-/// devices registered to a user. It supports both immutable devices (read/delete only) and
-/// mutable devices (read/update/delete).
+/// devices registered to a user.
 ///
 /// ## Supported Device Types
 ///
-/// ### Immutable (Read/Delete Only)
+/// ### Mutable (Full CRUD)
 /// - **Oath**: TOTP/HOTP authentication devices
 /// - **Push**: Push notification authentication devices
-///
-/// ### Mutable (Full CRUD)
 /// - **Bound**: Device binding for 2FA
 /// - **Profile**: Device profiling information
 /// - **WebAuthn**: WebAuthn/FIDO2 credentials
@@ -118,31 +108,46 @@ public struct DeviceClientConfig: Sendable {
 ///     serverUrl: "https://openam.example.com",
 ///     realm: "alpha",
 ///     cookieName: "iPlanetDirectoryPro",
-///     userId: "demo",
 ///     ssoToken: token
 /// )
 /// let client = DeviceClient(config: config)
 ///
 /// // Fetch devices
-/// let oathDevices = try await client.oath.get()
+/// let result = await client.oath.get()
+/// switch result {
+/// case .success(let devices):
+///     print("Found \(devices.count) devices")
+/// case .failure(let error):
+///     print("Error: \(error)")
+/// }
 ///
-/// // Update a device (mutable types only)
-/// var device = boundDevices.first!
-/// device.deviceName = "My Updated Device"
-/// try await client.bound.update(device)
+/// // Update a device
+/// if case .success(let devices) = await client.bound.get(),
+///    var device = devices.first {
+///     device.deviceName = "My Updated Device"
+///     let updateResult = await client.bound.update(device)
+///     if case .success = updateResult {
+///         print("Device updated successfully")
+///     }
+/// }
 ///
 /// // Delete a device
-/// try await client.oath.delete(deviceToDelete)
+/// let deleteResult = await client.oath.delete(deviceToDelete)
+/// if case .failure(let error) = deleteResult {
+///     print("Failed to delete: \(error)")
+/// }
 /// ```
 ///
 /// ## Error Handling
 ///
-/// All operations throw `DeviceError` on failure:
+/// All operations return `Result` types:
 ///
 /// ```swift
-/// do {
-///     let devices = try await client.oath.get()
-/// } catch let error as DeviceError {
+/// let result = await client.oath.get()
+/// switch result {
+/// case .success(let devices):
+///     print("Fetched \(devices.count) devices")
+/// case .failure(let error):
 ///     switch error {
 ///     case .requestFailed(let statusCode, let message):
 ///         print("Request failed: \(statusCode) - \(message)")
@@ -167,6 +172,9 @@ public class DeviceClient {
     /// The configuration for this client instance
     private let config: DeviceClientConfig
     
+    /// Cached user ID to avoid repeated session info requests
+    private var userId: String?
+    
     // MARK: Initialization
     
     /// Initializes a new DeviceClient
@@ -181,7 +189,6 @@ public class DeviceClient {
     ///     serverUrl: "https://openam.example.com",
     ///     realm: "alpha",
     ///     cookieName: "iPlanetDirectoryPro",
-    ///     userId: "demo",
     ///     ssoToken: token
     /// )
     /// let client = DeviceClient(config: config)
@@ -195,37 +202,71 @@ public class DeviceClient {
     /// Provides access to Oath devices
     ///
     /// Oath devices support TOTP (Time-based One-Time Password) and HOTP (HMAC-based One-Time Password)
-    /// authentication. These devices are **immutable** - they support read and delete operations only.
+    /// These devices are **mutable** - they support full CRUD operations.
     ///
     /// Supported operations:
     /// - `get()`: Retrieve all Oath devices for the user
+    /// - `update(_:)`: Update device properties (e.g., device name)
     /// - `delete(_:)`: Delete a specific Oath device
     ///
     /// Example:
     /// ```swift
-    /// let devices = try await client.oath.get()
-    /// try await client.oath.delete(devices.first!)
+    /// let result = await client.oath.get()
+    /// switch result {
+    /// case .success(let devices):
+    ///     if var device = devices.first {
+    ///         device.deviceName = "My Work Phone"
+    ///         let updateResult = await client.oath.update(device)
+    ///         if case .success = updateResult {
+    ///             print("Device updated")
+    ///         }
+    ///
+    ///         let deleteResult = await client.oath.delete(device)
+    ///         if case .success = deleteResult {
+    ///             print("Device deleted")
+    ///         }
+    ///     }
+    /// case .failure(let error):
+    ///     print("Error: \(error)")
+    /// }
     /// ```
-    public lazy var oath: any ImmutableDevice<OathDevice> = {
-        ImmutableDeviceImplementation<OathDevice>(endpoint: "devices/2fa/oath", deviceClient: self)
+    public lazy var oath: any DeviceRepository<OathDevice> = {
+        DeviceRepositoryImplementation<OathDevice>(endpoint: DeviceClientConstants.oathEndpoint, deviceClient: self)
     }()
     
     /// Provides access to Push devices
     ///
     /// Push devices support push notification-based authentication.
-    /// These devices are **immutable** - they support read and delete operations only.
+    /// These devices are **mutable** - they support full CRUD operations.
     ///
     /// Supported operations:
     /// - `get()`: Retrieve all Push devices for the user
+    /// - `update(_:)`: Update device properties (e.g., device name)
     /// - `delete(_:)`: Delete a specific Push device
     ///
     /// Example:
     /// ```swift
-    /// let devices = try await client.push.get()
-    /// try await client.push.delete(devices.first!)
+    /// let result = await client.push.get()
+    /// switch result {
+    /// case .success(let devices):
+    ///     if var device = devices.first {
+    ///         device.deviceName = "My Work Phone"
+    ///         let updateResult = await client.push.update(device)
+    ///         if case .success = updateResult {
+    ///             print("Device updated")
+    ///         }
+    ///
+    ///         let deleteResult = await client.push.delete(device)
+    ///         if case .success = deleteResult {
+    ///             print("Device deleted")
+    ///         }
+    ///     }
+    /// case .failure(let error):
+    ///     print("Error: \(error)")
+    /// }
     /// ```
-    public lazy var push: any ImmutableDevice<PushDevice> = {
-        ImmutableDeviceImplementation<PushDevice>(endpoint: "devices/2fa/push", deviceClient: self)
+    public lazy var push: any DeviceRepository<PushDevice> = {
+        DeviceRepositoryImplementation<PushDevice>(endpoint: DeviceClientConstants.pushEndpoint, deviceClient: self)
     }()
     
     /// Provides access to Bound devices
@@ -240,16 +281,27 @@ public class DeviceClient {
     ///
     /// Example:
     /// ```swift
-    /// let devices = try await client.bound.get()
+    /// let result = await client.bound.get()
+    /// switch result {
+    /// case .success(let devices):
+    ///     if var device = devices.first {
+    ///         device.deviceName = "My Work Phone"
+    ///         let updateResult = await client.bound.update(device)
+    ///         if case .success = updateResult {
+    ///             print("Device updated")
+    ///         }
     ///
-    /// var device = devices.first!
-    /// device.deviceName = "My Work Phone"
-    /// try await client.bound.update(device)
-    ///
-    /// try await client.bound.delete(device)
+    ///         let deleteResult = await client.bound.delete(device)
+    ///         if case .success = deleteResult {
+    ///             print("Device deleted")
+    ///         }
+    ///     }
+    /// case .failure(let error):
+    ///     print("Error: \(error)")
+    /// }
     /// ```
-    public lazy var bound: any MutableDevice<BoundDevice> = {
-        MutableDeviceImplementation<BoundDevice>(endpoint: "devices/2fa/binding", deviceClient: self)
+    public lazy var bound: any DeviceRepository<BoundDevice> = {
+        DeviceRepositoryImplementation<BoundDevice>(endpoint: DeviceClientConstants.bindingEndpoint, deviceClient: self)
     }()
     
     /// Provides access to Profile devices
@@ -264,16 +316,27 @@ public class DeviceClient {
     ///
     /// Example:
     /// ```swift
-    /// let devices = try await client.profile.get()
+    /// let result = await client.profile.get()
+    /// switch result {
+    /// case .success(let devices):
+    ///     if var device = devices.first {
+    ///         device.deviceName = "My iPhone"
+    ///         let updateResult = await client.profile.update(device)
+    ///         if case .success = updateResult {
+    ///             print("Device updated")
+    ///         }
     ///
-    /// var device = devices.first!
-    /// device.deviceName = "My iPhone"
-    /// try await client.profile.update(device)
-    ///
-    /// try await client.profile.delete(device)
+    ///         let deleteResult = await client.profile.delete(device)
+    ///         if case .success = deleteResult {
+    ///             print("Device deleted")
+    ///         }
+    ///     }
+    /// case .failure(let error):
+    ///     print("Error: \(error)")
+    /// }
     /// ```
-    public lazy var profile: any MutableDevice<ProfileDevice> = {
-        MutableDeviceImplementation<ProfileDevice>(endpoint: "devices/profile", deviceClient: self)
+    public lazy var profile: any DeviceRepository<ProfileDevice> = {
+        DeviceRepositoryImplementation<ProfileDevice>(endpoint: DeviceClientConstants.profileEndpoint, deviceClient: self)
     }()
     
     /// Provides access to WebAuthn devices
@@ -288,16 +351,27 @@ public class DeviceClient {
     ///
     /// Example:
     /// ```swift
-    /// let devices = try await client.webAuthn.get()
+    /// let result = await client.webAuthn.get()
+    /// switch result {
+    /// case .success(let devices):
+    ///     if var device = devices.first {
+    ///         device.deviceName = "My YubiKey"
+    ///         let updateResult = await client.webAuthn.update(device)
+    ///         if case .success = updateResult {
+    ///             print("Device updated")
+    ///         }
     ///
-    /// var device = devices.first!
-    /// device.deviceName = "My YubiKey"
-    /// try await client.webAuthn.update(device)
-    ///
-    /// try await client.webAuthn.delete(device)
+    ///         let deleteResult = await client.webAuthn.delete(device)
+    ///         if case .success = deleteResult {
+    ///             print("Device deleted")
+    ///         }
+    ///     }
+    /// case .failure(let error):
+    ///     print("Error: \(error)")
+    /// }
     /// ```
-    public lazy var webAuthn: any MutableDevice<WebAuthnDevice> = {
-        MutableDeviceImplementation<WebAuthnDevice>(endpoint: "devices/2fa/webauthn", deviceClient: self)
+    public lazy var webAuthn: any DeviceRepository<WebAuthnDevice> = {
+        DeviceRepositoryImplementation<WebAuthnDevice>(endpoint: DeviceClientConstants.webAuthnEndpoint, deviceClient: self)
     }()
     
     // MARK: - Internal Methods
@@ -321,13 +395,8 @@ public class DeviceClient {
         }
         
         do {
-            let json = try response.json()
-            guard let resultArray = json["result"] as? [[String: Any]] else {
-                throw DeviceError.invalidResponse(message: "Missing 'result' array in response")
-            }
-            
-            let resultData = try JSONSerialization.data(withJSONObject: resultArray, options: [])
-            let devices = try JSONDecoder().decode([T].self, from: resultData)
+            let wrapper = try JSONDecoder().decode(DeviceResponse<T>.self, from: response.data)
+            let devices = wrapper.result
             
             LogManager.logger.i("DeviceClient: Successfully fetched \(devices.count) devices")
             return devices
@@ -401,13 +470,14 @@ public class DeviceClient {
     /// - Returns: A configured `Request` object ready for execution
     /// - Throws: `DeviceError.invalidUrl` if the URL cannot be constructed
     private func createGetRequest(for endpoint: String) async throws -> Request {
-        let urlString = "\(config.serverUrl)/json/realms/\(config.realm)/users/\(config.userId)/\(endpoint)"
+        let userId = try await fetchUserId()
+        let urlString = "\(config.serverUrl)\(DeviceClientConstants.jsonPath)\(DeviceClientConstants.realmsPath)/\(config.realm)\(DeviceClientConstants.usersPath)/\(userId)/\(endpoint)"
         
         guard var components = URLComponents(string: urlString) else {
             throw DeviceError.invalidUrl(url: urlString)
         }
         
-        components.queryItems = [URLQueryItem(name: "_queryFilter", value: "true")]
+        components.queryItems = [URLQueryItem(name: DeviceClientConstants.queryFilterKey, value: DeviceClientConstants.queryFilterValue)]
         
         guard let url = components.url else {
             throw DeviceError.invalidUrl(url: urlString)
@@ -430,7 +500,8 @@ public class DeviceClient {
     /// - Throws: `DeviceError.invalidUrl` if the URL cannot be constructed
     /// - Throws: `DeviceError.encodingFailed` if the device cannot be encoded to JSON
     private func createPutRequest(for device: Device) async throws -> Request {
-        let urlString = "\(config.serverUrl)/json/realms/\(config.realm)/users/\(config.userId)/\(device.urlSuffix)/\(device.id)"
+        let userId = try await fetchUserId()
+        let urlString = "\(config.serverUrl)\(DeviceClientConstants.jsonPath)\(DeviceClientConstants.realmsPath)/\(config.realm)\(DeviceClientConstants.usersPath)/\(userId)/\(device.urlSuffix)/\(device.id)"
         
         guard URL(string: urlString) != nil else {
             throw DeviceError.invalidUrl(url: urlString)
@@ -443,6 +514,9 @@ public class DeviceClient {
         
         let request = Request(urlString: urlString)
         addAuthHeaders(to: request)
+        if device.urlSuffix.hasSuffix(DeviceClientConstants.pushEndpoint) || device.urlSuffix.hasSuffix(DeviceClientConstants.oathEndpoint) {
+            request.header(name: DeviceClientConstants.ifMatchHeader, value: DeviceClientConstants.ifMatchValue)
+        }
         request.body(body: dictionary)
         request.method(Request.HTTPMethod.put)
         
@@ -458,7 +532,8 @@ public class DeviceClient {
     /// - Returns: A configured `Request` object ready for execution
     /// - Throws: `DeviceError.invalidUrl` if the URL cannot be constructed
     private func createDeleteRequest(for device: Device) async throws -> Request {
-        let urlString = "\(config.serverUrl)/json/realms/\(config.realm)/users/\(config.userId)/\(device.urlSuffix)/\(device.id)"
+        let userId = try await fetchUserId()
+        let urlString = "\(config.serverUrl)\(DeviceClientConstants.jsonPath)\(DeviceClientConstants.realmsPath)/\(config.realm)\(DeviceClientConstants.usersPath)/\(userId)/\(device.urlSuffix)/\(device.id)"
         
         guard URL(string: urlString) != nil else {
             throw DeviceError.invalidUrl(url: urlString)
@@ -479,63 +554,68 @@ public class DeviceClient {
     /// - Parameters:
     ///   - request: The request to add headers to
     ///   - acceptAPIVersion: The API version to request (default: "resource=1.0")
-    private func addAuthHeaders(to request: Request, acceptAPIVersion: String = "resource=1.0") {
+    private func addAuthHeaders(to request: Request, acceptAPIVersion: String = DeviceClientConstants.resourceAPIVersion1_0) {
         request.header(name: config.cookieName, value: config.ssoToken)
-        request.header(name: "Accept-API-Version", value: acceptAPIVersion)
+        request.header(name: DeviceClientConstants.acceptAPIVersionHeader, value: acceptAPIVersion)
+    }
+    
+    /// Fetches the user id from the session (with caching)
+    /// - Returns: The user id
+    private func fetchUserId() async throws -> String {
+        // Return cached value if available
+        if let userId = userId {
+            return userId
+        }
+        
+        LogManager.logger.d("DeviceClient: Fetching session username")
+        
+        let urlString = "\(config.serverUrl)\(DeviceClientConstants.jsonPath)\(DeviceClientConstants.realmsPath)/\(config.realm)\(DeviceClientConstants.sessionsPath)"
+        guard var components = URLComponents(string: urlString) else {
+            throw DeviceError.invalidUrl(url: urlString)
+        }
+        
+        components.queryItems = [URLQueryItem(name: DeviceClientConstants.actionKey, value: DeviceClientConstants.sessionInfoAction)]
+        
+        guard let url = components.url else {
+            throw DeviceError.invalidUrl(url: urlString)
+        }
+        
+        let request = Request(urlString: url.absoluteString)
+        addAuthHeaders(to: request, acceptAPIVersion: DeviceClientConstants.resourceAPIVersion2_1)
+        request.method(Request.HTTPMethod.post)
+        
+        let response = try await executeRequest(request)
+        
+        guard response.status() == 200 else {
+            LogManager.logger.e("DeviceClient: Failed to fetch session info. Status: \(response.status())", error: nil)
+            throw DeviceError.requestFailed(statusCode: response.status(), message: "Failed to retrieve session information")
+        }
+        
+        do {
+            let session = try JSONDecoder().decode(Session.self, from: response.data)
+            
+            // Cache the user ID
+            self.userId = session.username
+            
+            LogManager.logger.i("DeviceClient: Successfully retrieved username: \(session.username)")
+            return session.username
+        } catch {
+            LogManager.logger.e("DeviceClient: Failed to decode session", error: error)
+            throw DeviceError.decodingFailed(error: error)
+        }
     }
 }
 
-// MARK: - ImmutableDeviceImplementation
 
-/// Implementation of the `ImmutableDevice` protocol for read-only devices
-///
-/// Provides GET and DELETE operations for devices that do not support updates.
-/// Used by Oath and Push device types.
-///
-/// - Note: This implementation is generic and can work with any device type conforming to `Device`
-public struct ImmutableDeviceImplementation<R>: ImmutableDevice where R: Device {
-    /// The API endpoint for this device type
-    var endpoint: String
-    
-    /// Reference to the parent DeviceClient for executing operations
-    var deviceClient: DeviceClient
-    
-    /// Initializes a new immutable device implementation
-    ///
-    /// - Parameters:
-    ///   - endpoint: The API endpoint for this device type
-    ///   - deviceClient: The DeviceClient instance to use for operations
-    public init(endpoint: String, deviceClient: DeviceClient) {
-        self.endpoint = endpoint
-        self.deviceClient = deviceClient
-    }
-    
-    /// Retrieves all devices of this type for the user
-    ///
-    /// - Returns: An array of devices
-    /// - Throws: `DeviceError` if the request fails or cannot be decoded
-    public func get() async throws -> [R] {
-        try await deviceClient.fetchDevices(endpoint: endpoint)
-    }
-    
-    /// Deletes the specified device from the server
-    ///
-    /// - Parameter device: The device to delete
-    /// - Throws: `DeviceError` if the request fails
-    public func delete(_ device: R) async throws {
-        try await deviceClient.delete(device: device)
-    }
-}
+// MARK: - DeviceRepositoryImplementation
 
-// MARK: - MutableDeviceImplementation
-
-/// Implementation of the `MutableDevice` protocol for full CRUD devices
+/// Implementation of the `DeviceRepository` protocol for full CRUD devices
 ///
 /// Provides GET, UPDATE, and DELETE operations for devices that support modification.
-/// Used by Bound, Profile, and WebAuthn device types.
+/// Used by Oath, Push, Bound, Profile, and WebAuthn device types.
 ///
 /// - Note: This implementation is generic and can work with any device type conforming to `Device`
-public struct MutableDeviceImplementation<R>: MutableDevice where R: Device {
+public struct DeviceRepositoryImplementation<R>: DeviceRepository where R: Device {
     /// The API endpoint for this device type
     var endpoint: String
     
@@ -554,25 +634,96 @@ public struct MutableDeviceImplementation<R>: MutableDevice where R: Device {
     
     /// Retrieves all devices of this type for the user
     ///
-    /// - Returns: An array of devices
-    /// - Throws: `DeviceError` if the request fails or cannot be decoded
-    public func get() async throws -> [R] {
-        try await deviceClient.fetchDevices(endpoint: endpoint)
+    /// - Returns: A Result containing either the array of devices or an error
+    public func get() async -> Result<[R], DeviceError> {
+        do {
+            let devices: [R] = try await deviceClient.fetchDevices(endpoint: endpoint)
+            return .success(devices)
+        } catch let error as DeviceError {
+            return .failure(error)
+        } catch {
+            return .failure(.decodingFailed(error: error))
+        }
     }
     
     /// Deletes the specified device from the server
     ///
     /// - Parameter device: The device to delete
-    /// - Throws: `DeviceError` if the request fails
-    public func delete(_ device: R) async throws {
-        try await deviceClient.delete(device: device)
+    /// - Returns: A Result containing either success (true) or an error
+    public func delete(_ device: R) async -> Result<Bool, DeviceError> {
+        do {
+            try await deviceClient.delete(device: device)
+            return .success(true)
+        } catch let error as DeviceError {
+            return .failure(error)
+        } catch {
+            return .failure(.networkError(error: error))
+        }
     }
     
     /// Updates the specified device on the server
     ///
     /// - Parameter device: The device with updated properties
-    /// - Throws: `DeviceError` if the request fails
-    public func update(_ device: R) async throws {
-        try await deviceClient.update(device: device)
+    /// - Returns: A Result containing either success (true) or an error
+    public func update(_ device: R) async -> Result<Bool, DeviceError> {
+        do {
+            try await deviceClient.update(device: device)
+            return .success(true)
+        } catch let error as DeviceError {
+            return .failure(error)
+        } catch {
+            return .failure(.networkError(error: error))
+        }
     }
 }
+
+private struct DeviceResponse<T: Decodable>: Decodable {
+    let result: [T]
+}
+
+// MARK: - Session Model
+
+/// Struct representing a user session.
+struct Session: Codable {
+    let username: String
+    let universalId: String
+    let realm: String
+    let latestAccessTime: String
+    let maxIdleExpirationTime: String
+    let maxSessionExpirationTime: String
+}
+
+public enum DeviceClientConstants {
+    // MARK: - URL Paths
+    static let jsonPath = "/json"
+    static let realmsPath = "/realms"
+    static let usersPath = "/users"
+    static let sessionsPath = "/sessions"
+    
+    // MARK: - Device Endpoints
+    static let oathEndpoint = "devices/2fa/oath"
+    static let pushEndpoint = "devices/2fa/push"
+    static let bindingEndpoint = "devices/2fa/binding"
+    static let profileEndpoint = "devices/profile"
+    static let webAuthnEndpoint = "devices/2fa/webauthn"
+    
+    // MARK: - Query Parameters
+    static let queryFilterKey = "_queryFilter"
+    static let queryFilterValue = "true"
+    static let actionKey = "_action"
+    static let sessionInfoAction = "getSessionInfo"
+    
+    // MARK: - Headers
+    static let acceptAPIVersionHeader = "Accept-API-Version"
+    static let ifMatchHeader = "If-Match"
+    static let ifMatchValue = "*"
+    
+    // MARK: - API Versions
+    static let resourceAPIVersion1_0 = "resource=1.0"
+    static let resourceAPIVersion2_1 = "resource=2.1"
+    
+    // MARK: - Default Values
+    public static let defaultRealm = "root"
+    public static let defaultCookieName = "iPlanetDirectoryPro"
+}
+

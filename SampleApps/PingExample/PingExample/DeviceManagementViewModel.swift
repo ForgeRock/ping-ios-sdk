@@ -36,14 +36,6 @@ enum DeviceType: String, CaseIterable, Identifiable {
         }
     }
     
-    var supportsUpdate: Bool {
-        switch self {
-        case .oath, .push:
-            return false
-        case .bound, .profile, .webAuthn:
-            return true
-        }
-    }
 }
 
 /// ViewModel for managing devices
@@ -66,7 +58,6 @@ class DeviceManagementViewModel: ObservableObject {
     // MARK: - Private Properties
     
     private var deviceClient: DeviceClient?
-    private var cachedUserId: String?
     
     // MARK: - Initialization
     
@@ -99,16 +90,6 @@ class DeviceManagementViewModel: ObservableObject {
         
         let cookieName = config.cookieName ?? "iPlanetDirectoryPro"
         
-        // Fetch user ID
-        guard let userId = await fetchUserId() else {
-            errorMessage = "Unable to retrieve user information. Please ensure you are logged in."
-            LogManager.logger.e("DeviceManagement: Failed to retrieve userId", error: nil)
-            return false
-        }
-        
-        // Cache user ID for future use
-        cachedUserId = userId
-        
         // Get session token
         guard let sessionToken = await ConfigurationManager.shared.journeySession?.value,
               !sessionToken.isEmpty else {
@@ -122,14 +103,13 @@ class DeviceManagementViewModel: ObservableObject {
             serverUrl: serverUrl,
             realm: realm,
             cookieName: cookieName,
-            userId: userId,
             ssoToken: sessionToken
         )
         
         // Initialize device client
         self.deviceClient = DeviceClient(config: deviceConfig)
         
-        LogManager.logger.i("DeviceManagement: Successfully initialized with userId: \(userId)")
+        LogManager.logger.i("DeviceManagement: Successfully initialized")
         return true
     }
     
@@ -155,35 +135,48 @@ class DeviceManagementViewModel: ObservableObject {
         successMessage = nil
         selectedDeviceType = type
         
-        do {
-            switch type {
-            case .oath:
-                oathDevices = try await client.oath.get()
-                LogManager.logger.i("DeviceManagement: Loaded \(oathDevices.count) Oath devices")
-                
-            case .push:
-                pushDevices = try await client.push.get()
-                LogManager.logger.i("DeviceManagement: Loaded \(pushDevices.count) Push devices")
-                
-            case .bound:
-                boundDevices = try await client.bound.get()
-                LogManager.logger.i("DeviceManagement: Loaded \(boundDevices.count) Bound devices")
-                
-            case .profile:
-                profileDevices = try await client.profile.get()
-                LogManager.logger.i("DeviceManagement: Loaded \(profileDevices.count) Profile devices")
-                
-            case .webAuthn:
-                webAuthnDevices = try await client.webAuthn.get()
-                LogManager.logger.i("DeviceManagement: Loaded \(webAuthnDevices.count) WebAuthn devices")
+        let result: Result<Int, DeviceError> = switch type {
+        case .oath:
+            await client.oath.get().map { devices in
+                self.oathDevices = devices
+                LogManager.logger.i("DeviceManagement: Loaded \(devices.count) Oath devices")
+                return devices.count
             }
             
+        case .push:
+            await client.push.get().map { devices in
+                self.pushDevices = devices
+                LogManager.logger.i("DeviceManagement: Loaded \(devices.count) Push devices")
+                return devices.count
+            }
+            
+        case .bound:
+            await client.bound.get().map { devices in
+                self.boundDevices = devices
+                LogManager.logger.i("DeviceManagement: Loaded \(devices.count) Bound devices")
+                return devices.count
+            }
+            
+        case .profile:
+            await client.profile.get().map { devices in
+                self.profileDevices = devices
+                LogManager.logger.i("DeviceManagement: Loaded \(devices.count) Profile devices")
+                return devices.count
+            }
+            
+        case .webAuthn:
+            await client.webAuthn.get().map { devices in
+                self.webAuthnDevices = devices
+                LogManager.logger.i("DeviceManagement: Loaded \(devices.count) WebAuthn devices")
+                return devices.count
+            }
+        }
+        
+        switch result {
+        case .success:
             successMessage = "Successfully loaded \(type.rawValue) devices"
-        } catch let error as DeviceError {
+        case .failure(let error):
             handleDeviceError(error, operation: "load devices")
-        } catch {
-            errorMessage = "Failed to load devices: \(error.localizedDescription)"
-            LogManager.logger.e("DeviceManagement: Unexpected error loading devices", error: error)
         }
         
         isLoading = false
@@ -191,88 +184,165 @@ class DeviceManagementViewModel: ObservableObject {
     
     /// Deletes an Oath device
     func deleteOathDevice(_ device: OathDevice) async {
-        await performDeviceOperation(operation: {
-            try await self.deviceClient?.oath.delete(device)
-            self.oathDevices.removeAll { $0.id == device.id }
-        }, deviceName: device.deviceName, operationType: "delete", deviceType: "Oath")
+        await performDeviceOperation(
+            operation: { await self.deviceClient?.oath.delete(device) },
+            onSuccess: {
+                self.oathDevices.removeAll { $0.id == device.id }
+            },
+            deviceName: device.deviceName,
+            operationType: "delete",
+            deviceType: "Oath"
+        )
     }
     
     /// Deletes a Push device
     func deletePushDevice(_ device: PushDevice) async {
-        await performDeviceOperation(operation: {
-            try await self.deviceClient?.push.delete(device)
-            self.pushDevices.removeAll { $0.id == device.id }
-        }, deviceName: device.deviceName, operationType: "delete", deviceType: "Push")
+        await performDeviceOperation(
+            operation: { await self.deviceClient?.push.delete(device) },
+            onSuccess: {
+                self.pushDevices.removeAll { $0.id == device.id }
+            },
+            deviceName: device.deviceName,
+            operationType: "delete",
+            deviceType: "Push"
+        )
     }
     
     /// Deletes a Bound device
     func deleteBoundDevice(_ device: BoundDevice) async {
-        await performDeviceOperation(operation: {
-            try await self.deviceClient?.bound.delete(device)
-            self.boundDevices.removeAll { $0.id == device.id }
-        }, deviceName: device.deviceName, operationType: "delete", deviceType: "Bound")
+        await performDeviceOperation(
+            operation: { await self.deviceClient?.bound.delete(device) },
+            onSuccess: {
+                self.boundDevices.removeAll { $0.id == device.id }
+            },
+            deviceName: device.deviceName,
+            operationType: "delete",
+            deviceType: "Bound"
+        )
     }
     
     /// Updates a Bound device
     func updateBoundDevice(_ device: BoundDevice, newName: String) async {
-        await performDeviceOperation(operation: {
-            var updatedDevice = device
-            updatedDevice.deviceName = newName
-            try await self.deviceClient?.bound.update(updatedDevice)
-            
-            if let index = self.boundDevices.firstIndex(where: { $0.id == device.id }) {
-                self.boundDevices[index] = updatedDevice
-            }
-        }, deviceName: device.deviceName, operationType: "update", deviceType: "Bound")
+        var updatedDevice = device
+        updatedDevice.deviceName = newName
+        
+        await performDeviceOperation(
+            operation: { await self.deviceClient?.bound.update(updatedDevice) },
+            onSuccess: {
+                if let index = self.boundDevices.firstIndex(where: { $0.id == device.id }) {
+                    self.boundDevices[index] = updatedDevice
+                }
+            },
+            deviceName: device.deviceName,
+            operationType: "update",
+            deviceType: "Bound"
+        )
     }
     
     /// Deletes a Profile device
     func deleteProfileDevice(_ device: ProfileDevice) async {
-        await performDeviceOperation(operation: {
-            try await self.deviceClient?.profile.delete(device)
-            self.profileDevices.removeAll { $0.id == device.id }
-        }, deviceName: device.deviceName, operationType: "delete", deviceType: "Profile")
+        await performDeviceOperation(
+            operation: { await self.deviceClient?.profile.delete(device) },
+            onSuccess: {
+                self.profileDevices.removeAll { $0.id == device.id }
+            },
+            deviceName: device.deviceName,
+            operationType: "delete",
+            deviceType: "Profile"
+        )
     }
     
     /// Updates a Profile device
     func updateProfileDevice(_ device: ProfileDevice, newName: String) async {
-        await performDeviceOperation(operation: {
-            var updatedDevice = device
-            updatedDevice.deviceName = newName
-            try await self.deviceClient?.profile.update(updatedDevice)
-            
-            if let index = self.profileDevices.firstIndex(where: { $0.id == device.id }) {
-                self.profileDevices[index] = updatedDevice
-            }
-        }, deviceName: device.deviceName, operationType: "update", deviceType: "Profile")
+        var updatedDevice = device
+        updatedDevice.deviceName = newName
+        
+        await performDeviceOperation(
+            operation: { await self.deviceClient?.profile.update(updatedDevice) },
+            onSuccess: {
+                if let index = self.profileDevices.firstIndex(where: { $0.id == device.id }) {
+                    self.profileDevices[index] = updatedDevice
+                }
+            },
+            deviceName: device.deviceName,
+            operationType: "update",
+            deviceType: "Profile"
+        )
     }
     
     /// Deletes a WebAuthn device
     func deleteWebAuthnDevice(_ device: WebAuthnDevice) async {
-        await performDeviceOperation(operation: {
-            try await self.deviceClient?.webAuthn.delete(device)
-            self.webAuthnDevices.removeAll { $0.id == device.id }
-        }, deviceName: device.deviceName, operationType: "delete", deviceType: "WebAuthn")
+        await performDeviceOperation(
+            operation: { await self.deviceClient?.webAuthn.delete(device) },
+            onSuccess: {
+                self.webAuthnDevices.removeAll { $0.id == device.id }
+            },
+            deviceName: device.deviceName,
+            operationType: "delete",
+            deviceType: "WebAuthn"
+        )
     }
     
     /// Updates a WebAuthn device
     func updateWebAuthnDevice(_ device: WebAuthnDevice, newName: String) async {
-        await performDeviceOperation(operation: {
-            var updatedDevice = device
-            updatedDevice.deviceName = newName
-            try await self.deviceClient?.webAuthn.update(updatedDevice)
-            
-            if let index = self.webAuthnDevices.firstIndex(where: { $0.id == device.id }) {
-                self.webAuthnDevices[index] = updatedDevice
-            }
-        }, deviceName: device.deviceName, operationType: "update", deviceType: "WebAuthn")
+        var updatedDevice = device
+        updatedDevice.deviceName = newName
+        
+        await performDeviceOperation(
+            operation: { await self.deviceClient?.webAuthn.update(updatedDevice) },
+            onSuccess: {
+                if let index = self.webAuthnDevices.firstIndex(where: { $0.id == device.id }) {
+                    self.webAuthnDevices[index] = updatedDevice
+                }
+            },
+            deviceName: device.deviceName,
+            operationType: "update",
+            deviceType: "WebAuthn"
+        )
+    }
+    
+    /// Updates a Push device
+    func updatePushDevice(_ device: PushDevice, newName: String) async {
+        var updatedDevice = device
+        updatedDevice.deviceName = newName
+        
+        await performDeviceOperation(
+            operation: { await self.deviceClient?.push.update(updatedDevice) },
+            onSuccess: {
+                if let index = self.pushDevices.firstIndex(where: { $0.id == device.id }) {
+                    self.pushDevices[index] = updatedDevice
+                }
+            },
+            deviceName: device.deviceName,
+            operationType: "update",
+            deviceType: "Push"
+        )
+    }
+    
+    /// Updates a Oath device
+    func updateOathDevice(_ device: OathDevice, newName: String) async {
+        var updatedDevice = device
+        updatedDevice.deviceName = newName
+        
+        await performDeviceOperation(
+            operation: { await self.deviceClient?.oath.update(updatedDevice) },
+            onSuccess: {
+                if let index = self.oathDevices.firstIndex(where: { $0.id == device.id }) {
+                    self.oathDevices[index] = updatedDevice
+                }
+            },
+            deviceName: device.deviceName,
+            operationType: "update",
+            deviceType: "Oath"
+        )
     }
     
     // MARK: - Helper Methods
     
     /// Generic method to perform device operations with consistent error handling
     private func performDeviceOperation(
-        operation: () async throws -> Void,
+        operation: () async -> Result<Bool, DeviceError>?,
+        onSuccess: () -> Void,
         deviceName: String,
         operationType: String,
         deviceType: String
@@ -286,15 +356,19 @@ class DeviceManagementViewModel: ObservableObject {
         errorMessage = nil
         successMessage = nil
         
-        do {
-            try await operation()
+        guard let result = await operation() else {
+            errorMessage = "Device client not available"
+            isLoading = false
+            return
+        }
+        
+        switch result {
+        case .success:
+            onSuccess()
             successMessage = "Successfully \(operationType)d device: \(deviceName)"
             LogManager.logger.i("DeviceManagement: \(operationType.capitalized) \(deviceType) device: \(deviceName)")
-        } catch let error as DeviceError {
+        case .failure(let error):
             handleDeviceError(error, operation: "\(operationType) device")
-        } catch {
-            errorMessage = "Failed to \(operationType) device: \(error.localizedDescription)"
-            LogManager.logger.e("DeviceManagement: Failed to \(operationType) \(deviceType) device", error: error)
         }
         
         isLoading = false
@@ -334,48 +408,5 @@ class DeviceManagementViewModel: ObservableObject {
     func clearMessages() {
         errorMessage = nil
         successMessage = nil
-    }
-    
-    /// Gets the cached user ID if available
-    func getCachedUserId() -> String? {
-        return cachedUserId
-    }
-    
-    // MARK: - User Info
-    
-    /// Fetches user information from the Journey/OIDC SDK
-    /// - Returns: The user ID (sub claim) or nil if not available
-    func fetchUserId() async -> String? {
-        // Return cached value if available
-        if let cached = cachedUserId {
-            LogManager.logger.d("DeviceManagement: Using cached userId")
-            return cached
-        }
-        
-        // Get journey user
-        guard let journeyUser = await ConfigurationManager.shared.journeyUser else {
-            LogManager.logger.e("DeviceManagement: Journey user not available", error: nil)
-            return nil
-        }
-        
-        // Fetch user info without cache to get fresh data
-        let userInfoResult = await journeyUser.userinfo(cache: false)
-        
-        switch userInfoResult {
-        case .success(let userInfoDictionary):
-            // Extract 'sub' claim as user ID
-            if let userId = userInfoDictionary["sub"] as? String {
-                LogManager.logger.i("DeviceManagement: Successfully retrieved userId from userinfo")
-                cachedUserId = userId
-                return userId
-            } else {
-                LogManager.logger.e("DeviceManagement: 'sub' claim not found in userinfo", error: nil)
-                return nil
-            }
-            
-        case .failure(let error):
-            LogManager.logger.e("DeviceManagement: Failed to fetch userinfo", error: error)
-            return nil
-        }
     }
 }

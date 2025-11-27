@@ -17,7 +17,7 @@
 		A570D5192ECC0E1800CBBCCF /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A570D5182ECC0E1800CBBCCF /* PrivacyInfo.xcprivacy */; };
 		A570D51B2ECC0E3200CBBCCF /* DeviceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A570D51A2ECC0E3200CBBCCF /* DeviceClient.h */; };
 		A570D51F2ECC0FA200CBBCCF /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = A570D51E2ECC0FA100CBBCCF /* Device.swift */; };
-		A570D5212ECC10C100CBBCCF /* CodableExtentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A570D5202ECC10BF00CBBCCF /* CodableExtentions.swift */; };
+		A570D5212ECC10C100CBBCCF /* CodableExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A570D5202ECC10BF00CBBCCF /* CodableExtensions.swift */; };
 		A570D5242ECC144400CBBCCF /* DeviceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A570D5232ECC143F00CBBCCF /* DeviceError.swift */; };
 		A570D5272ECC188900CBBCCF /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A570D5262ECC188900CBBCCF /* PingLogger.framework */; };
 		A570D5282ECC188900CBBCCF /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A570D5262ECC188900CBBCCF /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -62,7 +62,7 @@
 		A570D5182ECC0E1800CBBCCF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A570D51A2ECC0E3200CBBCCF /* DeviceClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceClient.h; sourceTree = "<group>"; };
 		A570D51E2ECC0FA100CBBCCF /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
-		A570D5202ECC10BF00CBBCCF /* CodableExtentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableExtentions.swift; sourceTree = "<group>"; };
+		A570D5202ECC10BF00CBBCCF /* CodableExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableExtensions.swift; sourceTree = "<group>"; };
 		A570D5232ECC143F00CBBCCF /* DeviceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceError.swift; sourceTree = "<group>"; };
 		A570D5262ECC188900CBBCCF /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A570D52A2ECC189000CBBCCF /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,7 +117,7 @@
 				A570D51A2ECC0E3200CBBCCF /* DeviceClient.h */,
 				A570D51E2ECC0FA100CBBCCF /* Device.swift */,
 				A570D50E2ECC0D6800CBBCCF /* DeviceClient.swift */,
-				A570D5202ECC10BF00CBBCCF /* CodableExtentions.swift */,
+				A570D5202ECC10BF00CBBCCF /* CodableExtensions.swift */,
 				A570D5232ECC143F00CBBCCF /* DeviceError.swift */,
 			);
 			path = DeviceClient;
@@ -264,7 +264,7 @@
 				A570D5102ECC0D6800CBBCCF /* DeviceClient.swift in Sources */,
 				A570D51F2ECC0FA200CBBCCF /* Device.swift in Sources */,
 				A570D5242ECC144400CBBCCF /* DeviceError.swift in Sources */,
-				A570D5212ECC10C100CBBCCF /* CodableExtentions.swift in Sources */,
+				A570D5212ECC10C100CBBCCF /* CodableExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

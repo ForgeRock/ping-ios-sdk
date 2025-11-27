@@ -12,561 +12,777 @@ import XCTest
 @testable import PingDeviceClient
 @testable import PingOrchestrate
 
-/// Tests for DeviceClient
+/// Unit tests for DeviceClient
 final class DeviceClientTests: XCTestCase {
     
     // MARK: - Properties
     
     var mockHttpClient: MockHttpClient!
-    var deviceClient: DeviceClient!
     var config: DeviceClientConfig!
+    var deviceClient: DeviceClient!
     
     // MARK: - Setup & Teardown
     
     override func setUp() {
         super.setUp()
         mockHttpClient = MockHttpClient()
-        
         config = DeviceClientConfig(
             serverUrl: "https://test.example.com",
-            realm: "test-realm",
+            realm: "alpha",
             cookieName: "TestCookie",
-            userId: "test-user",
             ssoToken: "test-token-12345",
             httpClient: mockHttpClient
         )
-        
         deviceClient = DeviceClient(config: config)
     }
     
     override func tearDown() {
-        mockHttpClient = nil
         deviceClient = nil
         config = nil
+        mockHttpClient = nil
         super.tearDown()
     }
     
     // MARK: - Configuration Tests
     
     func testDeviceClientConfigInitialization() {
-        // Test all properties are set correctly
         XCTAssertEqual(config.serverUrl, "https://test.example.com")
-        XCTAssertEqual(config.realm, "test-realm")
+        XCTAssertEqual(config.realm, "alpha")
         XCTAssertEqual(config.cookieName, "TestCookie")
-        XCTAssertEqual(config.userId, "test-user")
         XCTAssertEqual(config.ssoToken, "test-token-12345")
-        XCTAssertTrue(config.httpClient is MockHttpClient)
+        XCTAssertNotNil(config.httpClient)
     }
     
-    func testDeviceClientConfigDefaultHttpClient() {
-        let configWithDefault = DeviceClientConfig(
+    func testDeviceClientConfigDefaultValues() {
+        let configWithDefaults = DeviceClientConfig(
             serverUrl: "https://test.example.com",
-            realm: "test-realm",
-            cookieName: "TestCookie",
-            userId: "test-user",
             ssoToken: "test-token"
         )
         
-        XCTAssertNotNil(configWithDefault.httpClient)
+        XCTAssertEqual(configWithDefaults.realm, "root")
+        XCTAssertEqual(configWithDefaults.cookieName, "iPlanetDirectoryPro")
     }
     
     func testDeviceClientInitialization() {
         XCTAssertNotNil(deviceClient)
+        XCTAssertNotNil(deviceClient.oath)
+        XCTAssertNotNil(deviceClient.push)
+        XCTAssertNotNil(deviceClient.bound)
+        XCTAssertNotNil(deviceClient.profile)
+        XCTAssertNotNil(deviceClient.webAuthn)
     }
     
-    // MARK: - Fetch Devices Tests
+    // MARK: - Session Fetching Tests
     
-    func testFetchOathDevicesSuccess() async throws {
-        // Setup mock response
+    func testSessionFetchingSuccess() async {
+        // Setup session response
+        let sessionJSON: [String: Any] = [
+            "username": "demo",
+            "universalId": "id=demo,ou=user,dc=openam,dc=forgerock,dc=org",
+            "realm": "/alpha",
+            "latestAccessTime": "2024-01-01T00:00:00Z",
+            "maxIdleExpirationTime": "2024-01-01T01:00:00Z",
+            "maxSessionExpirationTime": "2024-01-01T08:00:00Z"
+        ]
+        let sessionData = try! JSONSerialization.data(withJSONObject: sessionJSON)
+        
+        mockHttpClient.responses = [
+            MockHttpResponse(statusCode: 200, data: sessionData), // Session fetch
+            MockHttpResponse(statusCode: 200, data: createOathDevicesJSON()) // Device fetch
+        ]
+        
+        // Execute
+        let result = await deviceClient.oath.get()
+        
+        // Verify session was fetched
+        XCTAssertGreaterThanOrEqual(mockHttpClient.requests.count, 2)
+        let sessionRequest = mockHttpClient.requests[0]
+        XCTAssertTrue(sessionRequest.urlString.contains("/sessions"))
+        XCTAssertTrue(sessionRequest.urlString.contains("_action=getSessionInfo"))
+        
+        // Verify success
+        if case .success(let devices) = result {
+            XCTAssertGreaterThan(devices.count, 0)
+        } else {
+            XCTFail("Expected success result")
+        }
+    }
+    
+    func testSessionFetchingCaching() async {
+        // Setup session response
+        let sessionJSON: [String: Any] = [
+            "username": "demo",
+            "universalId": "id=demo,ou=user,dc=openam,dc=forgerock,dc=org",
+            "realm": "/alpha",
+            "latestAccessTime": "2024-01-01T00:00:00Z",
+            "maxIdleExpirationTime": "2024-01-01T01:00:00Z",
+            "maxSessionExpirationTime": "2024-01-01T08:00:00Z"
+        ]
+        let sessionData = try! JSONSerialization.data(withJSONObject: sessionJSON)
+        
+        mockHttpClient.responses = [
+            MockHttpResponse(statusCode: 200, data: sessionData), // Session fetch (first call)
+            MockHttpResponse(statusCode: 200, data: createOathDevicesJSON()), // Device fetch (first call)
+            MockHttpResponse(statusCode: 200, data: createPushDevicesJSON()) // Device fetch (second call, no session fetch)
+        ]
+        
+        // First call - should fetch session
+        _ = await deviceClient.oath.get()
+        
+        // Second call - should NOT fetch session (cached)
+        _ = await deviceClient.push.get()
+        
+        // Verify session was only fetched once
+        XCTAssertEqual(mockHttpClient.requests.count, 3)
+        let sessionRequests = mockHttpClient.requests.filter { $0.urlString.contains("/sessions") }
+        XCTAssertEqual(sessionRequests.count, 1, "Session should only be fetched once due to caching")
+    }
+    
+    func testSessionFetchingFailure() async {
+        // Setup session failure
+        mockHttpClient.responses = [
+            MockHttpResponse(statusCode: 401, data: Data()) // Session fetch fails
+        ]
+        
+        // Execute
+        let result = await deviceClient.oath.get()
+        
+        // Verify failure
+        if case .failure(let error) = result {
+            if case .requestFailed(let statusCode, _) = error {
+                XCTAssertEqual(statusCode, 401)
+            } else {
+                XCTFail("Expected requestFailed error")
+            }
+        } else {
+            XCTFail("Expected failure result")
+        }
+    }
+    
+    // MARK: - Fetch Operations Tests
+    
+    func testFetchOathDevicesSuccess() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createOathDevicesJSON()))
+        
+        let result = await deviceClient.oath.get()
+        
+        if case .success(let devices) = result {
+            XCTAssertEqual(devices.count, 2)
+            XCTAssertEqual(devices[0].deviceName, "My Authenticator")
+            XCTAssertEqual(devices[0].uuid, "oath-uuid-1")
+            XCTAssertEqual(devices[1].deviceName, "Work Phone")
+            XCTAssertEqual(devices[1].uuid, "oath-uuid-2")
+        } else {
+            XCTFail("Expected success result")
+        }
+    }
+    
+    func testFetchPushDevicesSuccess() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createPushDevicesJSON()))
+        
+        let result = await deviceClient.push.get()
+        
+        if case .success(let devices) = result {
+            XCTAssertEqual(devices.count, 1)
+            XCTAssertEqual(devices[0].deviceName, "My iPhone")
+            XCTAssertEqual(devices[0].uuid, "push-uuid-1")
+        } else {
+            XCTFail("Expected success result")
+        }
+    }
+    
+    func testFetchBoundDevicesSuccess() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createBoundDevicesJSON()))
+        
+        let result = await deviceClient.bound.get()
+        
+        if case .success(let devices) = result {
+            XCTAssertEqual(devices.count, 1)
+            XCTAssertEqual(devices[0].deviceName, "Bound Device")
+            XCTAssertEqual(devices[0].deviceId, "device-id-123")
+        } else {
+            XCTFail("Expected success result")
+        }
+    }
+    
+    func testFetchProfileDevicesSuccess() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createProfileDevicesJSON()))
+        
+        let result = await deviceClient.profile.get()
+        
+        if case .success(let devices) = result {
+            XCTAssertEqual(devices.count, 1)
+            XCTAssertEqual(devices[0].deviceName, "My Device")
+            XCTAssertEqual(devices[0].identifier, "device-identifier-1")
+            XCTAssertEqual(devices[0].metadata["platform"] as? String, "iOS")
+        } else {
+            XCTFail("Expected success result")
+        }
+    }
+    
+    func testFetchWebAuthnDevicesSuccess() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createWebAuthnDevicesJSON()))
+        
+        let result = await deviceClient.webAuthn.get()
+        
+        if case .success(let devices) = result {
+            XCTAssertEqual(devices.count, 1)
+            XCTAssertEqual(devices[0].deviceName, "YubiKey")
+            XCTAssertEqual(devices[0].credentialId, "credential-id-abc")
+        } else {
+            XCTFail("Expected success result")
+        }
+    }
+    
+    func testFetchDevicesEmptyResult() async {
+        setupSessionMock()
+        
+        let emptyJSON: [String: Any] = ["result": []]
+        let emptyData = try! JSONSerialization.data(withJSONObject: emptyJSON)
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: emptyData))
+        
+        let result = await deviceClient.oath.get()
+        
+        if case .success(let devices) = result {
+            XCTAssertEqual(devices.count, 0)
+        } else {
+            XCTFail("Expected success result with empty array")
+        }
+    }
+    
+    // MARK: - Update Operations Tests
+    
+    func testUpdateBoundDeviceSuccess() async {
+        setupSessionMock()
+        
+        // First fetch to get device
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createBoundDevicesJSON()))
+        let fetchResult = await deviceClient.bound.get()
+        
+        guard case .success(var devices) = fetchResult, var device = devices.first else {
+            XCTFail("Failed to fetch device")
+            return
+        }
+        
+        // Update device
+        device.deviceName = "Updated Device Name"
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: Data()))
+        
+        let updateResult = await deviceClient.bound.update(device)
+        
+        if case .success(let success) = updateResult {
+            XCTAssertTrue(success)
+            
+            // Verify request was made
+            let updateRequest = mockHttpClient.requests.last
+            XCTAssertTrue(updateRequest?.urlString.contains(device.id) ?? false)
+            XCTAssertEqual(updateRequest?.method, .put)
+        } else {
+            XCTFail("Expected success result")
+        }
+    }
+    
+    func testUpdateProfileDeviceSuccess() async {
+        setupSessionMock()
+        
+        // First fetch to get device
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createProfileDevicesJSON()))
+        let fetchResult = await deviceClient.profile.get()
+        
+        guard case .success(var devices) = fetchResult, var device = devices.first else {
+            XCTFail("Failed to fetch device")
+            return
+        }
+        
+        // Update device
+        device.deviceName = "Updated Profile"
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: Data()))
+        
+        let updateResult = await deviceClient.profile.update(device)
+        
+        if case .success(let success) = updateResult {
+            XCTAssertTrue(success)
+        } else {
+            XCTFail("Expected success result")
+        }
+    }
+    
+    func testUpdateWebAuthnDeviceSuccess() async {
+        setupSessionMock()
+        
+        // First fetch to get device
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createWebAuthnDevicesJSON()))
+        let fetchResult = await deviceClient.webAuthn.get()
+        
+        guard case .success(var devices) = fetchResult, var device = devices.first else {
+            XCTFail("Failed to fetch device")
+            return
+        }
+        
+        // Update device
+        device.deviceName = "Updated YubiKey"
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: Data()))
+        
+        let updateResult = await deviceClient.webAuthn.update(device)
+        
+        if case .success(let success) = updateResult {
+            XCTAssertTrue(success)
+        } else {
+            XCTFail("Expected success result")
+        }
+    }
+    
+    // MARK: - Delete Operations Tests
+    
+    func testDeleteOathDeviceSuccess() async {
+        setupSessionMock()
+        
+        // First fetch to get device
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createOathDevicesJSON()))
+        let fetchResult = await deviceClient.oath.get()
+        
+        guard case .success(let devices) = fetchResult, let device = devices.first else {
+            XCTFail("Failed to fetch device")
+            return
+        }
+        
+        // Delete device
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: Data()))
+        
+        let deleteResult = await deviceClient.oath.delete(device)
+        
+        if case .success(let success) = deleteResult {
+            XCTAssertTrue(success)
+            
+            // Verify request was made
+            let deleteRequest = mockHttpClient.requests.last
+            XCTAssertTrue(deleteRequest?.urlString.contains(device.id) ?? false)
+            XCTAssertEqual(deleteRequest?.method, .delete)
+        } else {
+            XCTFail("Expected success result")
+        }
+    }
+    
+    func testDeletePushDeviceSuccess() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createPushDevicesJSON()))
+        let fetchResult = await deviceClient.push.get()
+        
+        guard case .success(let devices) = fetchResult, let device = devices.first else {
+            XCTFail("Failed to fetch device")
+            return
+        }
+        
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: Data()))
+        let deleteResult = await deviceClient.push.delete(device)
+        
+        if case .success(let success) = deleteResult {
+            XCTAssertTrue(success)
+        } else {
+            XCTFail("Expected success result")
+        }
+    }
+    
+    func testDeleteBoundDeviceSuccess() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createBoundDevicesJSON()))
+        let fetchResult = await deviceClient.bound.get()
+        
+        guard case .success(let devices) = fetchResult, let device = devices.first else {
+            XCTFail("Failed to fetch device")
+            return
+        }
+        
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: Data()))
+        let deleteResult = await deviceClient.bound.delete(device)
+        
+        if case .success(let success) = deleteResult {
+            XCTAssertTrue(success)
+        } else {
+            XCTFail("Expected success result")
+        }
+    }
+    
+    func testDeleteWith204StatusCode() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createOathDevicesJSON()))
+        let fetchResult = await deviceClient.oath.get()
+        
+        guard case .success(let devices) = fetchResult, let device = devices.first else {
+            XCTFail("Failed to fetch device")
+            return
+        }
+        
+        // Some servers return 204 No Content on successful delete
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 204, data: Data()))
+        let deleteResult = await deviceClient.oath.delete(device)
+        
+        if case .success(let success) = deleteResult {
+            XCTAssertTrue(success)
+        } else {
+            XCTFail("Expected success result for 204 status code")
+        }
+    }
+    
+    // MARK: - Error Handling Tests
+    
+    func testFetchDevicesNetworkError() async {
+        setupSessionMock()
+        mockHttpClient.shouldThrowError = true
+        mockHttpClient.errorToThrow = NSError(domain: NSURLErrorDomain, code: NSURLErrorNotConnectedToInternet)
+        
+        let result = await deviceClient.oath.get()
+        
+        if case .failure(let error) = result {
+            if case .networkError = error {
+                // Success - got expected error type
+            } else {
+                XCTFail("Expected networkError, got \(error)")
+            }
+        } else {
+            XCTFail("Expected failure result")
+        }
+    }
+    
+    func testFetchDevices401Error() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 401, data: Data()))
+        
+        let result = await deviceClient.oath.get()
+        
+        if case .failure(let error) = result {
+            if case .requestFailed(let statusCode, _) = error {
+                XCTAssertEqual(statusCode, 401)
+            } else {
+                XCTFail("Expected requestFailed error")
+            }
+        } else {
+            XCTFail("Expected failure result")
+        }
+    }
+    
+    func testFetchDevices404Error() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 404, data: Data()))
+        
+        let result = await deviceClient.oath.get()
+        
+        if case .failure(let error) = result {
+            if case .requestFailed(let statusCode, _) = error {
+                XCTAssertEqual(statusCode, 404)
+            } else {
+                XCTFail("Expected requestFailed error")
+            }
+        } else {
+            XCTFail("Expected failure result")
+        }
+    }
+    
+    func testFetchDevices500Error() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 500, data: Data()))
+        
+        let result = await deviceClient.oath.get()
+        
+        if case .failure(let error) = result {
+            if case .requestFailed(let statusCode, _) = error {
+                XCTAssertEqual(statusCode, 500)
+            } else {
+                XCTFail("Expected requestFailed error")
+            }
+        } else {
+            XCTFail("Expected failure result")
+        }
+    }
+    
+    func testFetchDevicesInvalidResponse() async {
+        setupSessionMock()
+        
+        let invalidJSON = "{ invalid json }"
+        let invalidData = invalidJSON.data(using: .utf8)!
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: invalidData))
+        
+        let result = await deviceClient.oath.get()
+        
+        if case .failure(let error) = result {
+            if case .decodingFailed = error {
+                // Success - got expected error type
+            } else {
+                XCTFail("Expected decodingFailed error")
+            }
+        } else {
+            XCTFail("Expected failure result")
+        }
+    }
+    
+    func testFetchDevicesMissingResultKey() async {
+        setupSessionMock()
+        
+        let invalidJSON: [String: Any] = ["data": []] // Missing "result" key
+        let invalidData = try! JSONSerialization.data(withJSONObject: invalidJSON)
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: invalidData))
+        
+        let result = await deviceClient.oath.get()
+        
+        if case .failure(let error) = result {
+            if case .decodingFailed = error {
+                // Success - got expected error type
+            } else {
+                XCTFail("Expected decodingFailed error")
+            }
+        } else {
+            XCTFail("Expected failure result")
+        }
+    }
+    
+    func testUpdateDeviceFailure() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createBoundDevicesJSON()))
+        let fetchResult = await deviceClient.bound.get()
+        
+        guard case .success(var devices) = fetchResult, var device = devices.first else {
+            XCTFail("Failed to fetch device")
+            return
+        }
+        
+        device.deviceName = "Updated Name"
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 500, data: Data()))
+        
+        let updateResult = await deviceClient.bound.update(device)
+        
+        if case .failure(let error) = updateResult {
+            if case .requestFailed(let statusCode, _) = error {
+                XCTAssertEqual(statusCode, 500)
+            } else {
+                XCTFail("Expected requestFailed error")
+            }
+        } else {
+            XCTFail("Expected failure result")
+        }
+    }
+    
+    func testDeleteDeviceFailure() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createOathDevicesJSON()))
+        let fetchResult = await deviceClient.oath.get()
+        
+        guard case .success(let devices) = fetchResult, let device = devices.first else {
+            XCTFail("Failed to fetch device")
+            return
+        }
+        
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 403, data: Data()))
+        let deleteResult = await deviceClient.oath.delete(device)
+        
+        if case .failure(let error) = deleteResult {
+            if case .requestFailed(let statusCode, _) = error {
+                XCTAssertEqual(statusCode, 403)
+            } else {
+                XCTFail("Expected requestFailed error")
+            }
+        } else {
+            XCTFail("Expected failure result")
+        }
+    }
+    
+    // MARK: - Request Building Tests
+    
+    func testRequestContainsAuthHeaders() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createOathDevicesJSON()))
+        
+        _ = await deviceClient.oath.get()
+        
+        let deviceRequest = mockHttpClient.requests.last
+        XCTAssertEqual(deviceRequest?.headers?["TestCookie"], "test-token-12345")
+        XCTAssertEqual(deviceRequest?.headers?["Accept-API-Version"], "resource=1.0")
+    }
+    
+    func testRequestURLConstruction() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createOathDevicesJSON()))
+        
+        _ = await deviceClient.oath.get()
+        
+        let deviceRequest = mockHttpClient.requests.last
+        XCTAssertTrue(deviceRequest?.urlString.contains("https://test.example.com") ?? false)
+        XCTAssertTrue(deviceRequest?.urlString.contains("/json/realms/alpha/users/demo/devices/2fa/oath") ?? false)
+        XCTAssertTrue(deviceRequest?.urlString.contains("_queryFilter=true") ?? false)
+    }
+    
+    func testUpdateRequestBodyEncoding() async {
+        setupSessionMock()
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createBoundDevicesJSON()))
+        let fetchResult = await deviceClient.bound.get()
+        
+        guard case .success(var devices) = fetchResult, var device = devices.first else {
+            XCTFail("Failed to fetch device")
+            return
+        }
+        
+        device.deviceName = "New Name"
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: Data()))
+        
+        _ = await deviceClient.bound.update(device)
+        
+        let updateRequest = mockHttpClient.requests.last
+        XCTAssertNotNil(updateRequest?.body)
+        
+        if let body = updateRequest?.body {
+            do {
+                let json = try JSONSerialization.jsonObject(with: body) as? [String: Any]
+                XCTAssertEqual(json?["deviceName"] as? String, "New Name")
+            } catch {
+                XCTFail("Failed to decode request body JSON: \(error)")
+            }
+        } else {
+            XCTFail("Request body should be present")
+        }
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func setupSessionMock() {
+        let sessionJSON: [String: Any] = [
+            "username": "demo",
+            "universalId": "id=demo,ou=user,dc=openam,dc=forgerock,dc=org",
+            "realm": "/alpha",
+            "latestAccessTime": "2024-01-01T00:00:00Z",
+            "maxIdleExpirationTime": "2024-01-01T01:00:00Z",
+            "maxSessionExpirationTime": "2024-01-01T08:00:00Z"
+        ]
+        let sessionData = try! JSONSerialization.data(withJSONObject: sessionJSON)
+        mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: sessionData))
+    }
+    
+    private func createOathDevicesJSON() -> Data {
         let json: [String: Any] = [
             "result": [
                 [
                     "_id": "oath-1",
                     "deviceName": "My Authenticator",
-                    "uuid": "uuid-1",
+                    "uuid": "oath-uuid-1",
                     "createdDate": 1640000000000.0,
                     "lastAccessDate": 1640000001000.0
                 ],
                 [
                     "_id": "oath-2",
-                    "deviceName": "Work Authenticator",
-                    "uuid": "uuid-2",
+                    "deviceName": "Work Phone",
+                    "uuid": "oath-uuid-2",
                     "createdDate": 1640000002000.0,
                     "lastAccessDate": 1640000003000.0
                 ]
             ]
         ]
-        
-        mockHttpClient.mockResponse = MockHttpResponse(
-            statusCode: 200,
-            data: try! JSONSerialization.data(withJSONObject: json)
-        )
-        
-        // Execute
-        let devices = try await deviceClient.oath.get()
-        
-        // Verify
-        XCTAssertEqual(devices.count, 2)
-        XCTAssertEqual(devices[0].id, "oath-1")
-        XCTAssertEqual(devices[0].deviceName, "My Authenticator")
-        XCTAssertEqual(devices[1].id, "oath-2")
-        XCTAssertEqual(devices[1].deviceName, "Work Authenticator")
-        
-        // Verify request was made correctly
-        XCTAssertTrue(mockHttpClient.lastRequest?.urlString.contains("devices/2fa/oath") ?? false)
-        XCTAssertTrue(mockHttpClient.lastRequest?.urlString.contains("_queryFilter=true") ?? false)
+        return try! JSONSerialization.data(withJSONObject: json)
     }
     
-    func testFetchPushDevicesSuccess() async throws {
+    private func createPushDevicesJSON() -> Data {
         let json: [String: Any] = [
             "result": [
                 [
                     "_id": "push-1",
-                    "deviceName": "iPhone 15",
+                    "deviceName": "My iPhone",
                     "uuid": "push-uuid-1",
                     "createdDate": 1640000000000.0,
                     "lastAccessDate": 1640000001000.0
                 ]
             ]
         ]
-        
-        mockHttpClient.mockResponse = MockHttpResponse(
-            statusCode: 200,
-            data: try! JSONSerialization.data(withJSONObject: json)
-        )
-        
-        let devices = try await deviceClient.push.get()
-        
-        XCTAssertEqual(devices.count, 1)
-        XCTAssertEqual(devices[0].id, "push-1")
-        XCTAssertEqual(devices[0].deviceName, "iPhone 15")
+        return try! JSONSerialization.data(withJSONObject: json)
     }
     
-    func testFetchBoundDevicesSuccess() async throws {
+    private func createBoundDevicesJSON() -> Data {
         let json: [String: Any] = [
             "result": [
                 [
                     "_id": "bound-1",
-                    "deviceId": "device-id-1",
-                    "deviceName": "My Phone",
+                    "deviceName": "Bound Device",
+                    "deviceId": "device-id-123",
                     "uuid": "bound-uuid-1",
                     "createdDate": 1640000000000.0,
                     "lastAccessDate": 1640000001000.0
                 ]
             ]
         ]
-        
-        mockHttpClient.mockResponse = MockHttpResponse(
-            statusCode: 200,
-            data: try! JSONSerialization.data(withJSONObject: json)
-        )
-        
-        let devices = try await deviceClient.bound.get()
-        
-        XCTAssertEqual(devices.count, 1)
-        XCTAssertEqual(devices[0].id, "bound-1")
-        XCTAssertEqual(devices[0].deviceId, "device-id-1")
+        return try! JSONSerialization.data(withJSONObject: json)
     }
     
-    func testFetchProfileDevicesSuccess() async throws {
+    private func createProfileDevicesJSON() -> Data {
         let json: [String: Any] = [
             "result": [
                 [
                     "_id": "profile-1",
                     "alias": "My Device",
-                    "identifier": "identifier-1",
-                    "lastSelectedDate": 1640000000000.0,
+                    "identifier": "device-identifier-1",
                     "metadata": [
                         "platform": "iOS",
                         "version": "17.0"
                     ],
-                    "location": [
-                        "latitude": 37.7749,
-                        "longitude": -122.4194
-                    ]
+                    "lastSelectedDate": 1640000000000.0
                 ]
             ]
         ]
-        
-        mockHttpClient.mockResponse = MockHttpResponse(
-            statusCode: 200,
-            data: try! JSONSerialization.data(withJSONObject: json)
-        )
-        
-        let devices = try await deviceClient.profile.get()
-        
-        XCTAssertEqual(devices.count, 1)
-        XCTAssertEqual(devices[0].id, "profile-1")
-        XCTAssertEqual(devices[0].deviceName, "My Device")
-        XCTAssertEqual(devices[0].identifier, "identifier-1")
-        XCTAssertNotNil(devices[0].location)
-        XCTAssertEqual(devices[0].location?.latitude, 37.7749)
+        return try! JSONSerialization.data(withJSONObject: json)
     }
     
-    func testFetchWebAuthnDevicesSuccess() async throws {
+    private func createWebAuthnDevicesJSON() -> Data {
         let json: [String: Any] = [
             "result": [
                 [
                     "_id": "webauthn-1",
-                    "credentialId": "cred-id-1",
                     "deviceName": "YubiKey",
+                    "credentialId": "credential-id-abc",
                     "uuid": "webauthn-uuid-1",
                     "createdDate": 1640000000000.0,
                     "lastAccessDate": 1640000001000.0
                 ]
             ]
         ]
-        
-        mockHttpClient.mockResponse = MockHttpResponse(
-            statusCode: 200,
-            data: try! JSONSerialization.data(withJSONObject: json)
-        )
-        
-        let devices = try await deviceClient.webAuthn.get()
-        
-        XCTAssertEqual(devices.count, 1)
-        XCTAssertEqual(devices[0].id, "webauthn-1")
-        XCTAssertEqual(devices[0].credentialId, "cred-id-1")
-    }
-    
-    func testFetchDevicesEmptyResult() async throws {
-        let json: [String: Any] = ["result": []]
-        
-        mockHttpClient.mockResponse = MockHttpResponse(
-            statusCode: 200,
-            data: try! JSONSerialization.data(withJSONObject: json)
-        )
-        
-        let devices: [OathDevice] = try await deviceClient.oath.get()
-        
-        XCTAssertEqual(devices.count, 0)
-    }
-    
-    // MARK: - Update Device Tests
-    
-    func testUpdateBoundDeviceSuccess() async throws {
-        var device = createMockBoundDevice()
-        device.deviceName = "Updated Name"
-        
-        mockHttpClient.mockResponse = MockHttpResponse(statusCode: 200, data: Data())
-        
-        try await deviceClient.bound.update(device)
-        
-        // Verify request
-        XCTAssertEqual(mockHttpClient.lastRequest?.method, .put)
-        XCTAssertTrue(mockHttpClient.lastRequest?.urlString.contains("devices/2fa/binding") ?? false)
-        XCTAssertTrue(mockHttpClient.lastRequest?.urlString.contains(device.id) ?? false)
-    }
-    
-    func testUpdateProfileDeviceSuccess() async throws {
-        var device = createMockProfileDevice()
-        device.deviceName = "Updated Profile"
-        
-        mockHttpClient.mockResponse = MockHttpResponse(statusCode: 200, data: Data())
-        
-        try await deviceClient.profile.update(device)
-        
-        XCTAssertEqual(mockHttpClient.lastRequest?.method, .put)
-    }
-    
-    func testUpdateWebAuthnDeviceSuccess() async throws {
-        var device = createMockWebAuthnDevice()
-        device.deviceName = "Updated WebAuthn"
-        
-        mockHttpClient.mockResponse = MockHttpResponse(statusCode: 200, data: Data())
-        
-        try await deviceClient.webAuthn.update(device)
-        
-        XCTAssertEqual(mockHttpClient.lastRequest?.method, .put)
-    }
-    
-    // MARK: - Delete Device Tests
-    
-    func testDeleteOathDeviceSuccess() async throws {
-        let device = createMockOathDevice()
-        
-        mockHttpClient.mockResponse = MockHttpResponse(statusCode: 200, data: Data())
-        
-        try await deviceClient.oath.delete(device)
-        
-        XCTAssertEqual(mockHttpClient.lastRequest?.method, .delete)
-        XCTAssertTrue(mockHttpClient.lastRequest?.urlString.contains(device.id) ?? false)
-    }
-    
-    func testDeleteDeviceSuccess204() async throws {
-        let device = createMockPushDevice()
-        
-        mockHttpClient.mockResponse = MockHttpResponse(statusCode: 204, data: Data())
-        
-        try await deviceClient.push.delete(device)
-        
-        // Should not throw - 204 is also acceptable
-    }
-    
-    func testDeleteBoundDeviceSuccess() async throws {
-        let device = createMockBoundDevice()
-        
-        mockHttpClient.mockResponse = MockHttpResponse(statusCode: 200, data: Data())
-        
-        try await deviceClient.bound.delete(device)
-        
-        XCTAssertEqual(mockHttpClient.lastRequest?.method, .delete)
-    }
-    
-    // MARK: - Error Handling Tests
-    
-    func testFetchDevicesInvalidResponse() async throws {
-        // Missing 'result' key
-        let json: [String: Any] = ["data": []]
-        
-        mockHttpClient.mockResponse = MockHttpResponse(
-            statusCode: 200,
-            data: try! JSONSerialization.data(withJSONObject: json)
-        )
-        
-        do {
-            _ = try await deviceClient.oath.get()
-            XCTFail("Should have thrown error")
-        } catch let error as DeviceError {
-            if case .invalidResponse(let message) = error {
-                XCTAssertTrue(message.contains("result"))
-            } else {
-                XCTFail("Wrong error type: \(error)")
-            }
-        }
-    }
-    
-    func testFetchDevicesStatusCode401() async throws {
-        mockHttpClient.mockResponse = MockHttpResponse(statusCode: 401, data: Data())
-        
-        do {
-            _ = try await deviceClient.oath.get()
-            XCTFail("Should have thrown error")
-        } catch let error as DeviceError {
-            if case .requestFailed(let statusCode, _) = error {
-                XCTAssertEqual(statusCode, 401)
-            } else {
-                XCTFail("Wrong error type")
-            }
-        }
-    }
-    
-    func testUpdateDeviceStatusCode500() async throws {
-        let device = createMockBoundDevice()
-        mockHttpClient.mockResponse = MockHttpResponse(statusCode: 500, data: Data())
-        
-        do {
-            try await deviceClient.bound.update(device)
-            XCTFail("Should have thrown error")
-        } catch let error as DeviceError {
-            if case .requestFailed(let statusCode, _) = error {
-                XCTAssertEqual(statusCode, 500)
-            } else {
-                XCTFail("Wrong error type")
-            }
-        }
-    }
-    
-    func testDeleteDeviceStatusCode404() async throws {
-        let device = createMockOathDevice()
-        mockHttpClient.mockResponse = MockHttpResponse(statusCode: 404, data: Data())
-        
-        do {
-            try await deviceClient.oath.delete(device)
-            XCTFail("Should have thrown error")
-        } catch let error as DeviceError {
-            if case .requestFailed(let statusCode, _) = error {
-                XCTAssertEqual(statusCode, 404)
-            } else {
-                XCTFail("Wrong error type")
-            }
-        }
-    }
-    
-    func testNetworkError() async throws {
-        mockHttpClient.shouldThrowError = true
-        mockHttpClient.errorToThrow = NSError(domain: "TestError", code: -1, userInfo: nil)
-        
-        do {
-            _ = try await deviceClient.oath.get()
-            XCTFail("Should have thrown error")
-        } catch let error as DeviceError {
-            if case .networkError = error {
-                // Success
-            } else {
-                XCTFail("Wrong error type")
-            }
-        }
-    }
-    
-    func testDecodingError() async throws {
-        // Invalid JSON for OathDevice
-        let json: [String: Any] = [
-            "result": [
-                ["invalidKey": "invalidValue"]
-            ]
-        ]
-        
-        mockHttpClient.mockResponse = MockHttpResponse(
-            statusCode: 200,
-            data: try! JSONSerialization.data(withJSONObject: json)
-        )
-        
-        do {
-            _ = try await deviceClient.oath.get()
-            XCTFail("Should have thrown error")
-        } catch let error as DeviceError {
-            if case .decodingFailed = error {
-                // Success
-            } else {
-                XCTFail("Wrong error type: \(error)")
-            }
-        }
-    }
-    
-    // MARK: - Request Building Tests
-    
-    func testRequestContainsAuthHeaders() async throws {
-        let json: [String: Any] = ["result": []]
-        mockHttpClient.mockResponse = MockHttpResponse(
-            statusCode: 200,
-            data: try! JSONSerialization.data(withJSONObject: json)
-        )
-        
-        _ = try await deviceClient.oath.get()
-        
-        // Verify headers
-        XCTAssertNotNil(mockHttpClient.lastRequest?.headers)
-        XCTAssertEqual(mockHttpClient.lastRequest?.headers?["TestCookie"], "test-token-12345")
-        XCTAssertEqual(mockHttpClient.lastRequest?.headers?["Accept-API-Version"], "resource=1.0")
-    }
-    
-    func testRequestURLConstruction() async throws {
-        let json: [String: Any] = ["result": []]
-        mockHttpClient.mockResponse = MockHttpResponse(
-            statusCode: 200,
-            data: try! JSONSerialization.data(withJSONObject: json)
-        )
-        
-        _ = try await deviceClient.oath.get()
-        
-        let expectedUrl = "https://test.example.com/json/realms/test-realm/users/test-user/devices/2fa/oath?_queryFilter=true"
-        XCTAssertEqual(mockHttpClient.lastRequest?.urlString, expectedUrl)
-    }
-    
-    func testUpdateRequestContainsBody() async throws {
-        var device = createMockBoundDevice()
-        device.deviceName = "Updated"
-        
-        mockHttpClient.mockResponse = MockHttpResponse(statusCode: 200, data: Data())
-        
-        try await deviceClient.bound.update(device)
-        
-        XCTAssertNotNil(mockHttpClient.lastRequest?.body)
-        
-        // Verify body contains updated name
-        if let body = mockHttpClient.lastRequest?.body as? [String: Any] {
-            XCTAssertEqual(body["deviceName"] as? String, "Updated")
-        }
-    }
-    
-    // MARK: - Helper Methods
-    
-    private func createMockOathDevice() -> OathDevice {
-        let json: [String: Any] = [
-            "_id": "oath-test-1",
-            "deviceName": "Test Oath",
-            "uuid": "uuid-oath-1",
-            "createdDate": 1640000000000.0,
-            "lastAccessDate": 1640000001000.0
-        ]
-        
-        let data = try! JSONSerialization.data(withJSONObject: json)
-        return try! JSONDecoder().decode(OathDevice.self, from: data)
-    }
-    
-    private func createMockPushDevice() -> PushDevice {
-        let json: [String: Any] = [
-            "_id": "push-test-1",
-            "deviceName": "Test Push",
-            "uuid": "uuid-push-1",
-            "createdDate": 1640000000000.0,
-            "lastAccessDate": 1640000001000.0
-        ]
-        
-        let data = try! JSONSerialization.data(withJSONObject: json)
-        return try! JSONDecoder().decode(PushDevice.self, from: data)
-    }
-    
-    private func createMockBoundDevice() -> BoundDevice {
-        let json: [String: Any] = [
-            "_id": "bound-test-1",
-            "deviceId": "device-id-test",
-            "deviceName": "Test Bound",
-            "uuid": "uuid-bound-1",
-            "createdDate": 1640000000000.0,
-            "lastAccessDate": 1640000001000.0
-        ]
-        
-        let data = try! JSONSerialization.data(withJSONObject: json)
-        return try! JSONDecoder().decode(BoundDevice.self, from: data)
-    }
-    
-    private func createMockProfileDevice() -> ProfileDevice {
-        let json: [String: Any] = [
-            "_id": "profile-test-1",
-            "alias": "Test Profile",
-            "identifier": "identifier-test",
-            "lastSelectedDate": 1640000000000.0,
-            "metadata": ["key": "value"]
-        ]
-        
-        let data = try! JSONSerialization.data(withJSONObject: json)
-        return try! JSONDecoder().decode(ProfileDevice.self, from: data)
-    }
-    
-    private func createMockWebAuthnDevice() -> WebAuthnDevice {
-        let json: [String: Any] = [
-            "_id": "webauthn-test-1",
-            "credentialId": "cred-test",
-            "deviceName": "Test WebAuthn",
-            "uuid": "uuid-webauthn-1",
-            "createdDate": 1640000000000.0,
-            "lastAccessDate": 1640000001000.0
-        ]
-        
-        let data = try! JSONSerialization.data(withJSONObject: json)
-        return try! JSONDecoder().decode(WebAuthnDevice.self, from: data)
+        return try! JSONSerialization.data(withJSONObject: json)
     }
 }
 
-// MARK: - Mock Classes
+// MARK: - Mock Objects
 
+/// Mock HTTP client for testing
 class MockHttpClient: HttpClient, @unchecked Sendable {
-    var mockResponse: MockHttpResponse?
-    var lastRequest: MockRequest?
+    var responses: [MockHttpResponse] = []
+    var requests: [MockRequest] = []
     var shouldThrowError = false
     var errorToThrow: Error?
+    private var responseIndex = 0
     
     override func sendRequest(request: Request) async throws -> (Data, URLResponse) {
-        // Capture request for verification
-        lastRequest = MockRequest(
+        // Capture request
+        let methodEnum = request.urlRequest.httpMethod.flatMap(Request.HTTPMethod.init(rawValue:))
+        requests.append(MockRequest(
             urlString: request.urlRequest.url?.absoluteString ?? "",
-            method: MockRequest.HTTPMethod(rawValue: request.urlRequest.httpMethod ?? "") ?? .get,
+            method: methodEnum,
             headers: request.urlRequest.allHTTPHeaderFields,
-            body: request.body
-        )
+            body: request.urlRequest.httpBody
+        ))
         
+        // Throw error if configured
         if shouldThrowError {
             throw errorToThrow ?? NSError(domain: "MockError", code: -1)
         }
         
-        guard let response = mockResponse else {
-            throw NSError(domain: "MockHttpClient", code: -1, userInfo: [NSLocalizedDescriptionKey: "No mock response set"])
+        // Return mock response
+        guard responseIndex < responses.count else {
+            throw NSError(domain: "MockError", code: -1, userInfo: [NSLocalizedDescriptionKey: "No more mock responses"])
         }
         
+        let response = responses[responseIndex]
+        responseIndex += 1
+        
         let urlResponse = HTTPURLResponse(
-            url: URL(string: "https://test.com")!,
+            url: URL(string: "https://test.example.com")!,
             statusCode: response.statusCode,
             httpVersion: nil,
             headerFields: nil
@@ -576,37 +792,16 @@ class MockHttpClient: HttpClient, @unchecked Sendable {
     }
 }
 
+/// Mock HTTP response
 struct MockHttpResponse {
     let statusCode: Int
     let data: Data
 }
 
+/// Mock request capture
 struct MockRequest {
     let urlString: String
-    let method: HTTPMethod
+    let method: Request.HTTPMethod?
     let headers: [String: String]?
-    let body: Any?
-    
-    enum HTTPMethod: String {
-        case get = "GET"
-        case post = "POST"
-        case put = "PUT"
-        case delete = "DELETE"
-    }
-}
-
-extension Request {
-    var body: Any? {
-        // Extract body for testing
-        guard let bodyData = urlRequest.httpBody else { return nil }
-        return try? JSONSerialization.jsonObject(with: bodyData)
-    }
-    
-    var headers: [String: String]? {
-        return urlRequest.allHTTPHeaderFields
-    }
-    
-    var method: MockRequest.HTTPMethod {
-        return MockRequest.HTTPMethod(rawValue: urlRequest.httpMethod ?? "") ?? .get
-    }
+    let body: Data?
 }

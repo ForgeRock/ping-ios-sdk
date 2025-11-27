@@ -305,7 +305,7 @@ struct DeviceManagementView: View {
                 
                 Spacer()
                 
-                if viewModel.selectedDeviceType.supportsUpdate {
+                
                     Button {
                         deviceToUpdate = (device.id, device.deviceName, viewModel.selectedDeviceType)
                         updatedName = device.deviceName
@@ -316,7 +316,7 @@ struct DeviceManagementView: View {
                             .foregroundColor(.blue)
                     }
                     .disabled(viewModel.isLoading)
-                }
+               
                 
                 Button(role: .destructive) {
                     Task {
@@ -500,7 +500,7 @@ struct DeviceManagementView: View {
     // MARK: - Helper Methods
     
     private func formatDate(_ timestamp: TimeInterval) -> String {
-        let date = Date(timeIntervalSince1970: timestamp / 1000)
+        let date = Date(timeIntervalSince1970: timestamp)
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
@@ -548,6 +548,15 @@ struct DeviceManagementView: View {
             if let device = viewModel.webAuthnDevices.first(where: { $0.id == deviceToUpdate.id }) {
                 await viewModel.updateWebAuthnDevice(device, newName: updatedName)
             }
+        case .push:
+            if let device = viewModel.pushDevices.first(where: { $0.id == deviceToUpdate.id }) {
+                await viewModel.updatePushDevice(device, newName: updatedName)
+            }
+        case .oath:
+            if let device = viewModel.oathDevices.first(where: { $0.id == deviceToUpdate.id }) {
+                await viewModel.updateOathDevice(device, newName: updatedName)
+            }
+        
         default:
             break
         }
