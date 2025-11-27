@@ -202,6 +202,10 @@
         "containerPath" : "container:..\/DeviceClient\/DeviceClient.xcodeproj",
         "identifier" : "A570D4CB2ECC0D6200CBBCCF",
         "name" : "DeviceClientTests"
+        }
+    },
+    {
+      "target" : {
         "containerPath" : "container:..\/PingDavinciPlugin\/PingDavinciPlugin\/PingDavinciPlugin.xcodeproj",
         "identifier" : "EC5C814D2ECF66D100C91570",
         "name" : "PingDavinciPluginTests"
@@ -212,6 +216,10 @@
         "containerPath" : "container:..\/Push\/Push.xcodeproj",
         "identifier" : "1B7C49B82EAAB6E300E3C0AC",
         "name" : "PushTests"
+        }
+    },
+    {
+      "target" : {
         "containerPath" : "container:..\/ExternalIdPFacebook\/ExternalIdPFacebook.xcodeproj",
         "identifier" : "EC5EA5432DC2295E000C2737",
         "name" : "ExternalIdPFacebookTests"

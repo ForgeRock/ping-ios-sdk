@@ -194,6 +194,20 @@
 			remoteGlobalIDString = 3A54412C2BCDF10900385131;
 			remoteInfo = PingExample;
 		};
+		95CD2C802ED8D7EA00C32C3D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A55A25022ED4A49100D8820C /* DeviceClient.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A570D4C32ECC0D6200CBBCCF;
+			remoteInfo = PingDeviceClient;
+		};
+		95CD2C822ED8D7EA00C32C3D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A55A25022ED4A49100D8820C /* DeviceClient.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A570D4CC2ECC0D6200CBBCCF;
+			remoteInfo = DeviceClientTests;
+		};
 		A525E7E32DD7687800B02C17 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A525E7DC2DD7687800B02C17 /* ExternalIdPApple.xcodeproj */;
@@ -214,13 +228,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = A570D4C32ECC0D6200CBBCCF;
 			remoteInfo = PingDeviceClient;
-		};
-		A526CBFE2ED4AEE6007FCCD9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A55A25022ED4A49100D8820C /* DeviceClient.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A570D4CC2ECC0D6200CBBCCF;
-			remoteInfo = DeviceClientTests;
 		};
 		A569DBC52E789BD300F4D7A8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -880,20 +887,20 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		95CD2C742ED8D7EA00C32C3D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				95CD2C812ED8D7EA00C32C3D /* PingDeviceClient.framework */,
+				95CD2C832ED8D7EA00C32C3D /* DeviceClientTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		A525E7DF2DD7687800B02C17 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				A525E7E42DD7687800B02C17 /* PingExternalIdPApple.framework */,
 				A525E7E62DD7687800B02C17 /* ExternalIdPAppleTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		A526CBF22ED4AEE6007FCCD9 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A526CBFD2ED4AEE6007FCCD9 /* PingDeviceClient.framework */,
-				A526CBFF2ED4AEE6007FCCD9 /* DeviceClientTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1114,6 +1121,7 @@
 			isa = PBXGroup;
 			children = (
 				A58CFBC92EB00434007C4A31 /* PingReCaptchaEnterprise.framework */,
+				A526CBFD2ED4AEE6007FCCD9 /* PingDeviceClient.framework */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -1264,10 +1272,12 @@
 					ProjectRef = 3A54420F2BCE1F2900385131 /* Davinci.xcodeproj */;
 				},
 				{
-					ProductGroup = A526CBF22ED4AEE6007FCCD9 /* Products */;
-					ProjectRef = A55A25022ED4A49100D8820C /* DeviceClient.xcodeproj */;
 					ProductGroup = ECA2E7D22ED7108300C32766 /* Products */;
 					ProjectRef = EC5C81652ECF678600C91570 /* DavinciPlugin.xcodeproj */;
+				},
+				{
+					ProductGroup = 95CD2C742ED8D7EA00C32C3D /* Products */;
+					ProjectRef = A55A25022ED4A49100D8820C /* DeviceClient.xcodeproj */;
 				},
 				{
 					ProductGroup = ECCAB3A72E3B600B00BA1C73 /* Products */;
@@ -1399,6 +1409,20 @@
 			remoteRef = 1B7C49F12EAAB6E400E3C0AC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		95CD2C812ED8D7EA00C32C3D /* PingDeviceClient.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingDeviceClient.framework;
+			remoteRef = 95CD2C802ED8D7EA00C32C3D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		95CD2C832ED8D7EA00C32C3D /* DeviceClientTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = DeviceClientTests.xctest;
+			remoteRef = 95CD2C822ED8D7EA00C32C3D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		A525E7E42DD7687800B02C17 /* PingExternalIdPApple.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -1418,13 +1442,6 @@
 			fileType = wrapper.framework;
 			path = PingDeviceClient.framework;
 			remoteRef = A526CBFC2ED4AEE6007FCCD9 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A526CBFF2ED4AEE6007FCCD9 /* DeviceClientTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = DeviceClientTests.xctest;
-			remoteRef = A526CBFE2ED4AEE6007FCCD9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		A569DBC62E789BD300F4D7A8 /* PingDeviceProfile.framework */ = {
