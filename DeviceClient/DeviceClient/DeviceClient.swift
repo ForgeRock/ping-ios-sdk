@@ -620,7 +620,7 @@ public struct DeviceRepositoryImplementation<R>: DeviceRepository where R: Devic
     var endpoint: String
     
     /// Reference to the parent DeviceClient for executing operations
-    var deviceClient: DeviceClient
+    unowned var deviceClient: DeviceClient
     
     /// Initializes a new mutable device implementation
     ///

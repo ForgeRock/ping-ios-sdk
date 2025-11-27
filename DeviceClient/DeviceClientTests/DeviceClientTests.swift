@@ -746,6 +746,25 @@ final class DeviceClientTests: XCTestCase {
         ]
         return try! JSONSerialization.data(withJSONObject: json)
     }
+    
+    // MARK: - Memory leak
+    
+    func testMemoryLeak() {
+        var client: DeviceClient? = DeviceClient(config: config)
+        weak var weakClient = client
+        
+        // Access lazy properties to initialize them
+        _ = client?.oath
+        _ = client?.push
+        
+        print("Retain count before release: \(CFGetRetainCount(client))")
+        
+        client = nil  // Release external reference
+        
+        print("Weak reference after release: \(weakClient)")
+        
+        XCTAssertNil(weakClient)
+    }
 }
 
 // MARK: - Mock Objects
