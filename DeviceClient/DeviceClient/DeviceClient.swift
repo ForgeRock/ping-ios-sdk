@@ -650,10 +650,10 @@ public struct DeviceRepositoryImplementation<R>: DeviceRepository where R: Devic
     ///
     /// - Parameter device: The device to delete
     /// - Returns: A Result containing either success (true) or an error
-    public func delete(_ device: R) async -> Result<Bool, DeviceError> {
+    public func delete(_ device: R) async -> Result<R, DeviceError> {
         do {
             try await deviceClient.delete(device: device)
-            return .success(true)
+            return .success(device)
         } catch let error as DeviceError {
             return .failure(error)
         } catch {
@@ -665,10 +665,10 @@ public struct DeviceRepositoryImplementation<R>: DeviceRepository where R: Devic
     ///
     /// - Parameter device: The device with updated properties
     /// - Returns: A Result containing either success (true) or an error
-    public func update(_ device: R) async -> Result<Bool, DeviceError> {
+    public func update(_ device: R) async -> Result<R, DeviceError> {
         do {
             try await deviceClient.update(device: device)
-            return .success(true)
+            return .success(device)
         } catch let error as DeviceError {
             return .failure(error)
         } catch {
@@ -693,6 +693,7 @@ struct Session: Codable {
     let maxSessionExpirationTime: String
 }
 
+/// Constants used throughout the DeviceClient module
 public enum DeviceClientConstants {
     // MARK: - URL Paths
     static let jsonPath = "/json"
@@ -723,7 +724,9 @@ public enum DeviceClientConstants {
     static let resourceAPIVersion2_1 = "resource=2.1"
     
     // MARK: - Default Values
+    /// Default realm name: "root"
     public static let defaultRealm = "root"
+    /// Default cookie/header name: "iPlanetDirectoryPro"
     public static let defaultCookieName = "iPlanetDirectoryPro"
 }
 

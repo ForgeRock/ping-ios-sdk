@@ -21,13 +21,13 @@ public protocol DeviceRepository<T> {
     
     /// Deletes the specified device.
     /// - Parameter device: The device to delete.
-    /// - Returns: A Result containing either success (true) or an error.
-    func delete(_ device: T) async -> Result<Bool, DeviceError>
+    /// - Returns: A Result containing either success (T) or an error.
+    func delete(_ device: T) async -> Result<T, DeviceError>
     
     /// Updates the specified device.
     /// - Parameter device: The device to update.
-    /// - Returns: A Result containing either success (true) or an error.
-    func update(_ device: T) async -> Result<Bool, DeviceError>
+    /// - Returns: A Result containing either success (T) or an error.
+    func update(_ device: T) async -> Result<T, DeviceError>
 }
 
 /// Protocol representing a device.
@@ -331,7 +331,7 @@ public struct ProfileDevice: Device {
 /// Struct representing a location.
 public struct Location: Codable, Sendable {
     /// The latitude of the location.
-    public let latitude: Double
+    public let latitude: Double?
     /// The longitude of the location.
-    public let longitude: Double
+    public let longitude: Double?
 }

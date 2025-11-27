@@ -340,8 +340,8 @@ class DeviceManagementViewModel: ObservableObject {
     // MARK: - Helper Methods
     
     /// Generic method to perform device operations with consistent error handling
-    private func performDeviceOperation(
-        operation: () async -> Result<Bool, DeviceError>?,
+    private func performDeviceOperation<T>(
+        operation: () async -> Result<T, DeviceError>?,
         onSuccess: () -> Void,
         deviceName: String,
         operationType: String,

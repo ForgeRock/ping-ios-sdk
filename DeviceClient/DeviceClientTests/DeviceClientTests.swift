@@ -264,7 +264,7 @@ final class DeviceClientTests: XCTestCase {
         mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createBoundDevicesJSON()))
         let fetchResult = await deviceClient.bound.get()
         
-        guard case .success(var devices) = fetchResult, var device = devices.first else {
+        guard case .success(let devices) = fetchResult, var device = devices.first else {
             XCTFail("Failed to fetch device")
             return
         }
@@ -275,9 +275,7 @@ final class DeviceClientTests: XCTestCase {
         
         let updateResult = await deviceClient.bound.update(device)
         
-        if case .success(let success) = updateResult {
-            XCTAssertTrue(success)
-            
+        if case .success = updateResult {
             // Verify request was made
             let updateRequest = mockHttpClient.requests.last
             XCTAssertTrue(updateRequest?.urlString.contains(device.id) ?? false)
@@ -294,7 +292,7 @@ final class DeviceClientTests: XCTestCase {
         mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createProfileDevicesJSON()))
         let fetchResult = await deviceClient.profile.get()
         
-        guard case .success(var devices) = fetchResult, var device = devices.first else {
+        guard case .success(let devices) = fetchResult, var device = devices.first else {
             XCTFail("Failed to fetch device")
             return
         }
@@ -305,8 +303,8 @@ final class DeviceClientTests: XCTestCase {
         
         let updateResult = await deviceClient.profile.update(device)
         
-        if case .success(let success) = updateResult {
-            XCTAssertTrue(success)
+        if case .success = updateResult {
+            // all good
         } else {
             XCTFail("Expected success result")
         }
@@ -319,7 +317,7 @@ final class DeviceClientTests: XCTestCase {
         mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createWebAuthnDevicesJSON()))
         let fetchResult = await deviceClient.webAuthn.get()
         
-        guard case .success(var devices) = fetchResult, var device = devices.first else {
+        guard case .success(let devices) = fetchResult, var device = devices.first else {
             XCTFail("Failed to fetch device")
             return
         }
@@ -330,8 +328,8 @@ final class DeviceClientTests: XCTestCase {
         
         let updateResult = await deviceClient.webAuthn.update(device)
         
-        if case .success(let success) = updateResult {
-            XCTAssertTrue(success)
+        if case .success = updateResult {
+            // all good
         } else {
             XCTFail("Expected success result")
         }
@@ -356,8 +354,7 @@ final class DeviceClientTests: XCTestCase {
         
         let deleteResult = await deviceClient.oath.delete(device)
         
-        if case .success(let success) = deleteResult {
-            XCTAssertTrue(success)
+        if case .success = deleteResult {
             
             // Verify request was made
             let deleteRequest = mockHttpClient.requests.last
@@ -381,8 +378,8 @@ final class DeviceClientTests: XCTestCase {
         mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: Data()))
         let deleteResult = await deviceClient.push.delete(device)
         
-        if case .success(let success) = deleteResult {
-            XCTAssertTrue(success)
+        if case .success = deleteResult {
+            // all good
         } else {
             XCTFail("Expected success result")
         }
@@ -401,8 +398,8 @@ final class DeviceClientTests: XCTestCase {
         mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: Data()))
         let deleteResult = await deviceClient.bound.delete(device)
         
-        if case .success(let success) = deleteResult {
-            XCTAssertTrue(success)
+        if case .success = deleteResult {
+            //all good
         } else {
             XCTFail("Expected success result")
         }
@@ -422,8 +419,8 @@ final class DeviceClientTests: XCTestCase {
         mockHttpClient.responses.append(MockHttpResponse(statusCode: 204, data: Data()))
         let deleteResult = await deviceClient.oath.delete(device)
         
-        if case .success(let success) = deleteResult {
-            XCTAssertTrue(success)
+        if case .success = deleteResult {
+            // all good
         } else {
             XCTFail("Expected success result for 204 status code")
         }
@@ -545,7 +542,7 @@ final class DeviceClientTests: XCTestCase {
         mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createBoundDevicesJSON()))
         let fetchResult = await deviceClient.bound.get()
         
-        guard case .success(var devices) = fetchResult, var device = devices.first else {
+        guard case .success(let devices) = fetchResult, var device = devices.first else {
             XCTFail("Failed to fetch device")
             return
         }
@@ -620,7 +617,7 @@ final class DeviceClientTests: XCTestCase {
         mockHttpClient.responses.append(MockHttpResponse(statusCode: 200, data: createBoundDevicesJSON()))
         let fetchResult = await deviceClient.bound.get()
         
-        guard case .success(var devices) = fetchResult, var device = devices.first else {
+        guard case .success(let devices) = fetchResult, var device = devices.first else {
             XCTFail("Failed to fetch device")
             return
         }
