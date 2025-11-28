@@ -49,5 +49,9 @@ let package = Package (
         .target(name: "PingExternalIdPGoogle", dependencies: [.target(name: "PingExternalIdP"), .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")], path: "ExternalIdPGoogle/ExternalIdPGoogle", exclude: ["ExternalIdPGoogle.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
     	.target(name: "PingExternalIdPFacebook", dependencies: [.target(name: "PingExternalIdP"), .product(name: "FacebookLogin", package: "facebook-ios-sdk")], path: "ExternalIdPFacebook/ExternalIdPFacebook", exclude: ["ExternalIdPFacebook.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
     	.target(name: "PingProtect", dependencies: [.target(name: "PingDavinci"), .product(name: "PingOneSignals", package: "pingone-signals-sdk-ios")], path: "Protect/Protect", exclude: ["Protect.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingDeviceClient", dependencies: [.target(name: "PingLogger"), .target(name: "PingOrchestrate")], path: "DeviceClient/DeviceClient", exclude: ["PingDeviceClient.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingReCaptchaEnterprise", dependencies: [.target(name: "PingJourneyPlugin"), .product(name: "RecaptchaEnterprise", package: "recaptcha-enterprise-mobile-sdk")], path: "ReCaptchaEnterprise/ReCaptchaEnterprise", exclude: ["PingReCaptchaEnterprise.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingDavinciPlugin", dependencies: [.target(name: "PingOidc"), .target(name: "PingLogger")], path: "DavinciPlugin/DavinciPlugin", exclude: ["PingDavinciPlugin.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingJourneyPlugin", dependencies: [.target(name: "PingOrchestrate"), .target(name: "PingLogger")], path: "JourneyPlugin/JourneyPlugin", exclude: ["PingJourneyPlugin.h"],resources: [.copy("PrivacyInfo.xcprivacy")])
     ]
 )
