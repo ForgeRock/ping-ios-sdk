@@ -54,7 +54,8 @@ jobs:
           -destination "$DEST" \
           -derivedDataPath DerivedData \
           -enableCodeCoverage YES \
-          -resultBundlePath TestResults 
+          -resultBundlePath TestResults \
+          -maximum-parallel-testing-workers 2 
           
       # Force stop test host
       - name: Force stop test host (avoid hangs)
