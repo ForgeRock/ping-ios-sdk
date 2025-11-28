@@ -37,6 +37,20 @@
          </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B7A9A802ED52F6400989A55"
+               BuildableName = "NetworkTests.xctest"
+               BlueprintName = "NetworkTests"
+               ReferencedContainer = "container:../Network/Network.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
             buildForRunning = "YES"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
@@ -417,6 +431,16 @@
                BuildableName = "PushTests.xctest"
                BlueprintName = "PushTests"
                ReferencedContainer = "container:../Push/Push.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B7A9A802ED52F6400989A55"
+               BuildableName = "NetworkTests.xctest"
+               BlueprintName = "NetworkTests"
+               ReferencedContainer = "container:../Network/Network.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
