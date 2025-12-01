@@ -17,6 +17,14 @@ import PingDavinciPlugin
 @MainActor
 final class CollectorRegistryTests: XCTestCase {
         
+    override func setUp() async throws {
+        await CollectorFactory.shared.reset()
+    }
+
+    override func tearDown() async throws {
+        await CollectorFactory.shared.reset()
+    }
+    
     func testShouldRegisterCollector() async {
         let davinci = DaVinci.createDaVinci()
         let jsonArray: [[String: Any]] = [
