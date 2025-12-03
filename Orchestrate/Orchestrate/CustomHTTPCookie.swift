@@ -13,19 +13,19 @@ import Foundation
 
 /// A struct that represents a custom HTTP cookie.
 public struct CustomHTTPCookie: Codable, Sendable {
-    var version: Int
-    var name: String?
-    var value: String?
-    var expiresDate: Date?
-    var isSessionOnly: Bool
-    var domain: String?
-    var path: String?
-    var isSecure: Bool
-    var isHTTPOnly: Bool
-    var comment: String?
-    var commentURL: URL?
-    var portList: [Int]?
-    var sameSitePolicy: String?
+    public var version: Int
+    public var name: String?
+    public var value: String?
+    public var expiresDate: Date?
+    public var isSessionOnly: Bool
+    public var domain: String?
+    public var path: String?
+    public var isSecure: Bool
+    public var isHTTPOnly: Bool
+    public var comment: String?
+    public var commentURL: URL?
+    public var portList: [Int]?
+    public var sameSitePolicy: String?
     
     enum CodingKeys: String, CodingKey {
         case version

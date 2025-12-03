@@ -862,4 +862,288 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
         XCTAssertEqual("Success", continueNode.name)
         XCTAssertEqual("User has been successfully deleted", continueNode.description)
     }
+    
+    // MARK: - Custom Cookie Storage Tests
+    
+    func testDaVinciWithCustomCookieStorage() async throws {
+        // Create a DaVinci instance with custom cookie storage
+        let customDaVinci = DaVinci.createDaVinci { config in
+            config.logger = LogManager.standard
+            
+            // Configure custom cookie storage
+            config.module(CookieModule.config) { cookieConfig in
+                cookieConfig.cookieStorage = KeychainStorage<[CustomHTTPCookie]>(
+                    account: "test_custom_cookies",
+                    encryptor: SecuredKeyEncryptor() ?? NoEncryptor()
+                )
+            }
+            
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
+                oidcValue.clientId = self.config.clientId
+                oidcValue.scopes = Set(self.config.scopes)
+                oidcValue.redirectUri = self.config.redirectUri
+                oidcValue.acrValues = self.config.acrValues
+                oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
+                
+                // Configure custom token storage
+                oidcValue.storage = KeychainStorage<Token>(account: "test_custom_tokens")
+            }
+        }
+        
+        // Verify the DaVinci instance was created successfully
+        XCTAssertNotNil(customDaVinci)
+        
+        // Verify cookie storage is properly set
+        let cookieStorage = customDaVinci.sharedContext.get(key: SharedContext.Keys.cookieStorage) as? StorageDelegate<[CustomHTTPCookie]>
+        XCTAssertNotNil(cookieStorage, "Cookie storage should be set in shared context")
+    }
+    
+    func testMultipleDaVinciInstancesWithIsolatedStorage() async throws {
+        // Create Standard DaVinci instance
+        let standardDaVinci = DaVinci.createDaVinci { config in
+            config.logger = LogManager.standard
+            
+            config.module(CookieModule.config) { cookieConfig in
+                cookieConfig.cookieStorage = KeychainStorage<[CustomHTTPCookie]>(
+                    account: "standard_cookies",
+                    encryptor: SecuredKeyEncryptor() ?? NoEncryptor()
+                )
+            }
+            
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
+                oidcValue.clientId = self.config.clientId
+                oidcValue.scopes = Set(self.config.scopes)
+                oidcValue.redirectUri = self.config.redirectUri
+                oidcValue.acrValues = self.config.acrValues
+                oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
+                oidcValue.storage = KeychainStorage<Token>(account: "standard_tokens")
+            }
+        }
+        
+        // Create Transaction DaVinci instance
+        let transactionDaVinci = DaVinci.createDaVinci { config in
+            config.logger = LogManager.standard
+            
+            config.module(CookieModule.config) { cookieConfig in
+                cookieConfig.cookieStorage = KeychainStorage<[CustomHTTPCookie]>(
+                    account: "transaction_cookies",
+                    encryptor: SecuredKeyEncryptor() ?? NoEncryptor()
+                )
+            }
+            
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
+                oidcValue.clientId = self.config.clientId
+                oidcValue.scopes = Set(self.config.scopes)
+                oidcValue.redirectUri = self.config.redirectUri
+                oidcValue.acrValues = self.config.acrValues
+                oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
+                oidcValue.storage = KeychainStorage<Token>(account: "transaction_tokens")
+            }
+        }
+        
+        // Verify both instances are created successfully
+        XCTAssertNotNil(standardDaVinci)
+        XCTAssertNotNil(transactionDaVinci)
+        
+        // Verify they have different storage configurations
+        let standardCookieStorage = standardDaVinci.sharedContext.get(key: SharedContext.Keys.cookieStorage) as? StorageDelegate<[CustomHTTPCookie]>
+        let transactionCookieStorage = transactionDaVinci.sharedContext.get(key: SharedContext.Keys.cookieStorage) as? StorageDelegate<[CustomHTTPCookie]>
+        
+        XCTAssertNotNil(standardCookieStorage)
+        XCTAssertNotNil(transactionCookieStorage)
+        
+        // Storage instances should be different (isolated)
+        XCTAssertTrue(standardCookieStorage !== transactionCookieStorage, "Cookie storages should be different instances")
+    }
+    
+    func testCookieStorageIsolation() async throws {
+        // Create a custom storage for testing
+        let storage = KeychainStorage<[CustomHTTPCookie]>(
+            account: "test_cookie_isolation",
+            encryptor: SecuredKeyEncryptor() ?? NoEncryptor()
+        )
+        
+        // Create mock cookies
+        let properties1: [HTTPCookiePropertyKey: Any] = [
+            .name: "test_cookie_1",
+            .value: "cookie_value_1",
+            .domain: "example.com",
+            .path: "/"
+        ]
+        
+        let properties2: [HTTPCookiePropertyKey: Any] = [
+            .name: "test_cookie_2",
+            .value: "cookie_value_2",
+            .domain: "example.com",
+            .path: "/"
+        ]
+        
+        guard let httpCookie1 = HTTPCookie(properties: properties1),
+              let httpCookie2 = HTTPCookie(properties: properties2) else {
+            XCTFail("Failed to create test cookies")
+            return
+        }
+        
+        let customCookie1 = CustomHTTPCookie(from: httpCookie1)
+        let customCookie2 = CustomHTTPCookie(from: httpCookie2)
+        let cookies = [customCookie1, customCookie2]
+        
+        // Save the cookies
+        try await storage.save(item: cookies)
+        
+        // Retrieve the cookies
+        let retrievedCookies = try await storage.get()
+        
+        // Verify the cookies were saved and retrieved correctly
+        XCTAssertNotNil(retrievedCookies)
+        XCTAssertEqual(retrievedCookies?.count, 2)
+        XCTAssertEqual(retrievedCookies?[0].name, "test_cookie_1")
+        XCTAssertEqual(retrievedCookies?[0].value, "cookie_value_1")
+        XCTAssertEqual(retrievedCookies?[1].name, "test_cookie_2")
+        XCTAssertEqual(retrievedCookies?[1].value, "cookie_value_2")
+        
+        // Clean up
+        try await storage.delete()
+        
+        // Verify deletion
+        let deletedCookies = try? await storage.get()
+        XCTAssertNil(deletedCookies, "Cookies should be nil after deletion")
+    }
+    
+    func testCustomHTTPCookieCodable() throws {
+        // Create a mock HTTP cookie
+        let properties: [HTTPCookiePropertyKey: Any] = [
+            .name: "test_cookie",
+            .value: "test_value",
+            .domain: "example.com",
+            .path: "/test",
+            .secure: "TRUE",
+            HTTPCookiePropertyKey("HttpOnly"): "TRUE"
+        ]
+        
+        guard let httpCookie = HTTPCookie(properties: properties) else {
+            XCTFail("Failed to create test cookie")
+            return
+        }
+        
+        let customCookie = CustomHTTPCookie(from: httpCookie)
+        
+        // Encode the cookie
+        let encoder = JSONEncoder()
+        let encodedData = try encoder.encode(customCookie)
+        XCTAssertFalse(encodedData.isEmpty, "Encoded data should not be empty")
+        
+        // Decode the cookie
+        let decoder = JSONDecoder()
+        let decodedCookie = try decoder.decode(CustomHTTPCookie.self, from: encodedData)
+        
+        // Verify the decoded cookie matches the original
+        XCTAssertEqual(decodedCookie.name, customCookie.name)
+        XCTAssertEqual(decodedCookie.value, customCookie.value)
+        XCTAssertEqual(decodedCookie.domain, customCookie.domain)
+        XCTAssertEqual(decodedCookie.path, customCookie.path)
+        XCTAssertEqual(decodedCookie.isSecure, customCookie.isSecure)
+        XCTAssertEqual(decodedCookie.isHTTPOnly, customCookie.isHTTPOnly)
+    }
+    
+    func testCustomHTTPCookieConversion() throws {
+        // Create an HTTP cookie with specific properties
+        let properties: [HTTPCookiePropertyKey: Any] = [
+            .name: "session_cookie",
+            .value: "session_value_123",
+            .domain: "test.example.com",
+            .path: "/api",
+            .version: 1,
+            .secure: "TRUE"
+        ]
+        
+        guard let originalCookie = HTTPCookie(properties: properties) else {
+            XCTFail("Failed to create test cookie")
+            return
+        }
+        
+        // Convert to CustomHTTPCookie
+        let customCookie = CustomHTTPCookie(from: originalCookie)
+        
+        // Verify properties were copied correctly
+        XCTAssertEqual(customCookie.name, "session_cookie")
+        XCTAssertEqual(customCookie.value, "session_value_123")
+        XCTAssertEqual(customCookie.domain, "test.example.com")
+        XCTAssertEqual(customCookie.path, "/api")
+        XCTAssertEqual(customCookie.version, 1)
+        XCTAssertTrue(customCookie.isSecure)
+        
+        // Convert back to HTTPCookie
+        guard let convertedCookie = customCookie.toHTTPCookie() else {
+            XCTFail("Failed to convert CustomHTTPCookie back to HTTPCookie")
+            return
+        }
+        
+        // Verify the round-trip conversion
+        XCTAssertEqual(convertedCookie.name, originalCookie.name)
+        XCTAssertEqual(convertedCookie.value, originalCookie.value)
+        XCTAssertEqual(convertedCookie.domain, originalCookie.domain)
+        XCTAssertEqual(convertedCookie.path, originalCookie.path)
+        XCTAssertEqual(convertedCookie.isSecure, originalCookie.isSecure)
+    }
+    
+    func testCookieConfigConvenienceInitializer() {
+        // Test the convenience initializer
+        let cookieConfig = CookieConfig(account: "test_convenience_account")
+        
+        XCTAssertNotNil(cookieConfig.cookieStorage)
+        XCTAssertNotNil(cookieConfig.inMemoryStorage)
+        
+        // The storage should be configured with a custom account
+        XCTAssertNotNil(cookieConfig.cookieStorage, "Cookie storage should be initialized with custom account")
+    }
+    
+    func testHasCookiesMethod() async throws {
+        // Create a DaVinci instance with custom cookie storage
+        let testDaVinci = DaVinci.createDaVinci { config in
+            config.logger = LogManager.standard
+            
+            config.module(CookieModule.config) { cookieConfig in
+                cookieConfig.cookieStorage = KeychainStorage<[CustomHTTPCookie]>(
+                    account: "test_has_cookies",
+                    encryptor: SecuredKeyEncryptor() ?? NoEncryptor()
+                )
+            }
+            
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
+                oidcValue.clientId = self.config.clientId
+                oidcValue.scopes = Set(self.config.scopes)
+                oidcValue.redirectUri = self.config.redirectUri
+                oidcValue.acrValues = self.config.acrValues
+                oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
+            }
+        }
+        
+        // Initially should have no cookies
+        let initialHasCookies = await testDaVinci.hasCookies()
+        XCTAssertFalse(initialHasCookies, "Should not have cookies initially")
+        
+        // Add a cookie
+        let storage = testDaVinci.sharedContext.get(key: SharedContext.Keys.cookieStorage) as? StorageDelegate<[CustomHTTPCookie]>
+        
+        let properties: [HTTPCookiePropertyKey: Any] = [
+            .name: "test_cookie",
+            .value: "test_value",
+            .domain: "example.com",
+            .path: "/"
+        ]
+        
+        if let httpCookie = HTTPCookie(properties: properties) {
+            let customCookie = CustomHTTPCookie(from: httpCookie)
+            try await storage?.save(item: [customCookie])
+            
+            // Now should have cookies
+            let hasCookies = await testDaVinci.hasCookies()
+            XCTAssertTrue(hasCookies, "Should have cookies after saving")
+            
+            // Clean up
+            try await storage?.delete()
+        }
+    }
 }
+

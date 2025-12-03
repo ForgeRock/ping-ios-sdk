@@ -35,6 +35,105 @@ public let journey = Journey.createJourney { config in
     }
 }
 
+// MARK: - Multi-User Journey Instances with Separate Session Storage
+// The following examples demonstrate how to create multiple Journey instances
+// with isolated session and token storage for different users or use cases.
+//
+// Key points:
+// 1. Each Journey instance can have its own cookie storage via SessionModule.config
+// 2. Each Journey instance can have its own token storage via OidcModule.config
+// 3. Use unique account identifiers to keep storage completely separate
+// 4. You must use KeychainStorage<SSOTokenImpl> array type for session storage
+
+/*
+// Switch "Journey.createJourney" to "DaVinci.createDaVinci" if required
+let userAInstance = Journey.createJourney { config in
+    config.serverUrl = "https://example.com/am"
+    config.realm = "alpha"
+
+    config.module(SessionModule.config) { sessionConfig in
+        sessionConfig.storage = KeychainStorage<SSOTokenImpl>(
+            account: "user_a_sessions",
+            encryptor: SecuredKeyEncryptor() ?? NoEncryptor()
+        )
+    }
+    
+    // Note: Custom session storage configuration is not directly supported
+    // via the public API. Session storage uses a default KeychainStorage internally.
+    // If you need separate session storage per user, consider using different
+    // Journey instances or managing session isolation at a higher level.
+    
+    config.module(PingJourney.OidcModule.config) { oidcConfig in
+        oidcConfig.clientId = "app-client"
+        oidcConfig.discoveryEndpoint = "https://example.com/.well-known/openid-configuration"
+        oidcConfig.scopes = ["openid", "profile", "email"]
+        oidcConfig.redirectUri = "app:/oauth2redirect"
+
+        // Custom token storage for User A
+        oidcConfig.storage = KeychainStorage<Token>(account: "user_a_tokens")
+    }
+}
+
+// Switch "Journey.createJourney" to "DaVinci.createDaVinci" if required
+let userBInstance = Journey.createJourney { config in
+    config.serverUrl = "https://example.com/am"
+    config.realm = "alpha"
+
+    // Note: Custom session storage configuration is not directly supported
+    // via the public API. Session storage uses a default KeychainStorage internally.
+    // If you need separate session storage per user, consider using different
+    // Journey instances or managing session isolation at a higher level.
+
+    config.module(PingJourney.OidcModule.config) { oidcConfig in
+        oidcConfig.clientId = "app-client"
+        oidcConfig.discoveryEndpoint = "https://example.com/.well-known/openid-configuration"
+        oidcConfig.scopes = ["openid", "profile", "email"]
+        oidcConfig.redirectUri = "app:/oauth2redirect"
+
+        // Custom token storage for User B
+        oidcConfig.storage = KeychainStorage<Token>(account: "user_b_tokens")
+    }
+}
+
+
+// Instance 1 - Standard authentication with long-lived tokens
+// Switch "Journey.createJourney" to "DaVinci.createDaVinci" if required
+let standardJourneyInstance = Journey.createJourney { config in
+    config.serverUrl = "https://example.com/am"
+    config.realm = "alpha"
+
+    config.module(PingJourney.OidcModule.config) { oidcConfig in
+        oidcConfig.clientId = "standard-client"
+        oidcConfig.scopes = ["openid", "profile", "email"]
+        oidcConfig.redirectUri = "app:/oauth2redirect"
+
+        // Custom storage for this instance’s access tokens
+        oidcConfig.storage = KeychainStorage<Token>(account: "standard_tokens")
+    }
+
+    // No custom session storage is defined, so it uses the default shared session.
+}
+
+// Instance 2 - High-security transactions with short-lived tokens
+// Switch "Journey.createJourney" to "DaVinci.createDaVinci" if required
+let transactionJourneyInstance2 = Journey.createJourney { config in
+    config.serverUrl = "https://example.com/am"
+    config.realm = "alpha"
+
+    config.module(PingJourney.OidcModule.config) { oidcConfig in
+        oidcConfig.clientId = "transaction-client"
+        oidcConfig.scopes = ["openid", "transactions"]
+        oidcConfig.redirectUri = "app:/oauth2redirect"
+
+        // Separate storage for this instance’s access token
+        oidcConfig.storage = KeychainStorage<Token>(account: "transaction_tokens")
+    }
+
+    // Also uses the default shared session storage.
+}
+ */
+
+
 // A view model that manages the flow and state of the Journey orchestration process.
 /// - Responsible for:
 ///   - Starting the Journey flow
