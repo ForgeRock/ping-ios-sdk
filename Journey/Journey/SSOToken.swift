@@ -18,12 +18,13 @@ public protocol SSOToken: Session, Codable {
 }
 
 /// Define the SSOTokenImpl class
-final class SSOTokenImpl: SSOToken, Sendable, Codable {
-    let value: String
-    let successUrl: String
-    let realm: String
+/// This is the concrete implementation of SSOToken used for storage.
+public final class SSOTokenImpl: SSOToken, Sendable, Codable {
+    public let value: String
+    public let successUrl: String
+    public let realm: String
 
-    init(value: String, successUrl: String, realm: String) {
+    public init(value: String, successUrl: String, realm: String) {
         self.value = value
         self.successUrl = successUrl
         self.realm = realm
@@ -36,14 +37,14 @@ final class SSOTokenImpl: SSOToken, Sendable, Codable {
         case realm
     }
 
-    required init(from decoder: Decoder) throws {
+    required public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.value = try container.decode(String.self, forKey: .value)
         self.successUrl = try container.decode(String.self, forKey: .successUrl)
         self.realm = try container.decode(String.self, forKey: .realm)
     }
 
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(value, forKey: .value)
         try container.encode(successUrl, forKey: .successUrl)

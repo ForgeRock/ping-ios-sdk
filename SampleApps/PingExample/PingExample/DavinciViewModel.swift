@@ -32,9 +32,63 @@ public let davinci = DaVinci.createDaVinci { config in
         oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
         oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
-        oidcValue.acrValues = "" //update with actual ACR values if needed or remove
+        oidcValue.acrValues = "1557008a3c8b6105d5f4e8e053ac7a29" //update with actual ACR values if needed or remove
     }
 }
+
+// MARK: - Multi-User DaVinci Instances with Separate Cookie Storage
+// The following examples demonstrate how to create multiple DaVinci instances
+// with isolated cookie and token storage for different users or use cases.
+//
+// Key points:
+// 1. Each DaVinci instance can have its own cookie storage via CookieModule.config
+// 2. Each DaVinci instance can have its own token storage via OidcModule.config
+// 3. Use unique account identifiers to keep storage completely separate
+// 4. You must use CustomHTTPCookie array type for cookie storage
+
+// Instance 1 - Standard authentication with long-lived tokens
+/*
+let standardDaVinciInstance = DaVinci.createDaVinci { config in
+    
+    config.module(CookieModule.config) { cookieConfig in
+        cookieConfig.cookieStorage = KeychainStorage<[CustomHTTPCookie]>(account: "standard_storage", encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
+    }
+    
+    config.module(PingDavinci.OidcModule.config) { oidcConfig in
+        oidcConfig.clientId = "standard-client"
+        oidcConfig.scopes = ["openid", "profile", "email"]
+        oidcConfig.redirectUri = "app:/oauth2redirect"
+        oidcConfig.discoveryEndpoint = "[DISCOVERY ENDPOINT]"
+        oidcConfig.acrValues = "" //update with actual ACR values if needed or
+        
+        // Separate storage for this instance’s access token
+        oidcConfig.storage = KeychainStorage<Token>(account: "standard_tokens")
+    }
+
+}
+
+// Instance 2 - High-security transactions with short-lived tokens
+// Switch "Journey.createJourney" to "DaVinci.createDaVinci" if required
+let transactionDaVinciInstance = DaVinci.createDaVinci { config in
+    
+    config.module(CookieModule.config) { cookieConfig in
+        cookieConfig.cookieStorage = KeychainStorage<[CustomHTTPCookie]>(account: "transaction_cookies", encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
+    }
+    
+    config.module(PingDavinci.OidcModule.config) { oidcConfig in
+        oidcConfig.clientId = "transaction-client"
+        oidcConfig.scopes = ["openid", "transactions"]
+        oidcConfig.redirectUri = "app:/oauth2redirect"
+        oidcConfig.discoveryEndpoint = "[DISCOVERY ENDPOINT]"
+        oidcConfig.acrValues = "" //update with actual ACR values if needed or remove
+        
+        // Separate storage for this instance’s access token
+        oidcConfig.storage = KeychainStorage<Token>(account: "transaction_tokens")
+    }
+
+    // Uses the custom cookie storage configured above
+}
+*/
 
 // A view model that manages the flow and state of the DaVinci orchestration process.
 /// - Responsible for:

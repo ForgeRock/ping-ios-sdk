@@ -13,12 +13,20 @@ import PingStorage
 
 /// A configuration class for managing session-related settings.
 public class SessionConfig: @unchecked Sendable {
-    /// Optional storage that can be lazily initialized
-    var storage: any Storage<SSOTokenImpl>
+    /// Storage for SSO tokens. Can be customized per Journey instance.
+    /// Defaults to KeychainStorage with a default account identifier.
+    public var storage: any Storage<SSOTokenImpl>
 
-    /// Initialize storage if it's not already set
+    /// Initialize storage with default KeychainStorage
     public init() {
         storage = KeychainStorage<SSOTokenImpl>(account: SharedContext.Keys.sessionConfigKey, encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
+    }
+    
+    /// Initialize storage with a custom account identifier
+    /// - Parameter account: A unique identifier for this session storage
+    public convenience init(account: String) {
+        self.init()
+        storage = KeychainStorage<SSOTokenImpl>(account: account, encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
     }
 }
 

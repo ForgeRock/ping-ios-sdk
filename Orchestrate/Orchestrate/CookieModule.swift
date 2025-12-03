@@ -154,13 +154,21 @@ public final class CookieConfig: @unchecked Sendable {
     public var persist: [String] = []
     /// In-memory storage for cookies.
     public private(set) var inMemoryStorage: InMemoryCookieStorage
-    /// Persistent storage for cookies.
-    public internal(set) var cookieStorage: StorageDelegate<[CustomHTTPCookie]>
+    /// Persistent storage for cookies. Can be customized per DaVinci instance.
+    /// Defaults to KeychainStorage with a default account identifier.
+    public var cookieStorage: StorageDelegate<[CustomHTTPCookie]>
     
-    /// Initializes a new instance of `CookieConfig`.
+    /// Initializes a new instance of `CookieConfig` with default KeychainStorage.
     public init() {
         cookieStorage = KeychainStorage<[CustomHTTPCookie]>(account: SharedContext.Keys.cookieStorage, encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
         inMemoryStorage = InMemoryCookieStorage()
+    }
+    
+    /// Initializes a new instance of `CookieConfig` with a custom account identifier.
+    /// - Parameter account: A unique identifier for this cookie storage
+    public convenience init(account: String) {
+        self.init()
+        cookieStorage = KeychainStorage<[CustomHTTPCookie]>(account: account, encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
     }
 }
 
