@@ -32,7 +32,7 @@ public let davinci = DaVinci.createDaVinci { config in
         oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
         oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
-        oidcValue.acrValues = "1557008a3c8b6105d5f4e8e053ac7a29" //update with actual ACR values if needed or remove
+        oidcValue.acrValues = "" //update with actual ACR values if needed or remove
     }
 }
 
