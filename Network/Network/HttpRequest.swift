@@ -14,6 +14,13 @@ import Foundation
 ///
 /// `HttpRequest` provides a fluent interface for configuring HTTP requests
 /// including URL, headers, query parameters, cookies, and request body.
+///
+/// This protocol requires `Sendable` conformance to allow passing request instances
+/// across async boundaries. However, **implementations are not required to be thread-safe
+/// during configuration**. Request builders are designed to be used within a single
+/// async context (typically a builder closure) and should not be shared or modified
+/// concurrently.
+/// ```
 public protocol HttpRequest: Sendable {
     /// The URL for this request.
     var url: String? { get set }

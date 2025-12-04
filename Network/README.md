@@ -60,7 +60,7 @@ Make a simple GET request:
 ```swift
 import PingNetwork
 
-let client = createHttpClient()
+let client = HttpClient.createClient()
 
 let result = await client.request { request in
     request.url = "https://api.example.com/users"
@@ -137,7 +137,7 @@ let result = await client.request { request in
 Create a client with custom configuration:
 
 ```swift
-let client = createHttpClient { config in
+let client = HttpClient.createClient { config in
     config.timeout = 30.0  // Set timeout to 30 seconds
     config.logger = LogManager.standard  // Enable logging
 }
@@ -148,7 +148,7 @@ let client = createHttpClient { config in
 Add request interceptors to modify all outgoing requests:
 
 ```swift
-let client = createHttpClient { config in
+let client = HttpClient.createClient { config in
     // Add authentication token to all requests
     config.onRequest { request in
         request.setHeader(name: "Authorization", value: "Bearer \(token)")
@@ -168,7 +168,7 @@ Request interceptors are executed in the order they are registered, before the r
 Add response interceptors to process all responses:
 
 ```swift
-let client = createHttpClient { config in
+let client = HttpClient.createClient { config in
     // Log all responses
     config.onResponse { response in
         print("Response: \(response.status) - \(response.request.url?.absoluteString ?? "")")

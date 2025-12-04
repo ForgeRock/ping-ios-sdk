@@ -29,7 +29,7 @@ import PingLogger
 ///     config.logger.d("Status \(response.status)")
 /// }
 /// ```
-public final class HttpClientConfig: @unchecked Sendable {
+public final class HttpClientConfig {
     /// Request timeout in seconds. Defaults to 15 seconds to match Android implementation.
     public var timeout: TimeInterval = 15.0
 
@@ -37,10 +37,10 @@ public final class HttpClientConfig: @unchecked Sendable {
     public var logger: Logger = LogManager.warning
 
     /// Internal storage for request interceptors.
-    internal var requestInterceptors: [HttpRequestInterceptor] = []
+    internal private(set) var requestInterceptors: [HttpRequestInterceptor] = []
 
     /// Internal storage for response interceptors.
-    internal var responseInterceptors: [HttpResponseInterceptor] = []
+    internal private(set) var responseInterceptors: [HttpResponseInterceptor] = []
 
     /// Registers a request interceptor. Executed in registration order.
     /// - Parameter interceptor: The interceptor closure.

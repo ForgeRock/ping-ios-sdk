@@ -11,6 +11,12 @@
 import Foundation
 
 /// Read-only wrapper around `URLSessionHttpRequest` for response consumption.
+///
+/// It provides immutable access to request data when attached to HTTP responses.
+/// All mutation methods are implemented as no-ops to preserve immutability.
+///
+/// This class is **thread-safe** for read operations. It wraps an original request instance
+/// but all mutation operations are no-ops, making it safe to share across threads.
 final class ImmutableHttpRequest: HttpRequest, @unchecked Sendable {
     private let original: URLSessionHttpRequest
 

@@ -14,16 +14,19 @@ import Foundation
 ///
 /// This type accumulates headers, query parameters, cookies, and bodies before
 /// building a `URLRequest` for execution by the HTTP client.
+///
+/// **This class is NOT thread-safe.** It contains mutable state without synchronization
+/// and should not be shared across multiple threads or modified concurrently.
 public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
+    /// The target URL for this HTTP request.
     public var url: String?
 
     private var headers: [String: String] = [:]
     private var parameters: [URLQueryItem] = []
     private var cookies: [String] = []
     private var method: HttpMethod = .get
-    private var bodyData: Data?
     private var formParameters: [URLQueryItem] = []
-    private var jsonError: Error?
+    private var bodyResult: Result<Data, Error>?
 
     /// Creates a new HTTP request with standard headers automatically injected.
     ///
@@ -77,7 +80,7 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     /// Clears any previously set body data.
     public func get() {
         method = .get
-        bodyData = nil
+        bodyResult = nil
     }
 
     /// Configures the request as a POST request with a JSON body.
@@ -87,7 +90,7 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     /// - Parameter json: The dictionary to serialize as JSON. Defaults to empty dictionary.
     public func post(json: [String: Any] = [:]) {
         method = .post
-        bodyData = serializeSafely(json)
+        bodyResult = serializeSafely(json)
         headers[NetworkConstants.headerContentType] = NetworkConstants.contentTypeJSON
     }
 
@@ -98,7 +101,7 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     /// - Parameter json: The dictionary to serialize as JSON. Defaults to empty dictionary.
     public func put(json: [String: Any] = [:]) {
         method = .put
-        bodyData = serializeSafely(json)
+        bodyResult = serializeSafely(json)
         headers[NetworkConstants.headerContentType] = NetworkConstants.contentTypeJSON
     }
 
@@ -109,7 +112,7 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     /// - Parameter json: The dictionary to serialize as JSON. Defaults to empty dictionary.
     public func delete(json: [String: Any] = [:]) {
         method = .delete
-        bodyData = serializeSafely(json)
+        bodyResult = serializeSafely(json)
         headers[NetworkConstants.headerContentType] = NetworkConstants.contentTypeJSON
     }
 
@@ -120,7 +123,7 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     ///   - body: The string body to send.
     public func post(contentType: String = NetworkConstants.contentTypeJSON, body: String) {
         method = .post
-        bodyData = Data(body.utf8)
+        bodyResult = .success(Data(body.utf8))
         headers[NetworkConstants.headerContentType] = contentType
     }
 
@@ -131,7 +134,7 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     ///   - body: The string body to send.
     public func put(contentType: String = NetworkConstants.contentTypeJSON, body: String) {
         method = .put
-        bodyData = Data(body.utf8)
+        bodyResult = .success(Data(body.utf8))
         headers[NetworkConstants.headerContentType] = contentType
     }
 
@@ -142,7 +145,7 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     ///   - body: The string body to send.
     public func delete(contentType: String = NetworkConstants.contentTypeJSON, body: String) {
         method = .delete
-        bodyData = Data(body.utf8)
+        bodyResult = .success(Data(body.utf8))
         headers[NetworkConstants.headerContentType] = contentType
     }
 
@@ -173,8 +176,7 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     ///
     /// - Parameter body: The body data, or nil to clear the body.
     public func setBody(_ body: Data?) {
-        jsonError = nil
-        bodyData = body
+        bodyResult = body.map { .success($0) }
     }
 
     /// Gets the currently configured HTTP method.
@@ -202,9 +204,18 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     }
 
     /// Builds a `URLRequest` from the accumulated request state.
-    /// - Returns: A configured `URLRequest`, or `nil` if no URL is set.
+    ///
+    /// This method constructs a complete `URLRequest` by:
+    /// - Combining the base URL with query parameters
+    /// - Setting the HTTP method and body
+    /// - Applying all configured headers
+    /// - Adding cookies via the Cookie header
+    ///
+    /// - Returns: A configured `URLRequest`, or `nil` if the URL is invalid or JSON serialization failed.
     public func buildURLRequest() -> URLRequest? {
-        guard jsonError == nil else { return nil }
+        if case .failure = bodyResult {
+            return nil
+        }
         guard let urlString = url, let baseURL = URL(string: urlString) else { return nil }
 
         var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
@@ -217,7 +228,7 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
 
         var request = URLRequest(url: finalURL)
         request.httpMethod = method.rawValue
-        request.httpBody = bodyData
+        request.httpBody = try? bodyResult?.get()
 
         var appliedHeaders = headers
         if !cookies.isEmpty {
@@ -234,24 +245,26 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     private func buildFormBody() {
         var components = URLComponents()
         components.queryItems = formParameters
-        bodyData = components.percentEncodedQuery?.data(using: .utf8)
+        if let data = components.percentEncodedQuery?.data(using: .utf8) {
+            bodyResult = .success(data)
+        }
         headers[NetworkConstants.headerContentType] = NetworkConstants.contentTypeForm
     }
 
-    private func serializeSafely(_ json: [String: Any]) -> Data? {
+    private func serializeSafely(_ json: [String: Any]) -> Result<Data, Error> {
+        if json.isEmpty {
+            return .success(Data("{}".utf8))
+        }
+        
+        guard JSONSerialization.isValidJSONObject(json) else {
+            return .failure(NetworkError.invalidRequest("Invalid JSON body"))
+        }
+        
         do {
-            jsonError = nil
-            if json.isEmpty {
-                return Data("{}".utf8)
-            }
-            guard JSONSerialization.isValidJSONObject(json) else {
-                jsonError = NetworkError.invalidRequest("Invalid JSON body")
-                return nil
-            }
-            return try serializeJSON(json)
+            let data = try serializeJSON(json)
+            return .success(data)
         } catch {
-            jsonError = error
-            return nil
+            return .failure(error)
         }
     }
 

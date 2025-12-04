@@ -8,13 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		1B7A9A822ED52F6400989A55 /* PingNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7A9A782ED52F6400989A55 /* PingNetwork.framework */; };
-		1B7A9ACA2ED52F7600989A55 /* NetworkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9AC82ED52F7600989A55 /* NetworkTests.swift */; };
 		1B7A9ACD2ED530D500989A55 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1B7A9ACC2ED530D500989A55 /* PrivacyInfo.xcprivacy */; };
 		1B7A9ACF2ED5310100989A55 /* Network.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7A9ACE2ED5310100989A55 /* Network.h */; };
 		1B7A9B422ED5409100989A55 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7A9B412ED5409100989A55 /* PingLogger.framework */; };
 		1B7A9B432ED5409100989A55 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7A9B412ED5409100989A55 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1B7A9BF52EE1597100989A55 /* HttpClientFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9BF42EE1597100989A55 /* HttpClientFactoryTests.swift */; };
+		1B7A9BF72EE1599600989A55 /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9BF62EE1599600989A55 /* HttpClient.swift */; };
 		1B90AA3B2ED65F2B0011F5AF /* HttpMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B90AA3A2ED65F2B0011F5AF /* HttpMethod.swift */; };
-		1B90AA3D2ED65F3E0011F5AF /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B90AA3C2ED65F3E0011F5AF /* HttpClient.swift */; };
+		1B90AA3D2ED65F3E0011F5AF /* HttpClientProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B90AA3C2ED65F3E0011F5AF /* HttpClientProtocol.swift */; };
 		1B90AA3F2ED65F520011F5AF /* HttpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B90AA3E2ED65F520011F5AF /* HttpRequest.swift */; };
 		1B90AA412ED65F610011F5AF /* HttpResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B90AA402ED65F610011F5AF /* HttpResponse.swift */; };
 		1B90AA442ED65F7E0011F5AF /* Int+StatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B90AA432ED65F7E0011F5AF /* Int+StatusCode.swift */; };
@@ -62,13 +63,14 @@
 /* Begin PBXFileReference section */
 		1B7A9A782ED52F6400989A55 /* PingNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B7A9A812ED52F6400989A55 /* NetworkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetworkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		1B7A9AC82ED52F7600989A55 /* NetworkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkTests.swift; sourceTree = "<group>"; };
 		1B7A9ACB2ED5309E00989A55 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		1B7A9ACC2ED530D500989A55 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		1B7A9ACE2ED5310100989A55 /* Network.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Network.h; sourceTree = "<group>"; };
 		1B7A9B412ED5409100989A55 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B7A9BF42EE1597100989A55 /* HttpClientFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClientFactoryTests.swift; sourceTree = "<group>"; };
+		1B7A9BF62EE1599600989A55 /* HttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClient.swift; sourceTree = "<group>"; };
 		1B90AA3A2ED65F2B0011F5AF /* HttpMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpMethod.swift; sourceTree = "<group>"; };
-		1B90AA3C2ED65F3E0011F5AF /* HttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClient.swift; sourceTree = "<group>"; };
+		1B90AA3C2ED65F3E0011F5AF /* HttpClientProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClientProtocol.swift; sourceTree = "<group>"; };
 		1B90AA3E2ED65F520011F5AF /* HttpRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequest.swift; sourceTree = "<group>"; };
 		1B90AA402ED65F610011F5AF /* HttpResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpResponse.swift; sourceTree = "<group>"; };
 		1B90AA432ED65F7E0011F5AF /* Int+StatusCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+StatusCode.swift"; sourceTree = "<group>"; };
@@ -135,7 +137,8 @@
 				1B7A9ACC2ED530D500989A55 /* PrivacyInfo.xcprivacy */,
 				1B7A9ACE2ED5310100989A55 /* Network.h */,
 				1B90AA4A2ED660A10011F5AF /* HttpClientConfig.swift */,
-				1B90AA3C2ED65F3E0011F5AF /* HttpClient.swift */,
+				1B90AA3C2ED65F3E0011F5AF /* HttpClientProtocol.swift */,
+				1B7A9BF62EE1599600989A55 /* HttpClient.swift */,
 				1B90AA3A2ED65F2B0011F5AF /* HttpMethod.swift */,
 				1B90AA502ED660BF0011F5AF /* NetworkError.swift */,
 				1B90AA402ED65F610011F5AF /* HttpResponse.swift */,
@@ -151,7 +154,7 @@
 		1B7A9AC92ED52F7600989A55 /* NetworkTests */ = {
 			isa = PBXGroup;
 			children = (
-				1B7A9AC82ED52F7600989A55 /* NetworkTests.swift */,
+				1B7A9BF42EE1597100989A55 /* HttpClientFactoryTests.swift */,
 				1B90AA5B2ED666360011F5AF /* HttpResponseTests.swift */,
 				1B90AA7F2ED67B0A0011F5AF /* URLSessionHttpRequestTests.swift */,
 				1B90AA802ED67B0A0011F5AF /* URLSessionHttpResponseTests.swift */,
@@ -314,8 +317,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1B7A9BF72EE1599600989A55 /* HttpClient.swift in Sources */,
 				1B90AA4B2ED660A10011F5AF /* HttpClientConfig.swift in Sources */,
-				1B90AA3D2ED65F3E0011F5AF /* HttpClient.swift in Sources */,
+				1B90AA3D2ED65F3E0011F5AF /* HttpClientProtocol.swift in Sources */,
 				1B90AA3B2ED65F2B0011F5AF /* HttpMethod.swift in Sources */,
 				1B90AA512ED660BF0011F5AF /* NetworkError.swift in Sources */,
 				1B90AA412ED65F610011F5AF /* HttpResponse.swift in Sources */,
@@ -336,12 +340,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				1B90AA5C2ED666360011F5AF /* HttpResponseTests.swift in Sources */,
+				1B7A9BF52EE1597100989A55 /* HttpClientFactoryTests.swift in Sources */,
 				1B90AA742ED67B0A0011F5AF /* URLSessionHttpRequestTests.swift in Sources */,
 				1B90AA752ED67B0A0011F5AF /* URLSessionHttpResponseTests.swift in Sources */,
 				1B90AA762ED67B0A0011F5AF /* URLSessionHttpClientTests.swift in Sources */,
 				1B90AAB22ED6AAAA0011F5AF /* InterceptorTests.swift in Sources */,
 				1B90AAB42ED6AAAB0011F5AF /* ErrorHandlingTests.swift in Sources */,
-				1B7A9ACA2ED52F7600989A55 /* NetworkTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,7 +414,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -471,7 +475,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

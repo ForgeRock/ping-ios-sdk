@@ -11,14 +11,31 @@
 import Foundation
 
 /// URLSession-based implementation of `HttpResponse`.
+///
+/// This class is **thread-safe** and can be safely shared across threads.
 public final class URLSessionHttpResponse: HttpResponse, @unchecked Sendable {
+    /// The original HTTP request that generated this response.
     public let request: HttpRequest
+    
+    /// The HTTP status code (e.g., 200, 404, 500).
     public let status: Int
+    
+    /// The response body as raw data.
     public let body: Data?
+    
+    /// All response headers with case-insensitive normalized keys.
     public let headers: [String: [String]]
 
     private let httpURLResponse: HTTPURLResponse?
 
+    /// Creates a new HTTP response from URLSession data.
+    ///
+    /// - Parameters:
+    ///   - request: The original HTTP request.
+    ///   - status: The HTTP status code.
+    ///   - headers: Response headers dictionary.
+    ///   - body: The response body data.
+    ///   - httpURLResponse: The underlying HTTPURLResponse object.
     public init(
         request: HttpRequest,
         status: Int,
@@ -53,17 +70,32 @@ public final class URLSessionHttpResponse: HttpResponse, @unchecked Sendable {
         headers[name.lowercased()]
     }
 
+    /// Parses Set-Cookie headers and returns HTTPCookie objects.
+    ///
+    /// Handles multiple Set-Cookie headers and comma-separated values,
+    /// matching Android SDK behavior.
+    ///
+    /// - Returns: Array of parsed HTTP cookies.
     public func getCookies() -> [HTTPCookie] {
         guard let url = resolvedURL() else { return [] }
         return getCookieStrings()
             .flatMap { parseCookies(from: $0, url: url) }
     }
 
+    /// Converts the response body to a UTF-8 string.
+    ///
+    /// - Returns: The decoded body string, or an empty string if body is nil or not valid UTF-8.
     public func bodyAsString() -> String {
         guard let body else { return "" }
         return String(data: body, encoding: .utf8) ?? ""
     }
 
+    /// Gets raw Set-Cookie header values before parsing.
+    ///
+    /// This method extracts Set-Cookie headers from both the normalized headers
+    /// dictionary and the raw HTTPURLResponse, handling line breaks and comma separation.
+    ///
+    /// - Returns: Array of raw Set-Cookie header strings.
     public func getCookieStrings() -> [String] {
         let headerValues = headers[NetworkConstants.headerSetCookieLowercased] ?? []
         let splitValues = headerValues.flatMap { value -> [String] in

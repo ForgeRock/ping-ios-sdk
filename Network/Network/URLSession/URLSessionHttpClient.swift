@@ -11,15 +11,29 @@
 import Foundation
 import PingLogger
 
-/// URLSession-based implementation of `HttpClient`.
+/// URLSession-based implementation of `HttpClientProtocol`.
 ///
 /// Applies request/response interceptors, injects standard headers, and
-/// prevents automatic redirects to mirror Android parity.
-public final class URLSessionHttpClient: HttpClient, @unchecked Sendable {
+/// prevents automatic redirects.
+///
+/// This class is **thread-safe** and can be safely shared across multiple threads
+/// and async contexts. All mutable state is confined to the URLSession instance,
+/// which is itself thread-safe.
+///
+/// Multiple concurrent requests can safely use the same client instance.
+public final class URLSessionHttpClient: HttpClientProtocol, @unchecked Sendable {
+    
+    // MARK: - Properties
     private let session: URLSession
-    private let config: HttpClientConfig
+    private let timeout: TimeInterval
     private let logger: Logger
     private let delegate: URLSessionTaskDelegate?
+    
+    /// Immutable copy of request interceptors, frozen at initialization for thread-safe access.
+    private let requestInterceptors: [HttpRequestInterceptor]
+    
+    /// Immutable copy of response interceptors, frozen at initialization for thread-safe access.
+    private let responseInterceptors: [HttpResponseInterceptor]
 
     internal convenience init(config: HttpClientConfig) {
         let sessionConfig = URLSessionConfiguration.default
@@ -32,23 +46,59 @@ public final class URLSessionHttpClient: HttpClient, @unchecked Sendable {
         self.init(config: config, session: session, delegate: delegate)
     }
 
+    // MARK: - Factory Method
+    
+    /// Creates a new URLSession-based HTTP client instance with optional configuration.
+    ///
+    /// - Parameter configure: A closure that configures the HTTP client.
+    /// - Returns: A configured `URLSessionHttpClient` instance.
+    public static func createClient(
+        _ configure: (HttpClientConfig) -> Void = { _ in }
+    ) -> URLSessionHttpClient {
+        let config = HttpClientConfig()
+        configure(config)
+        return URLSessionHttpClient(config: config)
+    }
+    
+    /// Creates a new HTTP client with custom URLSession configuration.
+    ///
+    /// This initializer allows injecting a custom URLSession for testing or advanced configuration.
+    /// Interceptor arrays are copied from the config at initialization to ensure thread-safe immutability.
+    ///
+    /// - Parameters:
+    ///   - config: The HTTP client configuration.
+    ///   - session: The URLSession to use for requests.
+    ///   - delegate: Optional URLSessionTaskDelegate for handling redirects and authentication.
     public init(config: HttpClientConfig, session: URLSession, delegate: URLSessionTaskDelegate? = nil) {
-        self.config = config
+        self.timeout = config.timeout
         self.session = session
         self.logger = config.logger
         self.delegate = delegate
+        // Copy interceptor arrays to make them immutable and thread-safe
+        self.requestInterceptors = config.requestInterceptors
+        self.responseInterceptors = config.responseInterceptors
     }
 
+    /// Creates a new HTTP request instance ready for configuration.
+    ///
+    /// - Returns: A new `URLSessionHttpRequest` with standard headers pre-configured.
     public func request() -> HttpRequest {
         URLSessionHttpRequest()
     }
 
+    /// Executes a pre-configured HTTP request asynchronously.
+    ///
+    /// This method applies all registered request interceptors, performs the HTTP call,
+    /// and applies response interceptors before returning the result.
+    ///
+    /// - Parameter request: The configured HTTP request to execute.
+    /// - Returns: A `Result` containing the HTTP response or an error.
     public func request(request: HttpRequest) async -> Result<HttpResponse, Error> {
         guard let sessionRequest = request as? URLSessionHttpRequest else {
             return .failure(NetworkError.invalidRequest("Request must be URLSessionHttpRequest"))
         }
 
-        config.requestInterceptors.forEach { $0(sessionRequest) }
+        requestInterceptors.forEach { $0(sessionRequest) }
 
         guard let urlRequest = sessionRequest.buildURLRequest() else {
             return .failure(NetworkError.invalidRequest("Failed to build URLRequest"))
@@ -81,7 +131,7 @@ public final class URLSessionHttpClient: HttpClient, @unchecked Sendable {
                 httpURLResponse: httpResponse
             )
 
-            config.responseInterceptors.forEach { $0(httpResponseObj) }
+            responseInterceptors.forEach { $0(httpResponseObj) }
 
             logger.d("HTTP Response: \(httpResponseObj.status) (\(data.count) bytes)")
             return .success(httpResponseObj)
@@ -90,12 +140,32 @@ public final class URLSessionHttpClient: HttpClient, @unchecked Sendable {
         }
     }
 
+    /// Executes an HTTP request configured via a builder closure.
+    ///
+    /// This convenience method creates a new request, configures it using the provided closure,
+    /// and executes it in one call.
+    ///
+    /// Example:
+    /// ```swift
+    /// let result = await client.request { req in
+    ///     req.url = "https://api.example.com/users"
+    ///     req.setHeader(name: "Accept", value: "application/json")
+    ///     req.get()
+    /// }
+    /// ```
+    ///
+    /// - Parameter builder: A closure that configures the HTTP request.
+    /// - Returns: A `Result` containing the HTTP response or an error.
     public func request(builder: @escaping @Sendable (HttpRequest) -> Void) async -> Result<HttpResponse, Error> {
         let request = self.request()
         builder(request)
         return await self.request(request: request)
     }
 
+    /// Invalidates the URLSession and cancels all pending tasks.
+    ///
+    /// After calling this method, the client cannot be used for new requests.
+    /// All outstanding tasks will be cancelled.
     public func close() {
         session.invalidateAndCancel()
     }
@@ -136,19 +206,4 @@ final class RedirectPreventerDelegate: NSObject, URLSessionTaskDelegate {
     }
 }
 
-/// Public factory function to create HTTP client instances.
-///
-/// Example:
-/// ```swift
-/// let client = createHttpClient { config in
-///     config.timeout = 30.0
-///     config.onRequest { req in
-///         req.setHeader(name: "User-Agent", value: "MyApp/1.0")
-///     }
-/// }
-/// ```
-public func createHttpClient(configBuilder: (HttpClientConfig) -> Void = { _ in }) -> HttpClient {
-    let config = HttpClientConfig()
-    configBuilder(config)
-    return URLSessionHttpClient(config: config)
-}
+
