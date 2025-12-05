@@ -11,6 +11,8 @@
 		1B2933CE2E7DF429004D1D38 /* PingOath.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B2933B92E7DF20B004D1D38 /* PingOath.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1B75AC722E821237002B5DDD /* PingMfaCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B75AC662E8210E3002B5DDD /* PingMfaCommons.framework */; };
 		1B75AC732E821237002B5DDD /* PingMfaCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B75AC662E8210E3002B5DDD /* PingMfaCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1B7A9AD02ED5316F00989A55 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7A9AC22ED52F6600989A55 /* Network.framework */; };
+		1B7A9AD12ED5316F00989A55 /* Network.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7A9AC22ED52F6600989A55 /* Network.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1B7C4A022EAABAA300E3C0AC /* PingPush.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7C49F02EAAB6E400E3C0AC /* PingPush.framework */; };
 		1B7C4A032EAABAA300E3C0AC /* PingPush.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7C49F02EAAB6E400E3C0AC /* PingPush.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3A3709962BEB038200AA7B51 /* AccessTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3709952BEB038200AA7B51 /* AccessTokenView.swift */; };
@@ -165,6 +167,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = 1B75AC332E8210E1002B5DDD;
 			remoteInfo = MfaCommonsTests;
+		};
+		1B7A9AC12ED52F6600989A55 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1B7A9A902ED52F6500989A55 /* Network.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1B7A9A782ED52F6400989A55;
+			remoteInfo = Network;
+		};
+		1B7A9AC32ED52F6600989A55 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1B7A9A902ED52F6500989A55 /* Network.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1B7A9A812ED52F6400989A55;
+			remoteInfo = NetworkTests;
 		};
 		1B7C49EF2EAAB6E400E3C0AC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -516,6 +532,7 @@
 				EC5C81F62ED08C6100C91570 /* PingJourney.framework in Embed Frameworks */,
 				A5560CA32CFE4EDA0076CA8D /* PingLogger.framework in Embed Frameworks */,
 				A56740E02ED788FB009D29B9 /* PingDeviceClient.framework in Embed Frameworks */,
+				1B7A9AD12ED5316F00989A55 /* Network.framework in Embed Frameworks */,
 				A525E7B62DD7647200B02C17 /* PingExternalIdPApple.framework in Embed Frameworks */,
 				A5560CA52CFE4EDA0076CA8D /* PingOidc.framework in Embed Frameworks */,
 				A569DBED2E78A78800F4D7A8 /* PingDeviceProfile.framework in Embed Frameworks */,
@@ -551,6 +568,7 @@
 /* Begin PBXFileReference section */
 		1B29339F2E7DF20B004D1D38 /* Oath.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Oath.xcodeproj; path = ../../Oath/Oath.xcodeproj; sourceTree = SOURCE_ROOT; };
 		1B75AC422E8210E2002B5DDD /* MfaCommons.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MfaCommons.xcodeproj; path = ../../MfaCommons/MfaCommons.xcodeproj; sourceTree = SOURCE_ROOT; };
+		1B7A9A902ED52F6500989A55 /* Network.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Network.xcodeproj; path = ../../Network/Network.xcodeproj; sourceTree = SOURCE_ROOT; };
 		1B7C49C82EAAB6E400E3C0AC /* Push.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Push.xcodeproj; path = ../../Push/Push.xcodeproj; sourceTree = SOURCE_ROOT; };
 		3A3709952BEB038200AA7B51 /* AccessTokenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenView.swift; sourceTree = "<group>"; };
 		3A54412D2BCDF10900385131 /* PingExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PingExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -693,6 +711,7 @@
 				1B75AC722E821237002B5DDD /* PingMfaCommons.framework in Frameworks */,
 				EC5C81F32ED08C2D00C91570 /* PingDavinci.framework in Frameworks */,
 				1B2933CD2E7DF429004D1D38 /* PingOath.framework in Frameworks */,
+				1B7A9AD02ED5316F00989A55 /* Network.framework in Frameworks */,
 				A525E7B72DD7647200B02C17 /* PingExternalIdPFacebook.framework in Frameworks */,
 				EC4DD3182EABC06800ECC4E1 /* PingBinding.framework in Frameworks */,
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
@@ -746,6 +765,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		1B7A9ABD2ED52F6500989A55 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1B7A9AC22ED52F6600989A55 /* Network.framework */,
+				1B7A9AC42ED52F6600989A55 /* NetworkTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		1B7C49CB2EAAB6E400E3C0AC /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -759,6 +787,7 @@
 			isa = PBXGroup;
 			children = (
 				A55A25022ED4A49100D8820C /* DeviceClient.xcodeproj */,
+				1B7A9A902ED52F6500989A55 /* Network.xcodeproj */,
 				A5C0AC482EB003BB00846D16 /* ReCaptchaEnterprise.xcodeproj */,
 				EC4DD3072EABBAE400ECC4E1 /* Binding.xcodeproj */,
 				1B7C49C82EAAB6E400E3C0AC /* Push.xcodeproj */,
@@ -1324,6 +1353,10 @@
 					ProjectRef = 1B75AC422E8210E2002B5DDD /* MfaCommons.xcodeproj */;
 				},
 				{
+					ProductGroup = 1B7A9ABD2ED52F6500989A55 /* Products */;
+					ProjectRef = 1B7A9A902ED52F6500989A55 /* Network.xcodeproj */;
+				},
+				{
 					ProductGroup = 1B2933A22E7DF20B004D1D38 /* Products */;
 					ProjectRef = 1B29339F2E7DF20B004D1D38 /* Oath.xcodeproj */;
 				},
@@ -1393,6 +1426,20 @@
 			fileType = wrapper.cfbundle;
 			path = MfaCommonsTests.xctest;
 			remoteRef = 1B75AC672E8210E3002B5DDD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1B7A9AC22ED52F6600989A55 /* Network.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Network.framework;
+			remoteRef = 1B7A9AC12ED52F6600989A55 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1B7A9AC42ED52F6600989A55 /* NetworkTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = NetworkTests.xctest;
+			remoteRef = 1B7A9AC32ED52F6600989A55 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		1B7C49F02EAAB6E400E3C0AC /* PingPush.framework */ = {
