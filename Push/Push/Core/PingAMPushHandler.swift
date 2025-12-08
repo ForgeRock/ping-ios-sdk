@@ -10,7 +10,7 @@
 
 import Foundation
 import PingLogger
-import PingMfaCommons
+import PingCommons
 import PingOrchestrate
 
 /// Protocol defining the operations required to respond to PingAM push notifications.

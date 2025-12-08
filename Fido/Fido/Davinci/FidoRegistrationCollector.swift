@@ -14,6 +14,7 @@ import UIKit
 import AuthenticationServices
 import PingDavinciPlugin
 import PingOrchestrate
+import PingCommons
 
 /// A collector for FIDO registration within a DaVinci flow.
 public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unchecked Sendable {
@@ -97,13 +98,13 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
             // 3. Construct the attestationValue payload
             let authenticatorAttachment = response[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String ?? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
             let newAttestationValue: [String: Any] = [
-                FidoConstants.FIELD_ID: rawIdData.base64urlEncodedString(),
+                FidoConstants.FIELD_ID: rawIdData.base64URLEncodedString(),
                 FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,
                 FidoConstants.FIELD_RAW_ID: rawIdData.base64EncodedString(),
                 FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: authenticatorAttachment,
                 FidoConstants.FIELD_RESPONSE: [
-                    FidoConstants.FIELD_CLIENT_DATA_JSON: clientDataJSONData.base64urlEncodedString(),
-                    FidoConstants.FIELD_ATTESTATION_OBJECT: attestationObjectData.base64urlEncodedString()
+                    FidoConstants.FIELD_CLIENT_DATA_JSON: clientDataJSONData.base64URLEncodedString(),
+                    FidoConstants.FIELD_ATTESTATION_OBJECT: attestationObjectData.base64URLEncodedString()
                 ]
             ]
             

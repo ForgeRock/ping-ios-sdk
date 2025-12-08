@@ -11,7 +11,7 @@
 import Foundation
 import CommonCrypto
 import CryptoKit
-import PingMfaCommons
+import PingCommons
 
 /// Helper class for OATH algorithm operations, including code generation.
 /// Uses iOS CryptoKit and CommonCrypto for cryptographic operations.

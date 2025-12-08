@@ -10,7 +10,7 @@
 
 import Foundation
 import PingBinding
-import PingMfaCommons
+import PingCommons
 
 @MainActor
 class BindingKeysViewModel: ObservableObject {

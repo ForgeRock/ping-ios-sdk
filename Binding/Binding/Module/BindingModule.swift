@@ -10,7 +10,7 @@
 
 import Foundation
 import PingJourneyPlugin
-import PingMfaCommons
+import PingCommons
 import PingLogger
 
 /// Actor to manage migration state in a thread-safe manner

@@ -33,8 +33,6 @@
 		1B7C49BA2EAAB6E300E3C0AC /* PingPush.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7C49B02EAAB6E300E3C0AC /* PingPush.framework */; };
 		1B7C49FF2EAAB8C200E3C0AC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 1B7C49FE2EAAB8C200E3C0AC /* PrivacyInfo.xcprivacy */; };
 		1B7C4A012EAAB91700E3C0AC /* Push.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B7C4A002EAAB91700E3C0AC /* Push.h */; };
-		1B7C4A062EAABDD700E3C0AC /* PingMfaCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7C4A052EAABDD700E3C0AC /* PingMfaCommons.framework */; };
-		1B7C4A072EAABDD700E3C0AC /* PingMfaCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7C4A052EAABDD700E3C0AC /* PingMfaCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1BC0A0012EB0624D00A2F3A2 /* PushDeviceTokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC0A0002EB0624D00A2F3A2 /* PushDeviceTokenManager.swift */; };
 		1BC0A0032EB0628B00A2F3A2 /* NotificationCleanupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC0A0022EB0628B00A2F3A2 /* NotificationCleanupManager.swift */; };
 		1BC0A0062EB0631400A2F3A2 /* NotificationCleanupManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC0A0052EB0631400A2F3A2 /* NotificationCleanupManagerTests.swift */; };
@@ -47,6 +45,12 @@
 		1BC0A01C2EB07D8100A2F3A2 /* PingAMPushHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC0A01B2EB07D8100A2F3A2 /* PingAMPushHandlerTests.swift */; };
 		1BC0A0212EB0944B00A2F3A2 /* PushServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC0A0202EB0944B00A2F3A2 /* PushServiceTests.swift */; };
 		7359C8A9AF59480B97E060AC /* PushIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 712E59D706A14226BA3C08D72C /* PushIntegrationTests.swift */; };
+		A56742762EE33DB8009D29B9 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56742752EE33DB8009D29B9 /* PingCommons.framework */; };
+		A56742772EE33DB8009D29B9 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56742752EE33DB8009D29B9 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A56742812EE34027009D29B9 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56742802EE34027009D29B9 /* PingOrchestrate.framework */; };
+		A56742822EE34027009D29B9 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56742802EE34027009D29B9 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A56742842EE3402E009D29B9 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56742832EE3402E009D29B9 /* PingLogger.framework */; };
+		A56742852EE3402E009D29B9 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56742832EE3402E009D29B9 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AFDF53E2572F4B8CA038FB93 /* PushClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF356682EBE44179E3BB486 /* PushClient.swift */; };
 		CAD4E4A6921E41788982C7AB /* PushClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9397EBD6F44CCE96DE7D79 /* PushClientTests.swift */; };
 /* End PBXBuildFile section */
@@ -62,13 +66,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		1B7C4A082EAABDD700E3C0AC /* Embed Frameworks */ = {
+		A56742782EE33DB8009D29B9 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				1B7C4A072EAABDD700E3C0AC /* PingMfaCommons.framework in Embed Frameworks */,
+				A56742772EE33DB8009D29B9 /* PingCommons.framework in Embed Frameworks */,
+				A56742822EE34027009D29B9 /* PingOrchestrate.framework in Embed Frameworks */,
+				A56742852EE3402E009D29B9 /* PingLogger.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -119,6 +125,9 @@
 		2DF356682EBE44179E3BB486 /* PushClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushClient.swift; sourceTree = "<group>"; };
 		712E59D706A14226BA3C08D72C /* PushIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushIntegrationTests.swift; sourceTree = "<group>"; };
 		9B9397EBD6F44CCE96DE7D79 /* PushClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushClientTests.swift; sourceTree = "<group>"; };
+		A56742752EE33DB8009D29B9 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A56742802EE34027009D29B9 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A56742832EE3402E009D29B9 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,7 +135,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1B7C4A062EAABDD700E3C0AC /* PingMfaCommons.framework in Frameworks */,
+				A56742762EE33DB8009D29B9 /* PingCommons.framework in Frameworks */,
+				A56742812EE34027009D29B9 /* PingOrchestrate.framework in Frameworks */,
+				A56742842EE3402E009D29B9 /* PingLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,6 +260,9 @@
 		1B7C4A042EAABDD700E3C0AC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A56742832EE3402E009D29B9 /* PingLogger.framework */,
+				A56742802EE34027009D29B9 /* PingOrchestrate.framework */,
+				A56742752EE33DB8009D29B9 /* PingCommons.framework */,
 				1B7C4A052EAABDD700E3C0AC /* PingMfaCommons.framework */,
 			);
 			name = Frameworks;
@@ -276,7 +290,7 @@
 				1B7C49AC2EAAB6E300E3C0AC /* Sources */,
 				1B7C49AD2EAAB6E300E3C0AC /* Frameworks */,
 				1B7C49AE2EAAB6E300E3C0AC /* Resources */,
-				1B7C4A082EAABDD700E3C0AC /* Embed Frameworks */,
+				A56742782EE33DB8009D29B9 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

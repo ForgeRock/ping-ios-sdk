@@ -12,6 +12,7 @@
 import SwiftUI
 import PingLogger
 import PingDeviceProfile
+import PingCommons
 
 /// A view model responsible for fetching and managing device information.
 /// - Provides a published `deviceInfo` property that is updated with device information or error messages.
@@ -64,7 +65,7 @@ class DeviceInfoViewModel: ObservableObject {
             }
             
             // Submit to server
-            deviceInfo = DeviceProfileUtils.jsonStringify(value: profileDict as AnyObject, prettyPrinted: true)
+            deviceInfo = JSONUtils.jsonStringify(value: profileDict as AnyObject, prettyPrinted: true)
             LogManager.standard.i("Device Binding Result: \n\(deviceInfo)")
             
         } catch {

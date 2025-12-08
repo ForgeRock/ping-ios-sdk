@@ -36,5 +36,6 @@ occur during the authentication process.
   
   s.ios.dependency 'PingDavinciPlugin', '~> 1.3.1'
   s.ios.dependency 'PingOidc', '~> 1.3.1'
+  s.ios.dependency 'PingCommons', '~> 1.3.1'
     
 end

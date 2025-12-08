@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingCommons
 
 // MARK: - DeviceProfileCollector
 

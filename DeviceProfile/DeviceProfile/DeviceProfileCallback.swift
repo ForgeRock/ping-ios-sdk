@@ -12,6 +12,7 @@ import Foundation
 import PingJourneyPlugin
 import PingDeviceId
 import PingLogger
+import PingCommons
 
 // MARK: - DeviceProfileCallback
 
@@ -151,7 +152,7 @@ public class DeviceProfileCallback: AbstractCallback, ObservableObject, @uncheck
             }
             
             // Submit to server
-            let jsonString = DeviceProfileUtils.jsonStringify(value: profileDict as AnyObject)
+            let jsonString = JSONUtils.jsonStringify(value: profileDict as AnyObject)
             _ = input(jsonString)
             
             // JSON serialization produces only Sendable types (String, Number, Bool, Array, Dictionary)

@@ -10,7 +10,7 @@
 
 import Foundation
 import PingLogger
-import PingMfaCommons
+import PingCommons
 
 /// Configuration class specific for Push MFA functionality.
 ///
@@ -69,9 +69,9 @@ public final class PushConfiguration: @unchecked Sendable {
     
     /// The policy evaluator to use for credential policy validation.
     ///
-    /// If `nil`, default policies from `PingMfaCommons` will be used.
+    /// If `nil`, default policies from `PingCommons` will be used.
     ///
-    /// If `nil`, default policies from `PingMfaCommons` will be used.
+    /// If `nil`, default policies from `PingCommons` will be used.
     /// Policy evaluators check for device security issues like jailbreak detection,
     /// debugger attachment, and other security concerns.
     ///

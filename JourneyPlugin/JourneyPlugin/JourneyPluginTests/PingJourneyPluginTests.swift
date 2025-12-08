@@ -8,6 +8,7 @@
 import XCTest
 @testable import PingJourneyPlugin
 import PingOrchestrate
+import PingJourney
 
 final class PingJourneyPluginTests: XCTestCase {
 

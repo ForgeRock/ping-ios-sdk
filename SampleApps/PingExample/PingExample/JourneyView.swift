@@ -18,7 +18,7 @@ import PingDeviceProfile
 import PingFido
 import PingReCaptchaEnterprise
 import PingBinding
-import PingMfaCommons
+import PingCommons
 
 struct JourneyView: View {
     /// The view model that manages the Journey flow logic.

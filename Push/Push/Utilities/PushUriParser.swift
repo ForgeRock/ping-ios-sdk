@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import PingMfaCommons
+import PingCommons
 
 /// Utility class for parsing and formatting Push URIs.
 /// Supports both pushauth:// and mfauth:// schemes.
