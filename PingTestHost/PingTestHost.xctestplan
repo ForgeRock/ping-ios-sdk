@@ -202,6 +202,13 @@
         "containerPath" : "container:..\/DavinciPlugin\/DavinciPlugin\/DavinciPlugin.xcodeproj",
         "identifier" : "EC5C814D2ECF66D100C91570",
         "name" : "PingDavinciPluginTests"
+        }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Network\/Network.xcodeproj",
+        "identifier" : "1B7A9A802ED52F6400989A55",
+        "name" : "NetworkTests"
       }
     }
   ],
