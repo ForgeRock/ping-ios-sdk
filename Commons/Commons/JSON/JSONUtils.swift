@@ -10,7 +10,10 @@
 
 import Foundation
 
-
+/// A utility structure providing helper methods for JSON serialization and manipulation.
+///
+/// `JSONUtils` offers static methods for common JSON operations, including converting
+/// objects to JSON strings with configurable formatting options.
 public struct JSONUtils {
     /// Converts an object to JSON string representation.
     ///

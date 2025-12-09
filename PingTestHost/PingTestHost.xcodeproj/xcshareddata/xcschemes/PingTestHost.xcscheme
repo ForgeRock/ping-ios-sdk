@@ -461,7 +461,7 @@
                BuildableName = "PingJourneyPluginTests.xctest"
                BlueprintName = "PingJourneyPluginTests"
                ReferencedContainer = "container:../JourneyPlugin/JourneyPlugin/JourneyPlugin.xcodeproj">
-               </BuildableReference>
+            </BuildableReference>
          </TestableReference>
          <TestableReference
             skipped = "NO">

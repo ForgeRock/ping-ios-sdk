@@ -15,7 +15,15 @@ import Foundation
 /// This structure provides flexibility when working with JSON data that contains dynamic or unknown keys
 /// at compile time, supporting both string and integer-based keys.
 public struct JSONCodingKeys: CodingKey {
+    /// The string representation of the coding key.
+    ///
+    /// This property contains the key name as it appears in the JSON data.
     public var stringValue: String
+    
+    /// The integer representation of the coding key, if applicable.
+    ///
+    /// This optional property is used when the key represents an array index
+    /// or other integer-based identifier in the JSON structure.
     public var intValue: Int?
 
     /// Creates a coding key from a string value.
