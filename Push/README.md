@@ -16,7 +16,7 @@
 - **Storage** – `PushKeychainStorage` (default) plus `PushStorage` protocol for custom persistence strategies.
 - **Utilities** – Notification cleanup, device-token management, and URI parsing utilities shared across the module.
 
-The module requires **iOS 16+** and **Swift 6** with Structured Concurrency enabled. Networking is handled by `PingOrchestrate.HttpClient`, policy evaluation by `PingMfaCommons.MfaPolicyEvaluator`, and secure storage by Keychain APIs.
+The module requires **iOS 16+** and **Swift 6** with Structured Concurrency enabled. Networking is handled by `PingNetwork.HttpClient`, policy evaluation by `PingCommons.MfaPolicyEvaluator`, and secure storage by Keychain APIs.
 
 ## Installation
 

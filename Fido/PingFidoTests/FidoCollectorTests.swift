@@ -11,6 +11,7 @@
 
 import XCTest
 @testable import PingFido
+internal import PingCommons
 
 class FidoCollectorTests: XCTestCase {
     
@@ -95,7 +96,7 @@ class FidoCollectorTests: XCTestCase {
             // Check if the returned value matches expectations (based on internal logic)
             XCTAssertNotNil(resultAssertionValue)
             // Example check - adjust based on your actual construction logic and expected Base64URL
-            XCTAssertEqual(resultAssertionValue[FidoConstants.FIELD_ID] as? String, "rawId".data(using: .utf8)!.base64urlEncodedString())
+            XCTAssertEqual(resultAssertionValue[FidoConstants.FIELD_ID] as? String, "rawId".data(using: .utf8)!.base64URLEncodedString())
             
             // Also verify the internal state was set for payload()
             XCTAssertNotNil(collector.assertionValue)
@@ -169,7 +170,7 @@ class FidoCollectorTests: XCTestCase {
             // Check if the returned value matches expectations
             XCTAssertNotNil(resultAttestationValue)
             // Example check - adjust based on your actual construction logic and expected Base64URL
-            XCTAssertEqual(resultAttestationValue[FidoConstants.FIELD_ID] as? String, "rawId".data(using: .utf8)!.base64urlEncodedString())
+            XCTAssertEqual(resultAttestationValue[FidoConstants.FIELD_ID] as? String, "rawId".data(using: .utf8)!.base64URLEncodedString())
             
             // Also verify the internal state was set for payload()
             XCTAssertNotNil(collector.attestationValue)

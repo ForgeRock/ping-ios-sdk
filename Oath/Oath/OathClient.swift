@@ -10,7 +10,7 @@
 
 import Foundation
 import PingLogger
-import PingMfaCommons
+import PingCommons
 
 /// Main public interface for OATH functionality.
 /// This client handles TOTP and HOTP credential management and code generation.

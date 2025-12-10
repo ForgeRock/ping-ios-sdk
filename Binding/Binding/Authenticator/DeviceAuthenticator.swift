@@ -10,7 +10,7 @@
 //
 
 import Foundation
-import PingMfaCommons
+import PingCommons
 import PingJourneyPlugin
 
 /// A protocol defining the capabilities and requirements for any device authenticator.

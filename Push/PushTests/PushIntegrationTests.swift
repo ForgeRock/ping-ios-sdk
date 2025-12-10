@@ -10,7 +10,7 @@
 //
 
 import XCTest
-import PingMfaCommons
+import PingCommons
 @testable import PingPush
 
 final class PushIntegrationTests: XCTestCase {

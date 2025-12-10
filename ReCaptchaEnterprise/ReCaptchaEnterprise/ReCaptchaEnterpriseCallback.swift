@@ -12,6 +12,7 @@
 import Foundation
 import PingJourneyPlugin
 import PingLogger
+import PingCommons
 @_exported import RecaptchaEnterprise
 
 // MARK: - ReCaptchaEnterpriseCallback
@@ -206,7 +207,7 @@ public class ReCaptchaEnterpriseCallback: AbstractCallback, @unchecked Sendable 
             guard !payloadKey.isEmpty else { return }
             
             if let payload = value, !payload.isEmpty {
-                let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: payload)
+                let jsonString = JSONUtils.jsonStringify(value: payload)
                 _ = input(jsonString, forKey: payloadKey)
             }
         }

@@ -12,6 +12,7 @@ import Foundation
 import PingJourneyPlugin
 import AuthenticationServices
 import PingLogger
+import PingCommons
 
 /// A callback for handling FIDO authentication in a PingOne Journey.
 public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
@@ -76,9 +77,9 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
             // 3. Process data and set callback value (side effect)
             let legacyData = [
                 String(decoding: clientData, as: UTF8.self),
-                convertInt8ArrToStr(authenticatorData.bytesArray.map { Int8(bitPattern: $0) }),
-                convertInt8ArrToStr(signatureData.bytesArray.map { Int8(bitPattern: $0) }),
-                base64ToBase64url(base64: credIDData.base64EncodedString()),
+                Int8.convertInt8ArrToStr(authenticatorData.bytesArray.map { Int8(bitPattern: $0) }, separator: FidoConstants.INT_SEPARATOR),
+                Int8.convertInt8ArrToStr(signatureData.bytesArray.map { Int8(bitPattern: $0) }, separator: FidoConstants.INT_SEPARATOR),
+                credIDData.base64URLEncodedString(),
                 String(decoding: userHandleData, as: UTF8.self)
             ].joined(separator: FidoConstants.DATA_SEPARATOR)
             

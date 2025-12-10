@@ -11,7 +11,7 @@
 import Foundation
 import CryptoKit
 import PingLogger
-import PingMfaCommons
+import PingCommons
 import PingOrchestrate
 
 /// Handles PingAM-specific network operations such as registration and authentication responses.

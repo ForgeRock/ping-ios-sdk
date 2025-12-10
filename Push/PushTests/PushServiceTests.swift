@@ -9,7 +9,7 @@
 //
 
 import XCTest
-import PingMfaCommons
+import PingCommons
 import PingOrchestrate
 @testable import PingPush
 

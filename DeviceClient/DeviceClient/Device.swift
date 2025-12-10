@@ -10,6 +10,7 @@
 
 
 import Foundation
+import PingCommons
 
 /// Protocol defining device operations.
 public protocol DeviceRepository<T> {

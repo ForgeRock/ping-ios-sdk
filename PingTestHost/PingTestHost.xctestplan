@@ -81,13 +81,6 @@
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:..\/MfaCommons\/MfaCommons.xcodeproj",
-        "identifier" : "1B75AC322E8210E1002B5DDD",
-        "name" : "MfaCommonsTests"
-      }
-    },
-    {
       "skippedTests" : [
         "DeviceProfileCallbackE2ETest",
         "MetadataCallbackE2ETest"
@@ -103,13 +96,6 @@
         "containerPath" : "container:..\/TamperDetector\/TamperDetector.xcodeproj",
         "identifier" : "EC59E1612E7AD21700A91E66",
         "name" : "TamplerDetectorTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/PingJourneyPlugin\/PingJourneyPlugin\/PingJourneyPlugin.xcodeproj",
-        "identifier" : "EC5C81822ECF67B700C91570",
-        "name" : "PingJourneyPluginTests"
       }
     },
     {
@@ -206,17 +192,17 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/PingDavinciPlugin\/PingDavinciPlugin\/PingDavinciPlugin.xcodeproj",
-        "identifier" : "EC5C814D2ECF66D100C91570",
-        "name" : "PingDavinciPluginTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/ExternalIdPFacebook\/ExternalIdPFacebook.xcodeproj",
         "identifier" : "EC5EA5432DC2295E000C2737",
         "name" : "ExternalIdPFacebookTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/DavinciPlugin\/DavinciPlugin\/DavinciPlugin.xcodeproj",
+        "identifier" : "EC5C814D2ECF66D100C91570",
+        "name" : "PingDavinciPluginTests"
+        }
     },
     {
       "target" : {

@@ -10,7 +10,7 @@
 
 import Foundation
 import PingLogger
-import PingMfaCommons
+import PingCommons
 import PingOrchestrate
 
 /// Public-facing client that orchestrates Push MFA operations.

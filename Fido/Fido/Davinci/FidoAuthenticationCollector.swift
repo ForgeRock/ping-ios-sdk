@@ -15,6 +15,7 @@ import PingLogger
 import UIKit
 import AuthenticationServices
 import PingOrchestrate
+import PingCommons
 
 /// A collector for FIDO authentication within a DaVinci flow.
 public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unchecked Sendable {
@@ -100,14 +101,14 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
             // 3. Construct the assertionValue payload
             let userIDString = String(decoding: userHandleData, as: UTF8.self)
             let newAssertionValue: [String: Any] = [
-                FidoConstants.FIELD_ID: credIDData.base64urlEncodedString(),
+                FidoConstants.FIELD_ID: credIDData.base64URLEncodedString(),
                 FidoConstants.FIELD_RAW_ID: credIDData.base64EncodedString(),
                 FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: "platform",
                 FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,
                 FidoConstants.FIELD_RESPONSE: [
-                    FidoConstants.FIELD_AUTHENTICATOR_DATA: authenticatorData.base64urlEncodedString(),
-                    FidoConstants.FIELD_CLIENT_DATA_JSON: clientData.base64urlEncodedString(),
-                    FidoConstants.FIELD_SIGNATURE: signatureData.base64urlEncodedString(),
+                    FidoConstants.FIELD_AUTHENTICATOR_DATA: authenticatorData.base64URLEncodedString(),
+                    FidoConstants.FIELD_CLIENT_DATA_JSON: clientData.base64URLEncodedString(),
+                    FidoConstants.FIELD_SIGNATURE: signatureData.base64URLEncodedString(),
                     FidoConstants.FIELD_USER_HANDLE: userIDString
                 ]
             ]

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1640"
+   LastUpgradeVersion = "2610"
    version = "2.1">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -437,6 +437,36 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EC5C814D2ECF66D100C91570"
+               BuildableName = "PingDavinciPluginTests.xctest"
+               BlueprintName = "PingDavinciPluginTests"
+               ReferencedContainer = "container:../DavinciPlugin/DavinciPlugin/DavinciPlugin.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A56741AC2EE1EBFD009D29B9"
+               BuildableName = "CommonsTests.xctest"
+               BlueprintName = "CommonsTests"
+               ReferencedContainer = "container:../Commons/Commons.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EC5C81822ECF67B700C91570"
+               BuildableName = "PingJourneyPluginTests.xctest"
+               BlueprintName = "PingJourneyPluginTests"
+               ReferencedContainer = "container:../JourneyPlugin/JourneyPlugin/JourneyPlugin.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "1B7A9A802ED52F6400989A55"
                BuildableName = "NetworkTests.xctest"
                BlueprintName = "NetworkTests"
@@ -469,15 +499,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A54BF4642BF2E33C00CD24D4"
-            BuildableName = "PingTestHost.app"
-            BlueprintName = "PingTestHost"
-            ReferencedContainer = "container:PingTestHost.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

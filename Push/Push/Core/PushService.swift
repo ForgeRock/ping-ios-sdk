@@ -10,7 +10,7 @@
 
 import Foundation
 import PingLogger
-import PingMfaCommons
+import PingCommons
 import PingOrchestrate
 #if canImport(UIKit)
 import UIKit

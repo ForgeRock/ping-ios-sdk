@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import PingMfaCommons
+import PingCommons
 import PingLogger
 
 /// Internal service class that provides OATH functionality including credential management
