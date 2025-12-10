@@ -229,6 +229,85 @@ final class OathAlgorithmHelperTests: XCTestCase {
         }
     }
 
+    // MARK: - Malformed Padding Compatibility Tests
+
+    func testCodeGenerationWithMalformedPadding() async throws {
+        // Test the primary failing secret from FRAuthenticator compatibility issue
+        // This secret has malformed padding: 25 base32 chars + 6 padding = 31 total (not multiple of 8)
+        let malformedSecret = "HNEZ2W7D462P3JYDG2HV7PFBM======"
+
+        let credential = OathCredential(
+            issuer: "ACME",
+            accountName: "test@example.com",
+            oathType: .totp,
+            oathAlgorithm: .sha1,
+            digits: 6,
+            period: 30,
+            secretKey: malformedSecret
+        )
+
+        // Should successfully generate code without throwing
+        let codeInfo = try await OathAlgorithmHelper.generateCode(for: credential)
+
+        // Verify code format
+        XCTAssertEqual(codeInfo.code.count, 6, "Code should have 6 digits")
+        XCTAssertTrue(codeInfo.code.allSatisfy { $0.isNumber }, "Code should only contain digits")
+        XCTAssertTrue(codeInfo.timeRemaining > 0, "Time remaining should be positive for TOTP")
+        XCTAssertTrue(codeInfo.timeRemaining <= 30, "Time remaining should not exceed period")
+        XCTAssertEqual(codeInfo.totalPeriod, 30, "Total period should match credential")
+    }
+
+    func testHotpCodeGenerationWithMalformedPadding() async throws {
+        // Test HOTP with various malformed padding scenarios
+        let malformedSecrets = [
+            "HNEZ2W7D462P3JYDG2HV7PFBM======", // 31 chars (25 + 6 padding)
+            "JBSWY3DPEHPK3PXP==", // 18 chars (16 + 2 padding)
+            "JBSWY3DPE=====", // 14 chars (9 + 5 padding)
+        ]
+
+        for (index, secret) in malformedSecrets.enumerated() {
+            let credential = OathCredential(
+                issuer: "Test",
+                accountName: "user@example.com",
+                oathType: .hotp,
+                oathAlgorithm: .sha256,
+                digits: 6,
+                counter: 0,
+                secretKey: secret
+            )
+
+            let codeInfo = try await OathAlgorithmHelper.generateCode(for: credential)
+
+            // Verify code format
+            XCTAssertEqual(codeInfo.code.count, 6, "Code should have 6 digits for secret \(index)")
+            XCTAssertTrue(codeInfo.code.allSatisfy { $0.isNumber }, "Code should only contain digits for secret \(index)")
+            XCTAssertEqual(codeInfo.counter, 1, "Counter should be incremented for secret \(index)")
+        }
+    }
+
+    func testCodeGenerationWithDifferentAlgorithmsAndMalformedPadding() async throws {
+        // Test all algorithms with malformed padding
+        let malformedSecret = "HNEZ2W7D462P3JYDG2HV7PFBM======"
+
+        for algorithm in OathAlgorithm.allCases {
+            let credential = OathCredential(
+                issuer: "Test",
+                accountName: "user@example.com",
+                oathType: .totp,
+                oathAlgorithm: algorithm,
+                digits: 6,
+                period: 30,
+                secretKey: malformedSecret
+            )
+
+            let codeInfo = try await OathAlgorithmHelper.generateCode(for: credential)
+
+            // Verify code format
+            XCTAssertEqual(codeInfo.code.count, 6, "Code should have 6 digits for \(algorithm)")
+            XCTAssertTrue(codeInfo.code.allSatisfy { $0.isNumber }, "Code should only contain digits for \(algorithm)")
+        }
+    }
+
     func testCredentialValidation() throws {
         // Test valid credential
         let validCredential = OathCredential(

@@ -14,6 +14,9 @@ import SwiftUI
 import UIKit
 import PingOidc
 import PingJourney
+import PingOath
+import PingPush
+import PingLogger
 
 //The ConfigurationManager class is used to manage the configuration settings for the SDK.
 //The class provides the following functionality:
@@ -26,7 +29,11 @@ import PingJourney
 class ConfigurationManager: ObservableObject, @unchecked Sendable {
     static let shared = ConfigurationManager()
     public var currentConfigurationViewModel: ConfigurationViewModel?
-    
+
+    // MFA Clients
+    public var oathClient: OathClient?
+    public var pushClient: PushClient?
+
     public var journeyUser: User? {
         get async {
             let journeyUser = await journey.journeyUser()
@@ -102,6 +109,26 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
             serverUrl: <#"Server URL"#>, // Optional, can be nil if not used
             realm: <#"Realm"#> // Optional, can be nil if not used
         )
+    }
+
+    // MARK: - MFA Client Initialization
+
+    /// Initialize the OATH client for MFA functionality
+    public func initializeOathClient() async throws {
+        guard oathClient == nil else { return }
+
+        oathClient = try await OathClient.createClient { config in
+            config.logger = LogManager.logger
+        }
+    }
+
+    /// Initialize the Push client for MFA functionality
+    public func initializePushClient() async throws {
+        guard pushClient == nil else { return }
+
+        pushClient = try await PushClient.createClient { config in
+            config.logger = LogManager.logger
+        }
     }
 }
 

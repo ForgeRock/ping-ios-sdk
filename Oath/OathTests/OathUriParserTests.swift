@@ -535,4 +535,71 @@ final class OathUriParserTests: XCTestCase {
         XCTAssertEqual(credential.digits, 6)
         XCTAssertEqual(credential.counter, 1)
     }
+
+    // MARK: - Malformed Padding Compatibility Tests (FRAuthenticator)
+
+    func testUriParsingWithMalformedPadding() async throws {
+        // Test the primary failing URI from FRAuthenticator compatibility issue
+        // This secret has malformed padding: 25 base32 chars + 6 padding = 31 total (not multiple of 8)
+        let uri = "otpauth://totp/ACME:Elmer.Fudd?secret=HNEZ2W7D462P3JYDG2HV7PFBM======&image=https://upload.wikimedia.org/wikipedia/commons/6/6e/Acme-corp.png"
+
+        let credential = try await OathUriParser.parse(uri)
+
+        XCTAssertEqual(credential.issuer, "ACME")
+        XCTAssertEqual(credential.accountName, "Elmer.Fudd")
+        XCTAssertEqual(credential.secret, "HNEZ2W7D462P3JYDG2HV7PFBM======")
+        XCTAssertEqual(credential.oathType, .totp)
+        XCTAssertEqual(credential.imageURL, "https://upload.wikimedia.org/wikipedia/commons/6/6e/Acme-corp.png")
+
+        // Verify secret can be decoded despite malformed padding
+        let secretData = Base32.decode(credential.secret, strict: false)
+        XCTAssertNotNil(secretData, "Secret with malformed padding should decode in lenient mode")
+        XCTAssertGreaterThan(secretData?.count ?? 0, 0, "Decoded secret should not be empty")
+    }
+
+    func testUriParsingWithVariousMalformedPadding() async throws {
+        // Test various malformed padding scenarios
+        let testCases = [
+            ("otpauth://totp/Test:user1?secret=JBSWY3DPEHPK3PXP==&issuer=Test", "2 char padding (18 total)"),
+            ("otpauth://totp/Test:user2?secret=JBSWY3DPE=====&issuer=Test", "5 char padding (14 total)"),
+            ("otpauth://totp/Test:user3?secret=JBSWY3D=======&issuer=Test", "7 char padding (14 total)"),
+        ]
+
+        for (uri, description) in testCases {
+            let credential = try await OathUriParser.parse(uri)
+
+            XCTAssertEqual(credential.issuer, "Test", "Issuer should be parsed correctly: \(description)")
+            XCTAssertTrue(credential.accountName.hasPrefix("user"), "Account name should be parsed correctly: \(description)")
+
+            // Verify secret can be decoded despite malformed padding
+            let secretData = Base32.decode(credential.secret, strict: false)
+            XCTAssertNotNil(secretData, "Secret should decode in lenient mode: \(description)")
+        }
+    }
+
+    func testUriRoundTripWithMalformedPadding() async throws {
+        // Parse URI with malformed padding
+        let originalUri = "otpauth://totp/ACME:test@example.com?secret=HNEZ2W7D462P3JYDG2HV7PFBM======&issuer=ACME"
+
+        let credential = try await OathUriParser.parse(originalUri)
+
+        // Format back to URI
+        let formattedUri = try await OathUriParser.format(credential)
+
+        // Reparse formatted URI
+        let reparsedCredential = try await OathUriParser.parse(formattedUri)
+
+        // Verify all fields match
+        XCTAssertEqual(credential.issuer, reparsedCredential.issuer)
+        XCTAssertEqual(credential.accountName, reparsedCredential.accountName)
+        XCTAssertEqual(credential.secret, reparsedCredential.secret)
+        XCTAssertEqual(credential.oathType, reparsedCredential.oathType)
+
+        // Verify both secrets can be decoded
+        let originalSecretData = Base32.decode(credential.secret, strict: false)
+        let reparsedSecretData = Base32.decode(reparsedCredential.secret, strict: false)
+        XCTAssertNotNil(originalSecretData)
+        XCTAssertNotNil(reparsedSecretData)
+        XCTAssertEqual(originalSecretData, reparsedSecretData, "Decoded secrets should match after round trip")
+    }
 }

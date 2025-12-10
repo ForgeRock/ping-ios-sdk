@@ -330,6 +330,91 @@ final class OathSecurityTests: XCTestCase {
         }
     }
 
+    // MARK: - Base32 Padding Compatibility Tests (FRAuthenticator)
+
+    func testBase32PaddingCompatibility() {
+        // Test 1: Valid RFC 4648 padding scenarios (should work in both modes)
+        let validPaddingScenarios = [
+            ("JBSWY3DPEHPK3PXP", "No padding (16 chars)"),
+            ("JBSWY3DPEHPK3PX=", "1 char padding (16 total)"),
+            ("JBSWY3DPEHPK3===", "3 char padding (16 total)"),
+            ("JBSWY3DPEHPK====", "4 char padding (16 total)"),
+            ("JBSWY3DPEH======", "6 char padding (16 total)"),
+        ]
+
+        for (input, description) in validPaddingScenarios {
+            let lenientResult = Base32.decode(input, strict: false)
+            let strictResult = Base32.decode(input, strict: true)
+            XCTAssertNotNil(lenientResult, "Valid padding should decode in lenient mode: \(description)")
+            XCTAssertNotNil(strictResult, "Valid padding should decode in strict mode: \(description)")
+            XCTAssertEqual(lenientResult, strictResult, "Results should match in both modes for valid input: \(description)")
+        }
+
+        // Test 2: Malformed padding (FRAuthenticator compatibility - lenient mode only)
+        let malformedPaddingScenarios = [
+            ("HNEZ2W7D462P3JYDG2HV7PFBM======", "Primary test case - 31 total chars (25 + 6 padding)"),
+            ("JBSWY3DPEHPK3PXP==", "2 char padding (18 total, invalid)"),
+            ("JBSWY3DPE=====", "5 char padding (14 total, invalid)"),
+            ("JBSWY3D=======", "7 char padding (14 total, invalid)"),
+        ]
+
+        for (input, description) in malformedPaddingScenarios {
+            let lenientResult = Base32.decode(input, strict: false)
+            let strictResult = Base32.decode(input, strict: true)
+            XCTAssertNotNil(lenientResult, "Malformed padding should decode in lenient mode: \(description)")
+            XCTAssertNil(strictResult, "Malformed padding should be rejected in strict mode: \(description)")
+        }
+
+        // Test 3: Padding in wrong positions (should fail in both modes)
+        let invalidPositionScenarios = [
+            ("JBSWY=3DPEH", "Mid-string padding"),
+            ("JBS==WY3==", "Multiple padding blocks"),
+        ]
+
+        for (input, description) in invalidPositionScenarios {
+            let lenientResult = Base32.decode(input, strict: false)
+            let strictResult = Base32.decode(input, strict: true)
+            XCTAssertNil(lenientResult, "Invalid padding position should fail in lenient mode: \(description)")
+            XCTAssertNil(strictResult, "Invalid padding position should fail in strict mode: \(description)")
+        }
+
+        // Test 4: Security edge cases
+        let edgeCases = [
+            ("", "Empty string", false, true), // lenient returns Data(), strict returns nil
+            ("========", "Only padding", false, true), // lenient returns Data(), strict returns nil
+            ("JBS============", "Excessive padding", false, true), // lenient returns Data(), strict returns nil
+        ]
+
+        for (input, description, shouldFailLenient, shouldFailStrict) in edgeCases {
+            let lenientResult = Base32.decode(input, strict: false)
+            let strictResult = Base32.decode(input, strict: true)
+            if shouldFailLenient {
+                XCTAssertNil(lenientResult, "Edge case should fail in lenient mode: \(description)")
+            } else {
+                XCTAssertNotNil(lenientResult, "Edge case should succeed in lenient mode: \(description)")
+            }
+            if shouldFailStrict {
+                XCTAssertNil(strictResult, "Edge case should fail in strict mode: \(description)")
+            } else {
+                XCTAssertNotNil(strictResult, "Edge case should succeed in strict mode: \(description)")
+            }
+        }
+
+        // Test 5: Verify primary failing secret decodes correctly
+        let problematicSecret = "HNEZ2W7D462P3JYDG2HV7PFBM======"
+        guard let decodedData = Base32.decode(problematicSecret, strict: false) else {
+            XCTFail("Primary failing secret should decode in lenient mode")
+            return
+        }
+        XCTAssertGreaterThan(decodedData.count, 0, "Decoded data should not be empty")
+
+        // Test 6: Round-trip encoding/decoding with malformed padding
+        let testData = "Hello, World!".data(using: .utf8)!
+        let encoded = Base32.encode(testData)
+        let decoded = Base32.decode(encoded, strict: false)
+        XCTAssertEqual(decoded, testData, "Round-trip encoding/decoding should work")
+    }
+
     // MARK: - RFC Compliance Security Tests
 
     func testRfcCompliantTotpGeneration() async throws {

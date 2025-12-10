@@ -252,15 +252,47 @@ public final class PushClient: @unchecked Sendable {
 
     /// Processes a push notification using a `UNNotification`-style `userInfo` dictionary.
     ///
-    /// - Parameter userInfo: Notification payload in `[AnyHashable: Any]` form.
+    /// This method automatically extracts APNs custom data from the nested `aps` dictionary format:
+    /// - `aps["data"]` → `message` (JWT)
+    /// - `aps["messageId"]` → `messageId`
+    ///
+    /// - Parameter userInfo: Notification payload in `[AnyHashable: Any]` form (APNs `userInfo`).
     /// - Returns: The stored ``PushNotification`` (or `nil` when unsupported).
     /// - Throws: `PushError` when parsing or persistence fails.
     public func processNotification(userInfo: [AnyHashable: Any]) async throws -> PushNotification? {
-        let messageData = userInfo.reduce(into: [String: Any]()) { partialResult, pair in
+        // Convert AnyHashable keys to String
+        let converted = userInfo.reduce(into: [String: Any]()) { partialResult, pair in
             if let key = pair.key as? String {
                 partialResult[key] = pair.value
             }
         }
+        
+        // Extract APNs payload if present
+        let messageData: [String: Any]
+        if let aps = converted["aps"] as? [String: Any] {
+            var extracted: [String: Any] = [:]
+            
+            // Extract JWT from aps.data -> message
+            if let jwt = aps["data"] as? String {
+                extracted["message"] = jwt
+            }
+            
+            // Extract messageId from aps.messageId
+            if let messageId = aps["messageId"] as? String {
+                extracted["messageId"] = messageId
+            }
+            
+            // Preserve any top-level keys outside of 'aps'
+            for (key, value) in converted where key != "aps" {
+                extracted[key] = value
+            }
+            
+            messageData = extracted
+        } else {
+            // No APNs wrapper - use converted data as-is
+            messageData = converted
+        }
+        
         return try await processNotification(messageData: messageData)
     }
 
