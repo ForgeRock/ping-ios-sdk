@@ -18,11 +18,16 @@ import PingTamperDetector
 import PingOidc
 import PingProtect
 import PingBinding
+import PingOath
+import PingPush
 
 /// The main application entry point.
 @main
 struct MyApp: App {
-    
+
+    // Connect AppDelegate for push notifications
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     // Create an instance of the manager.
     // @StateObject ensures it's kept alive for the app's lifecycle.
     @StateObject private var sceneManager = ScenePhaseManager()
@@ -45,23 +50,27 @@ struct MyApp: App {
 // MARK: - Menu Section Enum
 enum MenuSection: CaseIterable, Identifiable {
     case authentication
+    case mfa
     case userManagement
     case developerTools
-    
+
     var id: String { title }
-    
+
     var title: String {
         switch self {
         case .authentication: return "Authentication"
+        case .mfa: return "MFA"
         case .userManagement: return "User Management"
         case .developerTools: return "Developer Tools"
         }
     }
-    
+
     var items: [MenuItem] {
         switch self {
         case .authentication:
             return [.davinci, .journey, .oidc]
+        case .mfa:
+            return [.qrScanner, .oathAccounts, .pushAccounts, .pushNotifications]
         case .userManagement:
             return [.token, .user, .deviceManagement, .logout]
         case .developerTools:
@@ -75,6 +84,10 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case davinci = "DaVinci"
     case journey = "Journey"
     case oidc = "OIDC"
+    case oathAccounts = "OATH"
+    case pushAccounts = "Push"
+    case qrScanner = "QR Scanner"
+    case pushNotifications = "Push Notifications"
     case token = "Token"
     case user = "User"
     case logout = "Logout"
@@ -84,7 +97,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case storage = "Storage"
     case bindingKeys = "Binding Keys"
     case configuration = "Configuration"
-    
+
     var id: String { rawValue }
     
     var icon: String {
@@ -92,6 +105,10 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .davinci: return "key.fill"
         case .journey: return "map.fill"
         case .oidc: return "lock.shield.fill"
+        case .oathAccounts: return "key.viewfinder"
+        case .pushAccounts: return "bell.badge.fill"
+        case .qrScanner: return "qrcode.viewfinder"
+        case .pushNotifications: return "bell.fill"
         case .token: return "ticket.fill"
         case .user: return "person.fill"
         case .logout: return "rectangle.portrait.and.arrow.right"
@@ -109,6 +126,10 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .davinci: return "DaVinci Flow"
         case .journey: return "Journey Flow"
         case .oidc: return "OIDC Login"
+        case .oathAccounts: return "OATH"
+        case .pushAccounts: return "Push"
+        case .qrScanner: return "QR Scanner"
+        case .pushNotifications: return "Push Notifications"
         case .token: return "Access Token"
         case .user: return "User Info"
         case .logout: return "Logout"
@@ -126,6 +147,10 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .davinci: return "Test DaVinci authentication"
         case .journey: return "Test Journey authentication"
         case .oidc: return "OpenID Connect flow"
+        case .oathAccounts: return "Manage TOTP and HOTP accounts"
+        case .pushAccounts: return "Manage push authentication accounts"
+        case .qrScanner: return "Scan QR codes for registration"
+        case .pushNotifications: return "View and respond to push requests"
         case .token: return "View current token"
         case .user: return "View user details"
         case .logout: return "End session"
@@ -146,6 +171,7 @@ struct ContentView: View {
     @State private var path: [MenuItem] = []
     @State private var configurationViewModel: ConfigurationViewModel = ConfigurationManager.shared.loadConfigurationViewModel()
     @State private var deviceStatus: String = "Checking..."
+    @State private var navigateToPushNotifications = false
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -172,6 +198,12 @@ struct ContentView: View {
                 }
             }
             .background(Color(.systemGroupedBackground))
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("NavigateToPushNotifications"))) { _ in
+                // Navigate to Push Notifications view
+                if !path.contains(.pushNotifications) {
+                    path.append(.pushNotifications)
+                }
+            }
             .navigationDestination(for: MenuItem.self) { item in
                 switch item {
                 case .configuration:
@@ -182,6 +214,14 @@ struct ContentView: View {
                     JourneyView(path: $path)
                 case .oidc:
                     OidcLoginView(path: $path)
+                case .oathAccounts:
+                    OathAccountsView(path: $path)
+                case .pushAccounts:
+                    PushAccountsView(path: $path)
+                case .qrScanner:
+                    QRScannerContainerView(path: $path)
+                case .pushNotifications:
+                    PushNotificationsView(path: $path)
                 case .token:
                     AccessTokenView(menuItem: item)
                 case .user:

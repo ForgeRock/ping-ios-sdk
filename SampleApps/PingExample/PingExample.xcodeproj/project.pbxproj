@@ -9,8 +9,30 @@
 /* Begin PBXBuildFile section */
 		1B2933CD2E7DF429004D1D38 /* PingOath.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B2933B92E7DF20B004D1D38 /* PingOath.framework */; };
 		1B2933CE2E7DF429004D1D38 /* PingOath.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B2933B92E7DF20B004D1D38 /* PingOath.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		1B7A9AD02ED5316F00989A55 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7A9AC22ED52F6600989A55 /* Network.framework */; };
-		1B7A9AD12ED5316F00989A55 /* Network.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7A9AC22ED52F6600989A55 /* Network.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1B7A9AD02ED5316F00989A55 /* PingNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7A9AC22ED52F6600989A55 /* PingNetwork.framework */; };
+		1B7A9AD12ED5316F00989A55 /* PingNetwork.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7A9AC22ED52F6600989A55 /* PingNetwork.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1B7A9C852EE7BD2A00989A55 /* PushNotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C802EE7BD2A00989A55 /* PushNotificationsView.swift */; };
+		1B7A9C862EE7BD2A00989A55 /* BiometricNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C742EE7BD2A00989A55 /* BiometricNotificationView.swift */; };
+		1B7A9C872EE7BD2A00989A55 /* OathAccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C7A2EE7BD2A00989A55 /* OathAccountsView.swift */; };
+		1B7A9C882EE7BD2A00989A55 /* PushNotificationCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C7F2EE7BD2A00989A55 /* PushNotificationCardView.swift */; };
+		1B7A9C892EE7BD2A00989A55 /* PushNotificationsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C812EE7BD2A00989A55 /* PushNotificationsViewModel.swift */; };
+		1B7A9C8A2EE7BD2A00989A55 /* OathAccountsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C7B2EE7BD2A00989A55 /* OathAccountsViewModel.swift */; };
+		1B7A9C8B2EE7BD2A00989A55 /* PushAccountsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C7E2EE7BD2A00989A55 /* PushAccountsViewModel.swift */; };
+		1B7A9C8C2EE7BD2A00989A55 /* OathAccountDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C792EE7BD2A00989A55 /* OathAccountDetailView.swift */; };
+		1B7A9C8D2EE7BD2A00989A55 /* OathAccountCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C782EE7BD2A00989A55 /* OathAccountCardView.swift */; };
+		1B7A9C8E2EE7BD2A00989A55 /* DefaultNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C762EE7BD2A00989A55 /* DefaultNotificationView.swift */; };
+		1B7A9C8F2EE7BD2A00989A55 /* PushAccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C7D2EE7BD2A00989A55 /* PushAccountsView.swift */; };
+		1B7A9C902EE7BD2A00989A55 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C732EE7BD2A00989A55 /* AppDelegate.swift */; };
+		1B7A9C912EE7BD2A00989A55 /* QRScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C832EE7BD2A00989A55 /* QRScannerView.swift */; };
+		1B7A9C922EE7BD2A00989A55 /* ChallengeNotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C752EE7BD2A00989A55 /* ChallengeNotificationView.swift */; };
+		1B7A9C932EE7BD2A00989A55 /* QRScannerContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C822EE7BD2A00989A55 /* QRScannerContainerView.swift */; };
+		1B7A9C942EE7BD2A00989A55 /* QRScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C842EE7BD2A00989A55 /* QRScannerViewModel.swift */; };
+		1B7A9C952EE7BD2A00989A55 /* PushAccountCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C7C2EE7BD2A00989A55 /* PushAccountCardView.swift */; };
+		1B7A9C962EE7BD2A00989A55 /* ManualOathRegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C772EE7BD2A00989A55 /* ManualOathRegistrationView.swift */; };
+		1B7A9CC92EE8CD9A00989A55 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA2E7D72ED7108300C32766 /* PingDavinciPlugin.framework */; };
+		1B7A9CCA2EE8CD9A00989A55 /* PingDavinciPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA2E7D72ED7108300C32766 /* PingDavinciPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1B7A9CCB2EE8CD9A00989A55 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA2E7CF2ED7107900C32766 /* PingJourneyPlugin.framework */; };
+		1B7A9CCC2EE8CD9A00989A55 /* PingJourneyPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA2E7CF2ED7107900C32766 /* PingJourneyPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1B7C4A022EAABAA300E3C0AC /* PingPush.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7C49F02EAAB6E400E3C0AC /* PingPush.framework */; };
 		1B7C4A032EAABAA300E3C0AC /* PingPush.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7C49F02EAAB6E400E3C0AC /* PingPush.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3A3709962BEB038200AA7B51 /* AccessTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3709952BEB038200AA7B51 /* AccessTokenView.swift */; };
@@ -41,8 +63,8 @@
 		A5560CA92CFE4EDA0076CA8D /* PingStorage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A57A09022CE50EF1006F0CBB /* PingStorage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A56740DF2ED788FB009D29B9 /* PingDeviceClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A526CBFD2ED4AEE6007FCCD9 /* PingDeviceClient.framework */; };
 		A56740E02ED788FB009D29B9 /* PingDeviceClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A526CBFD2ED4AEE6007FCCD9 /* PingDeviceClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A56742022EE1EE15009D29B9 /* Commons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56741C82EE1EBFD009D29B9 /* Commons.framework */; };
-		A56742032EE1EE15009D29B9 /* Commons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56741C82EE1EBFD009D29B9 /* Commons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A56742022EE1EE15009D29B9 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56741C82EE1EBFD009D29B9 /* PingCommons.framework */; };
+		A56742032EE1EE15009D29B9 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56741C82EE1EBFD009D29B9 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A569DBEC2E78A78800F4D7A8 /* PingDeviceProfile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A569DBC62E789BD300F4D7A8 /* PingDeviceProfile.framework */; };
 		A569DBED2E78A78800F4D7A8 /* PingDeviceProfile.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A569DBC62E789BD300F4D7A8 /* PingDeviceProfile.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A570D52E2ECCE47500CBBCCF /* DeviceManagementViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A570D52D2ECCE47400CBBCCF /* DeviceManagementViewModel.swift */; };
@@ -528,12 +550,14 @@
 			dstSubfolderSpec = 10;
 			files = (
 				ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */,
-				A56742032EE1EE15009D29B9 /* Commons.framework in Embed Frameworks */,
+				A56742032EE1EE15009D29B9 /* PingCommons.framework in Embed Frameworks */,
+				1B7A9CCC2EE8CD9A00989A55 /* PingJourneyPlugin.framework in Embed Frameworks */,
 				EC59E3542E7D8BB900A91E66 /* PingTamperDetector.framework in Embed Frameworks */,
+				1B7A9CCA2EE8CD9A00989A55 /* PingDavinciPlugin.framework in Embed Frameworks */,
 				EC5C81F62ED08C6100C91570 /* PingJourney.framework in Embed Frameworks */,
 				A5560CA32CFE4EDA0076CA8D /* PingLogger.framework in Embed Frameworks */,
 				A56740E02ED788FB009D29B9 /* PingDeviceClient.framework in Embed Frameworks */,
-				1B7A9AD12ED5316F00989A55 /* Network.framework in Embed Frameworks */,
+				1B7A9AD12ED5316F00989A55 /* PingNetwork.framework in Embed Frameworks */,
 				A525E7B62DD7647200B02C17 /* PingExternalIdPApple.framework in Embed Frameworks */,
 				A5560CA52CFE4EDA0076CA8D /* PingOidc.framework in Embed Frameworks */,
 				A569DBED2E78A78800F4D7A8 /* PingDeviceProfile.framework in Embed Frameworks */,
@@ -568,6 +592,24 @@
 /* Begin PBXFileReference section */
 		1B29339F2E7DF20B004D1D38 /* Oath.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Oath.xcodeproj; path = ../../Oath/Oath.xcodeproj; sourceTree = SOURCE_ROOT; };
 		1B7A9A902ED52F6500989A55 /* Network.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Network.xcodeproj; path = ../../Network/Network.xcodeproj; sourceTree = SOURCE_ROOT; };
+		1B7A9C732EE7BD2A00989A55 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		1B7A9C742EE7BD2A00989A55 /* BiometricNotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricNotificationView.swift; sourceTree = "<group>"; };
+		1B7A9C752EE7BD2A00989A55 /* ChallengeNotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeNotificationView.swift; sourceTree = "<group>"; };
+		1B7A9C762EE7BD2A00989A55 /* DefaultNotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultNotificationView.swift; sourceTree = "<group>"; };
+		1B7A9C772EE7BD2A00989A55 /* ManualOathRegistrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualOathRegistrationView.swift; sourceTree = "<group>"; };
+		1B7A9C782EE7BD2A00989A55 /* OathAccountCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OathAccountCardView.swift; sourceTree = "<group>"; };
+		1B7A9C792EE7BD2A00989A55 /* OathAccountDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OathAccountDetailView.swift; sourceTree = "<group>"; };
+		1B7A9C7A2EE7BD2A00989A55 /* OathAccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OathAccountsView.swift; sourceTree = "<group>"; };
+		1B7A9C7B2EE7BD2A00989A55 /* OathAccountsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OathAccountsViewModel.swift; sourceTree = "<group>"; };
+		1B7A9C7C2EE7BD2A00989A55 /* PushAccountCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushAccountCardView.swift; sourceTree = "<group>"; };
+		1B7A9C7D2EE7BD2A00989A55 /* PushAccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushAccountsView.swift; sourceTree = "<group>"; };
+		1B7A9C7E2EE7BD2A00989A55 /* PushAccountsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushAccountsViewModel.swift; sourceTree = "<group>"; };
+		1B7A9C7F2EE7BD2A00989A55 /* PushNotificationCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationCardView.swift; sourceTree = "<group>"; };
+		1B7A9C802EE7BD2A00989A55 /* PushNotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationsView.swift; sourceTree = "<group>"; };
+		1B7A9C812EE7BD2A00989A55 /* PushNotificationsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationsViewModel.swift; sourceTree = "<group>"; };
+		1B7A9C822EE7BD2A00989A55 /* QRScannerContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerContainerView.swift; sourceTree = "<group>"; };
+		1B7A9C832EE7BD2A00989A55 /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerView.swift; sourceTree = "<group>"; };
+		1B7A9C842EE7BD2A00989A55 /* QRScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerViewModel.swift; sourceTree = "<group>"; };
 		1B7C49C82EAAB6E400E3C0AC /* Push.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Push.xcodeproj; path = ../../Push/Push.xcodeproj; sourceTree = SOURCE_ROOT; };
 		3A3709952BEB038200AA7B51 /* AccessTokenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenView.swift; sourceTree = "<group>"; };
 		3A54412D2BCDF10900385131 /* PingExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PingExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -699,7 +741,7 @@
 				ECA540BD2D6DD7D6002B35D4 /* AppTrackingTransparency.framework in Frameworks */,
 				A525E7B52DD7647200B02C17 /* PingExternalIdPApple.framework in Frameworks */,
 				EC92B3912DA03E0700E4246D /* SVGKitSwift in Frameworks */,
-				A56742022EE1EE15009D29B9 /* Commons.framework in Frameworks */,
+				A56742022EE1EE15009D29B9 /* PingCommons.framework in Frameworks */,
 				EC4DD3742EAFCAED00ECC4E1 /* PingExternalIdP.framework in Frameworks */,
 				EC14474B2EA664C300882AF2 /* PingFido.framework in Frameworks */,
 				1B7C4A022EAABAA300E3C0AC /* PingPush.framework in Frameworks */,
@@ -710,13 +752,15 @@
 				EC5C81F52ED08C6100C91570 /* PingJourney.framework in Frameworks */,
 				A569DBEC2E78A78800F4D7A8 /* PingDeviceProfile.framework in Frameworks */,
 				EC5C81F32ED08C2D00C91570 /* PingDavinci.framework in Frameworks */,
+				1B7A9CCB2EE8CD9A00989A55 /* PingJourneyPlugin.framework in Frameworks */,
 				1B2933CD2E7DF429004D1D38 /* PingOath.framework in Frameworks */,
-				1B7A9AD02ED5316F00989A55 /* Network.framework in Frameworks */,
+				1B7A9AD02ED5316F00989A55 /* PingNetwork.framework in Frameworks */,
 				A525E7B72DD7647200B02C17 /* PingExternalIdPFacebook.framework in Frameworks */,
 				EC4DD3182EABC06800ECC4E1 /* PingBinding.framework in Frameworks */,
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
 				EC92B38F2DA03E0700E4246D /* SVGKit in Frameworks */,
 				EC59E3532E7D8BB900A91E66 /* PingTamperDetector.framework in Frameworks */,
+				1B7A9CC92EE8CD9A00989A55 /* PingDavinciPlugin.framework in Frameworks */,
 				ECCAB3692E3A6C3300BA1C73 /* PingDeviceId.framework in Frameworks */,
 				A5560CA62CFE4EDA0076CA8D /* PingOrchestrate.framework in Frameworks */,
 				A58CFBD02EB0046B007C4A31 /* PingReCaptchaEnterprise.framework in Frameworks */,
@@ -759,7 +803,7 @@
 		1B7A9ABD2ED52F6500989A55 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1B7A9AC22ED52F6600989A55 /* Network.framework */,
+				1B7A9AC22ED52F6600989A55 /* PingNetwork.framework */,
 				1B7A9AC42ED52F6600989A55 /* NetworkTests.xctest */,
 			);
 			name = Products;
@@ -860,6 +904,24 @@
 				EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */,
 				EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */,
 				EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */,
+				1B7A9C732EE7BD2A00989A55 /* AppDelegate.swift */,
+				1B7A9C742EE7BD2A00989A55 /* BiometricNotificationView.swift */,
+				1B7A9C752EE7BD2A00989A55 /* ChallengeNotificationView.swift */,
+				1B7A9C762EE7BD2A00989A55 /* DefaultNotificationView.swift */,
+				1B7A9C772EE7BD2A00989A55 /* ManualOathRegistrationView.swift */,
+				1B7A9C782EE7BD2A00989A55 /* OathAccountCardView.swift */,
+				1B7A9C792EE7BD2A00989A55 /* OathAccountDetailView.swift */,
+				1B7A9C7A2EE7BD2A00989A55 /* OathAccountsView.swift */,
+				1B7A9C7B2EE7BD2A00989A55 /* OathAccountsViewModel.swift */,
+				1B7A9C7C2EE7BD2A00989A55 /* PushAccountCardView.swift */,
+				1B7A9C7D2EE7BD2A00989A55 /* PushAccountsView.swift */,
+				1B7A9C7E2EE7BD2A00989A55 /* PushAccountsViewModel.swift */,
+				1B7A9C7F2EE7BD2A00989A55 /* PushNotificationCardView.swift */,
+				1B7A9C802EE7BD2A00989A55 /* PushNotificationsView.swift */,
+				1B7A9C812EE7BD2A00989A55 /* PushNotificationsViewModel.swift */,
+				1B7A9C822EE7BD2A00989A55 /* QRScannerContainerView.swift */,
+				1B7A9C832EE7BD2A00989A55 /* QRScannerView.swift */,
+				1B7A9C842EE7BD2A00989A55 /* QRScannerViewModel.swift */,
 				3A5441342BCDF10B00385131 /* Assets.xcassets */,
 				3A5441362BCDF10B00385131 /* Preview Content */,
 			);
@@ -928,7 +990,7 @@
 		A56741BF2EE1EBFD009D29B9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A56741C82EE1EBFD009D29B9 /* Commons.framework */,
+				A56741C82EE1EBFD009D29B9 /* PingCommons.framework */,
 				A56741CA2EE1EBFD009D29B9 /* CommonsTests.xctest */,
 			);
 			name = Products;
@@ -1414,10 +1476,10 @@
 			remoteRef = 1B2933BA2E7DF20B004D1D38 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1B7A9AC22ED52F6600989A55 /* Network.framework */ = {
+		1B7A9AC22ED52F6600989A55 /* PingNetwork.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = Network.framework;
+			path = PingNetwork.framework;
 			remoteRef = 1B7A9AC12ED52F6600989A55 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1477,10 +1539,10 @@
 			remoteRef = A526CBFC2ED4AEE6007FCCD9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A56741C82EE1EBFD009D29B9 /* Commons.framework */ = {
+		A56741C82EE1EBFD009D29B9 /* PingCommons.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
-			path = Commons.framework;
+			path = PingCommons.framework;
 			remoteRef = A56741C72EE1EBFD009D29B9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1800,6 +1862,24 @@
 				A5E9AECE2D3037BE000533ED /* AccessTokenViewModel.swift in Sources */,
 				A5768D142E297260000290EE /* ValidatedUsernameCallbackView.swift in Sources */,
 				A5768D1A2E29B228000290EE /* NumberAttributeInputCallbackView.swift in Sources */,
+				1B7A9C852EE7BD2A00989A55 /* PushNotificationsView.swift in Sources */,
+				1B7A9C862EE7BD2A00989A55 /* BiometricNotificationView.swift in Sources */,
+				1B7A9C872EE7BD2A00989A55 /* OathAccountsView.swift in Sources */,
+				1B7A9C882EE7BD2A00989A55 /* PushNotificationCardView.swift in Sources */,
+				1B7A9C892EE7BD2A00989A55 /* PushNotificationsViewModel.swift in Sources */,
+				1B7A9C8A2EE7BD2A00989A55 /* OathAccountsViewModel.swift in Sources */,
+				1B7A9C8B2EE7BD2A00989A55 /* PushAccountsViewModel.swift in Sources */,
+				1B7A9C8C2EE7BD2A00989A55 /* OathAccountDetailView.swift in Sources */,
+				1B7A9C8D2EE7BD2A00989A55 /* OathAccountCardView.swift in Sources */,
+				1B7A9C8E2EE7BD2A00989A55 /* DefaultNotificationView.swift in Sources */,
+				1B7A9C8F2EE7BD2A00989A55 /* PushAccountsView.swift in Sources */,
+				1B7A9C902EE7BD2A00989A55 /* AppDelegate.swift in Sources */,
+				1B7A9C912EE7BD2A00989A55 /* QRScannerView.swift in Sources */,
+				1B7A9C922EE7BD2A00989A55 /* ChallengeNotificationView.swift in Sources */,
+				1B7A9C932EE7BD2A00989A55 /* QRScannerContainerView.swift in Sources */,
+				1B7A9C942EE7BD2A00989A55 /* QRScannerViewModel.swift in Sources */,
+				1B7A9C952EE7BD2A00989A55 /* PushAccountCardView.swift in Sources */,
+				1B7A9C962EE7BD2A00989A55 /* ManualOathRegistrationView.swift in Sources */,
 				A588D0072BF6A0E500F9052A /* LoggerViewModel.swift in Sources */,
 				ECF7EB862E464EDD002A5E8E /* IdpCallbackView.swift in Sources */,
 				3ACD90E12BE586BC00DABCE6 /* DavinciViewModel.swift in Sources */,
@@ -2057,8 +2137,10 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PingExample/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Davinci;
+				INFOPLIST_KEY_CFBundleDisplayName = PingExample;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "PingExample app uses BLE to collect device information";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Scan QR codes to register MFA accounts";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "FaceID for Biometrics";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "PingExample app uses geo-location service to collect device information app uses geo-location service to collect device information";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to deliver personalized ads to you";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -2092,8 +2174,10 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PingExample/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Davinci;
+				INFOPLIST_KEY_CFBundleDisplayName = PingExample;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "PingExample app uses BLE to collect device information";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Scan QR codes to register MFA accounts";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "FaceID for Biometrics";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "PingExample app uses geo-location service to collect device information app uses geo-location service to collect device information";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to deliver personalized ads to you";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
