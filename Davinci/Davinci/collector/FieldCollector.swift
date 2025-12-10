@@ -12,17 +12,6 @@
 import Foundation
 import PingDavinciPlugin
 
-/// Protocol representing a collector. Inherits from `Sendable`, `Collector`, `Validator`.
-/// - property id: The collector id.
-/// - function anyPayload: The payload of the collector as `Any`
-/// - function initialize: Initializes the collector with the given value.
-public protocol AnyFieldCollector: Collector, Validator, Sendable {
-    var id: String { get }
-    /// Returns the payload as `Any?`.
-    func anyPayload() -> Any?
-    /// Initializes the field collector with the given value.
-    func initialize(with value: Any)
-}
 
 /// Abstract class representing a field collector.
 /// - property type: The type of the field collector.
