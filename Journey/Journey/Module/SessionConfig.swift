@@ -32,8 +32,17 @@ import PingStorage
 /// ```swift
 /// let journey = Journey.createJourney { config in
 ///     // ... other configuration ...
+///     config.serverUrl = "https://example.com/am"
+///     config.realm = "alpha"
 ///
-///     // After initialization, customize session storage
+///     // Configure storage during initialization
+///     config.module(SessionModule.config) { sessionConfig in
+///         sessionConfig.storage = KeychainStorage<SSOTokenImpl>(
+///             account: "user_a_sessions",
+///             encryptor: SecuredKeyEncryptor() ?? NoEncryptor()
+///         )
+///     }
+///
 /// }
 ///
 /// // Configure custom session storage after journey initialization
