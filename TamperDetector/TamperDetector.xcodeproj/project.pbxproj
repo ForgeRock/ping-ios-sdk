@@ -7,10 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1B18D64C2EF1CC740004F205 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B18D64B2EF1CC740004F205 /* PingCommons.framework */; };
-		1B18D64D2EF1CC740004F205 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B18D64B2EF1CC740004F205 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		1B18D64F2EF1CC860004F205 /* DeviceTamperingPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B18D64E2EF1CC860004F205 /* DeviceTamperingPolicy.swift */; };
-		1B18D6512EF1CCFD0004F205 /* DeviceTamperingPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B18D6502EF1CCFD0004F205 /* DeviceTamperingPolicyTests.swift */; };
 		EC59E1632E7AD21700A91E66 /* PingTamperDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E1592E7AD21600A91E66 /* PingTamperDetector.framework */; };
 		EC59E30F2E7D7E1300A91E66 /* MockTamperDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E30B2E7D7E1300A91E66 /* MockTamperDetector.swift */; };
 		EC59E3102E7D7E1300A91E66 /* TamperDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E30C2E7D7E1300A91E66 /* TamperDetectorTests.swift */; };
@@ -48,7 +44,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				ECC52B2D2E81B34700C468C7 /* PingLogger.framework in Embed Frameworks */,
-				1B18D64D2EF1CC740004F205 /* PingCommons.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -56,9 +51,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1B18D64B2EF1CC740004F205 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		1B18D64E2EF1CC860004F205 /* DeviceTamperingPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTamperingPolicy.swift; sourceTree = "<group>"; };
-		1B18D6502EF1CCFD0004F205 /* DeviceTamperingPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTamperingPolicyTests.swift; sourceTree = "<group>"; };
 		EC59E1592E7AD21600A91E66 /* PingTamperDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingTamperDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC59E1622E7AD21700A91E66 /* TamplerDetectorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TamplerDetectorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC59E30B2E7D7E1300A91E66 /* MockTamperDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTamperDetector.swift; sourceTree = "<group>"; };
@@ -85,7 +77,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECC52B2C2E81B34700C468C7 /* PingLogger.framework in Frameworks */,
-				1B18D64C2EF1CC740004F205 /* PingCommons.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,7 +113,6 @@
 		EC59E30E2E7D7E1300A91E66 /* TamperDetectorTests */ = {
 			isa = PBXGroup;
 			children = (
-				1B18D6502EF1CCFD0004F205 /* DeviceTamperingPolicyTests.swift */,
 				EC59E30B2E7D7E1300A91E66 /* MockTamperDetector.swift */,
 				EC59E30C2E7D7E1300A91E66 /* TamperDetectorTests.swift */,
 				EC59E30D2E7D7E1300A91E66 /* TamperDetectorTests-Bridging-Header.h */,
@@ -133,7 +123,6 @@
 		EC59E31D2E7D7E1D00A91E66 /* TamperDetector */ = {
 			isa = PBXGroup;
 			children = (
-				1B18D64E2EF1CC860004F205 /* DeviceTamperingPolicy.swift */,
 				EC59E3112E7D7E1D00A91E66 /* DyldDetector.swift */,
 				EC59E3122E7D7E1D00A91E66 /* PrivacyInfo.xcprivacy */,
 				EC59E3132E7D7E1D00A91E66 /* RestrictedDirectoriesWritableDetector.swift */,
@@ -153,7 +142,6 @@
 		ECC52B2A2E81B34700C468C7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1B18D64B2EF1CC740004F205 /* PingCommons.framework */,
 				ECC52B2B2E81B34700C468C7 /* PingLogger.framework */,
 			);
 			name = Frameworks;
@@ -287,7 +275,6 @@
 				EC59E3272E7D7E1D00A91E66 /* URLSchemeDetector.swift in Sources */,
 				EC59E3282E7D7E1D00A91E66 /* DyldDetector.swift in Sources */,
 				EC59E3292E7D7E1D00A91E66 /* SuspiciousFilesAccessibleDetector.swift in Sources */,
-				1B18D64F2EF1CC860004F205 /* DeviceTamperingPolicy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,7 +283,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC59E30F2E7D7E1300A91E66 /* MockTamperDetector.swift in Sources */,
-				1B18D6512EF1CCFD0004F205 /* DeviceTamperingPolicyTests.swift in Sources */,
 				EC59E3102E7D7E1300A91E66 /* TamperDetectorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -461,7 +447,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.TamperDetector;
@@ -501,7 +487,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.TamperDetector;
@@ -526,8 +512,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.TamperDetectorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -550,8 +536,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.TamperDetectorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
