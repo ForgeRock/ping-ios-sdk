@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		95F525BA2EECF4BC00160748 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95F525B92EECF4BC00160748 /* PingJourney.framework */; };
+		95F525BB2EECF4BC00160748 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 95F525B92EECF4BC00160748 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC5C81842ECF67B700C91570 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */; };
 		EC5C81972ECF67C000C91570 /* PingJourneyPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81952ECF67C000C91570 /* PingJourneyPluginTests.swift */; };
 		EC5C81D52ED07FB800C91570 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81D42ED07FA500C91570 /* Constants.swift */; };
@@ -31,6 +33,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		95F525BC2EECF4BC00160748 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				95F525BB2EECF4BC00160748 /* PingJourney.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EC5C81E02ED0809200C91570 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -45,6 +58,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		95F525B92EECF4BC00160748 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81832ECF67B700C91570 /* PingJourneyPluginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingJourneyPluginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81952ECF67C000C91570 /* PingJourneyPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingJourneyPluginTests.swift; sourceTree = "<group>"; };
@@ -72,6 +86,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC5C81842ECF67B700C91570 /* PingJourneyPlugin.framework in Frameworks */,
+				95F525BA2EECF4BC00160748 /* PingJourney.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,6 +137,7 @@
 		EC5C81DC2ED0809200C91570 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				95F525B92EECF4BC00160748 /* PingJourney.framework */,
 				EC5C81DD2ED0809200C91570 /* PingOrchestrate.framework */,
 			);
 			name = Frameworks;
@@ -168,6 +184,7 @@
 				EC5C817F2ECF67B700C91570 /* Sources */,
 				EC5C81802ECF67B700C91570 /* Frameworks */,
 				EC5C81812ECF67B700C91570 /* Resources */,
+				95F525BC2EECF4BC00160748 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

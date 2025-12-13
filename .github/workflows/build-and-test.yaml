@@ -11,13 +11,13 @@ env:
   WORKSPACE: SampleApps/Ping.xcworkspace
   SCHEME: PingTestHost
   CONFIGURATION: Debug
-  DESTINATION: platform=iOS Simulator,name=iPhone SE (3rd generation),OS=18.6
+  DESTINATION: platform=iOS Simulator,name=iPhone SE (3rd generation),OS=26.1
   XCODE_VERSION: '26.1.1'
   DERIVED_DATA_PATH: DerivedData
 
 jobs:
   build-and-test:
-    runs-on: macos-15
+    runs-on: macos-15-xlarge
     timeout-minutes: 40
 
     steps:
@@ -34,14 +34,10 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app && /usr/bin/xcodebuild -version
 
-      # Set target Xcode version. For more details and options see:
-      # https://github.com/actions/runner-images/blob/main/images/macos/macos-15-Readme.md
-      - name: Select Xcode
-        run: sudo xcode-select -switch /Applications/Xcode_$XCODE_VERSION.app && /usr/bin/xcodebuild -version
-
       # Cache DerivedData
       - name: Cache DerivedData
-        uses: actions/cache@v3
+        if: always()
+        uses: actions/cache@v4
         with:
           path: ${{ env.DERIVED_DATA_PATH }}
           key: ${{ runner.os }}-derived-data-${{ env.XCODE_VERSION }}-${{ hashFiles('**/Podfile.lock', '**/*.pbxproj') }}
@@ -50,7 +46,8 @@ jobs:
 
       # Cache Swift Packages
       - name: Cache Swift Packages
-        uses: actions/cache@v3
+        if: always()
+        uses: actions/cache@v4
         with:
           path: SourcePackages
           # Look for Package.resolved inside your workspace or project
@@ -76,6 +73,10 @@ jobs:
         run: |
           xcrun simctl bootstatus "iPhone SE (3rd generation)" -b || true
 
+      # # List all simulators (shutdown and booted)
+      - name: List available simulators
+        run: xcrun simctl list devices
+
       # Run unit tests
       - name: Run tests
         run: |
@@ -85,6 +86,8 @@ jobs:
           -destination '${{ env.DESTINATION }}' \
           -derivedDataPath ${{ env.DERIVED_DATA_PATH }} \
           -clonedSourcePackagesDirPath SourcePackages \
+          -parallel-testing-enabled NO \
+          -retry-tests-on-failure \
           COMPILER_INDEX_STORE_ENABLE=NO \
           -resultBundlePath TestResults | xcbeautify
 
@@ -95,13 +98,20 @@ jobs:
           # -disable-concurrent-destination-testing \
           # -retry-tests-on-failure 
           
+      # Convert test results to JUnit format
+      - name: Convert Test Results to JUnit
+        run: | 
+          xcresultparser -o junit TestResults.xcresult > test-report.xml
+          ls -la test-report.xml
+          cat test-report.xml
+
       # Publish the test results
       - name: Publish test results
         if: success() || failure()
         uses: dorny/test-reporter@v1
         with:
           name: Unit tests results
-          path: './test*.xml'
+          path: test-report.xml
           list-suites: 'all'
           list-tests: 'all'
           fail-on-error: 'true'
