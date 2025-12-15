@@ -37,7 +37,7 @@ jobs:
       # Cache DerivedData
       - name: Cache DerivedData
         if: always()
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ env.DERIVED_DATA_PATH }}
           key: ${{ runner.os }}-derived-data-${{ env.XCODE_VERSION }}-${{ hashFiles('**/Podfile.lock', '**/*.pbxproj') }}
@@ -47,7 +47,7 @@ jobs:
       # Cache Swift Packages
       - name: Cache Swift Packages
         if: always()
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: SourcePackages
           # Look for Package.resolved inside your workspace or project
@@ -77,29 +77,62 @@ jobs:
       - name: List available simulators
         run: xcrun simctl list devices
 
-      # Run unit tests
-      - name: Run tests
+      # Build the SDK for testing
+      - name: Build for testing
         run: |
-          set -o pipefail && xcodebuild test \
-          -scheme ${{ env.SCHEME }} \
-          -workspace ${{ env.WORKSPACE }} \
-          -destination '${{ env.DESTINATION }}' \
-          -derivedDataPath ${{ env.DERIVED_DATA_PATH }} \
-          -clonedSourcePackagesDirPath SourcePackages \
-          -parallel-testing-enabled NO \
-          -retry-tests-on-failure \
-          COMPILER_INDEX_STORE_ENABLE=NO \
-          -resultBundlePath TestResults | xcbeautify
+          xcodebuild build-for-testing \
+            -scheme "${{ env.SCHEME }}" \
+            -workspace "${{ env.WORKSPACE }}" \
+            -destination '${{ env.DESTINATION }}' \
+            -derivedDataPath ${{ env.DERIVED_DATA_PATH }} \
+            -clonedSourcePackagesDirPath SourcePackages \
+            COMPILER_INDEX_STORE_ENABLE=NO | xcbeautify
 
-          # -configuration ${{ env.CONFIGURATION}} \
-          # TEST_TARGET_SIGNING=YES \
-          # -enableCodeCoverage YES \
-          # -resultBundlePath TestResults \
-          # -disable-concurrent-destination-testing \
-          # -retry-tests-on-failure 
+      # Run the unit tests without building
+      - name: Build for testing
+        run: |
+          set -o pipefail
+          xcodebuild test-without-building \
+            -scheme "${{ env.SCHEME }}" \
+            -workspace "${{ env.WORKSPACE }}" \
+            -destination '${{ env.DESTINATION }}' \
+            -derivedDataPath ${{ env.DERIVED_DATA_PATH }} \
+            -resultBundlePath TestResults.xcresult \
+            -parallel-testing-enabled NO \
+            -retry-tests-on-failure | xcbeautify
+
+      # # Run unit tests
+      # - name: Run tests
+      #   run: |
+      #     set -o pipefail && xcodebuild test \
+      #     -scheme ${{ env.SCHEME }} \
+      #     -workspace ${{ env.WORKSPACE }} \
+      #     -destination '${{ env.DESTINATION }}' \
+      #     -derivedDataPath ${{ env.DERIVED_DATA_PATH }} \
+      #     -clonedSourcePackagesDirPath SourcePackages \
+      #     -parallel-testing-enabled NO \
+      #     -retry-tests-on-failure \
+      #     COMPILER_INDEX_STORE_ENABLE=NO \
+      #     -resultBundlePath TestResults | xcbeautify
+
+      #     # -configuration ${{ env.CONFIGURATION}} \
+      #     # TEST_TARGET_SIGNING=YES \
+      #     # -enableCodeCoverage YES \
+      #     # -resultBundlePath TestResults \
+      #     # -disable-concurrent-destination-testing \
+      #     # -retry-tests-on-failure 
           
+      # Upload xcresult for debugging purposes
+      - name: Upload xcresult (debug)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults.xcresult
+          path: TestResults.xcresult
+
       # Convert test results to JUnit format
       - name: Convert Test Results to JUnit
+        if: always()
         run: | 
           xcresultparser -o junit TestResults.xcresult > test-report.xml
           ls -la test-report.xml
@@ -107,7 +140,7 @@ jobs:
 
       # Publish the test results
       - name: Publish test results
-        if: success() || failure()
+        if: always()
         uses: dorny/test-reporter@v1
         with:
           name: Unit tests results
