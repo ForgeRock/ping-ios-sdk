@@ -30,19 +30,19 @@ jobs:
           fetch-depth: 0
 
       # Set target Xcode version. For more details and options see:
-      # https://github.com/actions/runner-images/blob/main/images/macos/macos-15-Readme.md
+      # https://github.com/actions/runner-images/blob/main/images/macos/macos-15-arm64-Readme.md
       - name: Select Xcode
         run: sudo xcode-select -switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app && /usr/bin/xcodebuild -version
 
-      # Cache DerivedData
-      - name: Cache DerivedData
-        if: always()
-        uses: actions/cache@v5
-        with:
-          path: ${{ env.DERIVED_DATA_PATH }}
-          key: ${{ runner.os }}-derived-data-${{ env.XCODE_VERSION }}-${{ hashFiles('**/Podfile.lock', '**/*.pbxproj') }}
-          restore-keys: |
-            ${{ runner.os }}-derived-data-${{ env.XCODE_VERSION }}-
+      # # Cache DerivedData
+      # - name: Cache DerivedData
+      #   if: always()
+      #   uses: actions/cache@v5
+      #   with:
+      #     path: ${{ env.DERIVED_DATA_PATH }}
+      #     key: ${{ runner.os }}-derived-data-${{ env.XCODE_VERSION }}-${{ hashFiles('**/Podfile.lock', '**/*.pbxproj') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-derived-data-${{ env.XCODE_VERSION }}-
 
       # Cache Swift Packages
       - name: Cache Swift Packages
@@ -64,22 +64,24 @@ jobs:
           chmod +x product/xcresultparser
           sudo mv product/xcresultparser /usr/local/bin/
 
-      # # List available simulators
-      # - name: List available simulators
-      #   run: xcrun simctl list devices
+      - name: Reset simulators
+        run: |
+          xcrun simctl shutdown all || true
+          xcrun simctl erase all || true
+          
+      # List available simulators
+      - name: List available simulators
+        run: xcrun simctl list devices
 
       # Pre-boot the simulator to avoid timeouts during xcodebuild
       - name: Pre-boot Simulator
         run: |
           xcrun simctl bootstatus "iPhone SE (3rd generation)" -b || true
 
-      # # List all simulators (shutdown and booted)
-      - name: List available simulators
-        run: xcrun simctl list devices
-
       # Build the SDK for testing
       - name: Build for testing
         run: |
+          set -o pipefail
           xcodebuild build-for-testing \
             -scheme "${{ env.SCHEME }}" \
             -workspace "${{ env.WORKSPACE }}" \
@@ -89,7 +91,7 @@ jobs:
             COMPILER_INDEX_STORE_ENABLE=NO | xcbeautify
 
       # Run the unit tests without building
-      - name: Build for testing
+      - name: Run unit tests
         run: |
           set -o pipefail
           xcodebuild test-without-building \
@@ -99,6 +101,7 @@ jobs:
             -derivedDataPath ${{ env.DERIVED_DATA_PATH }} \
             -resultBundlePath TestResults.xcresult \
             -parallel-testing-enabled NO \
+            -parallel-testing-worker-count 1 \
             -retry-tests-on-failure | xcbeautify
 
       # # Run unit tests
@@ -133,10 +136,7 @@ jobs:
       # Convert test results to JUnit format
       - name: Convert Test Results to JUnit
         if: always()
-        run: | 
-          xcresultparser -o junit TestResults.xcresult > test-report.xml
-          ls -la test-report.xml
-          cat test-report.xml
+        run: xcresultparser -o junit TestResults.xcresult > test-report.xml
 
       # Publish the test results
       - name: Publish test results
@@ -149,7 +149,6 @@ jobs:
           list-tests: 'all'
           fail-on-error: 'true'
           reporter: java-junit
-
       
       # Send slack notification with result status
       - uses: 8398a7/action-slack@v3
