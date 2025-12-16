@@ -50,8 +50,8 @@ struct MyApp: App {
 // MARK: - Menu Section Enum
 enum MenuSection: CaseIterable, Identifiable {
     case authentication
-    case mfa
     case userManagement
+    case mfa
     case developerTools
 
     var id: String { title }
@@ -59,8 +59,8 @@ enum MenuSection: CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .authentication: return "Authentication"
-        case .mfa: return "MFA"
         case .userManagement: return "User Management"
+        case .mfa: return "MFA"
         case .developerTools: return "Developer Tools"
         }
     }
@@ -69,10 +69,10 @@ enum MenuSection: CaseIterable, Identifiable {
         switch self {
         case .authentication:
             return [.davinci, .journey, .oidc]
-        case .mfa:
-            return [.qrScanner, .oathAccounts, .pushAccounts, .pushNotifications]
         case .userManagement:
             return [.token, .user, .deviceManagement, .logout]
+        case .mfa:
+            return [.qrScanner, .oathAccounts, .pushAccounts, .pushNotifications]
         case .developerTools:
             return [.deviceInfo, .logger, .storage, .bindingKeys, .configuration]
         }

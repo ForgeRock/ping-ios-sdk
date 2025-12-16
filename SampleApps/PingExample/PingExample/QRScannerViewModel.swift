@@ -56,18 +56,11 @@ class QRScannerViewModel: ObservableObject {
     }
 
     private func registerOathAccount(uri: String, publishState: Bool = true) async throws -> String {
-        guard let oathClient = ConfigurationManager.shared.oathClient else {
+        if ConfigurationManager.shared.oathClient == nil {
             try await ConfigurationManager.shared.initializeOathClient()
-            guard let oathClient = ConfigurationManager.shared.oathClient else {
-                throw NSError(domain: "QRScanner", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to initialize OATH client"])
-            }
-            let credential = try await oathClient.addCredentialFromUri(uri)
-            let message = "Successfully registered OATH account: \(credential.issuer)"
-            if publishState {
-                successMessage = message
-                registrationSuccess = true
-            }
-            return message
+        }
+        guard let oathClient = ConfigurationManager.shared.oathClient else {
+            throw NSError(domain: "ManualRegistration", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to initialize OATH client"])
         }
 
         let credential = try await oathClient.addCredentialFromUri(uri)
@@ -80,18 +73,11 @@ class QRScannerViewModel: ObservableObject {
     }
 
     private func registerPushAccount(uri: String, publishState: Bool = true) async throws -> String {
-        guard let pushClient = ConfigurationManager.shared.pushClient else {
+        if ConfigurationManager.shared.pushClient == nil {
             try await ConfigurationManager.shared.initializePushClient()
-            guard let pushClient = ConfigurationManager.shared.pushClient else {
-                throw NSError(domain: "QRScanner", code: -2, userInfo: [NSLocalizedDescriptionKey: "Failed to initialize Push client"])
-            }
-            let credential = try await pushClient.addCredentialFromUri(uri)
-            let message = "Successfully registered Push account: \(credential.issuer)"
-            if publishState {
-                successMessage = message
-                registrationSuccess = true
-            }
-            return message
+        }
+        guard let pushClient = ConfigurationManager.shared.pushClient else {
+            throw NSError(domain: "QRScanner", code: -2, userInfo: [NSLocalizedDescriptionKey: "Failed to initialize Push client"])
         }
 
         let credential = try await pushClient.addCredentialFromUri(uri)

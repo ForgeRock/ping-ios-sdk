@@ -17,6 +17,7 @@ struct PushNotificationsView: View {
     @Binding var path: [MenuItem]
     @StateObject private var viewModel = PushNotificationsViewModel()
     @State private var selectedTab = 0
+    @State private var selectedNotification: PushNotification?
 
     var body: some View {
         ZStack {
@@ -56,6 +57,14 @@ struct PushNotificationsView: View {
         .refreshable {
             await viewModel.loadNotifications()
         }
+        .sheet(item: $selectedNotification) { notification in
+            NavigationStack {
+                PushNotificationDetailView(
+                    notification: notification,
+                    credential: viewModel.credential(for: notification)
+                )
+            }
+        }
         .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
             Button("OK") {
                 viewModel.errorMessage = nil
@@ -94,7 +103,12 @@ struct PushNotificationsView: View {
                     emptyHistoryView
                 } else {
                     ForEach(viewModel.allNotifications, id: \.id) { notification in
-                        NotificationHistoryCard(notification: notification)
+                        Button {
+                            selectedNotification = notification
+                        } label: {
+                            NotificationHistoryCard(notification: notification, viewModel: viewModel)
+                        }
+                        .buttonStyle(.plain)
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 20)
@@ -147,6 +161,7 @@ struct PushNotificationsView: View {
 
 struct NotificationHistoryCard: View {
     let notification: PushNotification
+    let viewModel: PushNotificationsViewModel
     
     // Determine status following Android logic:
     // 1. approved -> APPROVED
@@ -181,6 +196,20 @@ struct NotificationHistoryCard: View {
                 Text(notification.respondedAt ?? notification.createdAt, style: .relative)
                     .font(.system(size: 12))
                     .foregroundColor(.secondary)
+            }
+
+            // Credential info
+            if let credential = viewModel.credential(for: notification) {
+                HStack(spacing: 4) {
+                    Text(credential.displayIssuer)
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.primary)
+                    Text("•")
+                        .foregroundColor(.secondary)
+                    Text(credential.displayAccountName)
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
+                }
             }
 
             if let message = notification.messageText {

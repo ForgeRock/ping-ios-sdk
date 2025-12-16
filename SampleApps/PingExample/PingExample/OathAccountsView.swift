@@ -82,7 +82,11 @@ struct OathAccountsView: View {
                 }
             }
         }
-        .sheet(item: $selectedAccount) { account in
+        .sheet(item: $selectedAccount, onDismiss: {
+            Task {
+                await viewModel.loadAccounts()
+            }
+        }) { account in
             NavigationStack {
                 OathAccountDetailView(credential: account)
             }
@@ -93,6 +97,12 @@ struct OathAccountsView: View {
         }
         .refreshable {
             await viewModel.loadAccounts()
+        }
+        .onDisappear {
+            // Stop tracking when view disappears
+            Task { @MainActor in
+                ConfigurationManager.shared.oathTimerService?.stopTracking()
+            }
         }
         .onChange(of: viewModel.errorMessage) { newError in
             showError = newError != nil
@@ -165,16 +175,18 @@ struct OathAccountsView: View {
     private var accountsList: some View {
         VStack(spacing: 16) {
             ForEach(viewModel.accounts, id: \.id) { account in
-                OathAccountCardView(credential: account) {
-                    selectedAccount = account
-                }
-                .contextMenu {
-                    Button(role: .destructive) {
-                        Task {
-                            await viewModel.deleteAccount(id: account.id)
+                if let timerService = ConfigurationManager.shared.oathTimerService {
+                    OathAccountCardView(credential: account, timerService: timerService) {
+                        selectedAccount = account
+                    }
+                    .contextMenu {
+                        Button(role: .destructive) {
+                            Task {
+                                await viewModel.deleteAccount(id: account.id)
+                            }
+                        } label: {
+                            Label("Delete", systemImage: "trash")
                         }
-                    } label: {
-                        Label("Delete", systemImage: "trash")
                     }
                 }
             }

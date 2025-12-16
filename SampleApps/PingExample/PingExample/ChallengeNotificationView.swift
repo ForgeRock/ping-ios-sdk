@@ -53,6 +53,21 @@ struct ChallengeNotificationView: View {
                 }
             }
 
+            // Credential info
+            if let credential = viewModel.credential(for: notification) {
+                HStack(spacing: 4) {
+                    Text(credential.displayIssuer)
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundColor(.primary)
+                    Text("•")
+                        .foregroundColor(.secondary)
+                    Text(credential.displayAccountName)
+                        .font(.system(size: 15))
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
             // Message
             if let message = notification.messageText {
                 Text(message)

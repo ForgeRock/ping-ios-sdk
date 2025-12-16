@@ -9,21 +9,22 @@
 //
 
 import Foundation
+import PingTamperDetector
 
 /// Policy that checks for device tampering indicators.
 ///
-/// This is currently a placeholder implementation that always returns true.
-/// In the future, this will be updated to use actual device tampering detection
-/// similar to the legacy FRRootDetector with threshold scoring.
+/// Uses the TamperDetector module to analyze the device for signs of jailbreaking
+/// and compares the result against a configurable threshold.
 ///
 /// JSON format: {"deviceTampering": {"score": 0.8}}
 ///
 /// The score threshold can be configured in the policy data. If the device
-/// tampering score exceeds the threshold, the policy will fail.
+/// tampering score exceeds or equals the threshold, the policy will fail.
+/// Default threshold is 0.8 (matching Android implementation).
 public struct DeviceTamperingPolicy: MfaPolicy, Sendable {
 
     public static let policyName = "deviceTampering"
-    private static let defaultThreshold: Double = 0.5
+    private static let defaultThreshold: Double = 0.8
 
     public var name: String {
         return Self.policyName
@@ -32,22 +33,19 @@ public struct DeviceTamperingPolicy: MfaPolicy, Sendable {
     public init() {}
 
     public func evaluate(data: [String: Any]?) async throws -> Bool {
-        // TODO: Replace with actual device tampering detection
-        // This is a placeholder implementation that always returns true
-
         // Get the threshold from policy configuration data
+        // Default to 0.8 to match Android implementation
         let threshold = (data?["score"] as? Double) ?? Self.defaultThreshold
 
-        // Placeholder: simulate device tampering score calculation
-        // In real implementation, this would check for:
-        // - Jailbreak detection
-        // - Debug mode detection
-        // - Simulator detection
-        // - Hook framework detection (Frida, Cycript, etc.)
-        // - Other tampering indicators
-        let deviceTamperingScore = 0.0 // Always safe for now
+        // Use TamperDetector to analyze device for tampering
+        // Must call on main actor since TamperDetector requires it
+        let deviceTamperingScore = await MainActor.run {
+            let tamperDetector = TamperDetector()
+            return tamperDetector.analyze()
+        }
 
-        // Return true if device tampering score is below threshold
+        // Return true (compliant) if device tampering score is below threshold
+        // Return false (non-compliant) if score meets or exceeds threshold
         return deviceTamperingScore < threshold
     }
 }

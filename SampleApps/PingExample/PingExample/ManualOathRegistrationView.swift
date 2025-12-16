@@ -81,8 +81,7 @@ struct ManualOathRegistrationView: View {
 
             FormField(title: "Account Name", text: $accountName, placeholder: "e.g., user@example.com")
 
-            FormField(title: "Secret Key", text: $secretKey, placeholder: "Base32-encoded secret")
-                .autocapitalization(.allCharacters)
+            FormField(title: "Secret Key", text: $secretKey, placeholder: "Base32-encoded secret", autocapitalization: .characters)
 
             Divider()
 
@@ -189,23 +188,11 @@ struct ManualOathRegistrationView: View {
         errorMessage = nil
 
         do {
-            guard let client = ConfigurationManager.shared.oathClient else {
+            if ConfigurationManager.shared.oathClient == nil {
                 try await ConfigurationManager.shared.initializeOathClient()
-                guard let client = ConfigurationManager.shared.oathClient else {
-                    throw NSError(domain: "ManualRegistration", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to initialize OATH client"])
-                }
-                let credential = OathCredential(
-                    issuer: issuer,
-                    accountName: accountName,
-                    oathType: oathType,
-                    oathAlgorithm: algorithm,
-                    digits: digits,
-                    period: period,
-                    secretKey: secretKey.uppercased()
-                )
-                _ = try await client.saveCredential(credential)
-                isPresented = false
-                return
+            }
+            guard let client = ConfigurationManager.shared.oathClient else {
+                throw NSError(domain: "ManualRegistration", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to initialize OATH client"])
             }
 
             let credential = OathCredential(
@@ -233,6 +220,7 @@ struct FormField: View {
     let title: String
     @Binding var text: String
     let placeholder: String
+    var autocapitalization: TextInputAutocapitalization = .sentences
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -242,11 +230,7 @@ struct FormField: View {
 
             TextField(placeholder, text: $text)
                 .textFieldStyle(.roundedBorder)
+                .textInputAutocapitalization(autocapitalization)
         }
-    }
-
-    func autocapitalization(_ style: TextInputAutocapitalization) -> some View {
-        var view = self
-        return view
     }
 }

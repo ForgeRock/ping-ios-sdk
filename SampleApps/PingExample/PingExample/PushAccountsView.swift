@@ -16,6 +16,7 @@ import PingPush
 struct PushAccountsView: View {
     @Binding var path: [MenuItem]
     @StateObject private var viewModel = PushAccountsViewModel()
+    @State private var selectedAccount: PushCredential?
 
     var body: some View {
         ZStack {
@@ -62,6 +63,15 @@ struct PushAccountsView: View {
             await viewModel.initialize()
             await viewModel.loadAccounts()
             await viewModel.loadDeviceToken()
+        }
+        .sheet(item: $selectedAccount, onDismiss: {
+            Task {
+                await viewModel.loadAccounts()
+            }
+        }) { account in
+            NavigationStack {
+                PushAccountDetailView(credential: account)
+            }
         }
         .onAppear {
             // Reload accounts and token when view appears (e.g., after returning from QR scanner)
@@ -159,16 +169,18 @@ struct PushAccountsView: View {
     private var accountsList: some View {
         VStack(spacing: 16) {
             ForEach(viewModel.accounts, id: \.id) { account in
-                PushAccountCardView(credential: account)
-                    .contextMenu {
-                        Button(role: .destructive) {
-                            Task {
-                                await viewModel.deleteAccount(id: account.id)
-                            }
-                        } label: {
-                            Label("Delete", systemImage: "trash")
+                PushAccountCardView(credential: account) {
+                    selectedAccount = account
+                }
+                .contextMenu {
+                    Button(role: .destructive) {
+                        Task {
+                            await viewModel.deleteAccount(id: account.id)
                         }
+                    } label: {
+                        Label("Delete", systemImage: "trash")
                     }
+                }
             }
         }
     }

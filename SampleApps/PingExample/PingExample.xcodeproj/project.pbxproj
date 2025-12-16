@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B18D60D2EECB4FF0004F205 /* PushAccountDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B18D60C2EECB4FF0004F205 /* PushAccountDetailView.swift */; };
+		1B18D6412EECC30F0004F205 /* JsonExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B18D6402EECC30F0004F205 /* JsonExportView.swift */; };
+		1B18D6432EECC33C0004F205 /* PushNotificationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B18D6422EECC33C0004F205 /* PushNotificationDetailView.swift */; };
+		1B18D6452EF0AEEF0004F205 /* OathTimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B18D6442EF0AEEF0004F205 /* OathTimerService.swift */; };
+		1B18D64A2EF0E7000004F205 /* PolicySelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B18D6492EF0E7000004F205 /* PolicySelectionView.swift */; };
 		1B2933CD2E7DF429004D1D38 /* PingOath.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B2933B92E7DF20B004D1D38 /* PingOath.framework */; };
 		1B2933CE2E7DF429004D1D38 /* PingOath.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B2933B92E7DF20B004D1D38 /* PingOath.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1B7A9AD02ED5316F00989A55 /* PingNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7A9AC22ED52F6600989A55 /* PingNetwork.framework */; };
@@ -590,6 +595,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1B18D60C2EECB4FF0004F205 /* PushAccountDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushAccountDetailView.swift; sourceTree = "<group>"; };
+		1B18D6402EECC30F0004F205 /* JsonExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonExportView.swift; sourceTree = "<group>"; };
+		1B18D6422EECC33C0004F205 /* PushNotificationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationDetailView.swift; sourceTree = "<group>"; };
+		1B18D6442EF0AEEF0004F205 /* OathTimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OathTimerService.swift; sourceTree = "<group>"; };
+		1B18D6492EF0E7000004F205 /* PolicySelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolicySelectionView.swift; sourceTree = "<group>"; };
 		1B29339F2E7DF20B004D1D38 /* Oath.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Oath.xcodeproj; path = ../../Oath/Oath.xcodeproj; sourceTree = SOURCE_ROOT; };
 		1B7A9A902ED52F6500989A55 /* Network.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Network.xcodeproj; path = ../../Network/Network.xcodeproj; sourceTree = SOURCE_ROOT; };
 		1B7A9C732EE7BD2A00989A55 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -913,15 +923,20 @@
 				1B7A9C792EE7BD2A00989A55 /* OathAccountDetailView.swift */,
 				1B7A9C7A2EE7BD2A00989A55 /* OathAccountsView.swift */,
 				1B7A9C7B2EE7BD2A00989A55 /* OathAccountsViewModel.swift */,
+				1B18D6442EF0AEEF0004F205 /* OathTimerService.swift */,
+				1B18D6492EF0E7000004F205 /* PolicySelectionView.swift */,
 				1B7A9C7C2EE7BD2A00989A55 /* PushAccountCardView.swift */,
+				1B18D60C2EECB4FF0004F205 /* PushAccountDetailView.swift */,
 				1B7A9C7D2EE7BD2A00989A55 /* PushAccountsView.swift */,
 				1B7A9C7E2EE7BD2A00989A55 /* PushAccountsViewModel.swift */,
 				1B7A9C7F2EE7BD2A00989A55 /* PushNotificationCardView.swift */,
+				1B18D6422EECC33C0004F205 /* PushNotificationDetailView.swift */,
 				1B7A9C802EE7BD2A00989A55 /* PushNotificationsView.swift */,
 				1B7A9C812EE7BD2A00989A55 /* PushNotificationsViewModel.swift */,
 				1B7A9C822EE7BD2A00989A55 /* QRScannerContainerView.swift */,
 				1B7A9C832EE7BD2A00989A55 /* QRScannerView.swift */,
 				1B7A9C842EE7BD2A00989A55 /* QRScannerViewModel.swift */,
+				1B18D6402EECC30F0004F205 /* JsonExportView.swift */,
 				3A5441342BCDF10B00385131 /* Assets.xcassets */,
 				3A5441362BCDF10B00385131 /* Preview Content */,
 			);
@@ -1897,6 +1912,7 @@
 				3A8532332BE2D5D800F8619D /* DavinciView.swift in Sources */,
 				EC4DD32F2EABD36E00ECC4E1 /* DeviceBindingCallbackView.swift in Sources */,
 				EC4DD3302EABD36E00ECC4E1 /* DeviceSigningVerifierCallbackView.swift in Sources */,
+				1B18D6412EECC30F0004F205 /* JsonExportView.swift in Sources */,
 				A5EFA9812D360ACC00F771FE /* ContinueNodeView.swift in Sources */,
 				EC92B3882DA02D7400E4246D /* DeviceAuthenticationView.swift in Sources */,
 				EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */,
@@ -1913,6 +1929,7 @@
 				3A5441332BCDF10900385131 /* ContentView.swift in Sources */,
 				A5EFA9792D35F62E00F771FE /* RadioButtonView.swift in Sources */,
 				EC6F65A92EB240C800D4686D /* BindingKeysViewModel.swift in Sources */,
+				1B18D6432EECC33C0004F205 /* PushNotificationDetailView.swift in Sources */,
 				EC6F65AA2EB240C800D4686D /* BindingKeysView.swift in Sources */,
 				A5768D202E29BFE7000290EE /* PingOneProtectInitializeCallbackView.swift in Sources */,
 				A5E9AED42D30385D000533ED /* LogOutViewModel.swift in Sources */,
@@ -1922,6 +1939,7 @@
 				A5768D102E2965B8000290EE /* ConfirmationCallbackView.swift in Sources */,
 				EC0816C12D4A833400F1AD02 /* ConfigurationViewModel.swift in Sources */,
 				A5EFA9772D35F2FA00F771FE /* CheckBoxView.swift in Sources */,
+				1B18D64A2EF0E7000004F205 /* PolicySelectionView.swift in Sources */,
 				ECC52B0D2E81AF5B00C468C7 /* ScenePhaseManager.swift in Sources */,
 				A5E9AEDF2D30CA34000533ED /* ErrorMessageView.swift in Sources */,
 				A5E9AED22D30380B000533ED /* UserInfoViewModel.swift in Sources */,
@@ -1941,6 +1959,8 @@
 				ECBF06A42D5391690066A3BD /* SocialButtonView.swift in Sources */,
 				A5768D0C2E2959CC000290EE /* TextInputCallbackView.swift in Sources */,
 				A5E9AED82D303962000533ED /* StorageView.swift in Sources */,
+				1B18D60D2EECB4FF0004F205 /* PushAccountDetailView.swift in Sources */,
+				1B18D6452EF0AEEF0004F205 /* OathTimerService.swift in Sources */,
 				EC92B3932DA0422700E4246D /* DeviceCardView.swift in Sources */,
 				ECF7EB882E464F31002A5E8E /* SelectIdpCallbackView.swift in Sources */,
 				ECE2B8812DB7DBEC00E2C51E /* PhoneNumberView.swift in Sources */,

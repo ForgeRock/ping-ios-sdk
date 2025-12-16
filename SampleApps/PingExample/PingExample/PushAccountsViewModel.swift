@@ -86,4 +86,68 @@ class PushAccountsViewModel: ObservableObject {
 
         isLoading = false
     }
+    
+    func updateAccount(credential: PushCredential) async {
+        guard let client = ConfigurationManager.shared.pushClient else {
+            errorMessage = "Push client not initialized"
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            _ = try await client.saveCredential(credential)
+            // Reload accounts to refresh the list
+            await loadAccounts()
+        } catch {
+            errorMessage = "Failed to update account: \(error.localizedDescription)"
+        }
+
+        isLoading = false
+    }
+    
+    func lockAccount(credential: PushCredential, policyName: String) async {
+        guard let client = ConfigurationManager.shared.pushClient else {
+            errorMessage = "Push client not initialized"
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            var lockedCredential = credential
+            lockedCredential.lockCredential(policyName: policyName)
+            _ = try await client.saveCredential(lockedCredential)
+            // Reload accounts to refresh the list
+            await loadAccounts()
+        } catch {
+            errorMessage = "Failed to lock account: \(error.localizedDescription)"
+        }
+
+        isLoading = false
+    }
+    
+    func unlockAccount(credential: PushCredential) async {
+        guard let client = ConfigurationManager.shared.pushClient else {
+            errorMessage = "Push client not initialized"
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            var unlockedCredential = credential
+            unlockedCredential.unlockCredential()
+            _ = try await client.saveCredential(unlockedCredential)
+            // Reload accounts to refresh the list
+            await loadAccounts()
+        } catch {
+            errorMessage = "Failed to unlock account: \(error.localizedDescription)"
+        }
+
+        isLoading = false
+    }
 }

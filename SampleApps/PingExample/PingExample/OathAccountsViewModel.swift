@@ -43,6 +43,11 @@ class OathAccountsViewModel: ObservableObject {
 
         do {
             accounts = try await client.getCredentials()
+            
+            // Restart timer service with updated credentials
+            if let timerService = ConfigurationManager.shared.oathTimerService {
+                await timerService.startTracking(credentials: accounts)
+            }
         } catch {
             errorMessage = "Failed to load accounts: \(error.localizedDescription)"
         }
@@ -68,6 +73,70 @@ class OathAccountsViewModel: ObservableObject {
             }
         } catch {
             errorMessage = "Failed to delete account: \(error.localizedDescription)"
+        }
+
+        isLoading = false
+    }
+    
+    func updateAccount(credential: OathCredential) async {
+        guard let client = ConfigurationManager.shared.oathClient else {
+            errorMessage = "OATH client not initialized"
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            _ = try await client.saveCredential(credential)
+            // Reload accounts to refresh the list
+            await loadAccounts()
+        } catch {
+            errorMessage = "Failed to update account: \(error.localizedDescription)"
+        }
+
+        isLoading = false
+    }
+    
+    func lockAccount(credential: OathCredential, policyName: String) async {
+        guard let client = ConfigurationManager.shared.oathClient else {
+            errorMessage = "OATH client not initialized"
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            var lockedCredential = credential
+            lockedCredential.lockCredential(policyName: policyName)
+            _ = try await client.saveCredential(lockedCredential)
+            // Reload accounts to refresh the list
+            await loadAccounts()
+        } catch {
+            errorMessage = "Failed to lock account: \(error.localizedDescription)"
+        }
+
+        isLoading = false
+    }
+    
+    func unlockAccount(credential: OathCredential) async {
+        guard let client = ConfigurationManager.shared.oathClient else {
+            errorMessage = "OATH client not initialized"
+            return
+        }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            var unlockedCredential = credential
+            unlockedCredential.unlockCredential()
+            _ = try await client.saveCredential(unlockedCredential)
+            // Reload accounts to refresh the list
+            await loadAccounts()
+        } catch {
+            errorMessage = "Failed to unlock account: \(error.localizedDescription)"
         }
 
         isLoading = false

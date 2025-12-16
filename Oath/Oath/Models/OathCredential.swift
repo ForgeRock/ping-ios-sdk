@@ -166,6 +166,30 @@ public struct OathCredential: Codable, Identifiable, Sendable, CustomStringConve
     }
 
     
+    // MARK: - Policy Methods
+    
+    /// Lock this credential due to policy violations.
+    ///
+    /// Locked credentials cannot be used for code generation until they are unlocked.
+    /// This is typically enforced by policy evaluators checking for jailbreak,
+    /// device compromise, or other security violations.
+    ///
+    /// - Parameter policyName: The name of the policy that caused the lock.
+    public mutating func lockCredential(policyName: String) {
+        isLocked = true
+        lockingPolicy = policyName
+    }
+    
+    /// Unlock this credential.
+    ///
+    /// This removes any locking policy information and allows the credential
+    /// to be used for code generation again.
+    public mutating func unlockCredential() {
+        isLocked = false
+        lockingPolicy = nil
+    }
+
+    
     // MARK: - Validation
 
     /// Validates the credential parameters.

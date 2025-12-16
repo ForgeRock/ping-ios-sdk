@@ -18,6 +18,7 @@ import PingPush
 class PushNotificationsViewModel: ObservableObject {
     @Published var pendingNotifications: [PushNotification] = []
     @Published var allNotifications: [PushNotification] = []
+    @Published var credentials: [PushCredential] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
 
@@ -43,6 +44,7 @@ class PushNotificationsViewModel: ObservableObject {
         errorMessage = nil
 
         do {
+            credentials = try await client.getCredentials()
             pendingNotifications = try await client.getPendingNotifications()
             allNotifications = try await client.getAllNotifications()
         } catch {
@@ -50,6 +52,10 @@ class PushNotificationsViewModel: ObservableObject {
         }
 
         isLoading = false
+    }
+
+    func credential(for notification: PushNotification) -> PushCredential? {
+        credentials.first { $0.id == notification.credentialId }
     }
 
     func approveNotification(id: String) async {

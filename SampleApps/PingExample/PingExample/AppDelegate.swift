@@ -47,6 +47,27 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         }
     }
 
+    // MARK: - Helper Methods
+
+    /// Ensures PushClient is initialized and returns it
+    /// - Returns: Initialized PushClient instance
+    /// - Throws: Error if initialization fails
+    private func getInitializedPushClient() async throws -> PushClient {
+        if ConfigurationManager.shared.pushClient == nil {
+            try await ConfigurationManager.shared.initializePushClient()
+        }
+
+        guard let client = ConfigurationManager.shared.pushClient else {
+            throw NSError(
+                domain: "AppDelegate",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Failed to initialize PushClient"]
+            )
+        }
+
+        return client
+    }
+
     // MARK: - Remote Notification Registration
 
     func application(
@@ -59,14 +80,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         // Store device token in PushClient
         Task {
             do {
-                if ConfigurationManager.shared.pushClient == nil {
-                    try await ConfigurationManager.shared.initializePushClient()
-                }
-
-                if let client = ConfigurationManager.shared.pushClient {
-                    _ = try await client.setDeviceToken(tokenString)
-                    print("Device token registered with PushClient")
-                }
+                let client = try await getInitializedPushClient()
+                _ = try await client.setDeviceToken(tokenString)
+                print("Device token registered with PushClient")
             } catch {
                 print("Failed to register device token: \(error.localizedDescription)")
             }
@@ -94,15 +110,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         // Process the notification through PushClient
         Task {
             do {
-                // Ensure PushClient is initialized
-                if ConfigurationManager.shared.pushClient == nil {
-                    try await ConfigurationManager.shared.initializePushClient()
-                }
-
-                guard let client = ConfigurationManager.shared.pushClient else {
-                    print("Failed to initialize PushClient for foreground notification")
-                    return
-                }
+                let client = try await getInitializedPushClient()
 
                 // Process the notification - PushClient automatically extracts APNs payload
                 if let pushNotification = try await client.processNotification(userInfo: userInfo) {
@@ -131,15 +139,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         // Process the notification through PushClient
         Task {
             do {
-                // Ensure PushClient is initialized
-                if ConfigurationManager.shared.pushClient == nil {
-                    try await ConfigurationManager.shared.initializePushClient()
-                }
-
-                guard let client = ConfigurationManager.shared.pushClient else {
-                    print("Failed to initialize PushClient")
-                    return
-                }
+                let client = try await getInitializedPushClient()
 
                 // Process the notification - PushClient automatically extracts APNs payload
                 if let notification = try await client.processNotification(userInfo: userInfo) {

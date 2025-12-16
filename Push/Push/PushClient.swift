@@ -291,6 +291,8 @@ public final class PushClient: @unchecked Sendable {
         } else {
             // No APNs wrapper - use converted data as-is
             messageData = converted
+            
+            logger?.d("No 'aps' dictionary found in notification payload; processing raw data")
         }
         
         return try await processNotification(messageData: messageData)

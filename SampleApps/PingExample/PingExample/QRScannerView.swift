@@ -102,6 +102,19 @@ class QRScannerViewController: UIViewController {
         super.viewDidLayoutSubviews()
         previewLayer?.frame = view.layer.bounds
         overlayView.frame = view.bounds
+        updateOverlayMask()
+    }
+    
+    private func updateOverlayMask() {
+        let path = UIBezierPath(rect: overlayView.bounds)
+        let scanAreaPath = UIBezierPath(roundedRect: CGRect(x: overlayView.bounds.midX - 125, y: overlayView.bounds.midY - 125, width: 250, height: 250), cornerRadius: 12)
+        path.append(scanAreaPath)
+        path.usesEvenOddFillRule = true
+
+        let maskLayer = CAShapeLayer()
+        maskLayer.path = path.cgPath
+        maskLayer.fillRule = .evenOdd
+        overlayView.layer.mask = maskLayer
     }
 
     private func setupCamera() {
@@ -175,15 +188,7 @@ class QRScannerViewController: UIViewController {
             scanArea.heightAnchor.constraint(equalToConstant: 250)
         ])
 
-        let path = UIBezierPath(rect: overlayView.bounds)
-        let scanAreaPath = UIBezierPath(roundedRect: CGRect(x: view.bounds.midX - 125, y: view.bounds.midY - 125, width: 250, height: 250), cornerRadius: 12)
-        path.append(scanAreaPath)
-        path.usesEvenOddFillRule = true
-
-        let maskLayer = CAShapeLayer()
-        maskLayer.path = path.cgPath
-        maskLayer.fillRule = .evenOdd
-        overlayView.layer.mask = maskLayer
+        updateOverlayMask()
 
         let label = UILabel()
         label.text = "Scan QR Code"

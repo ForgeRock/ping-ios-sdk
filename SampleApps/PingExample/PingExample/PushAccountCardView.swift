@@ -15,29 +15,49 @@ import PingPush
 /// Displays information about a push credential.
 struct PushAccountCardView: View {
     let credential: PushCredential
+    let onTap: () -> Void
 
     var body: some View {
+        Button(action: onTap) {
+            cardContent
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    private var cardContent: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 12) {
-                Image(systemName: "bell.badge.fill")
-                    .font(.system(size: 20))
-                    .foregroundColor(.white)
-                    .frame(width: 40, height: 40)
-                    .background(
-                        LinearGradient(
-                            colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+                ZStack(alignment: .bottomTrailing) {
+                    Image(systemName: "bell.badge.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(.white)
+                        .frame(width: 40, height: 40)
+                        .background(
+                            LinearGradient(
+                                colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
                         )
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    
+                    if credential.isLocked {
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 10))
+                            .foregroundColor(.white)
+                            .padding(3)
+                            .background(Color.red)
+                            .clipShape(Circle())
+                            .offset(x: 4, y: 4)
+                    }
+                }
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(credential.issuer)
+                    Text(credential.displayIssuer)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.primary)
 
-                    Text(credential.accountName)
+                    Text(credential.displayAccountName)
                         .font(.system(size: 13))
                         .foregroundColor(.secondary)
                 }

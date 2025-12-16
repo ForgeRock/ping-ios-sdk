@@ -1,5 +1,5 @@
 //
-//  OathAccountDetailView.swift
+//  PushAccountDetailView.swift
 //  PingExample
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
@@ -9,14 +9,14 @@
 //
 
 import SwiftUI
-import PingOath
+import PingPush
 
-/// View to display details of an OATH account and manage codes.
-struct OathAccountDetailView: View {
+/// View to display details of a push authentication account.
+struct PushAccountDetailView: View {
     @Environment(\.dismiss) var dismiss
-    let credential: OathCredential
+    let credential: PushCredential
 
-    @State private var currentCredential: OathCredential?
+    @State private var currentCredential: PushCredential?
     @State private var showDeleteAlert = false
     @State private var showEditSheet = false
     @State private var editedIssuer = ""
@@ -25,42 +25,11 @@ struct OathAccountDetailView: View {
     @State private var showExportSheet = false
     @State private var showPolicySelectionSheet = false
     @State private var showUnlockAlert = false
-    
-    // Get the timer service - will be set by parent view
-    private var timerService: OathTimerService? {
-        ConfigurationManager.shared.oathTimerService
-    }
-    
-    // State to trigger UI updates
-    @State private var currentTime: Date = Date()
-    
-    // Computed properties for real-time updates from shared service
-    private var code: String {
-        timerService?.generatedCodes[credential.id]?.code ?? "------"
-    }
-    
-    private var timeRemaining: Int {
-        guard credential.oathType == .totp else { return 0 }
-        let now = currentTime.timeIntervalSince1970
-        let period = Double(credential.period)
-        let elapsed = now.truncatingRemainder(dividingBy: period)
-        return Int(period - elapsed)
-    }
-    
-    private var progress: Double {
-        guard credential.oathType == .totp else { return 0.0 }
-        let now = currentTime.timeIntervalSince1970
-        let period = Double(credential.period)
-        let elapsed = now.truncatingRemainder(dividingBy: period)
-        return elapsed / period
-    }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
                 headerSection
-
-                codeSection
 
                 accountInfoSection
 
@@ -87,30 +56,19 @@ struct OathAccountDetailView: View {
             .padding(.horizontal, 20)
             .padding(.top, 20)
             .padding(.bottom, 30)
-            .onReceive(Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()) { _ in
-                currentTime = Date()
-            }
         }
         .background(Color(.systemGroupedBackground))
-        .navigationTitle("Account Details")
+        .navigationTitle("Push Account Details")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                HStack(spacing: 16) {
-                    Button {
-                        UIPasteboard.general.string = code
-                    } label: {
-                        Image(systemName: "doc.on.doc")
-                    }
-                    
-                    Button {
-                        let displayCredential = currentCredential ?? credential
-                        editedIssuer = displayCredential.displayIssuer
-                        editedAccountName = displayCredential.displayAccountName
-                        showEditSheet = true
-                    } label: {
-                        Image(systemName: "pencil")
-                    }
+                Button {
+                    let displayCredential = currentCredential ?? credential
+                    editedIssuer = displayCredential.displayIssuer
+                    editedAccountName = displayCredential.displayAccountName
+                    showEditSheet = true
+                } label: {
+                    Image(systemName: "pencil")
                 }
             }
         }
@@ -118,7 +76,7 @@ struct OathAccountDetailView: View {
             editSheet
         }
         .sheet(isPresented: $showExportSheet) {
-            JsonExportView(title: "OATH Credential JSON", jsonData: credentialToJson())
+            JsonExportView(title: "Push Credential JSON", jsonData: credentialToJson())
         }
         .sheet(isPresented: $showPolicySelectionSheet) {
             PolicySelectionView { policyName in
@@ -135,7 +93,7 @@ struct OathAccountDetailView: View {
                 }
             }
         } message: {
-            Text("Are you sure you want to delete this account? This action cannot be undone.")
+            Text("Are you sure you want to delete this push account? This action cannot be undone.")
         }
         .alert("Unlock Account", isPresented: $showUnlockAlert) {
             Button("Cancel", role: .cancel) { }
@@ -157,11 +115,11 @@ struct OathAccountDetailView: View {
             }
         }
     }
-    
+
     private var headerSection: some View {
         let displayCredential = currentCredential ?? credential
         return VStack(spacing: 12) {
-            Image(systemName: displayCredential.oathType == .totp ? "clock.fill" : "number.circle.fill")
+            Image(systemName: "bell.badge.fill")
                 .font(.system(size: 50))
                 .foregroundColor(.white)
                 .frame(width: 100, height: 100)
@@ -185,87 +143,6 @@ struct OathAccountDetailView: View {
         .padding()
     }
 
-    private var codeSection: some View {
-        let displayCredential = currentCredential ?? credential
-        let isLocked = displayCredential.isLocked
-        
-        return VStack(spacing: 16) {
-            if credential.oathType == .totp {
-                ZStack {
-                    Circle()
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 8)
-                        .frame(width: 120, height: 120)
-
-                    Circle()
-                        .trim(from: 0, to: progress)
-                        .stroke(isLocked ? Color.red.opacity(0.5) : Color.themeButtonBackground, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                        .frame(width: 120, height: 120)
-                        .rotationEffect(.degrees(-90))
-
-                    VStack(spacing: 4) {
-                        if isLocked {
-                            Image(systemName: "lock.fill")
-                                .font(.system(size: 32, weight: .bold))
-                                .foregroundColor(.white)
-                        } else {
-                            Text("\(timeRemaining)")
-                                .font(.system(size: 32, weight: .bold))
-                                .foregroundColor(.primary)
-                        }
-
-                        Text(isLocked ? "Locked" : "seconds")
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
-                    }
-                }
-            }
-
-            if isLocked {
-                VStack(spacing: 8) {
-                    Text("------")
-                        .font(.system(size: 48, weight: .bold, design: .monospaced))
-                        .foregroundColor(.gray)
-                        .padding()
-                        .background(Color(.secondarySystemGroupedBackground))
-                        .cornerRadius(12)
-                    
-                    Text("Account is locked")
-                        .font(.system(size: 14))
-                        .foregroundColor(.secondary)
-                }
-            } else {
-                Text(code)
-                    .font(.system(size: 48, weight: .bold, design: .monospaced))
-                    .foregroundColor(.themeButtonBackground)
-                    .padding()
-                    .background(Color(.secondarySystemGroupedBackground))
-                    .cornerRadius(12)
-
-                if credential.oathType == .hotp {
-                    Button {
-                        Task {
-                            await timerService?.generateCode(for: credential.id)
-                        }
-                    } label: {
-                        HStack {
-                            Image(systemName: "arrow.clockwise")
-                            Text("Generate New Code")
-                        }
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.themeButtonBackground)
-                        .cornerRadius(12)
-                    }
-                }
-            }
-        }
-        .padding()
-        .background(Color(.secondarySystemGroupedBackground))
-        .cornerRadius(12)
-    }
-
     private var accountInfoSection: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Account Information")
@@ -273,19 +150,17 @@ struct OathAccountDetailView: View {
                 .foregroundColor(.primary)
                 .padding(.bottom, 16)
 
-            InfoRow(label: "Type", value: credential.oathType == .totp ? "TOTP (Time-based)" : "HOTP (Counter-based)")
+            PushInfoRow(label: "Status", value: "Active")
             Divider().padding(.leading, 100)
 
-            InfoRow(label: "Algorithm", value: algorithmName)
+            PushInfoRow(label: "Platform", value: credential.platform.rawValue)
             Divider().padding(.leading, 100)
 
-            InfoRow(label: "Digits", value: "\(credential.digits)")
-            Divider().padding(.leading, 100)
-
-            if credential.oathType == .totp {
-                InfoRow(label: "Period", value: "\(credential.period) seconds")
-            } else {
-                InfoRow(label: "Counter", value: "\(credential.counter)")
+            PushInfoRow(label: "Created", value: formatDate(credential.createdAt))
+            
+            if let userId = credential.userId {
+                Divider().padding(.leading, 100)
+                PushInfoRow(label: "User ID", value: userId)
             }
         }
         .padding()
@@ -293,20 +168,21 @@ struct OathAccountDetailView: View {
         .cornerRadius(12)
     }
 
-    private var algorithmName: String {
-        switch credential.oathAlgorithm {
-        case .sha1: return "SHA-1"
-        case .sha256: return "SHA-256"
-        case .sha512: return "SHA-512"
-        @unknown default: return "SHA-1"
-        }
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
 
     private func deleteAccount() async {
-        guard let client = ConfigurationManager.shared.oathClient else { return }
+        guard let client = ConfigurationManager.shared.pushClient else {
+            errorMessage = "Push client not initialized"
+            return
+        }
 
         do {
-            _ = try await client.deleteCredential(credential.id)
+            _ = try await client.deleteCredential(credentialId: credential.id)
             dismiss()
         } catch {
             errorMessage = "Failed to delete account: \(error.localizedDescription)"
@@ -364,8 +240,8 @@ struct OathAccountDetailView: View {
     }
     
     private func saveChanges() async {
-        guard let client = ConfigurationManager.shared.oathClient else {
-            errorMessage = "OATH client not initialized"
+        guard let client = ConfigurationManager.shared.pushClient else {
+            errorMessage = "Push client not initialized"
             showEditSheet = false
             return
         }
@@ -389,8 +265,8 @@ struct OathAccountDetailView: View {
         var credentialToLock = displayCredential
         credentialToLock.lockCredential(policyName: policyName)
         
-        guard let client = ConfigurationManager.shared.oathClient else {
-            errorMessage = "OATH client not initialized"
+        guard let client = ConfigurationManager.shared.pushClient else {
+            errorMessage = "Push client not initialized"
             return
         }
         
@@ -407,24 +283,21 @@ struct OathAccountDetailView: View {
         var credentialToUnlock = displayCredential
         credentialToUnlock.unlockCredential()
         
-        guard let client = ConfigurationManager.shared.oathClient else {
-            errorMessage = "OATH client not initialized"
+        guard let client = ConfigurationManager.shared.pushClient else {
+            errorMessage = "Push client not initialized"
             return
         }
         
         do {
             _ = try await client.saveCredential(credentialToUnlock)
             currentCredential = credentialToUnlock
-            
-            // Generate code immediately after unlocking
-            await timerService?.generateCode(for: credentialToUnlock.id)
         } catch {
             errorMessage = "Failed to unlock account: \(error.localizedDescription)"
         }
     }
 }
 
-struct InfoRow: View {
+struct PushInfoRow: View {
     let label: String
     let value: String
 
@@ -442,46 +315,5 @@ struct InfoRow: View {
             Spacer()
         }
         .padding(.vertical, 12)
-    }
-}
-
-/// Reusable delete button component.
-struct DeleteButton: View {
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                Image(systemName: "trash")
-                Text("Delete")
-            }
-            .font(.system(size: 16, weight: .semibold))
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.themeButtonBackground)
-            .cornerRadius(12)
-        }
-    }
-}
-
-/// Reusable lock/unlock button component.
-struct LockUnlockButton: View {
-    let locked: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                Image(systemName: locked ? "lock.open.fill" : "lock.fill")
-                Text(locked ? "Unlock Account" : "Lock Account")
-            }
-            .font(.system(size: 16, weight: .semibold))
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.themeButtonBackground)
-            .cornerRadius(12)
-        }
     }
 }
