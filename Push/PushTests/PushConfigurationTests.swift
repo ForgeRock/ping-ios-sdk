@@ -23,7 +23,7 @@ final class PushConfigurationTests: XCTestCase {
         XCTAssertTrue(config.encryptionEnabled)
         XCTAssertEqual(config.timeoutMs, 15000)
         XCTAssertFalse(config.enableCredentialCache)
-        XCTAssertNil(config.logger)
+        XCTAssertNotNil(config.logger)
         XCTAssertTrue(config.customPushHandlers.isEmpty)
         XCTAssertEqual(config.notificationCleanupConfig.cleanupMode, .countBased)
         XCTAssertEqual(config.notificationCleanupConfig.maxStoredNotifications, 100)
@@ -39,7 +39,7 @@ final class PushConfigurationTests: XCTestCase {
         XCTAssertTrue(config.encryptionEnabled)
         XCTAssertEqual(config.timeoutMs, 15000)
         XCTAssertFalse(config.enableCredentialCache)
-        XCTAssertNil(config.logger)
+        XCTAssertNotNil(config.logger)
         XCTAssertTrue(config.customPushHandlers.isEmpty)
     }
     
@@ -78,7 +78,7 @@ final class PushConfigurationTests: XCTestCase {
     // MARK: - Property Modification Tests
     
     func testModifyEncryptionEnabled() {
-        var config = PushConfiguration()
+        let config = PushConfiguration()
         XCTAssertTrue(config.encryptionEnabled)
         
         config.encryptionEnabled = false
@@ -89,7 +89,7 @@ final class PushConfigurationTests: XCTestCase {
     }
     
     func testModifyTimeoutMs() {
-        var config = PushConfiguration()
+        let config = PushConfiguration()
         XCTAssertEqual(config.timeoutMs, 15000)
         
         config.timeoutMs = 5000
@@ -100,7 +100,7 @@ final class PushConfigurationTests: XCTestCase {
     }
     
     func testModifyEnableCredentialCache() {
-        var config = PushConfiguration()
+        let config = PushConfiguration()
         XCTAssertFalse(config.enableCredentialCache)
         
         config.enableCredentialCache = true
@@ -111,7 +111,7 @@ final class PushConfigurationTests: XCTestCase {
     }
     
     func testModifyNotificationCleanupConfig() {
-        var config = PushConfiguration()
+        let config = PushConfiguration()
         XCTAssertEqual(config.notificationCleanupConfig.cleanupMode, .countBased)
         
         config.notificationCleanupConfig = .none()

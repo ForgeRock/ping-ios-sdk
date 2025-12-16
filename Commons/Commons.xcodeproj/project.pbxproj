@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1B18D6472EF0DDD70004F205 /* PingTamperDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B18D6462EF0DDD70004F205 /* PingTamperDetector.framework */; };
-		1B18D6482EF0DDD70004F205 /* PingTamperDetector.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B18D6462EF0DDD70004F205 /* PingTamperDetector.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A56741AE2EE1EBFD009D29B9 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56741A42EE1EBFC009D29B9 /* PingCommons.framework */; };
 		A56741F92EE1EC05009D29B9 /* CommonsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56741F72EE1EC05009D29B9 /* CommonsTests.swift */; };
 		A56741FC2EE1EC07009D29B9 /* Commons.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56741FA2EE1EC07009D29B9 /* Commons.swift */; };
@@ -45,7 +43,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				A567426C2EE21DE2009D29B9 /* PingLogger.framework in Embed Frameworks */,
-				1B18D6482EF0DDD70004F205 /* PingTamperDetector.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -125,7 +122,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A567426B2EE21DE1009D29B9 /* PingLogger.framework in Frameworks */,
-				1B18D6472EF0DDD70004F205 /* PingTamperDetector.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,6 +9,7 @@
 //
 
 import XCTest
+import PingLogger
 @testable import PingPush
 
 final class PushClientTests: XCTestCase {
@@ -18,7 +19,7 @@ final class PushClientTests: XCTestCase {
 
         let client = try await PushClient.createClient { config in
             config.storage = storage
-            config.logger = nil
+            config.logger = LogManager.none
         }
 
         XCTAssertTrue(client.storageProvider is TestInMemoryPushStorage)

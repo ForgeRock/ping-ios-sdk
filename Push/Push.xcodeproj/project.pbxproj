@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1B078EEE2EB9853900E88A0B /* PushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B078EED2EB9853900E88A0B /* PushService.swift */; };
+		1B18D6532EF1E9EA0004F205 /* PingTamperDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B18D6522EF1E9EA0004F205 /* PingTamperDetector.framework */; };
+		1B18D6542EF1E9EA0004F205 /* PingTamperDetector.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B18D6522EF1E9EA0004F205 /* PingTamperDetector.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1B6923362EAC20B00064B4F4 /* PushKeychainStorageIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B6923352EAC20B00064B4F4 /* PushKeychainStorageIntegrationTests.swift */; };
 		1B69233C2EAC29A70064B4F4 /* PushUriParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B69233B2EAC29A70064B4F4 /* PushUriParser.swift */; };
 		1B69233E2EAC2A220064B4F4 /* PushUriParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B69233D2EAC2A220064B4F4 /* PushUriParserTests.swift */; };
@@ -73,6 +75,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				A56742772EE33DB8009D29B9 /* PingCommons.framework in Embed Frameworks */,
+				1B18D6542EF1E9EA0004F205 /* PingTamperDetector.framework in Embed Frameworks */,
 				A56742822EE34027009D29B9 /* PingOrchestrate.framework in Embed Frameworks */,
 				A56742852EE3402E009D29B9 /* PingLogger.framework in Embed Frameworks */,
 			);
@@ -83,6 +86,7 @@
 
 /* Begin PBXFileReference section */
 		1B078EED2EB9853900E88A0B /* PushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushService.swift; sourceTree = "<group>"; };
+		1B18D6522EF1E9EA0004F205 /* PingTamperDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingTamperDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B6923352EAC20B00064B4F4 /* PushKeychainStorageIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushKeychainStorageIntegrationTests.swift; sourceTree = "<group>"; };
 		1B69233B2EAC29A70064B4F4 /* PushUriParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushUriParser.swift; sourceTree = "<group>"; };
 		1B69233D2EAC2A220064B4F4 /* PushUriParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushUriParserTests.swift; sourceTree = "<group>"; };
@@ -136,6 +140,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A56742762EE33DB8009D29B9 /* PingCommons.framework in Frameworks */,
+				1B18D6532EF1E9EA0004F205 /* PingTamperDetector.framework in Frameworks */,
 				A56742812EE34027009D29B9 /* PingOrchestrate.framework in Frameworks */,
 				A56742842EE3402E009D29B9 /* PingLogger.framework in Frameworks */,
 			);
@@ -260,6 +265,7 @@
 		1B7C4A042EAABDD700E3C0AC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1B18D6522EF1E9EA0004F205 /* PingTamperDetector.framework */,
 				A56742832EE3402E009D29B9 /* PingLogger.framework */,
 				A56742802EE34027009D29B9 /* PingOrchestrate.framework */,
 				A56742752EE33DB8009D29B9 /* PingCommons.framework */,

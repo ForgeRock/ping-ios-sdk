@@ -1,6 +1,6 @@
 //
 //  DeviceTamperingPolicy.swift
-//  PingCommons
+//  PingTamperDetector
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import PingTamperDetector
+import PingCommons
 
 /// Policy that checks for device tampering indicators.
 ///

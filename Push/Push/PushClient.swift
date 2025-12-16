@@ -11,6 +11,7 @@
 import Foundation
 import PingLogger
 import PingCommons
+import PingTamperDetector
 import PingOrchestrate
 
 /// Public-facing client that orchestrates Push MFA operations.
@@ -28,7 +29,7 @@ public final class PushClient: @unchecked Sendable {
     private let httpClient: HttpClient
     private let pushService: PushService
     private let cleanupManager: NotificationCleanupManager
-    private let logger: Logger?
+    private let logger: Logger
 
     private var isInitialized: Bool = false
 
@@ -88,13 +89,16 @@ public final class PushClient: @unchecked Sendable {
             )
             self.httpClient = client
 
-            let evaluator = try PushClient.makePolicyEvaluator(using: configuration)
+            let policyEvaluator = configuration.policyEvaluator ?? MfaPolicyEvaluator.create {config in
+                config.logger = configuration.logger
+                config.policies = [BiometricAvailablePolicy(), DeviceTamperingPolicy()]
+            }
 
             self.pushService = try PushClient.makePushService(
                 storage: resolvedStorage,
                 configuration: configuration,
                 httpClient: client,
-                policyEvaluator: evaluator
+                policyEvaluator: policyEvaluator
             )
 
             self.cleanupManager = NotificationCleanupManager(
@@ -104,12 +108,12 @@ public final class PushClient: @unchecked Sendable {
             )
 
             isInitialized = true
-            logger?.d("PushClient initialized successfully")
+            logger.d("PushClient initialized successfully")
         } catch let error as PushError {
-            logger?.e("Failed to initialize PushClient: \(error)", error: error)
+            logger.e("Failed to initialize PushClient: \(error)", error: error)
             throw PushError.initializationFailed("Failed to initialize PushClient", error)
         } catch {
-            logger?.e("Failed to initialize PushClient: \(error)", error: error)
+            logger.e("Failed to initialize PushClient: \(error)", error: error)
             throw PushError.initializationFailed("Failed to initialize PushClient", error)
         }
     }
@@ -122,7 +126,7 @@ public final class PushClient: @unchecked Sendable {
     @inline(__always)
     internal func checkInitialized() throws {
         guard isInitialized else {
-            logger?.w("PushClient used before initialization completed", error: nil)
+            logger.w("PushClient used before initialization completed", error: nil)
             throw PushError.notInitialized
         }
     }
@@ -138,7 +142,7 @@ public final class PushClient: @unchecked Sendable {
         try checkInitialized()
         let trimmed = uri.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
-            logger?.w("addCredentialFromUri called with empty URI", error: nil)
+            logger.w("addCredentialFromUri called with empty URI", error: nil)
             throw PushError.invalidUri("Enrollment URI cannot be empty")
         }
 
@@ -292,7 +296,7 @@ public final class PushClient: @unchecked Sendable {
             // No APNs wrapper - use converted data as-is
             messageData = converted
             
-            logger?.d("No 'aps' dictionary found in notification payload; processing raw data")
+            logger.d("No 'aps' dictionary found in notification payload; processing raw data")
         }
         
         return try await processNotification(messageData: messageData)
@@ -331,7 +335,7 @@ public final class PushClient: @unchecked Sendable {
 
         let trimmed = challengeResponse.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
-            logger?.w("approveChallengeNotification called with empty response", error: nil)
+            logger.w("approveChallengeNotification called with empty response", error: nil)
             throw PushError.invalidParameterValue("Challenge response cannot be empty")
         }
 
@@ -354,7 +358,7 @@ public final class PushClient: @unchecked Sendable {
 
         let trimmed = authenticationMethod.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
-            logger?.w("approveBiometricNotification called with empty authentication method", error: nil)
+            logger.w("approveBiometricNotification called with empty authentication method", error: nil)
             throw PushError.invalidParameterValue("Authentication method cannot be empty")
         }
 
@@ -424,11 +428,11 @@ public final class PushClient: @unchecked Sendable {
         do {
             _ = try await cleanupManager.runCleanup(credentialId: nil)
         } catch {
-            logger?.w("Error running cleanup during close: \(error.localizedDescription)", error: error)
+            logger.w("Error running cleanup during close: \(error.localizedDescription)", error: error)
         }
 
         isInitialized = false
-        logger?.d("PushClient closed")
+        logger.d("PushClient closed")
     }
 
     // MARK: - Private Factory Helpers
@@ -455,18 +459,6 @@ public final class PushClient: @unchecked Sendable {
         return client
     }
 
-    private static func makePolicyEvaluator(
-        using configuration: PushConfiguration
-    ) throws -> MfaPolicyEvaluator {
-        if let evaluator = configuration.policyEvaluator {
-            return evaluator
-        }
-
-        let evaluator = MfaPolicyEvaluator.create()
-        configuration.policyEvaluator = evaluator
-        return evaluator
-    }
-
     private static func makePushService(
         storage: any PushStorage,
         configuration: PushConfiguration,
@@ -490,13 +482,15 @@ public final class PushClient: @unchecked Sendable {
         do {
             let removed = try await cleanupManager.runCleanup(credentialId: credentialId)
             if removed > 0 {
-                logger?.d(
+                logger.d(
                     "Auto-cleanup removed \(removed) notification(s) using mode \(cleanupConfig.cleanupMode.rawValue)"
                 )
             }
         } catch {
-            logger?.w("Auto-cleanup failed: \(error.localizedDescription)", error: error)
+            logger.w("Auto-cleanup failed: \(error.localizedDescription)", error: error)
         }
     }
 }
+
+/// A wrapper struct to mark message payloads as `Sendable`
 private struct UnsafeMessagePayload: @unchecked Sendable { let value: [String: Any] }
