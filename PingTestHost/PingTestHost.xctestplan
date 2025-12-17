@@ -202,7 +202,7 @@
         "containerPath" : "container:..\/DavinciPlugin\/DavinciPlugin\/DavinciPlugin.xcodeproj",
         "identifier" : "EC5C814D2ECF66D100C91570",
         "name" : "PingDavinciPluginTests"
-        }
+      }
     },
     {
       "target" : {
