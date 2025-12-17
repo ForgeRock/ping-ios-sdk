@@ -49,8 +49,6 @@
 		A56742772EE33DB8009D29B9 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56742752EE33DB8009D29B9 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A56742812EE34027009D29B9 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56742802EE34027009D29B9 /* PingOrchestrate.framework */; };
 		A56742822EE34027009D29B9 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56742802EE34027009D29B9 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A56742842EE3402E009D29B9 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56742832EE3402E009D29B9 /* PingLogger.framework */; };
-		A56742852EE3402E009D29B9 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56742832EE3402E009D29B9 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AFDF53E2572F4B8CA038FB93 /* PushClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF356682EBE44179E3BB486 /* PushClient.swift */; };
 		CAD4E4A6921E41788982C7AB /* PushClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9397EBD6F44CCE96DE7D79 /* PushClientTests.swift */; };
 /* End PBXBuildFile section */
@@ -74,7 +72,6 @@
 			files = (
 				A56742772EE33DB8009D29B9 /* PingCommons.framework in Embed Frameworks */,
 				A56742822EE34027009D29B9 /* PingOrchestrate.framework in Embed Frameworks */,
-				A56742852EE3402E009D29B9 /* PingLogger.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -137,7 +134,6 @@
 			files = (
 				A56742762EE33DB8009D29B9 /* PingCommons.framework in Frameworks */,
 				A56742812EE34027009D29B9 /* PingOrchestrate.framework in Frameworks */,
-				A56742842EE3402E009D29B9 /* PingLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

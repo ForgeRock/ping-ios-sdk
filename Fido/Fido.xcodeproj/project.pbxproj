@@ -30,8 +30,6 @@
 		ECD5A3052E90195300A27205 /* FidoRegistrationCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A3022E90195300A27205 /* FidoRegistrationCallback.swift */; };
 		ECD5A3062E90195300A27205 /* FidoAuthenticationCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A3002E90195300A27205 /* FidoAuthenticationCallback.swift */; };
 		ECD5A3072E90195300A27205 /* CallbackInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2FF2E90195300A27205 /* CallbackInitializer.swift */; };
-		ECD5A30A2E901C0400A27205 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD5A3092E901C0400A27205 /* PingLogger.framework */; };
-		ECD5A30B2E901C0400A27205 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECD5A3092E901C0400A27205 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECD5A3112E901C1300A27205 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD5A3102E901C1300A27205 /* PingOrchestrate.framework */; };
 		ECD5A3122E901C1300A27205 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECD5A3102E901C1300A27205 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECD7804A2EA24F1B0050E60F /* PingFido.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD5A29C2E8FE40B00A27205 /* PingFido.framework */; };
@@ -72,7 +70,6 @@
 				A56742882EE34829009D29B9 /* PingCommons.framework in Embed Frameworks */,
 				EC5C81EE2ED0850500C91570 /* PingJourneyPlugin.framework in Embed Frameworks */,
 				ECD5A3122E901C1300A27205 /* PingOrchestrate.framework in Embed Frameworks */,
-				ECD5A30B2E901C0400A27205 /* PingLogger.framework in Embed Frameworks */,
 				EC5C81B42ECF6DE400C91570 /* PingDavinciPlugin.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -121,7 +118,6 @@
 				A56742872EE34829009D29B9 /* PingCommons.framework in Frameworks */,
 				EC5C81ED2ED0850500C91570 /* PingJourneyPlugin.framework in Frameworks */,
 				ECD5A3112E901C1300A27205 /* PingOrchestrate.framework in Frameworks */,
-				ECD5A30A2E901C0400A27205 /* PingLogger.framework in Frameworks */,
 				EC5C81B32ECF6DE400C91570 /* PingDavinciPlugin.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

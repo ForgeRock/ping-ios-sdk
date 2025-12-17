@@ -27,8 +27,6 @@
 		A569DBE82E78A0FC00F4D7A8 /* DeviceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A569DBE62E78A0FC00F4D7A8 /* DeviceProfile.swift */; };
 		A5BE8BAA2E84C599007AF0B9 /* LocationManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BE8BA92E84C597007AF0B9 /* LocationManagerTests.swift */; };
 		A5BE8C7A2E8C4A8F007AF0B9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5BE8C792E8C4A8F007AF0B9 /* PrivacyInfo.xcprivacy */; };
-		A5BE8CA72E8C8411007AF0B9 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5BE8CA62E8C8411007AF0B9 /* PingLogger.framework */; };
-		A5BE8CA82E8C8411007AF0B9 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5BE8CA62E8C8411007AF0B9 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5BE8CAA2E8C8424007AF0B9 /* PingTamperDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5BE8CA92E8C8424007AF0B9 /* PingTamperDetector.framework */; };
 		A5BE8CAB2E8C8424007AF0B9 /* PingTamperDetector.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5BE8CA92E8C8424007AF0B9 /* PingTamperDetector.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5BE8CAD2E8C881D007AF0B9 /* PingDeviceId.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5BE8CAC2E8C881D007AF0B9 /* PingDeviceId.framework */; };
@@ -66,7 +64,6 @@
 			files = (
 				A56742682EE21DD9009D29B9 /* PingCommons.framework in Embed Frameworks */,
 				EC5C81F12ED0851000C91570 /* PingJourneyPlugin.framework in Embed Frameworks */,
-				A5BE8CA82E8C8411007AF0B9 /* PingLogger.framework in Embed Frameworks */,
 				A5BE8CAE2E8C881D007AF0B9 /* PingDeviceId.framework in Embed Frameworks */,
 				A5BE8CAB2E8C8424007AF0B9 /* PingTamperDetector.framework in Embed Frameworks */,
 			);
@@ -121,7 +118,6 @@
 			files = (
 				A56742672EE21DD9009D29B9 /* PingCommons.framework in Frameworks */,
 				EC5C81F02ED0851000C91570 /* PingJourneyPlugin.framework in Frameworks */,
-				A5BE8CA72E8C8411007AF0B9 /* PingLogger.framework in Frameworks */,
 				A5BE8CAD2E8C881D007AF0B9 /* PingDeviceId.framework in Frameworks */,
 				A5BE8CAA2E8C8424007AF0B9 /* PingTamperDetector.framework in Frameworks */,
 			);

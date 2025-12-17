@@ -85,8 +85,6 @@
 		EC727A662E0192FA005D9E28 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC727A632E0192FA005D9E28 /* PrivacyInfo.xcprivacy */; };
 		EC727A922E02DCA9005D9E28 /* PingOidc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A912E02DCA9005D9E28 /* PingOidc.framework */; };
 		EC727A932E02DCA9005D9E28 /* PingOidc.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A912E02DCA9005D9E28 /* PingOidc.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EC727A962E02DCAF005D9E28 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A952E02DCAF005D9E28 /* PingOrchestrate.framework */; };
-		EC727A972E02DCAF005D9E28 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A952E02DCAF005D9E28 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC727A9A2E02DD04005D9E28 /* Oidc.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727A992E02DCFF005D9E28 /* Oidc.swift */; };
 		EC727AC92E031C8A005D9E28 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727AC82E031C86005D9E28 /* Request.swift */; };
 		EC727ACB2E042A49005D9E28 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727ACA2E042A22005D9E28 /* Session.swift */; };
@@ -139,7 +137,6 @@
 			files = (
 				EC727A932E02DCA9005D9E28 /* PingOidc.framework in Embed Frameworks */,
 				EC5C81E32ED0824200C91570 /* PingJourneyPlugin.framework in Embed Frameworks */,
-				EC727A972E02DCAF005D9E28 /* PingOrchestrate.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -250,7 +247,6 @@
 			files = (
 				EC727A922E02DCA9005D9E28 /* PingOidc.framework in Frameworks */,
 				EC5C81E22ED0824200C91570 /* PingJourneyPlugin.framework in Frameworks */,
-				EC727A962E02DCAF005D9E28 /* PingOrchestrate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
