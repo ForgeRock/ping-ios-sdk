@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		95F525C02EF23BF000160748 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 95F525BF2EF23BF000160748 /* PrivacyInfo.xcprivacy */; };
+		95F525C22EF23C5100160748 /* JourneyPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 95F525C12EF23C5100160748 /* JourneyPlugin.h */; };
 		EC5C81842ECF67B700C91570 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */; };
 		EC5C81972ECF67C000C91570 /* PingJourneyPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81952ECF67C000C91570 /* PingJourneyPluginTests.swift */; };
 		EC5C81D52ED07FB800C91570 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81D42ED07FA500C91570 /* Constants.swift */; };
@@ -45,6 +47,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		95F525BF2EF23BF000160748 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		95F525C12EF23C5100160748 /* JourneyPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JourneyPlugin.h; sourceTree = "<group>"; };
 		EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81832ECF67B700C91570 /* PingJourneyPluginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingJourneyPluginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81952ECF67C000C91570 /* PingJourneyPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingJourneyPluginTests.swift; sourceTree = "<group>"; };
@@ -100,6 +104,8 @@
 		EC5C81932ECF67BE00C91570 /* JourneyPlugin */ = {
 			isa = PBXGroup;
 			children = (
+				95F525C12EF23C5100160748 /* JourneyPlugin.h */,
+				95F525BF2EF23BF000160748 /* PrivacyInfo.xcprivacy */,
 				ECA2E7E72ED87E5900C32766 /* ContinueNode.swift */,
 				ECA2E7E52ED875D300C32766 /* JourneyAware.swift */,
 				EC5C81DA2ED0805800C91570 /* JourneyPlugin.swift */,
@@ -134,6 +140,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95F525C22EF23C5100160748 /* JourneyPlugin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +231,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				95F525C02EF23BF000160748 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

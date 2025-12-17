@@ -25,7 +25,7 @@
 		ECD5A2F82E8FE49C00A27205 /* FidoConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */; };
 		ECD5A2F92E8FE49C00A27205 /* Fido.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F52E8FE49C00A27205 /* Fido.swift */; };
 		ECD5A2FA2E8FE49C00A27205 /* FidoModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F32E8FE49C00A27205 /* FidoModels.swift */; };
-		ECD5A2FB2E8FE49C00A27205 /* PingFido.h in Headers */ = {isa = PBXBuildFile; fileRef = ECD5A2F42E8FE49C00A27205 /* PingFido.h */; };
+		ECD5A2FB2E8FE49C00A27205 /* Fido.h in Headers */ = {isa = PBXBuildFile; fileRef = ECD5A2F42E8FE49C00A27205 /* Fido.h */; };
 		ECD5A3042E90195300A27205 /* FidoCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A3012E90195300A27205 /* FidoCallback.swift */; };
 		ECD5A3052E90195300A27205 /* FidoRegistrationCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A3022E90195300A27205 /* FidoRegistrationCallback.swift */; };
 		ECD5A3062E90195300A27205 /* FidoAuthenticationCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A3002E90195300A27205 /* FidoAuthenticationCallback.swift */; };
@@ -96,7 +96,7 @@
 		ECD5A29C2E8FE40B00A27205 /* PingFido.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingFido.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoConstants.swift; sourceTree = "<group>"; };
 		ECD5A2F32E8FE49C00A27205 /* FidoModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoModels.swift; sourceTree = "<group>"; };
-		ECD5A2F42E8FE49C00A27205 /* PingFido.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PingFido.h; sourceTree = "<group>"; };
+		ECD5A2F42E8FE49C00A27205 /* Fido.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fido.h; sourceTree = "<group>"; };
 		ECD5A2F52E8FE49C00A27205 /* Fido.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fido.swift; sourceTree = "<group>"; };
 		ECD5A2F62E8FE49C00A27205 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ECD5A2FF2E90195300A27205 /* CallbackInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackInitializer.swift; sourceTree = "<group>"; };
@@ -175,7 +175,7 @@
 				ECD5A3032E90195300A27205 /* Journey */,
 				ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */,
 				ECD5A2F32E8FE49C00A27205 /* FidoModels.swift */,
-				ECD5A2F42E8FE49C00A27205 /* PingFido.h */,
+				ECD5A2F42E8FE49C00A27205 /* Fido.h */,
 				ECD5A2F52E8FE49C00A27205 /* Fido.swift */,
 				ECD5A2F62E8FE49C00A27205 /* PrivacyInfo.xcprivacy */,
 			);
@@ -229,7 +229,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECD5A2FB2E8FE49C00A27205 /* PingFido.h in Headers */,
+				ECD5A2FB2E8FE49C00A27205 /* Fido.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
