@@ -63,9 +63,9 @@ let package = Package(
         .target(name: "PingReCaptchaEnterprise", dependencies: [.target(name: "PingCommons"), .target(name: "PingJourneyPlugin"), .product(name: "RecaptchaEnterprise", package: "recaptcha-enterprise-mobile-sdk")], path: "ReCaptchaEnterprise/ReCaptchaEnterprise", exclude: ["ReCaptchaEnterprise.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingDeviceId", dependencies: [.target(name: "PingStorage"), .target(name: "PingLogger")], path: "DeviceId/DeviceId", exclude: ["DeviceId.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingTamperDetector", dependencies: [.target(name: "PingLogger")], path: "TamperDetector/TamperDetector", exclude: ["TamperDetector.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingDeviceProfile", dependencies: [.target(name: "PingCommons"), .target(name: "PingDeviceId"), .target(name: "PingLogger"), .target(name: "PingTamperDetector")], path: "DeviceProfile/DeviceProfile", exclude: ["DeviceProfile.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingDeviceProfile", dependencies: [.target(name: "PingCommons"), .target(name: "PingDeviceId"), .target(name: "PingLogger"), .target(name: "PingTamperDetector"), .target(name: "PingJourneyPlugin")], path: "DeviceProfile/DeviceProfile", exclude: ["DeviceProfile.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingOath", dependencies: [.target(name: "PingCommons")], path: "Oath/Oath", exclude: ["Oath.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingPush", dependencies: [.target(name: "PingCommons"), .target(name: "PingLogger"), .target(name: "PingOrchestrate")], path: "Push/Push", exclude: ["Push.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingFido", dependencies: [.target(name: "PingCommons"), .target(name: "PingLogger")], path: "Fido/Fido", exclude: ["Fido.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
+        .target(name: "PingFido", dependencies: [.target(name: "PingCommons"), .target(name: "PingLogger"), .target(name: "PingDavinciPlugin"), .target(name: "PingJourneyPlugin"), .target(name: "PingOrchestrate")], path: "Fido/Fido", exclude: ["Fido.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
     ]
 )
