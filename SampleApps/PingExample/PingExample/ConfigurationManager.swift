@@ -14,6 +14,9 @@ import SwiftUI
 import UIKit
 import PingOidc
 import PingJourney
+import PingOath
+import PingPush
+import PingLogger
 
 //The ConfigurationManager class is used to manage the configuration settings for the SDK.
 //The class provides the following functionality:
@@ -26,7 +29,17 @@ import PingJourney
 class ConfigurationManager: ObservableObject, @unchecked Sendable {
     static let shared = ConfigurationManager()
     public var currentConfigurationViewModel: ConfigurationViewModel?
+
+    // MFA Clients
+    public var oathClient: OathClient?
+    public var pushClient: PushClient?
     
+    // MFA Services
+    public var oathTimerService: OathTimerService?
+    
+    // Thread safety - use actor for initialization synchronization
+    private let initActor = ClientInitializationActor()
+
     public var journeyUser: User? {
         get async {
             let journeyUser = await journey.journeyUser()
@@ -102,6 +115,70 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
             serverUrl: <#"Server URL"#>, // Optional, can be nil if not used
             realm: <#"Realm"#> // Optional, can be nil if not used
         )
+    }
+
+    // MARK: - MFA Client Initialization
+
+    /// Initialize the OATH client for MFA functionality
+    public func initializeOathClient() async throws {
+        let client = try await initActor.initializeOath {
+            try await OathClient.createClient { config in
+                config.logger = LogManager.logger
+            }
+        }
+        
+        if let client = client {
+            self.oathClient = client
+            
+            // Initialize the timer service with the client
+            await MainActor.run {
+                oathTimerService = OathTimerService(client: client)
+            }
+        }
+    }
+
+    /// Initialize the Push client for MFA functionality
+    public func initializePushClient() async throws {
+        let client = try await initActor.initializePush {
+            try await PushClient.createClient { config in
+                config.logger = LogManager.logger
+            }
+        }
+        
+        if let client = client {
+            self.pushClient = client
+        }
+    }
+}
+
+// MARK: - Actor for Thread-Safe Initialization
+
+private actor ClientInitializationActor {
+    private var isOathInitializing = false
+    private var isPushInitializing = false
+    private var oathInitialized = false
+    private var pushInitialized = false
+    
+    func initializeOath(factory: () async throws -> OathClient) async throws -> OathClient? {
+        guard !oathInitialized && !isOathInitializing else { return nil }
+        
+        isOathInitializing = true
+        defer { isOathInitializing = false }
+        
+        let client = try await factory()
+        oathInitialized = true
+        return client
+    }
+    
+    func initializePush(factory: () async throws -> PushClient) async throws -> PushClient? {
+        guard !pushInitialized && !isPushInitializing else { return nil }
+        
+        isPushInitializing = true
+        defer { isPushInitializing = false }
+        
+        let client = try await factory()
+        pushInitialized = true
+        return client
     }
 }
 

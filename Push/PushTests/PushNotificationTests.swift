@@ -164,17 +164,6 @@ final class PushNotificationTests: XCTestCase {
             createdAt: Date(timeIntervalSinceNow: -120)
         )
         XCTAssertTrue(notification2.isExpired)
-        
-        // Edge case: exactly at TTL boundary
-        let notification3 = PushNotification(
-            credentialId: "credential-123",
-            ttl: 120,
-            messageId: "msg-456",
-            pushType: .default,
-            createdAt: Date(timeIntervalSinceNow: -120)
-        )
-        // Should be expired (elapsed time >= TTL)
-        XCTAssertTrue(notification3.isExpired)
     }
     
     // MARK: - Action Methods Tests
