@@ -1,3 +1,25 @@
+## [2.0.0]
+#### Added
+- Added new `PingJourney` module [SDKS-3918]
+- Added new `PingNetwork` module [SDKS-4496]
+- Added new `PingDeviceClient` module [SDKS-4491]
+- Added new `PingDeviceId` module [SDKS-4122]
+- Added new `PingDeviceProfile` module [SDKS-4128]
+- Added new `PingTamperDetector` module [SDKS-4366]
+- Added new `PingJourneyPlugin` and `PingDavinciPlugin` modules [SDKS-4492]
+- Added new `PingCommons` module [SDKS-4104]
+- Added new `PingOath` module [SDKS-4100]
+- Added new `PingPush` module [SDKS-4105]
+- Added new `PingFido` module [SDKS-4137]
+- Added new `PingBinding` module [SDKS-4117]
+- Added new `PingReCaptchaEnterprise` module [SDKS-4440]
+- Added support for core callbacks in the `PingJourney` module [SDKS-4060]
+- Added support for native social login for Facebook, Google and Apple for AIC [SDKS-3898]
+- Added migration mechanism for existing device binding data from the Legacy SDK to the new SDK [SDKS-4495]
+
+#### Fixes
+- Updated `PingStorage` module to allow multiple DaVinci/Journey instances to have separate cookies, sessions, and token storage [SDKS-4588]
+
 ## [1.3.1]
 #### Fixed
 - Fixed an issue in the `PingProtect` module causing a crash on iOS 17+ due to an incorrect actor executor assumption [SDKS-4494] 

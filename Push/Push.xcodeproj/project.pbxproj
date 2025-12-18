@@ -51,8 +51,6 @@
 		A56742772EE33DB8009D29B9 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56742752EE33DB8009D29B9 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A56742812EE34027009D29B9 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56742802EE34027009D29B9 /* PingOrchestrate.framework */; };
 		A56742822EE34027009D29B9 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56742802EE34027009D29B9 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A56742842EE3402E009D29B9 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56742832EE3402E009D29B9 /* PingLogger.framework */; };
-		A56742852EE3402E009D29B9 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56742832EE3402E009D29B9 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AFDF53E2572F4B8CA038FB93 /* PushClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF356682EBE44179E3BB486 /* PushClient.swift */; };
 		CAD4E4A6921E41788982C7AB /* PushClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B9397EBD6F44CCE96DE7D79 /* PushClientTests.swift */; };
 /* End PBXBuildFile section */
@@ -77,7 +75,6 @@
 				A56742772EE33DB8009D29B9 /* PingCommons.framework in Embed Frameworks */,
 				1B18D6542EF1E9EA0004F205 /* PingTamperDetector.framework in Embed Frameworks */,
 				A56742822EE34027009D29B9 /* PingOrchestrate.framework in Embed Frameworks */,
-				A56742852EE3402E009D29B9 /* PingLogger.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -142,7 +139,6 @@
 				A56742762EE33DB8009D29B9 /* PingCommons.framework in Frameworks */,
 				1B18D6532EF1E9EA0004F205 /* PingTamperDetector.framework in Frameworks */,
 				A56742812EE34027009D29B9 /* PingOrchestrate.framework in Frameworks */,
-				A56742842EE3402E009D29B9 /* PingLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -595,7 +591,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.0-alpha;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Push;
@@ -632,7 +628,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.0-alpha;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Push;
@@ -657,7 +653,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.0-alpha;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PushTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -678,7 +674,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.0-alpha;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PushTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;

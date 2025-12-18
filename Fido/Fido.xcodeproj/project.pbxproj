@@ -25,13 +25,11 @@
 		ECD5A2F82E8FE49C00A27205 /* FidoConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */; };
 		ECD5A2F92E8FE49C00A27205 /* Fido.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F52E8FE49C00A27205 /* Fido.swift */; };
 		ECD5A2FA2E8FE49C00A27205 /* FidoModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F32E8FE49C00A27205 /* FidoModels.swift */; };
-		ECD5A2FB2E8FE49C00A27205 /* PingFido.h in Headers */ = {isa = PBXBuildFile; fileRef = ECD5A2F42E8FE49C00A27205 /* PingFido.h */; };
+		ECD5A2FB2E8FE49C00A27205 /* Fido.h in Headers */ = {isa = PBXBuildFile; fileRef = ECD5A2F42E8FE49C00A27205 /* Fido.h */; };
 		ECD5A3042E90195300A27205 /* FidoCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A3012E90195300A27205 /* FidoCallback.swift */; };
 		ECD5A3052E90195300A27205 /* FidoRegistrationCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A3022E90195300A27205 /* FidoRegistrationCallback.swift */; };
 		ECD5A3062E90195300A27205 /* FidoAuthenticationCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A3002E90195300A27205 /* FidoAuthenticationCallback.swift */; };
 		ECD5A3072E90195300A27205 /* CallbackInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2FF2E90195300A27205 /* CallbackInitializer.swift */; };
-		ECD5A30A2E901C0400A27205 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD5A3092E901C0400A27205 /* PingLogger.framework */; };
-		ECD5A30B2E901C0400A27205 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECD5A3092E901C0400A27205 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECD5A3112E901C1300A27205 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD5A3102E901C1300A27205 /* PingOrchestrate.framework */; };
 		ECD5A3122E901C1300A27205 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECD5A3102E901C1300A27205 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECD7804A2EA24F1B0050E60F /* PingFido.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD5A29C2E8FE40B00A27205 /* PingFido.framework */; };
@@ -72,7 +70,6 @@
 				A56742882EE34829009D29B9 /* PingCommons.framework in Embed Frameworks */,
 				EC5C81EE2ED0850500C91570 /* PingJourneyPlugin.framework in Embed Frameworks */,
 				ECD5A3122E901C1300A27205 /* PingOrchestrate.framework in Embed Frameworks */,
-				ECD5A30B2E901C0400A27205 /* PingLogger.framework in Embed Frameworks */,
 				EC5C81B42ECF6DE400C91570 /* PingDavinciPlugin.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -96,7 +93,7 @@
 		ECD5A29C2E8FE40B00A27205 /* PingFido.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingFido.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoConstants.swift; sourceTree = "<group>"; };
 		ECD5A2F32E8FE49C00A27205 /* FidoModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoModels.swift; sourceTree = "<group>"; };
-		ECD5A2F42E8FE49C00A27205 /* PingFido.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PingFido.h; sourceTree = "<group>"; };
+		ECD5A2F42E8FE49C00A27205 /* Fido.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Fido.h; sourceTree = "<group>"; };
 		ECD5A2F52E8FE49C00A27205 /* Fido.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fido.swift; sourceTree = "<group>"; };
 		ECD5A2F62E8FE49C00A27205 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ECD5A2FF2E90195300A27205 /* CallbackInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackInitializer.swift; sourceTree = "<group>"; };
@@ -121,7 +118,6 @@
 				A56742872EE34829009D29B9 /* PingCommons.framework in Frameworks */,
 				EC5C81ED2ED0850500C91570 /* PingJourneyPlugin.framework in Frameworks */,
 				ECD5A3112E901C1300A27205 /* PingOrchestrate.framework in Frameworks */,
-				ECD5A30A2E901C0400A27205 /* PingLogger.framework in Frameworks */,
 				EC5C81B32ECF6DE400C91570 /* PingDavinciPlugin.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -175,7 +171,7 @@
 				ECD5A3032E90195300A27205 /* Journey */,
 				ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */,
 				ECD5A2F32E8FE49C00A27205 /* FidoModels.swift */,
-				ECD5A2F42E8FE49C00A27205 /* PingFido.h */,
+				ECD5A2F42E8FE49C00A27205 /* Fido.h */,
 				ECD5A2F52E8FE49C00A27205 /* Fido.swift */,
 				ECD5A2F62E8FE49C00A27205 /* PrivacyInfo.xcprivacy */,
 			);
@@ -229,7 +225,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECD5A2FB2E8FE49C00A27205 /* PingFido.h in Headers */,
+				ECD5A2FB2E8FE49C00A27205 /* Fido.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -527,7 +523,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.0-alpha;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Fido;
@@ -567,7 +563,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.0-alpha;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Fido;
@@ -592,7 +588,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.0-alpha;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingFidoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -613,7 +609,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.0-alpha;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingFidoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
