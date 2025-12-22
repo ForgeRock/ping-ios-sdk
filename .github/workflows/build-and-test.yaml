@@ -55,17 +55,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-
 
-      # Install xcbeautify
-      - name: Cache xcresultparser
-        id: cache-xcresultparser
-        uses: actions/cache@v5
-        with:
-          path: ~/.local/bin/xcresultparser
-          key: xcresultparser-1.9.3
-
       # Install xcresultparser
       - name: Install xcresultparser
-        if: steps.cache-xcresultparser.outputs.cache-hit != 'true'
         run: |
           curl -LO https://github.com/a7ex/xcresultparser/releases/download/1.9.3/xcresultparser.zip
           unzip xcresultparser.zip
