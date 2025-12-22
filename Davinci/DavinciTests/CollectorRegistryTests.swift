@@ -22,12 +22,19 @@ actor AsyncLock {
 
 @MainActor
 final class CollectorRegistryTests: XCTestCase {
+    
+    override func setUp() async throws {
+        await CollectorFactory.shared.reset()
+    }
+
+    override func tearDown() async throws {
+        await CollectorFactory.shared.reset()
+    }
 
     private static let lock = AsyncLock()
 
     func testShouldRegisterCollector() async throws {
         try await Self.lock.run({ @Sendable () async throws -> Void in
-            await CollectorFactory.shared.reset()
 
             let davinci = DaVinci.createDaVinci()
             let jsonArray: [[String: Any]] = [
@@ -51,7 +58,6 @@ final class CollectorRegistryTests: XCTestCase {
 
     func testShouldIgnoreUnknownCollector() async throws {
         try await Self.lock.run({ @Sendable () async throws -> Void in
-            await CollectorFactory.shared.reset()
 
             let davinci = DaVinci.createDaVinci()
             let jsonArray: [[String: Any]] = [
