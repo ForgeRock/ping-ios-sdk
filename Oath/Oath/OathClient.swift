@@ -82,7 +82,7 @@ public final class OathClient: @unchecked Sendable {
         // Initialize policy evaluator if none provided
         let policyEvaluator = configuration.policyEvaluator ?? MfaPolicyEvaluator.create {config in
             config.logger = configuration.logger
-//            config.policies = [BiometricAvailablePolicy(), DeviceTamperingPolicy()]
+            config.policies = [BiometricAvailablePolicy(), DeviceTamperingPolicy()]
         }
 
         // Initialize service layer
