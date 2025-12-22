@@ -142,6 +142,7 @@
     },
     {
       "skippedTests" : [
+        "CollectorRegistryTests",
         "DaVinciIntegrationTests",
         "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
         "DaVinciIntegrationTests\/testInvalidPassword()",

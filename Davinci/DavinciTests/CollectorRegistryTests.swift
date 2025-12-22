@@ -14,62 +14,57 @@ import XCTest
 import PingDavinciPlugin
 @testable import PingDavinci
 
-actor AsyncLock {
-    func run<T>(_ body: @Sendable () async throws -> T) async rethrows -> T {
-        try await body()
-    }
-}
-
 @MainActor
 final class CollectorRegistryTests: XCTestCase {
+        
+    func testShouldRegisterCollector() async {
+        let davinci = DaVinci.createDaVinci()
+        let jsonArray: [[String: Any]] = [
+            ["type": "TEXT"],
+            ["type": "PASSWORD"],
+            ["type": "SUBMIT_BUTTON"],
+            ["inputType": "ACTION"],
+            ["type": "PASSWORD_VERIFY"],
+            ["inputType": "ACTION"],
+            ["type": "LABEL"],
+            ["inputType": "SINGLE_SELECT"],
+            ["inputType": "SINGLE_SELECT"],
+            ["inputType": "MULTI_SELECT"],
+            ["inputType": "MULTI_SELECT"],
+        ]
+        
+        let collectors = await CollectorFactory.shared.collector(daVinci: davinci, from: jsonArray)
+        XCTAssertEqual(collectors.count, 11)
+        if collectors.count > 0 {
+            XCTAssertTrue(collectors[0] is TextCollector)
+            XCTAssertTrue(collectors[1] is PasswordCollector)
+            XCTAssertTrue(collectors[2] is SubmitCollector)
+            XCTAssertTrue(collectors[3] is FlowCollector)
+            XCTAssertTrue(collectors[4] is PasswordCollector)
+            XCTAssertTrue(collectors[5] is FlowCollector)
+            XCTAssertTrue(collectors[6] is LabelCollector)
+            XCTAssertTrue(collectors[7] is SingleSelectCollector)
+            XCTAssertTrue(collectors[8] is SingleSelectCollector)
+            XCTAssertTrue(collectors[9] is MultiSelectCollector)
+            XCTAssertTrue(collectors[10] is MultiSelectCollector)
+        }
+        
+        await CollectorFactory.shared.reset()
+    }
     
-    override func setUp() async throws {
+    func testShouldIgnoreUnknownCollector() async  {
+        let davinci = DaVinci.createDaVinci()
+        let jsonArray: [[String: Any]] = [
+            ["type": "TEXT"],
+            ["type": "PASSWORD"],
+            ["type": "SUBMIT_BUTTON"],
+            ["inputType": "ACTION"],
+            ["type": "UNKNOWN"]
+        ]
+        
+        let collectors = await CollectorFactory.shared.collector(daVinci: davinci, from: jsonArray)
+        XCTAssertEqual(collectors.count, 4)
+        
         await CollectorFactory.shared.reset()
-    }
-
-    override func tearDown() async throws {
-        await CollectorFactory.shared.reset()
-    }
-
-    private static let lock = AsyncLock()
-
-    func testShouldRegisterCollector() async throws {
-        try await Self.lock.run({ @Sendable () async throws -> Void in
-
-            let davinci = DaVinci.createDaVinci()
-            let jsonArray: [[String: Any]] = [
-                ["type": "TEXT"],
-                ["type": "PASSWORD"],
-                ["type": "SUBMIT_BUTTON"],
-                ["inputType": "ACTION"],
-                ["type": "PASSWORD_VERIFY"],
-                ["inputType": "ACTION"],
-                ["type": "LABEL"],
-                ["inputType": "SINGLE_SELECT"],
-                ["inputType": "SINGLE_SELECT"],
-                ["inputType": "MULTI_SELECT"],
-                ["inputType": "MULTI_SELECT"],
-            ]
-
-            let collectors = await CollectorFactory.shared.collector(daVinci: davinci, from: jsonArray)
-            XCTAssertEqual(collectors.count, 11)
-        })
-    }
-
-    func testShouldIgnoreUnknownCollector() async throws {
-        try await Self.lock.run({ @Sendable () async throws -> Void in
-
-            let davinci = DaVinci.createDaVinci()
-            let jsonArray: [[String: Any]] = [
-                ["type": "TEXT"],
-                ["type": "PASSWORD"],
-                ["type": "SUBMIT_BUTTON"],
-                ["inputType": "ACTION"],
-                ["type": "UNKNOWN"]
-            ]
-
-            let collectors = await CollectorFactory.shared.collector(daVinci: davinci, from: jsonArray)
-            XCTAssertEqual(collectors.count, 4)
-        })
     }
 }
