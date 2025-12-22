@@ -91,7 +91,7 @@ public final class PushClient: @unchecked Sendable {
 
             let policyEvaluator = configuration.policyEvaluator ?? MfaPolicyEvaluator.create {config in
                 config.logger = configuration.logger
-                config.policies = [BiometricAvailablePolicy(), DeviceTamperingPolicy()]
+//                config.policies = [BiometricAvailablePolicy(), DeviceTamperingPolicy()]
             }
 
             self.pushService = try PushClient.makePushService(
