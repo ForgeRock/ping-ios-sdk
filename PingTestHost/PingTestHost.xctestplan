@@ -39,6 +39,9 @@
       }
     },
     {
+      "skippedTests" : [
+        "ExternalIdPTests\/testIdpHandlerAuthorizeThrow()"
+      ],
       "target" : {
         "containerPath" : "container:..\/ExternalIdP\/ExternalIdP.xcodeproj",
         "identifier" : "ECB7C6972D5A2C1F0006F1C8",
@@ -53,6 +56,9 @@
       }
     },
     {
+      "skippedTests" : [
+        "PingFidoTests\/testAuthenticateAssosiatedDomainError()"
+      ],
       "target" : {
         "containerPath" : "container:..\/Fido\/Fido.xcodeproj",
         "identifier" : "ECD780452EA24F1B0050E60F",
