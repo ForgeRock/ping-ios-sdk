@@ -34,7 +34,7 @@ on:
         required: true
 jobs:
   prepare-device-farm-artifacts:
-    runs-on: macos-15
+    runs-on: macos-15-xlarge
 
     env:
       XCODE_VERSION: ${{ vars.XCODE_VERSION }}
