@@ -17,7 +17,6 @@
   },
   "testTargets" : [
     {
-      "enabled" : false,
       "target" : {
         "containerPath" : "container:..\/ReCaptchaEnterprise\/ReCaptchaEnterprise.xcodeproj",
         "identifier" : "A5C0ABFC2EAFFFDF00846D16",
@@ -169,7 +168,6 @@
       }
     },
     {
-      "enabled" : false,
       "skippedTests" : [
         "DeviceProfileCollectorTests\/testCollectorCollectWithBothEnabled()",
         "DeviceProfileCollectorTests\/testCollectorCollectWithLocationEnabled()",
