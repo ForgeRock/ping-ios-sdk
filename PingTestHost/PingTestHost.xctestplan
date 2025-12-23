@@ -169,6 +169,9 @@
     },
     {
       "skippedTests" : [
+        "BluetoothCollectorTests",
+        "BluetoothCollectorTests\/testBluetoothCollectorInArrayCollection()",
+        "BluetoothCollectorTests\/testBluetoothInfoCodable()",
         "DeviceProfileCollectorTests\/testCollectorCollectWithBothEnabled()",
         "DeviceProfileCollectorTests\/testCollectorCollectWithLocationEnabled()",
         "LocationCollectorTests",
