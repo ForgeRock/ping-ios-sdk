@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		95F525C02EF23BF000160748 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 95F525BF2EF23BF000160748 /* PrivacyInfo.xcprivacy */; };
-		95F525C22EF23C5100160748 /* JourneyPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 95F525C12EF23C5100160748 /* JourneyPlugin.h */; };
+		95F525BA2EECF4BC00160748 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95F525B92EECF4BC00160748 /* PingJourney.framework */; };
+		95F525BB2EECF4BC00160748 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 95F525B92EECF4BC00160748 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC5C81842ECF67B700C91570 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */; };
 		EC5C81972ECF67C000C91570 /* PingJourneyPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81952ECF67C000C91570 /* PingJourneyPluginTests.swift */; };
 		EC5C81D52ED07FB800C91570 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81D42ED07FA500C91570 /* Constants.swift */; };
@@ -33,6 +33,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		95F525BC2EECF4BC00160748 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				95F525BB2EECF4BC00160748 /* PingJourney.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EC5C81E02ED0809200C91570 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -47,8 +58,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		95F525BF2EF23BF000160748 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		95F525C12EF23C5100160748 /* JourneyPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JourneyPlugin.h; sourceTree = "<group>"; };
+		95F525B92EECF4BC00160748 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81832ECF67B700C91570 /* PingJourneyPluginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingJourneyPluginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81952ECF67C000C91570 /* PingJourneyPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingJourneyPluginTests.swift; sourceTree = "<group>"; };
@@ -76,6 +86,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC5C81842ECF67B700C91570 /* PingJourneyPlugin.framework in Frameworks */,
+				95F525BA2EECF4BC00160748 /* PingJourney.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,8 +115,6 @@
 		EC5C81932ECF67BE00C91570 /* JourneyPlugin */ = {
 			isa = PBXGroup;
 			children = (
-				95F525C12EF23C5100160748 /* JourneyPlugin.h */,
-				95F525BF2EF23BF000160748 /* PrivacyInfo.xcprivacy */,
 				ECA2E7E72ED87E5900C32766 /* ContinueNode.swift */,
 				ECA2E7E52ED875D300C32766 /* JourneyAware.swift */,
 				EC5C81DA2ED0805800C91570 /* JourneyPlugin.swift */,
@@ -128,6 +137,7 @@
 		EC5C81DC2ED0809200C91570 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				95F525B92EECF4BC00160748 /* PingJourney.framework */,
 				EC5C81DD2ED0809200C91570 /* PingOrchestrate.framework */,
 			);
 			name = Frameworks;
@@ -140,7 +150,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95F525C22EF23C5100160748 /* JourneyPlugin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -175,6 +184,7 @@
 				EC5C817F2ECF67B700C91570 /* Sources */,
 				EC5C81802ECF67B700C91570 /* Frameworks */,
 				EC5C81812ECF67B700C91570 /* Resources */,
+				95F525BC2EECF4BC00160748 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -231,7 +241,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95F525C02EF23BF000160748 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -426,7 +435,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingJourneyPlugin;
@@ -464,7 +473,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingJourneyPlugin;
@@ -488,7 +497,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 2.0.0-alpha;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingJourneyPluginTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -507,7 +517,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 2.0.0-alpha;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingJourneyPluginTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;

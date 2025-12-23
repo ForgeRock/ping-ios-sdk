@@ -6,22 +6,19 @@ on:
       SLACK_WEBHOOK:
         description: 'Slack Notifier Webhook'
         required: true
+  
+env:
+  WORKSPACE: SampleApps/Ping.xcworkspace
+  SCHEME: PingTestHost
+  CONFIGURATION: Debug
+  DESTINATION: platform=iOS Simulator,name=iPhone SE (3rd generation),OS=26.1
+  XCODE_VERSION: '26.1.1'
+  DERIVED_DATA_PATH: DerivedData
+
 jobs:
   build-and-test:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-15]
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-15-xlarge
     timeout-minutes: 40
-
-    env:
-      # XCODE_VERSION: 26.0.1
-      # SIM_DEVICE_NAME: iPhone 16
-      # SIM_OS_VERSION: 18.6
-      XCODE_VERSION: ${{ vars.XCODE_VERSION }}
-      SIM_DEVICE_NAME: ${{ vars.SIM_DEVICE_NAME }}
-      SIM_OS_VERSION: ${{ vars.SIM_OS_VERSION }}
 
     steps:
       # Clone the repo
@@ -32,76 +29,127 @@ jobs:
           repository: ${{github.event.pull_request.head.repo.full_name}}
           fetch-depth: 0
 
-      # Get the architecture of the chip
-      - name: Check chip architecture 
-        run: echo "CHIP_TYPE=$(uname -m)" >> $GITHUB_ENV    
-
       # Set target Xcode version. For more details and options see:
-      # https://github.com/actions/runner-images/blob/main/images/macos/macos-15-Readme.md
+      # https://github.com/actions/runner-images/blob/main/images/macos/macos-15-arm64-Readme.md
       - name: Select Xcode
-        run: sudo xcode-select -switch /Applications/Xcode_$XCODE_VERSION.app && /usr/bin/xcodebuild -version
-        
-      # Run all tests
-      - name: Run tests
-        run: |
-          DEST="platform=iOS Simulator,name=${SIM_DEVICE_NAME},OS=${SIM_OS_VERSION}"
-          echo "Running tests on $DEST"
+        run: sudo xcode-select -switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app && /usr/bin/xcodebuild -version
 
-          xcodebuild test \
-          -scheme PingTestHost \
-          -workspace SampleApps/Ping.xcworkspace \
-          -configuration Debug \
-          -destination "$DEST" \
-          -derivedDataPath DerivedData \
-          -enableCodeCoverage YES \
-          -resultBundlePath TestResults 
-          
-      # Force stop test host
-      - name: Force stop test host (avoid hangs)
-        if: failure() || success()  # always run
-        run: |
-          killall -9 PingTestHost 2>/dev/null || true
+      # # Cache DerivedData
+      # - name: Cache DerivedData
+      #   if: always()
+      #   uses: actions/cache@v5
+      #   with:
+      #     path: ${{ env.DERIVED_DATA_PATH }}
+      #     key: ${{ runner.os }}-derived-data-${{ env.XCODE_VERSION }}-${{ hashFiles('**/Podfile.lock', '**/*.pbxproj') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-derived-data-${{ env.XCODE_VERSION }}-
 
-      # Upload .xcresult bundle
-      - name: Upload .xcresult bundle as artifact
-        uses: actions/upload-artifact@v4
-        if: always()            # Upload even if build/test fails
+      # Cache Swift Packages
+      - name: Cache Swift Packages
+        if: always()
+        uses: actions/cache@v5
         with:
-          name: TestResults
-          path: TestResults.xcresult
+          path: SourcePackages
+          # Look for Package.resolved inside your workspace or project
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      # Install xcresultparser
+      - name: Install xcresultparser
+        run: |
+          curl -LO https://github.com/a7ex/xcresultparser/releases/download/1.9.3/xcresultparser.zip
+          unzip xcresultparser.zip
+          # Fix: The binary is inside the 'product' folder
+          chmod +x product/xcresultparser
+          sudo mv product/xcresultparser /usr/local/bin/
+
+      - name: Reset simulators
+        run: |
+          xcrun simctl shutdown all || true
+          xcrun simctl erase all || true
           
-      # # Install xcresultparser
-      # - name: Install xcresultparser
+      # List available simulators
+      - name: List available simulators
+        run: xcrun simctl list devices
+
+      # Pre-boot the simulator to avoid timeouts during xcodebuild
+      - name: Pre-boot Simulator
+        run: |
+          xcrun simctl bootstatus "iPhone SE (3rd generation)" -b || true
+
+      # Build the SDK for testing
+      - name: Build for testing
+        run: |
+          set -o pipefail
+          xcodebuild build-for-testing \
+            -scheme "${{ env.SCHEME }}" \
+            -workspace "${{ env.WORKSPACE }}" \
+            -destination '${{ env.DESTINATION }}' \
+            -derivedDataPath ${{ env.DERIVED_DATA_PATH }} \
+            -clonedSourcePackagesDirPath SourcePackages \
+            COMPILER_INDEX_STORE_ENABLE=NO | xcbeautify
+
+      # Run the unit tests without building
+      - name: Run unit tests
+        run: |
+          set -o pipefail
+          xcodebuild test-without-building \
+            -scheme "${{ env.SCHEME }}" \
+            -workspace "${{ env.WORKSPACE }}" \
+            -destination '${{ env.DESTINATION }}' \
+            -derivedDataPath ${{ env.DERIVED_DATA_PATH }} \
+            -resultBundlePath TestResults.xcresult \
+            -parallel-testing-enabled NO \
+            -parallel-testing-worker-count 1 \
+            -retry-tests-on-failure | xcbeautify
+
+      # # Run unit tests
+      # - name: Run tests
       #   run: |
-      #     curl -L https://github.com/a7ex/xcresultparser/releases/latest/download/xcresultparser-macos-arm64.zip -o parser.zip
-      #     unzip parser.zip -d xcparser
-      #     sudo mv xcparser/xcresultparser /usr/local/bin/xcresultparser
-      #     sudo chmod +x /usr/local/bin/xcresultparser
+      #     set -o pipefail && xcodebuild test \
+      #     -scheme ${{ env.SCHEME }} \
+      #     -workspace ${{ env.WORKSPACE }} \
+      #     -destination '${{ env.DESTINATION }}' \
+      #     -derivedDataPath ${{ env.DERIVED_DATA_PATH }} \
+      #     -clonedSourcePackagesDirPath SourcePackages \
+      #     -parallel-testing-enabled NO \
+      #     -retry-tests-on-failure \
+      #     COMPILER_INDEX_STORE_ENABLE=NO \
+      #     -resultBundlePath TestResults | xcbeautify
 
-      # # Parse and generate JUnit results
-      # - name: Convert xcresult to JUnit
-      #   run: |
-      #     xcresultparser -o junit TestResults.xcresult > TestResults.xml
+      #     # -configuration ${{ env.CONFIGURATION}} \
+      #     # TEST_TARGET_SIGNING=YES \
+      #     # -enableCodeCoverage YES \
+      #     # -resultBundlePath TestResults \
+      #     # -disable-concurrent-destination-testing \
+      #     # -retry-tests-on-failure 
+          
+      # Upload xcresult for debugging purposes
+      - name: Upload xcresult (debug)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults.xcresult
+          path: TestResults.xcresult
 
-      # # Publish JUnit test report to GitHub summary
-      # - name: Publish test results to GitHub summary
-      #   uses: dorny/test-reporter@v1
-      #   if: success() || failure()
-      #   with:
-      #     name: Tests Results
-      #     path: TestResults.xml
-      #     reporter: java-junit
+      # Convert test results to JUnit format
+      - name: Convert Test Results to JUnit
+        if: always()
+        run: xcresultparser -o junit TestResults.xcresult > test-report.xml
 
-      # # Publish test results
-      # - name: Publish test results
-      #   uses: slidoapp/xcresulttool@v3.1.0
-      #   with:
-      #     title: "Test Results ${{ matrix.os }} - ${{ env.CHIP_TYPE }}"
-      #     path: TestResults.xcresult
-      #     show-passed-tests: false
-      #     upload-bundles: never
-      #   if: success() || failure()
- 
+      # Publish the test results
+      - name: Publish test results
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Unit tests results
+          path: test-report.xml
+          list-suites: 'all'
+          list-tests: 'all'
+          fail-on-error: 'true'
+          reporter: java-junit
+      
       # Send slack notification with result status
       - uses: 8398a7/action-slack@v3
         with:
