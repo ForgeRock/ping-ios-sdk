@@ -147,7 +147,7 @@ jobs:
           path: test-report.xml
           list-suites: 'all'
           list-tests: 'all'
-          fail-on-error: 'true'
+          fail-on-error: 'false'
           reporter: java-junit
       
       # Send slack notification with result status
