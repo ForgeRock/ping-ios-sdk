@@ -368,13 +368,12 @@ final class PingOneProtectInitializeCallbackTests: XCTestCase {
         callback.initValue(name: JourneyConstants.envId, value: "concurrent-env")
 
         let concurrentCount = 100 // <-- Maybe we can change that to a smaller number
-        let tasks = (0..<concurrentCount).map { _ in
-            Task { await callback.start() }
-        }
 
         let results = await withTaskGroup(of: Result<Void, Error>.self) { group in
-            for task in tasks {
-                group.addTask { await task.value }
+            for _ in 0..<concurrentCount {
+                group.addTask { [callback] in
+                    await callback!.start()
+                }
             }
 
             var results: [Result<Void, Error>] = []
