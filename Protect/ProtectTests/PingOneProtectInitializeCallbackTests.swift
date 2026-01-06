@@ -10,8 +10,7 @@
 
 import XCTest
 @testable import PingProtect
-@testable import PingJourney
-
+@testable import PingJourneyPlugin
 
 
 // Test double for PingOneProtectInitializeCallback

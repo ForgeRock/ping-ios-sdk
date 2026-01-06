@@ -10,7 +10,7 @@
 
 import XCTest
 @testable import PingProtect
-@testable import PingJourney
+@testable import PingJourneyPlugin
 
 
 

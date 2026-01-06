@@ -34,10 +34,10 @@
 		1B7A9C942EE7BD2A00989A55 /* QRScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C842EE7BD2A00989A55 /* QRScannerViewModel.swift */; };
 		1B7A9C952EE7BD2A00989A55 /* PushAccountCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C7C2EE7BD2A00989A55 /* PushAccountCardView.swift */; };
 		1B7A9C962EE7BD2A00989A55 /* ManualOathRegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C772EE7BD2A00989A55 /* ManualOathRegistrationView.swift */; };
-		1B7A9CC92EE8CD9A00989A55 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA2E7D72ED7108300C32766 /* PingDavinciPlugin.framework */; };
-		1B7A9CCA2EE8CD9A00989A55 /* PingDavinciPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA2E7D72ED7108300C32766 /* PingDavinciPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		1B7A9CCB2EE8CD9A00989A55 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECA2E7CF2ED7107900C32766 /* PingJourneyPlugin.framework */; };
-		1B7A9CCC2EE8CD9A00989A55 /* PingJourneyPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA2E7CF2ED7107900C32766 /* PingJourneyPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1B7A9CC92EE8CD9A00989A55 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		1B7A9CCA2EE8CD9A00989A55 /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1B7A9CCB2EE8CD9A00989A55 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		1B7A9CCC2EE8CD9A00989A55 /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1B7C4A022EAABAA300E3C0AC /* PingPush.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7C49F02EAAB6E400E3C0AC /* PingPush.framework */; };
 		1B7C4A032EAABAA300E3C0AC /* PingPush.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7C49F02EAAB6E400E3C0AC /* PingPush.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3A3709962BEB038200AA7B51 /* AccessTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3709952BEB038200AA7B51 /* AccessTokenView.swift */; };
@@ -556,9 +556,9 @@
 			files = (
 				ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */,
 				A56742032EE1EE15009D29B9 /* PingCommons.framework in Embed Frameworks */,
-				1B7A9CCC2EE8CD9A00989A55 /* PingJourneyPlugin.framework in Embed Frameworks */,
+				1B7A9CCC2EE8CD9A00989A55 /* (null) in Embed Frameworks */,
 				EC59E3542E7D8BB900A91E66 /* PingTamperDetector.framework in Embed Frameworks */,
-				1B7A9CCA2EE8CD9A00989A55 /* PingDavinciPlugin.framework in Embed Frameworks */,
+				1B7A9CCA2EE8CD9A00989A55 /* (null) in Embed Frameworks */,
 				EC5C81F62ED08C6100C91570 /* PingJourney.framework in Embed Frameworks */,
 				A5560CA32CFE4EDA0076CA8D /* PingLogger.framework in Embed Frameworks */,
 				A56740E02ED788FB009D29B9 /* PingDeviceClient.framework in Embed Frameworks */,
@@ -762,7 +762,7 @@
 				EC5C81F52ED08C6100C91570 /* PingJourney.framework in Frameworks */,
 				A569DBEC2E78A78800F4D7A8 /* PingDeviceProfile.framework in Frameworks */,
 				EC5C81F32ED08C2D00C91570 /* PingDavinci.framework in Frameworks */,
-				1B7A9CCB2EE8CD9A00989A55 /* PingJourneyPlugin.framework in Frameworks */,
+				1B7A9CCB2EE8CD9A00989A55 /* (null) in Frameworks */,
 				1B2933CD2E7DF429004D1D38 /* PingOath.framework in Frameworks */,
 				1B7A9AD02ED5316F00989A55 /* PingNetwork.framework in Frameworks */,
 				A525E7B72DD7647200B02C17 /* PingExternalIdPFacebook.framework in Frameworks */,
@@ -770,7 +770,7 @@
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
 				EC92B38F2DA03E0700E4246D /* SVGKit in Frameworks */,
 				EC59E3532E7D8BB900A91E66 /* PingTamperDetector.framework in Frameworks */,
-				1B7A9CC92EE8CD9A00989A55 /* PingDavinciPlugin.framework in Frameworks */,
+				1B7A9CC92EE8CD9A00989A55 /* (null) in Frameworks */,
 				ECCAB3692E3A6C3300BA1C73 /* PingDeviceId.framework in Frameworks */,
 				A5560CA62CFE4EDA0076CA8D /* PingOrchestrate.framework in Frameworks */,
 				A58CFBD02EB0046B007C4A31 /* PingReCaptchaEnterprise.framework in Frameworks */,
@@ -2173,7 +2173,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2210,7 +2210,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2226,7 +2226,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -2242,7 +2242,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -2257,7 +2257,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -2273,7 +2273,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
