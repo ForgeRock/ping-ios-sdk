@@ -23,6 +23,12 @@
 		EC39CC842ED5D10A00ECBA72 /* PingJourneyPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC39CC822ED5D10A00ECBA72 /* PingJourneyPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC5C81CF2ECF8CD600C91570 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81CE2ECF8CD600C91570 /* PingDavinciPlugin.framework */; };
 		EC5C81D02ECF8CD600C91570 /* PingDavinciPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81CE2ECF8CD600C91570 /* PingDavinciPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC8025B72F0D2E8B0046C961 /* AbstractProtectCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8025B62F0D2E800046C961 /* AbstractProtectCallback.swift */; };
+		EC8025B92F0D2EA60046C961 /* PingOneProtectEvaluationCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8025B82F0D2E9D0046C961 /* PingOneProtectEvaluationCallback.swift */; };
+		EC8025BB2F0D2EAF0046C961 /* PingOneProtectInitializeCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8025BA2F0D2EA90046C961 /* PingOneProtectInitializeCallback.swift */; };
+		EC8025BD2F0D2EBD0046C961 /* ProtectCallbacks.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8025BC2F0D2EBB0046C961 /* ProtectCallbacks.swift */; };
+		EC8025C12F0D34850046C961 /* PingOneProtectInitializeCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8025C02F0D34850046C961 /* PingOneProtectInitializeCallbackTests.swift */; };
+		EC8025C22F0D34850046C961 /* PingOneProtectEvaluationCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8025BF2F0D34850046C961 /* PingOneProtectEvaluationCallbackTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +83,12 @@
 		A5F7A4FC2E0E2AAF0033F8B6 /* ProtectCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectCollectorTests.swift; sourceTree = "<group>"; };
 		EC39CC822ED5D10A00ECBA72 /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81CE2ECF8CD600C91570 /* PingDavinciPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinciPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC8025B62F0D2E800046C961 /* AbstractProtectCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractProtectCallback.swift; sourceTree = "<group>"; };
+		EC8025B82F0D2E9D0046C961 /* PingOneProtectEvaluationCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneProtectEvaluationCallback.swift; sourceTree = "<group>"; };
+		EC8025BA2F0D2EA90046C961 /* PingOneProtectInitializeCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneProtectInitializeCallback.swift; sourceTree = "<group>"; };
+		EC8025BC2F0D2EBB0046C961 /* ProtectCallbacks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectCallbacks.swift; sourceTree = "<group>"; };
+		EC8025BF2F0D34850046C961 /* PingOneProtectEvaluationCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneProtectEvaluationCallbackTests.swift; sourceTree = "<group>"; };
+		EC8025C02F0D34850046C961 /* PingOneProtectInitializeCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneProtectInitializeCallbackTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +146,8 @@
 		A5F7A4EC2E0E27620033F8B6 /* ProtectTests */ = {
 			isa = PBXGroup;
 			children = (
+				EC8025BF2F0D34850046C961 /* PingOneProtectEvaluationCallbackTests.swift */,
+				EC8025C02F0D34850046C961 /* PingOneProtectInitializeCallbackTests.swift */,
 				A5F7A4EB2E0E27620033F8B6 /* ProtectTests.swift */,
 				A5F7A4EA2E0E27620033F8B6 /* ProtectLifecycleModuleTests.swift */,
 				A5F7A4FC2E0E2AAF0033F8B6 /* ProtectCollectorTests.swift */,
@@ -145,6 +159,7 @@
 		A5F7A4F52E0E276A0033F8B6 /* Protect */ = {
 			isa = PBXGroup;
 			children = (
+				EC8025B52F0D2E790046C961 /* Journey */,
 				A5F7A4F02E0E276A0033F8B6 /* PrivacyInfo.xcprivacy */,
 				A5F7A4F12E0E276A0033F8B6 /* Protect.h */,
 				A5F7A4F22E0E276A0033F8B6 /* Protect.swift */,
@@ -153,6 +168,17 @@
 				A5F7A4F42E0E276A0033F8B6 /* ProtectLifecycleModule.swift */,
 			);
 			path = Protect;
+			sourceTree = "<group>";
+		};
+		EC8025B52F0D2E790046C961 /* Journey */ = {
+			isa = PBXGroup;
+			children = (
+				EC8025BC2F0D2EBB0046C961 /* ProtectCallbacks.swift */,
+				EC8025BA2F0D2EA90046C961 /* PingOneProtectInitializeCallback.swift */,
+				EC8025B82F0D2E9D0046C961 /* PingOneProtectEvaluationCallback.swift */,
+				EC8025B62F0D2E800046C961 /* AbstractProtectCallback.swift */,
+			);
+			path = Journey;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -277,10 +303,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC8025B72F0D2E8B0046C961 /* AbstractProtectCallback.swift in Sources */,
+				EC8025B92F0D2EA60046C961 /* PingOneProtectEvaluationCallback.swift in Sources */,
+				EC8025BD2F0D2EBD0046C961 /* ProtectCallbacks.swift in Sources */,
 				A5F7A4F62E0E276A0033F8B6 /* Protect.swift in Sources */,
 				A5F7A4F72E0E276A0033F8B6 /* ProtectCollector.swift in Sources */,
 				A5F7A4F82E0E276A0033F8B6 /* ProtectLifecycleModule.swift in Sources */,
 				A5F7A4F92E0E276A0033F8B6 /* ProtectError.swift in Sources */,
+				EC8025BB2F0D2EAF0046C961 /* PingOneProtectInitializeCallback.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,6 +320,8 @@
 			files = (
 				A5F7A4ED2E0E27620033F8B6 /* ProtectLifecycleModuleTests.swift in Sources */,
 				A5F7A4FD2E0E2ABB0033F8B6 /* ProtectCollectorTests.swift in Sources */,
+				EC8025C12F0D34850046C961 /* PingOneProtectInitializeCallbackTests.swift in Sources */,
+				EC8025C22F0D34850046C961 /* PingOneProtectEvaluationCallbackTests.swift in Sources */,
 				A5F7A4EE2E0E27620033F8B6 /* ProtectTests.swift in Sources */,
 				A5B38B822E4C0B4400692B2B /* MockProtect.swift in Sources */,
 			);
