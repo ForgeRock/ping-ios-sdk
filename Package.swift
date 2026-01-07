@@ -49,7 +49,7 @@ let package = Package(
         .target(name: "PingDavinci", dependencies: [.target(name: "PingOidc"), .target(name: "PingDavinciPlugin"), .target(name: "PingCommons")], path: "Davinci/Davinci", exclude: ["Davinci.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingBrowser", dependencies: [.target(name: "PingLogger")], path: "Browser/Browser", exclude: ["Browser.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingJourney", dependencies: [.target(name: "PingOidc"), .target(name: "PingJourneyPlugin")], path: "Journey/Journey", exclude: ["Journey.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingCommons", dependencies: [.target(name: "PingLogger")], path: "Commons/Commons", exclude: ["Commons.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingCommons", dependencies: [.target(name: "PingLogger"), .target(name: "PingTamperDetector")], path: "Commons/Commons", exclude: ["Commons.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingBinding", dependencies: [.target(name: "PingJourneyPlugin"), .target(name: "PingCommons")], path: "Binding/Binding", exclude: ["Binding.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingExternalIdP", dependencies: [.target(name: "PingDavinciPlugin"), .target(name: "PingBrowser")], path: "ExternalIdP/ExternalIdP", exclude: ["ExternalIdP.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingExternalIdPApple", dependencies: [.target(name: "PingExternalIdP")], path: "ExternalIdPApple/ExternalIdPApple", exclude: ["ExternalIdPApple.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
