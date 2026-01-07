@@ -26,8 +26,6 @@
 		EC59E3272E7D7E1D00A91E66 /* URLSchemeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E31C2E7D7E1D00A91E66 /* URLSchemeDetector.swift */; };
 		EC59E3282E7D7E1D00A91E66 /* DyldDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E3112E7D7E1D00A91E66 /* DyldDetector.swift */; };
 		EC59E3292E7D7E1D00A91E66 /* SuspiciousFilesAccessibleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E3162E7D7E1D00A91E66 /* SuspiciousFilesAccessibleDetector.swift */; };
-		ECC52B2C2E81B34700C468C7 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECC52B2B2E81B34700C468C7 /* PingLogger.framework */; };
-		ECC52B2D2E81B34700C468C7 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECC52B2B2E81B34700C468C7 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,7 +45,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				ECC52B2D2E81B34700C468C7 /* PingLogger.framework in Embed Frameworks */,
 				1B18D64D2EF1CC740004F205 /* PingCommons.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -84,7 +81,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ECC52B2C2E81B34700C468C7 /* PingLogger.framework in Frameworks */,
 				1B18D64C2EF1CC740004F205 /* PingCommons.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -461,7 +457,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.TamperDetector;
@@ -501,7 +497,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.TamperDetector;
@@ -527,7 +523,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.TamperDetectorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -551,7 +547,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.TamperDetectorTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;

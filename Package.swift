@@ -62,10 +62,10 @@ let package = Package(
         .target(name: "PingJourneyPlugin", dependencies: [.target(name: "PingOrchestrate")], path: "JourneyPlugin/JourneyPlugin", exclude: ["JourneyPlugin.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingReCaptchaEnterprise", dependencies: [.target(name: "PingCommons"), .target(name: "PingJourneyPlugin"), .product(name: "RecaptchaEnterprise", package: "recaptcha-enterprise-mobile-sdk")], path: "ReCaptchaEnterprise/ReCaptchaEnterprise", exclude: ["ReCaptchaEnterprise.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingDeviceId", dependencies: [.target(name: "PingStorage"), .target(name: "PingLogger")], path: "DeviceId/DeviceId", exclude: ["DeviceId.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingTamperDetector", dependencies: [.target(name: "PingLogger")], path: "TamperDetector/TamperDetector", exclude: ["TamperDetector.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingDeviceProfile", dependencies: [.target(name: "PingCommons"), .target(name: "PingDeviceId"), .target(name: "PingTamperDetector"), .target(name: "PingJourneyPlugin")], path: "DeviceProfile/DeviceProfile", exclude: ["DeviceProfile.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingOath", dependencies: [.target(name: "PingCommons")], path: "Oath/Oath", exclude: ["Oath.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
-        .target(name: "PingPush", dependencies: [.target(name: "PingCommons"), .target(name: "PingOrchestrate")], path: "Push/Push", exclude: ["Push.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingTamperDetector", dependencies: [.target(name: "PingCommons")], path: "TamperDetector/TamperDetector", exclude: ["TamperDetector.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingDeviceProfile", dependencies: [.target(name: "PingTamperDetector"), .target(name: "PingDeviceId"), .target(name: "PingJourneyPlugin")], path: "DeviceProfile/DeviceProfile", exclude: ["DeviceProfile.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingOath", dependencies: [.target(name: "PingTamperDetector")], path: "Oath/Oath", exclude: ["Oath.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
+        .target(name: "PingPush", dependencies: [.target(name: "PingTamperDetector"), .target(name: "PingOrchestrate")], path: "Push/Push", exclude: ["Push.h"], resources: [.copy("PrivacyInfo.xcprivacy")]),
         .target(name: "PingFido", dependencies: [.target(name: "PingCommons"), .target(name: "PingDavinciPlugin"), .target(name: "PingJourneyPlugin"), .target(name: "PingOrchestrate")], path: "Fido/Fido", exclude: ["Fido.h"], resources: [.copy("PrivacyInfo.xcprivacy")])
     ]
 )
