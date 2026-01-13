@@ -35,6 +35,5 @@ Pod::Spec.new do |s|
 
   s.ios.dependency 'PingExternalIdP', '~> 1.3.1'
   s.ios.dependency 'GoogleSignIn', '~> 9.0.0'
-  s.ios.dependency 'PingNetwork', '~> 1.3.1'
     
 end

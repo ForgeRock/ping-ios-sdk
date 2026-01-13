@@ -34,7 +34,8 @@ Pod::Spec.new do |s|
     'Protect' => [base_dir + '/*.xcprivacy']
   }
 
-  s.ios.dependency 'PingDaviniciPlugin', '~> 1.3.1'
+  s.ios.dependency 'PingDavinciPlugin', '~> 1.3.1'
+  s.ios.dependency 'PingJourneyPlugin', '~> 1.3.1'
   s.ios.dependency 'PingOneSignals', '~> 5.3.0'
 
 end

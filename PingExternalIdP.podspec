@@ -33,8 +33,8 @@ Pod::Spec.new do |s|
     'External-idp' => [base_dir + '/*.xcprivacy']
   }
 
-  s.ios.dependency 'PingDavinciPlugin', '~> 1.3.1'
   s.ios.dependency 'PingBrowser', '~> 1.3.1'
-  s.ios.dependency 'PingNetwork', '~> 1.3.1'
+  s.ios.dependency 'PingDavinciPlugin', '~> 1.3.1'
+  s.ios.dependency 'PingJourneyPlugin', '~> 1.3.1'
     
 end

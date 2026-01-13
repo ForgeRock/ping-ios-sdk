@@ -33,9 +33,7 @@ Pod::Spec.new do |s|
     'Fido' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingLogger', '~> 1.3.1'
+  s.ios.dependency 'PingCommons', '~> 1.3.1'
   s.ios.dependency 'PingDavinciPlugin', '~> 1.3.1'
   s.ios.dependency 'PingJourneyPlugin', '~> 1.3.1'
-  s.ios.dependency 'PingCommons', '~> 1.3.1'
-  s.ios.dependency 'Orchestrate', '~> 1.3.1'
 end

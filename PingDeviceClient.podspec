@@ -33,8 +33,7 @@ Pod::Spec.new do |s|
     'PingDeviceClient' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingNetwork', '~> 1.3.1'
-  s.ios.dependency 'PingLogger', '~> 1.3.1'
   s.ios.dependency 'PingCommons', '~> 1.3.1'
+  s.ios.dependency 'PingNetwork', '~> 1.3.1'
   
 end

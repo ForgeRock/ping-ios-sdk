@@ -33,8 +33,8 @@ Pod::Spec.new do |s|
     'PingReCaptchaEnterprise' => [base_dir + '/*.xcprivacy']
   }
 
-  s.ios.dependency 'JourneyPlugin', '~> 1.3.1'
-  s.ios.dependency 'Commons', '~> 1.3.1'
+  s.ios.dependency 'PingCommons', '~> 1.3.1'
+  s.ios.dependency 'PingJourneyPlugin', '~> 1.3.1'
   s.ios.dependency 'RecaptchaEnterprise', '~> 18.8.1'
 
 end

@@ -21,9 +21,6 @@ Pod::Spec.new do |s|
     'Binding' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingOrchestrate', '~> 1.3.1'
-  s.ios.dependency 'PingJourneyPlugin', '~> 1.3.1'
   s.ios.dependency 'PingCommons', '~> 1.3.1'
-  s.ios.dependency 'PingStorage', '~> 1.3.1'
-  s.ios.dependency 'PingLogger', '~> 1.3.1'
+  s.ios.dependency 'PingJourneyPlugin', '~> 1.3.1'
 end

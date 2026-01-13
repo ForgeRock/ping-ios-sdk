@@ -36,8 +36,6 @@
 		A51D4CF62C65743100FE09E0 /* MockAPIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CF52C65743100FE09E0 /* MockAPIEndpoint.swift */; };
 		A51D4CF82C65978300FE09E0 /* DaVinciIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CF72C65978300FE09E0 /* DaVinciIntegrationTests.swift */; };
 		A51D4CFA2C6BA75000FE09E0 /* CallbackFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CF92C6BA75000FE09E0 /* CallbackFactoryTests.swift */; };
-		A56742282EE219ED009D29B9 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56742272EE219ED009D29B9 /* PingCommons.framework */; };
-		A56742292EE219ED009D29B9 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56742272EE219ED009D29B9 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5A61E032D4A92BF00767C2D /* ErrorNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A61E022D4A92B000767C2D /* ErrorNode.swift */; };
 		A5A712482CAC527200B7DD58 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5A712472CAC527200B7DD58 /* PrivacyInfo.xcprivacy */; };
 		A5E9AEB22D2F1F93000533ED /* SingleValueCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */; };
@@ -90,7 +88,6 @@
 			files = (
 				EC5C81CA2ECF7A1700C91570 /* PingDavinciPlugin.framework in Embed Frameworks */,
 				A50981C32CEBDF2600F4B487 /* PingOidc.framework in Embed Frameworks */,
-				A56742292EE219ED009D29B9 /* PingCommons.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -127,7 +124,6 @@
 		A51D4CF52C65743100FE09E0 /* MockAPIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIEndpoint.swift; sourceTree = "<group>"; };
 		A51D4CF72C65978300FE09E0 /* DaVinciIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciIntegrationTests.swift; sourceTree = "<group>"; };
 		A51D4CF92C6BA75000FE09E0 /* CallbackFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackFactoryTests.swift; sourceTree = "<group>"; };
-		A56742272EE219ED009D29B9 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A61E022D4A92B000767C2D /* ErrorNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorNode.swift; sourceTree = "<group>"; };
 		A5A712472CAC527200B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleValueCollector.swift; sourceTree = "<group>"; };
@@ -168,7 +164,6 @@
 			files = (
 				EC5C81C92ECF7A1700C91570 /* PingDavinciPlugin.framework in Frameworks */,
 				A50981C22CEBDF2600F4B487 /* PingOidc.framework in Frameworks */,
-				A56742282EE219ED009D29B9 /* PingCommons.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,7 +181,6 @@
 		3A203D802BDB13FF0020C995 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A56742272EE219ED009D29B9 /* PingCommons.framework */,
 				EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */,
 				ECBF06752D525BE20066A3BD /* Extrernal_idp.framework */,
 				A50981C12CEBDF2600F4B487 /* PingOidc.framework */,

@@ -41,6 +41,8 @@
 		A5D296992E7C72350093A761 /* NetworkPathMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296982E7C72330093A761 /* NetworkPathMonitor.swift */; };
 		EC5C81F02ED0851000C91570 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */; };
 		EC5C81F12ED0851000C91570 /* PingJourneyPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A5COM0012F0100000000006 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56742662EE21DD9009D29B9 /* PingCommons.framework */; };
+		A5COM0022F0100000000006 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56742662EE21DD9009D29B9 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +62,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				A5COM0022F0100000000006 /* PingCommons.framework in Embed Frameworks */,
 				EC5C81F12ED0851000C91570 /* PingJourneyPlugin.framework in Embed Frameworks */,
 				A5BE8CAE2E8C881D007AF0B9 /* PingDeviceId.framework in Embed Frameworks */,
 				A5BE8CAB2E8C8424007AF0B9 /* PingTamperDetector.framework in Embed Frameworks */,
@@ -113,6 +116,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5COM0012F0100000000006 /* PingCommons.framework in Frameworks */,
 				EC5C81F02ED0851000C91570 /* PingJourneyPlugin.framework in Frameworks */,
 				A5BE8CAD2E8C881D007AF0B9 /* PingDeviceId.framework in Frameworks */,
 				A5BE8CAA2E8C8424007AF0B9 /* PingTamperDetector.framework in Frameworks */,

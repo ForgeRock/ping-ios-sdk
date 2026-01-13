@@ -33,6 +33,6 @@ Pod::Spec.new do |s|
     'TamperDetector' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingLogger', '~> 1.3.1'
+  s.ios.dependency 'PingCommons', '~> 1.3.1'
     
 end

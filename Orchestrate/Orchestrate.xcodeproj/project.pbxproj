@@ -23,8 +23,6 @@
 		3AB1C9E92BD6410A003FCE3C /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1C9E52BD6410A003FCE3C /* Response.swift */; };
 		3AB1C9F22BD6B2F9003FCE3C /* CustomHTTPCookie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1C9F02BD6B2F9003FCE3C /* CustomHTTPCookie.swift */; };
 		3AF7D3BB2BF3CF410056F497 /* Module.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7D3BA2BF3CF410056F497 /* Module.swift */; };
-		A50981B92CEBDF0800F4B487 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50981B72CEBDF0800F4B487 /* PingLogger.framework */; };
-		A50981BA2CEBDF0800F4B487 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A50981B72CEBDF0800F4B487 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A50981BB2CEBDF0800F4B487 /* PingStorage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50981B82CEBDF0800F4B487 /* PingStorage.framework */; };
 		A50981BC2CEBDF0800F4B487 /* PingStorage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A50981B82CEBDF0800F4B487 /* PingStorage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A51D4CE32C62EB4B00FE09E0 /* CustomHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CE22C62EB4B00FE09E0 /* CustomHeader.swift */; };
@@ -60,7 +58,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				A50981BC2CEBDF0800F4B487 /* PingStorage.framework in Embed Frameworks */,
-				A50981BA2CEBDF0800F4B487 /* PingLogger.framework in Embed Frameworks */,
 				A565497F2EF2293B00CC409B /* PingNetwork.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -86,7 +83,6 @@
 		3AB1C9E52BD6410A003FCE3C /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
 		3AB1C9F02BD6B2F9003FCE3C /* CustomHTTPCookie.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomHTTPCookie.swift; sourceTree = "<group>"; };
 		3AF7D3BA2BF3CF410056F497 /* Module.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Module.swift; sourceTree = "<group>"; };
-		A50981B72CEBDF0800F4B487 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A50981B82CEBDF0800F4B487 /* PingStorage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingStorage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A51D4CE22C62EB4B00FE09E0 /* CustomHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeader.swift; sourceTree = "<group>"; };
 		A51D4CFB2C6BA9BD00FE09E0 /* CustomHeaderModuleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeaderModuleTests.swift; sourceTree = "<group>"; };
@@ -108,7 +104,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A50981BB2CEBDF0800F4B487 /* PingStorage.framework in Frameworks */,
-				A50981B92CEBDF0800F4B487 /* PingLogger.framework in Frameworks */,
 				A565497E2EF2293B00CC409B /* PingNetwork.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -186,7 +181,6 @@
 			isa = PBXGroup;
 			children = (
 				A565497D2EF2293B00CC409B /* PingNetwork.framework */,
-				A50981B72CEBDF0800F4B487 /* PingLogger.framework */,
 				A50981B82CEBDF0800F4B487 /* PingStorage.framework */,
 			);
 			name = Frameworks;

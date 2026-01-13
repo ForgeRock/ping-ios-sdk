@@ -33,7 +33,6 @@ Pod::Spec.new do |s|
     'Oidc' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingOrchestrate', '~> 1.3.1'
   s.ios.dependency 'PingBrowser', '~> 1.3.1'
-  s.ios.dependency 'PingCommons', '~> 1.3.1'
+  s.ios.dependency 'PingOrchestrate', '~> 1.3.1'
 end

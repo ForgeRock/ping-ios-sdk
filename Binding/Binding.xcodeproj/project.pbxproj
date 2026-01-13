@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A56742732EE33D00009D29B9 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56742722EE33D00009D29B9 /* PingCommons.framework */; };
-		A56742742EE33D00009D29B9 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56742722EE33D00009D29B9 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A5COM0012F0100000000007 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5COM0002F0100000000007 /* PingCommons.framework */; };
+		A5COM0022F0100000000007 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5COM0002F0100000000007 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC4DD2F12EABBAB800ECC4E1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC4DD2EC2EABBAB800ECC4E1 /* PrivacyInfo.xcprivacy */; };
 		EC4DD2F22EABBAB800ECC4E1 /* SigningParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2E52EABBAB800ECC4E1 /* SigningParameters.swift */; };
 		EC4DD2F32EABBAB800ECC4E1 /* DeviceAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD2D42EABBAB800ECC4E1 /* DeviceAuthenticator.swift */; };
@@ -69,8 +69,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				A5COM0022F0100000000007 /* PingCommons.framework in Embed Frameworks */,
 				EC5C81EA2ED084F700C91570 /* PingJourneyPlugin.framework in Embed Frameworks */,
-				A56742742EE33D00009D29B9 /* PingCommons.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -78,7 +78,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		A56742722EE33D00009D29B9 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5COM0002F0100000000007 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC4DD2842EABBA5F00ECC4E1 /* PingBinding.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingBinding.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC4DD2D42EABBAB800ECC4E1 /* DeviceAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticator.swift; sourceTree = "<group>"; };
 		EC4DD2D52EABBAB800ECC4E1 /* NoneAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoneAuthenticator.swift; sourceTree = "<group>"; };
@@ -134,7 +134,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A56742732EE33D00009D29B9 /* PingCommons.framework in Frameworks */,
+				A5COM0012F0100000000007 /* PingCommons.framework in Frameworks */,
 				EC5C81E92ED084F700C91570 /* PingJourneyPlugin.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -275,7 +275,7 @@
 		EC4DD30F2EABBB0000ECC4E1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A56742722EE33D00009D29B9 /* PingCommons.framework */,
+				A5COM0002F0100000000007 /* PingCommons.framework */,
 				EC5C81E82ED084F700C91570 /* PingJourneyPlugin.framework */,
 				EC6F65D12EB2470F00D4686D /* PingStorage.framework */,
 				EC6F65892EB1197200D4686D /* AlarmKit.framework */,
