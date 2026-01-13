@@ -2,7 +2,7 @@
 //  ErrorHandlingTests.swift
 //  PingNetworkTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -28,39 +28,39 @@ final class ErrorHandlingTests: XCTestCase {
 
     func testInvalidURLStringFails() async {
         let client = makeClient()
-        let result = await client.request { req in
-            guard let mutable = req as? URLSessionHttpRequest else { return }
-            mutable.url = "ht tp://bad"
-            mutable.get()
-        }
-
-        switch result {
-        case .success:
+        do {
+            _ = try await client.request { req in
+                guard let mutable = req as? URLSessionHttpRequest else { return }
+                mutable.url = "ht tp://bad"
+                mutable.get()
+            }
             XCTFail("Expected failure for invalid URL")
-        case .failure(let error):
-            guard case NetworkError.invalidRequest = error else {
+        } catch let error as NetworkError {
+            guard case .invalidRequest = error else {
                 XCTFail("Unexpected error \(error)")
                 return
             }
+        } catch {
+            XCTFail("Unexpected error type \(error)")
         }
     }
 
     func testJsonSerializationErrorReturnsInvalidRequest() async {
         let client = makeClient()
-        let result = await client.request { req in
-            guard let mutable = req as? URLSessionHttpRequest else { return }
-            mutable.url = "https://example.com"
-            mutable.post(json: ["date": Date()]) // Date is not JSON-serializable
-        }
-
-        switch result {
-        case .success:
+        do {
+            _ = try await client.request { req in
+                guard let mutable = req as? URLSessionHttpRequest else { return }
+                mutable.url = "https://example.com"
+                mutable.post(json: ["date": Date()]) // Date is not JSON-serializable
+            }
             XCTFail("Expected serialization error")
-        case .failure(let error):
-            guard case NetworkError.invalidRequest = error else {
+        } catch let error as NetworkError {
+            guard case .invalidRequest = error else {
                 XCTFail("Unexpected error \(error)")
                 return
             }
+        } catch {
+            XCTFail("Unexpected error type \(error)")
         }
     }
 
@@ -71,20 +71,20 @@ final class ErrorHandlingTests: XCTestCase {
         let session = URLSession(configuration: sessionConfig, delegate: nil, delegateQueue: nil)
         let client = URLSessionHttpClient(config: config, session: session, delegate: nil)
 
-        let result = await client.request { req in
-            guard let mutable = req as? URLSessionHttpRequest else { return }
-            mutable.url = "https://example.com"
-            mutable.get()
-        }
-
-        switch result {
-        case .success:
+        do {
+            _ = try await client.request { req in
+                guard let mutable = req as? URLSessionHttpRequest else { return }
+                mutable.url = "https://example.com"
+                mutable.get()
+            }
             XCTFail("Expected invalidResponse error")
-        case .failure(let error):
-            guard case NetworkError.invalidResponse = error else {
+        } catch let error as NetworkError {
+            guard case .invalidResponse = error else {
                 XCTFail("Unexpected error \(error)")
                 return
             }
+        } catch {
+            XCTFail("Unexpected error type \(error)")
         }
     }
 
@@ -93,27 +93,24 @@ final class ErrorHandlingTests: XCTestCase {
 
         func assertMapping(code: URLError.Code, expected: NetworkError) async {
             MockURLProtocol.requestHandler = { _ in throw URLError(code) }
-            let result = await client.request { req in
-                guard let mutable = req as? URLSessionHttpRequest else { return }
-                mutable.url = "https://example.com"
-                mutable.get()
-            }
-            switch result {
-            case .success:
-                XCTFail("Expected failure for \(code)")
-            case .failure(let error):
-                guard let networkError = error as? NetworkError else {
-                    XCTFail("Unexpected error \(error)")
-                    return
+            do {
+                _ = try await client.request { req in
+                    guard let mutable = req as? URLSessionHttpRequest else { return }
+                    mutable.url = "https://example.com"
+                    mutable.get()
                 }
-                switch (networkError, expected) {
+                XCTFail("Expected failure for \(code)")
+            } catch let error as NetworkError {
+                switch (error, expected) {
                 case (.timeout, .timeout),
                      (.networkUnavailable, .networkUnavailable),
                      (.cancelled, .cancelled):
                     break
                 default:
-                    XCTFail("Unexpected error \(networkError)")
+                    XCTFail("Unexpected error \(error)")
                 }
+            } catch {
+                XCTFail("Unexpected error type \(error)")
             }
         }
 

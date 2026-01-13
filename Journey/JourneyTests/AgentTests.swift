@@ -2,7 +2,7 @@
 //  AgentTests.swift
 //  JourneyTests
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,7 +11,7 @@
 import XCTest
 @testable import PingJourney
 @testable import PingOidc
-@testable import PingOrchestrate
+@testable import PingNetwork
 
 final class AgentTests: XCTestCase {
     
@@ -91,12 +91,20 @@ final class AgentTests: XCTestCase {
         XCTAssertTrue(agent.used)
         
         // Verify request parameters
-        XCTAssertNotNil(httpClient.lastRequest)
-        let request = httpClient.lastRequest!
-        let baseURLString = "\(request.urlRequest.url?.scheme ?? "")://\(request.urlRequest.url?.host ?? "")\(request.urlRequest.url?.path ?? "")"
+        guard let request = httpClient.lastRequest else {
+            XCTFail("request should not be nil")
+            return
+        }
+        
+        guard let urlString = request.url else {
+            XCTFail("request url should not be nil")
+            return
+        }
+        let url = URL(string: urlString)
+        let baseURLString = "\(url?.scheme ?? "")://\(url?.host ?? "")\(url?.path ?? "")"
         XCTAssertEqual(baseURLString, "https://auth.example.com/authorize")
-        XCTAssertEqual(request.urlRequest.value(forHTTPHeaderField: "Accept-API-Version"), "resource=2.1, protocol=1.0")
-        XCTAssertEqual(request.urlRequest.value(forHTTPHeaderField: "iPlanetDirectoryPro"), "test-session")
+        XCTAssertEqual(request.getHeader(name: "Accept-API-Version"), "resource=2.1, protocol=1.0")
+        XCTAssertEqual(request.getHeader(name: "iPlanetDirectoryPro"), "test-session")
     }
     
     func testAuthorizeWithNon302Response() async throws {

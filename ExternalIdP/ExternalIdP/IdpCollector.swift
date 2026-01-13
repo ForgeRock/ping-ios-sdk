@@ -2,7 +2,7 @@
 //  IdpCollector.swift
 //  ExternalIdP
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,7 @@
 import Foundation
 import PingOrchestrate
 import PingDavinciPlugin
+import PingNetwork
 
 /// A collector class for handling Identity Provider (IdP) authorization.
 /// - property continueNode: The continue node.
@@ -50,7 +51,7 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
     public var nativeHandler: IdpRequestHandler?
     
     ///  The request to resume the DaVinci flow.
-    public var resumeRequest: Request?
+    public var resumeRequest: HttpRequest?
     
     /// Initializes the `IdpCollector` with the given JSON input.
     public required init(with json: [String : Any]) {
@@ -101,7 +102,7 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
     ///  - Parameters:
     ///     - context: The flow context.
     ///     - request: The request to intercept.
-    public func intercept(context: FlowContext, request: Request) -> Request {
+    public func intercept(context: FlowContext, request: HttpRequest) -> HttpRequest {
         return resumeRequest ?? request
     }
     
@@ -114,7 +115,7 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
     /// - Parameters:
     ///  - httpClient: The HTTP client.
     ///  - Returns: The IdpRequestHandler.
-    @MainActor public func getDefaultIdpHandler(httpClient: HttpClient) -> IdpRequestHandler? {
+    @MainActor public func getDefaultIdpHandler(httpClient: any HttpClientProtocol) -> IdpRequestHandler? {
         switch idpType {
         case Constants.APPLE:
             if let c: NSObject.Type = NSClassFromString("PingExternalIdPApple.AppleRequestHandler") as? NSObject.Type {
@@ -144,7 +145,7 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
     ///     - c: The class to create the handler from.
     ///     - httpClient: The HTTP client to use.
     /// - Returns: The IdpRequestHandler.
-    private func makeNativeRequestHandler(from c: AnyClass, httpClient: HttpClient) -> IdpRequestHandler? {
+    private func makeNativeRequestHandler(from c: AnyClass, httpClient: any HttpClientProtocol) -> IdpRequestHandler? {
         // 1) Cast the class object to NSObject.Type so we can call `perform(_:)` on it
         guard let nsObjcClass = c as? NSObject.Type else {
             // This is not an NSObject subclass

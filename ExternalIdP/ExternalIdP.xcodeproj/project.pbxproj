@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A56549812EF23E4200CC409B /* PingNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56549802EF23E4200CC409B /* PingNetwork.framework */; };
+		A56549822EF23E4200CC409B /* PingNetwork.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56549802EF23E4200CC409B /* PingNetwork.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC0815E42D49387A00F1AD02 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC0815E22D49387A00F1AD02 /* PrivacyInfo.xcprivacy */; };
 		EC0815E52D49387A00F1AD02 /* ExternalIdP.h in Headers */ = {isa = PBXBuildFile; fileRef = EC0815E12D49387A00F1AD02 /* ExternalIdP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EC0815E92D4939EB00F1AD02 /* IdpHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0815E82D4939E400F1AD02 /* IdpHandler.swift */; };
@@ -44,6 +46,7 @@
 			files = (
 				EC5C81CD2ECF8CC300C91570 /* PingDavinciPlugin.framework in Embed Frameworks */,
 				ECA53F912D635C53002B35D4 /* PingBrowser.framework in Embed Frameworks */,
+				A56549822EF23E4200CC409B /* PingNetwork.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -51,6 +54,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A56549802EF23E4200CC409B /* PingNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5AB9FFF2EF0BBE6000E42B7 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
 		EC0815B72D49377500F1AD02 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC0815E12D49387A00F1AD02 /* ExternalIdP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalIdP.h; sourceTree = "<group>"; };
 		EC0815E22D49387A00F1AD02 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -77,6 +82,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC5C81CC2ECF8CC300C91570 /* PingDavinciPlugin.framework in Frameworks */,
+				A56549812EF23E4200CC409B /* PingNetwork.framework in Frameworks */,
 				ECA53F902D635C53002B35D4 /* PingBrowser.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -147,6 +153,8 @@
 		ECBF06432D50EBF60066A3BD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A56549802EF23E4200CC409B /* PingNetwork.framework */,
+				A5AB9FFF2EF0BBE6000E42B7 /* Network.framework */,
 				EC5C81CB2ECF8CC300C91570 /* PingDavinciPlugin.framework */,
 				EC5016152E437052006D8C3A /* PingJourney.framework */,
 				ECA53FD42D63A48A002B35D4 /* PingDavinci.framework */,

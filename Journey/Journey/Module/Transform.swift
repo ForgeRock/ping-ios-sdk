@@ -2,7 +2,7 @@
 //  Transform.swift
 //  Journey
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -20,12 +20,12 @@ public class NodeTransformModule: @unchecked Sendable {
     /// The module configuration for transforming the response from Journey to `Node`.
     public static let config: Module<Void> = Module.of(setup: { setup in
         setup.transform { @Sendable flowContext, response in
-            let status = response.status()
+            let status = response.status
             
-            let body = await response.body()
+            let body = response.bodyAsString()
             
             // Check for 4XX errors that are unrecoverable
-            if (400..<500).contains(status) {
+            if status.isClientError() {
                 do {
                     let json = try response.json()
                     let message = json[JourneyConstants.message] as? String ?? ""
@@ -36,14 +36,14 @@ public class NodeTransformModule: @unchecked Sendable {
             }
             
             // Handle success (2XX) responses
-            if status == 200 {
+            if status.isSuccess() {
                 let json = try response.json()
                 return await transform(context: flowContext, journey: setup.workflow, json: json)
             }
             
             // Handle success (3XX) responses
-            if (300..<400).contains(status) {
-                let locationHeader = response.header(name: JourneyConstants.location) ?? ""
+            if status.isRedirect() {
+                let locationHeader = response.getHeader(name: JourneyConstants.location) ?? ""
                 return FailureNode(cause: ApiError.error(status, [:], "Location: \(String(describing: locationHeader))" ))
             }
             

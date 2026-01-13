@@ -35,5 +35,6 @@ Pod::Spec.new do |s|
 
   s.ios.dependency 'PingDavinciPlugin', '~> 1.3.1'
   s.ios.dependency 'PingBrowser', '~> 1.3.1'
+  s.ios.dependency 'PingNetwork', '~> 1.3.1'
     
 end

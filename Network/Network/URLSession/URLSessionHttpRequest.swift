@@ -2,7 +2,7 @@
 //  URLSessionHttpRequest.swift
 //  PingNetwork
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -17,16 +17,14 @@ import Foundation
 ///
 /// **This class is NOT thread-safe.** It contains mutable state without synchronization
 /// and should not be shared across multiple threads or modified concurrently.
-public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
+public class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     /// The target URL for this HTTP request.
     public var url: String?
-
-    private var headers: [String: String] = [:]
-    private var parameters: [URLQueryItem] = []
-    private var cookies: [String] = []
-    private var method: HttpMethod = .get
-    private var formParameters: [URLQueryItem] = []
-    private var bodyResult: Result<Data, Error>?
+    
+    private var urlRequest: URLRequest
+    
+    /// Tracks whether JSON serialization failed during body configuration.
+    private var jsonSerializationFailed: Bool = false
 
     /// Creates a new HTTP request with standard headers automatically injected.
     ///
@@ -34,8 +32,11 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     /// - `x-requested-with: ping-sdk`
     /// - `x-requested-platform: ios`
     public init() {
-        headers[NetworkConstants.headerRequestedWith] = NetworkConstants.requestedWithValue
-        headers[NetworkConstants.headerRequestedPlatform] = NetworkConstants.requestedPlatformValue
+        // Initialize with a placeholder URL - will be replaced when buildURLRequest is called
+        urlRequest = URLRequest(url: URL(string: "https://")!)
+        urlRequest.httpMethod = HttpMethod.get.rawValue
+        urlRequest.setValue(NetworkConstants.requestedWithValue, forHTTPHeaderField: NetworkConstants.headerRequestedWith)
+        urlRequest.setValue(NetworkConstants.requestedPlatformValue, forHTTPHeaderField: NetworkConstants.headerRequestedPlatform)
     }
 
     /// Adds a query parameter to the request URL.
@@ -46,7 +47,9 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     ///   - name: The parameter name.
     ///   - value: The parameter value.
     public func setParameter(name: String, value: String) {
-        parameters.append(URLQueryItem(name: name, value: value))
+        var items = getQueryParameters()
+        items.append(URLQueryItem(name: name, value: value))
+        setQueryParameters(items)
     }
 
     /// Sets a header value for the request.
@@ -57,30 +60,39 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     ///   - name: The header name.
     ///   - value: The header value.
     public func setHeader(name: String, value: String) {
-        headers = headers.filter { $0.key.lowercased() != name.lowercased() }
-        headers[name] = value
+        // Remove existing header with same name (case-insensitive)
+        if let allHeaders = urlRequest.allHTTPHeaderFields {
+            for (key, _) in allHeaders where key.lowercased() == name.lowercased() {
+                urlRequest.setValue(nil, forHTTPHeaderField: key)
+            }
+        }
+        urlRequest.setValue(value, forHTTPHeaderField: name)
     }
 
     /// Adds a cookie to the request.
     ///
     /// - Parameter cookie: The cookie string to add.
     public func setCookie(cookie: String) {
-        cookies.append(cookie)
+        var currentCookies = getCookies()
+        currentCookies.append(cookie)
+        setCookiesHeader(currentCookies)
     }
 
     /// Adds multiple cookies to the request.
     ///
     /// - Parameter cookies: Array of cookie strings to add.
     public func setCookies(cookies: [String]) {
-        self.cookies.append(contentsOf: cookies)
+        var currentCookies = getCookies()
+        currentCookies.append(contentsOf: cookies)
+        setCookiesHeader(currentCookies)
     }
 
     /// Configures the request as a GET request.
     ///
     /// Clears any previously set body data.
     public func get() {
-        method = .get
-        bodyResult = nil
+        urlRequest.httpMethod = HttpMethod.get.rawValue
+        urlRequest.httpBody = nil
     }
 
     /// Configures the request as a POST request with a JSON body.
@@ -89,9 +101,9 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     ///
     /// - Parameter json: The dictionary to serialize as JSON. Defaults to empty dictionary.
     public func post(json: [String: Any] = [:]) {
-        method = .post
-        bodyResult = serializeSafely(json)
-        headers[NetworkConstants.headerContentType] = NetworkConstants.contentTypeJSON
+        urlRequest.httpMethod = HttpMethod.post.rawValue
+        urlRequest.httpBody = serializeJSON(json)
+        setHeader(name: NetworkConstants.headerContentType, value: NetworkConstants.contentTypeJSON)
     }
 
     /// Configures the request as a PUT request with a JSON body.
@@ -100,9 +112,9 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     ///
     /// - Parameter json: The dictionary to serialize as JSON. Defaults to empty dictionary.
     public func put(json: [String: Any] = [:]) {
-        method = .put
-        bodyResult = serializeSafely(json)
-        headers[NetworkConstants.headerContentType] = NetworkConstants.contentTypeJSON
+        urlRequest.httpMethod = HttpMethod.put.rawValue
+        urlRequest.httpBody = serializeJSON(json)
+        setHeader(name: NetworkConstants.headerContentType, value: NetworkConstants.contentTypeJSON)
     }
 
     /// Configures the request as a DELETE request with an optional JSON body.
@@ -111,9 +123,9 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     ///
     /// - Parameter json: The dictionary to serialize as JSON. Defaults to empty dictionary.
     public func delete(json: [String: Any] = [:]) {
-        method = .delete
-        bodyResult = serializeSafely(json)
-        headers[NetworkConstants.headerContentType] = NetworkConstants.contentTypeJSON
+        urlRequest.httpMethod = HttpMethod.delete.rawValue
+        urlRequest.httpBody = serializeJSON(json)
+        setHeader(name: NetworkConstants.headerContentType, value: NetworkConstants.contentTypeJSON)
     }
 
     /// Configures the request as a POST request with a string body.
@@ -122,9 +134,9 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     ///   - contentType: The Content-Type header value. Defaults to `application/json`.
     ///   - body: The string body to send.
     public func post(contentType: String = NetworkConstants.contentTypeJSON, body: String) {
-        method = .post
-        bodyResult = .success(Data(body.utf8))
-        headers[NetworkConstants.headerContentType] = contentType
+        urlRequest.httpMethod = HttpMethod.post.rawValue
+        urlRequest.httpBody = Data(body.utf8)
+        setHeader(name: NetworkConstants.headerContentType, value: contentType)
     }
 
     /// Configures the request as a PUT request with a string body.
@@ -133,9 +145,9 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     ///   - contentType: The Content-Type header value. Defaults to `application/json`.
     ///   - body: The string body to send.
     public func put(contentType: String = NetworkConstants.contentTypeJSON, body: String) {
-        method = .put
-        bodyResult = .success(Data(body.utf8))
-        headers[NetworkConstants.headerContentType] = contentType
+        urlRequest.httpMethod = HttpMethod.put.rawValue
+        urlRequest.httpBody = Data(body.utf8)
+        setHeader(name: NetworkConstants.headerContentType, value: contentType)
     }
 
     /// Configures the request as a DELETE request with a string body.
@@ -144,9 +156,9 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     ///   - contentType: The Content-Type header value. Defaults to `application/json`.
     ///   - body: The string body to send.
     public func delete(contentType: String = NetworkConstants.contentTypeJSON, body: String) {
-        method = .delete
-        bodyResult = .success(Data(body.utf8))
-        headers[NetworkConstants.headerContentType] = contentType
+        urlRequest.httpMethod = HttpMethod.delete.rawValue
+        urlRequest.httpBody = Data(body.utf8)
+        setHeader(name: NetworkConstants.headerContentType, value: contentType)
     }
 
     /// Configures the request as a POST request with form-encoded data.
@@ -156,18 +168,23 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     ///
     /// - Parameter parameters: Dictionary of form field names and values.
     public func form(parameters: [String: String]) {
-        method = .post
+        urlRequest.httpMethod = HttpMethod.post.rawValue
+        
+        // Get existing form parameters and add new ones
+        var items = getFormParameters()
         for (key, value) in parameters {
-            formParameters.append(URLQueryItem(name: key, value: value))
+            items.append(URLQueryItem(name: key, value: value))
         }
-        buildFormBody()
+        setFormParameters(items)
+        
+        setHeader(name: NetworkConstants.headerContentType, value: NetworkConstants.contentTypeForm)
     }
 
     /// Sets the HTTP method directly.
     ///
     /// - Parameter method: The HTTP method to use (GET, POST, PUT, DELETE, etc.).
     public func setMethod(_ method: HttpMethod) {
-        self.method = method
+        urlRequest.httpMethod = method.rawValue
     }
 
     /// Sets the request body directly as raw data.
@@ -176,14 +193,15 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     ///
     /// - Parameter body: The body data, or nil to clear the body.
     public func setBody(_ body: Data?) {
-        bodyResult = body.map { .success($0) }
+        urlRequest.httpBody = body
+        jsonSerializationFailed = false
     }
 
     /// Gets the currently configured HTTP method.
     ///
     /// - Returns: The configured HTTP method.
     public func getMethod() -> HttpMethod {
-        method
+        HttpMethod(rawValue: urlRequest.httpMethod ?? "GET") ?? .get
     }
 
     /// Gets a header value by name.
@@ -193,82 +211,126 @@ public final class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     /// - Parameter name: The header name to look up.
     /// - Returns: The header value, or nil if not set.
     public func getHeader(name: String) -> String? {
-        headers.first { $0.key.lowercased() == name.lowercased() }?.value
+        urlRequest.value(forHTTPHeaderField: name)
     }
 
     /// Gets all headers as a dictionary.
     ///
     /// - Returns: Dictionary of header names to values.
     public func getHeaders() -> [String: String] {
-        headers
+        urlRequest.allHTTPHeaderFields ?? [:]
     }
 
     /// Builds a `URLRequest` from the accumulated request state.
     ///
     /// This method constructs a complete `URLRequest` by:
     /// - Combining the base URL with query parameters
-    /// - Setting the HTTP method and body
-    /// - Applying all configured headers
-    /// - Adding cookies via the Cookie header
+    /// - Applying the HTTP method, headers, and body
     ///
     /// - Returns: A configured `URLRequest`, or `nil` if the URL is invalid or JSON serialization failed.
     public func buildURLRequest() -> URLRequest? {
-        if case .failure = bodyResult {
+        if jsonSerializationFailed {
             return nil
         }
+        
         guard let urlString = url, let baseURL = URL(string: urlString) else { return nil }
 
+        // Get existing query parameters from urlRequest and merge with base URL
+        let existingParams = getQueryParameters()
+        
         var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
-        if !parameters.isEmpty {
+        if !existingParams.isEmpty {
             var items = components?.queryItems ?? []
-            items.append(contentsOf: parameters)
+            items.append(contentsOf: existingParams)
             components?.queryItems = items
         }
         guard let finalURL = components?.url else { return nil }
 
+        // Create final request with the constructed URL
         var request = URLRequest(url: finalURL)
-        request.httpMethod = method.rawValue
-        request.httpBody = try? bodyResult?.get()
-
-        var appliedHeaders = headers
-        if !cookies.isEmpty {
-            let cookieHeader = cookies.joined(separator: "; ")
-            appliedHeaders[NetworkConstants.headerCookie] = cookieHeader
-        }
-        for (name, value) in appliedHeaders {
-            request.setValue(value, forHTTPHeaderField: name)
-        }
+        request.httpMethod = urlRequest.httpMethod
+        request.allHTTPHeaderFields = urlRequest.allHTTPHeaderFields
+        request.httpBody = urlRequest.httpBody
 
         return request
     }
+}
 
-    private func buildFormBody() {
-        var components = URLComponents()
-        components.queryItems = formParameters
-        if let data = components.percentEncodedQuery?.data(using: .utf8) {
-            bodyResult = .success(data)
-        }
-        headers[NetworkConstants.headerContentType] = NetworkConstants.contentTypeForm
-    }
-
-    private func serializeSafely(_ json: [String: Any]) -> Result<Data, Error> {
+/// Private helper methods
+extension URLSessionHttpRequest {
+    // Helper to serialize a JSON dictionary to Data 
+    private func serializeJSON(_ json: [String: Any]) -> Data? {
         if json.isEmpty {
-            return .success(Data("{}".utf8))
+            return Data("{}".utf8)
         }
         
         guard JSONSerialization.isValidJSONObject(json) else {
-            return .failure(NetworkError.invalidRequest("Invalid JSON body"))
+            jsonSerializationFailed = true
+            return nil
         }
         
-        do {
-            let data = try serializeJSON(json)
-            return .success(data)
-        } catch {
-            return .failure(error)
+        guard let data = try? JSONSerialization.data(withJSONObject: json, options: []) else {
+            jsonSerializationFailed = true
+            return nil
+        }
+        
+        return data
+    }
+    
+    // Helper to extract query parameters from urlRequest.url
+    private func getQueryParameters() -> [URLQueryItem] {
+        guard let url = urlRequest.url,
+              let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let items = components.queryItems else {
+            return []
+        }
+        return items
+    }
+    
+    // Helper to update urlRequest.url with new query parameters
+    private func setQueryParameters(_ items: [URLQueryItem]) {
+        guard let url = urlRequest.url else { return }
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        components?.queryItems = items.isEmpty ? nil : items
+        if let newURL = components?.url {
+            urlRequest.url = newURL
         }
     }
-
-    private func serializeJSON(_ dict: [String: Any]) throws -> Data {
-        try JSONSerialization.data(withJSONObject: dict, options: [])
+    
+    // Helper to get current cookies from Cookie header
+    private func getCookies() -> [String] {
+        guard let cookieHeader = urlRequest.value(forHTTPHeaderField: NetworkConstants.headerCookie) else {
+            return []
+        }
+        return cookieHeader.components(separatedBy: "; ")
+    }
+    
+    // Helper to set cookies in Cookie header
+    private func setCookiesHeader(_ cookies: [String]) {
+        if cookies.isEmpty {
+            urlRequest.setValue(nil, forHTTPHeaderField: NetworkConstants.headerCookie)
+        } else {
+            urlRequest.setValue(cookies.joined(separator: "; "), forHTTPHeaderField: NetworkConstants.headerCookie)
+        }
+    }
+    
+    // Helper to get form parameters from body
+    private func getFormParameters() -> [URLQueryItem] {
+        guard let body = urlRequest.httpBody,
+              let bodyString = String(data: body, encoding: .utf8) else {
+            return []
+        }
+        var components = URLComponents()
+        components.percentEncodedQuery = bodyString
+        return components.queryItems ?? []
+    }
+    
+    // Helper to set form parameters in body
+    private func setFormParameters(_ items: [URLQueryItem]) {
+        var components = URLComponents()
+        components.queryItems = items
+        if let data = components.percentEncodedQuery?.data(using: .utf8) {
+            urlRequest.httpBody = data
+        }
     }
 }

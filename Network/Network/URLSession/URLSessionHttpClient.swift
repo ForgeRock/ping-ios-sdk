@@ -2,7 +2,7 @@
 //  URLSessionHttpClient.swift
 //  PingNetwork
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -21,7 +21,8 @@ import PingLogger
 /// which is itself thread-safe.
 ///
 /// Multiple concurrent requests can safely use the same client instance.
-public final class URLSessionHttpClient: HttpClientProtocol, @unchecked Sendable {
+@objc
+public final class URLSessionHttpClient: NSObject, HttpClientProtocol, @unchecked Sendable {
     
     // MARK: - Properties
     private let session: URLSession
@@ -92,51 +93,39 @@ public final class URLSessionHttpClient: HttpClientProtocol, @unchecked Sendable
     /// and applies response interceptors before returning the result.
     ///
     /// - Parameter request: The configured HTTP request to execute.
-    /// - Returns: A `Result` containing the HTTP response or an error.
-    public func request(request: HttpRequest) async -> Result<HttpResponse, Error> {
+    /// - Returns: An `HttpResponse` containing the HTTP response or an error.
+    public func request(request: HttpRequest) async throws-> HttpResponse {
         guard let sessionRequest = request as? URLSessionHttpRequest else {
-            return .failure(NetworkError.invalidRequest("Request must be URLSessionHttpRequest"))
+            throw NetworkError.invalidRequest("Request must be URLSessionHttpRequest")
         }
 
         requestInterceptors.forEach { $0(sessionRequest) }
 
-        guard let urlRequest = sessionRequest.buildURLRequest() else {
-            return .failure(NetworkError.invalidRequest("Failed to build URLRequest"))
+        guard var urlRequest = sessionRequest.buildURLRequest() else {
+            throw NetworkError.invalidRequest("Failed to build URLRequest")
         }
-
-        logger.d("HTTP Request: \(urlRequest.httpMethod ?? "") \(urlRequest.url?.absoluteString ?? "")")
+        urlRequest.timeoutInterval = timeout
+        logRequest(request: urlRequest)
 
         do {
             let (data, response) = try await session.data(for: urlRequest)
 
             guard let httpResponse = response as? HTTPURLResponse else {
-                return .failure(NetworkError.invalidResponse("Response is not HTTPURLResponse"))
-            }
-
-            let immutableRequest = ImmutableHttpRequest(original: sessionRequest)
-            let headerMap = httpResponse.allHeaderFields.reduce(into: [String: [String]]()) { result, pair in
-                if let key = pair.key as? String {
-                    let normalizedKey = key.lowercased()
-                    var values = result[normalizedKey] ?? []
-                    values.append("\(pair.value)")
-                    result[normalizedKey] = values
-                }
+                throw NetworkError.invalidResponse("Response is not HTTPURLResponse")
             }
 
             let httpResponseObj = URLSessionHttpResponse(
-                request: immutableRequest,
-                status: httpResponse.statusCode,
-                headers: headerMap,
+                request: sessionRequest,
                 body: data,
                 httpURLResponse: httpResponse
             )
 
             responseInterceptors.forEach { $0(httpResponseObj) }
 
-            logger.d("HTTP Response: \(httpResponseObj.status) (\(data.count) bytes)")
-            return .success(httpResponseObj)
+            logResponse(responseData: data, response: httpResponse)
+            return httpResponseObj
         } catch {
-            return .failure(mapError(error))
+            throw mapError(error)
         }
     }
 
@@ -147,7 +136,7 @@ public final class URLSessionHttpClient: HttpClientProtocol, @unchecked Sendable
     ///
     /// Example:
     /// ```swift
-    /// let result = await client.request { req in
+    /// let response = try await client.request { req in
     ///     req.url = "https://api.example.com/users"
     ///     req.setHeader(name: "Accept", value: "application/json")
     ///     req.get()
@@ -155,11 +144,11 @@ public final class URLSessionHttpClient: HttpClientProtocol, @unchecked Sendable
     /// ```
     ///
     /// - Parameter builder: A closure that configures the HTTP request.
-    /// - Returns: A `Result` containing the HTTP response or an error.
-    public func request(builder: @escaping @Sendable (HttpRequest) -> Void) async -> Result<HttpResponse, Error> {
+    /// - Returns: An `HttpResponse` containing the HTTP response or an error.
+    public func request(builder: @escaping @Sendable (HttpRequest) -> Void) async throws-> HttpResponse {
         let request = self.request()
         builder(request)
-        return await self.request(request: request)
+        return try await self.request(request: request)
     }
 
     /// Invalidates the URLSession and cancels all pending tasks.
@@ -190,6 +179,41 @@ public final class URLSessionHttpClient: HttpClientProtocol, @unchecked Sendable
         }
         logger.e("HTTP Error: \(mapped.localizedDescription)", error: mapped)
         return mapped
+    }
+    
+    /// Logs the details of an HTTP request.
+    /// - Parameter request: The URLRequest to be logged.
+    public func logRequest(request: URLRequest?) {
+        if let request = request {
+            var log = "⬆\n"
+            log += "Request URL: \(request.url?.absoluteString ?? "")\n"
+            log += "Request Method: \(request.httpMethod ?? "")\n"
+            if let headers = request.allHTTPHeaderFields {
+                log += "Request Headers: \(headers)\n"
+            }
+            if let bodyData = request.httpBody, let bodyString = String(data: bodyData, encoding: .utf8) {
+                log += "Request Body: \(bodyString)\n"
+            }
+            log += "Request Timeout: \(request.timeoutInterval)\n"
+            LogManager.standard.d(log)
+        }
+    }
+    
+    /// Logs the details of an HTTP response.
+    /// - Parameter responseData: The data returned by the server.
+    /// - Parameter response: The URLResponse object containing the response metadata.
+    public func logResponse(responseData: Data?, response: URLResponse?) {
+        var log = "⬇\n"
+        if let httpResponse = response as? HTTPURLResponse {
+            log += "Response Status Code: \(httpResponse.statusCode)\n"
+            log += "Response Headers: \(httpResponse.allHeaderFields)\n"
+            log += "Response Value: \(httpResponse.debugDescription)\n"
+        }
+        
+        if let data =  responseData, let dataString = String(data: data, encoding: .utf8) {
+            log += "Response Data: \(dataString)"
+        }
+        LogManager.standard.d(log)
     }
 }
 

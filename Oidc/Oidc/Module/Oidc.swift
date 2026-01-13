@@ -2,7 +2,7 @@
 //  Oidc.swift
 //  Oidc
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@
 import Foundation
 import PingOrchestrate
 import PingBrowser
+import PingNetwork
 
 /// A module that integrates OIDC capabilities into the DaVinci workflow.
 public class OidcModule {
@@ -54,7 +55,7 @@ public class OidcModule {
             
             let parameters = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcParameters) as? [String: String] ?? [:]
             for parameter in parameters {
-                oidcRequest.parameter(name: parameter.key, value: parameter.value)
+                oidcRequest.setParameter(name: parameter.key, value: parameter.value)
             }
             
             return oidcRequest
@@ -75,16 +76,17 @@ public class OidcModule {
         
         // Handles sign off of the module.
         setup.signOff { @Sendable request in
+            var request = request
             let isWeb = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcIsWeb) as? Bool ?? false
             if isWeb, let endSessionUrl = config.openId?.pingEndsessionEndpoint {
-                request.url(endSessionUrl)
+                request.url = endSessionUrl
             } else {
-                request.url(config.openId?.endSessionEndpoint ?? "")
+                request.url = config.openId?.endSessionEndpoint ?? ""
             }
                 
             _ = await OidcClient(config: config).endSession { idToken in
-                request.parameter(name: OidcClient.Constants.id_token_hint, value: idToken)
-                request.parameter(name: OidcClient.Constants.client_id, value: config.clientId)
+                request.setParameter(name: OidcClient.Constants.id_token_hint, value: idToken)
+                request.setParameter(name: OidcClient.Constants.client_id, value: config.clientId)
                 return true
             }
             
@@ -172,3 +174,4 @@ extension SharedContext.Keys {
     /// The key used to store additional parameters for the OIDC flow.
     static let oidcParameters = "com.pingidentity.oidcWeb.parameters"
 }
+

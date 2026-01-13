@@ -2,7 +2,7 @@
 //  PingAMPushResponder.swift
 //  PingPush
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,7 +12,7 @@ import Foundation
 import CryptoKit
 import PingLogger
 import PingCommons
-import PingOrchestrate
+import PingNetwork
 
 /// Handles PingAM-specific network operations such as registration and authentication responses.
 ///
@@ -22,7 +22,7 @@ import PingOrchestrate
 public final class PingAMPushResponder: @unchecked Sendable {
 
     /// Shared HTTP client used for all network requests.
-    private let httpClient: HttpClient
+    private let httpClient: any HttpClientProtocol
 
     /// Logger instance for diagnostic information.
     private let logger: Logger?
@@ -34,7 +34,7 @@ public final class PingAMPushResponder: @unchecked Sendable {
     /// - Parameters:
     ///   - httpClient: The HTTP client responsible for executing network requests.
     ///   - logger: Optional logger used for diagnostic output. Defaults to the global logger.
-    public init(httpClient: HttpClient, logger: Logger? = LogManager.logger) {
+    public init(httpClient: any HttpClientProtocol, logger: Logger? = LogManager.logger) {
         self.httpClient = httpClient
         self.logger = logger
     }
@@ -94,23 +94,20 @@ public final class PingAMPushResponder: @unchecked Sendable {
         }
 
         // Configure HTTP request
-        let request = Request(urlString: endpoint)
-        request.header(name: Constants.headerAcceptAPIVersion, value: Constants.acceptApiVersion)
+        let request = httpClient.request()
+        request.url = endpoint
+        request.setHeader(name: Constants.headerAcceptAPIVersion, value: Constants.acceptApiVersion)
         if let amlbCookie {
-            request.header(name: Constants.headerCookie, value: amlbCookie)
+            request.setHeader(name: Constants.headerCookie, value: amlbCookie)
         }
-        request.body(body: requestBody)
-
+        request.post(json: requestBody)
+        
         do {
-            let (data, response) = try await httpClient.sendRequest(request: request)
-            guard let httpResponse = response as? HTTPURLResponse else {
-                logger?.e("Registration failed: invalid response", error: nil)
-                throw PushError.networkFailure("Invalid response from registration endpoint", nil)
-            }
-
-            guard (200...299).contains(httpResponse.statusCode) else {
-                let bodyDescription = String(data: data, encoding: .utf8) ?? "no response body"
-                let message = "Registration failed with status code \(httpResponse.statusCode): \(bodyDescription)"
+            let response = try await httpClient.request(request: request)
+            
+            guard response.status.isSuccess() else {
+                let bodyDescription = response.body.flatMap { String(data: $0, encoding: .utf8) } ?? "no response body"
+                let message = "Registration failed with status code \(response.status): \(bodyDescription)"
                 logger?.e(message, error: nil)
                 throw PushError.networkFailure(message, nil)
             }
@@ -175,23 +172,20 @@ public final class PingAMPushResponder: @unchecked Sendable {
             requestBody[Keys.userId] = userId
         }
 
-        let request = Request(urlString: credential.authenticationEndpoint)
-        request.header(name: Constants.headerAcceptAPIVersion, value: Constants.acceptApiVersion)
+        let request = httpClient.request()
+        request.url = credential.authenticationEndpoint
+        request.setHeader(name: Constants.headerAcceptAPIVersion, value: Constants.acceptApiVersion)
         if let amlbCookie = notification.loadBalancer, !amlbCookie.isEmpty {
-            request.header(name: Constants.headerCookie, value: amlbCookie)
+            request.setHeader(name: Constants.headerCookie, value: amlbCookie)
         }
-        request.body(body: requestBody)
-
+        request.post(json: requestBody)
+        
         do {
-            let (data, response) = try await httpClient.sendRequest(request: request)
-            guard let httpResponse = response as? HTTPURLResponse else {
-                logger?.e("Authentication response failed: invalid response", error: nil)
-                throw PushError.networkFailure("Invalid response from authentication endpoint", nil)
-            }
-
-            guard (200...299).contains(httpResponse.statusCode) else {
-                let bodyDescription = String(data: data, encoding: .utf8) ?? "no response body"
-                let message = "Authentication response failed with status code \(httpResponse.statusCode): \(bodyDescription)"
+            let response = try await httpClient.request(request: request)
+            
+            guard response.status.isSuccess() else {
+                let bodyDescription = response.body.flatMap { String(data: $0, encoding: .utf8) } ?? "no response body"
+                let message = "Authentication response failed with status code \(response.status): \(bodyDescription)"
                 logger?.e(message, error: nil)
                 throw PushError.networkFailure(message, nil)
             }
@@ -253,20 +247,17 @@ public final class PingAMPushResponder: @unchecked Sendable {
             requestBody[Keys.userId] = userId
         }
 
-        let request = Request(urlString: credential.updateEndpoint)
-        request.header(name: Constants.headerAcceptAPIVersion, value: Constants.acceptApiVersion)
-        request.body(body: requestBody)
-
+        let request = httpClient.request()
+        request.url = credential.updateEndpoint
+        request.setHeader(name: Constants.headerAcceptAPIVersion, value: Constants.acceptApiVersion)
+        request.post(json: requestBody)
+        
         do {
-            let (data, response) = try await httpClient.sendRequest(request: request)
-            guard let httpResponse = response as? HTTPURLResponse else {
-                logger?.e("Device token update failed: invalid response", error: nil)
-                throw PushError.networkFailure("Invalid response from update endpoint", nil)
-            }
-
-            guard (200...299).contains(httpResponse.statusCode) else {
-                let bodyDescription = String(data: data, encoding: .utf8) ?? "no response body"
-                let message = "Device token update failed with status code \(httpResponse.statusCode): \(bodyDescription)"
+            let response = try await httpClient.request(request: request)
+            
+            guard response.status.isSuccess() else {
+                let bodyDescription = response.body.flatMap { String(data: $0, encoding: .utf8) } ?? "no response body"
+                let message = "Device token update failed with status code \(response.status): \(bodyDescription)"
                 logger?.e(message, error: nil)
                 throw PushError.networkFailure(message, nil)
             }

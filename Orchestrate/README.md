@@ -87,7 +87,7 @@ let customHeader = Module.of({ CustomHeaderConfig1() }, setup: { setup in
     // Intercept all send request and inject custom header
     setup.next { ( context, _, request) in
         if config.enable {
-            request.header(name: config.headerName, value: config.headerValue)
+            request.setHeader(name: config.headerName, value: config.headerValue)
         }
         return request
     }
@@ -110,7 +110,7 @@ More module examples:
 let nosession = Module.of { setup in
 //Intercept all send request and inject custom header during start state
     setup.next { ( context,_, request) in
-        request.header(name: "nosession", value: "true")
+        request.setHeader(name: "nosession", value: "true")
         return request
     }
 }
@@ -119,7 +119,7 @@ let nosession = Module.of { setup in
 let forceAuth = Module.of { setup in
 //Intercept all send request and inject custom header during start state
     setup.start { ( context, request) in
-        request.header(name: "forceAuth", value: "true")
+        request.setHeader(name: "forceAuth", value: "true")
         return request
     }
 }

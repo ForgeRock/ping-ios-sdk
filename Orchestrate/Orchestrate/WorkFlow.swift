@@ -2,7 +2,7 @@
 //  Workflow.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,13 @@
 
 import Foundation
 import PingLogger
+import PingNetwork
+
+/// Typealias for HttpRequest used in the workflow.
+public typealias Request = HttpRequest
+
+/// Typealias for HttpResponse used in the workflow.
+public typealias Response = HttpResponse
 
 /// Class representing the context of a flow.
 /// - property flowContext: The shared context of the flow.
@@ -135,7 +142,7 @@ public class Workflow: @unchecked Sendable {
     /// - Returns: The resulting `Node` after processing the workflow.
     public func start() async -> Node {
         do {
-            return try await start(request: Request())
+            return try await start(request: config.httpClient.request())
         }
         catch {
             return FailureNode(cause: error)
@@ -148,8 +155,7 @@ public class Workflow: @unchecked Sendable {
     ///   - request: The request to be sent.
     /// - Returns: The response received.
     private func send(_ context: FlowContext, request: Request) async throws -> Response {
-        let (data, urlResponse) = try await config.httpClient.sendRequest(request: request)
-        let response = HttpResponse(data: data, response: urlResponse)
+        let response = try await config.httpClient.request(request: request)
         for handler in responseHandlers {
             try await handler(context, response)
         }
@@ -160,9 +166,7 @@ public class Workflow: @unchecked Sendable {
     /// - Parameter request: The request to be sent.
     /// - Returns: The response received.
     private func send(_ request: Request) async throws -> Response {
-        // semaphore
-        let (data, urlResponse) = try await config.httpClient.sendRequest(request: request)
-        return HttpResponse(data: data, response: urlResponse)
+        return try await config.httpClient.request(request: request)
     }
     
     /// Processes the next node if it is a success node.
@@ -214,7 +218,7 @@ public class Workflow: @unchecked Sendable {
         self.config.logger.i("SignOff...")
         do {
             try await initialize()
-            var request = Request()
+            var request = config.httpClient.request()
             for handler in signOffHandlers {
                 request = try await handler(request)
             }

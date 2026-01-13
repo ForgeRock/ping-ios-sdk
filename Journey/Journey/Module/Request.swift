@@ -2,7 +2,7 @@
 //  Journey.swift
 //  Journey
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -29,24 +29,24 @@ extension Request {
         options: Options? = nil
     ) {
         let authenticateEndpoint = "\(journeyConfig.serverUrl ?? "")/json/realms/\(journeyConfig.realm)/authenticate"
-        self.url(authenticateEndpoint)
-        self.header(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource21Protocol10)
-        self.header(name: JourneyConstants.contentType, value: JourneyConstants.applicationJson)
+        self.url = authenticateEndpoint
+        self.setHeader(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource21Protocol10)
+        self.setHeader(name: JourneyConstants.contentType, value: JourneyConstants.applicationJson)
         if !authIndexType.isEmpty {
-            self.parameter(name: JourneyConstants.authIndexType, value: authIndexType)
+            self.setParameter(name: JourneyConstants.authIndexType, value: authIndexType)
         }
         if !authIndexValue.isEmpty {
-            self.parameter(name: JourneyConstants.authIndexValue, value: authIndexValue)
+            self.setParameter(name: JourneyConstants.authIndexValue, value: authIndexValue)
         }
         if let options = options {
             if options.forceAuth == true {
-                self.parameter(name: "ForceAuth", value: "true")
+                self.setParameter(name: "ForceAuth", value: "true")
             }
             if options.noSession == true {
-                self.parameter(name: "noSession", value: "true")
+                self.setParameter(name: "noSession", value: "true")
             }
         }
         
-        self.body(body: [String: Any]())
+        self.post(json: [String: Any]())
     }
 }

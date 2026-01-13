@@ -17,7 +17,6 @@
   },
   "testTargets" : [
     {
-      "enabled" : false,
       "target" : {
         "containerPath" : "container:..\/ReCaptchaEnterprise\/ReCaptchaEnterprise.xcodeproj",
         "identifier" : "A5C0ABFC2EAFFFDF00846D16",
@@ -162,7 +161,6 @@
       }
     },
     {
-      "enabled" : false,
       "skippedTests" : [
         "DeviceProfileCollectorTests\/testCollectorCollectWithBothEnabled()",
         "DeviceProfileCollectorTests\/testCollectorCollectWithLocationEnabled()",
@@ -202,13 +200,27 @@
         "containerPath" : "container:..\/DavinciPlugin\/DavinciPlugin\/DavinciPlugin.xcodeproj",
         "identifier" : "EC5C814D2ECF66D100C91570",
         "name" : "PingDavinciPluginTests"
-        }
+      }
     },
     {
       "target" : {
         "containerPath" : "container:..\/Network\/Network.xcodeproj",
         "identifier" : "1B7A9A802ED52F6400989A55",
         "name" : "NetworkTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Commons\/Commons.xcodeproj",
+        "identifier" : "A56741AC2EE1EBFD009D29B9",
+        "name" : "CommonsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/JourneyPlugin\/JourneyPlugin\/JourneyPlugin.xcodeproj",
+        "identifier" : "EC5C81822ECF67B700C91570",
+        "name" : "PingJourneyPluginTests"
       }
     }
   ],

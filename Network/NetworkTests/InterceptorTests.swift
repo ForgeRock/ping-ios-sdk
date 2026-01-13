@@ -2,7 +2,7 @@
 //  InterceptorTests.swift
 //  PingNetworkTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -51,10 +51,14 @@ final class InterceptorTests: XCTestCase {
         }
 
         let client = makeClient(config: config)
-        _ = await client.request { req in
-            guard let mutable = req as? URLSessionHttpRequest else { return }
-            mutable.url = "https://example.com/original"
-            mutable.get()
+        do {
+            _ = try await client.request { req in
+                guard let mutable = req as? URLSessionHttpRequest else { return }
+                mutable.url = "https://example.com/original"
+                mutable.get()
+            }
+        } catch {
+            XCTFail("Unexpected error \(error)")
         }
 
         await fulfillment(of: [expectation], timeout: 1.0)
@@ -86,17 +90,21 @@ final class InterceptorTests: XCTestCase {
         }
 
         let client = makeClient(config: config)
-        _ = await client.request { req in
-            guard let mutable = req as? URLSessionHttpRequest else { return }
-            mutable.url = "https://example.com"
-            mutable.setHeader(name: "X-Custom", value: "yes")
-            mutable.get()
+        do {
+            _ = try await client.request { req in
+                guard let mutable = req as? URLSessionHttpRequest else { return }
+                mutable.url = "https://example.com"
+                mutable.setHeader(name: "X-Custom", value: "yes")
+                mutable.get()
+            }
+        } catch {
+            XCTFail("Unexpected error \(error)")
         }
 
         await fulfillment(of: [expectation], timeout: 1.0)
         XCTAssertEqual(responseOrder.snapshot(), ["first", "second"])
         XCTAssertEqual(seenHeader.snapshot(), "ping-sdk")
-        XCTAssertTrue(seenType.snapshot()?.contains("ImmutableHttpRequest") == true)
+        XCTAssertTrue(seenType.snapshot()?.contains("HttpRequest") == true)
     }
 
     private func makeClient(config: HttpClientConfig = HttpClientConfig()) -> URLSessionHttpClient {

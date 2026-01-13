@@ -2,7 +2,7 @@
 //  CookieModule.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,7 @@
 
 import Foundation
 import PingStorage
+import PingNetwork
 
 /// A module that manages cookies.
 public class CookieModule {
@@ -28,7 +29,7 @@ public class CookieModule {
         
         setup.start { @Sendable context, request in
             let cookies = try? await setup.config.cookieStorage.get()
-            if let url = request.urlRequest.url, let cookies = cookies {
+            if let urlString = request.url, let url = URL(string: urlString), let cookies = cookies {
                 await CookieModule.inject(url: url,
                                           cookies: cookies,
                                           request: request)
@@ -37,10 +38,10 @@ public class CookieModule {
         }
         
         setup.next { @Sendable context, _, request in
-            if let url = request.urlRequest.url {
+            if let urlString = request.url, let url = URL(string: urlString) {
                 let allCookies = await setup.config.inMemoryStorage.cookies(for: url)
                 if let allCookies = allCookies {
-                    request.cookies(cookies: allCookies)
+                    request.setCookies(cookies: allCookies.map({$0.stringValue}))
                 }
                 // Inject persisted cookies from cookie storage if available
                 if let cookies = try? await setup.config.cookieStorage.get() {
@@ -52,7 +53,7 @@ public class CookieModule {
         
         setup.response { @Sendable context, response in
             let cookies = response.getCookies()
-            if cookies.count > 0, let httpResponse = response as? HttpResponse, let url = httpResponse.response.url {
+            if cookies.count > 0, let urlString = response.request.url, let url = URL(string: urlString) {
                 await CookieModule.parseResponseForCookie(context: context,
                                                           url: url,
                                                           cookies: cookies,
@@ -62,7 +63,7 @@ public class CookieModule {
         }
         
         setup.signOff { @Sendable request in
-            if let url = request.urlRequest.url {
+            if let urlString = request.url, let url = URL(string: urlString) {
                 if let cookies = try? await setup.config.cookieStorage.get() {
                     await CookieModule.inject(url: url, cookies: cookies, request: request)
                 }
@@ -88,8 +89,8 @@ public class CookieModule {
             await persistedTempCookiesStorage.setCookie(cookie)
         }
         
-        if let cookie = await persistedTempCookiesStorage.cookies(for: url) {
-            request.cookies(cookies: cookie)
+        if let cookies = await persistedTempCookiesStorage.cookies(for: url) {
+            request.setCookies(cookies: cookies.map({ $0.stringValue }))
         }
     }
     
@@ -411,6 +412,10 @@ extension SharedContext.Keys {
 
 
 extension HTTPCookie {
+    var stringValue: String {
+        return "\(self.name)=\(self.value)"
+    }
+    
     var isExpired: Bool {
         get {
             if let expDate = self.expiresDate, expDate.timeIntervalSince1970 < Date().timeIntervalSince1970 {

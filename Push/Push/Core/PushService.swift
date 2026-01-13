@@ -2,7 +2,7 @@
 //  PushService.swift
 //  PingPush
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,7 +11,7 @@
 import Foundation
 import PingLogger
 import PingCommons
-import PingOrchestrate
+import PingNetwork
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -59,7 +59,7 @@ actor PushService {
 
     private let storage: any PushStorage
     private let configuration: PushConfiguration
-    private let httpClient: HttpClient
+    private let httpClient: any HttpClientProtocol
     private let policyEvaluator: MfaPolicyEvaluator
     private let logger: Logger?
     private let deviceTokenManager: PushDeviceTokenManager
@@ -85,7 +85,7 @@ actor PushService {
     init(
         storage: any PushStorage,
         configuration: PushConfiguration,
-        httpClient: HttpClient,
+        httpClient: any HttpClientProtocol,
         policyEvaluator: MfaPolicyEvaluator,
         deviceTokenManager: PushDeviceTokenManager? = nil,
         handlers: [String: PushHandler]? = nil
@@ -127,7 +127,7 @@ actor PushService {
     /// provide an implementation for an existing platform identifier.
     private static func makeHandlers(
         configuration: PushConfiguration,
-        httpClient: HttpClient,
+        httpClient: any HttpClientProtocol,
         logger: Logger?
     ) -> [String: PushHandler] {
         var defaults: [String: PushHandler] = [

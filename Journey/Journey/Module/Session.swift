@@ -2,7 +2,7 @@
 //  Session.swift
 //  Journey
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -32,22 +32,22 @@ public class SessionModule {
         /// Start handler for the session module
         setup.start { @Sendable context, request in
             if let token = await journeyFlow.session(), let journeyConfig = journeyFlow.config as? JourneyConfig {
-                request.header(name: journeyConfig.cookie, value: token.value)
+                request.setHeader(name: journeyConfig.cookie, value: token.value)
             }
             return request
         }
         /// Next handler for the session module
         setup.next { @Sendable context, _, request in
             if let token = await journeyFlow.session(), let journeyConfig = journeyFlow.config as? JourneyConfig {
-                request.header(name: journeyConfig.cookie, value: token.value)
+                request.setHeader(name: journeyConfig.cookie, value: token.value)
             }
             
             if let noSession = journeyFlow.sharedContext.get(key: JourneyConstants.noSession) as? Bool {
-                request.parameter(name: JourneyConstants.noSessionParam, value: "\(noSession)") // assume no session false by default
+                request.setParameter(name: JourneyConstants.noSessionParam, value: "\(noSession)") // assume no session false by default
             }
             
             if let forceAuth = journeyFlow.sharedContext.get(key: JourneyConstants.forceAuth) as? Bool {
-                request.parameter(name: JourneyConstants.forceAuthParam, value: "\(forceAuth)") // assume no session false by default
+                request.setParameter(name: JourneyConstants.forceAuthParam, value: "\(forceAuth)") // assume no session false by default
             }
              
             return request
@@ -61,12 +61,13 @@ public class SessionModule {
         }
         /// Sign off handler for the session module
         setup.signOff { @Sendable request in
+            var request = request
             if let ssoToken = await journeyFlow.session(), let journeyConfig = journeyFlow.config as? JourneyConfig {
-                request.url("\(journeyConfig.serverUrl ?? "")/json/realms/\(journeyConfig.realm)/sessions")
-                request.parameter(name: "_action", value: "logout")
-                request.header(name: journeyConfig.cookie, value: ssoToken.value)
-                request.header(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource31)
-                request.body(body: [:]) // assume empty body
+                request.url = "\(journeyConfig.serverUrl ?? "")/json/realms/\(journeyConfig.realm)/sessions"
+                request.setParameter(name: "_action", value: "logout")
+                request.setHeader(name: journeyConfig.cookie, value: ssoToken.value)
+                request.setHeader(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource31)
+                request.post(json: [:]) // assume empty body
                 await journeyFlow.deleteSession()
                 return request
             } else {

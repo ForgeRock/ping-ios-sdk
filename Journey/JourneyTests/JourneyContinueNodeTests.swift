@@ -2,7 +2,7 @@
 //  JourneyContinueNodeTests.swift
 //  JourneyTests
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@ import XCTest
 @testable import PingJourneyPlugin
 @testable import PingJourney
 @testable import PingOrchestrate
+@testable import PingNetwork
 
 final class JourneyContinueNodeTests: XCTestCase {
     
@@ -39,8 +40,8 @@ final class JourneyContinueNodeTests: XCTestCase {
     // MARK: - ContinueNode Extension Tests
     
     func testCallbacksExtraction() {
-        var mockCallback1 = MockCallback().initialize(with: ["_id": "1"])
-        var mockCallback2 = MockCallback().initialize(with: ["_id": "2"])
+        let mockCallback1 = MockCallback().initialize(with: ["_id": "1"])
+        let mockCallback2 = MockCallback().initialize(with: ["_id": "2"])
         let mockActions: [Action] = [mockCallback1, mockCallback2]
         
         let sharedContext = SharedContext()
@@ -62,7 +63,7 @@ final class JourneyContinueNodeTests: XCTestCase {
         let config = WorkflowConfig()
         let workflow = Workflow(config: config)
         let input = ["authId": "test-auth-id"]
-        var mockCallback = MockCallback().initialize(with: ["_id": "1"])
+        let mockCallback = MockCallback().initialize(with: ["_id": "1"])
 
         let node = JourneyContinueNode(context: context,
                                      workflow: workflow,
@@ -82,19 +83,22 @@ final class JourneyContinueNodeTests: XCTestCase {
         }
         
         let input = ["authId": "test-auth-id"]
-        var mockCallback = MockCallback().initialize(with: ["_id": "1"])
+        let mockCallback = MockCallback().initialize(with: ["_id": "1"])
 
         let node = JourneyContinueNode(context: context,
                                      workflow: journey,
                                      input: input,
                                      actions: [mockCallback])
         
-        let request = node.asRequest()
+        guard let request = node.asRequest() as? URLSessionHttpRequest else {
+            XCTFail("request should be URLSessionHttpRequest")
+            return
+        }
         
-        XCTAssertEqual(request.urlRequest.url?.absoluteString, "https://test.com/json/realms/test-realm/authenticate")
-        XCTAssertEqual(request.urlRequest.value(forHTTPHeaderField: JourneyConstants.contentType), JourneyConstants.applicationJson)
+        XCTAssertEqual(request.url, "https://test.com/json/realms/test-realm/authenticate")
+        XCTAssertEqual(request.getHeader(name: JourneyConstants.contentType), JourneyConstants.applicationJson)
         
-        if let httpBody = request.urlRequest.httpBody,
+        if let httpBody = request.buildURLRequest()?.httpBody,
            let bodyJson = try? JSONSerialization.jsonObject(with: httpBody) as? [String: Any] {
             XCTAssertEqual(bodyJson["authId"] as? String, "test-auth-id")
             XCTAssertNotNil(bodyJson[JourneyConstants.callbacks])
@@ -109,18 +113,21 @@ final class JourneyContinueNodeTests: XCTestCase {
         let config = WorkflowConfig()
         let workflow = Workflow(config: config)
         let input: [String: Any] = [:]
-        var mockCallback = MockCallback().initialize(with: ["_id": "1"])
+        let mockCallback = MockCallback().initialize(with: ["_id": "1"])
 
         let node = JourneyContinueNode(context: context,
                                      workflow: workflow,
                                      input: input,
                                      actions: [mockCallback])
         
-        let request = node.asRequest()
+        guard let request = node.asRequest() as? URLSessionHttpRequest else {
+            XCTFail("request should be URLSessionHttpRequest")
+            return
+        }
         
-        XCTAssertEqual(request.urlRequest.url?.path, "/json/realms/root/authenticate")
+        XCTAssertEqual(URL(string: request.url ?? "")?.path, "/json/realms/root/authenticate")
         
-        if let httpBody = request.urlRequest.httpBody,
+        if let httpBody = request.buildURLRequest()?.httpBody,
            let bodyJson = try? JSONSerialization.jsonObject(with: httpBody) as? [String: Any] {
             XCTAssertEqual(bodyJson["authId"] as? String, "")
         } else {
@@ -140,9 +147,12 @@ final class JourneyContinueNodeTests: XCTestCase {
                                      input: input,
                                      actions: [])
         
-        let request = node.asRequest()
+        guard let request = node.asRequest() as? URLSessionHttpRequest else {
+            XCTFail("request should be URLSessionHttpRequest")
+            return
+        }
         
-        if let httpBody = request.urlRequest.httpBody,
+        if let httpBody = request.buildURLRequest()?.httpBody,
            let bodyJson = try? JSONSerialization.jsonObject(with: httpBody) as? [String: Any] {
             XCTAssertEqual((bodyJson[JourneyConstants.callbacks] as? [[String: Any]])?.count, 0)
         } else {

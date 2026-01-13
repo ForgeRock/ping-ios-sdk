@@ -2,7 +2,7 @@
 //  HttpRequest.swift
 //  PingNetwork
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -21,7 +21,7 @@ import Foundation
 /// async context (typically a builder closure) and should not be shared or modified
 /// concurrently.
 /// ```
-public protocol HttpRequest: Sendable {
+public protocol HttpRequest: AnyObject, Sendable {
     /// The URL for this request.
     var url: String? { get set }
 

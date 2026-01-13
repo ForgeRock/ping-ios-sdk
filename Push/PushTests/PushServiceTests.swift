@@ -2,7 +2,7 @@
 //  PushServiceTests.swift
 //  PushTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -10,21 +10,21 @@
 
 import XCTest
 import PingCommons
-import PingOrchestrate
+import PingNetwork
 @testable import PingPush
 
 final class PushServiceTests: XCTestCase {
 
     private var storage: TestInMemoryPushStorage!
     private var configuration: PushConfiguration!
-    private var httpClient: HttpClient!
+    private var httpClient: (any HttpClientProtocol)!
     private var policyEvaluator: MfaPolicyEvaluator!
 
     override func setUp() async throws {
         try await super.setUp()
         storage = TestInMemoryPushStorage()
         configuration = PushConfiguration()
-        httpClient = HttpClient()
+        httpClient = HttpClient.createClient()
         policyEvaluator = MfaPolicyEvaluator.create()
     }
 

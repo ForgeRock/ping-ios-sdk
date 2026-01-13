@@ -2,7 +2,7 @@
 //  URLSessionHttpClientTests.swift
 //  PingNetworkTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -41,18 +41,16 @@ final class URLSessionHttpClientTests: XCTestCase {
         }
 
         let client = makeClient()
-        let result = await client.request { req in
-            guard let mutable = req as? URLSessionHttpRequest else { return }
-            mutable.url = "https://example.com/path"
-            mutable.get()
-        }
-
-        switch result {
-        case .success(let response):
+        do {
+            let response = try await client.request { req in
+                guard let mutable = req as? URLSessionHttpRequest else { return }
+                mutable.url = "https://example.com/path"
+                mutable.get()
+            }
             XCTAssertEqual(response.status, 200)
             XCTAssertEqual(response.bodyAsString(), "ok")
             XCTAssertEqual(MockURLProtocol.lastRequest?.httpMethod, "GET")
-        case .failure(let error):
+        } catch {
             XCTFail("Unexpected error \(error)")
         }
     }
@@ -72,7 +70,7 @@ final class URLSessionHttpClientTests: XCTestCase {
 
         let url = "https://example.com/resource"
 
-        _ = await client.request { req in
+        _ = try? await client.request { req in
             guard let mutable = req as? URLSessionHttpRequest else { return }
             mutable.url = url
             mutable.post(json: ["a": 1])
@@ -80,21 +78,21 @@ final class URLSessionHttpClientTests: XCTestCase {
         XCTAssertEqual(MockURLProtocol.lastRequest?.httpMethod, "POST")
         XCTAssertEqual(MockURLProtocol.lastRequest?.value(forHTTPHeaderField: "Content-Type"), "application/json")
 
-        _ = await client.request { req in
+        _ = try? await client.request { req in
             guard let mutable = req as? URLSessionHttpRequest else { return }
             mutable.url = url
             mutable.put(json: ["b": 2])
         }
         XCTAssertEqual(MockURLProtocol.lastRequest?.httpMethod, "PUT")
 
-        _ = await client.request { req in
+        _ = try? await client.request { req in
             guard let mutable = req as? URLSessionHttpRequest else { return }
             mutable.url = url
             mutable.delete(json: ["c": "del"])
         }
         XCTAssertEqual(MockURLProtocol.lastRequest?.httpMethod, "DELETE")
 
-        _ = await client.request { req in
+        _ = try? await client.request { req in
             guard let mutable = req as? URLSessionHttpRequest else { return }
             mutable.url = url
             mutable.form(parameters: ["a": "1", "b": "2"])
@@ -132,18 +130,16 @@ final class URLSessionHttpClientTests: XCTestCase {
 
         let client = makeClient(config: config)
 
-        let result = await client.request { req in
-            guard let mutable = req as? URLSessionHttpRequest else { return }
-            mutable.url = "https://example.com"
-            mutable.get()
-        }
-
-        switch result {
-        case .success:
+        do {
+            _ = try await client.request { req in
+                guard let mutable = req as? URLSessionHttpRequest else { return }
+                mutable.url = "https://example.com"
+                mutable.get()
+            }
             XCTAssertEqual(requestOrder.snapshot(), ["first", "second"])
             XCTAssertEqual(responseOrder.snapshot(), ["first", "second"])
             XCTAssertEqual(MockURLProtocol.lastRequest?.value(forHTTPHeaderField: "X-Chain"), "1,2")
-        case .failure(let error):
+        } catch {
             XCTFail("Unexpected error \(error)")
         }
     }
@@ -164,16 +160,14 @@ final class URLSessionHttpClientTests: XCTestCase {
         }
 
         let client = makeClient(config: config)
-        let result = await client.request { req in
-            guard let mutable = req as? URLSessionHttpRequest else { return }
-            mutable.url = "https://example.com"
-            mutable.get()
-        }
-
-        switch result {
-        case .success(let response):
+        do {
+            let response = try await client.request { req in
+                guard let mutable = req as? URLSessionHttpRequest else { return }
+                mutable.url = "https://example.com"
+                mutable.get()
+            }
             XCTAssertEqual(response.status, 200)
-        case .failure(let error):
+        } catch {
             XCTFail("Unexpected error \(error)")
         }
     }
@@ -184,24 +178,24 @@ final class URLSessionHttpClientTests: XCTestCase {
 
         func assertError(code: URLError.Code, expected: NetworkError, file: StaticString = #filePath, line: UInt = #line) async {
             MockURLProtocol.requestHandler = { _ in throw URLError(code) }
-            let result = await client.request { req in
-                guard let mutable = req as? URLSessionHttpRequest else { return }
-                mutable.url = url
-                mutable.get()
-            }
-
-            switch result {
-            case .success:
+            do {
+                _ = try await client.request { req in
+                    guard let mutable = req as? URLSessionHttpRequest else { return }
+                    mutable.url = url
+                    mutable.get()
+                }
                 XCTFail("Expected error for \(code)", file: file, line: line)
-            case .failure(let error):
+            } catch let error as NetworkError {
                 switch (error, expected) {
-                case (NetworkError.timeout, NetworkError.timeout),
-                     (NetworkError.networkUnavailable, NetworkError.networkUnavailable),
-                     (NetworkError.cancelled, NetworkError.cancelled):
+                case (.timeout, .timeout),
+                     (.networkUnavailable, .networkUnavailable),
+                     (.cancelled, .cancelled):
                     break
                 default:
                     XCTFail("Unexpected error \(error)", file: file, line: line)
                 }
+            } catch {
+                XCTFail("Unexpected error type \(error)", file: file, line: line)
             }
         }
 
@@ -221,48 +215,40 @@ final class URLSessionHttpClientTests: XCTestCase {
         let client = makeClient()
         let url = "https://example.com"
 
-        let first = await client.request { req in
-            guard let mutable = req as? URLSessionHttpRequest else { return }
-            mutable.url = url
-            mutable.get()
-        }
+        do {
+            let first = try await client.request { req in
+                guard let mutable = req as? URLSessionHttpRequest else { return }
+                mutable.url = url
+                mutable.get()
+            }
+            XCTAssertEqual(first.status, 404)
 
-        let second = await client.request { req in
-            guard let mutable = req as? URLSessionHttpRequest else { return }
-            mutable.url = url
-            mutable.get()
-        }
-
-        switch first {
-        case .success(let response):
-            XCTAssertEqual(response.status, 404)
-        case .failure(let error):
-            XCTFail("Unexpected error \(error)")
-        }
-
-        switch second {
-        case .success(let response):
-            XCTAssertEqual(response.status, 500)
-        case .failure(let error):
+            let second = try await client.request { req in
+                guard let mutable = req as? URLSessionHttpRequest else { return }
+                mutable.url = url
+                mutable.get()
+            }
+            XCTAssertEqual(second.status, 500)
+        } catch {
             XCTFail("Unexpected error \(error)")
         }
     }
 
     func testInvalidURLFails() async {
         let client = makeClient()
-        let result = await client.request { req in
-            guard let mutable = req as? URLSessionHttpRequest else { return }
-            mutable.get()
-        }
-
-        switch result {
-        case .success:
+        do {
+            _ = try await client.request { req in
+                guard let mutable = req as? URLSessionHttpRequest else { return }
+                mutable.get()
+            }
             XCTFail("Expected failure for missing URL")
-        case .failure(let error):
-            guard case NetworkError.invalidRequest = error else {
+        } catch let error as NetworkError {
+            guard case .invalidRequest = error else {
                 XCTFail("Unexpected error \(error)")
                 return
             }
+        } catch {
+            XCTFail("Unexpected error type \(error)")
         }
     }
 
@@ -278,17 +264,15 @@ final class URLSessionHttpClientTests: XCTestCase {
         let session = URLSession(configuration: sessionConfig, delegate: delegate, delegateQueue: nil)
         let client = URLSessionHttpClient(config: config, session: session, delegate: delegate)
 
-        let result = await client.request { req in
-            guard let mutable = req as? URLSessionHttpRequest else { return }
-            mutable.url = "https://example.com/redirect"
-            mutable.get()
-        }
-
-        switch result {
-        case .success(let response):
+        do {
+            let response = try await client.request { req in
+                guard let mutable = req as? URLSessionHttpRequest else { return }
+                mutable.url = "https://example.com/redirect"
+                mutable.get()
+            }
             XCTAssertEqual(response.status, 302)
             XCTAssertEqual(RedirectURLProtocol.requestCount, 1)
-        case .failure(let error):
+        } catch {
             XCTFail("Unexpected error \(error)")
         }
     }

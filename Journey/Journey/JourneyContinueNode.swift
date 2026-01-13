@@ -2,7 +2,7 @@
 //  JourneyContinueNode.swift
 //  Journey
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -59,11 +59,11 @@ public final class JourneyContinueNode: ContinueNode, @unchecked Sendable {
         let realm = config?.realm ?? "root"
         let baseURL = config?.serverUrl ?? ""
 
-        var request = Request()
-        request.url("\(baseURL)/json/realms/\(realm)/authenticate")
-        request.header(name: JourneyConstants.contentType,  value: JourneyConstants.applicationJson)
-        request.header(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource21Protocol10)
-        request.body(body: asJson())
+        var request = workflow.config.httpClient.request()
+        request.url = "\(baseURL)/json/realms/\(realm)/authenticate"
+        request.setHeader(name: JourneyConstants.contentType,  value: JourneyConstants.applicationJson)
+        request.setHeader(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource21Protocol10)
+        request.post(json: asJson())
         
         // Allow callbacks to intercept and modify the request (e.g., add headers)
         for callback in actions {

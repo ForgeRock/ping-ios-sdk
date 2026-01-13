@@ -2,7 +2,7 @@
 //  PushConfigurationTests.swift
 //  PingPushTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -78,7 +78,7 @@ final class PushConfigurationTests: XCTestCase {
     // MARK: - Property Modification Tests
     
     func testModifyEncryptionEnabled() {
-        var config = PushConfiguration()
+        let config = PushConfiguration()
         XCTAssertTrue(config.encryptionEnabled)
         
         config.encryptionEnabled = false
@@ -89,7 +89,7 @@ final class PushConfigurationTests: XCTestCase {
     }
     
     func testModifyTimeoutMs() {
-        var config = PushConfiguration()
+        let config = PushConfiguration()
         XCTAssertEqual(config.timeoutMs, 15000)
         
         config.timeoutMs = 5000
@@ -100,7 +100,7 @@ final class PushConfigurationTests: XCTestCase {
     }
     
     func testModifyEnableCredentialCache() {
-        var config = PushConfiguration()
+        let config = PushConfiguration()
         XCTAssertFalse(config.enableCredentialCache)
         
         config.enableCredentialCache = true
@@ -111,7 +111,7 @@ final class PushConfigurationTests: XCTestCase {
     }
     
     func testModifyNotificationCleanupConfig() {
-        var config = PushConfiguration()
+        let config = PushConfiguration()
         XCTAssertEqual(config.notificationCleanupConfig.cleanupMode, .countBased)
         
         config.notificationCleanupConfig = .none()

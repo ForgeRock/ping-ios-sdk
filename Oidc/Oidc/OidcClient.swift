@@ -2,7 +2,7 @@
 //  OidcClient.swift
 //  PingOidc
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@
 import Foundation
 import PingLogger
 import PingOrchestrate
+import PingNetwork
 
 /// Class representing an OpenID Connect client.
 /// - Property pkce: PKCE  object used for the Authorization call.
@@ -30,15 +31,18 @@ public class OidcClient {
     /// OidcClient generateAuthorizeUrl.
     /// - Parameter customParams: Custom parameters to include in the authorization request.
     public func generateAuthorizeUrl(customParams: [String: String]? = nil) throws -> URL {
-        var request = Request()
+        guard let httpClient = config.httpClient else {
+            throw OidcError.networkError(message: "HTTP client not found")
+        }
+        var request = httpClient.request()
         self.pkce = Pkce.generate()
         request = config.populateRequest(request: request, pkce: pkce!, responseMode: OidcClient.Constants.query)
         if let customParams = customParams {
             for parameter in customParams {
-                request.parameter(name: parameter.key, value: parameter.value)
+                request.setParameter(name: parameter.key, value: parameter.value)
             }
         }
-        guard let url = request.urlRequest.url, let redirectURI = URL(string: config.redirectUri), let _ = redirectURI.scheme else {
+        guard let urlString = request.url, let url = URL(string: urlString), let redirectURI = URL(string: config.redirectUri), let _ = redirectURI.scheme else {
             throw OidcError.networkError(message: "URL not found")
         }
         
@@ -129,17 +133,14 @@ public class OidcClient {
             throw OidcError.unknown(message: "OpenID configuration not found")
         }
         
-        let request = Request()
-        request.url(openId.tokenEndpoint)
-        request.form(formData: params)
-        
-        let (data, response) = try await httpClient.sendRequest(request: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw OidcError.apiError(code: (response as? HTTPURLResponse)?.statusCode ?? 0, message: String(decoding: data, as: UTF8.self))
+        let response = try await httpClient.request { request in
+            request.url = openId.tokenEndpoint
+            request.form(parameters: params)
         }
-        let token = try JSONDecoder().decode(Token.self, from: data)
-        
+        guard response.status.isSuccess() else {
+            throw OidcError.apiError(code: response.status, message: response.bodyAsString())
+        }
+        let token = try JSONDecoder().decode(Token.self, from: response.body ?? Data())
         try await config.storage.save(item: token)
         
         return token
@@ -181,11 +182,12 @@ public class OidcClient {
                 return
             }
             
-            let request = Request()
-            request.url(openId.revocationEndpoint)
-            request.form(formData: params)
             do {
-                let (_, _) = try await httpClient.sendRequest(request: request)
+                _ = try await httpClient.request{ request in
+                    request.url = openId.revocationEndpoint
+                    request.form(parameters: params)
+                }
+                
             } catch {
                 config.logger.e("Failed to revoke token", error: error)
             }
@@ -240,15 +242,14 @@ public class OidcClient {
             case .failure(let error):
                 return .failure(error)
             case .success(let token):
-                let request = Request()
-                request.url(openId.userinfoEndpoint)
-                request.header(name: "Authorization", value: "Bearer \(token.accessToken)")
-                let (data, response) = try await httpClient.sendRequest(request: request)
-                
-                guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                    throw OidcError.apiError(code: (response as? HTTPURLResponse)?.statusCode ?? 0, message: String(decoding: data, as: UTF8.self))
+                let response = try await httpClient.request { request in
+                    request.url = openId.userinfoEndpoint
+                    request.setHeader(name: NetworkConstants.headerAuthorization, value: "Bearer \(token.accessToken)")
                 }
-                let json = try JSONSerialization.jsonObject(with: data, options: []) as? UserInfo ?? [:]
+                guard response.status.isSuccess() else {
+                    throw OidcError.apiError(code: response.status, message: response.bodyAsString())
+                }
+                let json = try JSONSerialization.jsonObject(with: response.body ?? Data(), options: []) as? UserInfo ?? [:]
                 return .success(json)
             }
         } catch {
@@ -282,15 +283,15 @@ public class OidcClient {
             params[Constants.code_verifier] = codeVerifier
         }
         
-        let request = Request()
-        request.url(openId.tokenEndpoint)
-        request.form(formData: params)
-        let (data, response) = try await httpClient.sendRequest(request: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw OidcError.apiError(code: (response as? HTTPURLResponse)?.statusCode ?? 0, message: String(decoding: data, as: UTF8.self))
+        let immutableParams = params
+        let response = try await httpClient.request { request in
+            request.url = openId.tokenEndpoint
+            request.form(parameters: immutableParams)
         }
-        let token = try JSONDecoder().decode(Token.self, from: data)
+        guard response.status.isSuccess() else {
+            throw OidcError.apiError(code: response.status, message: response.bodyAsString())
+        }
+        let token = try JSONDecoder().decode(Token.self, from: response.body ?? Data())
         return token
     }
     
@@ -314,43 +315,43 @@ extension OidcClientConfig {
         pkce: Pkce,
         responseMode: String = OidcClient.Constants.piflow
     ) -> Request {
-        request.url(openId?.authorizationEndpoint ?? "")
+        request.url = openId?.authorizationEndpoint ?? ""
         if !responseMode.isEmpty {
-            request.parameter(name: OidcClient.Constants.response_mode, value: responseMode)
+            request.setParameter(name: OidcClient.Constants.response_mode, value: responseMode)
         }
-        request.parameter(name: OidcClient.Constants.client_id, value: clientId)
-        request.parameter(name: OidcClient.Constants.response_type, value: OidcClient.Constants.code)
-        request.parameter(name: OidcClient.Constants.scope, value: scopes.joined(separator: " "))
-        request.parameter(name: OidcClient.Constants.redirect_uri, value: redirectUri)
-        request.parameter(name: OidcClient.Constants.code_challenge, value: pkce.codeChallenge)
-        request.parameter(name: OidcClient.Constants.code_challenge_method, value: pkce.codeChallengeMethod)
+        request.setParameter(name: OidcClient.Constants.client_id, value: clientId)
+        request.setParameter(name: OidcClient.Constants.response_type, value: OidcClient.Constants.code)
+        request.setParameter(name: OidcClient.Constants.scope, value: scopes.joined(separator: " "))
+        request.setParameter(name: OidcClient.Constants.redirect_uri, value: redirectUri)
+        request.setParameter(name: OidcClient.Constants.code_challenge, value: pkce.codeChallenge)
+        request.setParameter(name: OidcClient.Constants.code_challenge_method, value: pkce.codeChallengeMethod)
         
         if let acr = acrValues {
-            request.parameter(name: OidcClient.Constants.acr_values, value: acr)
+            request.setParameter(name: OidcClient.Constants.acr_values, value: acr)
         }
         
         if let display = display {
-            request.parameter(name: OidcClient.Constants.display, value: display)
+            request.setParameter(name: OidcClient.Constants.display, value: display)
         }
         
         for (key, value) in additionalParameters {
-            request.parameter(name: key, value: value)
+            request.setParameter(name: key, value: value)
         }
         
         if let loginHint = loginHint {
-            request.parameter(name: OidcClient.Constants.login_hint, value: loginHint)
+            request.setParameter(name: OidcClient.Constants.login_hint, value: loginHint)
         }
         
         if let nonce = nonce {
-            request.parameter(name: OidcClient.Constants.nonce, value: nonce)
+            request.setParameter(name: OidcClient.Constants.nonce, value: nonce)
         }
         
         if let prompt = prompt {
-            request.parameter(name: OidcClient.Constants.prompt, value: prompt)
+            request.setParameter(name: OidcClient.Constants.prompt, value: prompt)
         }
         
         if let uiLocales = uiLocales {
-            request.parameter(name: OidcClient.Constants.ui_locales, value: uiLocales)
+            request.setParameter(name: OidcClient.Constants.ui_locales, value: uiLocales)
         }
         
         return request

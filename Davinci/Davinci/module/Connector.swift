@@ -2,7 +2,7 @@
 //  Connector.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -10,6 +10,7 @@
 
 import PingOrchestrate
 import PingDavinciPlugin
+import PingNetwork
 
 extension ContinueNode {
     /// Extension property to get the id of a Connector.
@@ -93,15 +94,15 @@ class Connector: ContinueNode, @unchecked Sendable {
     /// Function to convert the connector to a Request.
     /// - Returns: The connector as a Request.
     override func asRequest() -> Request {
-        var request = Request()
+        var request = workflow.config.httpClient.request()
         
         let links: [String: Any]? = input[Constants._links] as? [String: Any]
         let next = links?[Constants.next] as? [String: Any]
         let href = next?[Constants.href] as? String ?? ""
         
-        request.url(href)
-        request.header(name: Request.Constants.contentType, value: Request.ContentType.json.rawValue)
-        request.body(body: asJson())
+        request.url = href
+        request.setHeader(name: NetworkConstants.headerContentType, value: NetworkConstants.contentTypeJSON)
+        request.post(json: asJson())
         
         for collector in actions {
             if let interceptor = collector as? RequestInterceptor {

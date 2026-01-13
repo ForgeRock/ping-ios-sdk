@@ -2,7 +2,7 @@
 //  DeviceClient.swift
 //  DeviceClient
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,7 +11,7 @@
 
 import Foundation
 import PingLogger
-import PingOrchestrate
+import PingNetwork
 
 // MARK: - DeviceClientConfig
 
@@ -52,8 +52,8 @@ public struct DeviceClientConfig: Sendable {
     
     /// The HTTP client used for network requests
     ///
-    /// Default: Creates a new `HttpClient()` instance with default configuration
-    public let httpClient: HttpClient
+    /// Default: Creates a new `HttpClientProtocol` instance with default configuration
+    public let httpClient: HttpClientProtocol
     
     // MARK: Initialization
     
@@ -66,7 +66,7 @@ public struct DeviceClientConfig: Sendable {
     ///   - realm: The realm for device operations (e.g., `"alpha"`)
     ///   - cookieName: The header name for the SSO token (e.g., `"iPlanetDirectoryPro"`)
     ///   - ssoToken: The SSO session token for authentication
-    ///   - httpClient: The HTTP client instance (default: `HttpClient()`)
+    ///   - httpClient: The HTTP client instance (default: `HttpClient.createClient()`)
     ///
     /// - Throws: Does not throw, but invalid URLs or tokens will cause runtime errors during API calls
     public init(
@@ -74,7 +74,7 @@ public struct DeviceClientConfig: Sendable {
         realm: String = DeviceClientConstants.defaultRealm,
         cookieName: String = DeviceClientConstants.defaultCookieName,
         ssoToken: String,
-        httpClient: HttpClient = HttpClient()
+        httpClient: HttpClientProtocol = HttpClient.createClient()
     ) {
         self.serverUrl = serverUrl
         self.realm = realm
@@ -389,13 +389,13 @@ public class DeviceClient {
         let request = try await createGetRequest(for: endpoint)
         let response = try await executeRequest(request)
         
-        guard response.status() == 200 else {
-            LogManager.logger.e("DeviceClient: Failed to fetch devices. Status: \(response.status())", error: nil)
-            throw DeviceError.requestFailed(statusCode: response.status(), message: "Failed to fetch devices")
+        guard response.status.isSuccess() else {
+            LogManager.logger.e("DeviceClient: Failed to fetch devices. Status: \(response.status)", error: nil)
+            throw DeviceError.requestFailed(statusCode: response.status, message: "Failed to fetch devices")
         }
         
         do {
-            let wrapper = try JSONDecoder().decode(DeviceResponse<T>.self, from: response.data)
+            let wrapper = try JSONDecoder().decode(DeviceResponse<T>.self, from: response.body ?? Data())
             let devices = wrapper.result
             
             LogManager.logger.i("DeviceClient: Successfully fetched \(devices.count) devices")
@@ -418,9 +418,9 @@ public class DeviceClient {
         let request = try await createPutRequest(for: device)
         let response = try await executeRequest(request)
         
-        guard response.status() == 200 else {
-            LogManager.logger.e("DeviceClient: Failed to update device. Status: \(response.status())", error: nil)
-            throw DeviceError.requestFailed(statusCode: response.status(), message: "Failed to update device")
+        guard response.status.isSuccess() else {
+            LogManager.logger.e("DeviceClient: Failed to update device. Status: \(response.status)", error: nil)
+            throw DeviceError.requestFailed(statusCode: response.status, message: "Failed to update device")
         }
         
         LogManager.logger.i("DeviceClient: Successfully updated device: \(device.id)")
@@ -436,9 +436,9 @@ public class DeviceClient {
         let request = try await createDeleteRequest(for: device)
         let response = try await executeRequest(request)
         
-        guard response.status() == 200 || response.status() == 204 else {
-            LogManager.logger.e("DeviceClient: Failed to delete device. Status: \(response.status())", error: nil)
-            throw DeviceError.requestFailed(statusCode: response.status(), message: "Failed to delete device")
+        guard response.status.isSuccess() else {
+            LogManager.logger.e("DeviceClient: Failed to delete device. Status: \(response.status)", error: nil)
+            throw DeviceError.requestFailed(statusCode: response.status, message: "Failed to delete device")
         }
         
         LogManager.logger.i("DeviceClient: Successfully deleted device: \(device.id)")
@@ -451,10 +451,9 @@ public class DeviceClient {
     /// - Parameter request: The request to execute
     /// - Returns: The HTTP response wrapped in `HttpResponse`
     /// - Throws: `DeviceError.networkError` if the request fails
-    private func executeRequest(_ request: Request) async throws -> HttpResponse {
+    private func executeRequest(_ request: HttpRequest) async throws -> HttpResponse {
         do {
-            let (data, urlResponse) = try await config.httpClient.sendRequest(request: request)
-            return HttpResponse(data: data, response: urlResponse)
+            return try await config.httpClient.request(request: request)
         } catch {
             LogManager.logger.e("DeviceClient: Request execution failed", error: error)
             throw DeviceError.networkError(error: error)
@@ -467,9 +466,9 @@ public class DeviceClient {
     /// for retrieving a list of devices from the specified endpoint.
     ///
     /// - Parameter endpoint: The device endpoint (e.g., "devices/2fa/oath")
-    /// - Returns: A configured `Request` object ready for execution
+    /// - Returns: A configured `HttpRequest` object ready for execution
     /// - Throws: `DeviceError.invalidUrl` if the URL cannot be constructed
-    private func createGetRequest(for endpoint: String) async throws -> Request {
+    private func createGetRequest(for endpoint: String) async throws -> HttpRequest {
         let userId = try await fetchUserId()
         let urlString = "\(config.serverUrl)\(DeviceClientConstants.jsonPath)\(DeviceClientConstants.realmsPath)/\(config.realm)\(DeviceClientConstants.usersPath)/\(userId)/\(endpoint)"
         
@@ -483,9 +482,10 @@ public class DeviceClient {
             throw DeviceError.invalidUrl(url: urlString)
         }
         
-        let request = Request(urlString: url.absoluteString)
+        let request = config.httpClient.request()
+        request.url = url.absoluteString
         addAuthHeaders(to: request)
-        request.method(Request.HTTPMethod.get)
+        request.get()
         
         return request
     }
@@ -496,10 +496,10 @@ public class DeviceClient {
     /// and configures the request for updating the specified device.
     ///
     /// - Parameter device: The device to update (must be encodable)
-    /// - Returns: A configured `Request` object ready for execution
+    /// - Returns: A configured `HttpRequest` object ready for execution
     /// - Throws: `DeviceError.invalidUrl` if the URL cannot be constructed
     /// - Throws: `DeviceError.encodingFailed` if the device cannot be encoded to JSON
-    private func createPutRequest(for device: Device) async throws -> Request {
+    private func createPutRequest(for device: Device) async throws -> HttpRequest {
         let userId = try await fetchUserId()
         let urlString = "\(config.serverUrl)\(DeviceClientConstants.jsonPath)\(DeviceClientConstants.realmsPath)/\(config.realm)\(DeviceClientConstants.usersPath)/\(userId)/\(device.urlSuffix)/\(device.id)"
         
@@ -512,13 +512,13 @@ public class DeviceClient {
             throw DeviceError.encodingFailed(message: "Failed to encode device to JSON")
         }
         
-        let request = Request(urlString: urlString)
+        let request = config.httpClient.request()
+        request.url = urlString
         addAuthHeaders(to: request)
         if device.urlSuffix.hasSuffix(DeviceClientConstants.pushEndpoint) || device.urlSuffix.hasSuffix(DeviceClientConstants.oathEndpoint) {
-            request.header(name: DeviceClientConstants.ifMatchHeader, value: DeviceClientConstants.ifMatchValue)
+            request.setHeader(name: DeviceClientConstants.ifMatchHeader, value: DeviceClientConstants.ifMatchValue)
         }
-        request.body(body: dictionary)
-        request.method(Request.HTTPMethod.put)
+        request.put(json: dictionary)
         
         return request
     }
@@ -529,9 +529,9 @@ public class DeviceClient {
     /// for deleting the specified device.
     ///
     /// - Parameter device: The device to delete
-    /// - Returns: A configured `Request` object ready for execution
+    /// - Returns: A configured `HttpRequest` object ready for execution
     /// - Throws: `DeviceError.invalidUrl` if the URL cannot be constructed
-    private func createDeleteRequest(for device: Device) async throws -> Request {
+    private func createDeleteRequest(for device: Device) async throws -> HttpRequest {
         let userId = try await fetchUserId()
         let urlString = "\(config.serverUrl)\(DeviceClientConstants.jsonPath)\(DeviceClientConstants.realmsPath)/\(config.realm)\(DeviceClientConstants.usersPath)/\(userId)/\(device.urlSuffix)/\(device.id)"
         
@@ -539,9 +539,10 @@ public class DeviceClient {
             throw DeviceError.invalidUrl(url: urlString)
         }
         
-        let request = Request(urlString: urlString)
+        let request = config.httpClient.request()
+        request.url = urlString
         addAuthHeaders(to: request)
-        request.method(Request.HTTPMethod.delete)
+        request.delete(json: [:])
         
         return request
     }
@@ -554,9 +555,9 @@ public class DeviceClient {
     /// - Parameters:
     ///   - request: The request to add headers to
     ///   - acceptAPIVersion: The API version to request (default: "resource=1.0")
-    private func addAuthHeaders(to request: Request, acceptAPIVersion: String = DeviceClientConstants.resourceAPIVersion1_0) {
-        request.header(name: config.cookieName, value: config.ssoToken)
-        request.header(name: DeviceClientConstants.acceptAPIVersionHeader, value: acceptAPIVersion)
+    private func addAuthHeaders(to request: HttpRequest, acceptAPIVersion: String = DeviceClientConstants.resourceAPIVersion1_0) {
+        request.setHeader(name: config.cookieName, value: config.ssoToken)
+        request.setHeader(name: DeviceClientConstants.acceptAPIVersionHeader, value: acceptAPIVersion)
     }
     
     /// Fetches the user id from the session (with caching)
@@ -580,19 +581,20 @@ public class DeviceClient {
             throw DeviceError.invalidUrl(url: urlString)
         }
         
-        let request = Request(urlString: url.absoluteString)
+        let request = config.httpClient.request()
+        request.url = url.absoluteString
         addAuthHeaders(to: request, acceptAPIVersion: DeviceClientConstants.resourceAPIVersion2_1)
-        request.method(Request.HTTPMethod.post)
+        request.post(json: [:])
         
         let response = try await executeRequest(request)
         
-        guard response.status() == 200 else {
-            LogManager.logger.e("DeviceClient: Failed to fetch session info. Status: \(response.status())", error: nil)
-            throw DeviceError.requestFailed(statusCode: response.status(), message: "Failed to retrieve session information")
+        guard response.status.isSuccess() else {
+            LogManager.logger.e("DeviceClient: Failed to fetch session info. Status: \(response.status)", error: nil)
+            throw DeviceError.requestFailed(statusCode: response.status, message: "Failed to retrieve session information")
         }
         
         do {
-            let session = try JSONDecoder().decode(Session.self, from: response.data)
+            let session = try JSONDecoder().decode(Session.self, from: response.body ?? Data())
             
             // Cache the user ID
             self.userId = session.username

@@ -28,4 +28,6 @@ Pod::Spec.new do |s|
   s.ios.dependency 'PingOidc', '~> 1.3.1'
   s.ios.dependency 'PingOrchestrate', '~> 1.3.1'
   s.ios.dependency 'PingCommons', '~> 1.3.1'
+  s.ios.dependency 'PingNetwork', '~> 1.3.1'
+  
 end

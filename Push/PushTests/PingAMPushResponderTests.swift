@@ -2,14 +2,14 @@
 //  PingAMPushResponderTests.swift
 //  PushTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import XCTest
-import PingOrchestrate
+@testable import PingNetwork
 @testable import PingPush
 
 private final class URLProtocolMock: URLProtocol {
@@ -92,13 +92,13 @@ final class PingAMPushResponderTests: XCTestCase {
         static let notificationId = "notification-id"
     }
 
-    private var httpClient: HttpClient!
+    private var httpClient: (any HttpClientProtocol)!
     private var responder: PingAMPushResponder!
 
     override func setUp() {
         super.setUp()
         URLProtocolMock.reset()
-        httpClient = HttpClient()
+        httpClient = makeMockHttpClient()
         responder = PingAMPushResponder(httpClient: httpClient, logger: nil)
     }
 
@@ -685,11 +685,11 @@ final class PingAMPushResponderTests: XCTestCase {
         )
     }
 
-    private func makeMockHttpClient() -> HttpClient {
+    private func makeMockHttpClient() -> HttpClientProtocol {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [URLProtocolMock.self]
         let session = URLSession(configuration: configuration)
-        return HttpClient(session: session)
+        return URLSessionHttpClient(config: HttpClientConfig(), session: session)
     }
 
     private func extractJwt(from bodyData: Data) throws -> String {

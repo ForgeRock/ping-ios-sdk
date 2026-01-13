@@ -2,7 +2,7 @@
 //  HttpClientProtocol.swift
 //  PingNetwork
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -23,14 +23,14 @@ public protocol HttpClientProtocol: Sendable {
     /// Executes a pre-configured HTTP request.
     ///
     /// - Parameter request: The configured HTTP request to execute.
-    /// - Returns: A `Result` containing the HTTP response or an error.
-    func request(request: HttpRequest) async -> Result<HttpResponse, Error>
+    /// - Returns: An `HttpResponse` instance
+    func request(request: HttpRequest) async throws -> HttpResponse
 
     /// Executes an HTTP request configured via a builder closure.
     ///
     /// Example:
     /// ```swift
-    /// let result = await client.request { req in
+    /// let response = try await client.request { req in
     ///     req.url = URL(string: "https://api.example.com/users")
     ///     req.setHeader(name: "Accept", value: "application/json")
     ///     req.get()
@@ -38,8 +38,8 @@ public protocol HttpClientProtocol: Sendable {
     /// ```
     ///
     /// - Parameter builder: A closure that configures the request.
-    /// - Returns: A `Result` containing the HTTP response or an error.
-    func request(builder: @escaping @Sendable (HttpRequest) -> Void) async -> Result<HttpResponse, Error>
+    /// - Returns: An `HttpResponse` instance
+    func request(builder: @escaping @Sendable (HttpRequest) -> Void) async throws -> HttpResponse
 
     /// Closes the client and releases resources.
     ///

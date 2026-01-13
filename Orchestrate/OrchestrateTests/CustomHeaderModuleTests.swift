@@ -2,7 +2,7 @@
 //  CustomHeaderModuleTests.swift
 //  OrchestrateTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@
 import Foundation
 import XCTest
 @testable import PingOrchestrate
+@testable import PingNetwork
 
 final class CustomHeaderModuleTest: XCTestCase {
     
@@ -36,7 +37,7 @@ final class CustomHeaderModuleTest: XCTestCase {
         }
         
         let workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             config.module(CustomHeader.config) { customHeaderConfig in
                 customHeaderConfig.header(name: "X-Custom-Header", value: "CustomValue")
                 

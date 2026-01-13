@@ -2,7 +2,7 @@
 //  DeviceManagementView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -386,7 +386,7 @@ struct DeviceManagementView: View {
             detailRow(label: "Last Selected", value: formatDate(device.lastSelectedDate))
             
             if let location = device.location {
-                detailRow(label: "Location", value: "Lat: \(location.latitude), Lon: \(location.longitude)")
+                detailRow(label: "Location", value: "Lat: \(String(describing: location.latitude)), Lon: \(String(describing: location.longitude))")
             }
             
             if !device.metadata.isEmpty {

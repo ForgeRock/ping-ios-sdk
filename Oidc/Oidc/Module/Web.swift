@@ -2,7 +2,7 @@
 //  Web.swift
 //  Oidc
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@
 import PingOrchestrate
 import PingBrowser
 import Foundation
+import PingNetwork
 
 /// A module that integrates OIDC capabilities into the DaVinci workflow.
 public class WebModule {
@@ -35,7 +36,7 @@ public class WebModule {
             let oidcLoginConfig = oidcLoginFlow.config as? OidcWebConfig
             
             do {
-                guard let url = request.urlRequest.url else {
+                guard let urlString = request.url, let url = URL(string: urlString) else {
                     throw OidcError.authorizeError(message: "Browser authorization failed: URL not found")
                 }
                 // Ensure the redirect URI scheme is valid
@@ -47,7 +48,7 @@ public class WebModule {
                         "code": code
                     ]
                 // Return the authorization code response
-                return await HttpResponse(data: WebModule.body(code: code), response: URLResponse())
+                return await URLSessionHttpResponse(request: request, body: WebModule.body(code: code), httpURLResponse: HTTPURLResponse())
             } catch {
                 throw OidcError.authorizeError(message: "Browser authorization failed: \(error.localizedDescription)")
             }

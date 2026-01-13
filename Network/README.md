@@ -62,18 +62,11 @@ import PingNetwork
 
 let client = HttpClient.createClient()
 
-let result = await client.request { request in
+let response = try await client.request { request in request in
     request.url = "https://api.example.com/users"
     request.get()
 }
 
-switch result {
-case .success(let response):
-    print("Status: \(response.status)")
-    print("Body: \(response.bodyAsString())")
-case .failure(let error):
-    print("Error: \(error)")
-}
 ```
 
 ### POST Request with JSON Body
@@ -81,7 +74,7 @@ case .failure(let error):
 Send a POST request with a JSON body:
 
 ```swift
-let result = await client.request { request in
+let response = try await client.request { request in request in
     request.url = "https://api.example.com/users"
     request.setHeader(name: "Content-Type", value: "application/json")
     request.post(json: [
@@ -96,7 +89,7 @@ let result = await client.request { request in
 Submit form data:
 
 ```swift
-let result = await client.request { request in
+let response = try await client.request { request in request in
     request.url = "https://api.example.com/login"
     request.form(parameters: [
         "username": "user@example.com",
@@ -110,7 +103,7 @@ let result = await client.request { request in
 Add query parameters to a request:
 
 ```swift
-let result = await client.request { request in
+let response = try await client.request { request in request in
     request.url = "https://api.example.com/search"
     request.setParameter(name: "q", value: "swift")
     request.setParameter(name: "page", value: "1")
@@ -124,7 +117,7 @@ let result = await client.request { request in
 Set custom headers:
 
 ```swift
-let result = await client.request { request in
+let response = try await client.request { request in request in
     request.url = "https://api.example.com/protected"
     request.setHeader(name: "Authorization", value: "Bearer \(token)")
     request.setHeader(name: "Accept", value: "application/json")
@@ -189,39 +182,33 @@ Response interceptors are executed in the order they are registered, after the r
 Access response data:
 
 ```swift
-let result = await client.request { request in
+let response = try await client.request { request in request in
     request.url = "https://api.example.com/data"
     request.get()
 }
 
-switch result {
-case .success(let response):
-    // Check status
-    if response.status.isSuccess() {
-        // Get body as string
-        let bodyString = response.bodyAsString()
-        
-        // Get raw body data
-        if let bodyData = response.body {
-            let json = try? JSONSerialization.jsonObject(with: bodyData)
-        }
-        
-        // Get specific header
-        if let contentType = response.getHeader(name: "Content-Type") {
-            print("Content-Type: \(contentType)")
-        }
-        
-        // Get all headers
-        let allHeaders = response.headers
-        
-        // Get cookies
-        let cookies = response.getCookies()
-        let cookieStrings = response.getCookieStrings()
+if response.status.isSuccess() {
+    // Get body as string
+    let bodyString = response.bodyAsString()
+
+    // Get raw body data
+    if let bodyData = response.body {
+        let json = try? JSONSerialization.jsonObject(with: bodyData)
     }
-    
-case .failure(let error):
-    print("Request failed: \(error)")
+
+    // Get specific header
+    if let contentType = response.getHeader(name: "Content-Type") {
+        print("Content-Type: \(contentType)")
+    }
+
+    // Get all headers
+    let allHeaders = response.headers
+
+    // Get cookies
+    let cookies = response.getCookies()
+    let cookieStrings = response.getCookieStrings()
 }
+
 ```
 
 ### Status Code Checking
@@ -294,19 +281,17 @@ let result = await client.request(request: request)
 Handle different types of network errors:
 
 ```swift
-let result = await client.request { request in
-    request.url = "https://api.example.com/data"
-    request.get()
-}
+do {
+    let response = try await client.request { request in request in
+        request.url = "https://api.example.com/data"
+        request.get()
+    }
 
-switch result {
-case .success(let response):
     if !response.status.isSuccess() {
         // HTTP error (4xx, 5xx)
         print("HTTP Error: \(response.status)")
     }
-    
-case .failure(let error):
+} catch {
     if let networkError = error as? NetworkError {
         switch networkError {
         case .timeout:

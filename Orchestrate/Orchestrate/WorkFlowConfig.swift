@@ -2,7 +2,7 @@
 //  WorkflowConfig.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,7 @@
 
 import Foundation
 import PingLogger
+import PingNetwork
 
 /// Enum representing the mode of module override.
 public enum OverrideMode {
@@ -34,7 +35,10 @@ open class WorkflowConfig: @unchecked Sendable {
         }
     }
     /// HTTP client for the engine
-    public internal(set) var httpClient: HttpClient = HttpClient()
+    /// If not set, a default client will be created during workflow registration
+    /// - see register(workflow:)
+    /// - note: This property is internal(set) to allow setting it from tests.
+    public internal(set) var httpClient: HttpClientProtocol!
     
     /// Initializes a new WorkflowConfig instance.
     public init() {}
@@ -84,7 +88,12 @@ open class WorkflowConfig: @unchecked Sendable {
     /// Registers the workflow
     /// - Parameter workflow: The workflow to be registered.
     public func register(workflow: Workflow) {
-        httpClient.timeoutIntervalForRequest = timeout
+        // Create default HTTP client if not set already
+        if httpClient == nil {
+            httpClient = HttpClient.createClient({ config in
+                config.timeout = timeout
+            })
+        }
         modules.sort(by: { $0.priority < $1.priority })
         modules.forEach { $0.register(workflow: workflow) }
     }

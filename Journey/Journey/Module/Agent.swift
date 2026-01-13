@@ -2,7 +2,7 @@
 //  Agent.swift
 //  Journey
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@ import Foundation
 import PingOidc
 import PingOrchestrate
 import PingJourneyPlugin
+import PingNetwork
 
 /// An agent that handles the creation of an authentication session.
 /// This agent is used to initiate the authentication process for a user.
@@ -76,25 +77,24 @@ internal final class CreateAgent: Agent, Sendable {
             JourneyConstants.code_challenge: pkce.codeChallenge,
             JourneyConstants.code_challenge_method: pkce.codeChallengeMethod
         ]
-
-        let request = Request()
         
-        request.url(openId.authorizationEndpoint)
-        for (name, value) in params {
-            request.parameter(name: name, value: value)
-        }
-        request.header(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource21Protocol10)
-        request.header(name: cookieName, value: session.value)
-        let (data, response) = try await httpClient.sendRequest(request: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 302 else {
-            throw OidcError.apiError(code: (response as? HTTPURLResponse)?.statusCode ?? 0, message: String(decoding: data, as: UTF8.self))
+        let response = try await httpClient.request { request in
+            request.url = openId.authorizationEndpoint
+            for (name, value) in params {
+                request.setParameter(name: name, value: value)
+                request.setHeader(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource21Protocol10)
+                request.setHeader(name: self.cookieName, value: self.session.value)
+            }
         }
         
-        guard let locationHeader = httpResponse.value(forHTTPHeaderField: JourneyConstants.location),
-           let urlComponents = URLComponents(string: locationHeader),
-           let authCode = urlComponents.queryItems?.first(where: { $0.name == JourneyConstants.code })?.value else {
-            throw OidcError.apiError(code: (response as? HTTPURLResponse)?.statusCode ?? 0, message: "Code not found in redirect")
+        guard response.status.isRedirect() else {
+            throw OidcError.apiError(code: response.status, message: response.bodyAsString())
+        }
+        
+        guard let locationHeader = response.getHeader(name: JourneyConstants.location),
+              let urlComponents = URLComponents(string: locationHeader),
+              let authCode = urlComponents.queryItems?.first(where: { $0.name == JourneyConstants.code })?.value else {
+            throw OidcError.apiError(code: response.status, message: "Code not found in redirect")
         }
         
         used = true

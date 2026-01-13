@@ -2,7 +2,7 @@
 //  Request.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -18,41 +18,42 @@ extension OidcClientConfig {
         request: Request,
         pkce: Pkce
     ) -> Request {
-        request.url(openId?.authorizationEndpoint ?? "")
-        request.parameter(name: OidcClient.Constants.response_mode, value: "pi.flow")
-        request.parameter(name: OidcClient.Constants.client_id, value: clientId)
-        request.parameter(name: OidcClient.Constants.response_type, value: OidcClient.Constants.code)
-        request.parameter(name: OidcClient.Constants.scope, value: scopes.joined(separator: " "))
-        request.parameter(name: OidcClient.Constants.redirect_uri, value: redirectUri)
-        request.parameter(name: OidcClient.Constants.code_challenge, value: pkce.codeChallenge)
-        request.parameter(name: OidcClient.Constants.code_challenge_method, value: pkce.codeChallengeMethod)
+        let request = request
+        request.url = openId?.authorizationEndpoint ?? ""
+        request.setParameter(name: OidcClient.Constants.response_mode, value: "pi.flow")
+        request.setParameter(name: OidcClient.Constants.client_id, value: clientId)
+        request.setParameter(name: OidcClient.Constants.response_type, value: OidcClient.Constants.code)
+        request.setParameter(name: OidcClient.Constants.scope, value: scopes.joined(separator: " "))
+        request.setParameter(name: OidcClient.Constants.redirect_uri, value: redirectUri)
+        request.setParameter(name: OidcClient.Constants.code_challenge, value: pkce.codeChallenge)
+        request.setParameter(name: OidcClient.Constants.code_challenge_method, value: pkce.codeChallengeMethod)
         
         if let acr = acrValues {
-            request.parameter(name: OidcClient.Constants.acr_values, value: acr)
+            request.setParameter(name: OidcClient.Constants.acr_values, value: acr)
         }
         
         if let display = display {
-            request.parameter(name: OidcClient.Constants.display, value: display)
+            request.setParameter(name: OidcClient.Constants.display, value: display)
         }
         
         for (key, value) in additionalParameters {
-            request.parameter(name: key, value: value)
+            request.setParameter(name: key, value: value)
         }
         
         if let loginHint = loginHint {
-            request.parameter(name: OidcClient.Constants.login_hint, value: loginHint)
+            request.setParameter(name: OidcClient.Constants.login_hint, value: loginHint)
         }
         
         if let nonce = nonce {
-            request.parameter(name: OidcClient.Constants.nonce, value: nonce)
+            request.setParameter(name: OidcClient.Constants.nonce, value: nonce)
         }
         
         if let prompt = prompt {
-            request.parameter(name: OidcClient.Constants.prompt, value: prompt)
+            request.setParameter(name: OidcClient.Constants.prompt, value: prompt)
         }
         
         if let uiLocales = uiLocales {
-            request.parameter(name: OidcClient.Constants.ui_locales, value: uiLocales)
+            request.setParameter(name: OidcClient.Constants.ui_locales, value: uiLocales)
         }
         
         return request

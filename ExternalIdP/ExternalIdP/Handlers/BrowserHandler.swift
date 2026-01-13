@@ -2,7 +2,7 @@
 //  BrowserHandler.swift
 //  ExternalIdP
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,7 @@
 import Foundation
 import PingBrowser
 import PingOrchestrate
+import PingNetwork
 
 /// A handler class for managing browser-based Identity Provider (IdP) authorization.
 @MainActor
@@ -32,8 +33,8 @@ public class BrowserHandler: IdpRequestHandler {
     ///  This function takes a JSON object and extracts the "form" field. It then iterates over the "fields" array in the "components" object,
     ///  parsing each field into a collector and adding it to a list.
     ///  - Parameter url: The URL to which the authorization request is made.
-    ///  - Returns:  A [Request] object that can be used to continue the DaVinci flow.
-    public func authorize(url: URL?) async throws -> Request {
+    ///  - Returns:  An `HttpRequest` object that can be used to continue the DaVinci flow.
+    public func authorize(url: URL?) async throws -> HttpRequest {
         guard let continueUrl = url else {
             throw IdpExceptions.illegalArgumentException(message: "continueUrl not found")
         }
@@ -50,15 +51,16 @@ public class BrowserHandler: IdpRequestHandler {
                 throw IdpExceptions.illegalStateException(message: "Could not read continueToken")
             }
             
-            guard let links = continueNode.input[Request.Constants._links] as? [String: Any],
-                  let _continue = links[Request.Constants._continue] as? [String: Any],
-                  let continueURL = _continue[Request.Constants.href] as? String else {
+            guard let links = continueNode.input[NetworkConstants._links] as? [String: Any],
+                  let _continue = links[NetworkConstants.continue] as? [String: Any],
+                  let continueURL = _continue[NetworkConstants.href] as? String else {
                 throw IdpExceptions.illegalStateException(message: "Could not read continue URL")
             }
             
-            let request = Request(urlString: continueURL)
-            request.header(name: Request.Constants.authorization, value: "Bearer \(continueToken)")
-            request.body(body: [String: Any]())
+            let request = URLSessionHttpRequest()
+            request.url = continueURL
+            request.setHeader(name: NetworkConstants.headerAuthorization, value: "Bearer \(continueToken)")
+            request.post(json: [String: Any]())
             return request
         } catch let error {
             throw error

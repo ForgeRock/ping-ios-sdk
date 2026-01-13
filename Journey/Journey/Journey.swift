@@ -2,7 +2,7 @@
 //  Journey.swift
 //  Journey
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -15,6 +15,7 @@ import PingOidc
 import PingLogger
 import PingJourneyPlugin
 import PingCommons
+import PingNetwork
 
 /// A typealias mapping Journey to the underlying Workflow type used by the orchestrator.
 public typealias Journey = Workflow
@@ -66,9 +67,9 @@ public extension Journey {
         config.logger = LogManager.standard
         config.timeout = 30
         config.module(CustomHeader.config) { customHeaderConfig in
-            customHeaderConfig.header(name: Request.Constants.xRequestedWith, value: Request.Constants.pingSdk)
-            customHeaderConfig.header(name: Request.Constants.xRequestedPlatform, value: Request.Constants.ios)
-            customHeaderConfig.header(name: Request.Constants.acceptLanguage, value: Locale.preferredLocales.toAcceptLanguage())
+            customHeaderConfig.header(name: NetworkConstants.headerRequestedWith, value: NetworkConstants.requestedWithValue)
+            customHeaderConfig.header(name: NetworkConstants.headerRequestedPlatform, value: NetworkConstants.requestedPlatformValue)
+            customHeaderConfig.header(name: NetworkConstants.headerAcceptLanguage, value: Locale.preferredLocales.toAcceptLanguage())
         }
         
         config.module(NodeTransformModule.config)
@@ -137,7 +138,7 @@ public extension Journey {
         self.sharedContext.set(key: JourneyConstants.forceAuth, value: options.forceAuth)
         self.sharedContext.set(key: JourneyConstants.noSession, value: options.noSession)
         
-        let request = Request()
+        let request = config.httpClient.request()
         request.populateRequest(authIndexValue: journeyName, journeyConfig: journeyConfig, options: options)
         
         return await start(request)
@@ -161,9 +162,9 @@ public extension Journey {
         
         if let components = URLComponents(url: uri, resolvingAgainstBaseURL: false),
            let suspendedId = components.queryItems?.first(where: { $0.name == JourneyConstants.suspendedId })?.value {
-            let request = Request()
+            let request = config.httpClient.request()
             request.populateRequest(authIndexValue: "", authIndexType: "", journeyConfig: journeyConfig, options: options)
-            request.parameter(name: JourneyConstants.suspendedId, value: suspendedId)
+            request.setParameter(name: JourneyConstants.suspendedId, value: suspendedId)
             return await start(request)
         } else {
             return FailureNode(cause: ApiError.error(400, [:], "Invalid URI or missing suspendedId"))
@@ -182,7 +183,6 @@ public extension Journey {
     /// - Parameter request: The request to send.
     /// - Returns: A `Response` containing the raw data and `HTTPURLResponse`.
     private func send(_ request: Request) async throws -> Response {
-        let (data, urlResponse) = try await config.httpClient.sendRequest(request: request)
-        return HttpResponse(data: data, response: urlResponse)
+        return try await config.httpClient.request(request: request)
     }
 }

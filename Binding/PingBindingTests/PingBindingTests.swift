@@ -2,7 +2,7 @@
 //  PingBindingTests.swift
 //  PingBinding
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -431,7 +431,7 @@ final class PingBindingTests: XCTestCase {
         
         let userKey = UserKey(keyTag: keyAlias, userId: userId, username: userName, kid: keyId, authType: .none)
         let createdAt = Date()
-        XCTAssertEqual(userKey.createdAt, createdAt)
+        XCTAssertEqual(userKey.createdAt.timeIntervalSince1970, createdAt.timeIntervalSince1970)
         XCTAssertEqual(userKey.id, keyId)
         XCTAssertEqual(userKey.userId, userId)
         XCTAssertEqual(userKey.username, userName)

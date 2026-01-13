@@ -2,7 +2,7 @@
 //  PingBrowserTests.swift
 //  PingBrowserTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@ import XCTest
 @testable import PingBrowser
 @testable import PingExternalIdP
 @testable import PingOrchestrate
+@testable import PingNetwork
 
 
 /// Tests for the BrowserHandler class.
@@ -43,9 +44,9 @@ final class PingBrowserTests: XCTestCase {
         
         
         connector = TestContinueNode(context: mockContext, workflow: mockWorkflow, input: [
-            Request.Constants._links: [
-                Request.Constants._continue: [
-                    Request.Constants.href: continueURL
+            NetworkConstants._links: [
+                NetworkConstants.continue: [
+                    NetworkConstants.href: continueURL
                 ]
             ]
         ], actions: [])
@@ -85,9 +86,9 @@ final class PingBrowserTests: XCTestCase {
         let request = try await handler.authorize(url: url)
         
         // Assert
-        XCTAssertEqual(request.urlRequest.url!.absoluteString, continueURL)
-        XCTAssertEqual(request.urlRequest.allHTTPHeaderFields?[Request.Constants.authorization], "Bearer \(continueToken)")
-        XCTAssertEqual(request.urlRequest.httpMethod, "POST")
+        XCTAssertEqual(request.url, continueURL)
+        XCTAssertEqual(request.getHeader(name: NetworkConstants.headerAuthorization), "Bearer \(continueToken)")
+        XCTAssertEqual(request.getMethod(), HttpMethod.post)
     }
     
     
@@ -189,11 +190,13 @@ final class NodeMock: Node {}
 
 class TestContinueNode: ContinueNode, @unchecked Sendable {
     override func asRequest() -> Request {
-        return RequestMock(urlString: "https://openam.example.com")
+        let request = RequestMock()
+        request.url = "https://openam.example.com"
+        return request
     }
 }
 
-class RequestMock: Request, @unchecked Sendable {}
+class RequestMock: URLSessionHttpRequest, @unchecked Sendable {}
 
 /// A mock BrowserLauncher that you can control in tests.
 class MockBrowserLauncher: BrowserLauncherProtocol {

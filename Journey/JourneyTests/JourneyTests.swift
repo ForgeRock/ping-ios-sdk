@@ -2,7 +2,7 @@
 //  JourneyTests.swift
 //  JourneyTests
 //
-//  Copyright (c) 2025 Ping Identity. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -112,7 +112,7 @@ final class JourneyTests: JourneyBaseTests, @unchecked Sendable {
         
         let nosession = Module.of { setup in
             setup.next { ( context,connector, request) in
-                request.header(name: "nosession", value: "true")
+                request.setHeader(name: "nosession", value: "true")
                 return request
             }
         }
@@ -178,7 +178,7 @@ final class JourneyTests: JourneyBaseTests, @unchecked Sendable {
     func testJourneyWithAdditionalModule() {
         let nosession = Module.of { setup in
             setup.next { (context, connector, request) in
-                request.header(name: "nosession", value: "true")
+                request.setHeader(name: "nosession", value: "true")
                 return request
             }
         }

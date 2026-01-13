@@ -2,7 +2,7 @@
 //  NetworkConstants.swift
 //  PingNetwork
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -39,6 +39,9 @@ public enum NetworkConstants {
     /// Header name for accept language: "Accept-Language"
     public static let headerAcceptLanguage = "Accept-Language"
     
+    /// Header name for accept language: "Accept"
+    public static let headerAccept = "Accept"
+    
     // MARK: - Standard Header Values
     
     /// Default value for x-requested-with header: "ping-sdk"
@@ -49,7 +52,7 @@ public enum NetworkConstants {
     
     /// Bearer token prefix: "Bearer"
     public static let bearerValue = "Bearer"
-
+    
     // MARK: - Content Types
     
     /// JSON content type: "application/json"
@@ -57,7 +60,7 @@ public enum NetworkConstants {
     
     /// Form URL-encoded content type: "application/x-www-form-urlencoded"
     public static let contentTypeForm = "application/x-www-form-urlencoded"
-
+    
     // MARK: - Common Cookie Names
     
     /// Session token cookie name: "ST"
@@ -65,7 +68,7 @@ public enum NetworkConstants {
     
     /// Session token without single sign-on cookie name: "ST-NO-SS"
     public static let stNoSsCookie = "ST-NO-SS"
-
+    
     // MARK: - Common Request Parameters and Keys
     
     /// HATEOAS links key: "_links"
@@ -82,4 +85,24 @@ public enum NetworkConstants {
     
     /// Access token key: "accessToken"
     public static let accessToken = "accessToken"
+    
+    // MARK: - Common Response Parameters and Keys
+    
+    /// OAuth/OIDC client identifier key: "clientId"
+    public static let clientId = "clientId"
+    
+    /// Space-delimited list of requested scopes key: "scopes"
+    public static let scopes = "scopes"
+    
+    /// OIDC nonce parameter key used to mitigate replay attacks: "nonce"
+    public static let nonce = "nonce"
+    
+    /// Redirect URI parameter key indicating where the server should send the user after authorization: "redirectUri"
+    public static let redirectUri = "redirectUri"
+    
+    /// Continuation/next step link key often used in HATEOAS-style responses: "next"
+    public static let next = "next"
+    
+    /// Identity provider identifier key, used to select a specific IdP in federation flows: "idp"
+    public static let idp = "idp"
 }

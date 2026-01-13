@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint PingDeviceClient.podspec` to ensure this is a
+# Be sure to run `pod lib lint PingOath.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -7,11 +7,11 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'PingDeviceClient'
+  s.name             = 'PingOath'
   s.version          = '1.3.1'
-  s.summary          = 'PingDeviceClient module for the Ping iOS SDK'
+  s.summary          = 'PingOath module for the Ping iOS SDK'
   s.description      = <<-DESC
-  DeviceClient module simplifies device management operations for Ping AIC. It provides a clean, type-safe API for managing authentication devices including OATH, Push, Bound, Profile, and WebAuthn devices.
+  PingOath is a comprehensive iOS SDK module that provides One-Time Password (OTP) authentication functionality, including support for both TOTP (Time-based One-Time Password) and HOTP (HMAC-based One-Time Password) authentication mechanisms following RFC 4226 and RFC 6238 standards.
                        DESC
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
@@ -22,19 +22,18 @@ Pod::Spec.new do |s|
       :tag => s.version.to_s
   }
 
-  s.module_name   = 'PingDeviceClient'
+  s.module_name   = 'PingOath'
   s.swift_versions = ['5.0', '5.1', '6.0']
 
   s.ios.deployment_target = '16.0'
 
-  base_dir = "DeviceClient/DeviceClient"
+  base_dir = "Oath/Oath"
   s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.c', base_dir + '/**/*.h'
   s.resource_bundles = {
-    'PingDeviceClient' => [base_dir + '/*.xcprivacy']
+    'Oath' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingNetwork', '~> 1.3.1'
   s.ios.dependency 'PingLogger', '~> 1.3.1'
   s.ios.dependency 'PingCommons', '~> 1.3.1'
-  
+    
 end

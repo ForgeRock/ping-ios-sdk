@@ -2,13 +2,17 @@
 //  MetadataCallbackInjectionTests.swift
 //  JourneyTests
 //
-//  Converted from Swift Testing to XCTest
+//  Copyright (c) 2025 - 2026 Ping Identity. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
 //
 
 import XCTest
 @testable import PingJourneyPlugin
 @testable import PingJourney
 @testable import PingOrchestrate
+@testable import PingNetwork
 
 // MARK: - Test doubles
 
@@ -65,7 +69,7 @@ private final class FakeContinueNode: ContinueNode, @unchecked Sendable {
         super.init(context: .fake(), workflow: FakeWorkflow(), input: [:], actions: callbacks)
     }
 
-    override func asRequest() -> Request { Request() }
+    override func asRequest() -> Request { HttpClient.createClient().request() }
 }
 
 // MARK: - Tests

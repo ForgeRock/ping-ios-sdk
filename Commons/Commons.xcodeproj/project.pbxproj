@@ -69,22 +69,9 @@
 		A567426A2EE21DE1009D29B9 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		A567420D2EE1F26F009D29B9 /* Exceptions for "JSON" folder in "CommonsTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				JSONUtils.swift,
-			);
-			target = A56741AC2EE1EBFD009D29B9 /* CommonsTests */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		A56742042EE1F069009D29B9 /* JSON */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				A567420D2EE1F26F009D29B9 /* Exceptions for "JSON" folder in "CommonsTests" target */,
-			);
 			path = JSON;
 			sourceTree = "<group>";
 		};

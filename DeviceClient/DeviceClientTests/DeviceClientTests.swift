@@ -2,7 +2,7 @@
 //  DeviceClientTests.swift
 //  DeviceClientTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -10,7 +10,7 @@
 
 import XCTest
 @testable import PingDeviceClient
-@testable import PingOrchestrate
+@testable import PingNetwork
 
 /// Unit tests for DeviceClient
 final class DeviceClientTests: XCTestCase {
@@ -748,7 +748,7 @@ final class DeviceClientTests: XCTestCase {
     
     func testMemoryLeak() {
         var client: DeviceClient? = DeviceClient(config: config)
-        weak var weakClient = client
+        weak let weakClient = client
         
         // Access lazy properties to initialize them
         _ = client?.oath
@@ -758,7 +758,7 @@ final class DeviceClientTests: XCTestCase {
         
         client = nil  // Release external reference
         
-        print("Weak reference after release: \(weakClient)")
+        print("Weak reference after release: \(String(describing: weakClient))")
         
         XCTAssertNil(weakClient)
     }
@@ -767,21 +767,38 @@ final class DeviceClientTests: XCTestCase {
 // MARK: - Mock Objects
 
 /// Mock HTTP client for testing
-class MockHttpClient: HttpClient, @unchecked Sendable {
+class MockHttpClient: HttpClientProtocol, @unchecked Sendable {
     var responses: [MockHttpResponse] = []
     var requests: [MockRequest] = []
     var shouldThrowError = false
     var errorToThrow: Error?
     private var responseIndex = 0
     
-    override func sendRequest(request: Request) async throws -> (Data, URLResponse) {
-        // Capture request
-        let methodEnum = request.urlRequest.httpMethod.flatMap(Request.HTTPMethod.init(rawValue:))
+    func request() -> HttpRequest {
+        return URLSessionHttpRequest()
+    }
+    
+    func request(request: HttpRequest) async throws -> HttpResponse {
+        // Capture request details
+        let urlString = request.url ?? ""
+        var method: HttpMethod?
+        var headers: [String: String]?
+        var body: Data?
+        
+        if let urlSessionRequest = request as? URLSessionHttpRequest {
+            method = urlSessionRequest.getMethod()
+            headers = urlSessionRequest.getHeaders()
+            // Extract body from the URLRequest
+            if let urlRequest = urlSessionRequest.buildURLRequest() {
+                body = urlRequest.httpBody
+            }
+        }
+        
         requests.append(MockRequest(
-            urlString: request.urlRequest.url?.absoluteString ?? "",
-            method: methodEnum,
-            headers: request.urlRequest.allHTTPHeaderFields,
-            body: request.urlRequest.httpBody
+            urlString: urlString,
+            method: method,
+            headers: headers,
+            body: body
         ))
         
         // Throw error if configured
@@ -794,17 +811,61 @@ class MockHttpClient: HttpClient, @unchecked Sendable {
             throw NSError(domain: "MockError", code: -1, userInfo: [NSLocalizedDescriptionKey: "No more mock responses"])
         }
         
-        let response = responses[responseIndex]
+        let mockResponse = responses[responseIndex]
         responseIndex += 1
         
-        let urlResponse = HTTPURLResponse(
-            url: URL(string: "https://test.example.com")!,
-            statusCode: response.statusCode,
-            httpVersion: nil,
-            headerFields: nil
-        )!
+        let response = MockHttpResponseImpl(
+            request: request,
+            statusCode: mockResponse.statusCode,
+            body: mockResponse.data
+        )
         
-        return (response.data, urlResponse)
+        return response
+    }
+    
+    func request(builder: @escaping @Sendable (HttpRequest) -> Void) async throws -> HttpResponse {
+        let req = request()
+        builder(req)
+        return try await request(request: req)
+    }
+    
+    func close() {
+        // No-op for mock
+    }
+}
+
+/// Mock HTTP response implementation
+final class MockHttpResponseImpl: HttpResponse {
+    func bodyAsString() -> String {
+        return ""
+    }
+    
+    let request: HttpRequest
+    let status: Int
+    let body: Data?
+    let headers: [String: [String]]
+    
+    init(request: HttpRequest, statusCode: Int, body: Data?) {
+        self.request = request
+        self.status = statusCode
+        self.body = body
+        self.headers = [:]
+    }
+    
+    func getHeader(name: String) -> String? {
+        return headers[name]?.first
+    }
+    
+    func getHeaders(name: String) -> [String]? {
+        return headers[name]
+    }
+    
+    func getCookies() -> [HTTPCookie] {
+        return []
+    }
+    
+    func getCookieStrings() -> [String] {
+        return []
     }
 }
 
@@ -817,7 +878,7 @@ struct MockHttpResponse {
 /// Mock request capture
 struct MockRequest {
     let urlString: String
-    let method: Request.HTTPMethod?
+    let method: HttpMethod?
     let headers: [String: String]?
     let body: Data?
 }

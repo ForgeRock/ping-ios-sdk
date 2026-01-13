@@ -2,7 +2,7 @@
 //  OidcClientConfig.swift
 //  PingOidc
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -10,7 +10,7 @@
 
 
 import Foundation
-import PingOrchestrate
+import PingNetwork
 import PingLogger
 import PingStorage
 
@@ -51,7 +51,7 @@ public class OidcClientConfig: @unchecked Sendable {
     /// Additional parameters for OIDC.
     public var additionalParameters = [String: String]()
     /// HTTP client for making network requests.
-    public var httpClient: HttpClient?
+    public var httpClient: (any HttpClientProtocol)?
     
     /// Initializes a new `OidcClientConfig` instance.
     public init() {
@@ -76,7 +76,7 @@ public class OidcClientConfig: @unchecked Sendable {
     /// Initializes the lazy properties to their default values.
     public func oidcInitialize() async throws {
         if httpClient == nil {
-            httpClient = HttpClient()
+            httpClient = HttpClient.createClient()
         }
         
         if openId != nil {
@@ -98,14 +98,14 @@ public class OidcClientConfig: @unchecked Sendable {
             logger.e("Invalid Http Client URL", error: nil)
             return nil
         }
-        let request = Request()
-        request.url(discoveryEndpoint)
-        let (data, response) = try await httpClient.sendRequest(request: request)
         
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw OidcError.apiError(code: (response as? HTTPURLResponse)?.statusCode ?? 500, message: String(decoding: data, as: UTF8.self))
+        let response = try await httpClient.request { request in
+            request.url = self.discoveryEndpoint
         }
-        let configuration = try JSONDecoder().decode(OpenIdConfiguration.self, from: data)
+        guard response.status.isSuccess() else {
+            throw OidcError.apiError(code: response.status, message: response.bodyAsString())
+        }
+        let configuration = try JSONDecoder().decode(OpenIdConfiguration.self, from: response.body ?? Data())
         return configuration
     }
     

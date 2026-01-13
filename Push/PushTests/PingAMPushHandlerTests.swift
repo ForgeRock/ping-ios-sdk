@@ -2,7 +2,7 @@
 //  PingAMPushHandlerTests.swift
 //  PushTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -10,7 +10,7 @@
 
 import XCTest
 import PingCommons
-import PingOrchestrate
+@testable import PingNetwork
 @testable import PingPush
 
 final class PingAMPushHandlerTests: XCTestCase {
@@ -22,7 +22,7 @@ final class PingAMPushHandlerTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         mockResponder = MockResponder()
-        handler = PingAMPushHandler(httpClient: HttpClient(), logger: nil, pushResponder: mockResponder)
+        handler = PingAMPushHandler(httpClient: HttpClient.createClient(), logger: nil, pushResponder: mockResponder)
     }
 
     override func tearDown() async throws {
