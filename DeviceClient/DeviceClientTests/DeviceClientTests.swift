@@ -748,7 +748,7 @@ final class DeviceClientTests: XCTestCase {
     
     func testMemoryLeak() {
         var client: DeviceClient? = DeviceClient(config: config)
-        weak let weakClient = client
+        weak var weakClient = client
         
         // Access lazy properties to initialize them
         _ = client?.oath
