@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		EC23D5872E2FD12100C43D42 /* PingDeviceId.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC23D57D2E2FD12100C43D42 /* PingDeviceId.framework */; };
+		EC92D44E2F1663900083CCF3 /* LegacyDeviceIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92D44C2F1663900083CCF3 /* LegacyDeviceIdentifier.swift */; };
+		EC92D4512F1668300083CCF3 /* LegacyDeviceIdentifierMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92D44F2F1667D70083CCF3 /* LegacyDeviceIdentifierMigrationTests.swift */; };
 		ECCAB3102E393EDF00BA1C73 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB30F2E393EDF00BA1C73 /* PingLogger.framework */; };
 		ECCAB3112E393EDF00BA1C73 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB30F2E393EDF00BA1C73 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECCAB3142E393F2500BA1C73 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB3132E393F2500BA1C73 /* PingLogger.framework */; };
@@ -61,6 +63,8 @@
 /* Begin PBXFileReference section */
 		EC23D57D2E2FD12100C43D42 /* PingDeviceId.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingDeviceId.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC23D5862E2FD12100C43D42 /* DeviceIdTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeviceIdTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC92D44C2F1663900083CCF3 /* LegacyDeviceIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyDeviceIdentifier.swift; sourceTree = "<group>"; };
+		EC92D44F2F1667D70083CCF3 /* LegacyDeviceIdentifierMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyDeviceIdentifierMigrationTests.swift; sourceTree = "<group>"; };
 		ECCAB30F2E393EDF00BA1C73 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECCAB3132E393F2500BA1C73 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECCAB3172E393F2F00BA1C73 /* PingStorage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingStorage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -126,6 +130,7 @@
 		ECCAB39D2E3B5FBC00BA1C73 /* DeviceId */ = {
 			isa = PBXGroup;
 			children = (
+				EC92D44C2F1663900083CCF3 /* LegacyDeviceIdentifier.swift */,
 				ECCAB39A2E3B5FBC00BA1C73 /* DeviceId.h */,
 				ECCAB39B2E3B5FBC00BA1C73 /* DeviceIdentifier.swift */,
 				ECCAB3AF2E3BA1A000BA1C73 /* DefaultDeviceIdentifier.swift */,
@@ -138,6 +143,7 @@
 		ECCAB3A22E3B5FEB00BA1C73 /* DeviceIdTests */ = {
 			isa = PBXGroup;
 			children = (
+				EC92D44F2F1667D70083CCF3 /* LegacyDeviceIdentifierMigrationTests.swift */,
 				ECCAB3A12E3B5FEB00BA1C73 /* DeviceIdTests.swift */,
 			);
 			path = DeviceIdTests;
@@ -261,6 +267,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECCAB3B02E3BA1B200BA1C73 /* DefaultDeviceIdentifier.swift in Sources */,
+				EC92D44E2F1663900083CCF3 /* LegacyDeviceIdentifier.swift in Sources */,
 				ECCAB3B22E3BA21300BA1C73 /* UUIDDeviceIdentifier.swift in Sources */,
 				ECCAB39F2E3B5FBC00BA1C73 /* DeviceIdentifier.swift in Sources */,
 			);
@@ -270,6 +277,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC92D4512F1668300083CCF3 /* LegacyDeviceIdentifierMigrationTests.swift in Sources */,
 				ECCAB3A32E3B5FEB00BA1C73 /* DeviceIdTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -432,7 +440,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Device;
@@ -466,7 +474,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Device;
@@ -488,7 +496,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.DeviceTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -506,7 +514,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.DeviceTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;

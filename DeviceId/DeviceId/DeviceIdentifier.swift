@@ -2,7 +2,7 @@
 //  DeviceIdentifier.swift
 //  DeviceId
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -73,17 +73,29 @@ public struct DeviceIdentifierConfiguration : Sendable {
 public final class DeviceIdentifierImpl: DeviceIdentifier, Codable, Sendable {
     /// The key pair used for device identification, containing both private and public keys.
     let deviceIdentifierKeyPair: DeviceIdentifierKeyPair
+    /// An optional legacy identifier, used for migration from older versions.
+    let legacyIdentifier: String?
+    
     /// The unique identifier for the device, computed as a SHA-256 hash of the public key.
     public var id: String {
         get async throws {
+            // If this is a migrated legacy identifier, return it directly
+            if let legacy = legacyIdentifier {
+                return legacy
+            }
             // Hashing is synchronous, so this never actually suspends or throws,
             // but it satisfies the protocol requirement exactly.
-            hashSHA256AndTransformToHex(deviceIdentifierKeyPair.publicKey)
+            return hashSHA256AndTransformToHex(deviceIdentifierKeyPair.publicKey)
         }
     }
+    
     /// Initializes a new instance of `DeviceIdentifierImpl`.
-    public init(deviceIdentifierKeyPair: DeviceIdentifierKeyPair) {
+    /// - Parameters:
+    ///   - deviceIdentifierKeyPair: The key pair for the device identifier.
+    ///   - legacyIdentifier: An optional legacy identifier for migration purposes. Defaults to `nil`.
+    public init(deviceIdentifierKeyPair: DeviceIdentifierKeyPair, legacyIdentifier: String? = nil) {
         self.deviceIdentifierKeyPair = deviceIdentifierKeyPair
+        self.legacyIdentifier = legacyIdentifier
     }
 }
 
