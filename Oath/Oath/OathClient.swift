@@ -11,6 +11,7 @@
 import Foundation
 import PingLogger
 import PingCommons
+import PingTamperDetector
 
 /// Main public interface for OATH functionality.
 /// This client handles TOTP and HOTP credential management and code generation.
@@ -40,6 +41,8 @@ public final class OathClient: @unchecked Sendable {
     /// The internal service that handles OATH operations.
     private let oathService: OathService
 
+    /// The logger instance for this client.
+    private let logger: Logger
     
     // MARK: - Factory Methods
 
@@ -71,12 +74,16 @@ public final class OathClient: @unchecked Sendable {
     /// - Throws: `OathError.initializationFailed` if initialization fails.
     private init(configuration: OathConfiguration) async throws {
         self.configuration = configuration
+        self.logger = configuration.logger
 
         // Initialize default storage if none provided
         configuration.storage = configuration.storage ?? OathKeychainStorage()
 
         // Initialize policy evaluator if none provided
-        let policyEvaluator = configuration.policyEvaluator ?? MfaPolicyEvaluator.create()
+        let policyEvaluator = configuration.policyEvaluator ?? MfaPolicyEvaluator.create {config in
+            config.logger = configuration.logger
+            config.policies = [BiometricAvailablePolicy(), DeviceTamperingPolicy()]
+        }
 
         // Initialize service layer
         self.oathService = OathService(
@@ -84,7 +91,7 @@ public final class OathClient: @unchecked Sendable {
             policyEvaluator: policyEvaluator
         )
 
-        configuration.logger.d("OATH client initialized successfully")
+        logger.d("OATH client initialized successfully")
     }
 
     
@@ -102,16 +109,16 @@ public final class OathClient: @unchecked Sendable {
     /// - `otpauth://hotp/Issuer:Account?secret=SECRET&issuer=Issuer&algorithm=SHA1&digits=6&counter=0`
     /// - `mfauth://totp/Issuer:Account?secret=SECRET&issuer=Issuer&algorithm=SHA1&digits=6&period=30`
     public func addCredentialFromUri(_ uri: String) async throws -> OathCredential {
-        configuration.logger.d("Adding credential from URI")
+        logger.d("Adding credential from URI")
 
         do {
             let credential = try await oathService.parseUri(uri)
             let storedCredential = try await oathService.addCredential(credential)
 
-            configuration.logger.i("Successfully added credential: \(storedCredential.issuer)")
+            logger.i("Successfully added credential: \(storedCredential.issuer)")
             return storedCredential
         } catch {
-            configuration.logger.e("Failed to add credential from URI: \(error)", error: error)
+            logger.e("Failed to add credential from URI: \(error)", error: error)
             throw error
         }
     }
@@ -122,14 +129,14 @@ public final class OathClient: @unchecked Sendable {
     /// - Throws: `OathError.policyViolation` if credential policies are not met.
     /// - Throws: `OathStorageError` if storage operations fail.
     public func saveCredential(_ credential: OathCredential) async throws -> OathCredential {
-        configuration.logger.d("Saving credential: \(credential.id)")
+        logger.d("Saving credential: \(credential.id)")
 
         do {
             let savedCredential = try await oathService.addCredential(credential)
-            configuration.logger.i("Successfully saved credential: \(savedCredential.id)")
+            logger.i("Successfully saved credential: \(savedCredential.id)")
             return savedCredential
         } catch {
-            configuration.logger.e("Failed to save credential \(credential.id): \(error)", error: error)
+            logger.e("Failed to save credential \(credential.id): \(error)", error: error)
             throw error
         }
     }
@@ -138,14 +145,14 @@ public final class OathClient: @unchecked Sendable {
     /// - Returns: An array of all stored OathCredential objects.
     /// - Throws: `OathStorageError` if storage operations fail.
     public func getCredentials() async throws -> [OathCredential] {
-        configuration.logger.d("Retrieving all credentials")
+        logger.d("Retrieving all credentials")
 
         do {
             let credentials = try await oathService.getCredentials()
-            configuration.logger.d("Retrieved \(credentials.count) credentials")
+            logger.d("Retrieved \(credentials.count) credentials")
             return credentials
         } catch {
-            configuration.logger.e("Failed to retrieve credentials: \(error)", error: error)
+            logger.e("Failed to retrieve credentials: \(error)", error: error)
             throw error
         }
     }
@@ -155,18 +162,18 @@ public final class OathClient: @unchecked Sendable {
     /// - Returns: The OathCredential if found, nil otherwise.
     /// - Throws: `OathStorageError` if storage operations fail.
     public func getCredential(_ credentialId: String) async throws -> OathCredential? {
-        configuration.logger.d("Retrieving credential: \(credentialId)")
+        logger.d("Retrieving credential: \(credentialId)")
 
         do {
             let credential = try await oathService.getCredential(credentialId: credentialId)
             if credential != nil {
-                configuration.logger.d("Found credential: \(credentialId)")
+                logger.d("Found credential: \(credentialId)")
             } else {
-                configuration.logger.d("Credential not found: \(credentialId)")
+                logger.d("Credential not found: \(credentialId)")
             }
             return credential
         } catch {
-            configuration.logger.e("Failed to retrieve credential \(credentialId): \(error)", error: error)
+            logger.e("Failed to retrieve credential \(credentialId): \(error)", error: error)
             throw error
         }
     }
@@ -176,18 +183,18 @@ public final class OathClient: @unchecked Sendable {
     /// - Returns: true if the credential was deleted, false if it wasn't found.
     /// - Throws: `OathStorageError` if storage operations fail.
     public func deleteCredential(_ credentialId: String) async throws -> Bool {
-        configuration.logger.d("Deleting credential: \(credentialId)")
+        logger.d("Deleting credential: \(credentialId)")
 
         do {
             let deleted = try await oathService.removeCredential(credentialId: credentialId)
             if deleted {
-                configuration.logger.i("Successfully deleted credential: \(credentialId)")
+                logger.i("Successfully deleted credential: \(credentialId)")
             } else {
-                configuration.logger.d("Credential not found for deletion: \(credentialId)")
+                logger.d("Credential not found for deletion: \(credentialId)")
             }
             return deleted
         } catch {
-            configuration.logger.e("Failed to delete credential \(credentialId): \(error)", error: error)
+            logger.e("Failed to delete credential \(credentialId): \(error)", error: error)
             throw error
         }
     }
@@ -205,14 +212,14 @@ public final class OathClient: @unchecked Sendable {
     /// For HOTP credentials, this method will automatically increment the counter.
     /// For TOTP credentials, the code is valid for the current time period.
     public func generateCode(_ credentialId: String) async throws -> String {
-        configuration.logger.d("Generating code for credential: \(credentialId)")
+        logger.d("Generating code for credential: \(credentialId)")
 
         do {
             let codeInfo = try await oathService.generateCodeForCredential(credentialId: credentialId)
-            configuration.logger.d("Successfully generated code for credential: \(credentialId)")
+            logger.d("Successfully generated code for credential: \(credentialId)")
             return codeInfo.code
         } catch {
-            configuration.logger.e("Failed to generate code for credential \(credentialId): \(error)", error: error)
+            logger.e("Failed to generate code for credential \(credentialId): \(error)", error: error)
             throw error
         }
     }
@@ -228,14 +235,14 @@ public final class OathClient: @unchecked Sendable {
     /// - For TOTP: time remaining before expiration and progress through the time window
     /// - For HOTP: the counter value used for generation
     public func generateCodeWithValidity(_ credentialId: String) async throws -> OathCodeInfo {
-        configuration.logger.d("Generating code with validity for credential: \(credentialId)")
+        logger.d("Generating code with validity for credential: \(credentialId)")
 
         do {
             let codeInfo = try await oathService.generateCodeForCredential(credentialId: credentialId)
-            configuration.logger.d("Successfully generated code with validity for credential: \(credentialId)")
+            logger.d("Successfully generated code with validity for credential: \(credentialId)")
             return codeInfo
         } catch {
-            configuration.logger.e("Failed to generate code with validity for credential \(credentialId): \(error)", error: error)
+            logger.e("Failed to generate code with validity for credential \(credentialId): \(error)", error: error)
             throw error
         }
     }
@@ -248,8 +255,8 @@ public final class OathClient: @unchecked Sendable {
     /// proper cleanup of resources and cached data.
     /// - Throws: `OathError.cleanupFailed` if cleanup operations fail.
     public func close() async throws {
-        configuration.logger.d("Closing OATH client")
+        logger.d("Closing OATH client")
         await oathService.clearCache()
-        configuration.logger.i("OATH client closed successfully")
+        logger.i("OATH client closed successfully")
     }
 }

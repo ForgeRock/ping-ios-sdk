@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "2610"
+   LastUpgradeVersion = "2620"
    version = "2.1">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -471,6 +471,26 @@
                BuildableName = "NetworkTests.xctest"
                BlueprintName = "NetworkTests"
                ReferencedContainer = "container:../Network/Network.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EC5C814D2ECF66D100C91570"
+               BuildableName = "PingDavinciPluginTests.xctest"
+               BlueprintName = "PingDavinciPluginTests"
+               ReferencedContainer = "container:../DavinciPlugin/DavinciPlugin.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EC5C81822ECF67B700C91570"
+               BuildableName = "PingJourneyPluginTests.xctest"
+               BlueprintName = "PingJourneyPluginTests"
+               ReferencedContainer = "container:../JourneyPlugin/JourneyPlugin.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>

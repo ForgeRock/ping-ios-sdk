@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B18D6562EF1EC090004F205 /* PingTamperDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B18D6552EF1EC090004F205 /* PingTamperDetector.framework */; };
+		1B18D6572EF1EC090004F205 /* PingTamperDetector.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B18D6552EF1EC090004F205 /* PingTamperDetector.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1B2933912E7DF20A004D1D38 /* PingOath.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B2933872E7DF20A004D1D38 /* PingOath.framework */; };
 		1B2933D02E7DFC26004D1D38 /* Oath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B2933CF2E7DFC26004D1D38 /* Oath.h */; };
 		1B89A5F92E85FB1000EF8295 /* OathStorageIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B89A5F72E85FB1000EF8295 /* OathStorageIntegrationTests.swift */; };
@@ -37,8 +39,6 @@
 		1BB409862E85F8F600F4186D /* OathKeychainSecurityOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB409812E85F8F600F4186D /* OathKeychainSecurityOptions.swift */; };
 		1BB409872E85F8F600F4186D /* OathStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB409832E85F8F600F4186D /* OathStorage.swift */; };
 		1BB409882E85F8F600F4186D /* OathKeychainStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB409822E85F8F600F4186D /* OathKeychainStorage.swift */; };
-		A567427A2EE33E14009D29B9 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56742792EE33E14009D29B9 /* PingCommons.framework */; };
-		A567427B2EE33E14009D29B9 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56742792EE33E14009D29B9 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,7 +58,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A567427B2EE33E14009D29B9 /* PingCommons.framework in Embed Frameworks */,
+				1B18D6572EF1EC090004F205 /* PingTamperDetector.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -66,6 +66,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1B18D6552EF1EC090004F205 /* PingTamperDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingTamperDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B2933872E7DF20A004D1D38 /* PingOath.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingOath.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B2933902E7DF20A004D1D38 /* OathTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OathTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B2933CA2E7DF34C004D1D38 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -107,7 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A567427A2EE33E14009D29B9 /* PingCommons.framework in Frameworks */,
+				1B18D6562EF1EC090004F205 /* PingTamperDetector.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,6 +181,7 @@
 		1B75AC882E834408002B5DDD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1B18D6552EF1EC090004F205 /* PingTamperDetector.framework */,
 				A56742792EE33E14009D29B9 /* PingCommons.framework */,
 				1B75AC892E834408002B5DDD /* PingMfaCommons.framework */,
 			);
@@ -545,7 +547,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Oath;
@@ -582,7 +584,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Oath;
@@ -607,7 +609,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.OathTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -628,7 +630,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.OathTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;

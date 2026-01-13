@@ -236,7 +236,7 @@ public final class PushKeychainStorage: PushStorage, @unchecked Sendable {
 
     /// Retrieve all stored push notifications.
     ///
-    /// - Returns: An array of all stored push notifications.
+    /// - Returns: An array of all stored push notifications sorted by createdAt in descending order (newest first).
     public func getAllPushNotifications() async throws -> [PushNotification] {
         logger?.i("Retrieving all push notifications")
         
@@ -255,8 +255,11 @@ public final class PushKeychainStorage: PushStorage, @unchecked Sendable {
                 }
             }
             
-            logger?.i("Retrieved \(notifications.count) push notifications")
-            return notifications
+            // Sort by createdAt in descending order (newest first)
+            let sortedNotifications = notifications.sorted { $0.createdAt > $1.createdAt }
+            
+            logger?.i("Retrieved \(sortedNotifications.count) push notifications")
+            return sortedNotifications
         } catch {
             logger?.e("Failed to retrieve all push notifications", error: error)
             throw PushStorageError.storageFailure("Failed to retrieve notifications", error)
@@ -270,7 +273,7 @@ public final class PushKeychainStorage: PushStorage, @unchecked Sendable {
         logger?.i("Retrieving pending push notifications")
         
         let allNotifications = try await getAllPushNotifications()
-        let pendingNotifications = allNotifications.filter { $0.pending }
+        let pendingNotifications = allNotifications.filter { $0.pending && !$0.isExpired }
         
         logger?.i("Found \(pendingNotifications.count) pending notifications")
         return pendingNotifications

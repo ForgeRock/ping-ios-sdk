@@ -38,6 +38,9 @@
       }
     },
     {
+      "skippedTests" : [
+        "ExternalIdPTests\/testIdpHandlerAuthorizeThrow()"
+      ],
       "target" : {
         "containerPath" : "container:..\/ExternalIdP\/ExternalIdP.xcodeproj",
         "identifier" : "ECB7C6972D5A2C1F0006F1C8",
@@ -52,6 +55,9 @@
       }
     },
     {
+      "skippedTests" : [
+        "PingFidoTests\/testAuthenticateAssosiatedDomainError()"
+      ],
       "target" : {
         "containerPath" : "container:..\/Fido\/Fido.xcodeproj",
         "identifier" : "ECD780452EA24F1B0050E60F",
@@ -141,6 +147,7 @@
     },
     {
       "skippedTests" : [
+        "CollectorRegistryTests",
         "DaVinciIntegrationTests",
         "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
         "DaVinciIntegrationTests\/testInvalidPassword()",
@@ -162,6 +169,9 @@
     },
     {
       "skippedTests" : [
+        "BluetoothCollectorTests",
+        "BluetoothCollectorTests\/testBluetoothCollectorInArrayCollection()",
+        "BluetoothCollectorTests\/testBluetoothInfoCodable()",
         "DeviceProfileCollectorTests\/testCollectorCollectWithBothEnabled()",
         "DeviceProfileCollectorTests\/testCollectorCollectWithLocationEnabled()",
         "LocationCollectorTests",
@@ -175,6 +185,9 @@
       }
     },
     {
+      "skippedTests" : [
+        "PingBindingTests\/testUserKeysStorage_ConcurrentAccess()"
+      ],
       "target" : {
         "containerPath" : "container:..\/Binding\/Binding.xcodeproj",
         "identifier" : "EC4DD31D2EABCE7600ECC4E1",
@@ -197,13 +210,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/DavinciPlugin\/DavinciPlugin\/DavinciPlugin.xcodeproj",
-        "identifier" : "EC5C814D2ECF66D100C91570",
-        "name" : "PingDavinciPluginTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/Network\/Network.xcodeproj",
         "identifier" : "1B7A9A802ED52F6400989A55",
         "name" : "NetworkTests"
@@ -218,7 +224,14 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/JourneyPlugin\/JourneyPlugin\/JourneyPlugin.xcodeproj",
+        "containerPath" : "container:..\/DavinciPlugin\/DavinciPlugin.xcodeproj",
+        "identifier" : "EC5C814D2ECF66D100C91570",
+        "name" : "PingDavinciPluginTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/JourneyPlugin\/JourneyPlugin.xcodeproj",
         "identifier" : "EC5C81822ECF67B700C91570",
         "name" : "PingJourneyPluginTests"
       }

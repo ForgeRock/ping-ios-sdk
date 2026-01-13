@@ -44,7 +44,7 @@ public actor CallbackRegistry {
     /// Each dictionary should have a "type" field that matches a registered Callback type.
     /// - Parameter array: The array of dictionaries to create the Callbacks from.
     /// - Returns: A list of Callback instances (metadata callbacks are filtered out).
-    public func callback(from array: [[String: Any]]) async -> Callbacks {
+    public func callback(from array: [[String: any Sendable]]) async -> Callbacks {
         var list = Callbacks()
         for item in array {
             guard let typeKey = item[JourneyConstants.type] as? String,

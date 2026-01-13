@@ -23,7 +23,7 @@ final class PushConfigurationTests: XCTestCase {
         XCTAssertTrue(config.encryptionEnabled)
         XCTAssertEqual(config.timeoutMs, 15000)
         XCTAssertFalse(config.enableCredentialCache)
-        XCTAssertNil(config.logger)
+        XCTAssertNotNil(config.logger)
         XCTAssertTrue(config.customPushHandlers.isEmpty)
         XCTAssertEqual(config.notificationCleanupConfig.cleanupMode, .countBased)
         XCTAssertEqual(config.notificationCleanupConfig.maxStoredNotifications, 100)
@@ -39,7 +39,7 @@ final class PushConfigurationTests: XCTestCase {
         XCTAssertTrue(config.encryptionEnabled)
         XCTAssertEqual(config.timeoutMs, 15000)
         XCTAssertFalse(config.enableCredentialCache)
-        XCTAssertNil(config.logger)
+        XCTAssertNotNil(config.logger)
         XCTAssertTrue(config.customPushHandlers.isEmpty)
     }
     

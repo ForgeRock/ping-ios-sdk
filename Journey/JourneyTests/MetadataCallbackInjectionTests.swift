@@ -121,7 +121,7 @@ final class MetadataCallbackInjectionTests: XCTestCase {
             typeKey: "MetadataCallback",
             data: [
                 "_type": "WebAuthn",
-                "allowCredentials": []
+                "allowCredentials": [] as [any Sendable]
             ]
         )
 
@@ -147,16 +147,17 @@ final class MetadataCallbackInjectionTests: XCTestCase {
 
 // MARK: - Helpers
 
-private func makeMetadataItem(typeKey: String, data: [String: Any]) -> [String: Any] {
+private typealias Payload = [String: any Sendable]
+
+private func makeMetadataItem(typeKey: String, data: Payload) -> Payload {
     return [
         JourneyConstants.type: typeKey,
         JourneyConstants.output: [
             [
                 JourneyConstants.name: JourneyConstants.data,
                 JourneyConstants.value: data
-            ]
-        ],
-        JourneyConstants.input: []
+            ] as Payload
+        ] as [Payload],
+        JourneyConstants.input: [] as [Payload]
     ]
 }
-

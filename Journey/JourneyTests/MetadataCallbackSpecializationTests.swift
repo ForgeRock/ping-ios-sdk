@@ -86,7 +86,7 @@ final class MetadataCallbackSpecializationTests: XCTestCase {
             typeKey: "MetadataCallback",
             data: [
                 "_type": "WebAuthn",
-                "pubKeyCredParams": []
+                "pubKeyCredParams": [] as [any Sendable]
             ]
         )
         let result = await CallbackRegistry.shared.callback(from: [item])
@@ -117,7 +117,7 @@ final class MetadataCallbackSpecializationTests: XCTestCase {
             typeKey: "MetadataCallback",
             data: [
                 "_type": "WebAuthn",
-                "allowCredentials": []
+                "allowCredentials": [] as [any Sendable]
             ]
         )
         let result = await CallbackRegistry.shared.callback(from: [item])
@@ -143,17 +143,17 @@ final class MetadataCallbackSpecializationTests: XCTestCase {
 
 // MARK: - Helpers
 
-private func makeMetadataItem(typeKey: String, data: [String: Any]) -> [String: Any] {
-    // The registry expects JourneyConstants.type, input/output arrays, and output with name/value entries.
-    // We only need to populate output[data] for these tests.
+private typealias Payload = [String: any Sendable]
+
+private func makeMetadataItem(typeKey: String, data: Payload) -> Payload {
     return [
         JourneyConstants.type: typeKey,
         JourneyConstants.output: [
             [
                 JourneyConstants.name: JourneyConstants.data,
                 JourneyConstants.value: data
-            ]
-        ],
-        JourneyConstants.input: [] // not used by these tests
+            ] as Payload
+        ] as [Payload],
+        JourneyConstants.input: [] as [Payload]
     ]
 }

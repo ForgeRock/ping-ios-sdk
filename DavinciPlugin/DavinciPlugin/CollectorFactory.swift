@@ -2,7 +2,7 @@
 //  CollectorFactory.swift
 //  PingDavinciPlugin
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -29,7 +29,7 @@ public actor CollectorFactory {
     var collectors: [String: any Collector.Type] = [:]
     
     /// Registry mapping a type key to a factory closure that produces a collector from the raw JSON.
-    var collectorCreationClosures: [String: ([String: Any]) -> (any Collector)?] = [:]
+    var collectorCreationClosures: [String: @Sendable ([String: Any]) -> (any Collector)?] = [:]
     
     /// The shared singleton instance of the CollectorFactory.
     public static let shared = CollectorFactory()
@@ -56,7 +56,7 @@ public actor CollectorFactory {
     ///   - type: The string key identifying the collector (e.g., "TEXT", "PASSWORD").
     ///   - closure: A closure that takes the raw JSON dictionary for a collector and returns an instance,
     ///              or nil if the JSON cannot be parsed for this type.
-    public func register(type: String, closure: @escaping ([String: Any]) -> (any Collector)?) {
+    public func register(type: String, closure: @escaping @Sendable ([String: Any]) -> (any Collector)?) {
         collectorCreationClosures[type] = closure
     }
     

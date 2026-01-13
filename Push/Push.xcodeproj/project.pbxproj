@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1B078EEE2EB9853900E88A0B /* PushService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B078EED2EB9853900E88A0B /* PushService.swift */; };
+		1B18D6532EF1E9EA0004F205 /* PingTamperDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B18D6522EF1E9EA0004F205 /* PingTamperDetector.framework */; };
+		1B18D6542EF1E9EA0004F205 /* PingTamperDetector.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B18D6522EF1E9EA0004F205 /* PingTamperDetector.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1B6923362EAC20B00064B4F4 /* PushKeychainStorageIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B6923352EAC20B00064B4F4 /* PushKeychainStorageIntegrationTests.swift */; };
 		1B69233C2EAC29A70064B4F4 /* PushUriParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B69233B2EAC29A70064B4F4 /* PushUriParser.swift */; };
 		1B69233E2EAC2A220064B4F4 /* PushUriParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B69233D2EAC2A220064B4F4 /* PushUriParserTests.swift */; };
@@ -75,6 +77,7 @@
 				A56742772EE33DB8009D29B9 /* PingCommons.framework in Embed Frameworks */,
 				A56742852EE3402E009D29B9 /* PingLogger.framework in Embed Frameworks */,
 				A56549852EF2444F00CC409B /* PingNetwork.framework in Embed Frameworks */,
+				1B18D6542EF1E9EA0004F205 /* PingTamperDetector.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -83,6 +86,7 @@
 
 /* Begin PBXFileReference section */
 		1B078EED2EB9853900E88A0B /* PushService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushService.swift; sourceTree = "<group>"; };
+		1B18D6522EF1E9EA0004F205 /* PingTamperDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingTamperDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B6923352EAC20B00064B4F4 /* PushKeychainStorageIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushKeychainStorageIntegrationTests.swift; sourceTree = "<group>"; };
 		1B69233B2EAC29A70064B4F4 /* PushUriParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushUriParser.swift; sourceTree = "<group>"; };
 		1B69233D2EAC2A220064B4F4 /* PushUriParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushUriParserTests.swift; sourceTree = "<group>"; };
@@ -124,6 +128,7 @@
 		1BC0A0202EB0944B00A2F3A2 /* PushServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushServiceTests.swift; sourceTree = "<group>"; };
 		2DF356682EBE44179E3BB486 /* PushClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushClient.swift; sourceTree = "<group>"; };
 		712E59D706A14226BA3C08D72C /* PushIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushIntegrationTests.swift; sourceTree = "<group>"; };
+		95DD7DF62EF5EC7100ED05D7 /* PingTamperDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingTamperDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B9397EBD6F44CCE96DE7D79 /* PushClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushClientTests.swift; sourceTree = "<group>"; };
 		A56549832EF2444F00CC409B /* PingNetwork.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A56742752EE33DB8009D29B9 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -139,6 +144,7 @@
 				A56742762EE33DB8009D29B9 /* PingCommons.framework in Frameworks */,
 				A56742842EE3402E009D29B9 /* PingLogger.framework in Frameworks */,
 				A56549842EF2444F00CC409B /* PingNetwork.framework in Frameworks */,
+				1B18D6532EF1E9EA0004F205 /* PingTamperDetector.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,6 +268,8 @@
 			isa = PBXGroup;
 			children = (
 				A56549832EF2444F00CC409B /* PingNetwork.framework */,
+				95DD7DF62EF5EC7100ED05D7 /* PingTamperDetector.framework */,
+				1B18D6522EF1E9EA0004F205 /* PingTamperDetector.framework */,
 				A56742832EE3402E009D29B9 /* PingLogger.framework */,
 				A56742802EE34027009D29B9 /* PingOrchestrate.framework */,
 				A56742752EE33DB8009D29B9 /* PingCommons.framework */,
@@ -591,7 +599,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Push;
@@ -628,7 +636,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Push;
@@ -653,7 +661,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PushTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -674,7 +682,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PushTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;

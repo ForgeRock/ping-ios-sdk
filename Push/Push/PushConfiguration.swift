@@ -128,7 +128,7 @@ public final class PushConfiguration: @unchecked Sendable {
     /// ```swift
     /// config.logger = PingLogger(logLevel: .debug)
     /// ```
-    public var logger: Logger?
+    public var logger: Logger = LogManager.logger
     
     /// Map of custom PushHandlers that will be used along with default handlers.
     ///

@@ -7,39 +7,50 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		EC5C814F2ECF66D100C91570 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81452ECF66D000C91570 /* PingDavinciPlugin.framework */; };
-		EC5C81622ECF672000C91570 /* PingDavinciPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81602ECF672000C91570 /* PingDavinciPluginTests.swift */; };
-		EC5C81A82ECF6B8400C91570 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81A72ECF6B8400C91570 /* PingOrchestrate.framework */; };
-		EC5C81A92ECF6B8400C91570 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81A72ECF6B8400C91570 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EC5C81B62ECF6F7100C91570 /* PingDavinciPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = EC5C81B52ECF6EA200C91570 /* PingDavinciPlugin.h */; };
-		EC5C81B72ECF6F7100C91570 /* Collector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81A52ECF6B6900C91570 /* Collector.swift */; };
-		EC5C81B82ECF6F7100C91570 /* DaVinciAware.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81AB2ECF6CC500C91570 /* DaVinciAware.swift */; };
-		EC5C81B92ECF6F7100C91570 /* Validator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81AE2ECF6CC500C91570 /* Validator.swift */; };
-		EC5C81BA2ECF6F7100C91570 /* ContinueNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81AC2ECF6CC500C91570 /* ContinueNode.swift */; };
-		EC5C81BB2ECF6F7100C91570 /* Submittable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81AD2ECF6CC500C91570 /* Submittable.swift */; };
-		EC5C81BD2ECF6FCC00C91570 /* ValidationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81BC2ECF6FCC00C91570 /* ValidationError.swift */; };
-		EC5C81BF2ECF76B800C91570 /* CollectorFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81BE2ECF76B800C91570 /* CollectorFactory.swift */; };
-		EC5C81C72ECF780F00C91570 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81C62ECF780F00C91570 /* Constants.swift */; };
+		95F525BA2EECF4BC00160748 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95F525B92EECF4BC00160748 /* PingJourney.framework */; };
+		95F525BB2EECF4BC00160748 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 95F525B92EECF4BC00160748 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EC5C81842ECF67B700C91570 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */; };
+		EC5C81972ECF67C000C91570 /* PingJourneyPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81952ECF67C000C91570 /* PingJourneyPluginTests.swift */; };
+		EC5C81D52ED07FB800C91570 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81D42ED07FA500C91570 /* Constants.swift */; };
+		EC5C81D62ED07FB800C91570 /* Callback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81D32ED07F8A00C91570 /* Callback.swift */; };
+		EC5C81D72ED07FB800C91570 /* CallbackRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81D22ED07F7A00C91570 /* CallbackRegistry.swift */; };
+		EC5C81D92ED07FC400C91570 /* AbstractCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81D82ED07FC400C91570 /* AbstractCallback.swift */; };
+		EC5C81DB2ED0806100C91570 /* JourneyPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81DA2ED0805800C91570 /* JourneyPlugin.swift */; };
+		EC5C81DE2ED0809200C91570 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81DD2ED0809200C91570 /* PingOrchestrate.framework */; };
+		EC5C81DF2ED0809200C91570 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81DD2ED0809200C91570 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECA2E7E62ED875DC00C32766 /* JourneyAware.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA2E7E52ED875D300C32766 /* JourneyAware.swift */; };
+		ECA2E7E82ED87E5F00C32766 /* ContinueNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA2E7E72ED87E5900C32766 /* ContinueNode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		EC5C81502ECF66D100C91570 /* PBXContainerItemProxy */ = {
+		EC5C81852ECF67B700C91570 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = EC5C813C2ECF66D000C91570 /* Project object */;
+			containerPortal = EC5C81712ECF67B700C91570 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = EC5C81442ECF66D000C91570;
-			remoteInfo = PingDavinciPlugin;
+			remoteGlobalIDString = EC5C81792ECF67B700C91570;
+			remoteInfo = PingJourneyPlugin;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		EC5C81AA2ECF6B8400C91570 /* Embed Frameworks */ = {
+		95F525BC2EECF4BC00160748 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				EC5C81A92ECF6B8400C91570 /* PingOrchestrate.framework in Embed Frameworks */,
+				95F525BB2EECF4BC00160748 /* PingJourney.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EC5C81E02ED0809200C91570 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EC5C81DF2ED0809200C91570 /* PingOrchestrate.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -47,88 +58,87 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		EC5C81452ECF66D000C91570 /* PingDavinciPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingDavinciPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC5C814E2ECF66D100C91570 /* PingDavinciPluginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingDavinciPluginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC5C81602ECF672000C91570 /* PingDavinciPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingDavinciPluginTests.swift; sourceTree = "<group>"; };
-		EC5C81A52ECF6B6900C91570 /* Collector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collector.swift; sourceTree = "<group>"; };
-		EC5C81A72ECF6B8400C91570 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC5C81AB2ECF6CC500C91570 /* DaVinciAware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciAware.swift; sourceTree = "<group>"; };
-		EC5C81AC2ECF6CC500C91570 /* ContinueNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueNode.swift; sourceTree = "<group>"; };
-		EC5C81AD2ECF6CC500C91570 /* Submittable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Submittable.swift; sourceTree = "<group>"; };
-		EC5C81AE2ECF6CC500C91570 /* Validator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validator.swift; sourceTree = "<group>"; };
-		EC5C81B52ECF6EA200C91570 /* PingDavinciPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PingDavinciPlugin.h; sourceTree = "<group>"; };
-		EC5C81BC2ECF6FCC00C91570 /* ValidationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationError.swift; sourceTree = "<group>"; };
-		EC5C81BE2ECF76B800C91570 /* CollectorFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectorFactory.swift; sourceTree = "<group>"; };
-		EC5C81C62ECF780F00C91570 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		95F525B92EECF4BC00160748 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC5C81832ECF67B700C91570 /* PingJourneyPluginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingJourneyPluginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC5C81952ECF67C000C91570 /* PingJourneyPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingJourneyPluginTests.swift; sourceTree = "<group>"; };
+		EC5C81D22ED07F7A00C91570 /* CallbackRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackRegistry.swift; sourceTree = "<group>"; };
+		EC5C81D32ED07F8A00C91570 /* Callback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Callback.swift; sourceTree = "<group>"; };
+		EC5C81D42ED07FA500C91570 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		EC5C81D82ED07FC400C91570 /* AbstractCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractCallback.swift; sourceTree = "<group>"; };
+		EC5C81DA2ED0805800C91570 /* JourneyPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyPlugin.swift; sourceTree = "<group>"; };
+		EC5C81DD2ED0809200C91570 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECA2E7E52ED875D300C32766 /* JourneyAware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyAware.swift; sourceTree = "<group>"; };
+		ECA2E7E72ED87E5900C32766 /* ContinueNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueNode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		EC5C81422ECF66D000C91570 /* Frameworks */ = {
+		EC5C81772ECF67B700C91570 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC5C81A82ECF6B8400C91570 /* PingOrchestrate.framework in Frameworks */,
+				EC5C81DE2ED0809200C91570 /* PingOrchestrate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EC5C814B2ECF66D100C91570 /* Frameworks */ = {
+		EC5C81802ECF67B700C91570 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC5C814F2ECF66D100C91570 /* PingDavinciPlugin.framework in Frameworks */,
+				EC5C81842ECF67B700C91570 /* PingJourneyPlugin.framework in Frameworks */,
+				95F525BA2EECF4BC00160748 /* PingJourney.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		EC5C813B2ECF66D000C91570 = {
+		EC5C81702ECF67B700C91570 = {
 			isa = PBXGroup;
 			children = (
-				EC5C815E2ECF671D00C91570 /* DavinciPlugin */,
-				EC5C81612ECF672000C91570 /* DavinciPluginTests */,
-				EC5C81A62ECF6B8400C91570 /* Frameworks */,
-				EC5C81462ECF66D000C91570 /* Products */,
+				EC5C81932ECF67BE00C91570 /* JourneyPlugin */,
+				EC5C81962ECF67C000C91570 /* JourneyPluginTests */,
+				EC5C81DC2ED0809200C91570 /* Frameworks */,
+				EC5C817B2ECF67B700C91570 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		EC5C81462ECF66D000C91570 /* Products */ = {
+		EC5C817B2ECF67B700C91570 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EC5C81452ECF66D000C91570 /* PingDavinciPlugin.framework */,
-				EC5C814E2ECF66D100C91570 /* PingDavinciPluginTests.xctest */,
+				EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */,
+				EC5C81832ECF67B700C91570 /* PingJourneyPluginTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		EC5C815E2ECF671D00C91570 /* DavinciPlugin */ = {
+		EC5C81932ECF67BE00C91570 /* JourneyPlugin */ = {
 			isa = PBXGroup;
 			children = (
-				EC5C81C62ECF780F00C91570 /* Constants.swift */,
-				EC5C81BE2ECF76B800C91570 /* CollectorFactory.swift */,
-				EC5C81AB2ECF6CC500C91570 /* DaVinciAware.swift */,
-				EC5C81AC2ECF6CC500C91570 /* ContinueNode.swift */,
-				EC5C81AD2ECF6CC500C91570 /* Submittable.swift */,
-				EC5C81AE2ECF6CC500C91570 /* Validator.swift */,
-				EC5C81BC2ECF6FCC00C91570 /* ValidationError.swift */,
-				EC5C81A52ECF6B6900C91570 /* Collector.swift */,
-				EC5C81B52ECF6EA200C91570 /* PingDavinciPlugin.h */,
+				ECA2E7E72ED87E5900C32766 /* ContinueNode.swift */,
+				ECA2E7E52ED875D300C32766 /* JourneyAware.swift */,
+				EC5C81DA2ED0805800C91570 /* JourneyPlugin.swift */,
+				EC5C81D82ED07FC400C91570 /* AbstractCallback.swift */,
+				EC5C81D42ED07FA500C91570 /* Constants.swift */,
+				EC5C81D32ED07F8A00C91570 /* Callback.swift */,
+				EC5C81D22ED07F7A00C91570 /* CallbackRegistry.swift */,
 			);
-			path = DavinciPlugin;
+			path = JourneyPlugin;
 			sourceTree = "<group>";
 		};
-		EC5C81612ECF672000C91570 /* DavinciPluginTests */ = {
+		EC5C81962ECF67C000C91570 /* JourneyPluginTests */ = {
 			isa = PBXGroup;
 			children = (
-				EC5C81602ECF672000C91570 /* PingDavinciPluginTests.swift */,
+				EC5C81952ECF67C000C91570 /* PingJourneyPluginTests.swift */,
 			);
-			path = DavinciPluginTests;
+			path = JourneyPluginTests;
 			sourceTree = "<group>";
 		};
-		EC5C81A62ECF6B8400C91570 /* Frameworks */ = {
+		EC5C81DC2ED0809200C91570 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EC5C81A72ECF6B8400C91570 /* PingOrchestrate.framework */,
+				95F525B92EECF4BC00160748 /* PingJourney.framework */,
+				EC5C81DD2ED0809200C91570 /* PingOrchestrate.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -136,105 +146,105 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		EC5C81402ECF66D000C91570 /* Headers */ = {
+		EC5C81752ECF67B700C91570 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC5C81B62ECF6F7100C91570 /* PingDavinciPlugin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		EC5C81442ECF66D000C91570 /* PingDavinciPlugin */ = {
+		EC5C81792ECF67B700C91570 /* PingJourneyPlugin */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EC5C81572ECF66D100C91570 /* Build configuration list for PBXNativeTarget "PingDavinciPlugin" */;
+			buildConfigurationList = EC5C818C2ECF67B700C91570 /* Build configuration list for PBXNativeTarget "PingJourneyPlugin" */;
 			buildPhases = (
-				EC5C81402ECF66D000C91570 /* Headers */,
-				EC5C81412ECF66D000C91570 /* Sources */,
-				EC5C81422ECF66D000C91570 /* Frameworks */,
-				EC5C81432ECF66D000C91570 /* Resources */,
-				EC5C81AA2ECF6B8400C91570 /* Embed Frameworks */,
+				EC5C81752ECF67B700C91570 /* Headers */,
+				EC5C81762ECF67B700C91570 /* Sources */,
+				EC5C81772ECF67B700C91570 /* Frameworks */,
+				EC5C81782ECF67B700C91570 /* Resources */,
+				EC5C81E02ED0809200C91570 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = PingDavinciPlugin;
+			name = PingJourneyPlugin;
 			packageProductDependencies = (
 			);
-			productName = PingDavinciPlugin;
-			productReference = EC5C81452ECF66D000C91570 /* PingDavinciPlugin.framework */;
+			productName = PingJourneyPlugin;
+			productReference = EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		EC5C814D2ECF66D100C91570 /* PingDavinciPluginTests */ = {
+		EC5C81822ECF67B700C91570 /* PingJourneyPluginTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EC5C815A2ECF66D100C91570 /* Build configuration list for PBXNativeTarget "PingDavinciPluginTests" */;
+			buildConfigurationList = EC5C818F2ECF67B700C91570 /* Build configuration list for PBXNativeTarget "PingJourneyPluginTests" */;
 			buildPhases = (
-				EC5C814A2ECF66D100C91570 /* Sources */,
-				EC5C814B2ECF66D100C91570 /* Frameworks */,
-				EC5C814C2ECF66D100C91570 /* Resources */,
+				EC5C817F2ECF67B700C91570 /* Sources */,
+				EC5C81802ECF67B700C91570 /* Frameworks */,
+				EC5C81812ECF67B700C91570 /* Resources */,
+				95F525BC2EECF4BC00160748 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				EC5C81512ECF66D100C91570 /* PBXTargetDependency */,
+				EC5C81862ECF67B700C91570 /* PBXTargetDependency */,
 			);
-			name = PingDavinciPluginTests;
+			name = PingJourneyPluginTests;
 			packageProductDependencies = (
 			);
-			productName = PingDavinciPluginTests;
-			productReference = EC5C814E2ECF66D100C91570 /* PingDavinciPluginTests.xctest */;
+			productName = PingJourneyPluginTests;
+			productReference = EC5C81832ECF67B700C91570 /* PingJourneyPluginTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		EC5C813C2ECF66D000C91570 /* Project object */ = {
+		EC5C81712ECF67B700C91570 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
-					EC5C81442ECF66D000C91570 = {
+					EC5C81792ECF67B700C91570 = {
 						CreatedOnToolsVersion = 26.0;
 					};
-					EC5C814D2ECF66D100C91570 = {
+					EC5C81822ECF67B700C91570 = {
 						CreatedOnToolsVersion = 26.0;
 					};
 				};
 			};
-			buildConfigurationList = EC5C813F2ECF66D000C91570 /* Build configuration list for PBXProject "DavinciPlugin" */;
+			buildConfigurationList = EC5C81742ECF67B700C91570 /* Build configuration list for PBXProject "JourneyPlugin" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = EC5C813B2ECF66D000C91570;
+			mainGroup = EC5C81702ECF67B700C91570;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = EC5C81462ECF66D000C91570 /* Products */;
+			productRefGroup = EC5C817B2ECF67B700C91570 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				EC5C81442ECF66D000C91570 /* PingDavinciPlugin */,
-				EC5C814D2ECF66D100C91570 /* PingDavinciPluginTests */,
+				EC5C81792ECF67B700C91570 /* PingJourneyPlugin */,
+				EC5C81822ECF67B700C91570 /* PingJourneyPluginTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		EC5C81432ECF66D000C91570 /* Resources */ = {
+		EC5C81782ECF67B700C91570 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EC5C814C2ECF66D100C91570 /* Resources */ = {
+		EC5C81812ECF67B700C91570 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -244,41 +254,40 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		EC5C81412ECF66D000C91570 /* Sources */ = {
+		EC5C81762ECF67B700C91570 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC5C81B72ECF6F7100C91570 /* Collector.swift in Sources */,
-				EC5C81C72ECF780F00C91570 /* Constants.swift in Sources */,
-				EC5C81B82ECF6F7100C91570 /* DaVinciAware.swift in Sources */,
-				EC5C81B92ECF6F7100C91570 /* Validator.swift in Sources */,
-				EC5C81BA2ECF6F7100C91570 /* ContinueNode.swift in Sources */,
-				EC5C81BB2ECF6F7100C91570 /* Submittable.swift in Sources */,
-				EC5C81BF2ECF76B800C91570 /* CollectorFactory.swift in Sources */,
-				EC5C81BD2ECF6FCC00C91570 /* ValidationError.swift in Sources */,
+				EC5C81D52ED07FB800C91570 /* Constants.swift in Sources */,
+				EC5C81D62ED07FB800C91570 /* Callback.swift in Sources */,
+				EC5C81D92ED07FC400C91570 /* AbstractCallback.swift in Sources */,
+				ECA2E7E82ED87E5F00C32766 /* ContinueNode.swift in Sources */,
+				EC5C81DB2ED0806100C91570 /* JourneyPlugin.swift in Sources */,
+				EC5C81D72ED07FB800C91570 /* CallbackRegistry.swift in Sources */,
+				ECA2E7E62ED875DC00C32766 /* JourneyAware.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EC5C814A2ECF66D100C91570 /* Sources */ = {
+		EC5C817F2ECF67B700C91570 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC5C81622ECF672000C91570 /* PingDavinciPluginTests.swift in Sources */,
+				EC5C81972ECF67C000C91570 /* PingJourneyPluginTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		EC5C81512ECF66D100C91570 /* PBXTargetDependency */ = {
+		EC5C81862ECF67B700C91570 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EC5C81442ECF66D000C91570 /* PingDavinciPlugin */;
-			targetProxy = EC5C81502ECF66D100C91570 /* PBXContainerItemProxy */;
+			target = EC5C81792ECF67B700C91570 /* PingJourneyPlugin */;
+			targetProxy = EC5C81852ECF67B700C91570 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		EC5C81552ECF66D100C91570 /* Debug */ = {
+		EC5C818A2ECF67B700C91570 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -345,7 +354,7 @@
 			};
 			name = Debug;
 		};
-		EC5C81562ECF66D100C91570 /* Release */ = {
+		EC5C818B2ECF67B700C91570 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -405,10 +414,10 @@
 			};
 			name = Release;
 		};
-		EC5C81582ECF66D100C91570 /* Debug */ = {
+		EC5C818D2ECF67B700C91570 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -426,10 +435,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.0-alpha;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingDavinciPlugin;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingJourneyPlugin;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -443,10 +452,10 @@
 			};
 			name = Debug;
 		};
-		EC5C81592ECF66D100C91570 /* Release */ = {
+		EC5C818E2ECF67B700C91570 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -464,10 +473,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.0.0-alpha;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingDavinciPlugin;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingJourneyPlugin;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -481,15 +490,16 @@
 			};
 			name = Release;
 		};
-		EC5C815B2ECF66D100C91570 /* Debug */ = {
+		EC5C81902ECF67B700C91570 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingDavinciPluginTests;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 2.0.0-alpha;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingJourneyPluginTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -500,15 +510,16 @@
 			};
 			name = Debug;
 		};
-		EC5C815C2ECF66D100C91570 /* Release */ = {
+		EC5C81912ECF67B700C91570 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingDavinciPluginTests;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 2.0.0-alpha;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingJourneyPluginTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -522,34 +533,34 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EC5C813F2ECF66D000C91570 /* Build configuration list for PBXProject "DavinciPlugin" */ = {
+		EC5C81742ECF67B700C91570 /* Build configuration list for PBXProject "JourneyPlugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EC5C81552ECF66D100C91570 /* Debug */,
-				EC5C81562ECF66D100C91570 /* Release */,
+				EC5C818A2ECF67B700C91570 /* Debug */,
+				EC5C818B2ECF67B700C91570 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EC5C81572ECF66D100C91570 /* Build configuration list for PBXNativeTarget "PingDavinciPlugin" */ = {
+		EC5C818C2ECF67B700C91570 /* Build configuration list for PBXNativeTarget "PingJourneyPlugin" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EC5C81582ECF66D100C91570 /* Debug */,
-				EC5C81592ECF66D100C91570 /* Release */,
+				EC5C818D2ECF67B700C91570 /* Debug */,
+				EC5C818E2ECF67B700C91570 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EC5C815A2ECF66D100C91570 /* Build configuration list for PBXNativeTarget "PingDavinciPluginTests" */ = {
+		EC5C818F2ECF67B700C91570 /* Build configuration list for PBXNativeTarget "PingJourneyPluginTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EC5C815B2ECF66D100C91570 /* Debug */,
-				EC5C815C2ECF66D100C91570 /* Release */,
+				EC5C81902ECF67B700C91570 /* Debug */,
+				EC5C81912ECF67B700C91570 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = EC5C813C2ECF66D000C91570 /* Project object */;
+	rootObject = EC5C81712ECF67B700C91570 /* Project object */;
 }

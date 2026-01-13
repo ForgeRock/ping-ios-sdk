@@ -9,6 +9,7 @@
 //
 
 import XCTest
+import PingLogger
 @testable import PingPush
 
 final class PushClientTests: XCTestCase {
@@ -18,7 +19,7 @@ final class PushClientTests: XCTestCase {
 
         let client = try await PushClient.createClient { config in
             config.storage = storage
-            config.logger = nil
+            config.logger = LogManager.none
         }
 
         XCTAssertTrue(client.storageProvider is TestInMemoryPushStorage)
@@ -184,6 +185,100 @@ final class PushClientTests: XCTestCase {
         let notification = try await client.processNotification(userInfo: userInfo)
         XCTAssertNotNil(notification)
         XCTAssertEqual(notification?.messageId, "msg-userinfo")
+    }
+
+    func testProcessNotificationUserInfoExtractsAPNsPayload() async throws {
+        let storage = TestInMemoryPushStorage()
+        let stubHandler = StubPushHandler()
+        stubHandler.canHandleMessageDataResult = true
+        stubHandler.parseMessageDataResult = makeParsedNotificationData(
+            credentialId: "cred-apns",
+            messageId: "apns-msg-123"
+        )
+
+        let client = try await PushClient.createClient { config in
+            config.storage = storage
+            config.customPushHandlers = [
+                PushPlatform.pingAM.rawValue: stubHandler
+            ]
+            config.notificationCleanupConfig = .none()
+        }
+
+        // Simulate APNs userInfo format with nested aps dictionary
+        let userInfo: [AnyHashable: Any] = [
+            "aps": [
+                "alert": "Login attempt from Chrome",
+                "sound": "default",
+                "data": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test",
+                "messageId": "apns-msg-123"
+            ]
+        ]
+
+        let notification = try await client.processNotification(userInfo: userInfo)
+        XCTAssertNotNil(notification)
+        XCTAssertEqual(notification?.messageId, "apns-msg-123")
+        
+        // Verify handler received extracted payload (message and messageId at root level)
+        XCTAssertTrue(stubHandler.canHandleMessageDataResult)
+    }
+
+    func testProcessNotificationUserInfoHandlesMissingAPsFields() async throws {
+        let storage = TestInMemoryPushStorage()
+        let stubHandler = StubPushHandler()
+        stubHandler.canHandleMessageDataResult = false // Handler will reject incomplete data
+
+        let client = try await PushClient.createClient { config in
+            config.storage = storage
+            config.customPushHandlers = [
+                PushPlatform.pingAM.rawValue: stubHandler
+            ]
+            config.notificationCleanupConfig = .none()
+        }
+
+        // APNs payload missing required fields
+        let userInfo: [AnyHashable: Any] = [
+            "aps": [
+                "alert": "Test notification",
+                "sound": "default"
+                // Missing "data" and "messageId"
+            ]
+        ]
+
+        let notification = try await client.processNotification(userInfo: userInfo)
+        // Should return nil when handler cannot process
+        XCTAssertNil(notification)
+    }
+
+    func testProcessNotificationUserInfoPreservesNonAPsKeys() async throws {
+        let storage = TestInMemoryPushStorage()
+        let stubHandler = StubPushHandler()
+        stubHandler.canHandleMessageDataResult = true
+        stubHandler.parseMessageDataResult = makeParsedNotificationData(
+            credentialId: "cred-mixed",
+            messageId: "mixed-msg-456"
+        )
+
+        let client = try await PushClient.createClient { config in
+            config.storage = storage
+            config.customPushHandlers = [
+                PushPlatform.pingAM.rawValue: stubHandler
+            ]
+            config.notificationCleanupConfig = .none()
+        }
+
+        // APNs payload with additional top-level keys
+        let userInfo: [AnyHashable: Any] = [
+            "aps": [
+                "data": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test",
+                "messageId": "mixed-msg-456"
+            ],
+            "customKey": "customValue",
+            "anotherKey": 123
+        ]
+
+        let notification = try await client.processNotification(userInfo: userInfo)
+        XCTAssertNotNil(notification)
+        XCTAssertEqual(notification?.messageId, "mixed-msg-456")
     }
 
     func testApproveNotificationMarksNotificationAsApproved() async throws {

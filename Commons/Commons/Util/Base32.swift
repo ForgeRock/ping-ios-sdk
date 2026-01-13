@@ -48,35 +48,34 @@ enum Base32 {
             return nil
         }
 
-        // Security: Validate padding
-        // Padding must only appear at the end (if at all)
-        if let firstPaddingIndex = cleanString.firstIndex(of: "=") {
-            let paddingStart = cleanString.distance(from: cleanString.startIndex, to: firstPaddingIndex)
-            let paddingSubstring = cleanString[firstPaddingIndex...]
-
-            // All characters after first padding must also be padding
-            guard paddingSubstring.allSatisfy({ $0 == "=" }) else {
-                return nil // Padding in middle or invalid padding pattern
-            }
-
-            // Validate padding length (RFC 4648: padding to make length multiple of 8)
-            let paddingLength = paddingSubstring.count
-            let totalLength = cleanString.count
-            guard totalLength % 8 == 0 else {
-                return nil // Invalid padding - total length must be multiple of 8
-            }
-
-            // Padding can only be 0, 1, 3, 4, or 6 characters (based on RFC 4648 Base32)
-            let validPaddingLengths: Set<Int> = [0, 1, 3, 4, 6]
-            guard validPaddingLengths.contains(paddingLength) else {
-                return nil // Invalid padding length
-            }
-        }
-
-        // Security: In strict mode, require proper padding
-        // The input string (before removing padding) must be a multiple of 8 characters
-        // This prevents accepting malformed or truncated Base32 strings
+        // Security: Validate padding (only in strict mode for RFC 4648 compliance)
+        // In lenient mode (default), padding is ignored for FRAuthenticator compatibility
         if strict {
+            // Padding must only appear at the end (if at all)
+            if let firstPaddingIndex = cleanString.firstIndex(of: "=") {
+                let paddingStart = cleanString.distance(from: cleanString.startIndex, to: firstPaddingIndex)
+                let paddingSubstring = cleanString[firstPaddingIndex...]
+
+                // All characters after first padding must also be padding
+                guard paddingSubstring.allSatisfy({ $0 == "=" }) else {
+                    return nil // Padding in middle or invalid padding pattern
+                }
+
+                // Validate padding length (RFC 4648: padding to make length multiple of 8)
+                let paddingLength = paddingSubstring.count
+                let totalLength = cleanString.count
+                guard totalLength % 8 == 0 else {
+                    return nil // Invalid padding - total length must be multiple of 8
+                }
+
+                // Padding can only be 0, 1, 3, 4, or 6 characters (based on RFC 4648 Base32)
+                let validPaddingLengths: Set<Int> = [0, 1, 3, 4, 6]
+                guard validPaddingLengths.contains(paddingLength) else {
+                    return nil // Invalid padding length
+                }
+            }
+
+            // Require proper padding (multiple of 8 characters)
             guard cleanString.count % 8 == 0 || cleanString.isEmpty else {
                 return nil // Improperly padded Base32 string
             }
