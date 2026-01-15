@@ -16,42 +16,68 @@ import PingStorage
 /// Legacy device identifier retrieval from FRAuth SDK format.
 /// This class handles migration from the old FRDeviceIdentifier format to the new DeviceId module format.
 internal actor LegacyDeviceIdentifier {
-    /// Legacy keychain key for the identifier
-    private static let legacyIdentifierKey = "com.forgerock.ios.device-identifier.hash-base64-string-identifier"
-    /// Legacy keychain key for public key data
-    private static let legacyPublicKeyDataKey = "com.forgerock.ios.device-identifier.pubic-key.data"
     
-    private let keychainService: any Storage<String>
+    // MARK: - Legacy Keychain Constants
+    
+    /// Legacy keychain keys from FRAuth SDK
+    enum LegacyKeychainKeys {
+        /// Legacy keychain key for the identifier
+        static let identifier = "com.forgerock.ios.device-identifier.hash-base64-string-identifier"
+        /// Legacy keychain key for public key data
+        static let publicKeyData = "com.forgerock.ios.device-identifier.pubic-key.data"
+        /// Legacy keychain key for private key data
+        static let privateKeyData = "com.forgerock.ios.device-identifier.private-key.data"
+    }
+    
     private let logger: Logger?
     
     /// Initializes the legacy device identifier retriever
     /// - Parameters:
-    ///   - keychainService: Storage service to access legacy keychain items
     ///   - logger: Optional logger for diagnostic messages
-    init(keychainService: any Storage<String>, logger: Logger? = nil) {
-        self.keychainService = keychainService
+    init(logger: Logger? = nil) {
         self.logger = logger
     }
     
-    /// Attempts to retrieve the legacy device identifier
+    /// Attempts to retrieve the legacy device identifier directly from keychain
+    /// Uses raw Security framework queries to match FRAuth SDK's KeychainService behavior
     /// - Returns: The legacy identifier if it exists, otherwise nil
     func getLegacyIdentifier() async throws -> String? {
-        logger?.i("Checking for legacy device identifier")
+        logger?.i("Checking for legacy device identifier using direct keychain query")
         
-        // First try to get the stored identifier directly
-        if let identifier = try await keychainService.get() {
-            logger?.i("Found legacy device identifier in keychain")
-            return identifier
-        }
-        
-        logger?.d("No legacy device identifier found")
-        return nil
+        return await Task.detached { () -> String? in
+            // Build query matching FRAuth SDK's KeychainService
+            var query: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrAccount as String: LegacyKeychainKeys.identifier,
+                kSecReturnData as String: true,
+                kSecMatchLimit as String: kSecMatchLimitOne
+            ]
+            
+            // Add access group if available (same as FRAuth SDK would use)
+            if let accessGroup = await self.getKeychainAccessGroup() {
+                query[kSecAttrAccessGroup as String] = accessGroup
+            }
+            
+            var result: AnyObject?
+            let status = SecItemCopyMatching(query as CFDictionary, &result)
+            
+            if status == errSecSuccess, let data = result as? Data, let identifier = String(data: data, encoding: .utf8) {
+                self.logger?.i("Found legacy device identifier in keychain")
+                return identifier
+            } else if status == errSecItemNotFound {
+                self.logger?.d("No legacy device identifier found (errSecItemNotFound)")
+                return nil
+            } else {
+                self.logger?.w("Failed to retrieve legacy identifier. Status: \(status)", error: nil)
+                return nil
+            }
+        }.value
     }
     
     /// Creates a legacy keychain storage instance
     /// - Parameter account: Keychain account (typically the legacy identifier key)
     /// - Returns: Storage instance configured for legacy keychain access
-    static func createLegacyStorage(account: String = legacyIdentifierKey, logger: Logger? = nil) -> any Storage<String> {
+    static func createLegacyStorage(account: String = LegacyKeychainKeys.identifier, logger: Logger? = nil) -> any Storage<String> {
         return KeychainStorage<String>(
             account: account,
             encryptor: NoEncryptor()
@@ -64,24 +90,93 @@ internal actor LegacyDeviceIdentifier {
     func migrateLegacyIdentifierFromPublicKey() async throws -> String? {
         logger?.i("Attempting to regenerate legacy identifier from public key data")
         
-        // Create storage for public key data
-        let publicKeyStorage = KeychainStorage<Data>(
-            account: Self.legacyPublicKeyDataKey,
-            encryptor: NoEncryptor()
-        )
-        
-        guard let keyData = try await publicKeyStorage.get() else {
-            logger?.d("No legacy public key data found")
-            return nil
-        }
-        
-        logger?.i("Found legacy public key data, regenerating identifier")
-        let identifier = hashAndBase64Data(keyData)
-        
-        // Store the regenerated identifier for future retrievals
-        try await keychainService.save(item: identifier)
-        
-        return identifier
+        return await Task.detached { () -> String? in
+            // Build query for legacy public key data
+            var query: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrAccount as String: LegacyKeychainKeys.publicKeyData,
+                kSecReturnData as String: true,
+                kSecMatchLimit as String: kSecMatchLimitOne
+            ]
+            
+            // Add access group if available
+            if let accessGroup = await self.getKeychainAccessGroup() {
+                query[kSecAttrAccessGroup as String] = accessGroup
+            }
+            
+            var result: AnyObject?
+            let status = SecItemCopyMatching(query as CFDictionary, &result)
+            
+            guard status == errSecSuccess, let keyData = result as? Data else {
+                if status == errSecItemNotFound {
+                    self.logger?.d("No legacy public key data found")
+                } else {
+                    self.logger?.w("Failed to retrieve legacy public key. Status: \(status)", error: nil)
+                }
+                return nil
+            }
+            
+            self.logger?.i("Found legacy public key data, regenerating identifier")
+            let identifier = await self.hashAndBase64Data(keyData)
+            
+            // Store the regenerated identifier using raw keychain for consistency
+            await self.saveLegacyIdentifier(identifier)
+            
+            return identifier
+        }.value
+    }
+    
+    /// Saves the legacy identifier to keychain using direct Security framework calls
+    /// - Parameter identifier: The identifier to save
+    private func saveLegacyIdentifier(_ identifier: String) async {
+        await Task.detached {
+            guard let data = identifier.data(using: .utf8) else {
+                self.logger?.e("Failed to encode identifier as UTF-8", error: nil)
+                return
+            }
+            
+            var query: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrAccount as String: LegacyKeychainKeys.identifier,
+                kSecValueData as String: data,
+                kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+            ]
+            
+            if let accessGroup = await self.getKeychainAccessGroup() {
+                query[kSecAttrAccessGroup as String] = accessGroup
+            }
+            
+            // Try to add, if it exists, update it
+            var status = SecItemAdd(query as CFDictionary, nil)
+            
+            if status == errSecDuplicateItem {
+                let updateQuery: [String: Any] = [
+                    kSecClass as String: kSecClassGenericPassword,
+                    kSecAttrAccount as String: LegacyKeychainKeys.identifier
+                ]
+                let updateAttributes: [String: Any] = [
+                    kSecValueData as String: data
+                ]
+                status = SecItemUpdate(updateQuery as CFDictionary, updateAttributes as CFDictionary)
+            }
+            
+            if status != errSecSuccess {
+                self.logger?.w("Failed to save regenerated legacy identifier. Status: \(status)", error: nil)
+            } else {
+                self.logger?.i("Successfully saved regenerated legacy identifier")
+            }
+        }.value
+    }
+    
+    /// Gets the keychain access group if configured
+    /// This should match the access group used by FRAuth SDK
+    /// - Returns: Access group string if available
+    private func getKeychainAccessGroup() -> String? {
+        // Check if there's a configured access group in the app's entitlements
+        // FRAuth SDK would use the first access group from keychain-access-groups
+        // For now, return nil to search in the default group
+        // This can be enhanced to read from configuration if needed
+        return nil
     }
     
     /// Hashes given Data using SHA1 and returns hex string
@@ -93,7 +188,6 @@ internal actor LegacyDeviceIdentifier {
         data.withUnsafeBytes {
             _ = CC_SHA1($0.baseAddress, CC_LONG(data.count), &digest)
         }
-        // Inline hex conversion to avoid extension conflicts
         let hashData = Data(bytes: digest, count: digest.count)
         return hashData.toHexString()
     }

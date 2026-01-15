@@ -30,44 +30,101 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
     }
     
     private func cleanupKeychain() {
-        let group = DispatchGroup()
+        // Bridge async cleanup to synchronous test lifecycle
+        let semaphore = DispatchSemaphore(value: 0)
         
-        // Clean up default configuration
-        group.enter()
         Task {
-            try? await DefaultDeviceIdentifier(configuration: .default).keychainService.delete()
-            group.leave()
+            async let defaultCleanup: Void = {
+                try? await DefaultDeviceIdentifier(configuration: .default).keychainService.delete()
+            }()
+            
+            async let legacyCleanup: Void = {
+                await LegacyDeviceIdentifierMigrationTests.deleteLegacyKeychainItem(account: LegacyDeviceIdentifier.LegacyKeychainKeys.identifier)
+                await LegacyDeviceIdentifierMigrationTests.deleteLegacyKeychainItem(account: LegacyDeviceIdentifier.LegacyKeychainKeys.publicKeyData)
+                await LegacyDeviceIdentifierMigrationTests.deleteLegacyKeychainItem(account: LegacyDeviceIdentifier.LegacyKeychainKeys.privateKeyData)
+            }()
+            
+            await defaultCleanup
+            await legacyCleanup
+            semaphore.signal()
         }
         
-        // Clean up legacy storage locations
-        group.enter()
-        Task {
-            let legacyIdentifierStorage = LegacyDeviceIdentifier.createLegacyStorage()
-            try? await legacyIdentifierStorage.delete()
-            group.leave()
-        }
-        
-        group.enter()
-        Task {
-            let legacyPublicKeyStorage = KeychainStorage<Data>(
-                account: "com.forgerock.ios.device-identifier.pubic-key.data",
-                encryptor: NoEncryptor()
-            )
-            try? await legacyPublicKeyStorage.delete()
-            group.leave()
-        }
-        
-        group.wait()
+        semaphore.wait()
+    }
+    
+    /// Helper to delete legacy keychain items using raw Security framework
+    private static func deleteLegacyKeychainItem(account: String) async {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: account
+        ]
+        SecItemDelete(query as CFDictionary)
+    }
+    
+    /// Helper to save legacy keychain item using raw Security framework (simulating FRAuth SDK)
+    private func saveLegacyKeychainItem(account: String, value: String) async throws {
+        try await Task.detached {
+            guard let data = value.data(using: .utf8) else {
+                throw NSError(domain: "TestError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to encode string"])
+            }
+            
+            let query: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrAccount as String: account,
+                kSecValueData as String: data,
+                kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+            ]
+            
+            // Delete first to ensure clean state
+            let deleteQuery: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrAccount as String: account
+            ]
+            SecItemDelete(deleteQuery as CFDictionary)
+            
+            // Add the item
+            let status = SecItemAdd(query as CFDictionary, nil)
+            if status != errSecSuccess {
+                throw NSError(domain: NSOSStatusErrorDomain, code: Int(status), userInfo: [NSLocalizedDescriptionKey: "Failed to save to keychain"])
+            }
+        }.value
+    }
+    
+    /// Helper to save legacy public key data using raw Security framework
+    private func saveLegacyPublicKeyData(_ data: Data) async throws {
+        try await Task.detached {
+            let query: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrAccount as String: LegacyDeviceIdentifier.LegacyKeychainKeys.publicKeyData,
+                kSecValueData as String: data,
+                kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+            ]
+            
+            // Delete first to ensure clean state
+            let deleteQuery: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrAccount as String: LegacyDeviceIdentifier.LegacyKeychainKeys.publicKeyData
+            ]
+            SecItemDelete(deleteQuery as CFDictionary)
+            
+            // Add the item
+            let status = SecItemAdd(query as CFDictionary, nil)
+            if status != errSecSuccess {
+                throw NSError(domain: NSOSStatusErrorDomain, code: Int(status), userInfo: [NSLocalizedDescriptionKey: "Failed to save public key to keychain"])
+            }
+        }.value
     }
     
     // MARK: - Legacy Identifier Migration Tests
     
     /// Test that when a legacy identifier exists, it is retrieved and used instead of generating a new one
     func testLegacyIdentifierIsUsedWhenAvailable() async throws {
-        // GIVEN: A legacy identifier exists in keychain
+        // GIVEN: A legacy identifier exists in keychain (using raw keychain like FRAuth SDK would)
         let expectedLegacyId = "abc123def456legacy789"
-        let legacyStorage = LegacyDeviceIdentifier.createLegacyStorage()
-        try await legacyStorage.save(item: expectedLegacyId)
+        try await saveLegacyKeychainItem(
+            account: LegacyDeviceIdentifier.LegacyKeychainKeys.identifier,
+            value: expectedLegacyId
+        )
         
         // WHEN: Creating a new DefaultDeviceIdentifier
         let deviceIdentifier = try DefaultDeviceIdentifier()
@@ -88,10 +145,12 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
     
     /// Test that legacy identifier stored in new format persists correctly
     func testLegacyIdentifierPersistedInNewFormat() async throws {
-        // GIVEN: A legacy identifier exists
+        // GIVEN: A legacy identifier exists (using raw keychain like FRAuth SDK would)
         let expectedLegacyId = "legacy_identifier_12345"
-        let legacyStorage = LegacyDeviceIdentifier.createLegacyStorage()
-        try await legacyStorage.save(item: expectedLegacyId)
+        try await saveLegacyKeychainItem(
+            account: LegacyDeviceIdentifier.LegacyKeychainKeys.identifier,
+            value: expectedLegacyId
+        )
         
         // WHEN: First access triggers migration
         let firstIdentifier = try DefaultDeviceIdentifier()
@@ -101,7 +160,7 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
         XCTAssertEqual(migratedId, expectedLegacyId)
         
         // WHEN: We clear the legacy storage (simulating it being removed)
-        try await legacyStorage.delete()
+        await LegacyDeviceIdentifierMigrationTests.deleteLegacyKeychainItem(account: LegacyDeviceIdentifier.LegacyKeychainKeys.identifier)
         
         // AND: Create a new instance
         let secondIdentifier = try DefaultDeviceIdentifier()
@@ -130,13 +189,9 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
     
     /// Test migration from public key data when identifier doesn't exist but public key does
     func testMigrationFromLegacyPublicKey() async throws {
-        // GIVEN: Legacy public key data exists but no identifier
+        // GIVEN: Legacy public key data exists but no identifier (using raw keychain like FRAuth SDK would)
         let samplePublicKeyData = Data("sample_public_key_data".utf8)
-        let legacyPublicKeyStorage = KeychainStorage<Data>(
-            account: "com.forgerock.ios.device-identifier.pubic-key.data",
-            encryptor: NoEncryptor()
-        )
-        try await legacyPublicKeyStorage.save(item: samplePublicKeyData)
+        try await saveLegacyPublicKeyData(samplePublicKeyData)
         
         // WHEN: Creating a DefaultDeviceIdentifier
         let deviceIdentifier = try DefaultDeviceIdentifier()
@@ -144,6 +199,8 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
         
         // THEN: An identifier should be generated from the public key
         XCTAssertFalse(migratedId.isEmpty, "Should generate identifier from legacy public key")
+        // Legacy migration uses SHA-1, which produces 40 character hex strings
+        XCTAssertEqual(migratedId.count, 40, "Legacy identifier from public key should be SHA-1 based (40 chars)")
         
         // AND: The same identifier should be returned on subsequent calls
         let secondCallId = try await deviceIdentifier.id
@@ -157,10 +214,12 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
     
     /// Test that regenerateIdentifier works correctly even with legacy migration
     func testRegenerateIdentifierAfterLegacyMigration() async throws {
-        // GIVEN: A legacy identifier that has been migrated
+        // GIVEN: A legacy identifier that has been migrated (using raw keychain like FRAuth SDK would)
         let legacyId = "legacy_identifier_xyz"
-        let legacyStorage = LegacyDeviceIdentifier.createLegacyStorage()
-        try await legacyStorage.save(item: legacyId)
+        try await saveLegacyKeychainItem(
+            account: LegacyDeviceIdentifier.LegacyKeychainKeys.identifier,
+            value: legacyId
+        )
         
         let deviceIdentifier = try DefaultDeviceIdentifier()
         let initialId = try await deviceIdentifier.id
@@ -180,10 +239,12 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
     
     /// Test concurrent access during legacy migration
     func testConcurrentAccessDuringLegacyMigration() async throws {
-        // GIVEN: A legacy identifier exists
+        // GIVEN: A legacy identifier exists (using raw keychain like FRAuth SDK would)
         let legacyId = "concurrent_legacy_test"
-        let legacyStorage = LegacyDeviceIdentifier.createLegacyStorage()
-        try await legacyStorage.save(item: legacyId)
+        try await saveLegacyKeychainItem(
+            account: LegacyDeviceIdentifier.LegacyKeychainKeys.identifier,
+            value: legacyId
+        )
         
         // WHEN: Multiple concurrent requests are made
         let deviceIdentifier = try DefaultDeviceIdentifier()
@@ -207,10 +268,12 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
     
     /// Test that cache clearing works correctly with legacy identifiers
     func testCacheClearingWithLegacyIdentifier() async throws {
-        // GIVEN: A legacy identifier that has been loaded
+        // GIVEN: A legacy identifier that has been loaded (using raw keychain like FRAuth SDK would)
         let legacyId = "cache_test_legacy_id"
-        let legacyStorage = LegacyDeviceIdentifier.createLegacyStorage()
-        try await legacyStorage.save(item: legacyId)
+        try await saveLegacyKeychainItem(
+            account: LegacyDeviceIdentifier.LegacyKeychainKeys.identifier,
+            value: legacyId
+        )
         
         let deviceIdentifier = try DefaultDeviceIdentifier()
         let firstId = try await deviceIdentifier.id
@@ -287,18 +350,15 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
     
     /// Test migration priority: direct identifier > public key regeneration > new generation
     func testMigrationPriority() async throws {
-        // GIVEN: Both legacy identifier AND public key exist
+        // GIVEN: Both legacy identifier AND public key exist (using raw keychain like FRAuth SDK would)
         let directLegacyId = "direct_legacy_identifier"
         let publicKeyData = Data("legacy_public_key".utf8)
         
-        let legacyIdentifierStorage = LegacyDeviceIdentifier.createLegacyStorage()
-        try await legacyIdentifierStorage.save(item: directLegacyId)
-        
-        let legacyPublicKeyStorage = KeychainStorage<Data>(
-            account: "com.forgerock.ios.device-identifier.pubic-key.data",
-            encryptor: NoEncryptor()
+        try await saveLegacyKeychainItem(
+            account: LegacyDeviceIdentifier.LegacyKeychainKeys.identifier,
+            value: directLegacyId
         )
-        try await legacyPublicKeyStorage.save(item: publicKeyData)
+        try await saveLegacyPublicKeyData(publicKeyData)
         
         // WHEN: Creating a DefaultDeviceIdentifier
         let deviceIdentifier = try DefaultDeviceIdentifier()
