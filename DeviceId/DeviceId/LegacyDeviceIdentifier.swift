@@ -179,16 +179,16 @@ internal actor LegacyDeviceIdentifier {
         return nil
     }
     
-    /// Hashes given Data using SHA1 and returns base64-encoded string
+    /// Hashes given Data using SHA1 and returns hex string
     /// This matches the legacy FRDeviceIdentifier hashing behavior
     /// - Parameter data: Data to be hashed
-    /// - Returns: Base64-encoded string of the SHA1 hash
+    /// - Returns: Hex-encoded string of the SHA1 hash (40 characters)
     private func hashAndBase64Data(_ data: Data) -> String {
         var digest = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
         data.withUnsafeBytes {
             _ = CC_SHA1($0.baseAddress, CC_LONG(data.count), &digest)
         }
         let hashData = Data(bytes: digest, count: digest.count)
-        return hashData.base64EncodedString()
+        return hashData.toHexString()
     }
 }
