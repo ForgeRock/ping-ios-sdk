@@ -47,6 +47,10 @@ public struct DeviceIdentifierConfiguration : Sendable {
     public let keychainAccount: String
     /// Whether to use encryption for keychain storage
     public let useEncryption: Bool
+    /// Optional keychain access group used by the legacy SDK for migration purposes.
+    /// If your app used a custom keychain access group with the legacy FRAuth SDK,
+    /// specify it here to enable migration of the legacy device identifier.
+    public let legacyKeychainAccessGroup: String?
     
     /// Default configuration
     public static let `default` = DeviceIdentifierConfiguration(
@@ -62,10 +66,11 @@ public struct DeviceIdentifierConfiguration : Sendable {
         useEncryption: true
     )
     
-    public init(keySize: Int, keychainAccount: String, useEncryption: Bool = true) {
+    public init(keySize: Int, keychainAccount: String, useEncryption: Bool = true, legacyKeychainAccessGroup: String? = nil) {
         self.keySize = keySize
         self.keychainAccount = keychainAccount
         self.useEncryption = useEncryption
+        self.legacyKeychainAccessGroup = legacyKeychainAccessGroup
     }
 }
 

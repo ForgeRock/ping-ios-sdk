@@ -27,14 +27,21 @@ internal actor LegacyDeviceIdentifier {
         static let publicKeyData = "com.forgerock.ios.device-identifier.pubic-key.data"
         /// Legacy keychain key for private key data
         static let privateKeyData = "com.forgerock.ios.device-identifier.private-key.data"
+        /// Legacy keychain tag for public key in system keychain
+        static let publicKeyTag = "com.forgerock.ios.device-identifier.public-key"
+        /// Legacy keychain tag for private key in system keychain
+        static let privateKeyTag = "com.forgerock.ios.device-identifier.private-key"
     }
     
     private let logger: Logger?
+    private let accessGroup: String?
     
     /// Initializes the legacy device identifier retriever
     /// - Parameters:
+    ///   - accessGroup: Optional keychain access group used by the legacy SDK
     ///   - logger: Optional logger for diagnostic messages
-    init(logger: Logger? = nil) {
+    init(accessGroup: String? = nil, logger: Logger? = nil) {
+        self.accessGroup = accessGroup
         self.logger = logger
     }
     
@@ -44,7 +51,7 @@ internal actor LegacyDeviceIdentifier {
     func getLegacyIdentifier() async throws -> String? {
         logger?.i("Checking for legacy device identifier using direct keychain query")
         
-        return await Task.detached { () -> String? in
+        return await Task.detached { [accessGroup, logger] () -> String? in
             // Build query matching FRAuth SDK's KeychainService
             var query: [String: Any] = [
                 kSecClass as String: kSecClassGenericPassword,
@@ -53,22 +60,23 @@ internal actor LegacyDeviceIdentifier {
                 kSecMatchLimit as String: kSecMatchLimitOne
             ]
             
-            // Add access group if available (same as FRAuth SDK would use)
-            if let accessGroup = await self.getKeychainAccessGroup() {
+            // Add access group if specified
+            if let accessGroup = accessGroup {
                 query[kSecAttrAccessGroup as String] = accessGroup
+                logger?.i("Using legacy keychain access group: \(accessGroup)")
             }
             
             var result: AnyObject?
             let status = SecItemCopyMatching(query as CFDictionary, &result)
             
             if status == errSecSuccess, let data = result as? Data, let identifier = String(data: data, encoding: .utf8) {
-                self.logger?.i("Found legacy device identifier in keychain")
+                logger?.i("Found legacy device identifier in keychain")
                 return identifier
             } else if status == errSecItemNotFound {
-                self.logger?.d("No legacy device identifier found (errSecItemNotFound)")
+                logger?.d("No legacy device identifier found (errSecItemNotFound)")
                 return nil
             } else {
-                self.logger?.w("Failed to retrieve legacy identifier. Status: \(status)", error: nil)
+                logger?.w("Failed to retrieve legacy identifier. Status: \(status)", error: nil)
                 return nil
             }
         }.value
@@ -79,8 +87,8 @@ internal actor LegacyDeviceIdentifier {
     func migrateLegacyKeyPair() async throws -> (identifier: String, keyPair: DeviceIdentifierKeyPair)? {
         logger?.i("Attempting to migrate legacy RSA key pair from system keychain")
         
-        let publicKeyTag = "com.forgerock.ios.device-identifier.public-key".data(using: .utf8)!
-        let privateKeyTag = "com.forgerock.ios.device-identifier.private-key".data(using: .utf8)!
+        let publicKeyTag = LegacyKeychainKeys.publicKeyTag.data(using: .utf8)!
+        let privateKeyTag = LegacyKeychainKeys.privateKeyTag.data(using: .utf8)!
         
         // Query for public key
         let publicKeyQuery: [String: Any] = [
@@ -159,17 +167,6 @@ internal actor LegacyDeviceIdentifier {
         if let migration = try await migrateLegacyKeyPair() {
             return migration.identifier
         }
-        return nil
-    }
-    
-    /// Gets the keychain access group if configured
-    /// This should match the access group used by FRAuth SDK
-    /// - Returns: Access group string if available
-    private func getKeychainAccessGroup() -> String? {
-        // Check if there's a configured access group in the app's entitlements
-        // FRAuth SDK would use the first access group from keychain-access-groups
-        // For now, return nil to search in the default group
-        // This can be enhanced to read from configuration if needed
         return nil
     }
     

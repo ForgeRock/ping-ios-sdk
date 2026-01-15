@@ -19,6 +19,32 @@ import PingStorage
 /// ```swift
 /// let deviceId = DefaultDeviceIdentifier()
 /// let identifier = try await deviceId.id
+///
+/// // In case of migration from the FR SDK when using a custom Keychain Access Group use the following
+///
+///
+/// func setupDeviceIdentifierWithMigration() async throws -> String {
+///     // If your legacy FRAuth SDK used a custom keychain access group,
+///     // specify it here to enable migration
+///     let configuration = DeviceIdentifierConfiguration(
+///         keySize: DeviceIdentifierConfiguration.default.keySize,
+///         keychainAccount: DeviceIdentifierConfiguration.default.keychainAccount,
+///         useEncryption: DeviceIdentifierConfiguration.default.useEncryption,
+///         legacyKeychainAccessGroup: "com.test" // Set Legacy Keychain Access Group
+///     )
+///
+///     // Initialize with configuration
+///    let deviceIdentifier = try DefaultDeviceIdentifier(
+///         configuration: configuration,
+///         logger: LogManager.standard  // Optional: for debugging migration
+///     )
+///
+///     // First access will trigger migration if legacy identifier exists
+///     let deviceId = try await deviceIdentifier.id
+///     print("Device ID: \(deviceId)")
+///
+///     return deviceId
+/// }
 /// ```
 public actor DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     /// Configuration for the device identifier
@@ -213,7 +239,10 @@ public actor DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     /// Attempts to migrate a legacy device identifier from FRAuth SDK format
     /// - Returns: The legacy identifier if found and successfully migrated, otherwise nil
     private func migrateLegacyIdentifier() async throws -> String? {
-        let legacyIdentifier = LegacyDeviceIdentifier(logger: logger)
+        let legacyIdentifier = LegacyDeviceIdentifier(
+            accessGroup: configuration.legacyKeychainAccessGroup,
+            logger: logger
+        )
         
         // First try direct retrieval of the identifier string
         if let legacyId = try await legacyIdentifier.getLegacyIdentifier() {
