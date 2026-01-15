@@ -74,98 +74,92 @@ internal actor LegacyDeviceIdentifier {
         }.value
     }
     
-    /// Creates a legacy keychain storage instance
-    /// - Parameter account: Keychain account (typically the legacy identifier key)
-    /// - Returns: Storage instance configured for legacy keychain access
-    static func createLegacyStorage(account: String = LegacyKeychainKeys.identifier, logger: Logger? = nil) -> any Storage<String> {
-        return KeychainStorage<String>(
-            account: account,
-            encryptor: NoEncryptor()
-        )
-    }
-    
-    /// Attempts to migrate legacy identifier by regenerating it from public key data if needed
-    /// This handles the case where the identifier exists but may need regeneration
-    /// - Returns: The migrated identifier if successful, otherwise nil
-    func migrateLegacyIdentifierFromPublicKey() async throws -> String? {
-        logger?.i("Attempting to regenerate legacy identifier from public key data")
+    /// Attempts to migrate legacy RSA key pair from system keychain
+    /// - Returns: A tuple containing the legacy identifier and key pair data if found, otherwise nil
+    func migrateLegacyKeyPair() async throws -> (identifier: String, keyPair: DeviceIdentifierKeyPair)? {
+        logger?.i("Attempting to migrate legacy RSA key pair from system keychain")
         
-        return await Task.detached { () -> String? in
-            // Build query for legacy public key data
-            var query: [String: Any] = [
-                kSecClass as String: kSecClassGenericPassword,
-                kSecAttrAccount as String: LegacyKeychainKeys.publicKeyData,
-                kSecReturnData as String: true,
-                kSecMatchLimit as String: kSecMatchLimitOne
-            ]
-            
-            // Add access group if available
-            if let accessGroup = await self.getKeychainAccessGroup() {
-                query[kSecAttrAccessGroup as String] = accessGroup
+        let publicKeyTag = "com.forgerock.ios.device-identifier.public-key".data(using: .utf8)!
+        let privateKeyTag = "com.forgerock.ios.device-identifier.private-key".data(using: .utf8)!
+        
+        // Query for public key
+        let publicKeyQuery: [String: Any] = [
+            kSecClass as String: kSecClassKey,
+            kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
+            kSecAttrApplicationTag as String: publicKeyTag,
+            kSecReturnRef as String: true
+        ]
+        
+        var publicKeyResult: AnyObject?
+        let publicKeyStatus = SecItemCopyMatching(publicKeyQuery as CFDictionary, &publicKeyResult)
+        
+        guard publicKeyStatus == errSecSuccess, let publicSecKey = publicKeyResult as! SecKey? else {
+            if publicKeyStatus == errSecItemNotFound {
+                logger?.d("No legacy public key found in system keychain")
+            } else {
+                logger?.w("Failed to query for legacy public key. Status: \(publicKeyStatus)", error: nil)
             }
+            return nil
+        }
+        
+        logger?.i("Found legacy RSA public key in system keychain")
+        
+        // Export public key
+        var publicError: Unmanaged<CFError>?
+        guard let publicKeyData = SecKeyCopyExternalRepresentation(publicSecKey, &publicError) as Data? else {
+            logger?.e("Could not export legacy public key", error: publicError?.takeRetainedValue())
+            return nil
+        }
+        
+        logger?.i("Exported legacy public key: \(publicKeyData.count) bytes")
+        
+        // Query for private key
+        let privateKeyQuery: [String: Any] = [
+            kSecClass as String: kSecClassKey,
+            kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
+            kSecAttrApplicationTag as String: privateKeyTag,
+            kSecReturnRef as String: true
+        ]
+        
+        var privateKeyResult: AnyObject?
+        let privateKeyStatus = SecItemCopyMatching(privateKeyQuery as CFDictionary, &privateKeyResult)
+        
+        var privateKeyData: Data?
+        if privateKeyStatus == errSecSuccess, let privateSecKey = privateKeyResult as! SecKey? {
+            logger?.i("Found legacy RSA private key in system keychain")
             
-            var result: AnyObject?
-            let status = SecItemCopyMatching(query as CFDictionary, &result)
-            
-            guard status == errSecSuccess, let keyData = result as? Data else {
-                if status == errSecItemNotFound {
-                    self.logger?.d("No legacy public key data found")
-                } else {
-                    self.logger?.w("Failed to retrieve legacy public key. Status: \(status)", error: nil)
-                }
-                return nil
+            var privateError: Unmanaged<CFError>?
+            if let exportedPrivateKey = SecKeyCopyExternalRepresentation(privateSecKey, &privateError) as Data? {
+                privateKeyData = exportedPrivateKey
+                logger?.i("Exported legacy private key: \(exportedPrivateKey.count) bytes")
+            } else {
+                logger?.w("Could not export legacy private key, continuing with public key only", error: privateError?.takeRetainedValue())
             }
-            
-            self.logger?.i("Found legacy public key data, regenerating identifier")
-            let identifier = await self.hashAndBase64Data(keyData)
-            
-            // Store the regenerated identifier using raw keychain for consistency
-            await self.saveLegacyIdentifier(identifier)
-            
-            return identifier
-        }.value
+        } else {
+            logger?.d("No legacy private key found in system keychain (Status: \(privateKeyStatus))")
+        }
+        
+        // Generate identifier from public key (matching FRAuth SDK)
+        let identifier = hashAndBase64Data(publicKeyData)
+        logger?.i("Generated identifier from legacy key: \(identifier)")
+        
+        // Create key pair (private key may be nil/empty)
+        let keyPair = DeviceIdentifierKeyPair(
+            privateKey: privateKeyData,
+            publicKey: publicKeyData
+        )
+        
+        return (identifier: identifier, keyPair: keyPair)
     }
     
-    /// Saves the legacy identifier to keychain using direct Security framework calls
-    /// - Parameter identifier: The identifier to save
-    private func saveLegacyIdentifier(_ identifier: String) async {
-        await Task.detached {
-            guard let data = identifier.data(using: .utf8) else {
-                self.logger?.e("Failed to encode identifier as UTF-8", error: nil)
-                return
-            }
-            
-            var query: [String: Any] = [
-                kSecClass as String: kSecClassGenericPassword,
-                kSecAttrAccount as String: LegacyKeychainKeys.identifier,
-                kSecValueData as String: data,
-                kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-            ]
-            
-            if let accessGroup = await self.getKeychainAccessGroup() {
-                query[kSecAttrAccessGroup as String] = accessGroup
-            }
-            
-            // Try to add, if it exists, update it
-            var status = SecItemAdd(query as CFDictionary, nil)
-            
-            if status == errSecDuplicateItem {
-                let updateQuery: [String: Any] = [
-                    kSecClass as String: kSecClassGenericPassword,
-                    kSecAttrAccount as String: LegacyKeychainKeys.identifier
-                ]
-                let updateAttributes: [String: Any] = [
-                    kSecValueData as String: data
-                ]
-                status = SecItemUpdate(updateQuery as CFDictionary, updateAttributes as CFDictionary)
-            }
-            
-            if status != errSecSuccess {
-                self.logger?.w("Failed to save regenerated legacy identifier. Status: \(status)", error: nil)
-            } else {
-                self.logger?.i("Successfully saved regenerated legacy identifier")
-            }
-        }.value
+    /// Attempts to regenerate legacy identifier from public key (for backward compatibility)
+    /// - Returns: The legacy identifier if public key is found, otherwise nil
+    func migrateLegacyIdentifierFromPublicKey() async throws -> String? {
+        // Try to migrate the full key pair first
+        if let migration = try await migrateLegacyKeyPair() {
+            return migration.identifier
+        }
+        return nil
     }
     
     /// Gets the keychain access group if configured

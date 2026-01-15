@@ -193,9 +193,9 @@ public actor DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
             logger?.d("No legacy identifier found, will generate new one")
         } catch {
             // Migration found a legacy ID but failed to store it in new format
-            // Log the error but continue - user experience is more important than preserving legacy ID
-            logger?.e("Failed to migrate legacy device identifier. Will generate a new one instead.", error: error)
-            // Fall through to generate a new identifier
+            // Log the error and continue with generating a new identifier
+            logger?.e("Failed to migrate legacy device identifier, will generate new one instead", error: error)
+            // Fall through to generation step below
         }
         
         // 3. Keychain is empty and no legacy identifier, so generate a new key pair
@@ -215,19 +215,20 @@ public actor DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     private func migrateLegacyIdentifier() async throws -> String? {
         let legacyIdentifier = LegacyDeviceIdentifier(logger: logger)
         
-        // First try direct retrieval using raw keychain queries
+        // First try direct retrieval of the identifier string
         if let legacyId = try await legacyIdentifier.getLegacyIdentifier() {
-            logger?.i("Found legacy identifier via direct keychain query")
-            // Store in new format
-            try await storeLegacyIdentifierInNewFormat(legacyId)
+            logger?.i("Found legacy identifier string via direct keychain query")
+            // Store in new format with empty key pair (identifier only)
+            try await storeLegacyIdentifierInNewFormat(legacyId, keyPair: nil)
             return legacyId
         }
         
-        // If direct retrieval failed, try regenerating from public key
-        if let regeneratedId = try await legacyIdentifier.migrateLegacyIdentifierFromPublicKey() {
-            logger?.i("Regenerated legacy identifier from public key data")
-            try await storeLegacyIdentifierInNewFormat(regeneratedId)
-            return regeneratedId
+        // If direct retrieval failed, try migrating the full key pair from system keychain
+        if let migration = try await legacyIdentifier.migrateLegacyKeyPair() {
+            logger?.i("Successfully migrated legacy key pair from system keychain")
+            // Store both the identifier and the actual key pair data
+            try await storeLegacyIdentifierInNewFormat(migration.identifier, keyPair: migration.keyPair)
+            return migration.identifier
         }
         
         logger?.d("No legacy identifier found to migrate")
@@ -235,13 +236,24 @@ public actor DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     }
     
     /// Stores the legacy identifier in the new DeviceIdentifierImpl format
-    /// - Parameter legacyId: The legacy identifier to store
-    private func storeLegacyIdentifierInNewFormat(_ legacyId: String) async throws {
+    /// - Parameters:
+    ///   - legacyId: The legacy identifier to store
+    ///   - keyPair: Optional key pair data (if available from system keychain migration)
+    private func storeLegacyIdentifierInNewFormat(_ legacyId: String, keyPair: DeviceIdentifierKeyPair?) async throws {
         logger?.i("Storing migrated legacy identifier in new format")
-        // Create a special DeviceIdentifierImpl that wraps the legacy identifier
-        // We'll use empty key data since the legacy system only stored the final hash
-        let emptyKeyPair = DeviceIdentifierKeyPair(privateKey: Data(), publicKey: Data())
-        let impl = DeviceIdentifierImpl(deviceIdentifierKeyPair: emptyKeyPair, legacyIdentifier: legacyId)
+        
+        let finalKeyPair: DeviceIdentifierKeyPair
+        if let keyPair = keyPair {
+            // We have the actual key pair from legacy system keychain
+            logger?.i("Storing with migrated key pair (public: \(keyPair.publicKey.count) bytes, private: \(keyPair.privateKey?.count ?? 0) bytes)")
+            finalKeyPair = keyPair
+        } else {
+            // We only have the identifier string, use empty key data
+            logger?.i("Storing identifier only (no key pair available)")
+            finalKeyPair = DeviceIdentifierKeyPair(privateKey: Data(), publicKey: Data())
+        }
+        
+        let impl = DeviceIdentifierImpl(deviceIdentifierKeyPair: finalKeyPair, legacyIdentifier: legacyId)
         try await keychainService.save(item: impl)
     }
     

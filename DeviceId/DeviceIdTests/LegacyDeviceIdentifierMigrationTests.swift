@@ -30,36 +30,59 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
     }
     
     private func cleanupKeychain() {
-        let group = DispatchGroup()
+        let semaphore = DispatchSemaphore(value: 0)
         
-        // Clean up default configuration
-        group.enter()
-        Task.detached {
-            try? await DefaultDeviceIdentifier(configuration: .default).keychainService.delete()
-            group.leave()
+        Task {
+            async let defaultCleanup: Void = {
+                try? await DefaultDeviceIdentifier(configuration: .default).keychainService.delete()
+            }()
+            
+            async let legacyCleanup: Void = {
+                await LegacyDeviceIdentifierMigrationTests.deleteLegacyKeychainItem(account: LegacyDeviceIdentifier.LegacyKeychainKeys.identifier)
+                await LegacyDeviceIdentifierMigrationTests.deleteLegacyKeychainItem(account: LegacyDeviceIdentifier.LegacyKeychainKeys.publicKeyData)
+                await LegacyDeviceIdentifierMigrationTests.deleteLegacyKeychainItem(account: LegacyDeviceIdentifier.LegacyKeychainKeys.privateKeyData)
+            }()
+            
+            async let systemKeychainCleanup: Void = {
+                await LegacyDeviceIdentifierMigrationTests.deleteLegacySystemKeychainKeys()
+            }()
+            
+            await defaultCleanup
+            await legacyCleanup
+            await systemKeychainCleanup
+            semaphore.signal()
         }
         
-        // Clean up legacy storage locations using raw keychain access
-        group.enter()
-        Task.detached {
-            await LegacyDeviceIdentifierMigrationTests.deleteLegacyKeychainItem(account: LegacyDeviceIdentifier.LegacyKeychainKeys.identifier)
-            await LegacyDeviceIdentifierMigrationTests.deleteLegacyKeychainItem(account: LegacyDeviceIdentifier.LegacyKeychainKeys.publicKeyData)
-            await LegacyDeviceIdentifierMigrationTests.deleteLegacyKeychainItem(account: LegacyDeviceIdentifier.LegacyKeychainKeys.privateKeyData)
-            group.leave()
-        }
+        semaphore.wait()
+    }
+    
+    /// Helper to delete legacy system keychain keys (RSA keys stored with kSecClassKey)
+    private static func deleteLegacySystemKeychainKeys() async {
+        let publicKeyTag = "com.forgerock.ios.device-identifier.public-key".data(using: .utf8)!
+        let privateKeyTag = "com.forgerock.ios.device-identifier.private-key".data(using: .utf8)!
         
-        group.wait()
+        // Delete public key
+        let publicKeyQuery: [String: Any] = [
+            kSecClass as String: kSecClassKey,
+            kSecAttrApplicationTag as String: publicKeyTag
+        ]
+        SecItemDelete(publicKeyQuery as CFDictionary)
+        
+        // Delete private key
+        let privateKeyQuery: [String: Any] = [
+            kSecClass as String: kSecClassKey,
+            kSecAttrApplicationTag as String: privateKeyTag
+        ]
+        SecItemDelete(privateKeyQuery as CFDictionary)
     }
     
     /// Helper to delete legacy keychain items using raw Security framework
     private static func deleteLegacyKeychainItem(account: String) async {
-        await Task.detached {
-            let query: [String: Any] = [
-                kSecClass as String: kSecClassGenericPassword,
-                kSecAttrAccount as String: account
-            ]
-            SecItemDelete(query as CFDictionary)
-        }.value
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: account
+        ]
+        SecItemDelete(query as CFDictionary)
     }
     
     /// Helper to save legacy keychain item using raw Security framework (simulating FRAuth SDK)
@@ -188,20 +211,46 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
         XCTAssertEqual(generatedId, secondCallId)
     }
     
-    /// Test migration from public key data when identifier doesn't exist but public key does
+    /// Test migration from public key when identifier doesn't exist but public key SecKey does
     func testMigrationFromLegacyPublicKey() async throws {
-        // GIVEN: Legacy public key data exists but no identifier (using raw keychain like FRAuth SDK would)
-        let samplePublicKeyData = Data("sample_public_key_data".utf8)
-        try await saveLegacyPublicKeyData(samplePublicKeyData)
+        // GIVEN: A legacy RSA public key exists in system keychain (simulating FRAuth SDK)
+        // We need to create a real RSA key pair and store it with the legacy application tag
+        let publicKeyTag = "com.forgerock.ios.device-identifier.public-key".data(using: .utf8)!
         
-        // WHEN: Creating a DefaultDeviceIdentifier
+        // Clean up any existing key first
+        let deleteQuery: [String: Any] = [
+            kSecClass as String: kSecClassKey,
+            kSecAttrApplicationTag as String: publicKeyTag
+        ]
+        SecItemDelete(deleteQuery as CFDictionary)
+        
+        // Generate a test RSA key pair (matching FRAuth SDK behavior)
+        let attributes: CFDictionary = [
+            kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
+            kSecAttrKeySizeInBits as String: 2048,
+            kSecPublicKeyAttrs as String: [
+                kSecAttrIsPermanent as String: true,
+                kSecAttrApplicationTag as String: publicKeyTag
+            ] as CFDictionary
+        ] as CFDictionary
+        
+        var publicKey: SecKey?
+        var privateKey: SecKey?
+        let status = SecKeyGeneratePair(attributes, &publicKey, &privateKey)
+        
+        guard status == errSecSuccess, let pubKey = publicKey else {
+            XCTFail("Failed to generate test RSA key pair. Status: \(status)")
+            return
+        }
+        
+        // WHEN: Creating a DefaultDeviceIdentifier (should find the legacy key)
         let deviceIdentifier = try DefaultDeviceIdentifier()
         let migratedId = try await deviceIdentifier.id
         
-        // THEN: An identifier should be generated from the public key
+        // THEN: An identifier should be generated from the legacy public key
         XCTAssertFalse(migratedId.isEmpty, "Should generate identifier from legacy public key")
-        // Legacy migration uses SHA-1 hash that is base64-encoded (20 bytes -> ~28 chars base64)
-        XCTAssertTrue(migratedId.count >= 27 && migratedId.count <= 28, "Legacy identifier from public key should be base64-encoded SHA-1 hash (~28 chars), got \(migratedId.count)")
+        // Legacy migration uses SHA-1 hash with hex encoding (40 characters)
+        XCTAssertEqual(migratedId.count, 40, "Legacy identifier from public key should be SHA-1 hex encoded (40 chars)")
         
         // AND: The same identifier should be returned on subsequent calls
         let secondCallId = try await deviceIdentifier.id
@@ -211,6 +260,9 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
         let newInstance = try DefaultDeviceIdentifier()
         let newInstanceId = try await newInstance.id
         XCTAssertEqual(migratedId, newInstanceId, "Migrated identifier should persist")
+        
+        // Clean up the test key
+        SecItemDelete(deleteQuery as CFDictionary)
     }
     
     /// Test that regenerateIdentifier works correctly even with legacy migration
@@ -388,25 +440,55 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
         XCTAssertEqual(decodedId, legacyId, "Legacy identifier should survive encoding/decoding")
     }
     
-    /// Test that the hashing format matches FRAuth SDK (SHA-1 + base64, not hex)
-    func testLegacyHashingFormatIsBase64NotHex() async throws {
-        // GIVEN: A known public key data
-        let testData = Data("test_public_key_data".utf8)
-        try await saveLegacyPublicKeyData(testData)
+    /// Test that the hashing format matches FRAuth SDK (SHA-1 + hex encoding)
+    func testLegacyHashingFormatIsHexNotBase64() async throws {
+        // GIVEN: A legacy RSA public key exists in system keychain
+        let publicKeyTag = "com.forgerock.ios.device-identifier.public-key".data(using: .utf8)!
+        
+        // Clean up any existing key first
+        let deleteQuery: [String: Any] = [
+            kSecClass as String: kSecClassKey,
+            kSecAttrApplicationTag as String: publicKeyTag
+        ]
+        SecItemDelete(deleteQuery as CFDictionary)
+        
+        // Generate a test RSA key pair
+        let attributes: CFDictionary = [
+            kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
+            kSecAttrKeySizeInBits as String: 2048,
+            kSecPublicKeyAttrs as String: [
+                kSecAttrIsPermanent as String: true,
+                kSecAttrApplicationTag as String: publicKeyTag
+            ] as CFDictionary
+        ] as CFDictionary
+        
+        var publicKey: SecKey?
+        var privateKey: SecKey?
+        let status = SecKeyGeneratePair(attributes, &publicKey, &privateKey)
+        
+        guard status == errSecSuccess else {
+            XCTFail("Failed to generate test RSA key pair")
+            return
+        }
         
         // WHEN: Migrating the identifier
         let deviceIdentifier = try DefaultDeviceIdentifier()
         let migratedId = try await deviceIdentifier.id
         
-        // THEN: The identifier should be base64-encoded (contains chars like +, /, =)
-        // Base64 uses A-Z, a-z, 0-9, +, /, and =
-        let base64CharSet = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=")
-        let idCharSet = CharacterSet(charactersIn: migratedId)
-        XCTAssertTrue(idCharSet.isSubset(of: base64CharSet), "Legacy identifier should use base64 encoding, not hex")
-        
-        // AND: Should NOT be a hex string (hex only uses 0-9, a-f)
+        // THEN: The identifier should be hex-encoded (only 0-9, a-f)
         let isHexOnly = migratedId.allSatisfy { "0123456789abcdefABCDEF".contains($0) }
-        XCTAssertFalse(isHexOnly || migratedId.count == 40, "Legacy identifier should not be a hex string")
+        XCTAssertTrue(isHexOnly, "Legacy identifier should use hex encoding (only 0-9, a-f)")
+        
+        // AND: Should be 40 characters (SHA-1 hash in hex)
+        XCTAssertEqual(migratedId.count, 40, "Legacy identifier should be SHA-1 hex (40 characters)")
+        
+        // AND: Should NOT contain base64-specific characters like +, /, =
+        XCTAssertFalse(migratedId.contains("+"), "Should not contain base64 character '+'")
+        XCTAssertFalse(migratedId.contains("/"), "Should not contain base64 character '/'")
+        XCTAssertFalse(migratedId.contains("="), "Should not contain base64 character '='")
+        
+        // Clean up
+        SecItemDelete(deleteQuery as CFDictionary)
     }
 }
 
