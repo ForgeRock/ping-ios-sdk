@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingLogger
 
 /// URLSession-based implementation of `HttpRequest`.
 ///
@@ -266,11 +267,13 @@ extension URLSessionHttpRequest {
         
         guard JSONSerialization.isValidJSONObject(json) else {
             jsonSerializationFailed = true
+            LogManager.standard.d("URLSessionHttpRequest: Invalid JSON object for serialization.")
             return nil
         }
         
         guard let data = try? JSONSerialization.data(withJSONObject: json, options: []) else {
             jsonSerializationFailed = true
+            LogManager.standard.d("URLSessionHttpRequest: JSON serialization failed.")
             return nil
         }
         

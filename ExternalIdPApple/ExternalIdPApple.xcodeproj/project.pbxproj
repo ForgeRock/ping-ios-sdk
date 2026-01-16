@@ -44,6 +44,7 @@
 
 /* Begin PBXFileReference section */
 		A525E7A72DD7640400B02C17 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A53A9B512F198448000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EC5016412E43A731006D8C3A /* AppleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleHandler.swift; sourceTree = "<group>"; };
 		EC5016442E43A847006D8C3A /* SIWAHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SIWAHelpers.swift; sourceTree = "<group>"; };
 		ECA7A2A32DC24BC60011E59C /* PingExternalIdPApple.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingExternalIdPApple.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,6 +86,7 @@
 		ECA7A2992DC24BC60011E59C = {
 			isa = PBXGroup;
 			children = (
+				A53A9B512F198448000E2F2C /* README.md */,
 				ECA7A2C72DC24C540011E59C /* ExternalIdPApple */,
 				ECA7A2CA2DC24C580011E59C /* ExternalIdPAppleTests */,
 				ECA7A2CC2DC24C5F0011E59C /* Frameworks */,
@@ -104,10 +106,10 @@
 		ECA7A2C72DC24C540011E59C /* ExternalIdPApple */ = {
 			isa = PBXGroup;
 			children = (
+				ECA7A2D62DC24CB80011E59C /* PrivacyInfo.xcprivacy */,
+				ECA7A2D12DC24C7D0011E59C /* ExternalIdPApple.h */,
 				EC5016432E43A82C006D8C3A /* Helpers */,
 				ECA7A2D52DC24CA50011E59C /* Handlers */,
-				ECA7A2D12DC24C7D0011E59C /* ExternalIdPApple.h */,
-				ECA7A2D62DC24CB80011E59C /* PrivacyInfo.xcprivacy */,
 			);
 			path = ExternalIdPApple;
 			sourceTree = "<group>";
@@ -425,7 +427,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPApple;
@@ -459,7 +461,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPApple;
@@ -481,7 +483,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPAppleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -499,7 +501,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPAppleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;

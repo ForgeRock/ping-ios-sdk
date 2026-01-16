@@ -161,6 +161,7 @@
 		95DA7BFA2E4E7DCC00168E1A /* ValidatePasswordCallbackE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatePasswordCallbackE2ETest.swift; sourceTree = "<group>"; };
 		A50585142E3D05FA004813B5 /* ConfirmationCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationCallbackTests.swift; sourceTree = "<group>"; };
 		A50585162E3D13B2004813B5 /* KbaCreateCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KbaCreateCallbackTests.swift; sourceTree = "<group>"; };
+		A53A9B492F1983D6000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A5768D1D2E29B37A000290EE /* ConsentMappingCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsentMappingCallback.swift; sourceTree = "<group>"; };
 		A5AB903F2E26954A000E1089 /* TermsAndConditionsCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditionsCallback.swift; sourceTree = "<group>"; };
 		A5AB90412E2695B7000E1089 /* TextOutputCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextOutputCallback.swift; sourceTree = "<group>"; };
@@ -310,6 +311,7 @@
 		EC727A1A2E019243005D9E28 = {
 			isa = PBXGroup;
 			children = (
+				A53A9B492F1983D6000E2F2C /* README.md */,
 				EC727A5C2E019254005D9E28 /* Journey */,
 				EC727A5F2E019258005D9E28 /* JourneyTests */,
 				EC727A902E02DCA9005D9E28 /* Frameworks */,
@@ -854,7 +856,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.JourneyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -872,7 +874,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.JourneyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;

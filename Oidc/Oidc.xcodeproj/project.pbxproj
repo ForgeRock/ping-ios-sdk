@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A5COM0012F0100000000001 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5COM0002F0100000000001 /* PingCommons.framework */; };
-		A5COM0022F0100000000001 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5COM0002F0100000000001 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3AB1CA102BD6F99C003FCE3C /* PingOidc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AB1CA072BD6F99C003FCE3C /* PingOidc.framework */; };
 		3AB1CA162BD6F99C003FCE3C /* Oidc.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AB1CA0A2BD6F99C003FCE3C /* Oidc.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3AB1CA2D2BD7727B003FCE3C /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CA2A2BD7727B003FCE3C /* Token.swift */; };
@@ -34,6 +32,8 @@
 		A50981BE2CEBDF1700F4B487 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */; };
 		A50981BF2CEBDF1700F4B487 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5A712442CAC520500B7DD58 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */; };
+		A5COM0012F0100000000001 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5COM0002F0100000000001 /* PingCommons.framework */; };
+		A5COM0022F0100000000001 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5COM0002F0100000000001 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC0CB5922E266D7100A82D6C /* OidcWeb.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5912E266D6C00A82D6C /* OidcWeb.swift */; };
 		EC0CB5952E266F3900A82D6C /* Oidc.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5942E266F3400A82D6C /* Oidc.swift */; };
 		EC23D5132E295AAE00C43D42 /* Web.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5122E295AAB00C43D42 /* Web.swift */; };
@@ -67,7 +67,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		A5COM0002F0100000000001 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AB1CA072BD6F99C003FCE3C /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AB1CA0A2BD6F99C003FCE3C /* Oidc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Oidc.h; sourceTree = "<group>"; };
 		3AB1CA0F2BD6F99C003FCE3C /* OidcTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OidcTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -91,7 +90,9 @@
 		A50966EE2C4FF75400A4E5B5 /* MockStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockStorage.swift; sourceTree = "<group>"; };
 		A50967082C50843E00A4E5B5 /* MockAPIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIEndpoint.swift; sourceTree = "<group>"; };
 		A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A53A9B572F1984B3000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A5COM0002F0100000000001 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC0CB5912E266D6C00A82D6C /* OidcWeb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcWeb.swift; sourceTree = "<group>"; };
 		EC0CB5942E266F3400A82D6C /* Oidc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Oidc.swift; sourceTree = "<group>"; };
 		EC23D5122E295AAB00C43D42 /* Web.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Web.swift; sourceTree = "<group>"; };
@@ -133,6 +134,7 @@
 		3AB1C9FD2BD6F99C003FCE3C = {
 			isa = PBXGroup;
 			children = (
+				A53A9B572F1984B3000E2F2C /* README.md */,
 				3AB1CA092BD6F99C003FCE3C /* Oidc */,
 				3AB1CA132BD6F99C003FCE3C /* OidcTests */,
 				3AB1CA082BD6F99C003FCE3C /* Products */,
@@ -152,9 +154,9 @@
 		3AB1CA092BD6F99C003FCE3C /* Oidc */ = {
 			isa = PBXGroup;
 			children = (
-				EC0CB5932E266F2D00A82D6C /* Module */,
 				A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */,
 				3AB1CA0A2BD6F99C003FCE3C /* Oidc.h */,
+				EC0CB5932E266F2D00A82D6C /* Module */,
 				3AB1CA322BD8823C003FCE3C /* Agent.swift */,
 				A50966B72C4C34CB00A4E5B5 /* AuthCode.swift */,
 				3AB1CA3C2BD961A2003FCE3C /* OidcClient.swift */,
@@ -509,7 +511,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Oidc;
@@ -543,7 +545,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Oidc;
@@ -565,7 +567,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.OidcTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -586,7 +588,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.OidcTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;

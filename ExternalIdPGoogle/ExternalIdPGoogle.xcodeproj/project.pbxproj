@@ -45,6 +45,7 @@
 
 /* Begin PBXFileReference section */
 		A525E7AB2DD7640D00B02C17 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A53A9B502F198434000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EC5016462E43B35A006D8C3A /* GoogleHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleHandler.swift; sourceTree = "<group>"; };
 		ECA7A2E72DC251860011E59C /* PingExternalIdPGoogle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingExternalIdPGoogle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA7A2F02DC251870011E59C /* ExternalIdPGoogleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExternalIdPGoogleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,6 +80,7 @@
 		ECA7A2DD2DC251860011E59C = {
 			isa = PBXGroup;
 			children = (
+				A53A9B502F198434000E2F2C /* README.md */,
 				ECA7A3102DC251EF0011E59C /* ExternalIdPGoogle */,
 				ECA7A3132DC251F10011E59C /* ExternalIdPGoogleTests */,
 				ECA7A30A2DC251A40011E59C /* Frameworks */,
@@ -106,9 +108,9 @@
 		ECA7A3102DC251EF0011E59C /* ExternalIdPGoogle */ = {
 			isa = PBXGroup;
 			children = (
-				ECA7A31A2DC252C40011E59C /* Handlers */,
-				ECA7A31D2DC253710011E59C /* ExternalIdPGoogle.h */,
 				ECA7A31E2DC253710011E59C /* PrivacyInfo.xcprivacy */,
+				ECA7A31D2DC253710011E59C /* ExternalIdPGoogle.h */,
+				ECA7A31A2DC252C40011E59C /* Handlers */,
 			);
 			path = ExternalIdPGoogle;
 			sourceTree = "<group>";
@@ -423,7 +425,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPGoogle;
@@ -461,7 +463,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPGoogle;
@@ -487,7 +489,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPGoogleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -509,7 +511,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPGoogleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

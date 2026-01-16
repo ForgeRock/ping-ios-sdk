@@ -58,6 +58,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A53A9B532F19846D000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A552A7CC2F1699EE003CA76C /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5AB9FFF2EF0BBE6000E42B7 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk/System/Library/Frameworks/Network.framework; sourceTree = DEVELOPER_DIR; };
 		EC0815B72D49377500F1AD02 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -109,6 +110,7 @@
 		EC0815AD2D49377500F1AD02 = {
 			isa = PBXGroup;
 			children = (
+				A53A9B532F19846D000E2F2C /* README.md */,
 				EC0815E32D49387A00F1AD02 /* ExternalIdP */,
 				ECA53F942D635CF8002B35D4 /* ExternalIdPTests */,
 				ECBF06432D50EBF60066A3BD /* Frameworks */,

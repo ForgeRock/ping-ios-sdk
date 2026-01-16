@@ -29,6 +29,7 @@ public final class URLSessionHttpClient: NSObject, HttpClientProtocol, @unchecke
     private let timeout: TimeInterval
     private let logger: Logger
     private let delegate: URLSessionTaskDelegate?
+    private let bodyLogTruncationLimit: Int? = 4096
     
     /// Immutable copy of request interceptors, frozen at initialization for thread-safe access.
     private let requestInterceptors: [HttpRequestInterceptor]
@@ -211,7 +212,12 @@ public final class URLSessionHttpClient: NSObject, HttpClientProtocol, @unchecke
         }
         
         if let data =  responseData, let dataString = String(data: data, encoding: .utf8) {
-            log += "Response Data: \(dataString)"
+            if let limit = bodyLogTruncationLimit, dataString.count > limit {
+                let truncated = String(dataString.prefix(limit))
+                log += "Response Data (truncated to \(limit) chars): \(truncated)... [\(dataString.count - limit) more characters]"
+            } else {
+                log += "Response Data: \(dataString)"
+            }
         }
         LogManager.standard.d(log)
     }

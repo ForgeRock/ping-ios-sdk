@@ -56,6 +56,7 @@
 		1B18D64B2EF1CC740004F205 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B18D64E2EF1CC860004F205 /* DeviceTamperingPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTamperingPolicy.swift; sourceTree = "<group>"; };
 		1B18D6502EF1CCFD0004F205 /* DeviceTamperingPolicyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTamperingPolicyTests.swift; sourceTree = "<group>"; };
+		A53A9B472F1983A7000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EC59E1592E7AD21600A91E66 /* PingTamperDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingTamperDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC59E1622E7AD21700A91E66 /* TamplerDetectorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TamplerDetectorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC59E30B2E7D7E1300A91E66 /* MockTamperDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTamperDetector.swift; sourceTree = "<group>"; };
@@ -99,6 +100,7 @@
 		EC59E14F2E7AD21600A91E66 = {
 			isa = PBXGroup;
 			children = (
+				A53A9B472F1983A7000E2F2C /* README.md */,
 				EC59E31D2E7D7E1D00A91E66 /* TamperDetector */,
 				EC59E30E2E7D7E1300A91E66 /* TamperDetectorTests */,
 				ECC52B2A2E81B34700C468C7 /* Frameworks */,
@@ -129,9 +131,10 @@
 		EC59E31D2E7D7E1D00A91E66 /* TamperDetector */ = {
 			isa = PBXGroup;
 			children = (
+				EC59E3122E7D7E1D00A91E66 /* PrivacyInfo.xcprivacy */,
+				EC59E31A2E7D7E1D00A91E66 /* TamperDetector.h */,
 				1B18D64E2EF1CC860004F205 /* DeviceTamperingPolicy.swift */,
 				EC59E3112E7D7E1D00A91E66 /* DyldDetector.swift */,
-				EC59E3122E7D7E1D00A91E66 /* PrivacyInfo.xcprivacy */,
 				EC59E3132E7D7E1D00A91E66 /* RestrictedDirectoriesWritableDetector.swift */,
 				EC59E3142E7D7E1D00A91E66 /* SandboxDetector.swift */,
 				EC59E3152E7D7E1D00A91E66 /* SandboxRestrictedFilesAccessable.swift */,
@@ -139,7 +142,6 @@
 				EC59E3172E7D7E1D00A91E66 /* SuspiciousFilesExistenceDetector.swift */,
 				EC59E3182E7D7E1D00A91E66 /* SuspiciousObjCClassesDetector.swift */,
 				EC59E3192E7D7E1D00A91E66 /* SymbolicLinkDetector.swift */,
-				EC59E31A2E7D7E1D00A91E66 /* TamperDetector.h */,
 				EC59E31B2E7D7E1D00A91E66 /* TamperDetector.swift */,
 				EC59E31C2E7D7E1D00A91E66 /* URLSchemeDetector.swift */,
 			);

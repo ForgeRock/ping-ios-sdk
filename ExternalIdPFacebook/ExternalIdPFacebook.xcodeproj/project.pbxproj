@@ -46,6 +46,7 @@
 
 /* Begin PBXFileReference section */
 		A525E7A32DD763F900B02C17 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A53A9B522F198458000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EC5EA53B2DC2295E000C2737 /* PingExternalIdPFacebook.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingExternalIdPFacebook.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5EA5442DC2295E000C2737 /* ExternalIdPFacebookTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExternalIdPFacebookTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5EA5652DC229A8000C2737 /* FacebookRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookRequestHandler.swift; sourceTree = "<group>"; };
@@ -81,6 +82,7 @@
 		EC5EA5312DC2295E000C2737 = {
 			isa = PBXGroup;
 			children = (
+				A53A9B522F198458000E2F2C /* README.md */,
 				EC5EA5662DC229A8000C2737 /* ExternalIdPFacebook */,
 				EC5EA5692DC229A8000C2737 /* ExternalIdPFacebookTests */,
 				EC5EA5602DC2298D000C2737 /* Frameworks */,
@@ -108,9 +110,9 @@
 		EC5EA5662DC229A8000C2737 /* ExternalIdPFacebook */ = {
 			isa = PBXGroup;
 			children = (
-				EC5EA56D2DC22C98000C2737 /* Handlers */,
 				EC5EA5A72DC23B38000C2737 /* PrivacyInfo.xcprivacy */,
 				EC5EA5702DC23516000C2737 /* ExternalIdPFacebook.h */,
+				EC5EA56D2DC22C98000C2737 /* Handlers */,
 			);
 			path = ExternalIdPFacebook;
 			sourceTree = "<group>";
@@ -426,7 +428,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPFacebook;
@@ -464,7 +466,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPFacebook;
@@ -490,7 +492,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPFacebookTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -512,7 +514,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.ExternalIdPFacebookTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

@@ -499,45 +499,218 @@ class MockURLProtocol: URLProtocol {
 URLProtocol.registerClass(MockURLProtocol.self)
 ```
 
-## Migration from Old HttpClient
+## Migration from Orchestrate Network Classes
 
-If you're migrating from a previous version, here are the key changes:
+If you're migrating from the old `Request` class in PingOrchestrate, here's a comprehensive guide covering all the changes:
 
-### URL Property
+### Creating a Request
 
-**Before:**
+**Before (Orchestrate):**
 ```swift
-request.url = URL(string: "https://api.example.com")
+let request = Request()
+// ... configure and send via custom logic
 ```
 
-**After:**
+**After (PingNetwork):**
+```swift
+let client = HttpClient.createClient()
+let response = try await client.request { request in
+    // ... configure request
+}
+```
+
+### URL Configuration
+
+**Before (Orchestrate):**
+```swift
+request.url("https://api.example.com")
+// or
+request.url(urlRequest)
+```
+
+**After (PingNetwork):**
 ```swift
 request.url = "https://api.example.com"
 ```
 
-### JSON Body Methods
+### Adding Headers
 
-**Before:**
+**Before (Orchestrate):**
 ```swift
-request.post(body: jsonData)
+request.header(name: "Authorization", value: "Bearer token")
 ```
 
-**After:**
+**After (PingNetwork):**
 ```swift
-request.post(json: ["key": "value"])
+request.setHeader(name: "Authorization", value: "Bearer token")
 ```
 
-### Multi-Value Headers
+### Adding Query Parameters
 
-**Before:**
+**Before (Orchestrate):**
+```swift
+request.parameter(name: "page", value: "1")
+```
+
+**After (PingNetwork):**
+```swift
+request.setParameter(name: "page", value: "1")
+```
+
+### Setting Cookies
+
+**Before (Orchestrate):**
+```swift
+request.cookies(cookies: [httpCookie1, httpCookie2])  // [HTTPCookie]
+```
+
+**After (PingNetwork):**
+```swift
+request.setCookie(cookie: "name=value")              // Single cookie string
+request.setCookies(cookies: ["name1=value1", "name2=value2"])  // Multiple cookie strings
+```
+
+### JSON Body (POST/PUT/DELETE)
+
+**Before (Orchestrate):**
+```swift
+request.body(body: ["key": "value"])  // Automatically sets POST method
+```
+
+**After (PingNetwork):**
+```swift
+request.post(json: ["key": "value"])   // POST with JSON
+request.put(json: ["key": "value"])    // PUT with JSON
+request.delete(json: ["key": "value"]) // DELETE with JSON
+```
+
+### String Body with Custom Content-Type
+
+**Before (Orchestrate):**
+Not directly supported - required manual setup
+
+**After (PingNetwork):**
+```swift
+request.post(contentType: "text/plain", body: "raw string body")
+request.put(contentType: "application/xml", body: "<xml>data</xml>")
+request.delete(contentType: "application/json", body: "{\"id\": 123}")
+```
+
+### Form-Encoded Data
+
+**Before (Orchestrate):**
+```swift
+request.form(formData: ["username": "john", "password": "secret"])
+```
+
+**After (PingNetwork):**
+```swift
+request.form(parameters: ["username": "john", "password": "secret"])
+```
+
+### HTTP Method
+
+**Before (Orchestrate):**
+```swift
+request.method(.post)
+let method = request.getMethod()  // Returns String?
+```
+
+**After (PingNetwork):**
+```swift
+request.setMethod(.post)
+let method = request.getMethod()  // Returns HttpMethod enum
+```
+
+### Getting Headers
+
+**Before (Orchestrate):**
+Not available on Request class
+
+**After (PingNetwork):**
+```swift
+let authHeader = request.getHeader(name: "Authorization")  // Single header
+let allHeaders = request.getHeaders()                      // All headers as [String: String]
+```
+
+### Setting Raw Body Data
+
+**Before (Orchestrate):**
+Direct access to `urlRequest.httpBody`
+
+**After (PingNetwork):**
+```swift
+request.setBody(myData)  // Sets raw Data? body
+```
+
+### GET Request
+
+**Before (Orchestrate):**
+```swift
+request.method(.get)
+```
+
+**After (PingNetwork):**
+```swift
+request.get()  // Clears body and sets GET method
+```
+
+### Response Headers
+
+**Before (Orchestrate):**
 ```swift
 let headers: [String: String] = response.headers
 ```
 
-**After:**
+**After (PingNetwork):**
 ```swift
-let headers: [String: [String]] = response.headers
+let headers: [String: [String]] = response.headers  // Multi-value support
 let firstValue = headers["Content-Type"]?.first
+// or use convenience method:
+let contentType = response.getHeader(name: "Content-Type")
+```
+
+### Complete Migration Example
+
+**Before (Orchestrate):**
+```swift
+let request = Request()
+request.url("https://api.example.com/users")
+request.header(name: "Authorization", value: "Bearer \(token)")
+request.header(name: "Accept", value: "application/json")
+request.parameter(name: "page", value: "1")
+request.body(body: ["name": "John", "email": "john@example.com"])
+// Custom sending logic...
+```
+
+**After (PingNetwork):**
+```swift
+let client = HttpClient.createClient()
+let response = try await client.request { request in
+    request.url = "https://api.example.com/users"
+    request.setHeader(name: "Authorization", value: "Bearer \(token)")
+    request.setHeader(name: "Accept", value: "application/json")
+    request.setParameter(name: "page", value: "1")
+    request.post(json: ["name": "John", "email": "john@example.com"])
+}
+```
+
+### Constants Migration
+
+**Before (Orchestrate):**
+```swift
+Request.Constants.contentType      // "Content-Type"
+Request.Constants.authorization    // "Authorization"
+Request.ContentType.json.rawValue  // "application/json"
+Request.HTTPMethod.post            // .post
+```
+
+**After (PingNetwork):**
+```swift
+// Use NetworkConstants or string literals directly
+NetworkConstants.headerContentType    // "Content-Type"
+NetworkConstants.contentTypeJSON      // "application/json"
+HttpMethod.post                       // .post
 ```
 
 ## Platform Requirements

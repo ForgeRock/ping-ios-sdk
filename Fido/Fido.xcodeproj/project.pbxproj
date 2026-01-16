@@ -75,9 +75,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		955861222EB0657300DD55A6 /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A53A9B462F19838E000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A5COM0002F0100000000002 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5JPL0002F0100000000001 /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		955861222EB0657300DD55A6 /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5597F62E95445800A07329 /* AbstractFidoCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractFidoCollector.swift; sourceTree = "<group>"; };
 		EC5597F72E95445800A07329 /* CollectorInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectorInitializer.swift; sourceTree = "<group>"; };
 		EC5597F82E95445800A07329 /* FidoAuthenticationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoAuthenticationCollector.swift; sourceTree = "<group>"; };
@@ -143,6 +144,7 @@
 		ECD5A2922E8FE40B00A27205 = {
 			isa = PBXGroup;
 			children = (
+				A53A9B462F19838E000E2F2C /* README.md */,
 				ECD5A2E22E8FE41300A27205 /* Fido */,
 				ECD780582EA24FC40050E60F /* PingFidoTests */,
 				ECD5A3082E901C0400A27205 /* Frameworks */,
@@ -162,13 +164,13 @@
 		ECD5A2E22E8FE41300A27205 /* Fido */ = {
 			isa = PBXGroup;
 			children = (
+				ECD5A2F62E8FE49C00A27205 /* PrivacyInfo.xcprivacy */,
+				ECD5A2F42E8FE49C00A27205 /* Fido.h */,
 				EC5597FA2E95445800A07329 /* Davinci */,
 				ECD5A3032E90195300A27205 /* Journey */,
 				ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */,
 				ECD5A2F32E8FE49C00A27205 /* FidoModels.swift */,
-				ECD5A2F42E8FE49C00A27205 /* Fido.h */,
 				ECD5A2F52E8FE49C00A27205 /* Fido.swift */,
-				ECD5A2F62E8FE49C00A27205 /* PrivacyInfo.xcprivacy */,
 			);
 			path = Fido;
 			sourceTree = "<group>";
@@ -517,7 +519,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Fido;
@@ -557,7 +559,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Fido;
@@ -582,7 +584,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingFidoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -603,7 +605,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha;
+				MARKETING_VERSION = "2.0.0-alpha";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingFidoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
