@@ -180,7 +180,6 @@ let package = Package(
         .target(
             name: "PingDeviceProfile",
             dependencies: [
-                "PingCommons",
                 "PingDeviceId",
                 "PingJourneyPlugin",
                 "PingTamperDetector"
