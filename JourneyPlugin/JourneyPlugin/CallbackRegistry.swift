@@ -76,7 +76,7 @@ public actor CallbackRegistry {
     /// - Returns: True if it's a plain MetadataCallback, false if it's been specialized.
     private func isPlainMetadataCallback(_ callback: any Callback) -> Bool {
         let typeName = String(describing: Swift.type(of: callback))
-        return typeName == "MetadataCallback"
+        return typeName == JourneyConstants.metadataCallback
     }
 
     /// Injects the ContinueNode and Journey instances into the callbacks that require them.
