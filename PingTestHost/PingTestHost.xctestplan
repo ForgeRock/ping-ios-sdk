@@ -87,8 +87,7 @@
     },
     {
       "skippedTests" : [
-        "DeviceProfileCallbackE2ETest",
-        "MetadataCallbackE2ETest"
+        "DeviceProfileCallbackE2ETest"
       ],
       "target" : {
         "containerPath" : "container:..\/Journey\/Journey.xcodeproj",
