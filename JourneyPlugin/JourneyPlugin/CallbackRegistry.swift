@@ -43,7 +43,7 @@ public actor CallbackRegistry {
     /// Creates a list of Callback instances from an array of dictionaries.
     /// Each dictionary should have a "type" field that matches a registered Callback type.
     /// - Parameter array: The array of dictionaries to create the Callbacks from.
-    /// - Returns: A list of Callback instances (metadata callbacks are filtered out).
+    /// - Returns: A list of Callback instances (specialized metadata callbacks are filtered out).
     public func callback(from array: [[String: any Sendable]]) async -> Callbacks {
         var list = Callbacks()
         for item in array {
@@ -56,12 +56,27 @@ public actor CallbackRegistry {
             // in its initialize(with:) implementation and return a different concrete instance.
             let produced = await registeredType.init().initialize(with: item)
 
-            // Filter out metadata-only callbacks from the returned list
-            if !(produced is MetadataCallbackProtocol) {
-                list.append(produced)
+            // Filter out metadata callbacks only if they were specialized into specific callback types
+            // (FIDO Authentication, FIDO Registration, Protect Initialize, or Protect Evaluation).
+            // Regular metadata callbacks that don't match these conditions should be included.
+            if let _ = produced as? MetadataCallbackProtocol {
+                // Only omit if the callback was specialized (i.e., it's not a plain MetadataCallback anymore)
+                if !isPlainMetadataCallback(produced) {
+                    continue
+                }
             }
+            
+            list.append(produced)
         }
         return list
+    }
+    
+    /// Checks if a callback is a plain MetadataCallback (not specialized).
+    /// - Parameter callback: The callback to check.
+    /// - Returns: True if it's a plain MetadataCallback, false if it's been specialized.
+    private func isPlainMetadataCallback(_ callback: any Callback) -> Bool {
+        let typeName = String(describing: Swift.type(of: callback))
+        return typeName == "MetadataCallback"
     }
 
     /// Injects the ContinueNode and Journey instances into the callbacks that require them.
