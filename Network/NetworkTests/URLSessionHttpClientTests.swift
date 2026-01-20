@@ -239,6 +239,7 @@ final class URLSessionHttpClientTests: XCTestCase {
         do {
             _ = try await client.request { req in
                 guard let mutable = req as? URLSessionHttpRequest else { return }
+                mutable.url = nil  // Explicitly set to nil to ensure no valid URL
                 mutable.get()
             }
             XCTFail("Expected failure for missing URL")

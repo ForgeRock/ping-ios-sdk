@@ -107,4 +107,67 @@ final class URLSessionHttpRequestTests: XCTestCase {
         request.url = "ht tp://invalid"
         XCTAssertNil(request.buildURLRequest())
     }
+
+    func testURLPropertyGetterReturnsurlRequestURL() {
+        let request = URLSessionHttpRequest()
+        request.url = "https://example.com/api"
+        XCTAssertEqual(request.url, "https://example.com/api")
+    }
+
+    func testURLPropertySetterUpdatesurlRequestURL() {
+        let request = URLSessionHttpRequest()
+        request.url = "https://example.com"
+        request.url = "https://different.com/path"
+        XCTAssertEqual(request.url, "https://different.com/path")
+        XCTAssertEqual(request.buildURLRequest()?.url?.absoluteString, "https://different.com/path")
+    }
+
+    func testURLPropertySyncWithQueryParameters() {
+        let request = URLSessionHttpRequest()
+        request.url = "https://example.com/api"
+        request.setParameter(name: "key", value: "value")
+        
+        // url getter returns urlRequest.url which includes query parameters
+        XCTAssertEqual(request.url, "https://example.com/api?key=value")
+        
+        // Building the request should have the same complete URL
+        XCTAssertEqual(request.buildURLRequest()?.url?.absoluteString, "https://example.com/api?key=value")
+    }
+
+    func testURLPropertyAfterMultipleParameterUpdates() {
+        let request = URLSessionHttpRequest()
+        request.url = "https://example.com"
+        request.setParameter(name: "a", value: "1")
+        request.setParameter(name: "b", value: "2")
+        request.setParameter(name: "c", value: "3")
+        
+        // URL getter reflects urlRequest.url which includes all parameters
+        XCTAssertEqual(request.url, "https://example.com?a=1&b=2&c=3")
+        
+        // Built request should have all parameters
+        let built = request.buildURLRequest()
+        XCTAssertEqual(built?.url?.absoluteString, "https://example.com?a=1&b=2&c=3")
+    }
+
+    func testURLPropertyInvalidStringDoesNotUpdateurlRequest() {
+        let request = URLSessionHttpRequest()
+        request.url = "https://valid.com"
+        XCTAssertEqual(request.url, "https://valid.com")
+        
+        // Set to invalid URL
+        request.url = "ht tp://invalid"
+        
+        // URL should be nil after setting invalid string
+        XCTAssertNil(request.url)
+    }
+
+    func testURLPropertyWithComplexPath() {
+        let request = URLSessionHttpRequest()
+        request.url = "https://example.com/api/v1/users/123/profile"
+        XCTAssertEqual(request.url, "https://example.com/api/v1/users/123/profile")
+        
+        request.setParameter(name: "include", value: "metadata")
+        let built = request.buildURLRequest()
+        XCTAssertEqual(built?.url?.absoluteString, "https://example.com/api/v1/users/123/profile?include=metadata")
+    }
 }

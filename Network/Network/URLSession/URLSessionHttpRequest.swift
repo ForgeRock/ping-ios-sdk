@@ -20,7 +20,18 @@ import PingLogger
 /// and should not be shared across multiple threads or modified concurrently.
 public class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     /// The target URL for this HTTP request.
-    public var url: String?
+    public var url: String? {
+        get {
+            urlRequest.url?.absoluteString
+        }
+        set {
+            if let urlString = newValue, let newURL = URL(string: urlString) {
+                urlRequest.url = newURL
+            } else {
+                urlRequest.url = nil
+            }
+        }
+    }
     
     private var urlRequest: URLRequest
     
@@ -225,7 +236,7 @@ public class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     /// Builds a `URLRequest` from the accumulated request state.
     ///
     /// This method constructs a complete `URLRequest` by:
-    /// - Combining the base URL with query parameters
+    /// - Using the URL with already-accumulated query parameters
     /// - Applying the HTTP method, headers, and body
     ///
     /// - Returns: A configured `URLRequest`, or `nil` if the URL is invalid or JSON serialization failed.
@@ -234,20 +245,10 @@ public class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
             return nil
         }
         
-        guard let urlString = url, let baseURL = URL(string: urlString) else { return nil }
+        // urlRequest.url already contains all query parameters, so just use it directly
+        guard let finalURL = urlRequest.url else { return nil }
 
-        // Get existing query parameters from urlRequest and merge with base URL
-        let existingParams = getQueryParameters()
-        
-        var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
-        if !existingParams.isEmpty {
-            var items = components?.queryItems ?? []
-            items.append(contentsOf: existingParams)
-            components?.queryItems = items
-        }
-        guard let finalURL = components?.url else { return nil }
-
-        // Create final request with the constructed URL
+        // Create final request with the complete URL
         var request = URLRequest(url: finalURL)
         request.httpMethod = urlRequest.httpMethod
         request.allHTTPHeaderFields = urlRequest.allHTTPHeaderFields
