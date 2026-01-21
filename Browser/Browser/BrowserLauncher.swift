@@ -127,15 +127,24 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
         
         state = .closing
         
-        if let session = session as? SFSafariViewController {
-            session.dismiss(animated: false) {
+        // Resume continuation with cancellation error
+        loginContinuation?.resume(throwing: BrowserError.externalUserAgentCancelled)
+        
+        // Handle cleanup based on session type
+        if let sfViewController = session as? SFSafariViewController {
+            logger.i("Resetting SFSafariViewController session")
+            sfViewController.dismiss(animated: false) {
                 self.cleanup()
             }
+        } else if let asAuthSession = session as? ASWebAuthenticationSession {
+            logger.i("Resetting ASWebAuthenticationSession")
+            asAuthSession.cancel()
+            cleanup()
         } else {
+            // Native browser or unknown session type
+            logger.i("Resetting non-UI session")
             cleanup()
         }
-        
-        loginContinuation?.resume(throwing: BrowserError.externalUserAgentCancelled)
     }
     
     /// Launches external user-agent for web requests
@@ -298,17 +307,18 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     private func asWebAuthenticationSession(url: URL, callbackURLScheme: String,
                                             prefersEphemeralWebBrowserSession: Bool) async throws -> URL {
         return try await withCheckedThrowingContinuation { continuation in
+            self.loginContinuation = continuation
             let authSession = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme) { [weak self] (url, error) in
                 guard let self = self else { return }
                 
                 self.state = .closing
                 
                 if let error = error {
-                    continuation.resume(throwing: error)
+                    self.loginContinuation?.resume(throwing: error)
                 } else if let url = url {
-                    continuation.resume(returning: url)
+                    self.loginContinuation?.resume(returning: url)
                 } else {
-                    continuation.resume(throwing: BrowserError.externalUserAgentFailure)
+                    self.loginContinuation?.resume(throwing: BrowserError.externalUserAgentFailure)
                 }
                 self.cleanup()
             }
@@ -319,30 +329,12 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
             
             if !authSession.start() {
                 self.state = .closing
-                continuation.resume(throwing: BrowserError.externalUserAgentFailure)
+                self.loginContinuation?.resume(throwing: BrowserError.externalUserAgentFailure)
                 self.cleanup()
             }
         }
     }
-    
-    /// Closes currently presenting ViewController
-    private func close() async {
-        guard case .authenticating(let session) = state else {
-            return
-        }
-        
-        if let sfViewController = session as? SFSafariViewController {
-            self.logger.i("Close called with SFSafariViewController: \(String(describing: self.currentSession))")
-            sfViewController.dismiss(animated: true)
-        }
-        
-        if let asAuthSession = session as? ASWebAuthenticationSession {
-            self.logger.i("Close called with ASWebAuthenticationSession: \(String(describing: self.currentSession))")
-            asAuthSession.cancel()
-        }
-        
-        reset()
-    }
+
 }
 
 // MARK: ASWebAuthenticationPresentationContextProviding
