@@ -69,7 +69,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     // MARK: Properties
     
     /// Static shared instance
-    public static let currentBrowser: BrowserLauncherProtocol = BrowserLauncher()
+    public static var currentBrowser: BrowserLauncherProtocol = BrowserLauncher()
     
     public var isInProgress: Bool {
         if case .idle = state { return false }
