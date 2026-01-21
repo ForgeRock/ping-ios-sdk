@@ -278,6 +278,46 @@ final class URLSessionHttpClientTests: XCTestCase {
         }
     }
 
+    func testActualTimeoutBehavior() async {
+        var delayMilliseconds: UInt64 = 0
+
+        MockURLProtocol.requestHandler = { request in
+            // Simulate a delay longer than the timeout
+            Thread.sleep(forTimeInterval: TimeInterval(delayMilliseconds) / 1000.0)
+            let response = HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!
+            return (response, Data("delayed".utf8))
+        }
+
+        let config = HttpClientConfig()
+        config.timeout = 0.1  // 100ms timeout
+
+        let sessionConfig = URLSessionConfiguration.ephemeral
+        sessionConfig.protocolClasses = [MockURLProtocol.self]
+        sessionConfig.timeoutIntervalForRequest = 0.1
+
+        let session = URLSession(configuration: sessionConfig, delegate: nil, delegateQueue: nil)
+        let client = URLSessionHttpClient(config: config, session: session, delegate: nil)
+
+        delayMilliseconds = 500  // Delay for 500ms, which exceeds the 100ms timeout
+
+        do {
+            _ = try await client.request { req in
+                guard let mutable = req as? URLSessionHttpRequest else { return }
+                mutable.url = "https://example.com/slow"
+                mutable.get()
+            }
+            XCTFail("Expected timeout error")
+        } catch let error as NetworkError {
+            guard case .timeout = error else {
+                XCTFail("Expected timeout error, got \(error)")
+                return
+            }
+            // Success - timeout occurred as expected
+        } catch {
+            XCTFail("Unexpected error type \(error)")
+        }
+    }
+
     private func makeClient(config: HttpClientConfig = HttpClientConfig()) -> URLSessionHttpClient {
         let sessionConfig = URLSessionConfiguration.ephemeral
         sessionConfig.protocolClasses = [MockURLProtocol.self]
