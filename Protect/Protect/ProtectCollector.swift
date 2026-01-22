@@ -91,7 +91,9 @@ extension ProtectCollector {
     @objc
     public static func registerCollector() {
         Task {
-            await CollectorFactory.shared.register(type: Constants.PROTECT, collector: ProtectCollector.self)
+            await CollectorFactory.shared.register(type: Constants.PROTECT) { json in
+                ProtectCollector(with: json)
+            }
         }
     }
 }

@@ -69,7 +69,7 @@ public class DefaultPinCollector: NSObject, PinCollector, @unchecked Sendable {
     
     
     /// Disables the "Ok" button if the text field is empty.
-    @objc func textFieldDidChange(_ sender: UITextField) {
+    @MainActor @objc func textFieldDidChange(_ sender: UITextField) {
         alert?.actions.first?.isEnabled = sender.text?.isEmpty == false
     }
     

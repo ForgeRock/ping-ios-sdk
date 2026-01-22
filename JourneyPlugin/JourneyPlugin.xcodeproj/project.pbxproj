@@ -10,7 +10,6 @@
 		95F525BA2EECF4BC00160748 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 95F525B92EECF4BC00160748 /* PingJourney.framework */; };
 		95F525BB2EECF4BC00160748 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 95F525B92EECF4BC00160748 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A53A9B4C2F198404000E2F2C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A53A9B4B2F198404000E2F2C /* PrivacyInfo.xcprivacy */; };
-		A53A9B4E2F19840C000E2F2C /* JourneyPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = A53A9B4D2F19840C000E2F2C /* JourneyPlugin.h */; };
 		EC5C81842ECF67B700C91570 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C817A2ECF67B700C91570 /* PingJourneyPlugin.framework */; };
 		EC5C81972ECF67C000C91570 /* PingJourneyPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81952ECF67C000C91570 /* PingJourneyPluginTests.swift */; };
 		EC5C81D52ED07FB800C91570 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81D42ED07FA500C91570 /* Constants.swift */; };
@@ -22,6 +21,7 @@
 		EC5C81DF2ED0809200C91570 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81DD2ED0809200C91570 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECA2E7E62ED875DC00C32766 /* JourneyAware.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA2E7E52ED875D300C32766 /* JourneyAware.swift */; };
 		ECA2E7E82ED87E5F00C32766 /* ContinueNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA2E7E72ED87E5900C32766 /* ContinueNode.swift */; };
+		ECB2A2872F22660300B0F5F1 /* JourneyPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = A53A9B4D2F19840C000E2F2C /* JourneyPlugin.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -158,7 +158,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A53A9B4E2F19840C000E2F2C /* JourneyPlugin.h in Headers */,
+				ECB2A2872F22660300B0F5F1 /* JourneyPlugin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,7 +215,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					EC5C81792ECF67B700C91570 = {
 						CreatedOnToolsVersion = 26.0;
@@ -333,7 +333,9 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 9QSE66762D;
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -353,10 +355,12 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -400,7 +404,9 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 9QSE66762D;
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -414,9 +420,11 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -427,7 +435,8 @@
 		EC5C818D2ECF67B700C91570 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -456,7 +465,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = NO;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -465,7 +474,8 @@
 		EC5C818E2ECF67B700C91570 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -494,7 +504,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = NO;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

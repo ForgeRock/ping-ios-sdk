@@ -331,7 +331,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
                     attachmentValue = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
                 }
             }
-            if let registrationCredential = credential as? ASAuthorizationSecurityKeyPublicKeyCredentialRegistration {
+            if credential is ASAuthorizationSecurityKeyPublicKeyCredentialRegistration {
                 attachmentValue = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM
             }
             
