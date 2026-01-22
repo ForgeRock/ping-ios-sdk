@@ -565,7 +565,7 @@ final class PushKeychainStorageTests: XCTestCase {
             approved: false,
             pending: true
         )
-        var notification2 = PushNotification(
+        let notification2 = PushNotification(
             id: "notif-7",
             credentialId: "cred-6",
             ttl: 300,

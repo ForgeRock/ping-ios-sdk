@@ -493,7 +493,7 @@ class LocationManagerTests: XCTestCase, Sendable {
         let manager = CLLocationManager()
         
         // When
-        sut.locationManager(manager, didChangeAuthorization: .authorizedWhenInUse)
+        sut.locationManagerDidChangeAuthorization(manager)
         
         // Then - Should not crash
         XCTAssertTrue(true, "Delegate method should be callable")
@@ -697,7 +697,7 @@ class LocationManagerTests: XCTestCase, Sendable {
         
         // Simulate authorization change
         DispatchQueue.main.async {
-            self.delegate?.locationManager?(CLLocationManager(), didChangeAuthorization: self.mockAuthorizationStatus)
+            self.delegate?.locationManagerDidChangeAuthorization?(CLLocationManager())
         }
     }
     
@@ -711,7 +711,7 @@ class LocationManagerTests: XCTestCase, Sendable {
         
         // Simulate authorization change
         DispatchQueue.main.async {
-            self.delegate?.locationManager?(CLLocationManager(), didChangeAuthorization: self.mockAuthorizationStatus)
+            self.delegate?.locationManagerDidChangeAuthorization?(CLLocationManager())
         }
     }
 }
