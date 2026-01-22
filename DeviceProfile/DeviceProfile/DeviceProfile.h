@@ -11,10 +11,10 @@
 #import <Foundation/Foundation.h>
 
 //! Project version number for DeviceProfile.
-FOUNDATION_EXPORT double PingDeviceProfileVersionNumber;
+FOUNDATION_EXPORT double DeviceProfileVersionNumber;
 
 //! Project version string for DeviceProfile.
-FOUNDATION_EXPORT const unsigned char PingDeviceProfileVersionString[];
+FOUNDATION_EXPORT const unsigned char DeviceProfileVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <PingDeviceProfile/PublicHeader.h>
+// In this header, you should import all the public headers of your framework using statements like #import <DeviceProfile/PublicHeader.h>
 
