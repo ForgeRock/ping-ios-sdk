@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -66,10 +66,6 @@
 		A56740E02ED788FB009D29B9 /* PingDeviceClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A526CBFD2ED4AEE6007FCCD9 /* PingDeviceClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A56742022EE1EE15009D29B9 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56741C82EE1EBFD009D29B9 /* PingCommons.framework */; };
 		A56742032EE1EE15009D29B9 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56741C82EE1EBFD009D29B9 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A56743632EE9F79C009D29B9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		A56743642EE9F79C009D29B9 /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A56743952EE9F7C7009D29B9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		A56743962EE9F7C7009D29B9 /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A569DBEC2E78A78800F4D7A8 /* PingDeviceProfile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A569DBC62E789BD300F4D7A8 /* PingDeviceProfile.framework */; };
 		A569DBED2E78A78800F4D7A8 /* PingDeviceProfile.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A569DBC62E789BD300F4D7A8 /* PingDeviceProfile.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A570D52E2ECCE47500CBBCCF /* DeviceManagementViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A570D52D2ECCE47400CBBCCF /* DeviceManagementViewModel.swift */; };
@@ -559,9 +555,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				ECBF06742D5229BC0066A3BD /* PingBrowser.framework in Embed Frameworks */,
-				A56743962EE9F7C7009D29B9 /* (null) in Embed Frameworks */,
 				A56742032EE1EE15009D29B9 /* PingCommons.framework in Embed Frameworks */,
-				A56743642EE9F79C009D29B9 /* (null) in Embed Frameworks */,
 				EC59E3542E7D8BB900A91E66 /* PingTamperDetector.framework in Embed Frameworks */,
 				EC5C81F62ED08C6100C91570 /* PingJourney.framework in Embed Frameworks */,
 				A5560CA32CFE4EDA0076CA8D /* PingLogger.framework in Embed Frameworks */,
@@ -769,7 +763,6 @@
 				A569DBEC2E78A78800F4D7A8 /* PingDeviceProfile.framework in Frameworks */,
 				EC5C81F32ED08C2D00C91570 /* PingDavinci.framework in Frameworks */,
 				EC5AB1442F227BF300CB1AD5 /* PingJourneyPlugin.framework in Frameworks */,
-				A56743952EE9F7C7009D29B9 /* (null) in Frameworks */,
 				EC5AB1122F227BEB00CB1AD5 /* PingDavinciPlugin.framework in Frameworks */,
 				1B2933CD2E7DF429004D1D38 /* PingOath.framework in Frameworks */,
 				1B7A9AD02ED5316F00989A55 /* PingNetwork.framework in Frameworks */,
@@ -778,7 +771,6 @@
 				A5560CA82CFE4EDA0076CA8D /* PingStorage.framework in Frameworks */,
 				EC92B38F2DA03E0700E4246D /* SVGKit in Frameworks */,
 				EC59E3532E7D8BB900A91E66 /* PingTamperDetector.framework in Frameworks */,
-				A56743632EE9F79C009D29B9 /* (null) in Frameworks */,
 				ECCAB3692E3A6C3300BA1C73 /* PingDeviceId.framework in Frameworks */,
 				A5560CA62CFE4EDA0076CA8D /* PingOrchestrate.framework in Frameworks */,
 				A58CFBD02EB0046B007C4A31 /* PingReCaptchaEnterprise.framework in Frameworks */,
@@ -1359,7 +1351,6 @@
 				};
 			};
 			buildConfigurationList = 3A5441282BCDF10900385131 /* Build configuration list for PBXProject "PingExample" */;
-			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -1370,6 +1361,7 @@
 			packageReferences = (
 				EC92B38D2DA03E0700E4246D /* XCRemoteSwiftPackageReference "SVGKit" */,
 			);
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 3A54412E2BCDF10900385131 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
