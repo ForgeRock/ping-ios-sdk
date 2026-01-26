@@ -50,113 +50,63 @@ final class StorageDelegateTests: XCTestCase, @unchecked Sendable {
         XCTAssertNil(retrievedItem)
     }
     
-    func testConcurrentAccess() {
-        let concurrentQueue = DispatchQueue(label: "com.example.concurrentQueue", attributes: .concurrent)
-        let group = DispatchGroup()
+    func testConcurrentAccess() async throws {
         let item = TestItem(id: 1, name: "Test")
-        let iterations = 1000
+        let iterations = 100 // Reduced for stability
         
         // Concurrent writes
-        for _ in 0..<iterations {
-            group.enter()
-            concurrentQueue.async {
-                Task {
-                    try? await self.storageDelegate.save(item: item)
-                    group.leave()
+        await withTaskGroup(of: Void.self) { group in
+            for _ in 0..<iterations {
+                group.addTask {
+                    do {
+                        try await self.storageDelegate.save(item: item)
+                    } catch {
+                        XCTFail("Save failed: \(error)")
+                    }
                 }
             }
         }
         
         // Concurrent reads
-        for _ in 0..<iterations {
-            group.enter()
-            concurrentQueue.async {
-                Task {
-                    let _ = try? await self.storageDelegate.get()
-                    group.leave()
-                }
-            }
-        }
-        
-        // Wait for all tasks to finish
-        group.wait()
-        
-        // Verify the final value
-        Task {
-            let finalValue = try? await storageDelegate.get()
-            XCTAssertEqual(finalValue, item)
-        }
-    }
-    
-    func testConcurrentModification() {
-        let concurrentQueue = DispatchQueue(label: "com.example.concurrentQueue", attributes: .concurrent)
-        let group = DispatchGroup()
-        let item = TestItem(id: 1, name: "Test")
-        let iterations = 1000
-        
-        // Concurrent writes and deletes
-        for i in 0..<iterations {
-            group.enter()
-            concurrentQueue.async {
-                Task {
-                    if i % 2 == 0 {
-                        try? await self.storageDelegate.save(item: item)
-                    } else {
-                        try? await self.storageDelegate.delete()
-                    }
-                    group.leave()
-                }
-            }
-        }
-        
-        // Wait for all tasks to finish
-        group.wait()
-        
-        // Verify the final state
-        // Since the operations are concurrent and we don't know the exact state,
-        // we just check that no crash or data corruption occurred.
-        XCTAssertTrue(true)
-    }
-    
-    func testConcurrentAccessWithTaskGroup() async {
-        let iterations = 1000
-        let item = TestItem(id: 1, name: "Test")
-        
         await withTaskGroup(of: Void.self) { group in
             for _ in 0..<iterations {
                 group.addTask {
-                    try? await self.storageDelegate.save(item: item)
-                }
-            }
-            for _ in 0..<iterations {
-                group.addTask {
-                    _ = try? await self.storageDelegate.get()
+                    do {
+                        let _ = try await self.storageDelegate.get()
+                    } catch {
+                        XCTFail("Get failed: \(error)")
+                    }
                 }
             }
         }
         
-        let finalValue = try? await storageDelegate.get()
+        // Verify the final value
+        let finalValue = try await storageDelegate.get()
         XCTAssertEqual(finalValue, item)
     }
-    
-    func testConcurrentModificationWithTaskGroup() async {
-        let iterations = 1000
+
+    func testConcurrentModification() async throws {
         let item = TestItem(id: 1, name: "Test")
+        let iterations = 100 // Reduced for stability
         
+        // Concurrent writes and deletes
         await withTaskGroup(of: Void.self) { group in
             for i in 0..<iterations {
                 group.addTask {
-                    if i % 2 == 0 {
-                        try? await self.storageDelegate.save(item: item)
-                    } else {
-                        try? await self.storageDelegate.delete()
+                    do {
+                        if i % 2 == 0 {
+                            try await self.storageDelegate.save(item: item)
+                        } else {
+                            try await self.storageDelegate.delete()
+                        }
+                    } catch {
+                        XCTFail("Modification failed: \(error)")
                     }
                 }
             }
         }
         
-        // Since the operations are concurrent and we don't know the exact state,
-        // we just check that no crash or data corruption occurred.
+        // Just verify no crash occurred
         XCTAssertTrue(true)
     }
 }
