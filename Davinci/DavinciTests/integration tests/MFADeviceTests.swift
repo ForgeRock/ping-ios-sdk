@@ -68,7 +68,7 @@ class MFADeviceTests: XCTestCase {
     }
     
     // MARK: - Test Cases
-    func testDeviceRegistrationForm() async throws {
+    func test01_DeviceRegistrationForm() async throws {
         // Login with the test user
         var node = try await loginUser(username: username, password: password)
         
@@ -108,7 +108,7 @@ class MFADeviceTests: XCTestCase {
         XCTAssertNotNil(deviceRegistrationCollector.devices[2].iconSrc)
     }
         
-    func testDeviceAuthenticationFormError() async throws {
+    func test02_DeviceAuthenticationFormError() async throws {
         // Login with the test user (no MFA devices registered yet)
         let node = try await loginUser(username: username, password: password)
         
@@ -130,7 +130,7 @@ class MFADeviceTests: XCTestCase {
         XCTAssertEqual("There was a problem getting the MFA devices for the specified user. Check your PingOne Forms connector configuration.", error.message.trimmingCharacters(in: .whitespacesAndNewlines))
     }
         
-    func testDeviceAuthenticationForm() async throws {
+    func test03_DeviceAuthenticationForm() async throws {
         // Register an email MFA device
         try await registerEmailMFA(email: email1)
         var node = try await loginUser(username: username, password: password)
@@ -222,15 +222,15 @@ class MFADeviceTests: XCTestCase {
         XCTAssertEqual("VOICE", deviceAuthenticationCollector.devices[3].type)
     }
         
-    func testDeviceRegistrationEmail() async throws {
+    func test04_DeviceRegistrationEmail() async throws {
         try await registerEmailMFA(email: email1)
     }
     
-    func testDeviceRegistrationSMS() async throws {
+    func test05_DeviceRegistrationSMS() async throws {
         try await registerPhoneMFA(phone: phoneNumber1, mfaType: MFA_TEXT)
     }
     
-    func testDeviceRegistrationVOICE() async throws {
+    func test06_DeviceRegistrationVOICE() async throws {
         try await registerPhoneMFA(phone: phoneNumber2, mfaType: MFA_VOICE)
     }
         

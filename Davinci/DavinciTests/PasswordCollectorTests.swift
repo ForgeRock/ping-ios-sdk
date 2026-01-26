@@ -59,74 +59,74 @@ final class PasswordCollectorTests: XCTestCase {
         XCTAssertEqual(collector.validate(), [])
     }
     
-    // TODO: Reinclude PasswordPolicy test
-    func testAddsInvalidLengthErrorWhenValueTooShort() {
-        let input: [String: Any] = [
-            "passwordPolicy": [
-                "length": [
-                    "min": 8,
-                    "max": 20
-                ]
-            ]
-        ]
-        
-        let collector = PasswordCollector(with: [:])
-        collector.continueNode = MockContinueNode(context: FlowContext(flowContext: SharedContext()), workflow: Workflow(config: WorkflowConfig()), input: input, actions: [])
-        
-        collector.value = "Short1@"
-        
-        XCTAssertEqual(collector.validate(), [.invalidLength(min: 8, max: 20)])
-    }
+    // TODO: Reinclude when multiple password validation errors are supported
+//    func testAddsInvalidLengthErrorWhenValueTooShort() {
+//        let input: [String: Any] = [
+//            "passwordPolicy": [
+//                "length": [
+//                    "min": 8,
+//                    "max": 20
+//                ]
+//            ]
+//        ]
+//        
+//        let collector = PasswordCollector(with: [:])
+//        collector.continueNode = MockContinueNode(context: FlowContext(flowContext: SharedContext()), workflow: Workflow(config: WorkflowConfig()), input: input, actions: [])
+//        
+//        collector.value = "Short1@"
+//        
+//        XCTAssertEqual(collector.validate(), [.invalidLength(min: 8, max: 20)])
+//    }
     
-    // TODO: Reinclude PasswordPolicy test
-    func testAddsUniqueCharacterErrorWhenNotEnoughUniqueCharacters() {
-        let input: [String: Any] = [
-            "passwordPolicy": [
-                "minUniqueCharacters": 5
-            ]
-        ]
-        
-        let collector = PasswordCollector(with: [:])
-        collector.continueNode = MockContinueNode(context: FlowContext(flowContext: SharedContext()), workflow: Workflow(config: WorkflowConfig()), input: input, actions: [])
-        
-        collector.value = "aaa111@@@"
-        
-        XCTAssertEqual(collector.validate(), [.uniqueCharacter(min: 5)])
-    }
+    // TODO: Reinclude when multiple password validation errors are supported
+//    func testAddsUniqueCharacterErrorWhenNotEnoughUniqueCharacters() {
+//        let input: [String: Any] = [
+//            "passwordPolicy": [
+//                "minUniqueCharacters": 5
+//            ]
+//        ]
+//        
+//        let collector = PasswordCollector(with: [:])
+//        collector.continueNode = MockContinueNode(context: FlowContext(flowContext: SharedContext()), workflow: Workflow(config: WorkflowConfig()), input: input, actions: [])
+//        
+//        collector.value = "aaa111@@@"
+//        
+//        XCTAssertEqual(collector.validate(), [.uniqueCharacter(min: 5)])
+//    }
     
-    // TODO: Reinclude PasswordPolicy test
-    func testAddsMaxRepeatErrorWhenTooManyRepeatedCharacters() {
-        let input: [String: Any] = [
-            "passwordPolicy": [
-                "maxRepeatedCharacters": 2
-            ]
-        ]
-        
-        let collector = PasswordCollector(with: [:])
-        collector.continueNode = MockContinueNode(context: FlowContext(flowContext: SharedContext()), workflow: Workflow(config: WorkflowConfig()), input: input, actions: [])
-        
-        collector.value = "aaabbbccc"
-        
-        XCTAssertEqual(collector.validate(), [.maxRepeat(max: 2)])
-    }
+    // TODO: Reinclude when multiple password validation errors are supported
+//    func testAddsMaxRepeatErrorWhenTooManyRepeatedCharacters() {
+//        let input: [String: Any] = [
+//            "passwordPolicy": [
+//                "maxRepeatedCharacters": 2
+//            ]
+//        ]
+//        
+//        let collector = PasswordCollector(with: [:])
+//        collector.continueNode = MockContinueNode(context: FlowContext(flowContext: SharedContext()), workflow: Workflow(config: WorkflowConfig()), input: input, actions: [])
+//        
+//        collector.value = "aaabbbccc"
+//        
+//        XCTAssertEqual(collector.validate(), [.maxRepeat(max: 2)])
+//    }
     
-    // TODO: Reinclude PasswordPolicy test
-    func testAddsMinCharactersErrorWhenNotEnoughDigits() {
-        let input: [String: Any] = [
-            "passwordPolicy": [
-                "minCharacters": [
-                    "0123456789": 2
-                ]
-            ]
-        ]
-        
-        let collector = PasswordCollector(with: [:])
-        collector.continueNode = MockContinueNode(context: FlowContext(flowContext: SharedContext()), workflow: Workflow(config: WorkflowConfig()), input: input, actions: [])
-        
-        collector.value = "Password@1"
-        
-        XCTAssertEqual(collector.validate(), [.minCharacters(character: "0123456789", min: 2)])
-    }
+    // TODO: Reinclude when multiple password validation errors are supported
+//    func testAddsMinCharactersErrorWhenNotEnoughDigits() {
+//        let input: [String: Any] = [
+//            "passwordPolicy": [
+//                "minCharacters": [
+//                    "0123456789": 2
+//                ]
+//            ]
+//        ]
+//        
+//        let collector = PasswordCollector(with: [:])
+//        collector.continueNode = MockContinueNode(context: FlowContext(flowContext: SharedContext()), workflow: Workflow(config: WorkflowConfig()), input: input, actions: [])
+//        
+//        collector.value = "Password@1"
+//        
+//        XCTAssertEqual(collector.validate(), [.minCharacters(character: "0123456789", min: 2)])
+//    }
     
     func testAddsMinCharactersErrorWhenEnoughSpecialCharacters() {
         let input: [String: Any] = [

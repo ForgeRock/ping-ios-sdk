@@ -52,9 +52,6 @@
       }
     },
     {
-      "skippedTests" : [
-        "PingFidoTests\/testAuthenticateAssosiatedDomainError()"
-      ],
       "target" : {
         "containerPath" : "container:..\/Fido\/Fido.xcodeproj",
         "identifier" : "ECD780452EA24F1B0050E60F",
@@ -83,9 +80,6 @@
       }
     },
     {
-      "skippedTests" : [
-        "DeviceProfileCallbackE2ETest"
-      ],
       "target" : {
         "containerPath" : "container:..\/Journey\/Journey.xcodeproj",
         "identifier" : "EC727A2C2E019243005D9E28",
@@ -140,19 +134,9 @@
     },
     {
       "skippedTests" : [
-        "CollectorRegistryTests",
-        "DaVinciIntegrationTests",
         "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
         "DaVinciIntegrationTests\/testInvalidPassword()",
-        "FormFieldValidationTest\/testPasswordValidation()",
-        "FormFieldValidationTests\/testPasswordValidation()",
-        "MFADeviceTests\/testDeviceAuthenticationForm()",
-        "MFADeviceTests\/testDeviceRegistrationSMS()",
-        "MFADeviceTests\/testDeviceRegistrationVOICE()",
-        "PasswordCollectorTests\/testAddsInvalidLengthErrorWhenValueTooShort()",
-        "PasswordCollectorTests\/testAddsMaxRepeatErrorWhenTooManyRepeatedCharacters()",
-        "PasswordCollectorTests\/testAddsMinCharactersErrorWhenNotEnoughDigits()",
-        "PasswordCollectorTests\/testAddsUniqueCharacterErrorWhenNotEnoughUniqueCharacters()"
+        "FormFieldValidationTest\/testPasswordValidation()"
       ],
       "target" : {
         "containerPath" : "container:..\/Davinci\/Davinci.xcodeproj",
@@ -161,16 +145,6 @@
       }
     },
     {
-      "skippedTests" : [
-        "BluetoothCollectorTests",
-        "BluetoothCollectorTests\/testBluetoothCollectorInArrayCollection()",
-        "BluetoothCollectorTests\/testBluetoothInfoCodable()",
-        "DeviceProfileCollectorTests\/testCollectorCollectWithBothEnabled()",
-        "DeviceProfileCollectorTests\/testCollectorCollectWithLocationEnabled()",
-        "LocationCollectorTests",
-        "LocationManagerTests",
-        "TelephonyCollectorTests\/testNetworkCountryIsoFormat()"
-      ],
       "target" : {
         "containerPath" : "container:..\/DeviceProfile\/DeviceProfile.xcodeproj",
         "identifier" : "A569DBA82E789BD200F4D7A8",
