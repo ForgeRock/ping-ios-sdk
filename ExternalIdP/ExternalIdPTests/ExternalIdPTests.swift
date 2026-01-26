@@ -17,14 +17,24 @@ import XCTest
 @MainActor
 final class ExternalIdPTests: XCTestCase {
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
+        try await super.setUp()
+        // Register before each test
         IdpCollector.registerCollector()
+        
+        // Wait for registration to complete
+        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+    }
+    
+    override func tearDown() async throws {
+        // Clean up if needed
+        try await super.tearDown()
     }
     
     func testIdpCollectorRegistration() async throws {
         IdpCollector.registerCollector()
         let idpCollector = await CollectorFactory.shared.collectorCreationClosures[Constants.SOCIAL_LOGIN_BUTTON]
-        XCTAssertNotNil(idpCollector)
+        XCTAssertNotNil(idpCollector, "IdpCollector should be registered in CollectorFactory")
     }
 
     func testIdpCollectorParsing() throws {
@@ -76,11 +86,19 @@ final class ExternalIdPTests: XCTestCase {
         
         let browserHandler = BrowserHandler(continueNode: connector, callbackURLScheme: "myApp")
         
+        // Test that authorize throws when URL is nil
         do {
-            let _ = try await browserHandler.authorize(url: nil)
-            XCTAssertFalse(true)
-        } catch IdpExceptions.illegalArgumentException(let errorResponse) {
-            XCTAssertTrue(errorResponse == "continueUrl not found")
+            _ = try await browserHandler.authorize(url: nil)
+            // If we get here, the test should fail because an exception should have been thrown
+            XCTFail("authorize(url: nil) should throw IdpExceptions.illegalArgumentException")
+        } catch let error as IdpExceptions {
+            if case .illegalArgumentException(let errorMessage) = error {
+                XCTAssertEqual(errorMessage, "continueUrl not found")
+            } else {
+                XCTFail("Expected illegalArgumentException but got: \(error)")
+            }
+        } catch {
+            XCTFail("Unexpected error type: \(type(of: error))")
         }
     }
 }
