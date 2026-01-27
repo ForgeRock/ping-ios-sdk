@@ -57,7 +57,7 @@ class MockContinueNode: ContinueNode, @unchecked Sendable {
     }
 }
 
-class MockFido: Fido {
+class MockFido: Fido, @unchecked Sendable {
     var registrationResult: Result<[String: Any], Error>?
     var authenticationResult: Result<[String: Any], Error>?
     

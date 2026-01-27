@@ -45,7 +45,7 @@ class TelephonyCollectorTests: XCTestCase {
         let telephonyInfo = TelephonyInfo()
         
         // In test environment without cellular, might default to "Unknown"
-        let validCountryCodes = ["Unknown"] + Locale.isoRegionCodes
+        let validCountryCodes = ["Unknown"] + Locale.Region.isoRegions.map { $0.identifier }
         
         if let countryIso = telephonyInfo.networkCountryIso {
             // Should be either "Unknown" or a valid ISO country code

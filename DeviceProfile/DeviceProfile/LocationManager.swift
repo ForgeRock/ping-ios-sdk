@@ -371,9 +371,9 @@ extension LocationManager: @preconcurrency CLLocationManagerDelegate {
     
     /// Called when the authorization status changes
     /// - Parameter manager: The location manager whose authorization changed
-    /// - Parameter status: The new authorization status
     @MainActor
-    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+    public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        let status = manager.authorizationStatus
         // Resume any pending authorization continuation
         if let continuation = authorizationContinuation {
             authorizationContinuation = nil

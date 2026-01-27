@@ -346,7 +346,7 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
     func testLegacyMigrationWithMockStorage() async throws {
         // GIVEN: A mock storage implementation
         let mockStorage = MockStorage<DeviceIdentifierImpl>()
-        let deviceIdentifier = try DefaultDeviceIdentifier(
+        let deviceIdentifier = DefaultDeviceIdentifier(
             configuration: .default,
             storage: mockStorage,
             logger: nil

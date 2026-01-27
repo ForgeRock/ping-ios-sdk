@@ -18,7 +18,7 @@ class NamePasswordCallbackE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
     
     func testNamePasswordCallbacks() async throws {
         // Start the journey and cast to ContinueNode
-        guard var node = await defaultJourney.start(testTree) as? ContinueNode else {
+        guard let node = await defaultJourney.start(testTree) as? ContinueNode else {
             XCTFail("Expected ContinueNode at start")
             return
         }

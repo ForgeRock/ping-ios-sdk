@@ -250,7 +250,6 @@ class DeviceProfileCollectorTests: XCTestCase {
         config.location = false
         config.collectors = [MockPlatformCollectorForTests()]
         
-        let testCollector = collector!
         measure {
             Task {
                 let testCollector = DeviceProfileCollector(config: DeviceProfileConfig())
@@ -267,7 +266,6 @@ class DeviceProfileCollectorTests: XCTestCase {
         config.collectors = [MockPlatformCollectorForTests()]
         
         let iterations = 5
-        let testCollector = collector!
         
         await withTaskGroup(of: DeviceProfileResult?.self) { group in
             let testCollector = DeviceProfileCollector(config: DeviceProfileConfig())

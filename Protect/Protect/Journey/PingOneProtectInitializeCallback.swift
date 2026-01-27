@@ -80,9 +80,9 @@ public class PingOneProtectInitializeCallback: AbstractProtectCallback, @uncheck
             try await Protect.initialize()
             
             if isBehavioralDataCollection {
-                try await Protect.resumeBehavioralData()
+                try Protect.resumeBehavioralData()
             } else {
-                try await Protect.pauseBehavioralData()
+                try Protect.pauseBehavioralData()
             }
             return .success(())
         } catch {

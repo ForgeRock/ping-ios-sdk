@@ -47,7 +47,7 @@ public class PasswordCollector: ValidatedCollector, ContinueNodeAware, Closeable
     }
     
     public override func validate() -> [ValidationError] {
-        var errors = super.validate()
+        let errors = super.validate()
         
         // If we have a password policy, check additional constraints
         // TODO: Uncomment password policy validation

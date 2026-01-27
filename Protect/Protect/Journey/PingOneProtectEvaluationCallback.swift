@@ -40,7 +40,7 @@ public class PingOneProtectEvaluationCallback: AbstractProtectCallback, @uncheck
             let signal = try await Protect.data()
             
             if pauseBehavioralData {
-                try await Protect.pauseBehavioralData()
+                try Protect.pauseBehavioralData()
             }
             
             self.signal(signal, error: "")

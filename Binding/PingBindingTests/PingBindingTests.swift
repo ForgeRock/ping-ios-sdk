@@ -289,13 +289,15 @@ final class PingBindingTests: XCTestCase {
     
     // MARK: - Configuration Tests
     
+    @MainActor
     func testDeviceBindingConfig_DefaultValues() {
         // Given
         let config = DeviceBindingConfig()
         
         // Then
         #if canImport(UIKit)
-        XCTAssertEqual(config.deviceName, UIDevice.current.name)
+        let expectedDeviceName = UIDevice.current.name
+        XCTAssertEqual(config.deviceName, expectedDeviceName)
         XCTAssertTrue(config.userKeySelector is DefaultUserKeySelector)
         #else
         XCTAssertEqual(config.deviceName, "Apple")

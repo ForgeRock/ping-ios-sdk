@@ -1,6 +1,6 @@
 //
 //  DavinciPlugin.h
-//  PingDavinciPlugin
+//  DavinciPlugin
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -11,9 +11,9 @@
 #import <Foundation/Foundation.h>
 
 //! Project version number for DavinciPlugin.
-FOUNDATION_EXPORT double PingDavinciPluginVersionNumber;
+FOUNDATION_EXPORT double DavinciPluginVersionNumber;
 
 //! Project version string for PingFido.
-FOUNDATION_EXPORT const unsigned char PingDavinciPluginVersionString[];
+FOUNDATION_EXPORT const unsigned char DavinciPluginVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <PingDavinciPlugin/PublicHeader.h>
+// In this header, you should import all the public headers of your framework using statements like #import <DavinciPlugin/PublicHeader.h>

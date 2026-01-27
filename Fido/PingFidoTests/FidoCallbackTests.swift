@@ -58,8 +58,8 @@ class FidoCallbackTests: XCTestCase {
             // Optional: Assert specific things about the response if needed
             XCTAssertEqual(responseDict[FidoConstants.FIELD_RAW_ID] as? Data, "rawId".data(using: .utf8)!)
             // Verify the side effect on hiddenValueCallback
-            XCTAssertFalse((hiddenValueCallback.value ?? "").starts(with: "ERROR::"))
-            XCTAssertTrue((hiddenValueCallback.value ?? "").contains("clientDataJSON"))
+            XCTAssertFalse((hiddenValueCallback.value).starts(with: "ERROR::"))
+            XCTAssertTrue((hiddenValueCallback.value).contains("clientDataJSON"))
         case .failure(let error):
             XCTFail("Expected register to succeed, but it failed with \(error).")
         }
@@ -80,7 +80,7 @@ class FidoCallbackTests: XCTestCase {
             }
             XCTAssertEqual(fidoError, .invalidChallenge)
             // Verify the side effect on hiddenValueCallback
-            XCTAssertTrue((hiddenValueCallback.value ?? "").starts(with: "ERROR::"))
+            XCTAssertTrue((hiddenValueCallback.value).starts(with: "ERROR::"))
         }
     }
     
@@ -115,8 +115,8 @@ class FidoCallbackTests: XCTestCase {
             // Optional: Assert specific things about the response if needed
             XCTAssertEqual(responseDict[FidoConstants.FIELD_RAW_ID] as? Data, "rawId".data(using: .utf8)!)
             // Verify the side effect on hiddenValueCallback
-            XCTAssertFalse((hiddenValueCallback.value ?? "").starts(with: "ERROR::"))
-            XCTAssertTrue((hiddenValueCallback.value ?? "").contains("clientDataJSON"))
+            XCTAssertFalse((hiddenValueCallback.value).starts(with: "ERROR::"))
+            XCTAssertTrue((hiddenValueCallback.value).contains("clientDataJSON"))
         case .failure(let error):
             XCTFail("Expected authenticate to succeed, but it failed with \(error).")
         }
@@ -137,7 +137,7 @@ class FidoCallbackTests: XCTestCase {
             }
             XCTAssertEqual(fidoError, .invalidChallenge)
             // Verify the side effect on hiddenValueCallback
-            XCTAssertTrue((hiddenValueCallback.value ?? "").starts(with: "ERROR::"))
+            XCTAssertTrue((hiddenValueCallback.value).starts(with: "ERROR::"))
         }
     }
 }
