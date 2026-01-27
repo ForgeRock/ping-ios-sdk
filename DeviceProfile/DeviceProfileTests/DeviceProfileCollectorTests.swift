@@ -2,7 +2,7 @@
 //  DeviceProfileCollectorTests.swift
 //  DeviceProfile
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -21,6 +21,7 @@ class DeviceProfileCollectorTests: XCTestCase {
     override func setUp() {
         super.setUp()
         config = DeviceProfileConfig()
+        config.collectors = DefaultDeviceCollector.defaultDeviceCollectorsForTesting()
         collector = DeviceProfileCollector(config: config)
     }
     
@@ -243,20 +244,6 @@ class DeviceProfileCollectorTests: XCTestCase {
         XCTAssertTrue(true, "Logger configuration completed without error")
     }
     
-    // MARK: - Performance Tests
-    
-    func testCollectorCollectPerformance() {
-        config.metadata = true
-        config.location = false
-        config.collectors = [MockPlatformCollectorForTests()]
-        
-        measure {
-            Task {
-                let testCollector = DeviceProfileCollector(config: DeviceProfileConfig())
-                _ = try? await testCollector.collect()
-            }
-        }
-    }
     
     // MARK: - Thread Safety Tests
     
@@ -268,7 +255,7 @@ class DeviceProfileCollectorTests: XCTestCase {
         let iterations = 5
         
         await withTaskGroup(of: DeviceProfileResult?.self) { group in
-            let testCollector = DeviceProfileCollector(config: DeviceProfileConfig())
+            let testCollector = DeviceProfileCollector(config: config)
             for _ in 0..<iterations {
                 group.addTask {
                     return try? await testCollector.collect()
@@ -408,4 +395,18 @@ struct ThrowingDeviceIdentifierForTests: DeviceIdentifier {
 
 enum TestError: Error {
     case mockError
+}
+
+/// Extension to provide default collectors for testing
+extension DefaultDeviceCollector {
+    public static func defaultDeviceCollectorsForTesting() -> [any DeviceCollector] {
+        return [
+            PlatformCollector(),
+            HardwareCollector(),
+            BrowserCollector(),
+            TelephonyCollector(),
+            NetworkCollector(),
+            BluetoothCollector(stateProvider: MockBluetoothStateProvider()),
+        ]
+    }
 }

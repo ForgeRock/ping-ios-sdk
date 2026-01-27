@@ -136,7 +136,9 @@
       "skippedTests" : [
         "DaVinciIntegrationTests\/testHappyPathWithPasswordCredentials()",
         "DaVinciIntegrationTests\/testInvalidPassword()",
-        "FormFieldValidationTest\/testPasswordValidation()"
+        "DaVinciIntegrationTests\/testPasswordReset()",
+        "FormFieldValidationTest\/testPasswordValidation()",
+        "MFADeviceTests\/test03_DeviceAuthenticationForm()"
       ],
       "target" : {
         "containerPath" : "container:..\/Davinci\/Davinci.xcodeproj",

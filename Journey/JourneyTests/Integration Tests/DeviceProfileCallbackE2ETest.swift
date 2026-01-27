@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+ * Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import XCTest
+import CoreBluetooth
 @testable import PingJourney
 @testable import PingOrchestrate
 @testable import PingOidc
@@ -54,7 +55,7 @@ class DeviceProfileCallbackE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
         // Collect device profile using the devault collectors...
         let result = await deviceProfileCallback.collect { config in
             config.collectors {
-                return DefaultDeviceCollector.defaultDeviceCollectors()
+                return DefaultDeviceCollector.defaultDeviceCollectorsForTesting()
             }
         }
         
@@ -280,5 +281,29 @@ class DeviceProfileCallbackE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
         XCTAssertNotNil(result.session)
         let session = await defaultJourney.session()
         XCTAssertNotNil(session)
+    }
+}
+
+/// Extension to provide default collectors for testing
+extension DefaultDeviceCollector {
+    public static func defaultDeviceCollectorsForTesting() -> [any DeviceCollector] {
+        return [
+            PlatformCollector(),
+            HardwareCollector(),
+            BrowserCollector(),
+            TelephonyCollector(),
+            NetworkCollector(),
+            BluetoothCollector(stateProvider: MockBluetoothStateProvider()),
+        ]
+    }
+}
+
+/// Mock Bluetooth state provider for testing (no system prompts)
+struct MockBluetoothStateProvider: BluetoothStateProvider {
+    var mockState: CBManagerState = .poweredOn
+    
+    func getBluetoothSupported() async -> Bool {
+        let isBLESupported = mockState == .poweredOn || mockState == .poweredOff
+        return isBLESupported
     }
 }

@@ -44,6 +44,8 @@
 		A54BF4722BF2E34000CD24D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A54BF4712BF2E34000CD24D4 /* Assets.xcassets */; };
 		A567428A2EE34EE6009D29B9 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A56742892EE34EE6009D29B9 /* PingCommons.framework */; };
 		A567428B2EE34EE6009D29B9 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A56742892EE34EE6009D29B9 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A5997CEC2F2922CA0037537D /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5997CEB2F2922CA0037537D /* PingDavinciPlugin.framework */; };
+		A5997CED2F2922CA0037537D /* PingDavinciPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5997CEB2F2922CA0037537D /* PingDavinciPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC2E0D8F2DE60C42000CC0E2 /* PingExternalIdPApple.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC2E0D8E2DE60C42000CC0E2 /* PingExternalIdPApple.framework */; };
 		EC2E0D902DE60C42000CC0E2 /* PingExternalIdPApple.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC2E0D8E2DE60C42000CC0E2 /* PingExternalIdPApple.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC2E0D922DE60C49000CC0E2 /* PingExternalIdP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC2E0D912DE60C49000CC0E2 /* PingExternalIdP.framework */; };
@@ -73,6 +75,7 @@
 			files = (
 				ECB7C6932D5A27840006F1C8 /* PingBrowser.framework in Embed Frameworks */,
 				EC59E3712E7D8BFC00A91E66 /* PingTamperDetector.framework in Embed Frameworks */,
+				A5997CED2F2922CA0037537D /* PingDavinciPlugin.framework in Embed Frameworks */,
 				95DD7E6C2EF9F78700ED05D7 /* PingBinding.framework in Embed Frameworks */,
 				95DD7E722EF9F7C700ED05D7 /* PingNetwork.framework in Embed Frameworks */,
 				95E755602EA6A80F008DBFD6 /* PingDeviceProfile.framework in Embed Frameworks */,
@@ -137,6 +140,7 @@
 		A57A08BB2CE4FD96006F0CBB /* Orchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Orchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A57A08C22CE50537006F0CBB /* Oidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Oidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A57A08DE2CE50937006F0CBB /* Davinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Davinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5997CEB2F2922CA0037537D /* PingDavinciPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinciPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5D1CD5E2BF504E400D1C83E /* PingStorage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingStorage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC2E0D8E2DE60C42000CC0E2 /* PingExternalIdPApple.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdPApple.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC2E0D912DE60C49000CC0E2 /* PingExternalIdP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingExternalIdP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -181,6 +185,7 @@
 				95DD7E6E2EF9F7AF00ED05D7 /* PingDeviceClient.framework in Frameworks */,
 				956BEF7C2EFB1C5D00650FA0 /* PingReCaptchaEnterprise.framework in Frameworks */,
 				A507A2672CEBED9F007F5C16 /* PingDavinci.framework in Frameworks */,
+				A5997CEC2F2922CA0037537D /* PingDavinciPlugin.framework in Frameworks */,
 				A507A26F2CEBED9F007F5C16 /* PingStorage.framework in Frameworks */,
 				ECED512C2DC1111800FA39A7 /* FacebookCore in Frameworks */,
 				A507A26D2CEBED9F007F5C16 /* PingOrchestrate.framework in Frameworks */,
@@ -225,6 +230,7 @@
 		A54BF4822BF2E5B800CD24D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A5997CEB2F2922CA0037537D /* PingDavinciPlugin.framework */,
 				956BEF7B2EFB1C5D00650FA0 /* PingReCaptchaEnterprise.framework */,
 				95DD7E702EF9F7C700ED05D7 /* PingNetwork.framework */,
 				95DD7E6D2EF9F7AF00ED05D7 /* PingDeviceClient.framework */,
@@ -499,11 +505,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9QSE66762D;
+				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PingTestHost/Info.plist;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "We use Bluetooth in the device profile feature";
@@ -522,7 +526,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = PingTestHost;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -536,11 +539,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 9QSE66762D;
+				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PingTestHost/Info.plist;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "We use Bluetooth in the device profile feature";
@@ -559,7 +560,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = PingTestHost;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
