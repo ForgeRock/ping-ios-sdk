@@ -61,4 +61,11 @@ public struct DefaultDeviceCollector {
             BluetoothCollector(),
         ]
     }
+
+    /// Creates and returns the default location collector.
+    /// This method provides a pre-configured location collector
+    /// that gathers device location information, subject to user permissions.
+    public static func defaultLocationCollector() -> LocationCollector {
+        return LocationCollector()
+    }
 }

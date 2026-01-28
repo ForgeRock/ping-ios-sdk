@@ -197,6 +197,10 @@ public final class DeviceProfileConfig: @unchecked Sendable {
     /// Defaults valuse is `DefaultDeviceCollector.defaultDeviceCollectors()`
     public var collectors: [any DeviceCollector] =  DefaultDeviceCollector.defaultDeviceCollectors()
     
+    /// collector to use for location gathering.
+    /// Defaults valuse is `DefaultDeviceCollector.defaultLocationCollector()`
+    var locationCollector: LocationCollector =  DefaultDeviceCollector.defaultLocationCollector()
+    
     /// Configures the collectors array using a builder pattern
     /// - Parameter configBlock: Block that returns the desired collectors array
     ///

@@ -215,11 +215,14 @@ class MFADeviceTests: XCTestCase {
         
         // Assert the available devices
         print("deviceAuthenticationCollector.devices.count = \(deviceAuthenticationCollector.devices.count)")
-        XCTAssertTrue(deviceAuthenticationCollector.devices.count == 4)
-        XCTAssertEqual("EMAIL", deviceAuthenticationCollector.devices[0].type)
-        XCTAssertEqual("EMAIL", deviceAuthenticationCollector.devices[1].type)
-        XCTAssertEqual("SMS", deviceAuthenticationCollector.devices[2].type)
-        XCTAssertEqual("VOICE", deviceAuthenticationCollector.devices[3].type)
+        if deviceAuthenticationCollector.devices.count == 4 {
+            XCTAssertEqual("EMAIL", deviceAuthenticationCollector.devices[0].type)
+            XCTAssertEqual("EMAIL", deviceAuthenticationCollector.devices[1].type)
+            XCTAssertEqual("SMS", deviceAuthenticationCollector.devices[2].type)
+            XCTAssertEqual("VOICE", deviceAuthenticationCollector.devices[3].type)
+        } else {
+            XCTFail("Expected 4 devices, but got \(deviceAuthenticationCollector.devices.count)")
+        }
     }
         
     func test04_DeviceRegistrationEmail() async throws {

@@ -12,6 +12,7 @@ import XCTest
 import PingLogger
 @testable import PingDeviceProfile
 @testable import PingDeviceId
+import _LocationEssentials
 
 class DeviceProfileCollectorTests: XCTestCase {
     
@@ -140,8 +141,13 @@ class DeviceProfileCollectorTests: XCTestCase {
     func testCollectorCollectWithLocationEnabled() async throws {
         config.metadata = false
         config.location = true
+        config.locationCollector = await DefaultDeviceCollector.defaultlocationCollectorsForTesting()
         
         let result = try await collector.collect()
+        
+        await MainActor.run {
+            MockLocationManager.shared = nil
+        }
         
         XCTAssertNotNil(result, "Collector should return result")
         XCTAssertNil(result?.metadata, "Metadata should not be collected when disabled")
@@ -152,6 +158,11 @@ class DeviceProfileCollectorTests: XCTestCase {
         config.metadata = true
         config.location = true
         config.collectors = [MockPlatformCollectorForTests()]
+        config.locationCollector = await DefaultDeviceCollector.defaultlocationCollectorsForTesting()
+        
+        await MainActor.run {
+            MockLocationManager.shared = nil
+        }
         
         let result = try await collector.collect()
         
@@ -408,5 +419,22 @@ extension DefaultDeviceCollector {
             NetworkCollector(),
             BluetoothCollector(stateProvider: MockBluetoothStateProvider()),
         ]
+    }
+    
+    @MainActor public static func defaultlocationCollectorsForTesting() -> LocationCollector {
+        let mockCLLocationManager = MockLocationManager()
+        mockCLLocationManager.mockLocationServicesEnabled = true
+        mockCLLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
+        let expectedLocation = CLLocation(latitude: 37.7749, longitude: -122.4194)
+        mockCLLocationManager.mockLocation = expectedLocation
+        MockLocationManager.shared = mockCLLocationManager
+        
+        // Create LocationManager with the mock
+        let manager = LocationManager(
+            locationManager: mockCLLocationManager,
+            locationManagerType: MockLocationManager.self
+        )
+        
+        return LocationCollector(locationManager: manager)
     }
 }

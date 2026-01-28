@@ -110,7 +110,7 @@ public class DeviceProfileCollector: DeviceCollector, @unchecked Sendable {
     /// Collects location information if available
     /// - Returns: LocationInfo if successful, nil if unavailable or unauthorized
     private func collectLocation() async -> LocationInfo? {
-        return await LocationCollector().collect()
+        return await config.locationCollector.collect()
     }
 }
 

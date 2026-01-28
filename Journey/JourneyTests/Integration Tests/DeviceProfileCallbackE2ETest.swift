@@ -12,12 +12,14 @@ import CoreBluetooth
 @testable import PingOidc
 @testable import PingLogger
 @testable import PingDeviceProfile
+import CoreLocation
 
 class DeviceProfileCallbackE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
     
     var logger = LogManager.logger
     var testTree = "DeviceProfileCallbackTest"
     
+    @MainActor
     func testDeviceProfileCallbackWithDefaultCollectors() async throws {
         // Start the journey and provide valid credentials
         let node = try await handleLoginCallbacks(treeName: testTree)
@@ -52,11 +54,25 @@ class DeviceProfileCallbackE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
         XCTAssertTrue(deviceProfileCallback.location)
         XCTAssertTrue(deviceProfileCallback.metadata)
         
+        let mockCLLocationManager = MockLocationManager()
+        mockCLLocationManager.mockLocationServicesEnabled = true
+        mockCLLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
+        let expectedLocation = CLLocation(latitude: 37.7749, longitude: -122.4194)
+        mockCLLocationManager.mockLocation = expectedLocation
+        MockLocationManager.shared = mockCLLocationManager
+        
+        // Create LocationManager with the mock
+        let manager = LocationManager(
+            locationManager: mockCLLocationManager,
+            locationManagerType: MockLocationManager.self
+        )
+        
         // Collect device profile using the devault collectors...
         let result = await deviceProfileCallback.collect { config in
             config.collectors {
                 return DefaultDeviceCollector.defaultDeviceCollectorsForTesting()
             }
+            config.locationCollector = LocationCollector(locationManager: manager)
         }
         
         switch result {
@@ -305,5 +321,86 @@ struct MockBluetoothStateProvider: BluetoothStateProvider {
     func getBluetoothSupported() async -> Bool {
         let isBLESupported = mockState == .poweredOn || mockState == .poweredOff
         return isBLESupported
+    }
+}
+
+/// Mock implementation for testing location scenarios
+@MainActor class MockLocationManager: @preconcurrency LocationManagerProtocol {
+    weak var delegate: CLLocationManagerDelegate?
+    var desiredAccuracy: CLLocationAccuracy = kCLLocationAccuracyBest
+    
+    // Test configuration properties
+    var mockAuthorizationStatus: CLAuthorizationStatus = .notDetermined
+    var mockLocationServicesEnabled: Bool = true
+    var mockLocation: CLLocation?
+    var mockError: Error?
+    var shouldDelayResponse: Bool = false
+    
+    // Call tracking for verification
+    var requestLocationCallCount = 0
+    var requestWhenInUseAuthorizationCallCount = 0
+    var requestAlwaysAuthorizationCallCount = 0
+    
+    // Shared state for static methods (used in tests)
+    @MainActor static var shared: MockLocationManager?
+    
+    @MainActor static func locationServicesEnabled() -> Bool {
+        return shared?.mockLocationServicesEnabled ?? true
+    }
+    
+    @MainActor static func authorizationStatus() -> CLAuthorizationStatus {
+        return shared?.mockAuthorizationStatus ?? .notDetermined
+    }
+    
+    func requestLocation() {
+        requestLocationCallCount += 1
+        
+        let simulateResponse = {
+            if let error = self.mockError {
+                self.delegate?.locationManager?(CLLocationManager(), didFailWithError: error)
+            } else if let location = self.mockLocation {
+                self.delegate?.locationManager?(CLLocationManager(), didUpdateLocations: [location])
+            } else {
+                // No location set - simulate a failure
+                let error = NSError(domain: kCLErrorDomain,
+                                   code: CLError.locationUnknown.rawValue,
+                                   userInfo: [NSLocalizedDescriptionKey: "No mock location configured"])
+                self.delegate?.locationManager?(CLLocationManager(), didFailWithError: error)
+            }
+        }
+        
+        // Always respond asynchronously to match real CoreLocation behavior
+        let delay = shouldDelayResponse ? 0.1 : 0.01
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            simulateResponse()
+        }
+    }
+    
+    func requestWhenInUseAuthorization() {
+        requestWhenInUseAuthorizationCallCount += 1
+        
+        // If currently notDetermined, grant permission automatically
+        if mockAuthorizationStatus == .notDetermined {
+            mockAuthorizationStatus = .authorizedWhenInUse
+        }
+        
+        // Simulate authorization change
+        DispatchQueue.main.async {
+            self.delegate?.locationManagerDidChangeAuthorization?(CLLocationManager())
+        }
+    }
+    
+    func requestAlwaysAuthorization() {
+        requestAlwaysAuthorizationCallCount += 1
+        
+        // If currently notDetermined, grant permission automatically
+        if mockAuthorizationStatus == .notDetermined {
+            mockAuthorizationStatus = .authorizedAlways
+        }
+        
+        // Simulate authorization change
+        DispatchQueue.main.async {
+            self.delegate?.locationManagerDidChangeAuthorization?(CLLocationManager())
+        }
     }
 }
