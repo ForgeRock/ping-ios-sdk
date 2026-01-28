@@ -20,11 +20,11 @@ on:
         description: 'Keychain password'
         required: true
 
-      # 1. Find the 'com.pingidentity.PingTestHost' provisioning profile (~/Library/MobileDevice/Provisioning\ Profiles)
+      # 1. Find the 'com.pingidentity.PingTestHost' provisioning profile (~/Library/MobileDevice/Provisioning\ Profiles) Xcode 16+ (~/Library/Developer/Xcode/UserData/Provisioning\ Profiles)
       # 2. Rename the file to `provisioning_profile.mobileprovision`
       # 3. Zip the file: `zip provisioning_profile.mobileprovision.zip provisioning_profile.mobileprovision`
       # 4. Convert the file to Base64 string: `base64 -i provisioning_profile.mobileprovision.zip | pbcopy`
-      # 5. Update the value of the BUILD_PROVISION_PROFILE_ZIP_BASE64 action secret with the content of the clipboard
+      # 5. Update the value of the BUILD_PROVISION_PROFILE_ZIP_BASE64 action secret with the content of the clipboard, make sure extra new line is deleted at the end
       BUILD_PROVISION_PROFILE:
         description: 'Apple build provisioning profile'
         required: true
