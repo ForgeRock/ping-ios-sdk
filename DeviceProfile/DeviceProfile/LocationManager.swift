@@ -2,7 +2,7 @@
 //  LocationManager.swift
 //  DeviceProfile
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -315,11 +315,20 @@ public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
             return lastLocation
         }
         
-        // Request fresh location from system
-        return try await withCheckedThrowingContinuation { continuation in
-            Task {
-                locationContinuation = continuation
-                await locationManager.requestLocation()
+        // Request fresh location from system with proper cancellation handling
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                // Store continuation synchronously before starting async work
+                self.locationContinuation = continuation
+                Task {
+                    await self.locationManager.requestLocation()
+                }
+            }
+        } onCancel: {
+            // Clean up continuation if task is cancelled to prevent leak
+            if let pendingContinuation = self.locationContinuation {
+                self.locationContinuation = nil
+                pendingContinuation.resume(returning: nil)
             }
         }
     }
@@ -336,16 +345,31 @@ public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
             throw LocationError.missingPrivacyConsent
         }
         
-        return await withCheckedContinuation { continuation in
-            Task {
-                authorizationContinuation = continuation
-                
-                // Request appropriate authorization level based on Info.plist configuration
-                if hasAlwaysUsageDescription {
-                    await locationManager.requestAlwaysAuthorization()
-                } else if hasWhenInUseUsageDescription {
-                    await locationManager.requestWhenInUseAuthorization()
+        // Check current status first - if already determined, return immediately
+        let currentStatus = await authorizationStatus
+        if currentStatus != .notDetermined {
+            return currentStatus
+        }
+        
+        return await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                // Store continuation synchronously before starting async work
+                self.authorizationContinuation = continuation
+                Task {
+                    // Request appropriate authorization level based on Info.plist configuration
+                    if hasAlwaysUsageDescription {
+                        await self.locationManager.requestAlwaysAuthorization()
+                    } else if hasWhenInUseUsageDescription {
+                        await self.locationManager.requestWhenInUseAuthorization()
+                    }
                 }
+            }
+        } onCancel: {
+            // Clean up continuation if task is cancelled to prevent leak
+            if let pendingContinuation = self.authorizationContinuation {
+                self.authorizationContinuation = nil
+                // Resume with notDetermined on cancellation
+                pendingContinuation.resume(returning: .notDetermined)
             }
         }
     }
