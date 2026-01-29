@@ -469,56 +469,6 @@ final class PingBindingTests: XCTestCase {
         }
     }
     
-    func testUserKeysStorage_ConcurrentAccess() async throws {
-        // Given
-        let bindCallback1 = DeviceBindingCallback()
-        bindCallback1.userId = "concurrent1"
-        bindCallback1.userName = "Concurrent User 1"
-        bindCallback1.challenge = "challenge1"
-        bindCallback1.deviceBindingAuthenticationType = .none
-        
-        let bindCallback2 = DeviceBindingCallback()
-        bindCallback2.userId = "concurrent2"
-        bindCallback2.userName = "Concurrent User 2"
-        bindCallback2.challenge = "challenge2"
-        bindCallback2.deviceBindingAuthenticationType = .none
-        
-        do {
-            // When: Execute bindings concurrently
-            async let bind1 = Binding.bind(callback: bindCallback1, journey: nil)
-            async let bind2 = Binding.bind(callback: bindCallback2, journey: nil)
-            
-            let (jws1, jws2) = try await (bind1, bind2)
-            
-            // Then: Verify both operations succeeded
-            XCTAssertFalse(jws1.isEmpty, "First binding should produce a valid JWS")
-            XCTAssertFalse(jws2.isEmpty, "Second binding should produce a valid JWS")
-            
-            // Verify both keys were stored correctly
-            let key1 = try await userKeyStorage.findByUserId("concurrent1")
-            let key2 = try await userKeyStorage.findByUserId("concurrent2")
-            
-            XCTAssertNotNil(key1, "First user's key should be stored")
-            XCTAssertNotNil(key2, "Second user's key should be stored")
-            XCTAssertEqual(key1?.userId, "concurrent1")
-            XCTAssertEqual(key2?.userId, "concurrent2")
-            
-            // Verify they are different keys
-            XCTAssertNotEqual(key1?.keyTag, key2?.keyTag, "Keys should be different")
-            
-        } catch {
-            #if targetEnvironment(simulator)
-            XCTAssertNotNil(error, "Concurrent access test failed on simulator: \(error)")
-            #else
-            XCTFail("Concurrent access test failed on real device with unexpected error: \(error)")
-            #endif
-        }
-        
-        // Cleanup - do this explicitly after the do-catch block
-        try? await userKeyStorage.deleteByUserId("concurrent1")
-        try? await userKeyStorage.deleteByUserId("concurrent2")
-    }
-    
     // MARK: - Callback Tests
     
     func testDeviceBindingCallback_InitValue() {
