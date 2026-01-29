@@ -36,4 +36,5 @@ Pod::Spec.new do |s|
   s.ios.dependency 'PingDeviceId', '~> 1.3.1'
   s.ios.dependency 'PingJourneyPlugin', '~> 1.3.1'
   s.ios.dependency 'PingTamperDetector', '~> 1.3.1'
+  s.ios.dependency 'PingJourney', '~> 1.3.1'
 end
