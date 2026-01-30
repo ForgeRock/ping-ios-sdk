@@ -17,10 +17,10 @@ The Modern Ping SDK represents a fundamental architectural shift from callback-b
 
 | Legacy SDK | Modern SDK | Notes |
 |------------|------------|-------|
-| `FRAuth.start(options:)` | `Journey { ... }` | Configuration now declarative |
+| `FRAuth.start(options:)` | `Journey.createJourney { config in ... }` | Configuration now declarative |
 | `FRSession.authenticate()` | `journey.start()` | Returns explicit node types |
 | `Node.next()` completion | `await node.next()` | Async/await instead of callbacks |
-| `FRUser.currentUser` | `await journey.user()` | Async property access |
+| `FRUser.currentUser` | `await journey.journeyUser()` | Async property access |
 | `WebAuthnRegistrationCallback` | `FidoRegistrationCallback` | Renamed for clarity |
 | `WebAuthnAuthenticationCallback` | `FidoAuthenticationCallback` | Renamed for clarity |
 | `SelectIdPCallback` | `SelectIdpCallback` | Case change |
@@ -177,20 +177,20 @@ do {
 ### Modern
 
 ```swift
-let journey = Journey {
-    logger = Logger.STANDARD
+let journey = Journey.createJourney { config in
+    config.logger = LogManager.standard
     
-    serverUrl = "https://openam.example.com/am"
-    realm = "alpha"
-    cookie = "iPlanetDirectoryPro"
-    timeout = 60
+    config.serverUrl = "https://openam.example.com/am"
+    config.realm = "alpha"
+    config.cookie = "iPlanetDirectoryPro"
+    config.timeout = 60
     
     // OIDC module configuration
-    module(Oidc) {
-        clientId = "iOSClient"
-        discoveryEndpoint = "https://openam.example.com/am/oauth2/alpha/.well-known/openid-configuration"
-        scopes = mutableSetOf("openid", "profile", "email")
-        redirectUri = "com.example.app:/oauth2redirect"
+    config.module(PingJourney.OidcModule.config) { oidcConfig in
+        oidcConfig.clientId = "iOSClient"
+        oidcConfig.discoveryEndpoint = "https://openam.example.com/am/oauth2/alpha/.well-known/openid-configuration"
+        oidcConfig.scopes = ["openid", "profile", "email"]
+        oidcConfig.redirectUri = "com.example.app:/oauth2redirect"
     }
 }
 ```
@@ -220,21 +220,17 @@ let journeyName = "Login"
 let node = await journey.start(journeyName)
 
 switch node {
-case is ContinueNode:
-    let continueNode = node as! ContinueNode
+case let continueNode as ContinueNode:
     // Process callbacks
     handleCallbacks(continueNode)
     
-case is SuccessNode:
-    let successNode = node as! SuccessNode
+case let successNode as SuccessNode:
     print("Authentication successful")
     
-case is FailureNode:
-    let failureNode = node as! FailureNode
+case let failureNode as FailureNode:
     print("Authentication failed: \(failureNode.cause)")
     
-case is ErrorNode:
-    let errorNode = node as! ErrorNode
+case let errorNode as ErrorNode:
     print("Error: \(errorNode.cause)")
     
 default:
@@ -287,16 +283,16 @@ func handleCallbacks(_ node: ContinueNode) async {
     let nextNode = await node.next()
     
     switch nextNode {
-    case is ContinueNode:
-        await handleCallbacks(nextNode as! ContinueNode)
+    case let continueNode as ContinueNode:
+        await handleCallbacks(continueNode)
         
-    case is SuccessNode:
+    case let successNode as SuccessNode:
         print("Authentication successful")
         
-    case is FailureNode:
+    case let failureNode as FailureNode:
         print("Authentication failed")
         
-    case is ErrorNode:
+    case let errorNode as ErrorNode:
         print("Error occurred")
         
     default:
@@ -321,7 +317,7 @@ FRUser.currentUser?.logout()
 
 ```swift
 // Logout user (revokes OAuth2 tokens and session)
-await journey.user()?.logout()
+await journey.journeyUser()?.logout()
 ```
 
 ## Example: WebAuthn Registration Callback
@@ -465,7 +461,7 @@ FRUser.currentUser?.getUserInfo { (userInfo, error) in
 ### Modern
 
 ```swift
-if let user = await journey.user() {
+if let user = await journey.journeyUser() {
     // userinfo() returns Result<UserInfo, OidcError>
     let result = await user.userinfo(cache: false)
     
@@ -496,11 +492,17 @@ if let currentUser = FRUser.currentUser,
 ### Modern
 
 ```swift
-if let user = await journey.user(),
-   let token = user.token() {
-    print("Access Token: \(token.value)")
-    print("Expires In: \(token.expiresIn ?? 0)")
-    print("Token Type: \(token.tokenType)")
+if let user = await journey.journeyUser() {
+    let result = await user.token()
+    
+    switch result {
+    case .success(let token):
+        print("Access Token: \(token.value)")
+        print("Expires In: \(token.expiresIn ?? 0)")
+        print("Token Type: \(token.tokenType)")
+    case .failure(let error):
+        print("Error retrieving token: \(error)")
+    }
 }
 ```
 
@@ -521,7 +523,7 @@ FRUser.currentUser?.revokeAccessToken { (user, error) in
 ### Modern
 
 ```swift
-if let user = await journey.user() {
+if let user = await journey.journeyUser() {
     // revoke() does not return a value or throw errors
     await user.revoke()
     print("Access token revoked successfully")
@@ -546,7 +548,7 @@ FRUser.currentUser?.refresh { (user, error) in
 ### Modern
 
 ```swift
-if let user = await journey.user() {
+if let user = await journey.journeyUser() {
     // refresh() returns Result<Token, OidcError>
     let result = await user.refresh()
     
@@ -586,22 +588,29 @@ FRUser.browser()?
 ```swift
 import PingOidc
 
-let oidcWeb = OidcWeb {
-    logger = Logger.STANDARD
+let oidcLogin = OidcWeb.createOidcWeb { config in
+    config.browserMode = .login
+    config.browserType = .authSession
+    config.logger = LogManager.standard
     
-    module(Oidc) {
-        clientId = "iOSClient"
-        discoveryEndpoint = "https://openam.example.com/am/oauth2/alpha/.well-known/openid-configuration"
-        scopes = mutableSetOf("openid", "profile", "email")
-        redirectUri = "com.example.app:/oauth2redirect"
+    config.module(PingOidc.OidcModule.config) { oidcConfig in
+        oidcConfig.clientId = "iOSClient"
+        oidcConfig.discoveryEndpoint = "https://openam.example.com/am/oauth2/alpha/.well-known/openid-configuration"
+        oidcConfig.scopes = ["openid", "profile", "email"]
+        oidcConfig.redirectUri = "com.example.app:/oauth2redirect"
     }
 }
 
 do {
-    let user = try await oidcWeb.authorize(presentingViewController: self)
+    let user = try await oidcLogin.authorize(presentingViewController: self)
     print("Login successful")
-    if let token = user.token() {
+    
+    let result = await user.token()
+    switch result {
+    case .success(let token):
         print("Access Token: \(token.value)")
+    case .failure(let error):
+        print("Error retrieving token: \(error)")
     }
 } catch {
     print("Login error: \(error)")
@@ -628,7 +637,7 @@ FRUser.browser()?
 ### Modern
 
 ```swift
-if let user = await oidcWeb.user() {
+if let user = await oidcLogin.oidcLoginUser() {
     // logout() does not throw errors
     await user.logout()
     print("Logout successful")
@@ -662,7 +671,9 @@ if let deviceBindingCallback = callback as? DeviceBindingCallback {
 ```swift
 if let bindingCallback = callback as? DeviceBindingCallback {
     do {
-        try await bindingCallback.bind(deviceName: "MyDevice")
+        let result = await callback.bind { config in
+                config.deviceName = "My Device"
+            }
         print("Device binding successful")
     } catch {
         print("Device binding failed: \(error)")
@@ -1085,11 +1096,13 @@ func application(
         let node = await journey.resume(uri: resumeURL)
         
         switch node {
-        case is ContinueNode:
-            handleCallbacks(node as! ContinueNode)
-        case is SuccessNode:
+        case let continueNode as ContinueNode:
+            handleCallbacks(continueNode)
+        case let successNode as SuccessNode:
             print("Authentication successful")
-        case is FailureNode, is ErrorNode:
+        case let failureNode as FailureNode:
+            print("Authentication failed")
+        case let errorNode as ErrorNode:
             print("Authentication failed")
         default:
             break
@@ -1118,10 +1131,15 @@ if let currentUser = FRUser.currentUser {
 ### Modern
 
 ```swift
-if let user = await journey.user() {
+if let user = await journey.journeyUser() {
     print("User is authenticated")
-    if let token = user.token() {
+    
+    let result = await user.token()
+    switch result {
+    case .success(let token):
         print("Has access token: \(token.value)")
+    case .failure(let error):
+        print("Error retrieving token: \(error)")
     }
 } else {
     print("No authenticated user")
@@ -1152,9 +1170,13 @@ if let token = token {
 // After successful authentication, tokens are automatically managed
 if let successNode = node as? SuccessNode {
     print("User authenticated")
-    if let user = await journey.user() {
-        if let token = user.token() {
+    if let user = await journey.journeyUser() {
+        let result = await user.token()
+        switch result {
+        case .success(let token):
             print("Access token: \(token.value)")
+        case .failure(let error):
+            print("Error retrieving token: \(error)")
         }
     }
 }
@@ -1214,10 +1236,11 @@ let node = await journey.start("BiometricsRegistration") { options in
 }
 
 // Option 2: Create a simple module for custom request modification
+
 let customModule = Module.of { setup in
     // Intercept start requests and add custom parameters
     setup.start { context, request in
-        request.urlParams["ForceAuth"] = "true"
+        request.setParameter(name: "ForceAuth", value: "True")
         return request
     }
     
@@ -1229,11 +1252,11 @@ let customModule = Module.of { setup in
 }
 
 // Register module during Journey configuration
-let journey = Journey {
-    logger = Logger.STANDARD
-    serverUrl = "https://openam.example.com/am"
+let journey = Journey.createJourney { config in
+    config.logger = LogManager.standard
+    config.serverUrl = "https://openam.example.com/am"
     
-    module(customModule)
+    config.module(customModule)
 }
 ```
 
@@ -1251,7 +1274,7 @@ let journey = Journey {
 | Legacy | Modern |
 |--------|--------|
 | `FRAuth` | `Journey` / `DaVinci` |
-| `FRUser` | `User` (from `journey.user()`) |
+| `FRUser` | `User` (from `journey.journeyUser()`) |
 | `FRSession` | Session management built into Journey |
 | `Node` (callback completion) | `ContinueNode` / `SuccessNode` / `FailureNode` / `ErrorNode` |
 | `WebAuthnRegistrationCallback` | `FidoRegistrationCallback` |
