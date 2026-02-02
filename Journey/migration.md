@@ -10,6 +10,7 @@ The Modern Ping SDK represents a fundamental architectural shift from callback-b
 - **Workflow Pattern**: Journey/DaVinci use a workflow orchestration engine with explicit node states
 - **Modular Architecture**: Clear separation between core, plugins, and feature modules
 - **Type Safety**: Explicit node types (ContinueNode, SuccessNode, FailureNode, ErrorNode)
+- **Callback-Specific Properties**: Each callback type has specific properties (e.g., `name`, `password`, `selectedIndex`) instead of generic `value`/`setValue()`
 - **Modern Swift**: Full Swift 6 concurrency support with Sendable conformance
 - **Minimum Requirements**: iOS 16.0+ (up from iOS 12.0+ in Legacy SDK), Swift 6.0+
 
@@ -24,6 +25,10 @@ The Modern Ping SDK represents a fundamental architectural shift from callback-b
 | `WebAuthnRegistrationCallback` | `FidoRegistrationCallback` | Renamed for clarity |
 | `WebAuthnAuthenticationCallback` | `FidoAuthenticationCallback` | Renamed for clarity |
 | `SelectIdPCallback` | `SelectIdpCallback` | Case change |
+| `callback.setValue(value)` | `callback.name` / `callback.password` / `callback.selectedIndex` | Specific properties per callback type |
+| N/A (Legacy used Error object) | `failureNode.cause` | New property in Modern SDK |
+| N/A (Legacy used Error object) | `errorNode.message` | New property in Modern SDK |
+| `Node` | `ContinueNode` | Class changed |
 
 ---
 
@@ -231,7 +236,7 @@ case let failureNode as FailureNode:
     print("Authentication failed: \(failureNode.cause)")
     
 case let errorNode as ErrorNode:
-    print("Error: \(errorNode.cause)")
+    print("Error: \(errorNode.message)")
     
 default:
     break
@@ -273,9 +278,9 @@ func handleCallbacks(_ node: ContinueNode) async {
     // Set callback values
     for callback in node.callbacks {
         if let nameCallback = callback as? NameCallback {
-            nameCallback.value = "username"
+            nameCallback.name = "username"
         } else if let passwordCallback = callback as? PasswordCallback {
-            passwordCallback.value = "password"
+            passwordCallback.password = "password"
         }
     }
     
@@ -1296,3 +1301,26 @@ let journey = Journey.createJourney { config in
 | `PingProtect` | `PingProtect` (same module name) |
 | `FRCaptchaEnterprise` | `PingReCaptchaEnterprise` |
 | N/A (new) | `PingExternalIdPApple`, `PingFido`, `PingDeviceClient`, `PingDeviceId` |
+
+### Callback Property Changes
+
+The Modern SDK uses specific properties for each callback type instead of generic `setValue()` / `value` methods:
+
+| Callback Type | Legacy | Modern |
+|---------------|--------|--------|
+| `NameCallback` | `callback.setValue("username")` | `callback.name = "username"` |
+| `PasswordCallback` | `callback.setValue("password")` | `callback.password = "password"` |
+| `ChoiceCallback` | `callback.setValue(index)` | `callback.selectedIndex = index` |
+| `FidoRegistrationCallback` | `callback.register(...) { onSuccess:onError: }` | `await callback.register(...)` returns `Result` |
+| `FidoAuthenticationCallback` | `callback.authenticate(...) { onSuccess:onError: }` | `await callback.authenticate(...)` returns `Result` |
+
+**Important**: Always use the specific property name for each callback type. The generic `value` property is no longer the standard approach in the Modern SDK.
+
+### Node State Properties
+
+| Node Type | Property | Type | Description |
+|-----------|----------|------|-------------|
+| `SuccessNode` | N/A | - | Authentication succeeded |
+| `ContinueNode` | `callbacks` | `[Callback]` | Array of callbacks to process |
+| `FailureNode` | `cause` | `String` | Failure cause (did not exist in Legacy SDK) |
+| `ErrorNode` | `message` | `String` | Error message (did not exist in Legacy SDK) |
