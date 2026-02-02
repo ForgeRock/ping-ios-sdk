@@ -79,15 +79,29 @@ actor RealBluetoothStateProvider: BluetoothStateProvider {
         let manager = CBCentralManager(delegate: delegateBridge, queue: nil)
         manager.delegate = delegateBridge
         
-        // Await the first value emitted by the stream
+        // Await a definitive state (not .unknown or .resetting)
         for await state in delegateBridge.stream {
-            // This loop will only run once because we call continuation.finish()
-            // `manager` and `delegateBridge` are kept alive until this point.
-            let isBLESupported = state == .poweredOn || state == .poweredOff
-            return isBLESupported
+            // Skip transient states and wait for a definitive answer
+            switch state {
+            case .unknown, .resetting:
+                // Continue waiting for a definitive state
+                continue
+            case .poweredOn, .poweredOff:
+                // BLE is supported (hardware exists, regardless of power state)
+                return true
+            case .unsupported:
+                // Device doesn't support BLE
+                return false
+            case .unauthorized:
+                // BLE hardware exists but app lacks permission - still means BLE is supported
+                return true
+            @unknown default:
+                // For future states, assume not supported to be safe
+                return false
+            }
         }
         
-        // Fallback if the stream finishes without yielding a value
+        // Fallback if the stream finishes without yielding a definitive value
         return false
     }
 }
@@ -114,7 +128,14 @@ private class BluetoothDelegateBridge: NSObject, @preconcurrency CBCentralManage
         // Push the new state into the stream
         continuation?.yield(central.state)
         
-        // Since we only need the *first* state update, we can finish the stream.
-        continuation?.finish()
+        // Only finish the stream for definitive states (not transient ones)
+        switch central.state {
+        case .unknown, .resetting:
+            // Don't finish - wait for a definitive state
+            break
+        default:
+            // Definitive state received, finish the stream
+            continuation?.finish()
+        }
     }
 }

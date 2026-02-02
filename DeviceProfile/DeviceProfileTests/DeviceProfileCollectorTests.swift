@@ -12,7 +12,7 @@ import XCTest
 import PingLogger
 @testable import PingDeviceProfile
 @testable import PingDeviceId
-import _LocationEssentials
+import CoreLocation
 
 class DeviceProfileCollectorTests: XCTestCase {
     
