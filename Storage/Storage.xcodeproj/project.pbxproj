@@ -10,6 +10,8 @@
 		95E10E5D2CEEA80B0089FF5E /* EncryptedKeychainStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E10E5C2CEEA80B0089FF5E /* EncryptedKeychainStorageTests.swift */; };
 		A509667B2C45C19500A4E5B5 /* SecuredKeyEncryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A509667A2C45C19500A4E5B5 /* SecuredKeyEncryptorTests.swift */; };
 		A509667D2C45C4E000A4E5B5 /* CustomEncryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A509667C2C45C4E000A4E5B5 /* CustomEncryptorTests.swift */; };
+		A514FA762F33B274009892D2 /* NoEncryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A514FA752F33B271009892D2 /* NoEncryptorTests.swift */; };
+		A545A1712F32802D00B41544 /* StorageAdditionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A545A1702F32802D00B41544 /* StorageAdditionalTests.swift */; };
 		A54BF44C2BED188000CD24D4 /* SecuredKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54BF44B2BED188000CD24D4 /* SecuredKey.swift */; };
 		A54BF49F2BF2F04E00CD24D4 /* SecuredKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54BF49E2BF2F04E00CD24D4 /* SecuredKeyTests.swift */; };
 		A54BF4E52BF39DC200CD24D4 /* MemoryStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54BF4E42BF39DC200CD24D4 /* MemoryStorageTests.swift */; };
@@ -41,7 +43,9 @@
 		95E10E5C2CEEA80B0089FF5E /* EncryptedKeychainStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptedKeychainStorageTests.swift; sourceTree = "<group>"; };
 		A509667A2C45C19500A4E5B5 /* SecuredKeyEncryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecuredKeyEncryptorTests.swift; sourceTree = "<group>"; };
 		A509667C2C45C4E000A4E5B5 /* CustomEncryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomEncryptorTests.swift; sourceTree = "<group>"; };
+		A514FA752F33B271009892D2 /* NoEncryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoEncryptorTests.swift; sourceTree = "<group>"; };
 		A53A9B562F19849C000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		A545A1702F32802D00B41544 /* StorageAdditionalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageAdditionalTests.swift; sourceTree = "<group>"; };
 		A54BF44B2BED188000CD24D4 /* SecuredKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecuredKey.swift; sourceTree = "<group>"; };
 		A54BF49E2BF2F04E00CD24D4 /* SecuredKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecuredKeyTests.swift; sourceTree = "<group>"; };
 		A54BF4E42BF39DC200CD24D4 /* MemoryStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryStorageTests.swift; sourceTree = "<group>"; };
@@ -122,8 +126,10 @@
 				A54BF4E62BF39E0900CD24D4 /* KeychainStorageTests.swift */,
 				95E10E5C2CEEA80B0089FF5E /* EncryptedKeychainStorageTests.swift */,
 				A54BF4E42BF39DC200CD24D4 /* MemoryStorageTests.swift */,
+				A514FA752F33B271009892D2 /* NoEncryptorTests.swift */,
 				A54BF49E2BF2F04E00CD24D4 /* SecuredKeyTests.swift */,
 				A509667A2C45C19500A4E5B5 /* SecuredKeyEncryptorTests.swift */,
+				A545A1702F32802D00B41544 /* StorageAdditionalTests.swift */,
 				A54BF4E82BF39F8000CD24D4 /* StorageDelegateTests.swift */,
 			);
 			path = StorageTests;
@@ -255,8 +261,10 @@
 			files = (
 				A509667B2C45C19500A4E5B5 /* SecuredKeyEncryptorTests.swift in Sources */,
 				A54BF4E92BF39F8000CD24D4 /* StorageDelegateTests.swift in Sources */,
+				A545A1712F32802D00B41544 /* StorageAdditionalTests.swift in Sources */,
 				A54BF4E72BF39E0900CD24D4 /* KeychainStorageTests.swift in Sources */,
 				A509667D2C45C4E000A4E5B5 /* CustomEncryptorTests.swift in Sources */,
+				A514FA762F33B274009892D2 /* NoEncryptorTests.swift in Sources */,
 				A54BF4E52BF39DC200CD24D4 /* MemoryStorageTests.swift in Sources */,
 				95E10E5D2CEEA80B0089FF5E /* EncryptedKeychainStorageTests.swift in Sources */,
 				A54BF49F2BF2F04E00CD24D4 /* SecuredKeyTests.swift in Sources */,

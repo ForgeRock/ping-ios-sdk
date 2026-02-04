@@ -2,7 +2,7 @@
 //  CommonsTests.swift
 //  CommonsTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -22,19 +22,41 @@ final class CommonsTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    // MARK: - Int8 Extension Tests
+    
+    func testConvertInt8ArrToStr_WithCommaSeparator() {
+        let arr: [Int8] = [1, 2, 3, 4, 5]
+        let result = Int8.convertInt8ArrToStr(arr, separator: ",")
+        XCTAssertEqual(result, "1,2,3,4,5")
     }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    
+    func testConvertInt8ArrToStr_WithSpaceSeparator() {
+        let arr: [Int8] = [10, 20, 30]
+        let result = Int8.convertInt8ArrToStr(arr, separator: " ")
+        XCTAssertEqual(result, "10 20 30")
     }
-
+    
+    func testConvertInt8ArrToStr_WithEmptySeparator() {
+        let arr: [Int8] = [1, 2, 3]
+        let result = Int8.convertInt8ArrToStr(arr, separator: "")
+        XCTAssertEqual(result, "123")
+    }
+    
+    func testConvertInt8ArrToStr_WithEmptyArray() {
+        let arr: [Int8] = []
+        let result = Int8.convertInt8ArrToStr(arr, separator: ",")
+        XCTAssertEqual(result, "")
+    }
+    
+    func testConvertInt8ArrToStr_WithSingleElement() {
+        let arr: [Int8] = [42]
+        let result = Int8.convertInt8ArrToStr(arr, separator: ",")
+        XCTAssertEqual(result, "42")
+    }
+    
+    func testConvertInt8ArrToStr_WithNegativeValues() {
+        let arr: [Int8] = [-128, 0, 127]
+        let result = Int8.convertInt8ArrToStr(arr, separator: "-")
+        XCTAssertEqual(result, "-128-0-127")
+    }
 }

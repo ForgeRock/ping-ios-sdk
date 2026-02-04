@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A53A9B5C2F1984E5000E2F2C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A53A9B5B2F1984E5000E2F2C /* PrivacyInfo.xcprivacy */; };
+		A545A1672F327FAA00B41544 /* DavinciPluginAdditionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A545A1662F327FAA00B41544 /* DavinciPluginAdditionalTests.swift */; };
 		EC5C814F2ECF66D100C91570 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81452ECF66D000C91570 /* PingDavinciPlugin.framework */; };
 		EC5C81622ECF672000C91570 /* PingDavinciPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81602ECF672000C91570 /* PingDavinciPluginTests.swift */; };
 		EC5C81A82ECF6B8400C91570 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81A72ECF6B8400C91570 /* PingOrchestrate.framework */; };
@@ -51,6 +52,7 @@
 		A53A9B592F1984D6000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A53A9B5A2F1984E5000E2F2C /* DavinciPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DavinciPlugin.h; sourceTree = "<group>"; };
 		A53A9B5B2F1984E5000E2F2C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A545A1662F327FAA00B41544 /* DavinciPluginAdditionalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DavinciPluginAdditionalTests.swift; sourceTree = "<group>"; };
 		EC5C81452ECF66D000C91570 /* PingDavinciPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingDavinciPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C814E2ECF66D100C91570 /* PingDavinciPluginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingDavinciPluginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81602ECF672000C91570 /* PingDavinciPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingDavinciPluginTests.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 		EC5C81612ECF672000C91570 /* DavinciPluginTests */ = {
 			isa = PBXGroup;
 			children = (
+				A545A1662F327FAA00B41544 /* DavinciPluginAdditionalTests.swift */,
 				EC5C81602ECF672000C91570 /* PingDavinciPluginTests.swift */,
 			);
 			path = DavinciPluginTests;
@@ -269,6 +272,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A545A1672F327FAA00B41544 /* DavinciPluginAdditionalTests.swift in Sources */,
 				EC5C81622ECF672000C91570 /* PingDavinciPluginTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

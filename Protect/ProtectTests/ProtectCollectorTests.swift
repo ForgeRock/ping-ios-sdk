@@ -2,7 +2,7 @@
 //  ProtectCollectorTests.swift
 //  Protect
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -90,5 +90,23 @@ class ProtectCollectorTests: XCTestCase {
         case .failure:
             XCTFail("Expected success but got failure")
         }
+    }
+    
+    func testValidateReturnsEmptyArray() {
+        let collector = ProtectCollector(with: [:])
+        let errors = collector.validate()
+        XCTAssertTrue(errors.isEmpty)
+    }
+    
+    func testAnyPayloadReturnsNilWhenEmpty() {
+        let collector = ProtectCollector(with: [:])
+        XCTAssertNil(collector.anyPayload())
+    }
+    
+    func testInitializeWithValueDoesNothing() {
+        let collector = ProtectCollector(with: [:])
+        // initialize(with:) is a no-op, just verify it doesn't crash
+        collector.initialize(with: "test")
+        XCTAssertEqual(collector.key, "")
     }
 }

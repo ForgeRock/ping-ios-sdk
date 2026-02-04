@@ -31,6 +31,8 @@ final class ExternalIdPTests: XCTestCase {
         try await super.tearDown()
     }
     
+    // MARK: - IdpCollector Tests
+    
     func testIdpCollectorRegistration() async throws {
         IdpCollector.registerCollector()
         let idpCollector = await CollectorFactory.shared.collectorCreationClosures[Constants.SOCIAL_LOGIN_BUTTON]
@@ -60,6 +62,8 @@ final class ExternalIdPTests: XCTestCase {
         XCTAssertEqual(idpCollector.idpId, "c3e6a164bde107954e93f5c09f0c8bce")
         XCTAssertEqual(idpCollector.idpEnabled, true)
     }
+    
+    // MARK: - BrowserHandler Tests
     
     func testBrowserHandlerInitialization() async {
         let mockWorkflow = WorkflowMock(config: WorkflowConfig())
@@ -100,6 +104,70 @@ final class ExternalIdPTests: XCTestCase {
         } catch {
             XCTFail("Unexpected error type: \(type(of: error))")
         }
+    }
+    
+    // MARK: - IdpValidationUtils Tests
+    
+    func testValidateClientIdThrowsWithNilClientId() {
+        do {
+            try IdpValidationUtils.validateClientId(nil, provider: "Google")
+            XCTFail("Expected error with nil client ID")
+        } catch let error as IdpExceptions {
+            if case .illegalArgumentException(let message) = error {
+                XCTAssertTrue(message?.contains("Google") == true)
+            } else {
+                XCTFail("Expected illegalArgumentException")
+            }
+        } catch {
+            XCTFail("Unexpected error type")
+        }
+    }
+    
+    func testValidateClientIdThrowsWithEmptyClientId() {
+        do {
+            try IdpValidationUtils.validateClientId("", provider: "Facebook")
+            XCTFail("Expected error with empty client ID")
+        } catch let error as IdpExceptions {
+            if case .illegalArgumentException(let message) = error {
+                XCTAssertTrue(message?.contains("Facebook") == true)
+            } else {
+                XCTFail("Expected illegalArgumentException")
+            }
+        } catch {
+            XCTFail("Unexpected error type")
+        }
+    }
+    
+    func testValidateClientIdSucceedsWithValidClientId() {
+        XCTAssertNoThrow(try IdpValidationUtils.validateClientId("valid-client-id", provider: "Apple"))
+    }
+    
+    // MARK: - SelectIdpCallback Tests
+    
+    func testIdPValueInitialization() {
+        let json: [String: Any] = [
+            "provider": "google",
+            "uiConfig": ["backgroundColor": "#FFFFFF"]
+        ]
+        let idpValue = IdPValue(from: json)
+        
+        XCTAssertEqual(idpValue.provider, "google")
+        XCTAssertEqual(idpValue.id, "google")
+        XCTAssertNotNil(idpValue.uiConfig["backgroundColor"])
+    }
+    
+    func testIdPValueInitializationWithEmptyJson() {
+        let json: [String: Any] = [:]
+        let idpValue = IdPValue(from: json)
+        
+        XCTAssertEqual(idpValue.provider, "")
+        XCTAssertTrue(idpValue.uiConfig.isEmpty)
+    }
+    
+    func testSelectIdpCallbackValueSetting() {
+        let callback = SelectIdpCallback()
+        callback.value = "google"
+        XCTAssertEqual(callback.value, "google")
     }
 }
 

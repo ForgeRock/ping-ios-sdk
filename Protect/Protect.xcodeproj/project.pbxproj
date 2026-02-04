@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A514FA722F33B12B009892D2 /* ProtectConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A514FA712F33B123009892D2 /* ProtectConfigTests.swift */; };
+		A514FA742F33B15D009892D2 /* ProtectLifecycleConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A514FA732F33B15C009892D2 /* ProtectLifecycleConfigTests.swift */; };
+		A545A16F2F32801D00B41544 /* ProtectAdditionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A545A16E2F32801D00B41544 /* ProtectAdditionalTests.swift */; };
 		A552A7CA2F1699CD003CA76C /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A552A7C92F1699CD003CA76C /* PingJourneyPlugin.framework */; };
 		A552A7CB2F1699CD003CA76C /* PingJourneyPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A552A7C92F1699CD003CA76C /* PingJourneyPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5A31CA52E0A37C700ABBEF7 /* PingProtect.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A31C9C2E0A37C700ABBEF7 /* PingProtect.framework */; };
@@ -71,7 +74,10 @@
 
 /* Begin PBXFileReference section */
 		A50F945B2E27FA9D00C74086 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A514FA712F33B123009892D2 /* ProtectConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectConfigTests.swift; sourceTree = "<group>"; };
+		A514FA732F33B15C009892D2 /* ProtectLifecycleConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectLifecycleConfigTests.swift; sourceTree = "<group>"; };
 		A53A9B4F2F198421000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		A545A16E2F32801D00B41544 /* ProtectAdditionalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtectAdditionalTests.swift; sourceTree = "<group>"; };
 		A552A7C92F1699CD003CA76C /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A31C9C2E0A37C700ABBEF7 /* PingProtect.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingProtect.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A31CA42E0A37C700ABBEF7 /* ProtectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProtectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -154,12 +160,15 @@
 		A5F7A4EC2E0E27620033F8B6 /* ProtectTests */ = {
 			isa = PBXGroup;
 			children = (
+				A545A16E2F32801D00B41544 /* ProtectAdditionalTests.swift */,
 				EC8025BF2F0D34850046C961 /* PingOneProtectEvaluationCallbackTests.swift */,
 				EC8025C02F0D34850046C961 /* PingOneProtectInitializeCallbackTests.swift */,
 				A5F7A4EB2E0E27620033F8B6 /* ProtectTests.swift */,
 				A5F7A4EA2E0E27620033F8B6 /* ProtectLifecycleModuleTests.swift */,
 				A5F7A4FC2E0E2AAF0033F8B6 /* ProtectCollectorTests.swift */,
 				A5B38B812E4C0B3D00692B2B /* MockProtect.swift */,
+				A514FA712F33B123009892D2 /* ProtectConfigTests.swift */,
+				A514FA732F33B15C009892D2 /* ProtectLifecycleConfigTests.swift */,
 			);
 			path = ProtectTests;
 			sourceTree = "<group>";
@@ -326,10 +335,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A545A16F2F32801D00B41544 /* ProtectAdditionalTests.swift in Sources */,
 				A5F7A4ED2E0E27620033F8B6 /* ProtectLifecycleModuleTests.swift in Sources */,
 				A5F7A4FD2E0E2ABB0033F8B6 /* ProtectCollectorTests.swift in Sources */,
 				EC8025C12F0D34850046C961 /* PingOneProtectInitializeCallbackTests.swift in Sources */,
 				EC8025C22F0D34850046C961 /* PingOneProtectEvaluationCallbackTests.swift in Sources */,
+				A514FA742F33B15D009892D2 /* ProtectLifecycleConfigTests.swift in Sources */,
+				A514FA722F33B12B009892D2 /* ProtectConfigTests.swift in Sources */,
 				A5F7A4EE2E0E27620033F8B6 /* ProtectTests.swift in Sources */,
 				A5B38B822E4C0B4400692B2B /* MockProtect.swift in Sources */,
 			);

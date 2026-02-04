@@ -11,6 +11,7 @@
 import XCTest
 @testable import PingBinding
 @testable import PingJourneyPlugin
+@testable import PingStorage
 
 final class PingBindingTests: XCTestCase {
     
@@ -574,5 +575,25 @@ final class PingBindingTests: XCTestCase {
         
         // Then
         XCTAssertEqual(config.attestation, .none)
+    }
+    
+    // MARK: - UserKeyStorageConfig Tests
+    
+    func testUserKeyStorageConfig_DefaultInit() {
+        let config = UserKeyStorageConfig()
+        XCTAssertNotNil(config.storage)
+    }
+    
+    func testUserKeyStorageConfig_CustomStorageInit() {
+        let customStorage = MemoryStorage<[UserKey]>()
+        let config = UserKeyStorageConfig(storage: customStorage)
+        XCTAssertNotNil(config.storage)
+    }
+    
+    // MARK: - DefaultUserKeySelector Tests
+    
+    func testDefaultUserKeySelector_Initialization() {
+        let selector = DefaultUserKeySelector()
+        XCTAssertNotNil(selector)
     }
 }

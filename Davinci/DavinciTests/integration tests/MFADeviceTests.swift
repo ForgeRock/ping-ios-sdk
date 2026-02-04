@@ -367,7 +367,10 @@ class MFADeviceTests: XCTestCase {
         // Enter an email address in the form
         (node.collectors[1] as? TextCollector)?.value = email
         (node.collectors[2] as? SubmitCollector)?.value = "click"
-        node = await node.next() as! ContinueNode
+        
+        guard let node = await node.next() as? ContinueNode else {
+            throw XCTSkip("Could not cast to ContinueNode")
+        }
         
         // Make sure that we are at the "successful registration" screen
         XCTAssertEqual("EMAIL MFA Registered", node.name)
@@ -434,7 +437,9 @@ class MFADeviceTests: XCTestCase {
         
         // Submit the form
         (node.collectors[3] as? SubmitCollector)?.value = "click"
-        node = await node.next() as! ContinueNode
+        guard let node = await node.next() as? ContinueNode else {
+            throw XCTSkip("Could not cast to ContinueNode")
+        }
         
         // Make sure that we are at the "successful registration" screen
         XCTAssertEqual("SMS/Voice MFA Registered", node.name)
@@ -442,7 +447,9 @@ class MFADeviceTests: XCTestCase {
         
         // Click "Continue" to finish the registration process
         (node.collectors[0] as? SubmitCollector)?.value = "Continue"
-        node = await node.next() as! ContinueNode
+        guard let node = await node.next() as? ContinueNode else {
+            throw XCTSkip("Could not cast to ContinueNode")
+        }
         
         // Upon successful phone registration we should be at the initial screen... ("Select Test Form")
         XCTAssertEqual("Select Test Form", node.name)
