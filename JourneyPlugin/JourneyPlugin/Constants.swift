@@ -2,7 +2,7 @@
 //  Constants.swift
 //  PingJourneyPlugin
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -137,4 +137,11 @@ public enum JourneyConstants {
     public static let FACEBOOK = "facebook"
     public static let providers = "providers"
     public static let acceptsJSON = "acceptsJSON"
+    
+    /// Page Node Constants
+    public static let stage = "stage"
+    public static let header = "header"
+    public static let description = "description"
+    public static let submitButtonText = "submitButtonText"
+    public static let pageFooter = "pageFooter"
 }

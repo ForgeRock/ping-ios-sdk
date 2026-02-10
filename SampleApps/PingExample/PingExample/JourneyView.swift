@@ -2,7 +2,7 @@
 //  JourneyView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -119,8 +119,26 @@ struct CallbackView: View {
     public var node: ContinueNode
     
     var body: some View {
-        VStack {
+        VStack(spacing: 16) {
             Image("Logo").resizable().scaledToFill().frame(width: 100, height: 100)
+            
+            // Display header if available
+            if !node.pageHeader.isEmpty {
+                Text(node.pageHeader)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
+            
+            // Display description if available
+            if !node.pageDescription.isEmpty {
+                Text(node.pageDescription)
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
             
             JourneyNodeView(continueNode: node,
                             onNodeUpdated:  { journeyViewModel.refresh() },
@@ -129,6 +147,26 @@ struct CallbackView: View {
                 print("Next button tapped")
                 await journeyViewModel.next(node: node)
             }})
+            
+            // Display footer if available
+            if !node.pageFooter.isEmpty {
+                Text(node.pageFooter)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+            }
+            
+            // Display stage if available
+            if !node.stage.isEmpty {
+                Text("Stage:" + node.stage)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+            }
         }
         
     }
@@ -255,7 +293,7 @@ struct JourneyNodeView: View {
                     }
                     onNext()
                 }) {
-                    Text("Next")
+                    Text(continueNode.submitButtonText.isEmpty ? "Next" : continueNode.submitButtonText)
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.themeButtonBackground)
