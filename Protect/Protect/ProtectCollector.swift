@@ -38,7 +38,7 @@ public class ProtectCollector: NSObject, AnyFieldCollector, Collector, @unchecke
     /// - Parameter input: The value to initialize the collector with.
     public func initialize(with value: Any) {}
     
-    /// The UUID of the field collector.
+    /// The id of the field collector. In protect that is equal with the Key
     public var id: String {
         return key
     }
