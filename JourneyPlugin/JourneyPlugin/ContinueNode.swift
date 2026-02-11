@@ -29,11 +29,6 @@ extension ContinueNode {
             return localizedValue
         }
         
-        // Fall back to legacy form description
-        if let form = input["form"] as? [String: Any],
-           let value = form["description"] as? String {
-            return value
-        }
         return ""
     }
     
