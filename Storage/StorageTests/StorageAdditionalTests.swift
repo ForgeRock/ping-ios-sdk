@@ -17,7 +17,7 @@ import XCTest
 final class MemoryStorageCachingTests: XCTestCase {
     
     func testMemoryStorageWithCacheEnabled() async throws {
-        let storage = MemoryStorage<TestItem>(cacheable: true)
+        let storage = MemoryStorage<TestItem>(cacheStrategy: .CACHE)
         let item = TestItem(id: 1, name: "Cached Item")
         
         try await storage.save(item: item)
@@ -27,7 +27,7 @@ final class MemoryStorageCachingTests: XCTestCase {
     }
     
     func testMemoryStorageWithCacheDisabled() async throws {
-        let storage = MemoryStorage<TestItem>(cacheable: false)
+        let storage = MemoryStorage<TestItem>(cacheStrategy: .NO_CACHE)
         let item = TestItem(id: 2, name: "Non-Cached Item")
         
         try await storage.save(item: item)
@@ -150,8 +150,8 @@ final class KeychainActorTests: XCTestCase {
 final class StorageDelegateCachingTests: XCTestCase {
     
     func testStorageDelegateWithCacheEnabled() async throws {
-        let memoryStorage = MemoryStorage<TestItem>()
-        let delegate = StorageDelegate(delegate: memoryStorage, cacheable: true)
+        let memory = Memory<TestItem>()
+        let delegate = StorageDelegate<TestItem>(delegate: memory, cacheStrategy: .CACHE)
         let item = TestItem(id: 1, name: "Cached Delegate Item")
         
         try await delegate.save(item: item)
@@ -166,8 +166,8 @@ final class StorageDelegateCachingTests: XCTestCase {
     }
     
     func testStorageDelegateDeleteClearsCache() async throws {
-        let memoryStorage = MemoryStorage<TestItem>()
-        let delegate = StorageDelegate(delegate: memoryStorage, cacheable: true)
+        let memory = Memory<TestItem>()
+        let delegate = StorageDelegate<TestItem>(delegate: memory, cacheStrategy: .CACHE)
         let item = TestItem(id: 1, name: "Delete Cache Item")
         
         try await delegate.save(item: item)

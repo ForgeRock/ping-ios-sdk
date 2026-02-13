@@ -120,12 +120,12 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.testScopes)
                 oidcValue.redirectUri = self.testRedirectUri
                 oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
-                oidcValue.storage = MemoryStorage()
+                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage()
+                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
                 cookieValue.persist = ["ST"]
             }
         }
@@ -141,8 +141,8 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
     }
     
     func testDaVinciSimpleHappyPath() async throws {
-        let tokenStorage = MemoryStorage<Token>()
-        let cookieStorage = MemoryStorage<[CustomHTTPCookie]>()
+        let tokenStorage = MemoryStorage<Token>(cacheStrategy: .NO_CACHE)
+        let cookieStorage = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = MockURLProtocol.makeClient()
             
@@ -243,7 +243,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.testScopes)
                 oidcValue.redirectUri = self.testRedirectUri
                 oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
-                oidcValue.storage =  MemoryStorage()
+                oidcValue.storage =  MemoryStorage(cacheStrategy: .NO_CACHE)
                 oidcValue.logger = LogManager.standard
                 oidcValue.acrValues = "acrValues"
                 oidcValue.display = "display"
@@ -254,7 +254,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage()
+                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
                 cookieValue.persist = ["ST"]
             }
         }
@@ -284,8 +284,8 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
     }
     
     func testDaVinciRevokeAccessToken() async throws {
-        let tokenStorage = MemoryStorage<Token>()
-        let cookieStorage = MemoryStorage<[CustomHTTPCookie]>()
+        let tokenStorage = MemoryStorage<Token>(cacheStrategy: .NO_CACHE)
+        let cookieStorage = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = MockURLProtocol.makeClient()
             
@@ -343,12 +343,12 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.testScopes)
                 oidcValue.redirectUri = self.testRedirectUri
                 oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
-                oidcValue.storage = MemoryStorage()
+                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage()
+                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
                 cookieValue.persist = ["ST"]
             }
         }

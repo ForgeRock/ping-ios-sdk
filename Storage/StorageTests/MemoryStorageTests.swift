@@ -18,8 +18,8 @@ final class MemoryStorageTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        memoryStorage = MemoryStorage()
-        memoryStorageMulti = MemoryStorage()
+        memoryStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+        memoryStorageMulti = MemoryStorage(cacheStrategy: .NO_CACHE)
     }
     
     override func tearDown() {
