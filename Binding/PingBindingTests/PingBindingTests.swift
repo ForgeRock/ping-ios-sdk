@@ -585,7 +585,7 @@ final class PingBindingTests: XCTestCase {
     }
     
     func testUserKeyStorageConfig_CustomStorageInit() {
-        let customStorage = MemoryStorage<[UserKey]>()
+        let customStorage = MemoryStorage<[UserKey]>(cacheStrategy: .NO_CACHE)
         let config = UserKeyStorageConfig(storage: customStorage)
         XCTAssertNotNil(config.storage)
     }
