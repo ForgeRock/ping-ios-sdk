@@ -509,7 +509,7 @@ actor Mock<T: Codable & Sendable>: Storage {
 }
 
 class MockStorage<T: Codable& Sendable>: StorageDelegate<T>, @unchecked Sendable {
-    public init(cacheable: Bool = false) {
-        super.init(delegate: Mock<T>(), cacheable: cacheable)
+    public init(cacheStrategy: CacheStrategy = .NO_CACHE) {
+        super.init(delegate: Mock<T>(), cacheStrategy: cacheStrategy)
     }
 }

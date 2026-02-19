@@ -58,12 +58,12 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
@@ -109,12 +109,12 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
@@ -157,12 +157,12 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
@@ -205,12 +205,12 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
@@ -252,12 +252,12 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
@@ -299,12 +299,12 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
@@ -341,12 +341,12 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
@@ -393,12 +393,12 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
@@ -444,12 +444,12 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
@@ -485,12 +485,12 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
@@ -522,12 +522,12 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
@@ -578,12 +578,12 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
@@ -621,12 +621,12 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }

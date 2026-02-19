@@ -94,7 +94,6 @@ import Foundation
 /// - SeeAlso: `CacheStrategy`, `Storage`, `MemoryStorage`, `KeychainStorage`
 open class StorageDelegate<T: Codable & Sendable>: Storage, @unchecked Sendable {
     private let delegate: any Storage<T>
-    private let cacheable: Bool
     private let cacheStrategy: CacheStrategy
     private let cacheManager = CacheManager<T>()
     
@@ -137,38 +136,6 @@ open class StorageDelegate<T: Codable & Sendable>: Storage, @unchecked Sendable 
     public init(delegate: any Storage<T>, cacheStrategy: CacheStrategy = .NO_CACHE) {
         self.delegate = delegate
         self.cacheStrategy = cacheStrategy
-        self.cacheable = cacheStrategy != .NO_CACHE
-    }
-    
-    /// Initializes a new StorageDelegate with boolean caching flag.
-    ///
-    /// - Warning: This initializer is deprecated. Use `init(delegate:cacheStrategy:)` instead.
-    ///
-    /// The `cacheable` parameter is mapped to cache strategies as follows:
-    /// - `true` maps to `.CACHE`
-    /// - `false` maps to `.NO_CACHE`
-    ///
-    /// ## Migration Guide
-    ///
-    /// **Old code:**
-    /// ```swift
-    /// let storage = StorageDelegate(delegate: Memory<User>(), cacheable: true)
-    /// ```
-    ///
-    /// **New code:**
-    /// ```swift
-    /// let storage = StorageDelegate(delegate: Memory<User>(), cacheStrategy: .CACHE)
-    /// ```
-    ///
-    /// - Parameters:
-    ///   - delegate: The underlying storage to delegate operations to.
-    ///   - cacheable: Whether the storage delegate should cache the object in memory.
-    ///                `true` enables caching (equivalent to `.CACHE`), `false` disables it (`.NO_CACHE`).
-    @available(*, deprecated, message: "Use init(delegate:cacheStrategy:) instead. This initializer will be removed in a future version.")
-    public init(delegate: any Storage<T>, cacheable: Bool = false) {
-        self.delegate = delegate
-        self.cacheable = cacheable
-        self.cacheStrategy = cacheable ? .CACHE : .NO_CACHE
     }
     
     /// Saves the given item to storage with cache behavior determined by the cache strategy.
@@ -390,7 +357,7 @@ open class StorageDelegate<T: Codable & Sendable>: Storage, @unchecked Sendable 
         try await delegate.delete()
         
         // Clear cache for all strategies that use caching
-        if cacheable {
+        if self.cacheStrategy == .CACHE || self.cacheStrategy == .CACHE_ON_FAILURE {
             await cacheManager.clearCache()
         }
     }

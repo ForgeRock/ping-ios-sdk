@@ -45,7 +45,7 @@ final class KeychainStorageCachingTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        keychainStorage = KeychainStorage(account: "testCacheAccount", cacheable: true)
+        keychainStorage = KeychainStorage(account: "testCacheAccount", cacheStrategy: .CACHE)
     }
     
     override func tearDown() async throws {

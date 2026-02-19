@@ -18,8 +18,8 @@ final class StorageDelegateTests: XCTestCase, @unchecked Sendable {
     
     override func setUp() {
         super.setUp()
-        memoryStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
-        storageDelegate = StorageDelegate(delegate: memoryStorage, cacheable: false)
+        memoryStorage = MemoryStorage()
+        storageDelegate = StorageDelegate(delegate: memoryStorage, cacheStrategy: .NO_CACHE)
     }
     
     override func tearDown() {
@@ -365,38 +365,6 @@ final class StorageDelegateCacheOnFailureStrategyTests: XCTestCase {
         } catch {
             // Expected
         }
-    }
-}
-
-// MARK: - Deprecated API Tests
-
-final class StorageDelegateDeprecatedAPITests: XCTestCase {
-    
-    func testDeprecatedCacheableTrue() async throws {
-        let mockStorage = MockStorage<TestItem>()
-        let delegate = StorageDelegate(delegate: mockStorage, cacheable: true)
-        let item = TestItem(id: 1, name: "Deprecated True")
-        
-        try await delegate.save(item: item)
-        
-        // Should behave like CACHE strategy
-        _ = try await delegate.get()
-        let getCount = await mockStorage.getCallCount
-        XCTAssertEqual(getCount, 0, "Should use cache (deprecated cacheable: true)")
-    }
-    
-    func testDeprecatedCacheableFalse() async throws {
-        let mockStorage = MockStorage<TestItem>()
-        let delegate = StorageDelegate(delegate: mockStorage, cacheable: false)
-        let item = TestItem(id: 1, name: "Deprecated False")
-        
-        try await delegate.save(item: item)
-        
-        // Should behave like NO_CACHE strategy
-        _ = try await delegate.get()
-        _ = try await delegate.get()
-        let getCount = await mockStorage.getCallCount
-        XCTAssertEqual(getCount, 2, "Should always fetch from storage (deprecated cacheable: false)")
     }
 }
 

@@ -120,12 +120,12 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.testScopes)
                 oidcValue.redirectUri = self.testRedirectUri
                 oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
@@ -243,7 +243,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.testScopes)
                 oidcValue.redirectUri = self.testRedirectUri
                 oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
-                oidcValue.storage =  MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage =  MemoryStorage()
                 oidcValue.logger = LogManager.standard
                 oidcValue.acrValues = "acrValues"
                 oidcValue.display = "display"
@@ -254,7 +254,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
@@ -343,12 +343,12 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.scopes = Set(self.testScopes)
                 oidcValue.redirectUri = self.testRedirectUri
                 oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
-                oidcValue.storage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
             
             config.module(CookieModule.config) { cookieValue in
-                cookieValue.cookieStorage = MemoryStorage(cacheStrategy: .NO_CACHE)
+                cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }

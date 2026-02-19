@@ -129,7 +129,7 @@ public actor Memory<T: Codable & Sendable>: Storage {
 ///
 /// ## Migration from Legacy API
 ///
-/// The `cacheable` parameter is deprecated. Use `cacheStrategy` instead:
+/// The `cacheable` parameter is removed. Use `cacheStrategy` instead:
 ///
 /// **Before:**
 /// ```swift
@@ -194,32 +194,5 @@ public class MemoryStorage<T: Codable & Sendable>: StorageDelegate<T>, @unchecke
     /// - SeeAlso: `CacheStrategy`, `StorageDelegate`
     public init(cacheStrategy: CacheStrategy = .NO_CACHE) {
         super.init(delegate: Memory<T>(), cacheStrategy: cacheStrategy)
-    }
-    
-    /// Initializes a new instance of `MemoryStorage` with boolean caching flag.
-    ///
-    /// - Warning: This initializer is deprecated. Use `init(cacheStrategy:)` instead.
-    ///
-    /// The `cacheable` parameter is mapped to cache strategies as follows:
-    /// - `true` maps to `.CACHE`
-    /// - `false` maps to `.NO_CACHE`
-    ///
-    /// ## Migration Guide
-    ///
-    /// **Old code:**
-    /// ```swift
-    /// let storage = MemoryStorage<User>(cacheable: true)
-    /// ```
-    ///
-    /// **New code:**
-    /// ```swift
-    /// let storage = MemoryStorage<User>(cacheStrategy: .CACHE)
-    /// ```
-    ///
-    /// - Parameter cacheable: A Boolean value indicating whether the stored data should be cached.
-    ///                        `true` enables caching (equivalent to `.CACHE`), `false` disables it (`.NO_CACHE`).
-    @available(*, deprecated, message: "Use init(cacheStrategy:) instead. This initializer will be removed in a future version.")
-    public init(cacheable: Bool = false) {
-        super.init(delegate: Memory<T>(), cacheable: cacheable)
     }
 }
