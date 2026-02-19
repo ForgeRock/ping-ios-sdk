@@ -23,7 +23,7 @@ public class WebModule {
     /// The module configuration for transforming the response from Journey to `Node`.
     public static let config: Module<Void> = Module.of(setup: { setup in
         
-        let oidcLoginFlow: OidcWeb = setup.workflow
+        let oidcLoginFlow: OidcWebClient = setup.workflow
         
         // Initializes the module.
         setup.initialize {  @Sendable in
@@ -33,7 +33,7 @@ public class WebModule {
         // Start the browser authorization flow. Returns the authorization code in the response.
         setup.transport { @Sendable context, request in
             let callbackURLScheme = context.flowContext.get(key: SharedContext.Keys.callbackURLSchemeKey) as? String ?? ""
-            let oidcLoginConfig = oidcLoginFlow.config as? OidcWebConfig
+            let oidcLoginConfig = oidcLoginFlow.config as? OidcWebClientConfig
             
             do {
                 guard let urlString = request.url, let url = URL(string: urlString) else {

@@ -13,13 +13,13 @@ import PingOrchestrate
 import PingLogger
 import PingBrowser
 
-public typealias OidcWeb = Workflow
+public typealias OidcWebClient = Workflow
 
-/// OidcWeb is a subclass of Workflow
+/// OidcWebClientConfig is a subclass of WorkflowConfig
 /// - Parameters:
 ///   - config: The configuration for the OIDC workflow.
-///   - Returns: An instance of OidcWeb configured for OIDC login.
-public class OidcWebConfig: WorkflowConfig, @unchecked Sendable {
+///   - Returns: An instance of OidcWebClient configured for OIDC login.
+public class OidcWebClientConfig: WorkflowConfig, @unchecked Sendable {
     /// Browser type used for OIDC login.
     public var browserType: BrowserType = .authSession
     /// The mode of the browser for OIDC login.
@@ -32,12 +32,12 @@ public struct OidcOptions: Sendable {
     public var additionalParameters: [String: String] = [:]
 }
 
-public extension OidcWeb {
+public extension OidcWebClient {
     /// Creates an OIDC login instance with the provided configuration block.
     /// - Parameter block: A closure to configure the OIDC options.
-    /// - Returns: An instance of OidcWeb configured for OIDC login.
-    static func createOidcWeb(block: @Sendable (OidcWebConfig) -> Void = {_ in }) -> OidcWeb {
-        let config = OidcWebConfig()
+    /// - Returns: An instance of OidcWebClient configured for OIDC login.
+    static func createOidcWebClient(block: @Sendable (OidcWebClientConfig) -> Void = {_ in }) -> OidcWebClient {
+        let config = OidcWebClientConfig()
         config.timeout = 30
         
         config.module(OidcModule.config)
@@ -45,7 +45,7 @@ public extension OidcWeb {
         // Apply custom configuration
         block(config)
         
-        return OidcWeb(config: config)
+        return OidcWebClient(config: config)
     }
     
     /// This method initializes the OIDC client and starts the login process.
@@ -113,7 +113,7 @@ public extension OidcWeb {
     ///   - session: The session.
     /// - Returns: The prepared user.
     internal func prepareUser(
-        oidcLogin: OidcWeb,
+        oidcLogin: OidcWebClient,
         user: User,
         session: Session = EmptySession()
     ) async -> UserDelegate {
@@ -127,20 +127,20 @@ public extension OidcWeb {
 /// UserDelegate is a struct that conforms to User and Session protocols.
 /// It is used to manage user sessions and provide methods for user-related operations.
 /// - Parameters:
-///   - oidcLogin: The OidcWeb instance.
+///   - oidcLogin: The OidcWebClient instance.
 ///   - user: The User instance.
 ///   - session: The Session instance
 struct UserDelegate: User, Session, Sendable {
-    private let oidcLogin: OidcWeb
+    private let oidcLogin: OidcWebClient
     private let user: User
     private let session: Session
     
     /// Initializes a new UserDelegate instance.
     /// - Parameters:
-    ///  - oidcLogin: The OidcWeb instance.
+    ///  - oidcLogin: The OidcWebClient instance.
     ///  - user: The User instance.
     ///  - session: The Session instance.
-    init(oidcLogin: OidcWeb, user: User, session: Session) {
+    init(oidcLogin: OidcWebClient, user: User, session: Session) {
         self.oidcLogin = oidcLogin
         self.user = user
         self.session = session

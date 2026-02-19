@@ -21,7 +21,7 @@ Basic Configuration, use `discoveryEndpoint` to lookup OIDC endpoints
 
 ```swift
 // Create an OIDC client with the discovery endpoint, and other configurations
-public let oidcLogin = OidcWeb.createOidcWeb { config in
+public let oidcLogin = OidcWebClient.createOidcWebClient { config in
     config.module(PingOidc.OidcModule.config) { oidcValue in
         oidcValue.clientId = "ClientID"
         oidcValue.scopes = ["openid", "email", "address", "profile", "phone"]
@@ -57,7 +57,7 @@ oidcLoginUser?.revoke()
 oidcLoginUser?.logout()
 
 // Setting the browser type and mode
-public let oidcLogin = OidcWeb.createOidcWeb { config in
+public let oidcLogin = OidcWebClient.createOidcWebClient { config in
     // Set the browser mode(only the .login mode supported currently) and browser type.
     config.browserMode = .login
     config.browserType = .authSession
@@ -147,4 +147,30 @@ config.updateAgent(CustomAgent())
 
 let ping = OidcClient(config: config)
 
+```
+
+## Migration Guide
+
+### Migrating to `OidcWebClient` (from 2.0.0)
+
+The following classes and methods have been renamed for consistency starting from version 2.0.0:
+
+| Old Name | New Name |
+|----------|----------|
+| `OidcWeb` | `OidcWebClient` |
+| `OidcWebConfig` | `OidcWebClientConfig` |
+| `createOidcWeb` | `createOidcWebClient` |
+
+**Before:**
+```swift
+let oidcLogin = OidcWeb.createOidcWeb { config in
+    // configuration
+}
+```
+
+**After:**
+```swift
+let oidcLogin = OidcWebClient.createOidcWebClient { config in
+    // configuration
+}
 ```

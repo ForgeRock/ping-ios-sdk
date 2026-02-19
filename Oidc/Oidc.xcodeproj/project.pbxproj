@@ -31,14 +31,13 @@
 		A50967092C50843E00A4E5B5 /* MockAPIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50967082C50843E00A4E5B5 /* MockAPIEndpoint.swift */; };
 		A50981BE2CEBDF1700F4B487 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */; };
 		A50981BF2CEBDF1700F4B487 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A545A16D2F327FF500B41544 /* OidcAdditionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A545A16C2F327FF500B41544 /* OidcAdditionalTests.swift */; };
+		A51354EB2F462F75008B3249 /* OidcWebClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51354EA2F462F75008B3249 /* OidcWebClient.swift */; };
 		A5A712442CAC520500B7DD58 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */; };
 		A5COM0012F0100000000001 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5COM0002F0100000000001 /* PingCommons.framework */; };
 		A5COM0022F0100000000001 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5COM0002F0100000000001 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EC0CB5922E266D7100A82D6C /* OidcWeb.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5912E266D6C00A82D6C /* OidcWeb.swift */; };
 		EC0CB5952E266F3900A82D6C /* Oidc.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5942E266F3400A82D6C /* Oidc.swift */; };
 		EC23D5132E295AAE00C43D42 /* Web.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5122E295AAB00C43D42 /* Web.swift */; };
-		EC23D5152E2E7A1700C43D42 /* OidcWebTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5142E2E7A1100C43D42 /* OidcWebTests.swift */; };
+		EC23D5152E2E7A1700C43D42 /* OidcWebClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D5142E2E7A1100C43D42 /* OidcWebClientTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,14 +90,13 @@
 		A50966EE2C4FF75400A4E5B5 /* MockStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockStorage.swift; sourceTree = "<group>"; };
 		A50967082C50843E00A4E5B5 /* MockAPIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIEndpoint.swift; sourceTree = "<group>"; };
 		A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A51354EA2F462F75008B3249 /* OidcWebClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcWebClient.swift; sourceTree = "<group>"; };
 		A53A9B572F1984B3000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		A545A16C2F327FF500B41544 /* OidcAdditionalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcAdditionalTests.swift; sourceTree = "<group>"; };
 		A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A5COM0002F0100000000001 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC0CB5912E266D6C00A82D6C /* OidcWeb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcWeb.swift; sourceTree = "<group>"; };
 		EC0CB5942E266F3400A82D6C /* Oidc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Oidc.swift; sourceTree = "<group>"; };
 		EC23D5122E295AAB00C43D42 /* Web.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Web.swift; sourceTree = "<group>"; };
-		EC23D5142E2E7A1100C43D42 /* OidcWebTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcWebTests.swift; sourceTree = "<group>"; };
+		EC23D5142E2E7A1100C43D42 /* OidcWebClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcWebClientTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,7 +163,7 @@
 				3AB1CA342BD884E4003FCE3C /* OidcClientConfig.swift */,
 				A50966B52C4C342800A4E5B5 /* OidcError.swift */,
 				3AB1CA3A2BD96089003FCE3C /* OidcUser.swift */,
-				EC0CB5912E266D6C00A82D6C /* OidcWeb.swift */,
+				A51354EA2F462F75008B3249 /* OidcWebClient.swift */,
 				A50966B92C4C3E7300A4E5B5 /* OpenIdConfiguration.swift */,
 				3AB1CA2B2BD7727B003FCE3C /* Pkce.swift */,
 				3AB1CA2A2BD7727B003FCE3C /* Token.swift */,
@@ -177,11 +175,10 @@
 		3AB1CA132BD6F99C003FCE3C /* OidcTests */ = {
 			isa = PBXGroup;
 			children = (
-				A545A16C2F327FF500B41544 /* OidcAdditionalTests.swift */,
 				A509D1CC2C6D04E9003A0006 /* mock */,
 				A50966DE2C4DF3CD00A4E5B5 /* OidcClientConfigTests.swift */,
 				A50966E22C4F2F4300A4E5B5 /* OidcClientTests.swift */,
-				EC23D5142E2E7A1100C43D42 /* OidcWebTests.swift */,
+				EC23D5142E2E7A1100C43D42 /* OidcWebClientTests.swift */,
 				A50966DA2C4DDFAE00A4E5B5 /* PkceTests.swift */,
 				A50966D42C4DD79000A4E5B5 /* TokenTests.swift */,
 			);
@@ -329,7 +326,7 @@
 				3AB1CA3B2BD96089003FCE3C /* OidcUser.swift in Sources */,
 				EC23D5132E295AAE00C43D42 /* Web.swift in Sources */,
 				A50966BA2C4C3E7300A4E5B5 /* OpenIdConfiguration.swift in Sources */,
-				EC0CB5922E266D7100A82D6C /* OidcWeb.swift in Sources */,
+				A51354EB2F462F75008B3249 /* OidcWebClient.swift in Sources */,
 				3AB1CA2E2BD7727B003FCE3C /* Pkce.swift in Sources */,
 				A50966B62C4C342800A4E5B5 /* OidcError.swift in Sources */,
 				3AB1CA2D2BD7727B003FCE3C /* Token.swift in Sources */,
@@ -343,14 +340,13 @@
 			files = (
 				A50967092C50843E00A4E5B5 /* MockAPIEndpoint.swift in Sources */,
 				A50966DB2C4DDFAE00A4E5B5 /* PkceTests.swift in Sources */,
-				EC23D5152E2E7A1700C43D42 /* OidcWebTests.swift in Sources */,
+				EC23D5152E2E7A1700C43D42 /* OidcWebClientTests.swift in Sources */,
 				A50966EF2C4FF75400A4E5B5 /* MockStorage.swift in Sources */,
 				A50966DF2C4DF3CD00A4E5B5 /* OidcClientConfigTests.swift in Sources */,
 				A50966E12C4F1D9D00A4E5B5 /* MockURLProtocol.swift in Sources */,
 				A50966DD2C4DE4D700A4E5B5 /* MockResponse.swift in Sources */,
 				A50966D52C4DD79000A4E5B5 /* TokenTests.swift in Sources */,
 				A50966E32C4F2F4300A4E5B5 /* OidcClientTests.swift in Sources */,
-				A545A16D2F327FF500B41544 /* OidcAdditionalTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

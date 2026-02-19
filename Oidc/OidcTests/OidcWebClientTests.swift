@@ -1,5 +1,5 @@
 // 
-//  OidcWebTests.swift
+//  OidcWebClientTests.swift
 //  Oidc
 //
 //  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
@@ -13,13 +13,13 @@ import XCTest
 import PingBrowser
 import PingNetwork
 
-class OidcWebTests: XCTestCase {
-    var oidcWeb: OidcWeb?
+class OidcWebClientTests: XCTestCase {
+    var oidcWebClient: OidcWebClient?
     
     override func setUp() {
         super.setUp()
         
-        self.oidcWeb = OidcWeb.createOidcWeb { config in
+        self.oidcWebClient = OidcWebClient.createOidcWebClient { config in
             config.browserMode = .login
             config.browserType = .authSession
             config.module(OidcModule.config) { oidcValue in
@@ -32,7 +32,7 @@ class OidcWebTests: XCTestCase {
     }
     
     func testOidcWeb() throws {
-        guard let oidcWeb = self.oidcWeb else {
+        guard let oidcWeb = self.oidcWebClient else {
             XCTFail("Failed to create Journey instance")
             return
         }
@@ -43,12 +43,12 @@ class OidcWebTests: XCTestCase {
     }
     
     func testOidcWebConfig() throws {
-        guard let oidcWeb = self.oidcWeb else {
+        guard let oidcWeb = self.oidcWebClient else {
             XCTFail("Failed to create Journey instance")
             return
         }
         
-        let oidcWebConfig = oidcWeb.config as? OidcWebConfig
+        let oidcWebConfig = oidcWeb.config as? OidcWebClientConfig
         XCTAssertNotNil(oidcWebConfig)
         XCTAssertEqual(oidcWebConfig?.browserMode, .login)
         XCTAssertEqual(oidcWebConfig?.browserType, .authSession)

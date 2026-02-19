@@ -24,7 +24,7 @@ public class OidcModule {
     public static let config: Module<OidcClientConfig> = Module.of ({ OidcClientConfig() }) { setup in
         
         let config: OidcClientConfig = setup.config
-        let oidcLoginFlow: OidcWeb = setup.workflow
+        let oidcLoginFlow: OidcWebClient = setup.workflow
         
         // Initializes the module.
         setup.initialize {  @Sendable in
@@ -44,7 +44,7 @@ public class OidcModule {
         setup.start { @Sendable context, request in
             // When user starts the flow again, revoke previous token if exists
             let flowPkce = context.flowContext.get(key: SharedContext.Keys.pkceKey) as? Pkce
-            let oidcLoginConfig = oidcLoginFlow.config as? OidcWebConfig
+            let oidcLoginConfig = oidcLoginFlow.config as? OidcWebClientConfig
             await oidcLoginFlow.user()?.revoke()
             let pkce = Pkce.generate()
             context.flowContext.set(key: SharedContext.Keys.pkceKey, value: pkce)
