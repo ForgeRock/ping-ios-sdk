@@ -14,6 +14,107 @@ import XCTest
 @testable import PingOrchestrate
 @testable import PingNetwork
 
+// MARK: - BrowserType Tests
+
+@MainActor
+final class BrowserTypeTests: XCTestCase {
+    
+    func testBrowserTypeRawValues() {
+        XCTAssertEqual(BrowserType.authSession.rawValue, 0)
+        XCTAssertEqual(BrowserType.nativeBrowserApp.rawValue, 1)
+        XCTAssertEqual(BrowserType.sfViewController.rawValue, 2)
+        XCTAssertEqual(BrowserType.ephemeralAuthSession.rawValue, 3)
+    }
+    
+    func testBrowserTypeInitFromRawValue() {
+        XCTAssertEqual(BrowserType(rawValue: 0), .authSession)
+        XCTAssertEqual(BrowserType(rawValue: 1), .nativeBrowserApp)
+        XCTAssertEqual(BrowserType(rawValue: 2), .sfViewController)
+        XCTAssertEqual(BrowserType(rawValue: 3), .ephemeralAuthSession)
+        XCTAssertNil(BrowserType(rawValue: 99))
+    }
+}
+
+// MARK: - BrowserError Tests
+
+@MainActor
+final class BrowserErrorTests: XCTestCase {
+    
+    func testBrowserErrorEquality() {
+        XCTAssertEqual(BrowserError.externalUserAgentFailure, BrowserError.externalUserAgentFailure)
+        XCTAssertEqual(BrowserError.externalUserAgentAuthenticationInProgress, BrowserError.externalUserAgentAuthenticationInProgress)
+        XCTAssertEqual(BrowserError.externalUserAgentCancelled, BrowserError.externalUserAgentCancelled)
+    }
+    
+    func testBrowserErrorIsError() {
+        let error: Error = BrowserError.externalUserAgentFailure
+        XCTAssertNotNil(error)
+    }
+}
+
+// MARK: - BrowserMode Tests
+
+@MainActor
+final class BrowserModeTests: XCTestCase {
+    
+    func testBrowserModeValues() {
+        let loginMode: BrowserMode = .login
+        let logoutMode: BrowserMode = .logout
+        let customMode: BrowserMode = .custom
+        
+        XCTAssertNotNil(loginMode)
+        XCTAssertNotNil(logoutMode)
+        XCTAssertNotNil(customMode)
+    }
+}
+
+// MARK: - OpenURLMonitor Tests
+
+@MainActor
+final class OpenURLMonitorTests: XCTestCase {
+    
+    func testOpenURLMonitorSharedInstance() {
+        let monitor1 = OpenURLMonitor.shared
+        let monitor2 = OpenURLMonitor.shared
+        XCTAssertTrue(monitor1 === monitor2)
+    }
+    
+    func testOpenURLMonitorHandleURLReturnsTrue() {
+        let url = URL(string: "myapp://callback?code=123")!
+        let result = OpenURLMonitor.shared.handleOpenURL(url)
+        XCTAssertTrue(result)
+    }
+}
+
+// MARK: - BrowserLauncher Tests
+
+@MainActor
+final class BrowserLauncherTests: XCTestCase {
+    
+    func testBrowserLauncherCurrentBrowserExists() {
+        let browser = BrowserLauncher.currentBrowser
+        XCTAssertNotNil(browser)
+    }
+    
+    func testBrowserLauncherIsNotInProgressInitially() {
+        let browser = BrowserLauncher()
+        XCTAssertFalse(browser.isInProgress)
+    }
+    
+    func testBrowserLauncherResetWhenIdle() {
+        let browser = BrowserLauncher()
+        // Should not crash when reset is called in idle state
+        browser.reset()
+        XCTAssertFalse(browser.isInProgress)
+    }
+    
+    func testBrowserLauncherHandleAppActivationWhenIdle() {
+        let browser = BrowserLauncher()
+        // Should not crash when called in idle state
+        browser.handleAppActivation()
+        XCTAssertFalse(browser.isInProgress)
+    }
+}
 
 /// Tests for the BrowserHandler class.
 @MainActor

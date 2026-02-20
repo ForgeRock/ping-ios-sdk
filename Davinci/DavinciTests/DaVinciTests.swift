@@ -141,8 +141,8 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
     }
     
     func testDaVinciSimpleHappyPath() async throws {
-        let tokenStorage = MemoryStorage<Token>()
-        let cookieStorage = MemoryStorage<[CustomHTTPCookie]>()
+        let tokenStorage = MemoryStorage<Token>(cacheStrategy: .NO_CACHE)
+        let cookieStorage = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = MockURLProtocol.makeClient()
             
@@ -284,8 +284,8 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
     }
     
     func testDaVinciRevokeAccessToken() async throws {
-        let tokenStorage = MemoryStorage<Token>()
-        let cookieStorage = MemoryStorage<[CustomHTTPCookie]>()
+        let tokenStorage = MemoryStorage<Token>(cacheStrategy: .NO_CACHE)
+        let cookieStorage = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = MockURLProtocol.makeClient()
             

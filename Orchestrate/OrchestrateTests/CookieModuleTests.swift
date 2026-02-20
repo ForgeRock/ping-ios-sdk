@@ -40,7 +40,7 @@ final class CookieModuleTests: XCTestCase {
                 return SuccessNode(session: EmptySession())
             }
         }
-        let memory = MemoryStorage<[CustomHTTPCookie]>()
+        let memory = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         let workflow = Workflow.createWorkflow { config in
             config.httpClient = MockURLProtocol.makeClient()
             config.module(dummy)
@@ -70,7 +70,7 @@ final class CookieModuleTests: XCTestCase {
                 return SuccessNode(session: EmptySession())
             }
         }
-        let memory = MemoryStorage<[CustomHTTPCookie]>()
+        let memory = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         let workflow = Workflow.createWorkflow { config in
             config.httpClient = MockURLProtocol.makeClient()
             config.module(dummy)
@@ -118,7 +118,7 @@ final class CookieModuleTests: XCTestCase {
             }
         }
         
-        let memory = MemoryStorage<[CustomHTTPCookie]>()
+        let memory = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         
         // Update the workflow in the shared state
         workflowContainer.workflow = Workflow.createWorkflow { config in
@@ -180,7 +180,7 @@ final class CookieModuleTests: XCTestCase {
                 return SuccessNode(session: EmptySession())
             }
         }
-        let memory = MemoryStorage<[CustomHTTPCookie]>()
+        let memory = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         let workflow = Workflow.createWorkflow { config in
             config.httpClient = MockURLProtocol.makeClient()
             config.module(dummy)
@@ -238,7 +238,7 @@ final class CookieModuleTests: XCTestCase {
             }
         }
         
-        let memory = MemoryStorage<[CustomHTTPCookie]>()
+        let memory = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         // Update the workflow in the shared state
         workflowContainer.workflow = Workflow.createWorkflow { config in
             config.httpClient = MockURLProtocol.makeClient()

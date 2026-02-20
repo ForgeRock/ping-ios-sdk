@@ -39,7 +39,7 @@ uses iOS Keychain to store data securely.
 You can enable cache for the storage as follows, by default cache is disabled:
 
 ```swift
-  let storage = KeychainStorage<Dog>(account: "myId", cacheable: true) // Create the Storage with cache enabled
+  let storage = KeychainStorage<Dog>(account: "myId", cacheStrategy: .CACHE) // Create the Storage with cache enabled
 ```
 
 ### Adding Encryption to the Storage
@@ -47,7 +47,7 @@ You can enable cache for the storage as follows, by default cache is disabled:
 You can add encryption by specifying the encryptor (`Encryptor` instance) as follows, by default `NoEncryptor` is used:
 
 ```swift
-  let storage = KeychainStorage<Dog>(account: "myId", encryptor: SecuredKeyEncryptor() ?? NoEncryptor(), cacheable: true) // Create the Storage with `SecuredKeyEncryptor`
+  let storage = KeychainStorage<Dog>(account: "myId", encryptor: SecuredKeyEncryptor() ?? NoEncryptor(), cacheStrategy: .CACHE) // Create the Storage with `SecuredKeyEncryptor`
 ```
 
 You can create your custom encryptor by implementing the `Encryptor` protocol:
@@ -88,8 +88,8 @@ public class CustomStorage<T: Codable>: Storage {
 }
 
 public class CustomStorageDelegate<T: Codable>: StorageDelegate<T> {
-  public init(cacheable: Bool = false) {
-    super.init(delegate: CustomStorage<T>(), cacheable: cacheable)
+  public init(cacheStrategy: .CACHE) {
+    super.init(delegate: CustomStorage<T>(), cacheStrategy: cacheStrategy)
   }
 }
 

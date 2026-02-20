@@ -11,11 +11,11 @@
 		1B18D64D2EF1CC740004F205 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B18D64B2EF1CC740004F205 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1B18D64F2EF1CC860004F205 /* DeviceTamperingPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B18D64E2EF1CC860004F205 /* DeviceTamperingPolicy.swift */; };
 		1B18D6512EF1CCFD0004F205 /* DeviceTamperingPolicyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B18D6502EF1CCFD0004F205 /* DeviceTamperingPolicyTests.swift */; };
+		EC1DD79D2F22612200B8D0AE /* TamperDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = EC59E31A2E7D7E1D00A91E66 /* TamperDetector.h */; };
 		EC59E1632E7AD21700A91E66 /* PingTamperDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E1592E7AD21600A91E66 /* PingTamperDetector.framework */; };
 		EC59E30F2E7D7E1300A91E66 /* MockTamperDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E30B2E7D7E1300A91E66 /* MockTamperDetector.swift */; };
 		EC59E3102E7D7E1300A91E66 /* TamperDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E30C2E7D7E1300A91E66 /* TamperDetectorTests.swift */; };
 		EC59E31E2E7D7E1D00A91E66 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC59E3122E7D7E1D00A91E66 /* PrivacyInfo.xcprivacy */; };
-		EC59E31F2E7D7E1D00A91E66 /* TamperDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = EC59E31A2E7D7E1D00A91E66 /* TamperDetector.h */; };
 		EC59E3202E7D7E1D00A91E66 /* SandboxDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E3142E7D7E1D00A91E66 /* SandboxDetector.swift */; };
 		EC59E3212E7D7E1D00A91E66 /* TamperDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E31B2E7D7E1D00A91E66 /* TamperDetector.swift */; };
 		EC59E3222E7D7E1D00A91E66 /* SuspiciousObjCClassesDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC59E3182E7D7E1D00A91E66 /* SuspiciousObjCClassesDetector.swift */; };
@@ -164,7 +164,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC59E31F2E7D7E1D00A91E66 /* TamperDetector.h in Headers */,
+				EC1DD79D2F22612200B8D0AE /* TamperDetector.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,7 +220,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					EC59E1582E7AD21600A91E66 = {
 						CreatedOnToolsVersion = 26.0;
@@ -370,6 +370,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -430,6 +431,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -442,6 +444,7 @@
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -469,7 +472,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
@@ -482,6 +485,7 @@
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -509,7 +513,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

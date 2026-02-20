@@ -78,7 +78,7 @@ public struct PlatformInfo: Codable, Sendable {
         self.deviceName = await UIDevice.current.name
         self.model = Self.getDeviceModel()
         self.brand = "Apple"
-        self.locale = Locale.current.languageCode
+        self.locale = Locale.current.language.languageCode?.identifier
         self.timeZone = TimeZone.current.identifier
         
         self.jailBreakScore = await TamperDetector().analyze()

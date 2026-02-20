@@ -2,7 +2,7 @@
 //  DaVinciIntegrationTests.swift
 //  DavinciTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -893,6 +893,9 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
         // Verify the DaVinci instance was created successfully
         XCTAssertNotNil(customDaVinci)
         
+        // call start so that module confis initialize is called
+        _ = await customDaVinci.start()
+        
         // Verify cookie storage is properly set
         let cookieStorage = customDaVinci.sharedContext.get(key: SharedContext.Keys.cookieStorage) as? StorageDelegate<[CustomHTTPCookie]>
         XCTAssertNotNil(cookieStorage, "Cookie storage should be set in shared context")
@@ -944,6 +947,10 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
         // Verify both instances are created successfully
         XCTAssertNotNil(standardDaVinci)
         XCTAssertNotNil(transactionDaVinci)
+        
+        // call start so that module confis initialize is called
+        _ = await standardDaVinci.start()
+        _ = await transactionDaVinci.start()
         
         // Verify they have different storage configurations
         let standardCookieStorage = standardDaVinci.sharedContext.get(key: SharedContext.Keys.cookieStorage) as? StorageDelegate<[CustomHTTPCookie]>
@@ -1118,6 +1125,9 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
             }
         }
+        
+        // call start so that module confis initialize is called
+        _ = await testDaVinci.start()
         
         // Initially should have no cookies
         let initialHasCookies = await testDaVinci.hasCookies()

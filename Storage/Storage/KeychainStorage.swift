@@ -118,8 +118,8 @@ public class KeychainStorage<T: Codable & Sendable>: StorageDelegate<T>, @unchec
     ///   - account: A `String` identifying the keychain account under which the data will be stored. This is used
     ///              to differentiate between different sets of data within the keychain.
     ///   - encryptor: An `Encryptor` instance for encrypting/decrypting the stored data. Default value is `NoEncryptor()`
-    ///   - cacheable: A `Bool` indicating whether the stored data should be cached. Defaults to `false`.
-    public init(account: String, encryptor: Encryptor = NoEncryptor(), cacheable: Bool = false) {
-        super.init(delegate: Keychain<T>(account: account, encryptor: encryptor), cacheable: cacheable)
+    ///   - cacheStrategy: A CacheStrategy `ENUM` indicating whether the stored data should be cached. Defaults to `NO_CACHE`.
+    public init(account: String, encryptor: Encryptor = NoEncryptor(), cacheStrategy: CacheStrategy = .NO_CACHE) {
+        super.init(delegate: Keychain<T>(account: account, encryptor: encryptor), cacheStrategy: cacheStrategy)
     }
 }

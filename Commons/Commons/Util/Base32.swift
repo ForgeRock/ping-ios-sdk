@@ -53,7 +53,6 @@ enum Base32 {
         if strict {
             // Padding must only appear at the end (if at all)
             if let firstPaddingIndex = cleanString.firstIndex(of: "=") {
-                let paddingStart = cleanString.distance(from: cleanString.startIndex, to: firstPaddingIndex)
                 let paddingSubstring = cleanString[firstPaddingIndex...]
 
                 // All characters after first padding must also be padding

@@ -2,7 +2,7 @@
 //  BluetoothCollector.swift
 //  DeviceProfile
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -10,6 +10,15 @@
 
 import Foundation
 import CoreBluetooth
+
+
+// MARK: - BluetoothStateProvider Protocol
+
+/// Protocol for providing Bluetooth state detection (allows for mocking)
+public protocol BluetoothStateProvider: Sendable {
+    /// Returns whether Bluetooth is supported on the device
+    func getBluetoothSupported() async -> Bool
+}
 
 // MARK: - BluetoothCollector
 
@@ -24,66 +33,76 @@ public class BluetoothCollector: DeviceCollector, @unchecked Sendable {
     /// Unique identifier for bluetooth capability data
     public let key = "bluetooth"
     
+    /// Dependency injection for Bluetooth state provider
+    private let stateProvider: BluetoothStateProvider
+    
     /// Collects Bluetooth capability information
     /// - Returns: BluetoothInfo containing support status
     public func collect() async -> BluetoothInfo? {
-        return await BluetoothInfo()
+        let supported = await stateProvider.getBluetoothSupported()
+        return BluetoothInfo(supported: supported)
     }
     
-    /// Initializes a new instance
-    public init() {}
+    /// Initializes a new instance with optional state provider (for testing)
+    /// - Parameter stateProvider: Custom state provider. If nil, uses real CoreBluetooth implementation
+    public init(stateProvider: BluetoothStateProvider? = nil) {
+        if let stateProvider = stateProvider {
+            self.stateProvider = stateProvider
+        } else {
+            self.stateProvider = RealBluetoothStateProvider()
+        }
+    }
 }
 
 // MARK: - BluetoothInfo
 
 /// Information about device Bluetooth Low Energy capabilities.
-///
-/// This structure contains the results of Bluetooth capability detection,
-/// indicating whether the device supports BLE functionality.
 public struct BluetoothInfo: Codable, Sendable {
     /// Whether the device supports Bluetooth Low Energy
     /// - Note: This indicates hardware support, not current power state or permissions
-    let supported: Bool
-    
-    /// Initializes Bluetooth information by detecting BLE support
-    init() async {
-        supported = await Self.getBluetoothStatus()
+    public let supported: Bool
+}
+
+// MARK: - Real Implementation
+
+/// Real Bluetooth state provider using CoreBluetooth
+actor RealBluetoothStateProvider: BluetoothStateProvider {
+    func getBluetoothSupported() async -> Bool {
+        return await getBluetoothStatus()
     }
     
     /// Determines if Bluetooth Low Energy is supported on this device
     /// - Returns: True if BLE is supported (regardless of power state), false otherwise
     @MainActor
-    private static func getBluetoothStatus() async -> Bool {
+    private func getBluetoothStatus() async -> Bool {
         let delegateBridge = BluetoothDelegateBridge()
         let manager = CBCentralManager(delegate: delegateBridge, queue: nil)
         manager.delegate = delegateBridge
         
-        // Await the first value emitted by the stream
+        // Await a definitive state (not .unknown or .resetting)
         for await state in delegateBridge.stream {
-            // This loop will only run once because we call continuation.finish()
-            // `manager` and `delegateBridge` are kept alive until this point.
-            let isBLESupported = state == .poweredOn || state == .poweredOff
-            return isBLESupported
+            // Skip transient states and wait for a definitive answer
+            switch state {
+            case .unknown, .resetting:
+                // Continue waiting for a definitive state
+                continue
+            case .poweredOn, .poweredOff:
+                // BLE is supported (hardware exists, regardless of power state)
+                return true
+            case .unsupported:
+                // Device doesn't support BLE
+                return false
+            case .unauthorized:
+                // BLE hardware exists but app lacks permission - still means BLE is supported
+                return true
+            @unknown default:
+                // For future states, assume not supported to be safe
+                return false
+            }
         }
         
-        // Fallback if the stream finishes without yielding a value
+        // Fallback if the stream finishes without yielding a definitive value
         return false
-    }
-    
-    /// Converts CBManagerState to a human-readable string
-    /// - Parameter state: The Bluetooth manager state
-    /// - Returns: String representation of the state
-    /// - Note: This method is kept for potential debugging use
-    private func stateDescription(_ state: CBManagerState) -> String {
-        switch state {
-        case .unknown: return "unknown"
-        case .resetting: return "resetting"
-        case .unsupported: return "unsupported"
-        case .unauthorized: return "unauthorized"
-        case .poweredOff: return "powered_off"
-        case .poweredOn: return "powered_on"
-        @unknown default: return "unknown"
-        }
     }
 }
 
@@ -109,7 +128,14 @@ private class BluetoothDelegateBridge: NSObject, @preconcurrency CBCentralManage
         // Push the new state into the stream
         continuation?.yield(central.state)
         
-        // Since we only need the *first* state update, we can finish the stream.
-        continuation?.finish()
+        // Only finish the stream for definitive states (not transient ones)
+        switch central.state {
+        case .unknown, .resetting:
+            // Don't finish - wait for a definitive state
+            break
+        default:
+            // Definitive state received, finish the stream
+            continuation?.finish()
+        }
     }
 }

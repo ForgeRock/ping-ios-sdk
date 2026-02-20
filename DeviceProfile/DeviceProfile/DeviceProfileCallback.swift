@@ -2,7 +2,7 @@
 //  DeviceProfileCallback.swift
 //  DeviceProfile
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -196,6 +196,10 @@ public final class DeviceProfileConfig: @unchecked Sendable {
     /// Array of collectors to use for metadata gathering.
     /// Defaults valuse is `DefaultDeviceCollector.defaultDeviceCollectors()`
     public var collectors: [any DeviceCollector] =  DefaultDeviceCollector.defaultDeviceCollectors()
+    
+    /// Collector to use for location gathering.
+    /// Defaults valuse is `DefaultDeviceCollector.defaultLocationCollector()`
+    var locationCollector: LocationCollector =  DefaultDeviceCollector.defaultLocationCollector()
     
     /// Configures the collectors array using a builder pattern
     /// - Parameter configBlock: Block that returns the desired collectors array

@@ -25,7 +25,7 @@
 		ECD5A2F82E8FE49C00A27205 /* FidoConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F22E8FE49C00A27205 /* FidoConstants.swift */; };
 		ECD5A2F92E8FE49C00A27205 /* Fido.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F52E8FE49C00A27205 /* Fido.swift */; };
 		ECD5A2FA2E8FE49C00A27205 /* FidoModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A2F32E8FE49C00A27205 /* FidoModels.swift */; };
-		ECD5A2FB2E8FE49C00A27205 /* Fido.h in Headers */ = {isa = PBXBuildFile; fileRef = ECD5A2F42E8FE49C00A27205 /* Fido.h */; };
+		ECD5A2FB2E8FE49C00A27205 /* Fido.h in Headers */ = {isa = PBXBuildFile; fileRef = ECD5A2F42E8FE49C00A27205 /* Fido.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		ECD5A3042E90195300A27205 /* FidoCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A3012E90195300A27205 /* FidoCallback.swift */; };
 		ECD5A3052E90195300A27205 /* FidoRegistrationCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A3022E90195300A27205 /* FidoRegistrationCallback.swift */; };
 		ECD5A3062E90195300A27205 /* FidoAuthenticationCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD5A3002E90195300A27205 /* FidoAuthenticationCallback.swift */; };
@@ -278,7 +278,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					ECD5A29B2E8FE40B00A27205 = {
 						CreatedOnToolsVersion = 26.0;
@@ -406,7 +406,9 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 9QSE66762D;
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -426,10 +428,12 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -473,7 +477,9 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 9QSE66762D;
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -487,9 +493,11 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -502,6 +510,7 @@
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -542,6 +551,7 @@
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;

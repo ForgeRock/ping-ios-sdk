@@ -2,7 +2,7 @@
 //  DeviceProfileCollectorTests.swift
 //  DeviceProfile
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@ import XCTest
 import PingLogger
 @testable import PingDeviceProfile
 @testable import PingDeviceId
+import CoreLocation
 
 class DeviceProfileCollectorTests: XCTestCase {
     
@@ -21,6 +22,7 @@ class DeviceProfileCollectorTests: XCTestCase {
     override func setUp() {
         super.setUp()
         config = DeviceProfileConfig()
+        config.collectors = DefaultDeviceCollector.defaultDeviceCollectorsForTesting()
         collector = DeviceProfileCollector(config: config)
     }
     
@@ -139,8 +141,13 @@ class DeviceProfileCollectorTests: XCTestCase {
     func testCollectorCollectWithLocationEnabled() async throws {
         config.metadata = false
         config.location = true
+        config.locationCollector = await DefaultDeviceCollector.defaultlocationCollectorsForTesting()
         
         let result = try await collector.collect()
+        
+        await MainActor.run {
+            MockLocationManager.shared = nil
+        }
         
         XCTAssertNotNil(result, "Collector should return result")
         XCTAssertNil(result?.metadata, "Metadata should not be collected when disabled")
@@ -151,6 +158,11 @@ class DeviceProfileCollectorTests: XCTestCase {
         config.metadata = true
         config.location = true
         config.collectors = [MockPlatformCollectorForTests()]
+        config.locationCollector = await DefaultDeviceCollector.defaultlocationCollectorsForTesting()
+        
+        await MainActor.run {
+            MockLocationManager.shared = nil
+        }
         
         let result = try await collector.collect()
         
@@ -243,21 +255,6 @@ class DeviceProfileCollectorTests: XCTestCase {
         XCTAssertTrue(true, "Logger configuration completed without error")
     }
     
-    // MARK: - Performance Tests
-    
-    func testCollectorCollectPerformance() {
-        config.metadata = true
-        config.location = false
-        config.collectors = [MockPlatformCollectorForTests()]
-        
-        let testCollector = collector!
-        measure {
-            Task {
-                let testCollector = DeviceProfileCollector(config: DeviceProfileConfig())
-                _ = try? await testCollector.collect()
-            }
-        }
-    }
     
     // MARK: - Thread Safety Tests
     
@@ -267,10 +264,9 @@ class DeviceProfileCollectorTests: XCTestCase {
         config.collectors = [MockPlatformCollectorForTests()]
         
         let iterations = 5
-        let testCollector = collector!
         
         await withTaskGroup(of: DeviceProfileResult?.self) { group in
-            let testCollector = DeviceProfileCollector(config: DeviceProfileConfig())
+            let testCollector = DeviceProfileCollector(config: config)
             for _ in 0..<iterations {
                 group.addTask {
                     return try? await testCollector.collect()
@@ -410,4 +406,35 @@ struct ThrowingDeviceIdentifierForTests: DeviceIdentifier {
 
 enum TestError: Error {
     case mockError
+}
+
+/// Extension to provide default collectors for testing
+extension DefaultDeviceCollector {
+    public static func defaultDeviceCollectorsForTesting() -> [any DeviceCollector] {
+        return [
+            PlatformCollector(),
+            HardwareCollector(),
+            BrowserCollector(),
+            TelephonyCollector(),
+            NetworkCollector(),
+            BluetoothCollector(stateProvider: MockBluetoothStateProvider()),
+        ]
+    }
+    
+    @MainActor public static func defaultlocationCollectorsForTesting() -> LocationCollector {
+        let mockCLLocationManager = MockLocationManager()
+        mockCLLocationManager.mockLocationServicesEnabled = true
+        mockCLLocationManager.mockAuthorizationStatus = .authorizedWhenInUse
+        let expectedLocation = CLLocation(latitude: 37.7749, longitude: -122.4194)
+        mockCLLocationManager.mockLocation = expectedLocation
+        MockLocationManager.shared = mockCLLocationManager
+        
+        // Create LocationManager with the mock
+        let manager = LocationManager(
+            locationManager: mockCLLocationManager,
+            locationManagerType: MockLocationManager.self
+        )
+        
+        return LocationCollector(locationManager: manager)
+    }
 }

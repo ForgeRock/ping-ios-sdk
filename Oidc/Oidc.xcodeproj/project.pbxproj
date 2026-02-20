@@ -31,6 +31,7 @@
 		A50967092C50843E00A4E5B5 /* MockAPIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50967082C50843E00A4E5B5 /* MockAPIEndpoint.swift */; };
 		A50981BE2CEBDF1700F4B487 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */; };
 		A50981BF2CEBDF1700F4B487 /* PingOrchestrate.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A545A16D2F327FF500B41544 /* OidcAdditionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A545A16C2F327FF500B41544 /* OidcAdditionalTests.swift */; };
 		A5A712442CAC520500B7DD58 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */; };
 		A5COM0012F0100000000001 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5COM0002F0100000000001 /* PingCommons.framework */; };
 		A5COM0022F0100000000001 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5COM0002F0100000000001 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -91,6 +92,7 @@
 		A50967082C50843E00A4E5B5 /* MockAPIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIEndpoint.swift; sourceTree = "<group>"; };
 		A50981BD2CEBDF1700F4B487 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A53A9B572F1984B3000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		A545A16C2F327FF500B41544 /* OidcAdditionalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcAdditionalTests.swift; sourceTree = "<group>"; };
 		A5A712432CAC520500B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A5COM0002F0100000000001 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC0CB5912E266D6C00A82D6C /* OidcWeb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcWeb.swift; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 		3AB1CA132BD6F99C003FCE3C /* OidcTests */ = {
 			isa = PBXGroup;
 			children = (
+				A545A16C2F327FF500B41544 /* OidcAdditionalTests.swift */,
 				A509D1CC2C6D04E9003A0006 /* mock */,
 				A50966DE2C4DF3CD00A4E5B5 /* OidcClientConfigTests.swift */,
 				A50966E22C4F2F4300A4E5B5 /* OidcClientTests.swift */,
@@ -347,6 +350,7 @@
 				A50966DD2C4DE4D700A4E5B5 /* MockResponse.swift in Sources */,
 				A50966D52C4DD79000A4E5B5 /* TokenTests.swift in Sources */,
 				A50966E32C4F2F4300A4E5B5 /* OidcClientTests.swift in Sources */,
+				A545A16D2F327FF500B41544 /* OidcAdditionalTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

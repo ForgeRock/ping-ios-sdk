@@ -20,8 +20,8 @@ final class ExternalIdPGoogleTests: XCTestCase {
     override func setUpWithError() throws {
         IdpCollector.registerCollector()
     }
-        
-        
+    
+    // MARK: - IdpCollector Tests
         
     @MainActor func testidpCollectorParsingGoogle() throws {
             let jsonObject: [String: Any] = [
@@ -44,7 +44,41 @@ final class ExternalIdPGoogleTests: XCTestCase {
             XCTAssertNotNil(handler)
             XCTAssertNotNil(handler as? GoogleRequestHandler)
         }
-        
     
+    // MARK: - GoogleHandler Tests
+    
+    @MainActor func testGoogleHandlerTokenType() {
+        let handler = GoogleHandler()
+        XCTAssertEqual(handler.tokenType, IdpConstants.id_token)
+    }
+    
+    @MainActor func testGoogleHandlerInitialization() {
+        let handler = GoogleHandler()
+        XCTAssertNotNil(handler)
+        XCTAssertFalse(handler.isNativeAvailable)
+    }
+    
+    // MARK: - GoogleRequestHandler Tests
+    
+    @MainActor func testGoogleRequestHandlerInitialization() {
+        let httpClient = HttpClient.createClient()
+        let handler = GoogleRequestHandler(httpClient: httpClient as! URLSessionHttpClient)
+        XCTAssertNotNil(handler)
+        XCTAssertFalse(handler.isNativeAvailable)
+    }
+    
+    // MARK: - GoogleHandlerUtils Tests
+    
+    @MainActor func testGoogleHandlerUtilsAuthorizeThrowsWithNilClientId() async {
+        let idpClient = IdpClient(clientId: nil, scopes: ["email"])
+        
+        do {
+            _ = try await GoogleHandlerUtils.authorize(idpClient: idpClient)
+            XCTFail("Expected error to be thrown with nil client ID")
+        } catch {
+            // Expected - validation fails with nil client ID
+            XCTAssertNotNil(error)
+        }
+    }
 
 }

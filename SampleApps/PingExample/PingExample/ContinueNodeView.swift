@@ -72,7 +72,7 @@ struct ContinueNodeView: View {
                 case let phoneNumberCollector as PhoneNumberCollector:
                     PhoneNumberView(field: phoneNumberCollector, onNodeUpdated: onNodeUpdated)
                 case let protectCollector as ProtectCollector:
-                    ProtectView(field: protectCollector, onNodeUpdated: onNodeUpdated)
+                    ProtectView(field: protectCollector, onNodeUpdated: onNodeUpdated).id(protectCollector.hash)
                 case let fidoRegistrationCollector as FidoRegistrationCollector:
                     FidoRegistrationCollectorView(collector: fidoRegistrationCollector, onNext: { onNext(true) })
                 case let fidoAuthenticationCollector as FidoAuthenticationCollector:

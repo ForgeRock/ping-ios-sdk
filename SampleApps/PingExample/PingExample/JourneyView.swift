@@ -2,7 +2,7 @@
 //  JourneyView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -119,8 +119,26 @@ struct CallbackView: View {
     public var node: ContinueNode
     
     var body: some View {
-        VStack {
+        VStack(spacing: 16) {
             Image("Logo").resizable().scaledToFill().frame(width: 100, height: 100)
+            
+            // Display header if available
+            if !node.pageHeader.isEmpty {
+                Text(node.pageHeader)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
+            
+            // Display description if available
+            if !node.pageDescription.isEmpty {
+                Text(node.pageDescription)
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
             
             JourneyNodeView(continueNode: node,
                             onNodeUpdated:  { journeyViewModel.refresh() },
@@ -129,6 +147,26 @@ struct CallbackView: View {
                 print("Next button tapped")
                 await journeyViewModel.next(node: node)
             }})
+            
+            // Display footer if available
+            if !node.pageFooter.isEmpty {
+                Text(node.pageFooter)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+            }
+            
+            // Display stage if available
+            if !node.stage.isEmpty {
+                Text("Stage:" + node.stage)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+            }
         }
         
     }
@@ -160,52 +198,52 @@ struct JourneyNodeView: View {
             ForEach(Array(continueNode.callbacks.enumerated()), id: \.offset) { index, callback in
                 switch callback {
                 case let booleanCallback as BooleanAttributeInputCallback:
-                    BooleanAttributeInputCallbackView(callback: booleanCallback, onNodeUpdated: onNodeUpdated)
+                    BooleanAttributeInputCallbackView(callback: booleanCallback, onNodeUpdated: onNodeUpdated).id(booleanCallback.id)
                     
                 case let choiceCallback as ChoiceCallback:
-                    ChoiceCallbackView(callback: choiceCallback, onNodeUpdated: onNodeUpdated)
+                    ChoiceCallbackView(callback: choiceCallback, onNodeUpdated: onNodeUpdated).id(choiceCallback.id)
                     
                 case let confirmationCallback as ConfirmationCallback:
-                    ConfirmationCallbackView(callback: confirmationCallback, onSelected: onNext)
+                    ConfirmationCallbackView(callback: confirmationCallback, onSelected: onNext).id(confirmationCallback.id)
                     
                 case let consentCallback as ConsentMappingCallback:
-                    ConsentMappingCallbackView(callback: consentCallback, onNodeUpdated: onNodeUpdated)
+                    ConsentMappingCallbackView(callback: consentCallback, onNodeUpdated: onNodeUpdated).id(consentCallback.id)
                     
                 case let kbaCallback as KbaCreateCallback:
-                    KbaCreateCallbackView(callback: kbaCallback, onNodeUpdated: onNodeUpdated)
+                    KbaCreateCallbackView(callback: kbaCallback, onNodeUpdated: onNodeUpdated).id(kbaCallback.id)
                     
                 case let numberCallback as NumberAttributeInputCallback:
-                    NumberAttributeInputCallbackView(callback: numberCallback, onNodeUpdated: onNodeUpdated)
+                    NumberAttributeInputCallbackView(callback: numberCallback, onNodeUpdated: onNodeUpdated).id(numberCallback.id)
                     
                 case let passwordCallback as PasswordCallback:
-                    PasswordCallbackView(callback: passwordCallback, onNodeUpdated: onNodeUpdated)
+                    PasswordCallbackView(callback: passwordCallback, onNodeUpdated: onNodeUpdated).id(passwordCallback.id)
                     
                 case let pollingCallback as PollingWaitCallback:
-                    PollingWaitCallbackView(callback: pollingCallback, onTimeout: onNext)
+                    PollingWaitCallbackView(callback: pollingCallback, onTimeout: onNext).id(pollingCallback.id)
                     
                 case let stringCallback as StringAttributeInputCallback:
-                    StringAttributeInputCallbackView(callback: stringCallback, onNodeUpdated: onNodeUpdated)
+                    StringAttributeInputCallbackView(callback: stringCallback, onNodeUpdated: onNodeUpdated).id(stringCallback.id)
                     
                 case let termsCallback as TermsAndConditionsCallback:
-                    TermsAndConditionsCallbackView(callback: termsCallback, onNodeUpdated: onNodeUpdated)
+                    TermsAndConditionsCallbackView(callback: termsCallback, onNodeUpdated: onNodeUpdated).id(termsCallback.id)
                     
                 case let textInputCallback as TextInputCallback:
-                    TextInputCallbackView(callback: textInputCallback, onNodeUpdated: onNodeUpdated)
+                    TextInputCallbackView(callback: textInputCallback, onNodeUpdated: onNodeUpdated).id(textInputCallback.id)
                     
                 case let textOutputCallback as TextOutputCallback:
-                    TextOutputCallbackView(callback: textOutputCallback)
+                    TextOutputCallbackView(callback: textOutputCallback).id(textOutputCallback.id)
                     
                 case let suspendedTextCallback as SuspendedTextOutputCallback:
-                    TextOutputCallbackView(callback: suspendedTextCallback)
+                    TextOutputCallbackView(callback: suspendedTextCallback).id(suspendedTextCallback.id)
                     
                 case let nameCallback as NameCallback:
-                    NameCallbackView(callback: nameCallback, onNodeUpdated: onNodeUpdated)
+                    NameCallbackView(callback: nameCallback, onNodeUpdated: onNodeUpdated).id(nameCallback.id)
                     
                 case let validatedUsernameCallback as ValidatedUsernameCallback:
-                    ValidatedUsernameCallbackView(callback: validatedUsernameCallback, onNodeUpdated: onNodeUpdated)
+                    ValidatedUsernameCallbackView(callback: validatedUsernameCallback, onNodeUpdated: onNodeUpdated).id(validatedUsernameCallback.id)
                     
                 case let validatedPasswordCallback as ValidatedPasswordCallback:
-                    ValidatedPasswordCallbackView(callback: validatedPasswordCallback, onNodeUpdated: onNodeUpdated)
+                    ValidatedPasswordCallbackView(callback: validatedPasswordCallback, onNodeUpdated: onNodeUpdated).id(validatedPasswordCallback.id)
                     
                 case let protectInitCallback as PingOneProtectInitializeCallback:
                     PingOneProtectInitializeCallbackView(callback: protectInitCallback, onNext: onNext)
@@ -255,7 +293,7 @@ struct JourneyNodeView: View {
                     }
                     onNext()
                 }) {
-                    Text("Next")
+                    Text(continueNode.submitButtonText.isEmpty ? "Next" : continueNode.submitButtonText)
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.themeButtonBackground)

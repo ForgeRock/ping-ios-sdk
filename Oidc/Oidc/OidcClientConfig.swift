@@ -56,7 +56,7 @@ public class OidcClientConfig: @unchecked Sendable {
     /// Initializes a new `OidcClientConfig` instance.
     public init() {
         logger = LogManager.none
-        storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE", encryptor: SecuredKeyEncryptor() ?? NoEncryptor(), cacheable: true)
+        storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE", encryptor: SecuredKeyEncryptor() ?? NoEncryptor(), cacheStrategy: .NO_CACHE)
     }
     
     ///  Adds a scope to the set of scopes.

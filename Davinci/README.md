@@ -68,7 +68,7 @@ let daVinci = DaVinci.createDaVinci { config in
     config.logger = LogManager.standard
     config.module(OidcModule.config) { oidcValue in
         //...
-        oidcValue.storage = MemoryStorage<Token>()
+        oidcValue.storage = MemoryStorage<Token>(cacheStrategy: .NO_CACHE)
     }
 }
 ```

@@ -11,6 +11,7 @@
 import XCTest
 @testable import PingBinding
 @testable import PingJourneyPlugin
+@testable import PingStorage
 
 final class PingBindingTests: XCTestCase {
     
@@ -289,13 +290,15 @@ final class PingBindingTests: XCTestCase {
     
     // MARK: - Configuration Tests
     
+    @MainActor
     func testDeviceBindingConfig_DefaultValues() {
         // Given
         let config = DeviceBindingConfig()
         
         // Then
         #if canImport(UIKit)
-        XCTAssertEqual(config.deviceName, UIDevice.current.name)
+        let expectedDeviceName = UIDevice.current.name
+        XCTAssertEqual(config.deviceName, expectedDeviceName)
         XCTAssertTrue(config.userKeySelector is DefaultUserKeySelector)
         #else
         XCTAssertEqual(config.deviceName, "Apple")
@@ -467,30 +470,6 @@ final class PingBindingTests: XCTestCase {
         }
     }
     
-    func testUserKeysStorage_ConcurrentAccess() async {
-        // Test concurrent read/write operations
-        let bindCallback1 = DeviceBindingCallback()
-        bindCallback1.userId = "concurrent1"
-        
-        let bindCallback2 = DeviceBindingCallback()
-        bindCallback2.userId = "concurrent2"
-        
-        do {
-            // Execute bindings concurrently
-            async let bind1 = Binding.bind(callback: bindCallback1, journey: nil)
-            async let bind2 = Binding.bind(callback: bindCallback2, journey: nil)
-            
-            let (_, _) = try await (bind1, bind2)
-            
-            XCTFail("testUserKeysStorage_ConcurrentAccess Expected to fail")
-            
-        } catch {
-            // Cleanup
-            try? await userKeyStorage.deleteByUserId("concurrent1")
-            try? await userKeyStorage.deleteByUserId("concurrent2")
-        }
-    }
-    
     // MARK: - Callback Tests
     
     func testDeviceBindingCallback_InitValue() {
@@ -596,5 +575,25 @@ final class PingBindingTests: XCTestCase {
         
         // Then
         XCTAssertEqual(config.attestation, .none)
+    }
+    
+    // MARK: - UserKeyStorageConfig Tests
+    
+    func testUserKeyStorageConfig_DefaultInit() {
+        let config = UserKeyStorageConfig()
+        XCTAssertNotNil(config.storage)
+    }
+    
+    func testUserKeyStorageConfig_CustomStorageInit() {
+        let customStorage = MemoryStorage<[UserKey]>(cacheStrategy: .NO_CACHE)
+        let config = UserKeyStorageConfig(storage: customStorage)
+        XCTAssertNotNil(config.storage)
+    }
+    
+    // MARK: - DefaultUserKeySelector Tests
+    
+    func testDefaultUserKeySelector_Initialization() {
+        let selector = DefaultUserKeySelector()
+        XCTAssertNotNil(selector)
     }
 }

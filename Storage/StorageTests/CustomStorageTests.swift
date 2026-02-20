@@ -71,7 +71,7 @@ public actor CustomStorage<T: Codable & Sendable>: Storage {
 }
 
 public class CustomStorageDelegate<T: Codable & Sendable>: StorageDelegate<T>, @unchecked Sendable {
-    public init(cacheable: Bool = false) {
-        super.init(delegate: CustomStorage<T>(), cacheable: cacheable)
+    public init(cacheStrategy: CacheStrategy = .NO_CACHE) {
+        super.init(delegate: CustomStorage<T>(), cacheStrategy: cacheStrategy)
     }
 }

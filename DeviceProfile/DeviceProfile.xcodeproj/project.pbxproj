@@ -17,7 +17,6 @@
 		A50143C82E84AF4C00FC2E9A /* LocationCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50143C72E84AF4A00FC2E9A /* LocationCollectorTests.swift */; };
 		A5554B232E840E9700BA6217 /* BluetoothCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5554B222E840E8B00BA6217 /* BluetoothCollector.swift */; };
 		A5554B252E840EFA00BA6217 /* DeviceProfileCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5554B242E840EF200BA6217 /* DeviceProfileCollector.swift */; };
-		A5554B272E840F6C00BA6217 /* DeviceProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A5554B262E840F6400BA6217 /* DeviceProfile.h */; };
 		A5554B292E840FC200BA6217 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5554B282E840FB800BA6217 /* LocationManager.swift */; };
 		A5554B2B2E84107100BA6217 /* BluetoothCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5554B2A2E84106F00BA6217 /* BluetoothCollectorTests.swift */; };
 		A5554B2D2E84109400BA6217 /* BrowserCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5554B2C2E84109300BA6217 /* BrowserCollectorTests.swift */; };
@@ -41,6 +40,7 @@
 		A5D296992E7C72350093A761 /* NetworkPathMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296982E7C72330093A761 /* NetworkPathMonitor.swift */; };
 		EC5C81F02ED0851000C91570 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */; };
 		EC5C81F12ED0851000C91570 /* PingJourneyPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECB2A2892F226F9200B0F5F1 /* DeviceProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A5554B262E840F6400BA6217 /* DeviceProfile.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -219,7 +219,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5554B272E840F6C00BA6217 /* DeviceProfile.h in Headers */,
+				ECB2A2892F226F9200B0F5F1 /* DeviceProfile.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,6 +410,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -478,6 +479,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -507,9 +509,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -532,7 +535,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -542,9 +545,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -567,7 +571,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

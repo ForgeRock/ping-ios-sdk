@@ -203,6 +203,7 @@
 		EC2326A52E0D744A00634A50 /* JourneyUserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyUserTests.swift; sourceTree = "<group>"; };
 		EC2326A72E0D7C7800634A50 /* AgentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentTests.swift; sourceTree = "<group>"; };
 		EC4FF9122EE0569600A35D3A /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC5382FA2F23AF6D00FC28AD /* JourneyPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = JourneyPlugin.xcodeproj; path = ../JourneyPlugin/JourneyPlugin.xcodeproj; sourceTree = SOURCE_ROOT; };
 		EC5C81E12ED0824200C91570 /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC727A242E019243005D9E28 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC727A2D2E019243005D9E28 /* JourneyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JourneyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -308,6 +309,13 @@
 			path = Callbacks;
 			sourceTree = "<group>";
 		};
+		EC5383692F23AFC900FC28AD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		EC727A1A2E019243005D9E28 = {
 			isa = PBXGroup;
 			children = (
@@ -316,6 +324,7 @@
 				EC727A5F2E019258005D9E28 /* JourneyTests */,
 				EC727A902E02DCA9005D9E28 /* Frameworks */,
 				EC727A252E019243005D9E28 /* Products */,
+				EC5382FA2F23AF6D00FC28AD /* JourneyPlugin.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -517,6 +526,12 @@
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EC727A252E019243005D9E28 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = EC5383692F23AFC900FC28AD /* Products */;
+					ProjectRef = EC5382FA2F23AF6D00FC28AD /* JourneyPlugin.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				EC727A232E019243005D9E28 /* PingJourney */,
@@ -799,7 +814,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Journey;
@@ -834,7 +849,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = "2.0.0-alpha";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Journey;

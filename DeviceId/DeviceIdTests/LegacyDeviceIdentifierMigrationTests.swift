@@ -346,7 +346,7 @@ final class LegacyDeviceIdentifierMigrationTests: XCTestCase {
     func testLegacyMigrationWithMockStorage() async throws {
         // GIVEN: A mock storage implementation
         let mockStorage = MockStorage<DeviceIdentifierImpl>()
-        let deviceIdentifier = try DefaultDeviceIdentifier(
+        let deviceIdentifier = DefaultDeviceIdentifier(
             configuration: .default,
             storage: mockStorage,
             logger: nil
@@ -509,7 +509,7 @@ actor Mock<T: Codable & Sendable>: Storage {
 }
 
 class MockStorage<T: Codable& Sendable>: StorageDelegate<T>, @unchecked Sendable {
-    public init(cacheable: Bool = false) {
-        super.init(delegate: Mock<T>(), cacheable: cacheable)
+    public init(cacheStrategy: CacheStrategy = .NO_CACHE) {
+        super.init(delegate: Mock<T>(), cacheStrategy: cacheStrategy)
     }
 }

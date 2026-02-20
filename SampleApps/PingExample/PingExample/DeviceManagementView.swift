@@ -556,9 +556,6 @@ struct DeviceManagementView: View {
             if let device = viewModel.oathDevices.first(where: { $0.id == deviceToUpdate.id }) {
                 await viewModel.updateOathDevice(device, newName: updatedName)
             }
-        
-        default:
-            break
         }
     }
 }
