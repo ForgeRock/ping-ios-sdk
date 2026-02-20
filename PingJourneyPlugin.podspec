@@ -19,9 +19,9 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '16.0'
 
   base_dir = "JourneyPlugin"
-  s.source_files = base_dir + '/JourneyPlugin/PingJourneyPlugin/**/*.swift'
+  s.source_files = base_dir + '/JourneyPlugin/**/*.swift', base_dir + '/JourneyPlugin/**/*.h'
   s.resource_bundles = {
-    'PingJourneyPlugin' => [base_dir + '/JourneyPlugin/PingJourneyPlugin/*.xcprivacy']
+    'PingJourneyPlugin' => [base_dir + '/JourneyPlugin/*.xcprivacy']
   }
   
   s.dependency 'PingOrchestrate', '~> 1.3.1'
