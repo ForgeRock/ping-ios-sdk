@@ -57,7 +57,7 @@ public class DyldDetector: TamperDetectorProtocol {
             
             for suspiciousLibrary in suspiciousLibraries {
                 if loadedLibrary.lowercased().contains(suspiciousLibrary.lowercased()) {
-                    logger.w("DyldDetector: suspicious dynamically loaded library found — '\(loadedLibrary)' matches '\(suspiciousLibrary)'.")
+                    logger.w("DyldDetector: suspicious dynamically loaded library found — '\(loadedLibrary)' matches '\(suspiciousLibrary)'.", error: nil)
                     return 1.0
                 }
             }

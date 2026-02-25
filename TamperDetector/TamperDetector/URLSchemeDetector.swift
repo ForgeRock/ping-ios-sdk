@@ -36,7 +36,7 @@ public class URLSchemeDetector: TamperDetectorProtocol {
             if let url = URL(string: urlScheme) {
                 let canOpen = canOpenURL(url)
                 if canOpen {
-                    logger.w("URLSchemeDetector: jailbreak-related URL scheme '\(urlScheme)' can be opened.")
+                    logger.w("URLSchemeDetector: jailbreak-related URL scheme '\(urlScheme)' can be opened.", error: nil)
                     return 1.0
                 }
             }

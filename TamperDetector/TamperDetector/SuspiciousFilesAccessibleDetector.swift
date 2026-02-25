@@ -43,7 +43,7 @@ public class SuspiciousFilesAccessibleDetector: TamperDetectorProtocol {
         
         for path in paths {
             if self.canOpen(path: path) {
-                logger.w("SuspiciousFilesAccessibleDetector: suspicious file is accessible at path '\(path)'.")
+                logger.w("SuspiciousFilesAccessibleDetector: suspicious file is accessible at path '\(path)'.", error: nil)
                 return 1.0
             }
         }

@@ -35,7 +35,7 @@ public class SandboxDetector: TamperDetectorProtocol {
             if forkResult > 0 {
                 kill(forkResult, SIGTERM)
             }
-            logger.w("SandboxDetector: fork() succeeded (pid: \(forkResult)), indicating the app is running outside the sandbox.")
+            logger.w("SandboxDetector: fork() succeeded (pid: \(forkResult)), indicating the app is running outside the sandbox.", error: nil)
             return 1.0
         }
         

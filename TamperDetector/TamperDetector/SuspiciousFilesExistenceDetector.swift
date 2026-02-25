@@ -111,7 +111,7 @@ public class SuspiciousFilesExistenceDetector: TamperDetectorProtocol {
         
         for path in paths {
             if fileManager.fileExists(atPath: path) {
-                logger.w("SuspiciousFilesExistenceDetector: suspicious file found at path '\(path)'.")
+                logger.w("SuspiciousFilesExistenceDetector: suspicious file found at path '\(path)'.", error: nil)
                 return 1.0
             }
         }

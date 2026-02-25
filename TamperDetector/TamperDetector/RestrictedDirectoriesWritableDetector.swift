@@ -48,12 +48,12 @@ public class RestrictedDirectoriesWritableDetector: TamperDetectorProtocol {
                 do {
                     try fileManager.removeItem(atPath: path)
                 } catch {
-                    logger.w("RestrictedDirectoriesWritableDetector: file written to restricted path '\(restrictedPath)' but could not be deleted.")
+                    logger.w("RestrictedDirectoriesWritableDetector: file written to restricted path '\(restrictedPath)' but could not be deleted.", error: nil)
                 }
             }
             
             if isFileWritable {
-                logger.w("RestrictedDirectoriesWritableDetector: app can write to restricted directory '\(restrictedPath)'.")
+                logger.w("RestrictedDirectoriesWritableDetector: app can write to restricted directory '\(restrictedPath)'.", error: nil)
                 return 1.0
             }
         }

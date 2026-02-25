@@ -25,7 +25,7 @@ public class SandboxRestrictedFilesAccessable: TamperDetectorProtocol {
         let restrictedPaths = ["/var/root/", "/var/mobile/Library/Preferences"]
         for path in restrictedPaths {
             if FileManager.default.isReadableFile(atPath: path) {
-                logger.w("SandboxRestrictedFilesAccessable: app can read sandbox-restricted path '\(path)'.")
+                logger.w("SandboxRestrictedFilesAccessable: app can read sandbox-restricted path '\(path)'.", error: nil)
                 return 1.0
             }
         }

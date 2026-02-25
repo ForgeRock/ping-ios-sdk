@@ -25,7 +25,7 @@ public class SuspiciousObjCClassesDetector: TamperDetectorProtocol {
         if let shadowRulesetClass = objc_getClass("ShadowRuleset") as? NSObject.Type {
             let selector = Selector(("internalDictionary"))
             if class_getInstanceMethod(shadowRulesetClass, selector) != nil {
-                logger.w("SuspiciousObjCClassesDetector: suspicious Objective-C class 'ShadowRuleset' with method 'internalDictionary' was found, indicating the Shadow jailbreak detection bypass tweak is active.")
+                logger.w("SuspiciousObjCClassesDetector: suspicious Objective-C class 'ShadowRuleset' with method 'internalDictionary' was found, indicating the Shadow jailbreak detection bypass tweak is active.", error: nil)
                 return 1.0
             }
         }

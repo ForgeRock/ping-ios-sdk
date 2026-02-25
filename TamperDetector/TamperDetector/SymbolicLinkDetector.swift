@@ -38,7 +38,7 @@ public class SymbolicLinkDetector: TamperDetectorProtocol {
             if let ok = try? url.checkResourceIsReachable(), ok {
                 let vals = try? url.resourceValues(forKeys: [.isSymbolicLinkKey])
                 if let vals = vals, let islink = vals.isSymbolicLink, islink {
-                    logger.w("SymbolicLinkDetector: path '\(urlString)' is a symbolic link, which is a common indicator of jailbreaking.")
+                    logger.w("SymbolicLinkDetector: path '\(urlString)' is a symbolic link, which is a common indicator of jailbreaking.", error: nil)
                     return 1.0
                 }
             }
