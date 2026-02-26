@@ -8,6 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		A53A9B452F19835B000E2F2C /* Binding.h in Headers */ = {isa = PBXBuildFile; fileRef = A53A9B442F19835B000E2F2C /* Binding.h */; };
+		A56F97CE2F4F52C5003DC037 /* DeviceBindingCallbackE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56F97CD2F4F52B9003DC037 /* DeviceBindingCallbackE2ETests.swift */; };
+		A56F97D02F4F52D8003DC037 /* DeviceSigningVerifierCallbackE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56F97CF2F4F52CF003DC037 /* DeviceSigningVerifierCallbackE2ETests.swift */; };
+		A56F97D22F4F6EE5003DC037 /* BindingE2EBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56F97D12F4F6EE5003DC037 /* BindingE2EBaseTest.swift */; };
+		A56F97D62F4F6EFA003DC037 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56F97D42F4F6EFA003DC037 /* Config.swift */; };
+		A56F97D72F4F6EFA003DC037 /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = A56F97D32F4F6EFA003DC037 /* Config.json */; };
+		A56F97FE2F4FA4BF003DC037 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4DD3102EABBB0000ECC4E1 /* PingJourney.framework */; };
+		A56F97FF2F4FA4BF003DC037 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC4DD3102EABBB0000ECC4E1 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5COM0012F0100000000007 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5COM0002F0100000000007 /* PingCommons.framework */; };
 		A5COM0022F0100000000007 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5COM0002F0100000000007 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC4DD2F12EABBAB800ECC4E1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC4DD2EC2EABBAB800ECC4E1 /* PrivacyInfo.xcprivacy */; };
@@ -65,6 +72,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		A56F98002F4FA4BF003DC037 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A56F97FF2F4FA4BF003DC037 /* PingJourney.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EC5C81EB2ED084F700C91570 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -83,6 +101,11 @@
 /* Begin PBXFileReference section */
 		A53A9B432F19831A000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A53A9B442F19835B000E2F2C /* Binding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Binding.h; sourceTree = "<group>"; };
+		A56F97CD2F4F52B9003DC037 /* DeviceBindingCallbackE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceBindingCallbackE2ETests.swift; sourceTree = "<group>"; };
+		A56F97CF2F4F52CF003DC037 /* DeviceSigningVerifierCallbackE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSigningVerifierCallbackE2ETests.swift; sourceTree = "<group>"; };
+		A56F97D12F4F6EE5003DC037 /* BindingE2EBaseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindingE2EBaseTest.swift; sourceTree = "<group>"; };
+		A56F97D32F4F6EFA003DC037 /* Config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Config.json; sourceTree = "<group>"; };
+		A56F97D42F4F6EFA003DC037 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		A5COM0002F0100000000007 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC4DD2842EABBA5F00ECC4E1 /* PingBinding.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingBinding.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC4DD2D42EABBAB800ECC4E1 /* DeviceAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticator.swift; sourceTree = "<group>"; };
@@ -149,12 +172,32 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC4DD3222EABCE7600ECC4E1 /* PingBinding.framework in Frameworks */,
+				A56F97FE2F4FA4BF003DC037 /* PingJourney.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A56F97CC2F4F5247003DC037 /* Integration Tests */ = {
+			isa = PBXGroup;
+			children = (
+				A56F97D12F4F6EE5003DC037 /* BindingE2EBaseTest.swift */,
+				A56F97CD2F4F52B9003DC037 /* DeviceBindingCallbackE2ETests.swift */,
+				A56F97CF2F4F52CF003DC037 /* DeviceSigningVerifierCallbackE2ETests.swift */,
+			);
+			path = "Integration Tests";
+			sourceTree = "<group>";
+		};
+		A56F97D52F4F6EFA003DC037 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				A56F97D32F4F6EFA003DC037 /* Config.json */,
+				A56F97D42F4F6EFA003DC037 /* Config.swift */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 		EC4DD27A2EABBA5F00ECC4E1 = {
 			isa = PBXGroup;
 			children = (
@@ -297,6 +340,8 @@
 		EC4DD3292EABCE7D00ECC4E1 /* PingBindingTests */ = {
 			isa = PBXGroup;
 			children = (
+				A56F97D52F4F6EFA003DC037 /* Config */,
+				A56F97CC2F4F5247003DC037 /* Integration Tests */,
 				EC9CC3882EC752C800795E4F /* BindingMigrationTests.swift */,
 				EC4DD32B2EABCE8F00ECC4E1 /* PingBinderTests.swift */,
 				EC4DD3282EABCE7D00ECC4E1 /* PingBindingTests.swift */,
@@ -365,6 +410,7 @@
 				EC4DD31A2EABCE7600ECC4E1 /* Sources */,
 				EC4DD31B2EABCE7600ECC4E1 /* Frameworks */,
 				EC4DD31C2EABCE7600ECC4E1 /* Resources */,
+				A56F98002F4FA4BF003DC037 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -429,6 +475,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A56F97D72F4F6EFA003DC037 /* Config.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -480,6 +527,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				EC9CC3892EC752C800795E4F /* BindingMigrationTests.swift in Sources */,
+				A56F97D02F4F52D8003DC037 /* DeviceSigningVerifierCallbackE2ETests.swift in Sources */,
+				A56F97CE2F4F52C5003DC037 /* DeviceBindingCallbackE2ETests.swift in Sources */,
+				A56F97D62F4F6EFA003DC037 /* Config.swift in Sources */,
+				A56F97D22F4F6EE5003DC037 /* BindingE2EBaseTest.swift in Sources */,
 				EC4DD32A2EABCE7D00ECC4E1 /* PingBindingTests.swift in Sources */,
 				EC4DD32C2EABCE8F00ECC4E1 /* PingBinderTests.swift in Sources */,
 			);

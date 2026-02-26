@@ -41,7 +41,7 @@ private actor MigrationState {
 }
 
 /// A module for handling device binding and signing callbacks.
-/// The callbacks are automatically registered when `CallbackRegistry.shared.registerDefaultCallbacks()` is called.
+/// The callbacks are automatically registered when `Journey.createJourney()` is called.
 /// Manual registration using `BindingModule.register()` is optional and only needed if you're not using the Journey framework.
 public class BindingModule: NSObject {
     
@@ -54,7 +54,7 @@ public class BindingModule: NSObject {
     /// Registers the device binding and signing callbacks with the `CallbackRegistry`.
     /// 
     /// **Note:** This method is optional when using the Journey framework, as callbacks are automatically
-    /// registered when `CallbackRegistry.shared.registerDefaultCallbacks()` is called.
+    /// registered when `Journey.createJourney()` is called.
     /// Only call this method if you need to register callbacks manually outside of the Journey flow.
     @objc public static func registerCallbacks() {
         Task {
