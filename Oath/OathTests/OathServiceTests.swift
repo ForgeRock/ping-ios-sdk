@@ -161,6 +161,52 @@ final class OathServiceTests: XCTestCase {
         XCTAssertEqual(credentialCount, 1)
     }
     
+    func testAddCredentialWithDuplicateIssuerAndAccount() async throws {
+        guard let service = oathService else {
+            XCTFail("OathService not initialized")
+            return
+        }
+        
+        // Add first credential
+        let credential1 = OathCredential(
+            issuer: "ForgeRock",
+            accountName: "rodrigo1@forgerock.com",
+            oathType: .totp,
+            secretKey: "JBSWY3DPEHPK3PXP"
+        )
+        let stored1 = try await service.addCredential(credential1)
+        XCTAssertNotNil(stored1)
+        
+        // Try to add second credential with same issuer+accountName but different ID
+        let credential2 = OathCredential(
+            id: "different-id",
+            issuer: "ForgeRock",
+            accountName: "rodrigo1@forgerock.com",
+            oathType: .totp,
+            secretKey: "JBSWY3DPEHPK3PXQ"
+        )
+        
+        // Should throw duplicate credential error
+        do {
+            _ = try await service.addCredential(credential2)
+            XCTFail("Expected duplicateCredential error")
+        } catch let error as OathError {
+            switch error {
+            case .duplicateCredential(let issuer, let accountName):
+                XCTAssertEqual(issuer, "ForgeRock")
+                XCTAssertEqual(accountName, "rodrigo1@forgerock.com")
+            default:
+                XCTFail("Expected duplicateCredential error, got \(error)")
+            }
+        } catch {
+            XCTFail("Expected OathError, got \(error)")
+        }
+        
+        // Should still only have one credential
+        let credentialCount = await inMemoryStorage.credentialCount
+        XCTAssertEqual(credentialCount, 1)
+    }
+    
     func testParseUriWithPolicyViolationBlocks() async {
         // Create a mock policy that always fails
         let failingPolicy = MockFailingPolicy()

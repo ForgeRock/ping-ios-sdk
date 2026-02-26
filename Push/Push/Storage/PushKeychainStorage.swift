@@ -196,6 +196,43 @@ public final class PushKeychainStorage: PushStorage, @unchecked Sendable {
         }
     }
 
+    /// Retrieve a push credential by issuer and account name.
+    /// - Parameters:
+    ///   - issuer: The issuer of the credential.
+    ///   - accountName: The account name of the credential.
+    /// - Returns: The credential if found, nil otherwise.
+    /// - Throws: `PushStorageError.storageFailure` if keychain operations fail.
+   public func getCredentialByIssuerAndAccount(issuer: String, accountName: String) async throws -> PushCredential? {
+        logger?.i("Checking for credential with issuer: \(issuer), account: \(accountName)")
+        
+        do {
+            let items = try loadAllKeychainItems(service: credentialService)
+            
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            
+            for (_, data) in items {
+                do {
+                    let credential = try decoder.decode(PushCredential.self, from: data)
+                    // Check if issuer and accountName match (case-sensitive)
+                    if credential.issuer == issuer && credential.accountName == accountName {
+                        logger?.i("Found credential with issuer: \(issuer), account: \(accountName)")
+                        return credential
+                    }
+                } catch {
+                    logger?.w("Failed to decode credential, skipping", error: error)
+                }
+            }
+            
+            // No matching credential found
+            logger?.i("No credential found with issuer: \(issuer), account: \(accountName)")
+            return nil
+        } catch {
+            logger?.e("Failed to retrieve credential by issuer and account", error: error)
+            throw PushStorageError.storageFailure("Failed to retrieve credential", error)
+        }
+    }
+
     /// Store a push notification.
     ///
     /// - Parameter notification: The push notification to store.

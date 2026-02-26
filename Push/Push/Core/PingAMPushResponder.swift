@@ -90,7 +90,7 @@ public final class PingAMPushResponder: @unchecked Sendable {
         ]
 
         if let userId = credential.userId, !userId.isEmpty {
-            requestBody[Keys.userId] = userId
+            requestBody[Keys.username] = userId
         }
 
         // Configure HTTP request
@@ -169,7 +169,7 @@ public final class PingAMPushResponder: @unchecked Sendable {
         ]
 
         if let userId = credential.userId, !userId.isEmpty {
-            requestBody[Keys.userId] = userId
+            requestBody[Keys.username] = userId
         }
 
         let request = httpClient.request()
@@ -222,6 +222,13 @@ public final class PingAMPushResponder: @unchecked Sendable {
             throw PushError.invalidParameterValue("Device token cannot be empty")
         }
 
+        guard let userId = credential.userId, !userId.isEmpty else {
+            logger?.e("Device token update requires userId but credential \(credential.id) has none", error: nil)
+            throw PushError.invalidParameterValue(
+                "Device token update requires a credential with userId. Credential '\(credential.id)' does not have a userId."
+            )
+        }
+
         let resolvedName = deviceName?
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .nonEmpty ?? Constants.defaultDeviceName
@@ -240,12 +247,9 @@ public final class PingAMPushResponder: @unchecked Sendable {
 
         var requestBody: [String: Any] = [
             Keys.mechanismUID: credential.id,
-            Keys.jwt: jwt
+            Keys.jwt: jwt,
+            Keys.username: userId
         ]
-
-        if let userId = credential.userId, !userId.isEmpty {
-            requestBody[Keys.userId] = userId
-        }
 
         let request = httpClient.request()
         request.url = credential.updateEndpoint
@@ -465,7 +469,7 @@ public final class PingAMPushResponder: @unchecked Sendable {
         static let amlbCookie = "amlbCookie"
         static let challenge = "challenge"
         static let jwt = "jwt"
-        static let userId = "userId"
+        static let username = "username"
     }
 
     private enum Constants {

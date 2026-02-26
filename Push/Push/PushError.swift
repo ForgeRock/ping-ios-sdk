@@ -106,6 +106,9 @@ public enum PushError: Error, LocalizedError, Sendable {
     /// The credential is locked due to policy violation.
     case credentialLocked(String)
     
+    /// A credential with the same issuer and account name already exists.
+    case duplicateCredential(issuer: String, accountName: String)
+    
     // MARK: - Notification Errors
     
     /// The specified notification was not found.
@@ -177,6 +180,9 @@ public enum PushError: Error, LocalizedError, Sendable {
             
         case .credentialLocked(let id):
             return "Credential is locked: \(id)"
+            
+        case .duplicateCredential(let issuer, let accountName):
+            return "A credential for issuer '\(issuer)' and account '\(accountName)' already exists"
             
         case .notificationNotFound(let id):
             return "Notification not found: \(id)"

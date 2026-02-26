@@ -561,7 +561,7 @@ final class PingAMPushResponderTests: XCTestCase {
         let bodyData = try XCTUnwrap(URLProtocolMock.lastRequestBody)
         let requestJson = try JSONSerialization.jsonObject(with: bodyData) as? [String: Any]
         XCTAssertEqual(requestJson?[PingAMPushResponder.Keys.mechanismUID] as? String, credential.id)
-        XCTAssertEqual(requestJson?[PingAMPushResponder.Keys.userId] as? String, credential.userId)
+        XCTAssertEqual(requestJson?[PingAMPushResponder.Keys.username] as? String, credential.userId)
 
         let jwt = try extractJwt(from: bodyData)
         let payload = try Self.decodeJwtPayload(jwt)
@@ -644,6 +644,31 @@ final class PingAMPushResponderTests: XCTestCase {
         }
     }
 
+    func testUpdateDeviceTokenWithoutUserIdThrows() async {
+        // No mock handler needed since validation occurs before network request
+        URLProtocolMock.requestHandler = { _ in
+            XCTFail("Should not make network request when userId is missing")
+            fatalError("Should not reach here")
+        }
+        
+        let mockResponder = PingAMPushResponder(httpClient: makeMockHttpClient(), logger: nil)
+        let credential = makeCredential(userId: nil)
+
+        do {
+            _ = try await mockResponder.updateDeviceToken(
+                credential: credential,
+                deviceToken: TestValues.deviceId,
+                deviceName: TestValues.deviceName
+            )
+            XCTFail("Expected invalidParameterValue error for missing userId")
+        } catch PushError.invalidParameterValue(let message) {
+            XCTAssertTrue(message.localizedCaseInsensitiveContains("userId"))
+            XCTAssertTrue(message.contains(credential.id))
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+
 
     // MARK: - Helpers
 
@@ -669,10 +694,10 @@ final class PingAMPushResponderTests: XCTestCase {
         return try XCTUnwrap(JSONSerialization.jsonObject(with: payloadData) as? [String: Any])
     }
 
-    private func makeCredential() -> PushCredential {
-        PushCredential(
+    private func makeCredential(userId: String? = "user-123") -> PushCredential {
+        var credential = PushCredential(
             id: "credential-id",
-            userId: "user-123",
+            userId: userId,
             resourceId: "credential-id",
             issuer: "Ping Identity",
             displayIssuer: "Ping Identity",
@@ -683,6 +708,7 @@ final class PingAMPushResponderTests: XCTestCase {
             createdAt: Date(),
             platform: .pingAM
         )
+        return credential
     }
 
     private func makeMockHttpClient() -> HttpClientProtocol {

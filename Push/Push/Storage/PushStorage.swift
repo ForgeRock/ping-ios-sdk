@@ -45,6 +45,15 @@ public protocol PushStorage: Sendable {
     /// - Throws: `PushStorageError.storageFailure` if the credentials cannot be cleared.
     func clearPushCredentials() async throws
 
+    /// Retrieve a push credential by issuer and account name.
+    /// Used for duplicate detection during credential registration.
+    /// - Parameters:
+    ///   - issuer: The issuer of the credential.
+    ///   - accountName: The account name of the credential.
+    /// - Returns: The Push credential if found, nil otherwise.
+    /// - Throws: `PushStorageError.storageFailure` if the credential cannot be retrieved.
+    func getCredentialByIssuerAndAccount(issuer: String, accountName: String) async throws -> PushCredential?
+
     // MARK: - Notification Operations
 
     /// Store a push notification.

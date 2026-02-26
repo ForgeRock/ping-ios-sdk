@@ -44,6 +44,12 @@ actor OathInMemoryStorage: OathStorage {
         credentials.removeAll()
     }
 
+    func getCredentialByIssuerAndAccount(issuer: String, accountName: String) async throws -> OathCredential? {
+        credentials.values.first { credential in
+            credential.issuer == issuer && credential.accountName == accountName
+        }
+    }
+
     // MARK: - Test Utilities
 
     /// Get the count of stored credentials (for testing).

@@ -45,6 +45,12 @@ actor TestInMemoryPushStorage: PushStorage {
         credentials.removeAll()
     }
 
+    func getCredentialByIssuerAndAccount(issuer: String, accountName: String) async throws -> PushCredential? {
+        credentials.values.first { credential in
+            credential.issuer == issuer && credential.accountName == accountName
+        }
+    }
+
     // MARK: - Notification Operations
 
     func storePushNotification(_ notification: PushNotification) async throws {

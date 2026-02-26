@@ -308,6 +308,65 @@ public final class OathKeychainStorage: OathStorage, @unchecked Sendable {
         }
     }
 
+    /// Retrieve an OATH credential by issuer and account name.
+    /// - Parameters:
+    ///   - issuer: The issuer of the credential.
+    ///   - accountName: The account name of the credential.
+    /// - Returns: The credential if found, nil otherwise.
+    /// - Throws: `OathStorageError.storageFailure` if keychain operations fail.
+    public func getCredentialByIssuerAndAccount(issuer: String, accountName: String) async throws -> OathCredential? {
+        logger?.d("Checking for credential with issuer: \(issuer), account: \(accountName)")
+
+        return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<OathCredential?, Error>) in
+            keychainQueue.async { [weak self] in
+                do {
+                    guard let self = self else {
+                        continuation.resume(throwing: OathStorageError.storageFailure("Storage instance deallocated"))
+                        return
+                    }
+
+                    let allItems = try self.loadAllKeychainItems(service: self.keychainService)
+
+                    for (account, data) in allItems {
+                        do {
+                            // Decode credential metadata
+                            let credentialWithoutSecret = try JSONDecoder().decode(OathCredential.self, from: data)
+
+                            // Check if issuer and accountName match (case-sensitive)
+                            if credentialWithoutSecret.issuer == issuer &&
+                               credentialWithoutSecret.accountName == accountName {
+                                // Retrieve and attach secret
+                                if let secretData = try self.loadKeychainItem(
+                                    service: self.keychainSecretService,
+                                    account: account
+                                ) {
+                                    let secret = String(data: secretData, encoding: .utf8) ?? ""
+                                    let credential = OathCredential.withSecret(credentialWithoutSecret, secretKey: secret)
+                                    self.logger?.d("Found credential with issuer: \(issuer), account: \(accountName)")
+                                    continuation.resume(returning: credential)
+                                    return
+                                }
+                            }
+                        } catch {
+                            self.logger?.w("Failed to decode credential \(account), skipping: \(error)", error: error)
+                        }
+                    }
+
+                    // No matching credential found
+                    self.logger?.d("No credential found with issuer: \(issuer), account: \(accountName)")
+                    continuation.resume(returning: nil)
+                } catch {
+                    self?.logger?.e("Failed to retrieve credential by issuer and account: \(error)", error: error)
+                    if let storageError = error as? OathStorageError {
+                        continuation.resume(throwing: storageError)
+                    } else {
+                        continuation.resume(throwing: OathStorageError.storageFailure("Failed to retrieve credential", error))
+                    }
+                }
+            }
+        }
+    }
+
     
     // MARK: - Private Keychain Operations
 

@@ -237,11 +237,28 @@ actor PushService {
     ///
     /// - Parameter credential: The credential to persist.
     /// - Returns: The stored credential (potentially locked).
+    /// - Throws: `PushError.duplicateCredential` if a credential with the same issuer and account name already exists.
     /// - Throws: `PushError.storageFailure` when persistence fails.
     func addCredential(_ credential: PushCredential) async throws -> PushCredential {
         logger?.d("Adding Push credential \(credential.id)")
 
         do {
+            // Check for duplicate credential by issuer and account name
+            let existingCredential = try await storage.getCredentialByIssuerAndAccount(
+                issuer: credential.issuer,
+                accountName: credential.accountName
+            )
+            
+            // Only throw duplicate exception if the existing credential has a different ID
+            // (same ID means we're updating, not creating a duplicate)
+            if let existing = existingCredential, existing.id != credential.id {
+                logger?.w("Credential already exists for issuer '\(credential.issuer)' and account '\(credential.accountName)'", error: nil)
+                throw PushError.duplicateCredential(
+                    issuer: credential.issuer,
+                    accountName: credential.accountName
+                )
+            }
+            
             var updatedCredential = credential
             try await evaluateAndUpdateCredentialPolicies(&updatedCredential, store: false)
 
@@ -352,6 +369,12 @@ actor PushService {
             let removed = try await storage.removePushCredential(credentialId: credentialId)
             if removed {
                 logger?.d("Removed Push credential \(credentialId)")
+                
+                // Remove associated push notifications for this credential
+                let notificationsRemoved = try await storage.removePushNotificationsForCredential(credentialId: credentialId)
+                if notificationsRemoved > 0 {
+                    logger?.d("Removed \(notificationsRemoved) associated push notification(s) for credential \(credentialId)")
+                }
             } else {
                 logger?.d("No Push credential found for removal: \(credentialId)")
             }
@@ -377,21 +400,21 @@ actor PushService {
         _ deviceToken: String,
         credentialId: String? = nil
     ) async throws -> Bool {
-        let trimmedToken = deviceToken.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedToken.isEmpty else {
+        guard !deviceToken.isEmpty else {
             logger?.w("setDeviceToken called with an empty token", error: nil)
             throw PushError.invalidParameterValue("Device token cannot be empty")
         }
 
         do {
-            let tokenChanged = try await deviceTokenManager.hasTokenChanged(trimmedToken)
+            let tokenChanged = try await deviceTokenManager.hasTokenChanged(deviceToken)
 
             if !tokenChanged {
-                logger?.d("Device token unchanged; skipping update")
+                logger?.d("Device token unchanged; skipping server update")
                 return true
             }
 
-            try await deviceTokenManager.storeDeviceToken(trimmedToken)
+            logger?.i("Device token changed; updating on server for \(credentialId != nil ? "credential \(credentialId!)" : "all credentials")")
+            try await deviceTokenManager.storeDeviceToken(deviceToken)
         } catch let error as PushError {
             throw error
         } catch {
@@ -400,7 +423,7 @@ actor PushService {
         }
 
         return try await updateDeviceTokensOnServer(
-            deviceToken: trimmedToken,
+            deviceToken: deviceToken,
             credentialId: credentialId
         )
     }
@@ -1076,6 +1099,7 @@ actor PushService {
                 }
 
                 do {
+                    logger?.d("Updating device token for credential \(credential.id) (platform: \(platformId))")
                     let success = try await handler.setDeviceToken(
                         credential: credential,
                         deviceToken: deviceToken,
@@ -1085,10 +1109,12 @@ actor PushService {
                     if !success {
                         allSucceeded = false
                         logger?.w("Handler reported failure updating device token for credential \(credential.id)", error: nil)
+                    } else {
+                        logger?.i("Successfully updated device token for credential \(credential.id)")
                     }
                 } catch let error as PushError {
                     allSucceeded = false
-                    logger?.e("Handler threw PushError while updating credential \(credential.id)", error: error)
+                    logger?.e("Handler threw PushError while updating credential \(credential.id): \(error)", error: error)
                 } catch {
                     allSucceeded = false
                     logger?.e("Unexpected error updating credential \(credential.id)", error: error)

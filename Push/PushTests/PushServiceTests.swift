@@ -159,6 +159,49 @@ final class PushServiceTests: XCTestCase {
        XCTAssertEqual(persisted?.isLocked, true)
     }
 
+    func testAddCredentialRejectsDuplicateIssuerAndAccount() async throws {
+        let service = makeService(handler: StubPushHandler())
+
+        // Add first credential
+        let credential1 = PushCredential(
+            issuer: "ForgeRock",
+            accountName: "rodrigo1@forgerock.com",
+            serverEndpoint: "https://am.example.com/push",
+            sharedSecret: "secret123"
+        )
+        let stored1 = try await service.addCredential(credential1)
+        XCTAssertNotNil(stored1)
+
+        // Try to add second credential with same issuer+accountName but different ID
+        let credential2 = PushCredential(
+            id: "different-id",
+            issuer: "ForgeRock",
+            accountName: "rodrigo1@forgerock.com",
+            serverEndpoint: "https://am.example.com/push",
+            sharedSecret: "secret456"
+        )
+
+        // Should throw duplicate credential error
+        do {
+            _ = try await service.addCredential(credential2)
+            XCTFail("Expected duplicateCredential error")
+        } catch let error as PushError {
+            switch error {
+            case .duplicateCredential(let issuer, let accountName):
+                XCTAssertEqual(issuer, "ForgeRock")
+                XCTAssertEqual(accountName, "rodrigo1@forgerock.com")
+            default:
+                XCTFail("Expected duplicateCredential error, got \(error)")
+            }
+        } catch {
+            XCTFail("Expected PushError, got \(error)")
+        }
+
+        // Should still only have one credential
+        let allCredentials = try await storage.getAllPushCredentials()
+        XCTAssertEqual(allCredentials.count, 1)
+    }
+
     func testSetDeviceTokenSkipsUpdateWhenUnchanged() async throws {
         let stubHandler = StubPushHandler()
         let tokenManager = PushDeviceTokenManager(storage: storage, logger: nil)
