@@ -29,7 +29,6 @@ class DeviceSigningVerifierCallbackE2ETests: BindingE2EBaseTest, @unchecked Send
         return false
         #endif
     }
-    static let biometricTestsSupported = true
     
     // MARK: - Tests
     

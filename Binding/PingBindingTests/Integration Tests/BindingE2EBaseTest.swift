@@ -16,6 +16,10 @@ import XCTest
 @testable import PingOidc
 
 open class BindingE2EBaseTest: XCTestCase {
+    // Change this to true when testing locally on a device with biometric capabilities.
+    // Should be false for CI to avoid test failures due to unavailable biometric hardware (or hardware with no lock pin set)
+    static let biometricTestsSupported = false
+    
     private(set) var config: Config!
     var configFileName = "Config"
     
