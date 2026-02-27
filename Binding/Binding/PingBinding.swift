@@ -112,6 +112,8 @@ class Binding {
         let deviceBindingConfig = DeviceBindingConfig()
         config(deviceBindingConfig)
         
+        let startTime = Date()
+        
         let claims = deviceBindingConfig.claims
         try validate(customClaims: claims)
         
@@ -188,7 +190,24 @@ class Binding {
                                                      expiration: deviceBindingConfig.expirationTime(callback.timeout),
                                                      customClaims: claims)
         
-        let jws = try deviceAuthenticator.sign(params: signingParams, journey: journey)
+        // Sign the JWS. If the signing operation fails with a non-DeviceBindingError (e.g., a
+        // Secure Enclave auth failure when the wrong PIN is used, surfaced as a JwtError from
+        // SecKeyCreateSignature), reclassify it as authenticationFailed so it maps to "Abort".
+        let jws: String
+        do {
+            jws = try deviceAuthenticator.sign(params: signingParams, journey: journey)
+        } catch let error as DeviceBindingError {
+            throw error
+        } catch {
+            throw DeviceBindingError.authenticationFailed
+        }
+        
+        // Check if the operation exceeded the allowed timeout (matching legacy SDK behaviour).
+        // A timeout of 0 means the operation is always considered expired.
+        let elapsed = Date().timeIntervalSince(startTime)
+        if elapsed > Double(callback.timeout) {
+            throw DeviceBindingError.timeout
+        }
         
         // Set the JWS on the callback.
         callback.setJws(jws)
