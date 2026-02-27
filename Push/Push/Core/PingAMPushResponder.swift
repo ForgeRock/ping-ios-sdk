@@ -245,7 +245,7 @@ public final class PingAMPushResponder: @unchecked Sendable {
             claims: claims
         )
 
-        var requestBody: [String: Any] = [
+        let requestBody: [String: Any] = [
             Keys.mechanismUID: credential.id,
             Keys.jwt: jwt,
             Keys.username: userId

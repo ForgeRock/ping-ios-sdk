@@ -695,7 +695,7 @@ final class PingAMPushResponderTests: XCTestCase {
     }
 
     private func makeCredential(userId: String? = "user-123") -> PushCredential {
-        var credential = PushCredential(
+        let credential = PushCredential(
             id: "credential-id",
             userId: userId,
             resourceId: "credential-id",
