@@ -61,8 +61,9 @@ public class AppPinAuthenticator: DefaultDeviceAuthenticator {
             let success = context.setCredential(pinData, type: .applicationPassword)
             
             if !success {
-                // The call succeeded but returned false (e.g., credential could not be set)
-                return .failure(DeviceBindingError.deviceNotSupported)
+                // The credential could not be set on this context; treat as an authentication
+                // failure so it maps to the "Abort" client error (not "Unsupported").
+                return .failure(DeviceBindingError.authenticationFailed)
             }
             
             
