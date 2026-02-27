@@ -112,10 +112,7 @@ class Binding {
         let deviceBindingConfig = DeviceBindingConfig()
         config(deviceBindingConfig)
         
-        // Enforce timeout: a timeout of 0 or less means the operation has already expired.
-        if callback.timeout <= 0 {
-            throw DeviceBindingError.timeout
-        }
+        let startTime = Date()
         
         let claims = deviceBindingConfig.claims
         try validate(customClaims: claims)
@@ -203,6 +200,13 @@ class Binding {
             throw error
         } catch {
             throw DeviceBindingError.authenticationFailed
+        }
+        
+        // Check if the operation exceeded the allowed timeout (matching legacy SDK behaviour).
+        // A timeout of 0 means the operation is always considered expired.
+        let elapsed = Date().timeIntervalSince(startTime)
+        if elapsed > Double(callback.timeout) {
+            throw DeviceBindingError.timeout
         }
         
         // Set the JWS on the callback.
