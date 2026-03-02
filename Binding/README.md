@@ -56,9 +56,8 @@ PingBinding has the following dependencies which will be automatically installed
 | Dependency | Version | Description |
 |------------|---------|-------------|
 | `PingOrchestrate` | ~> 1.3.1 | Core orchestration framework |
-| `PingOidc` | ~> 1.3.1 | OIDC authentication support |
-| `PingJourney` | ~> 1.3.1 | Journey-based authentication flow management |
-| `PingMfaCommons` | ~> 1.3.1 | Common MFA utilities including JWT signing |
+| `PingJourneyPlugin` | ~> 1.3.1 | Journey-based authentication flow management |
+| `PingCommons` | ~> 1.3.1 | Common utilities including JWT signing |
 | `PingStorage` | ~> 1.3.1 | Secure storage capabilities |
 | `PingLogger` | ~> 1.3.1 | Logging framework |
 
