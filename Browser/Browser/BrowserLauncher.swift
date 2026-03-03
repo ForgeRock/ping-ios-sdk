@@ -302,8 +302,8 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
                     self.state = .closing
                     
                     // Close the UI
-                    safariVC.dismiss(animated: true) {
-                        self.cleanup()
+                    safariVC.dismiss(animated: true) { [weak self] in
+                        self?.cleanup()
                     }
                 }
         }
