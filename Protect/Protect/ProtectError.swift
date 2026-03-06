@@ -11,7 +11,7 @@
 import Foundation
 
 /// Custom error type for Protect SDK exceptions
-public struct ProtectError: Error, LocalizedError {
+public struct ProtectError: Error, LocalizedError, Sendable {
     public let message: String
 
     /// A localized description of the error.

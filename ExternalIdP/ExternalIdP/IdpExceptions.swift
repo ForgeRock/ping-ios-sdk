@@ -11,7 +11,7 @@
 import Foundation
 
 /// A class representing IdpExceptions
-public enum IdpExceptions: LocalizedError {
+public enum IdpExceptions: LocalizedError, Sendable {
     
     /// An unsupportedIdpException
     /// - Parameters:

@@ -11,7 +11,7 @@
 import Foundation
 
 /// Errors that can occur during device binding migration.
-public enum MigrationError: LocalizedError {
+public enum MigrationError: LocalizedError, Sendable {
     /// Failed to read legacy user keys from keychain
     case failedToReadLegacyKeys(Error)
     

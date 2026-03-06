@@ -129,7 +129,7 @@ enum Constants {
 /// - keychainItemNotFound: Indicates that the keychain item was not found.
 /// - keychainUnexpectedData: Indicates that the data retrieved from the keychain was not as expected.
 /// - keychainUnexpectedStatus: Indicates an unexpected status code from the keychain operation, with the associated `OSStatus` code.
-public enum DeviceIdentifierError: Error {
+public enum DeviceIdentifierError: Error, LocalizedError, Sendable {
     case encryptionInitializationFailed
     case keyGenerationFailed(Error)
     case publicKeyExtractionFailed
@@ -137,4 +137,23 @@ public enum DeviceIdentifierError: Error {
     case keychainItemNotFound
     case keychainUnexpectedData
     case keychainUnexpectedStatus(OSStatus)
+
+    public var errorDescription: String? {
+        switch self {
+        case .encryptionInitializationFailed:
+            return "Encryption initialization failed."
+        case .keyGenerationFailed(let error):
+            return "Key generation failed: \(error.localizedDescription)"
+        case .publicKeyExtractionFailed:
+            return "Failed to extract the public key."
+        case .externalRepresentationFailed(let error):
+            return "Failed to export key to external representation: \(error.localizedDescription)"
+        case .keychainItemNotFound:
+            return "Keychain item not found."
+        case .keychainUnexpectedData:
+            return "Unexpected data format in keychain."
+        case .keychainUnexpectedStatus(let status):
+            return "Unexpected keychain status code: \(status)."
+        }
+    }
 }

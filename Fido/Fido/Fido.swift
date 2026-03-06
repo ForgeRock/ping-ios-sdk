@@ -376,7 +376,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
 }
 
 /// Represents an error that can occur during FIDO operations.
-public enum FidoError: Error, Equatable {
+public enum FidoError: Error, LocalizedError, Equatable, Sendable {
     case invalidChallenge
     case invalidWindow
     case invalidResponse
@@ -384,8 +384,8 @@ public enum FidoError: Error, Equatable {
     case unsupportedAction(String)
     case missingParameters(String)
     case timeout
-    
-    public var localizedDescription: String {
+
+    public var errorDescription: String? {
         switch self {
         case .timeout:
             return "ERROR::TimeoutError:Operation timedout"

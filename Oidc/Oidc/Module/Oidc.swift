@@ -141,7 +141,7 @@ internal extension Session {
 }
 
 // MARK: – Error types
-public enum AuthorizeError: Error, LocalizedError {
+public enum AuthorizeError: Error, LocalizedError, Sendable {
     case missingAuthCode
     case codeAlreadyUsed
 

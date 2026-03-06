@@ -12,7 +12,7 @@
 import Foundation
 
 /// An error type that represents validation errors.
-public enum ValidationError: Error, Identifiable, Equatable {
+public enum ValidationError: Error, LocalizedError, Identifiable, Equatable, Sendable {
     /// A unique identifier for the error.
     public var id: UUID { UUID() }
     
@@ -23,6 +23,9 @@ public enum ValidationError: Error, Identifiable, Equatable {
     case maxRepeat(max: Int)
     case minCharacters(character: String, min: Int)
     
+    /// A localized description of the error.
+    public var errorDescription: String? { errorMessage }
+
     /// The error message for the validation error.
     public var errorMessage: String {
         switch self {

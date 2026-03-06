@@ -85,7 +85,7 @@ public actor Keychain<T: Codable & Sendable>: Storage {
 
 
 /// `KeychainError` represents errors that can occur while interacting with the keychain.
-public enum KeychainError: LocalizedError {
+public enum KeychainError: LocalizedError, Sendable {
     case unableToSave
     case unableToRetrieve
     case unableToDelete
@@ -101,6 +101,9 @@ public enum KeychainError: LocalizedError {
             return "Unable to delete from the keychain"
         }
     }
+
+    /// A localized description of the error, used by `LocalizedError`.
+    public var errorDescription: String? { errorMessage }
 }
 
 

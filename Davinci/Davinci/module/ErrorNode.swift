@@ -142,7 +142,14 @@ public struct InnerError: Codable, Sendable {
 }
 
 /// Represents errors that occur during serialization.
-public enum SerializationError: Error {
+public enum SerializationError: Error, LocalizedError, Sendable {
     /// Indicates that the provided data has an invalid format.
     case invalidFormat
+
+    public var errorDescription: String? {
+        switch self {
+        case .invalidFormat:
+            return "The response data has an invalid format."
+        }
+    }
 }

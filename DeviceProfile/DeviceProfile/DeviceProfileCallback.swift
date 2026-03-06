@@ -225,7 +225,7 @@ public final class DeviceProfileConfig: @unchecked Sendable {
 // MARK: - Error Types
 
 /// Errors that can occur during device profile collection
-public enum DeviceProfileError: Error, LocalizedError {
+public enum DeviceProfileError: Error, LocalizedError, Sendable {
     case collectionFailed
     case serializationFailed
     

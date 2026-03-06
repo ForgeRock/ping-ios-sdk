@@ -52,7 +52,7 @@ public struct SecuredKeyEncryptor: Encryptor {
 
 
 /// `EncryptorError` represents errors that can occur while encrypting/decrypting.
-public enum EncryptorError: LocalizedError {
+public enum EncryptorError: LocalizedError, Sendable {
     case failedToEncrypt
     case failedToDecrypt
     
@@ -65,4 +65,7 @@ public enum EncryptorError: LocalizedError {
             return "Failed to decrypt given data"
         }
     }
+
+    /// A localized description of the error, used by `LocalizedError`.
+    public var errorDescription: String? { errorMessage }
 }

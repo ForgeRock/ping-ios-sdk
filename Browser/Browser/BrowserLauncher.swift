@@ -26,10 +26,21 @@ public enum BrowserType: Int, Sendable {
 }
 
 /// BrowserError enum to specify the error that may occur during external user-agent process
-public enum BrowserError: Error, Sendable {
+public enum BrowserError: Error, LocalizedError, Sendable {
     case externalUserAgentFailure
     case externalUserAgentAuthenticationInProgress
     case externalUserAgentCancelled
+
+    public var errorDescription: String? {
+        switch self {
+        case .externalUserAgentFailure:
+            return "The external user agent failed to launch or complete authentication."
+        case .externalUserAgentAuthenticationInProgress:
+            return "An authentication session is already in progress."
+        case .externalUserAgentCancelled:
+            return "The authentication was cancelled by the user."
+        }
+    }
 }
 
 /// BrowserMode enum to specify the mode of the browser; login, logout, or custom
