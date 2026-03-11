@@ -19,11 +19,6 @@ open class AbstractCallback: Callback, @unchecked Sendable {
 
     /// Initializes a new instance of `AbstractCallback` with the provided JSON.
     open func initialize(with json: [String: Any]) async -> any Callback {
-        return self.privateInit(with: json)
-    }
-    
-    /// Private convinient initializer, to allow both Async and Sync initializations
-    private func privateInit(with json: [String: Any]) -> any Callback {
         self.json = json
         if let output = json[JourneyConstants.output] as? [[String: Any]] {
             for item in output {
