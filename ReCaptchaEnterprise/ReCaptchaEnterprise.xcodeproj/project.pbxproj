@@ -609,8 +609,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 18.8.1;
+				kind = exactVersion;
+				version = 18.8.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
