@@ -85,7 +85,7 @@ public final class URLSessionHttpClient: NSObject, HttpClientProtocol, @unchecke
     ///
     /// - Returns: A new `URLSessionHttpRequest` with standard headers pre-configured.
     public func request() -> HttpRequest {
-        URLSessionHttpRequest()
+        URLSessionHttpRequest(logger: logger)
     }
 
     /// Executes a pre-configured HTTP request asynchronously.
@@ -196,7 +196,7 @@ public final class URLSessionHttpClient: NSObject, HttpClientProtocol, @unchecke
                 log += "Request Body: \(bodyString)\n"
             }
             log += "Request Timeout: \(request.timeoutInterval)\n"
-            LogManager.standard.d(log)
+            logger.d(log)
         }
     }
     
@@ -219,7 +219,7 @@ public final class URLSessionHttpClient: NSObject, HttpClientProtocol, @unchecke
                 log += "Response Data: \(dataString)"
             }
         }
-        LogManager.standard.d(log)
+        logger.d(log)
     }
 }
 

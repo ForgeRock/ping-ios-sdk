@@ -23,7 +23,7 @@ public class OidcClientConfig: @unchecked Sendable {
     /// Agent delegate for handling OIDC operations.
     internal var agent: (any AgentDelegateProtocol)?
     /// Logger instance for logging.
-    public var logger: Logger
+    public var logger: Logger = LogManager.logger
     /// Storage delegate for storing tokens.
     public var storage: StorageDelegate<Token>
     /// Discovery endpoint URL.
@@ -55,7 +55,6 @@ public class OidcClientConfig: @unchecked Sendable {
     
     /// Initializes a new `OidcClientConfig` instance.
     public init() {
-        logger = LogManager.none
         storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE", encryptor: SecuredKeyEncryptor() ?? NoEncryptor(), cacheStrategy: .NO_CACHE)
     }
     

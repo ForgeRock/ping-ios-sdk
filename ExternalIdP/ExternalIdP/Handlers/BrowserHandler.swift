@@ -12,6 +12,7 @@ import Foundation
 import PingBrowser
 import PingOrchestrate
 import PingNetwork
+import PingLogger
 
 /// A handler class for managing browser-based Identity Provider (IdP) authorization.
 @MainActor
@@ -40,7 +41,7 @@ public class BrowserHandler: IdpRequestHandler {
         }
         
         do {
-            let result = try await BrowserLauncher.currentBrowser.launch(url: continueUrl, customParams: nil, browserType: .ephemeralAuthSession, browserMode: .login, callbackURLScheme: callbackURLScheme)
+            let result = try await BrowserLauncher.currentBrowser.launch(url: continueUrl, customParams: nil, browserType: .ephemeralAuthSession, browserMode: .login, callbackURLScheme: callbackURLScheme, logger: LogManager.logger)
             
             guard let components = URLComponents(url: result, resolvingAgainstBaseURL: false),
                   let queryItems = components.queryItems else {

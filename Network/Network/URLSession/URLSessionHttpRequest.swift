@@ -19,6 +19,9 @@ import PingLogger
 /// **This class is NOT thread-safe.** It contains mutable state without synchronization
 /// and should not be shared across multiple threads or modified concurrently.
 public class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
+    
+    var logger: Logger
+    
     /// The target URL for this HTTP request.
     public var url: String? {
         get {
@@ -43,7 +46,10 @@ public class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
     /// Standard headers include:
     /// - `x-requested-with: ping-sdk`
     /// - `x-requested-platform: ios`
-    public init() {
+    ///
+    /// - Parameter logger: The logger to use for this request. Defaults to `LogManager.logger`.
+    public init(logger: Logger = LogManager.logger) {
+        self.logger = logger
         // Initialize with a placeholder URL - will be replaced when buildURLRequest is called
         urlRequest = URLRequest(url: URL(string: "https://")!)
         urlRequest.httpMethod = HttpMethod.get.rawValue
@@ -268,13 +274,13 @@ extension URLSessionHttpRequest {
         
         guard JSONSerialization.isValidJSONObject(json) else {
             jsonSerializationFailed = true
-            LogManager.standard.d("URLSessionHttpRequest: Invalid JSON object for serialization.")
+            logger.d("URLSessionHttpRequest: Invalid JSON object for serialization.")
             return nil
         }
         
         guard let data = try? JSONSerialization.data(withJSONObject: json, options: []) else {
             jsonSerializationFailed = true
-            LogManager.standard.d("URLSessionHttpRequest: JSON serialization failed.")
+            logger.d("URLSessionHttpRequest: JSON serialization failed.")
             return nil
         }
         

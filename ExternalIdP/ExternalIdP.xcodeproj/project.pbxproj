@@ -14,6 +14,8 @@
 		EC0815E92D4939EB00F1AD02 /* IdpHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0815E82D4939E400F1AD02 /* IdpHandler.swift */; };
 		EC0815ED2D493A1F00F1AD02 /* IdpResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0815EC2D493A1E00F1AD02 /* IdpResult.swift */; };
 		EC0815EF2D493DC900F1AD02 /* IdpExceptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0815EE2D493DC900F1AD02 /* IdpExceptions.swift */; };
+		EC3F70462F61B38700E7ABFA /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC3F70452F61B38700E7ABFA /* PingLogger.framework */; };
+		EC3F70472F61B38700E7ABFA /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC3F70452F61B38700E7ABFA /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC5C81CC2ECF8CC300C91570 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81CB2ECF8CC300C91570 /* PingDavinciPlugin.framework */; };
 		EC5C81CD2ECF8CC300C91570 /* PingDavinciPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81CB2ECF8CC300C91570 /* PingDavinciPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC8025C52F0D34C60046C961 /* SelectIdpCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8025C42F0D34C60046C961 /* SelectIdpCallbackTests.swift */; };
@@ -50,6 +52,7 @@
 			files = (
 				A552A7CE2F1699EE003CA76C /* PingJourneyPlugin.framework in Embed Frameworks */,
 				EC5C81CD2ECF8CC300C91570 /* PingDavinciPlugin.framework in Embed Frameworks */,
+				EC3F70472F61B38700E7ABFA /* PingLogger.framework in Embed Frameworks */,
 				ECA53F912D635C53002B35D4 /* PingBrowser.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -67,6 +70,7 @@
 		EC0815E82D4939E400F1AD02 /* IdpHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpHandler.swift; sourceTree = "<group>"; };
 		EC0815EC2D493A1E00F1AD02 /* IdpResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpResult.swift; sourceTree = "<group>"; };
 		EC0815EE2D493DC900F1AD02 /* IdpExceptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpExceptions.swift; sourceTree = "<group>"; };
+		EC3F70452F61B38700E7ABFA /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5016152E437052006D8C3A /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81CB2ECF8CC300C91570 /* PingDavinciPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinciPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC8025C32F0D34C60046C961 /* IdpCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpCallbackTests.swift; sourceTree = "<group>"; };
@@ -92,6 +96,7 @@
 			files = (
 				A552A7CD2F1699EE003CA76C /* PingJourneyPlugin.framework in Frameworks */,
 				EC5C81CC2ECF8CC300C91570 /* PingDavinciPlugin.framework in Frameworks */,
+				EC3F70462F61B38700E7ABFA /* PingLogger.framework in Frameworks */,
 				ECA53F902D635C53002B35D4 /* PingBrowser.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -167,6 +172,7 @@
 		ECBF06432D50EBF60066A3BD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EC3F70452F61B38700E7ABFA /* PingLogger.framework */,
 				A552A7CC2F1699EE003CA76C /* PingJourneyPlugin.framework */,
 				A5AB9FFF2EF0BBE6000E42B7 /* Network.framework */,
 				EC5C81CB2ECF8CC300C91570 /* PingDavinciPlugin.framework */,

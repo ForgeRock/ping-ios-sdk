@@ -187,7 +187,7 @@ public final class DeviceProfileConfig: @unchecked Sendable {
     public var location: Bool = false
     
     /// Logger instance for recording collection events
-    public var logger: Logger = LogManager.warning
+    public var logger: Logger = LogManager.logger
     
     /// Device identifier generator for unique device identification.
     /// Default value is `DefaultDeviceIdentifier()`

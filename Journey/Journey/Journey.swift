@@ -64,7 +64,7 @@ public extension Journey {
     /// - Returns: A configured Journey.
     static func createJourney(block: @Sendable (JourneyConfig) -> Void = {_ in }) -> Journey {
         let config = JourneyConfig()
-        config.logger = LogManager.standard
+        config.logger = LogManager.logger
         config.timeout = 30
         config.module(CustomHeader.config) { customHeaderConfig in
             customHeaderConfig.header(name: NetworkConstants.headerRequestedWith, value: NetworkConstants.requestedWithValue)

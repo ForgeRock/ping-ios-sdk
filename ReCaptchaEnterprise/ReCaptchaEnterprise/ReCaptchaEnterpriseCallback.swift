@@ -237,7 +237,7 @@ public final class ReCaptchaEnterpriseConfig: @unchecked Sendable {
     public var timeout: Double = ReCaptchaEnterpriseConstants.defaultTimeout
     
     /// Logger instance for recording reCAPTCHA events
-    public var logger: Logger = LogManager.warning
+    public var logger: Logger = LogManager.logger
     
     /// Sets additional payload value for the reCAPTCHA in callback response.
     /// Dictionary value of additional data

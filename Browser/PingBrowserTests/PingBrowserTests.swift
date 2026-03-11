@@ -13,7 +13,7 @@ import XCTest
 @testable import PingExternalIdP
 @testable import PingOrchestrate
 @testable import PingNetwork
-
+@testable import PingLogger
 // MARK: - BrowserType Tests
 
 @MainActor
@@ -314,7 +314,7 @@ class MockBrowserLauncher: BrowserLauncherProtocol {
     /// A closure that will be called when `launch` is invoked.
     var launchHandler: ((URL, BrowserType, String) async throws -> URL)?
     
-    func launch(url: URL, customParams: [String : String]?, browserType: PingBrowser.BrowserType, browserMode: PingBrowser.BrowserMode, callbackURLScheme: String) async throws -> URL {
+    func launch(url: URL, customParams: [String : String]?, browserType: PingBrowser.BrowserType, browserMode: PingBrowser.BrowserMode, callbackURLScheme: String, logger: Logger = LogManager.logger) async throws -> URL {
         if let handler = launchHandler {
             return try await handler(url, browserType, callbackURLScheme)
         }

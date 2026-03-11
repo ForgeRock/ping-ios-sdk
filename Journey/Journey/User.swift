@@ -28,9 +28,9 @@ extension Journey {
             return cachedUser
         }
         
-        if ((await session()) != nil) {
+        if let session = await session() {
             if let oidcClientConfig = self.sharedContext.get(key: SharedContext.Keys.oidcClientConfigKey) as? OidcClientConfig {
-                return await prepareUser(journey: self, user: OidcUser(config: oidcClientConfig))
+                return await prepareUser(journey: self, user: OidcUser(config: oidcClientConfig), session: session)
             }
         }
         return nil

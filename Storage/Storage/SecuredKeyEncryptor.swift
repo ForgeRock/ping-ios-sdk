@@ -56,8 +56,8 @@ public enum EncryptorError: LocalizedError, Sendable {
     case failedToEncrypt
     case failedToDecrypt
     
-    /// A localized message describing what error occurred.
-    public var errorMessage: String {
+    /// A localized description of the error, used by `LocalizedError`.
+    public var errorDescription: String? {
         switch self {
         case .failedToEncrypt:
             return "Failed to encrypt given data"
@@ -65,7 +65,4 @@ public enum EncryptorError: LocalizedError, Sendable {
             return "Failed to decrypt given data"
         }
     }
-
-    /// A localized description of the error, used by `LocalizedError`.
-    public var errorDescription: String? { errorMessage }
 }

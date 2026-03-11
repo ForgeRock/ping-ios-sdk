@@ -34,7 +34,7 @@ public final class HttpClientConfig {
     public var timeout: TimeInterval = 15.0
 
     /// Logger instance for network operations. Defaults to warning level.
-    public var logger: Logger = LogManager.warning
+    public var logger: Logger = LogManager.logger
 
     /// Internal storage for request interceptors.
     internal private(set) var requestInterceptors: [HttpRequestInterceptor] = []

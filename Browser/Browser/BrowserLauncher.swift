@@ -57,7 +57,7 @@ public enum BrowserMode: Sendable {
 public protocol BrowserLauncherProtocol: Sendable {
     var isInProgress: Bool { get }
     func launch(url: URL, customParams: [String: String]?,
-                browserType: BrowserType, browserMode: BrowserMode, callbackURLScheme: String) async throws -> URL
+                browserType: BrowserType, browserMode: BrowserMode, callbackURLScheme: String, logger: Logger) async throws -> URL
     func reset()
     func handleAppActivation()
 }
@@ -159,8 +159,8 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     ///   - Returns: URL of the external user-agent
     ///   - Throws: BrowserError
     public func launch(url: URL, customParams: [String: String]? = nil,
-                       browserType: BrowserType = .authSession, browserMode: BrowserMode = .login, callbackURLScheme: String) async throws -> URL {
-        logger = LogManager.logger
+                       browserType: BrowserType = .authSession, browserMode: BrowserMode = .login, callbackURLScheme: String, logger: Logger = LogManager.logger) async throws -> URL {
+        self.logger = logger
         
         guard case .idle = state else {
             throw BrowserError.externalUserAgentAuthenticationInProgress
