@@ -105,8 +105,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk",
       "state" : {
-        "revision" : "c6ce6a5790f0e0b70e66025ec1aa3c4aced13cc6",
-        "version" : "18.8.1"
+        "revision" : "1f3ac7ac4a8d73e8af514aae794b1a84696477c7",
+        "version" : "18.9.0-beta01"
       }
     },
     {
