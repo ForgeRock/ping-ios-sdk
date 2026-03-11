@@ -2,7 +2,7 @@
 //  ReCaptchaEnterpriseCallback.swift
 //  ReCaptchaEnterprise
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -62,8 +62,8 @@ public class ReCaptchaEnterpriseCallback: AbstractCallback, @unchecked Sendable 
     // MARK: - Initialization
     
     /// Initializes a new instance of `ReCaptchaEnterpriseCallback` with the provided JSON.
-    public override func initialize(with json: [String: Any]) -> any Callback {
-        _ = super.initialize(with: json)
+    public override func initialize(with json: [String: Any]) async -> any Callback {
+        _ = await super.initialize(with: json)
         
         // Assign input keys
         if let inputItems = json[JourneyConstants.input] as? [[String: Any]] {

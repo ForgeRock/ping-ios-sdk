@@ -2,7 +2,7 @@
 //  ReCaptchaEnterpriseTests.swift
 //  ReCaptchaEnterpriseTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -19,8 +19,8 @@ class ReCaptchaEnterpriseCallbackTests: XCTestCase {
     var callback: ReCaptchaEnterpriseCallback!
     var jsonString: [String: Any]!
     
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         
         // Create mock JSON that simulates server response
         jsonString = [
@@ -38,7 +38,7 @@ class ReCaptchaEnterpriseCallbackTests: XCTestCase {
         
         // Initialize callback with mock data
         callback = ReCaptchaEnterpriseCallback()
-        _ = callback.initialize(with: jsonString)
+        _ = await callback.initialize(with: jsonString)
 
     }
     

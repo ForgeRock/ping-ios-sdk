@@ -2,7 +2,7 @@
 //  AbstractProtectCallback.swift
 //  Protect
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -27,7 +27,7 @@ open class AbstractProtectCallback: AbstractCallback, ContinueNodeAware, @unchec
     }
     
     /// Initialize from JSON object
-    public override func initialize(with json: [String: Any]) -> any Callback {
+    public override func initialize(with json: [String: Any]) async -> any Callback {
         if let type = json[JourneyConstants.type] as? String, type == JourneyConstants.metadataCallback {
             derivedCallback = true
             if let output = json[JourneyConstants.output] as? [[String: Any]],
@@ -42,7 +42,7 @@ open class AbstractProtectCallback: AbstractCallback, ContinueNodeAware, @unchec
             return self
         } else {
             // Use standard initialization
-            return super.initialize(with: json)
+            return await super.initialize(with: json)
         }
     }
     
