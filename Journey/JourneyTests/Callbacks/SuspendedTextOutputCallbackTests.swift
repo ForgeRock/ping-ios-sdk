@@ -2,7 +2,7 @@
 //  SuspendedTextOutputCallbackTests.swift
 //  JourneyTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -17,8 +17,8 @@ class SuspendedTextOutputCallbackTests: XCTestCase {
     private var callback: SuspendedTextOutputCallback!
     private var jsonObject: [String: Any]!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws{
+        try await super.setUp()
         callback = SuspendedTextOutputCallback()
 
         let jsonString = """
@@ -43,7 +43,7 @@ class SuspendedTextOutputCallbackTests: XCTestCase {
 
              // Initialize callback with parsed data
              callback = SuspendedTextOutputCallback()
-             _ = callback.initialize(with: jsonObject)
+             _ = await callback.initialize(with: jsonObject)
         } else {
             XCTFail("Failed to parse JSON string")
         }

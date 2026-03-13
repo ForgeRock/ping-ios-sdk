@@ -2,7 +2,7 @@
 //  AbstractCallback.swift
 //  PingJourneyPlugin
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -19,17 +19,6 @@ open class AbstractCallback: Callback, @unchecked Sendable {
 
     /// Initializes a new instance of `AbstractCallback` with the provided JSON.
     open func initialize(with json: [String: Any]) async -> any Callback {
-        return self.privateInit(with: json)
-    }
-
-    
-    /// Initializes a new instance of `AbstractCallback` with the provided JSON.
-    open func initialize(with json: [String: Any]) -> any Callback {
-        return self.privateInit(with: json)
-    }
-    
-    /// Private convinient initializer, to allow both Async and Sync initializations
-    private func privateInit(with json: [String: Any]) -> any Callback {
         self.json = json
         if let output = json[JourneyConstants.output] as? [[String: Any]] {
             for item in output {

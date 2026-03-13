@@ -2,7 +2,7 @@
 //  ChoiceCallbackTests.swift
 //  JourneyTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -16,8 +16,8 @@ class ChoiceCallbackTests: XCTestCase {
 
     private var callback: ChoiceCallback!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws{
+        try await super.setUp()
         callback = ChoiceCallback()
 
         let jsonString = """
@@ -54,7 +54,7 @@ class ChoiceCallbackTests: XCTestCase {
         if let data = jsonString.data(using: .utf8),
            let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
             callback = ChoiceCallback()
-            _ = callback.initialize(with: jsonObject)
+            _ = await callback.initialize(with: jsonObject)
         } else {
             XCTFail("Failed to parse JSON string")
         }
