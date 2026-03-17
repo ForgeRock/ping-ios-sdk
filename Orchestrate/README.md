@@ -124,3 +124,5 @@ let forceAuth = Module.of { setup in
     }
 }
 ```
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

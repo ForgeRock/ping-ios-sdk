@@ -324,3 +324,5 @@ _ = await user?.userinfo(cache: false)
 await user?.logout()
 
 ```
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

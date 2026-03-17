@@ -153,3 +153,5 @@ xcodebuild test \\
 ## License
 
 PingPush is released under the [MIT License](../LICENSE).
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
