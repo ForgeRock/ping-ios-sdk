@@ -17,7 +17,7 @@ import CoreBluetooth
 /// Protocol for providing Bluetooth state detection (allows for mocking)
 public protocol BluetoothStateProvider: Sendable {
     /// Returns whether Bluetooth is supported on the device
-    func getBluetoothSupported() async -> Bool
+    func getBluetoothSupported() async throws -> Bool
 }
 
 // MARK: - BluetoothCollector
@@ -39,8 +39,13 @@ public class BluetoothCollector: DeviceCollector, @unchecked Sendable {
     /// Collects Bluetooth capability information
     /// - Returns: BluetoothInfo containing support status
     public func collect() async -> BluetoothInfo? {
-        let supported = await stateProvider.getBluetoothSupported()
-        return BluetoothInfo(supported: supported)
+        do {
+            let supported = try await stateProvider.getBluetoothSupported()
+            return BluetoothInfo(supported: supported)
+        } catch {
+            return nil
+        }
+        
     }
     
     /// Initializes a new instance with optional state provider (for testing)
@@ -67,14 +72,21 @@ public struct BluetoothInfo: Codable, Sendable {
 
 /// Real Bluetooth state provider using CoreBluetooth
 actor RealBluetoothStateProvider: BluetoothStateProvider {
-    func getBluetoothSupported() async -> Bool {
-        return await getBluetoothStatus()
+    func getBluetoothSupported() async throws -> Bool {
+        return try await getBluetoothStatus()
     }
     
     /// Determines if Bluetooth Low Energy is supported on this device
     /// - Returns: True if BLE is supported (regardless of power state), false otherwise
     @MainActor
-    private func getBluetoothStatus() async -> Bool {
+    private func getBluetoothStatus() async throws -> Bool {
+        // Check for required Info.plist privacy usage descriptions
+        let hasAlwaysUsageDescription = Bundle.main.object(forInfoDictionaryKey: "NSBluetoothAlwaysUsageDescription") != nil
+        
+        guard hasAlwaysUsageDescription else {
+            throw NSError(domain: "BluetoothCollector", code: 1, userInfo: [NSLocalizedDescriptionKey: "Missing NSBluetoothAlwaysUsageDescription in Info.plist"])
+        }
+        
         let delegateBridge = BluetoothDelegateBridge()
         let manager = CBCentralManager(delegate: delegateBridge, queue: nil)
         manager.delegate = delegateBridge
