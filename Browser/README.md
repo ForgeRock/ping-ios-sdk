@@ -15,7 +15,7 @@ and it provides the necessary configuration to launch the browser to authenticat
 
 ## Add dependency to your project
 
-You can add the dependency using Cocoapods or Swift Package manager
+You can add the dependency using Swift Package Manager
 
 ## Usage
 

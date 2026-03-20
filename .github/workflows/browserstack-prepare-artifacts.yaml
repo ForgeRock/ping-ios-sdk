@@ -91,7 +91,7 @@ jobs:
           xcodebuild \
             -scheme PingTestHost \
             -sdk iphoneos \
-            -workspace SampleApps/Ping.xcworkspace \
+            -project PingTestHost/PingTestHost.xcodeproj \
             -configuration Debug clean build \
             BUILD_DIR=/tmp/build/ \
             DEVELOPMENT_TEAM=9QSE66762D \

@@ -30,12 +30,6 @@ dependencies: [
 
 Add the `PingPush` product to your target dependencies.
 
-### CocoaPods
-
-```ruby
-pod 'PingPush', :git => 'https://github.com/ForgeRock/ping-ios-sdk.git'
-```
-
 ## Configuration & Initialization
 
 Use the DSL-style factory to create a `PushClient` with optional overrides:
@@ -143,11 +137,11 @@ Most methods throw; callers should `try`/`catch` and map to user-facing messagin
 - Recommended command:
 
 ```bash
-xcodebuild test \\
-  -scheme PingTestHost \\
-  -workspace SampleApps/Ping.xcworkspace \\
-  -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.3.1' \\
-  -only-testing:PushTests/PushIntegrationTests
+xcodebuild test \
+  -scheme PingTestHost \
+  -project PingTestHost/PingTestHost.xcodeproj \
+  -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.3.1' \
+  -only-testing:PingPushTests/PushIntegrationTests
 ```
 
 ## License

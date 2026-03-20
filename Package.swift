@@ -303,6 +303,262 @@ let package = Package(
             path: "Binding/Binding",
             exclude: ["Binding.h"],
             resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+        
+        // MARK: - Test Targets
+        
+        // Foundation Tests
+        .testTarget(
+            name: "PingLoggerTests",
+            dependencies: ["PingLogger"],
+            path: "Logger/LoggerTests"
+        ),
+        .testTarget(
+            name: "PingStorageTests",
+            dependencies: ["PingStorage"],
+            path: "Storage/StorageTests"
+        ),
+        
+        // Core Tests
+        .testTarget(
+            name: "PingNetworkTests",
+            dependencies: ["PingNetwork"],
+            path: "Network/NetworkTests"
+        ),
+        .testTarget(
+            name: "PingCommonsTests",
+            dependencies: ["PingCommons"],
+            path: "Commons/CommonsTests"
+        ),
+        .testTarget(
+            name: "PingBrowserTests",
+            dependencies: [
+                "PingBrowser",
+                "PingExternalIdP",
+                "PingOrchestrate",
+                "PingNetwork",
+                "PingLogger"
+            ],
+            path: "Browser/PingBrowserTests"
+        ),
+        .testTarget(
+            name: "PingOrchestrateTests",
+            dependencies: [
+                "PingOrchestrate",
+                "PingNetwork",
+                "PingStorage"
+            ],
+            path: "Orchestrate/OrchestrateTests"
+        ),
+        
+        // Plugin Tests
+        .testTarget(
+            name: "PingDavinciPluginTests",
+            dependencies: [
+                "PingDavinciPlugin",
+                "PingOrchestrate"
+            ],
+            path: "DavinciPlugin/DavinciPluginTests"
+        ),
+        .testTarget(
+            name: "PingJourneyPluginTests",
+            dependencies: [
+                "PingJourneyPlugin",
+                "PingOrchestrate",
+                "PingJourney"
+            ],
+            path: "JourneyPlugin/JourneyPluginTests"
+        ),
+        
+        // Authentication Tests
+        .testTarget(
+            name: "PingOidcTests",
+            dependencies: [
+                "PingOidc",
+                "PingNetwork",
+                "PingLogger",
+                "PingStorage",
+                "PingBrowser"
+            ],
+            path: "Oidc/OidcTests"
+        ),
+        .testTarget(
+            name: "PingDavinciTests",
+            dependencies: [
+                "PingDavinci",
+                "PingDavinciPlugin",
+                "PingOrchestrate",
+                "PingStorage",
+                "PingLogger",
+                "PingOidc",
+                "PingNetwork"
+            ],
+            path: "Davinci/DavinciTests",
+            resources: [.copy("Configuration")]
+        ),
+        .testTarget(
+            name: "PingJourneyTests",
+            dependencies: [
+                "PingJourney",
+                "PingJourneyPlugin",
+                "PingOrchestrate",
+                "PingNetwork",
+                "PingOidc",
+                "PingLogger",
+                "PingStorage",
+                "PingDeviceProfile"
+            ],
+            path: "Journey/JourneyTests",
+            resources: [.copy("Config")]
+        ),
+        
+        // Device Tests
+        .testTarget(
+            name: "PingDeviceIdTests",
+            dependencies: [
+                "PingDeviceId",
+                "PingStorage"
+            ],
+            path: "DeviceId/DeviceIdTests"
+        ),
+        .testTarget(
+            name: "PingTamperDetectorTests",
+            dependencies: ["PingTamperDetector"],
+            path: "TamperDetector/TamperDetectorTests"
+        ),
+        .testTarget(
+            name: "PingDeviceProfileTests",
+            dependencies: [
+                "PingDeviceProfile",
+                "PingJourneyPlugin",
+                "PingLogger",
+                "PingDeviceId"
+            ],
+            path: "DeviceProfile/DeviceProfileTests"
+        ),
+        .testTarget(
+            name: "PingDeviceClientTests",
+            dependencies: [
+                "PingDeviceClient",
+                "PingNetwork"
+            ],
+            path: "DeviceClient/DeviceClientTests"
+        ),
+        
+        // External IdP Tests
+        .testTarget(
+            name: "PingExternalIdPTests",
+            dependencies: [
+                "PingExternalIdP",
+                "PingJourneyPlugin",
+                "PingDavinciPlugin",
+                "PingOrchestrate",
+                "PingNetwork"
+            ],
+            path: "ExternalIdP/ExternalIdPTests"
+        ),
+        .testTarget(
+            name: "PingExternalIdPAppleTests",
+            dependencies: [
+                "PingExternalIdPApple",
+                "PingExternalIdP",
+                "PingNetwork",
+                "PingDavinciPlugin"
+            ],
+            path: "ExternalIdPApple/ExternalIdPAppleTests"
+        ),
+        .testTarget(
+            name: "PingExternalIdPGoogleTests",
+            dependencies: [
+                "PingExternalIdPGoogle",
+                "PingExternalIdP",
+                "PingNetwork",
+                "PingDavinciPlugin"
+            ],
+            path: "ExternalIdPGoogle/ExternalIdPGoogleTests"
+        ),
+        .testTarget(
+            name: "PingExternalIdPFacebookTests",
+            dependencies: [
+                "PingExternalIdPFacebook",
+                "PingExternalIdP",
+                "PingNetwork",
+                "PingDavinciPlugin"
+            ],
+            path: "ExternalIdPFacebook/ExternalIdPFacebookTests"
+        ),
+        
+        // Security & Protection Tests
+        .testTarget(
+            name: "PingProtectTests",
+            dependencies: [
+                "PingProtect",
+                "PingOrchestrate",
+                "PingJourneyPlugin",
+                "PingDavinciPlugin"
+            ],
+            path: "Protect/ProtectTests"
+        ),
+        .testTarget(
+            name: "PingReCaptchaEnterpriseTests",
+            dependencies: [
+                "PingReCaptchaEnterprise",
+                "PingJourney",
+                "PingOrchestrate",
+                "PingLogger",
+                "PingJourneyPlugin",
+                "PingOidc"
+            ],
+            path: "ReCaptchaEnterprise/ReCaptchaEnterpriseTests",
+            resources: [.copy("Config")]
+        ),
+        .testTarget(
+            name: "PingFidoTests",
+            dependencies: [
+                "PingFido",
+                "PingJourneyPlugin",
+                "PingJourney",
+                "PingOrchestrate",
+                "PingCommons"
+            ],
+            path: "Fido/PingFidoTests"
+        ),
+        
+        // MFA Tests
+        .testTarget(
+            name: "PingOathTests",
+            dependencies: [
+                "PingOath",
+                "PingCommons",
+                "PingLogger"
+            ],
+            path: "Oath/OathTests"
+        ),
+        .testTarget(
+            name: "PingPushTests",
+            dependencies: [
+                "PingPush",
+                "PingNetwork",
+                "PingCommons",
+                "PingLogger"
+            ],
+            path: "Push/PushTests"
+        ),
+        
+        // Utility Tests
+        .testTarget(
+            name: "PingBindingTests",
+            dependencies: [
+                "PingBinding",
+                "PingStorage",
+                "PingJourneyPlugin",
+                "PingJourney",
+                "PingOrchestrate",
+                "PingLogger",
+                "PingOidc"
+            ],
+            path: "Binding/PingBindingTests",
+            resources: [.copy("Config")]
         )
     ]
 )

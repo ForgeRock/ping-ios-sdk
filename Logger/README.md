@@ -12,7 +12,7 @@ SDKs.
 
 ## Integrating the SDK into your project
 
-Use Cocoapods or Swift Package Manager
+Use Swift Package Manager
 
 ## How to Use the SDK
 

@@ -12,12 +12,7 @@ Google reCAPTCHA Enterprise offers enhanced detection capabilities including gra
 
 ### Add dependency to your project
 
-To integrate the PingReCaptchaEnterprise module into your iOS project, add the following dependency to your `Podfile` or `Package.swift` file:
-
-**CocoaPods**
-```ruby
-pod 'PingReCaptchaEnterprise', '<version>'
-```
+To integrate the PingReCaptchaEnterprise module into your iOS project, add the following dependency to your `Package.swift` file:
 
 **Swift Package Manager**
 ```swift

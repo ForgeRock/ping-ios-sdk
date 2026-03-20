@@ -1,8 +1,5 @@
 # PingJourneyPlugin
 
-[![Version](https://img.shields.io/cocoapods/v/PingJourneyPlugin.svg?style=flat)](https://cocoapods.org/pods/PingJourneyPlugin)
-[![License](https://img.shields.io/cocoapods/l/PingJourneyPlugin.svg?style=flat)](https://cocoapods.org/pods/PingJourneyPlugin)
-
 ## Overview
 
 The `PingJourneyPlugin` is a lightweight abstraction layer for the `PingJourney` SDK. It defines a set of protocols and interfaces that encapsulate the core functionalities of the `PingJourney` SDK, providing a high-level API for other modules.
@@ -37,18 +34,15 @@ The `PingJourneyPlugin` module is built around a few core concepts that enable i
 
 ## Installation
 
-### CocoaPods
+Add the Ping iOS SDK via Swift Package Manager:
 
-`PingJourneyPlugin` is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your `Podfile`:
-
-```ruby
-pod 'PingJourneyPlugin', '~> 1.3.1'
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "1.3.1")
+]
 ```
 
-Then, run the command:
-```bash
-pod install
-```
+Then add `PingJourneyPlugin` to your target's dependencies.
 
 ## Usage
 

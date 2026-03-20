@@ -1,8 +1,5 @@
 # PingDavinciPlugin
 
-[![Version](https://img.shields.io/cocoapods/v/PingDavinciPlugin.svg?style=flat)](https://cocoapods.org/pods/PingDavinciPlugin)
-[![License](https://img.shields.io/cocoapods/l/PingDavinciPlugin.svg?style=flat)](https://cocoapods.org/pods/PingDavinciPlugin)
-
 ## Overview
 
 The `PingDavinciPlugin` is a lightweight abstraction layer for the `PingDavinci` SDK. It defines a set of protocols and interfaces that encapsulate the core functionalities of the `PingDavinci` SDK, providing a high-level API for other modules.
@@ -41,22 +38,15 @@ The `PingDavinciPlugin` module consists of several key files that define its cor
 
 ## Installation
 
-### CocoaPods
+Add the Ping iOS SDK via Swift Package Manager:
 
-`PingDavinciPlugin` is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your `Podfile`:
-
-```ruby
-pod 'PingDavinciPlugin', '~> 1.3.1'
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "1.3.1")
+]
 ```
 
-Then, run the command:
-```bash
-pod install
-```
-
-## Dependencies
-
--   [PingLogger](https://github.com/ForgeRock/ping-ios-sdk) (~> 1.3.1)
+Then add `PingDavinciPlugin` to your target's dependencies.
 
 ## License
 

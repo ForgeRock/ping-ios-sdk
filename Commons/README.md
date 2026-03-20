@@ -8,32 +8,6 @@ The Commons module provides the core foundation and shared functionality for all
 
 ### Installation
 
-#### CocoaPods
-
-The Commons module is typically included as a transitive dependency when you add other modules using it. However, you can also add it explicitly to your `Podfile`:
-
-```ruby
-pod 'PingCommons', '~> 1.3.1'
-```
-
-Then run:
-
-```bash
-pod install
-```
-
-**Note:** This module is automatically included when you install:
-- `PingBinding`
-- `PingOath`
-- `PingPush`
-- `DeviceClient`
-- `ReCaptchaEnterprise`
-- `DeviceProfile`
-- `Journey`
-- `Davinci`
-- `Fido`
-- `Oidc`
-
 #### Swift Package Manager
 
 Add the Ping iOS SDK to your `Package.swift`:

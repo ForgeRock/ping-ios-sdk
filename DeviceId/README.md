@@ -28,12 +28,9 @@ The core implementation, `DefaultDeviceIdentifier`, is built as a Swift `actor` 
 ## Installation
 
 Add dependency to your project
-To integrate the DeviceId module into your iOS project, add the following dependency to your Podfile or Package.swift file:
+To integrate the DeviceId module into your iOS project, add the following dependency to your Package.swift file:
 
-```
-pod 'PingDeviceId', '<version>'
-```
-or for Swift Package Manager:
+For Swift Package Manager:
 
 ```
 .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
