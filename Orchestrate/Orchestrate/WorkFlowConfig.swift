@@ -37,8 +37,7 @@ open class WorkflowConfig: @unchecked Sendable {
     /// HTTP client for the engine
     /// If not set, a default client will be created during workflow registration
     /// - see register(workflow:)
-    /// - note: This property is internal(set) to allow setting it from tests.
-    public internal(set) var httpClient: HttpClientProtocol!
+    public var httpClient: HttpClientProtocol!
     
     /// Initializes a new WorkflowConfig instance.
     public init() {}
