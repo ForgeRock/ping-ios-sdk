@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingDeviceId'
-  s.version          = '1.3.1'
+  s.version          = '2.0.0'
   s.summary          = 'PingDeviceId module for the Ping iOS SDK'
   s.description      = <<-DESC
   The Device ID module for Swift provides a robust and secure method for generating and managing a unique identifier for a device.
@@ -33,7 +33,7 @@ Pod::Spec.new do |s|
     'DeviceId' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingLogger', '~> 1.3.1'
-  s.ios.dependency 'PingStorage', '~> 1.3.1'
+  s.ios.dependency 'PingLogger', '~> 2.0.0'
+  s.ios.dependency 'PingStorage', '~> 2.0.0'
     
 end

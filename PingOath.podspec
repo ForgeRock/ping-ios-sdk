@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingOath'
-  s.version          = '1.3.1'
+  s.version          = '2.0.0'
   s.summary          = 'PingOath module for the Ping iOS SDK'
   s.description      = <<-DESC
   PingOath is a comprehensive iOS SDK module that provides One-Time Password (OTP) authentication functionality, including support for both TOTP (Time-based One-Time Password) and HOTP (HMAC-based One-Time Password) authentication mechanisms following RFC 4226 and RFC 6238 standards.
@@ -33,6 +33,6 @@ Pod::Spec.new do |s|
     'Oath' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingTamperDetector', '~> 1.3.1'
+  s.ios.dependency 'PingTamperDetector', '~> 2.0.0'
     
 end

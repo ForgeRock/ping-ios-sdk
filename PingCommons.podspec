@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingCommons'
-  s.version          = '1.3.1'
+  s.version          = '2.0.0'
   s.summary          = 'PingCommons module for the Ping iOS SDK'
   s.description      = <<-DESC
   The PingCommons module provides the core foundation and shared functionality for all modules within the Ping Identity iOS SDK
@@ -33,6 +33,6 @@ Pod::Spec.new do |s|
     'Commons' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingLogger', '~> 1.3.1'
+  s.ios.dependency 'PingLogger', '~> 2.0.0'
     
 end

@@ -42,7 +42,7 @@ The `PingJourneyPlugin` module is built around a few core concepts that enable i
 `PingJourneyPlugin` is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your `Podfile`:
 
 ```ruby
-pod 'PingJourneyPlugin', '~> 1.3.1'
+pod 'PingJourneyPlugin', '~> 2.0.0'
 ```
 
 Then, run the command:
@@ -59,7 +59,7 @@ For example, a module can get a reference to a service protocol from `PingJourne
 
 ## Dependencies
 
--   [PingLogger](https://github.com/ForgeRock/ping-ios-sdk) (~> 1.3.1)
+-   [PingLogger](https://github.com/ForgeRock/ping-ios-sdk) (~> 2.0.0)
 
 ## License
 
