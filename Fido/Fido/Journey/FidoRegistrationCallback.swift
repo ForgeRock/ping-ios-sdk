@@ -2,7 +2,7 @@
 //  FidoRegistrationCallback.swift
 //  Fido
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -55,7 +55,8 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
                 fido.register(options: publicKeyCredentialCreationOptions, window: window) { [continuation] result in
                     Task {
                         await MainActor.run {
-                            continuation.resume(with: result) // Resume with the Result<[String: Any>, Error>
+                            nonisolated(unsafe) let safeResult = result
+                            continuation.resume(with: safeResult) // Resume with the Result<[String: Any>, Error>
                         }
                     }
                 }

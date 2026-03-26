@@ -2,7 +2,7 @@
 //  OathSecurityTests.swift
 //  PingOathTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -532,35 +532,21 @@ final class OathSecurityTests: XCTestCase {
             secretKey: testSecret
         )
 
-        let expectation = XCTestExpectation(description: "Concurrent access")
-        let dispatchGroup = DispatchGroup()
-        let concurrentQueue = DispatchQueue(label: "test.security.concurrent", attributes: .concurrent)
-
-        var results: [String] = []
-        let resultsQueue = DispatchQueue(label: "test.security.results")
-
         // Test concurrent code generation doesn't cause race conditions
-        for _ in 0..<100 {
-            dispatchGroup.enter()
-            concurrentQueue.async {
-                Task {
-                    if let code = try? await OathAlgorithmHelper.generateCode(for: credential) {
-                        resultsQueue.async {
-                            results.append(code.code)
-                            dispatchGroup.leave()
-                        }
-                    } else {
-                        dispatchGroup.leave()
-                    }
+        let results: [String] = await withTaskGroup(of: String?.self, returning: [String].self) { group in
+            for _ in 0..<100 {
+                group.addTask {
+                    try? await OathAlgorithmHelper.generateCode(for: credential).code
                 }
             }
+            var collected: [String] = []
+            for await result in group {
+                if let code = result {
+                    collected.append(code)
+                }
+            }
+            return collected
         }
-
-        dispatchGroup.notify(queue: .main) {
-            expectation.fulfill()
-        }
-
-        await fulfillment(of: [expectation], timeout: 10.0)
 
         // All operations should complete without crashes
         XCTAssertGreaterThan(results.count, 0, "Should have generated codes successfully")

@@ -2,7 +2,7 @@
 //  FidoAuthenticationCollector.swift
 //  Fido
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -77,7 +77,8 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
                 fido.authenticate(options: publicKeyCredentialRequestOptions, window: window) { [continuation] result in
                     Task {
                         await MainActor.run {
-                            continuation.resume(with: result) // Resume with the Result<[String: Any>, Error>
+                            nonisolated(unsafe) let sendableResult = result
+                            continuation.resume(with: sendableResult) // Resume with the Result<[String: Any>, Error>
                         }
                     }
                 }
