@@ -12,6 +12,7 @@ import XCTest
 @testable import PingBinding
 @testable import PingJourneyPlugin
 @testable import PingStorage
+import PingDeviceId
 
 final class PingBindingTests: XCTestCase {
     
@@ -297,13 +298,14 @@ final class PingBindingTests: XCTestCase {
         
         // Then
         #if canImport(UIKit)
-        let expectedDeviceName = UIDevice.current.name
+        let expectedDeviceName = UIDevice.current.model
         XCTAssertEqual(config.deviceName, expectedDeviceName)
         XCTAssertTrue(config.userKeySelector is DefaultUserKeySelector)
         #else
         XCTAssertEqual(config.deviceName, "Apple")
         #endif
         
+        XCTAssertNil(config.deviceIdentifier) // nil means DefaultDeviceIdentifier is used at bind time
         XCTAssertEqual(config.timeout, 60)
         XCTAssertEqual(config.attestation, .none)
         XCTAssertEqual(config.deviceBindingAuthenticationType, .none)
@@ -327,6 +329,23 @@ final class PingBindingTests: XCTestCase {
         XCTAssertEqual(config.attestation, .challenge("ghjh"))
         XCTAssertEqual(config.deviceBindingAuthenticationType, .biometricOnly)
         XCTAssertEqual(config.claims["custom"] as? String, "value")
+    }
+    
+    func testDeviceBindingConfig_CustomDeviceIdentifier() async throws {
+        // Given
+        final class StaticDeviceIdentifier: DeviceIdentifier, @unchecked Sendable {
+            private let fixedId: String
+            init(_ id: String) { self.fixedId = id }
+            var id: String { get async throws { fixedId } }
+        }
+        let expectedId = "custom-device-id-12345"
+        let config = DeviceBindingConfig()
+        config.deviceIdentifier = StaticDeviceIdentifier(expectedId)
+        
+        // Then
+        let customIdentifier = try XCTUnwrap(config.deviceIdentifier)
+        let resolvedId = try await customIdentifier.id
+        XCTAssertEqual(resolvedId, expectedId)
     }
     
     func testDeviceBindingConfig_ES256AlgorithmAndKeySize() {

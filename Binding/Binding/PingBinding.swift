@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingDeviceId
 import PingJourneyPlugin
 #if canImport(UIKit)
 import UIKit
@@ -82,11 +83,11 @@ class Binding {
         
         // Set the JWS, device ID, and device name on the callback.
         callback.setJws(jws)
-        #if canImport(UIKit)
-        if let deviceId = await UIDevice.current.identifierForVendor?.uuidString {
+        let deviceIdentifier: any DeviceIdentifier = deviceBindingConfig.deviceIdentifier
+            ?? ((try? DefaultDeviceIdentifier()) ?? UUIDDeviceIdentifier())
+        if let deviceId = try? await deviceIdentifier.id {
             callback.setDeviceId(deviceId)
         }
-        #endif
         callback.setDeviceName(deviceBindingConfig.deviceName)
         
         return jws

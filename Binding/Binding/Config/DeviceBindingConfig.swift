@@ -2,13 +2,14 @@
 //  DeviceBindingConfig.swift
 //  PingBinding
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import Foundation
+import PingDeviceId
 
 #if canImport(UIKit)
 import UIKit
@@ -20,18 +21,18 @@ public class DeviceBindingConfig {
     #if canImport(UIKit)
     /// Helper private variable for deviceName
     private var _deviceName: String?
-    /// The name of the device.
-    /// The default is the current device name.
+    /// The human-readable name for the device that will be displayed in user interfaces.
+    /// Defaults to the device model (e.g. "iPhone"), matching Android's Build.MODEL default.
     public var deviceName: String {
         get {
             if let name = _deviceName {
                 return name
             }
             if Thread.isMainThread {
-                return UIDevice.current.name
+                return UIDevice.current.model
             } else {
                 return DispatchQueue.main.sync {
-                    UIDevice.current.name
+                    UIDevice.current.model
                 }
             }
         }
@@ -44,6 +45,12 @@ public class DeviceBindingConfig {
     /// The default is "Apple".
     public var deviceName: String = "Apple"
     #endif
+    /// The device identifier used to generate a stable, unique device ID for binding.
+    /// When `nil` (the default), `DefaultDeviceIdentifier` is used at bind time, generating a
+    /// persistent identifier derived from a key pair stored in the Keychain — matching Android's
+    /// `DeviceIdentifier` default behaviour.
+    /// Assign a custom `DeviceIdentifier` implementation to override the default ID generation.
+    public var deviceIdentifier: (any DeviceIdentifier)? = nil
     /// The configuration for the user key storage.
     public var userKeyStorage = UserKeyStorageConfig()
     /// Custom claims to be included in the JWS.
