@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 LIBRARIES=("PingLogger" "PingStorage" "PingNetwork" "PingCommons" "PingBrowser" "PingOrchestrate" "PingDavinciPlugin" "PingJourneyPlugin" "PingOidc" "PingDavinci" "PingJourney" "PingDeviceId" "PingDeviceProfile" "PingDeviceClient" "PingTamperDetector" "PingExternalIdP" "PingExternalIdPApple" "PingExternalIdPGoogle" "PingExternalIdPFacebook" "PingOneProtect" "PingReCaptchaEnterprise" "PingFido" "PingOath" "PingPush" "PingBinding")
 
 # Version being published for all libraries
-VERSION="2.0.0"
+VERSION="2.0.0-beta1"
 
 # Maximum waiting time in seconds (60 minutes = 3600 seconds)
 MAX_WAIT_TIME=3600

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'PingBinding'
-  s.version          = '2.0.0'
+  s.version          = '2.0.0-beta1'
   s.summary          = 'PingBinding SDK for iOS'
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
@@ -21,6 +21,6 @@ Pod::Spec.new do |s|
     'Binding' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingCommons', '~> 2.0.0'
-  s.ios.dependency 'PingJourneyPlugin', '~> 2.0.0'
+  s.ios.dependency 'PingCommons', '~> 2.0.0-beta1'
+  s.ios.dependency 'PingJourneyPlugin', '~> 2.0.0-beta1'
 end
