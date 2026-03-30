@@ -114,12 +114,13 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         print("Raw notification userInfo: \(userInfo)")
 
         // Process the notification through PushClient
+        nonisolated(unsafe) let userInfoCopy = userInfo
         Task {
             do {
                 let client = try await getInitializedPushClient()
 
                 // Process the notification - PushClient automatically extracts APNs payload
-                if let pushNotification = try await client.processNotification(userInfo: userInfo) {
+                if let pushNotification = try await client.processNotification(userInfo: userInfoCopy) {
                     print("Processed foreground push notification - ID: \(pushNotification.id), MessageID: \(pushNotification.messageId)")
                 } else {
                     print("Foreground notification was not processed (may be unsupported type)")
@@ -143,12 +144,13 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         print("Raw notification userInfo: \(userInfo)")
 
         // Process the notification through PushClient
+        nonisolated(unsafe) let userInfoCopy = userInfo
         Task {
             do {
                 let client = try await getInitializedPushClient()
 
                 // Process the notification - PushClient automatically extracts APNs payload
-                if let notification = try await client.processNotification(userInfo: userInfo) {
+                if let notification = try await client.processNotification(userInfo: userInfoCopy) {
                     print("Processed push notification successfully - ID: \(notification.id), MessageID: \(notification.messageId)")
                     
                     // Navigate to Push Notifications view
