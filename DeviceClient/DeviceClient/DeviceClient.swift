@@ -166,7 +166,7 @@ public struct DeviceClientConfig: Sendable {
 ///
 /// - Important: Ensure the SSO token in the configuration is valid before making requests
 /// - Note: The client does not automatically refresh tokens; token management is the caller's responsibility
-public class DeviceClient {
+public class DeviceClient: @unchecked Sendable {
     // MARK: Properties
     
     /// The configuration for this client instance
@@ -617,7 +617,7 @@ public class DeviceClient {
 /// Used by Oath, Push, Bound, Profile, and WebAuthn device types.
 ///
 /// - Note: This implementation is generic and can work with any device type conforming to `Device`
-public struct DeviceRepositoryImplementation<R>: DeviceRepository where R: Device {
+public struct DeviceRepositoryImplementation<R>: DeviceRepository, @unchecked Sendable where R: Device {
     /// The API endpoint for this device type
     var endpoint: String
     

@@ -13,7 +13,7 @@ import Foundation
 import PingCommons
 
 /// Protocol defining device operations.
-public protocol DeviceRepository<T> {
+public protocol DeviceRepository<T>: Sendable {
     associatedtype T
     
     /// Retrieves a list of devices.
