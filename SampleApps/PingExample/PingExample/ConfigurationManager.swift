@@ -105,15 +105,15 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
         
         //TODO: Provide here the Server configuration. Add the PingOne server Discovery Endpoint and the OAuth2.0 client details. Or the AIC server URL and Realm, server Discovery Endpoint and the OAuth2.0 client details.
         return ConfigurationViewModel(
-            clientId: <#"Client ID"#>,
-            scopes: [<#"scope1"#>, <#"scope2"#>, <#"scope3"#>], // Alter the scopes based on your clients configuration
-            redirectUri: <#"Redirect URI"#>,
-            signOutUri: <#"Redirect URI"#>,
-            discoveryEndpoint: <#"Discovery Endpoint"#>,
-            environment: "PingOne", // or "AIC" for the AIC server
-            cookieName: <#"Cookie Name"#>, // Optional, can be nil if not used
-            serverUrl: <#"Server URL"#>, // Optional, can be nil if not used
-            realm: <#"Realm"#> // Optional, can be nil if not used
+            clientId: "stoyan",
+            scopes: ["openid", "profile", "email", "address"], // Alter the scopes based on your clients configuration
+            redirectUri: "frauth://oauth2redirect",
+            signOutUri: "frauth://oauth2redirect",
+            discoveryEndpoint: "https://openam-sdks.forgeblocks.com/am/oauth2/alpha/.well-known/openid-configuration",
+            environment: "AIC", // or "AIC" for the AIC server
+            cookieName: "5421aeddf91aa20", // Optional, can be nil if not used
+            serverUrl: "https://openam-sdks.forgeblocks.com/", // Optional, can be nil if not used
+            realm: "alpha" // Optional, can be nil if not used
         )
     }
 
