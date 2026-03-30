@@ -54,7 +54,7 @@ let package = Package(
     ],
     dependencies: [
         // External dependencies
-        .package(url: "https://github.com/pingidentity/pingone-signals-sdk-ios.git", "5.3.0"..<"5.4.0"),
+        .package(url: "https://github.com/pingidentity/pingone-signals-sdk-ios.git", "5.4.0"..<"5.5.0"),
         .package(url: "https://github.com/facebook/facebook-ios-sdk.git", "16.3.1"..<"16.4.0"),
         .package(url: "https://github.com/google/GoogleSignIn-iOS.git", exact: "9.0.0"),
         .package(url: "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk.git", "18.8.1"..<"18.9.0")
