@@ -67,6 +67,10 @@
 		ECE2B8712DB7C36800E2C51E /* PhoneNumberCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2B8702DB7C35400E2C51E /* PhoneNumberCollectorTests.swift */; };
 		ECF053222D9C31A3004C9AAE /* DeviceRegistrationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */; };
 		ECF053242D9C4275004C9AAE /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF053232D9C4273004C9AAE /* Device.swift */; };
+		AA1A00022F0000000000AA01 /* PollingCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1A00012F0000000000AA01 /* PollingCollector.swift */; };
+		AA1A00042F0000000000AA01 /* PollingCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1A00032F0000000000AA01 /* PollingCollectorTests.swift */; };
+		AA1A00062F0000000000AA01 /* QRCodeCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1A00052F0000000000AA01 /* QRCodeCollector.swift */; };
+		AA1A00082F0000000000AA01 /* QRCodeCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1A00072F0000000000AA01 /* QRCodeCollectorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -156,6 +160,10 @@
 		ECE2B8702DB7C35400E2C51E /* PhoneNumberCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberCollectorTests.swift; sourceTree = "<group>"; };
 		ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationCollector.swift; sourceTree = "<group>"; };
 		ECF053232D9C4273004C9AAE /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		AA1A00012F0000000000AA01 /* PollingCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingCollector.swift; sourceTree = "<group>"; };
+		AA1A00032F0000000000AA01 /* PollingCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingCollectorTests.swift; sourceTree = "<group>"; };
+		AA1A00052F0000000000AA01 /* QRCodeCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeCollector.swift; sourceTree = "<group>"; };
+		AA1A00072F0000000000AA01 /* QRCodeCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeCollectorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -243,6 +251,8 @@
 				A5EFAA0B2D3F441200F771FE /* PasswordCollectorTests.swift */,
 				A5EFAA0D2D3F483900F771FE /* PasswordPolicyTests.swift */,
 				ECE2B8702DB7C35400E2C51E /* PhoneNumberCollectorTests.swift */,
+				AA1A00032F0000000000AA01 /* PollingCollectorTests.swift */,
+				AA1A00072F0000000000AA01 /* QRCodeCollectorTests.swift */,
 				A5EFAA0F2D3F50A500F771FE /* SingleSelectCollectorTests.swift */,
 				A5EFAA112D3F518800F771FE /* SubmitCollectorTests.swift */,
 				A5EFAA132D3F51CA00F771FE /* TextCollectorTests.swift */,
@@ -288,6 +298,8 @@
 				A51D4CD42C585DCD00FE09E0 /* PasswordCollector.swift */,
 				A5E9AEBF2D2F44CB000533ED /* PasswordPolicy.swift */,
 				EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */,
+				AA1A00012F0000000000AA01 /* PollingCollector.swift */,
+				AA1A00052F0000000000AA01 /* QRCodeCollector.swift */,
 				A5E9AEB52D2F243C000533ED /* SingleSelectCollector.swift */,
 				A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */,
 				A51D4CD62C585E2D00FE09E0 /* SubmitCollector.swift */,
@@ -457,6 +469,8 @@
 				A5E9AEB42D2F2256000533ED /* LabelCollector.swift in Sources */,
 				A5E9AEBA2D2F2731000533ED /* ValidatedCollector.swift in Sources */,
 				3A203D7F2BDB136C0020C995 /* DaVinci.swift in Sources */,
+				AA1A00022F0000000000AA01 /* PollingCollector.swift in Sources */,
+				AA1A00062F0000000000AA01 /* QRCodeCollector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -490,6 +504,8 @@
 				95C256792DF22BFB004266AB /* MFADeviceTests.swift in Sources */,
 				959249A72D405A1C00A6DA9C /* FormFieldValidationTests.swift in Sources */,
 				ECE2B8712DB7C36800E2C51E /* PhoneNumberCollectorTests.swift in Sources */,
+				AA1A00042F0000000000AA01 /* PollingCollectorTests.swift in Sources */,
+				AA1A00082F0000000000AA01 /* QRCodeCollectorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -508,4 +508,26 @@ struct MockResponse {
     """.data(using: .utf8)!
     }
     
+    static var rewindStateToLastRenderedUIResponse: Data {
+        return """
+        {
+            "eventName": "rewindStateToLastRenderedUI",
+            "success": true,
+            "id": "fxopi4maps",
+            "interactionId": "172e9100-9e72-456a-b850-ea3d698f06bb"
+        }
+        """.data(using: .utf8)!
+    }
+    
+    static var rewindStateToSpecificRenderedUIResponse: Data {
+        return """
+        {
+            "eventName": "rewindStateToSpecificRenderedUI",
+            "success": true,
+            "id": "fxopi4maps",
+            "interactionId": "172e9100-9e72-456a-b850-ea3d698f06bb"
+        }
+        """.data(using: .utf8)!
+    }
+    
 }

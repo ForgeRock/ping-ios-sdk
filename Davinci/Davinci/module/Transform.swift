@@ -81,6 +81,27 @@ public class NodeTransformModule {
             return SuccessNode(input: json, session: SessionResponse(json: json))
         }
         
+        // Handle rewindStateToLastRenderedUI and rewindStateToSpecificRenderedUI:
+        // Re-create a fresh Connector from the stored node's input so collectors
+        // (especially PollingCollector with its retriesAllowed counter) are reset to their
+        // initial state for a new cycle. Using a fresh instance (rather than the same one)
+        // lets the SwiftUI layer detect the change via ObjectIdentifier and restart .task.
+        if let eventName = json[Constants.eventName] as? String,
+           (eventName == "rewindStateToLastRenderedUI" || eventName == "rewindStateToSpecificRenderedUI") {
+            if let storedNode = context.flowContext.get(key: SharedContext.Keys.continueNode) as? ContinueNode {
+                let storedInput = storedNode.input
+                var freshCollectors: Collectors = []
+                if storedInput[Constants.form] != nil {
+                    await freshCollectors.append(contentsOf: Form.parse(daVinci: davinci, json: storedInput))
+                }
+                let freshConnector = Connector(context: context, davinci: davinci, input: storedInput, collectors: freshCollectors)
+                await CollectorFactory.shared.inject(continueNode: freshConnector)
+                return freshConnector
+            }
+            return FailureNode(cause: NSError(domain: "com.pingidentity.davinci", code: -1,
+                                              userInfo: [NSLocalizedDescriptionKey: "Rewind state to last rendered UI failed."]))
+        }
+        
         var collectors: Collectors = []
         if let _ = json[Constants.form] {
             await collectors.append(contentsOf: Form.parse(daVinci: davinci, json: json))

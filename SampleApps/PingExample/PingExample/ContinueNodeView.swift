@@ -71,6 +71,14 @@ struct ContinueNodeView: View {
                     DeviceAuthenticationView(field: deviceAuthenticationCollector, onNext: onNext)
                 case let phoneNumberCollector as PhoneNumberCollector:
                     PhoneNumberView(field: phoneNumberCollector, onNodeUpdated: onNodeUpdated)
+                case let pollingCollector as PollingCollector:
+                    // Use ObjectIdentifier (object identity) rather than pollingCollector.id
+                    // (the key string) so that a fresh PollingCollector returned after a
+                    // rewindStateToLastRenderedUI event forces SwiftUI to recreate the view
+                    // and restart the polling .task.
+                    PollingCollectorView(collector: pollingCollector, onNext: onNext).id(ObjectIdentifier(pollingCollector))
+                case let qrCodeCollector as QRCodeCollector:
+                    QRCodeCollectorView(collector: qrCodeCollector).id(qrCodeCollector.id)
                 case let protectCollector as ProtectCollector:
                     ProtectView(field: protectCollector, onNodeUpdated: onNodeUpdated).id(protectCollector.hash)
                 case let fidoRegistrationCollector as FidoRegistrationCollector:
@@ -83,7 +91,7 @@ struct ContinueNodeView: View {
             }
 
             // Fallback Next Button
-            if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector || $0 is DeviceRegistrationCollector || $0 is DeviceAuthenticationCollector || $0 is FidoRegistrationCollector || $0 is FidoAuthenticationCollector }) {
+            if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector || $0 is DeviceRegistrationCollector || $0 is DeviceAuthenticationCollector || $0 is FidoRegistrationCollector || $0 is FidoAuthenticationCollector || $0 is PollingCollector }) {
                 Button(action: { onNext(false) }) {
                     Text("Next")
                         .frame(maxWidth: .infinity)

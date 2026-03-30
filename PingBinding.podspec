@@ -22,5 +22,6 @@ Pod::Spec.new do |s|
   }
   
   s.ios.dependency 'PingCommons', '~> 1.3.1'
+  s.ios.dependency 'PingDeviceId', '~> 1.3.1'
   s.ios.dependency 'PingJourneyPlugin', '~> 1.3.1'
 end

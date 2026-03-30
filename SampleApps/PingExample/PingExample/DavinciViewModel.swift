@@ -32,7 +32,14 @@ public let davinci = DaVinci.createDaVinci { config in
         oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
         oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
-        oidcValue.acrValues = "" //update with actual ACR values if needed or remove
+        oidcValue.acrValues = "28f69709ab22084e4a29c8b18cf574fe " //update with actual ACR values if needed or remove
+    }
+
+    // CustomHeader module: the supported public API for injecting custom headers into every outbound request.
+    // Note: config.httpClient is internal(set) and cannot be set from outside PingOrchestrate.
+    // For custom URL query parameters there is currently no public module equivalent.
+    config.module(CustomHeader.config) { customHeaderConfig in
+        customHeaderConfig.header(name: "X-Custom-Header", value: "PingExample")
     }
 }
 
@@ -170,6 +177,9 @@ class DavinciViewModel: ObservableObject {
 /// A model class that represents the state of the current and previous nodes in the DaVinci flow.
 class DavinciState {
     var node: Node? = nil
+    /// Unique identifier for this state instance, used to force SwiftUI view recreation
+    /// when the same ContinueNode is returned (e.g. after a rewindStateToLastRenderedUI event).
+    let id = UUID()
     
     init(node: Node? = nil) {
         self.node = node

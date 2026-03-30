@@ -460,4 +460,94 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         XCTAssertEqual(collector11.options.count, 2)
         XCTAssertEqual(collector11.value, ["default-checkbox"])
     }
+    
+    func testDaVinciRewindStateToLastRenderedUIReturnsPreviousContinueNode() async throws {
+        MockURLProtocol.requestHandler = { request in
+            switch request.url!.path {
+            case MockAPIEndpoint.discovery.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfigurationResponse)
+            case MockAPIEndpoint.authorization.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.authorization.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.authorizeResponseHeaders)!, MockResponse.authorizeResponse)
+            case MockAPIEndpoint.customHTMLTemplate.url.path:
+                // `start()` gets its ContinueNode from /authorize; `next()` is the first (and only)
+                // call to this URL and must return the rewind response.
+                return (HTTPURLResponse(url: MockAPIEndpoint.customHTMLTemplate.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.customHTMLTemplateHeaders)!, MockResponse.rewindStateToLastRenderedUIResponse)
+            default:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+            }
+        }
+        
+        let daVinci = DaVinci.createDaVinci { config in
+            config.httpClient = MockURLProtocol.makeClient()
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
+                oidcValue.clientId = self.testClientId
+                oidcValue.scopes = Set(self.testScopes)
+                oidcValue.redirectUri = self.testRedirectUri
+                oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
+                oidcValue.storage = MemoryStorage()
+                oidcValue.logger = LogManager.standard
+            }
+            config.module(CookieModule.config) { cookieValue in
+                cookieValue.cookieStorage = MemoryStorage()
+                cookieValue.persist = ["ST"]
+            }
+        }
+        
+        let firstNode = await daVinci.start()
+        XCTAssertTrue(firstNode is ContinueNode, "Expected ContinueNode from start()")
+        
+        let rewindNode = await (firstNode as! ContinueNode).next()
+        XCTAssertTrue(rewindNode is ContinueNode, "Expected ContinueNode after rewindStateToLastRenderedUI")
+        // A fresh Connector is created so collectors are reset — it must be a different instance.
+        let firstContinue = firstNode as! ContinueNode
+        let rewindContinue = rewindNode as! ContinueNode
+        XCTAssertFalse(firstContinue === rewindContinue, "Rewind must create a fresh ContinueNode instance")
+        // But it must represent the same form (same id).
+        XCTAssertEqual(firstContinue.id, rewindContinue.id)
+    }
+    
+    func testDaVinciRewindStateToSpecificRenderedUIReturnsPreviousContinueNode() async throws {
+        MockURLProtocol.requestHandler = { request in
+            switch request.url!.path {
+            case MockAPIEndpoint.discovery.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfigurationResponse)
+            case MockAPIEndpoint.authorization.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.authorization.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.authorizeResponseHeaders)!, MockResponse.authorizeResponse)
+            case MockAPIEndpoint.customHTMLTemplate.url.path:
+                // `start()` gets its ContinueNode from /authorize; `next()` is the first (and only)
+                // call to this URL and must return the rewind response.
+                return (HTTPURLResponse(url: MockAPIEndpoint.customHTMLTemplate.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.customHTMLTemplateHeaders)!, MockResponse.rewindStateToSpecificRenderedUIResponse)
+            default:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+            }
+        }
+        
+        let daVinci = DaVinci.createDaVinci { config in
+            config.httpClient = MockURLProtocol.makeClient()
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
+                oidcValue.clientId = self.testClientId
+                oidcValue.scopes = Set(self.testScopes)
+                oidcValue.redirectUri = self.testRedirectUri
+                oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
+                oidcValue.storage = MemoryStorage()
+                oidcValue.logger = LogManager.standard
+            }
+            config.module(CookieModule.config) { cookieValue in
+                cookieValue.cookieStorage = MemoryStorage()
+                cookieValue.persist = ["ST"]
+            }
+        }
+        
+        let firstNode = await daVinci.start()
+        XCTAssertTrue(firstNode is ContinueNode, "Expected ContinueNode from start()")
+        
+        let rewindNode = await (firstNode as! ContinueNode).next()
+        XCTAssertTrue(rewindNode is ContinueNode, "Expected ContinueNode after rewindStateToSpecificRenderedUI")
+        // A fresh Connector is created so collectors are reset — it must be a different instance.
+        let firstContinue = firstNode as! ContinueNode
+        let rewindContinue = rewindNode as! ContinueNode
+        XCTAssertFalse(firstContinue === rewindContinue, "Rewind must create a fresh ContinueNode instance")
+        // But it must represent the same form (same id).
+        XCTAssertEqual(firstContinue.id, rewindContinue.id)
+    }
 }

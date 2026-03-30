@@ -88,6 +88,12 @@ extension DaVinci {
             await CollectorFactory.shared.register(type: Constants.PHONE_NUMBER, closure: { json in
                 return PhoneNumberCollector(with: json)
             })
+            await CollectorFactory.shared.register(type: Constants.POLLING, closure: { json in
+                return PollingCollector(with: json)
+            })
+            await CollectorFactory.shared.register(type: Constants.QR_CODE, closure: { json in
+                return QRCodeCollector(with: json)
+            })
             if let c: NSObject.Type = NSClassFromString("PingProtect.ProtectCollector") as? NSObject.Type {
                 c.perform(Selector(("registerCollector")))
             }
