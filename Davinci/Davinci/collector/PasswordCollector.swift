@@ -18,7 +18,8 @@ import PingDavinciPlugin
 /// It is used to collect password data.
 public class PasswordCollector: ValidatedCollector, ContinueNodeAware, Closeable, @unchecked Sendable {
     /// The continue node for the DaVinci flow.
-    public var continueNode: ContinueNode?
+    /// Declared `weak` to break the retain cycle: `ContinueNode → PasswordCollector → ContinueNode`.
+    public weak var continueNode: ContinueNode?
     /// Caches the decoded password policy so it’s only decoded once.
     private var cachedPasswordPolicy: PasswordPolicy?
     /// A flag to determine whether to clear the password or not after submission.

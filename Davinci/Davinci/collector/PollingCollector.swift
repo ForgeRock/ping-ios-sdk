@@ -66,9 +66,12 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
     // MARK: - ContinueNodeAware
 
     /// The continue node providing configuration context (links, interactionId) for challenge polling.
+    /// Declared `weak` to break the retain cycle: `ContinueNode → PollingCollector → ContinueNode`.
+    /// The node is kept alive by the view layer that is currently displaying it, so the weak
+    /// reference is always valid for the duration of an active polling session.
     /// When set, restores `retriesAllowed` from FlowContext if a value was persisted by a previous
     /// polling cycle (i.e. after a rewindStateToLastRenderedUI event creates a fresh collector).
-    public var continueNode: ContinueNode? {
+    public weak var continueNode: ContinueNode? {
         didSet {
             guard let node = continueNode else { return }
 
@@ -201,7 +204,12 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
             value = Constants.pollingValueContinue
             continuation.yield(.continuing(retryCount: retryCount, maxRetries: maxRetries))
 
-            try? await Task.sleep(nanoseconds: intervalNs)
+            do {
+                try await Task.sleep(nanoseconds: intervalNs)
+            } catch {
+                // Task.sleep only throws CancellationError.
+                return
+            }
 
             if Task.isCancelled { return }
 
@@ -260,19 +268,28 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
             return
         }
 
+        // Capture the node strongly before suspending. continueNode is weak to break the
+        // ContinueNode ↔ PollingCollector retain cycle; the local let keeps it alive for
+        // the duration of this single polling cycle.
+        let node = continueNode
         let totalRetries = Int(pollRetries) ?? 60
         let currentAttempt = totalRetries - retriesAllowed + 1
 
         // Emit current attempt immediately so the UI updates the counter before sleeping.
         continuation.yield(.continuing(retryCount: currentAttempt, maxRetries: totalRetries))
 
-        try? await Task.sleep(nanoseconds: UInt64(interval * 1_000_000))
+        do {
+            try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000))
+        } catch {
+            // Task.sleep only throws CancellationError.
+            return
+        }
 
         retriesAllowed -= 1
 
         // Persist remaining retries so the fresh PollingCollector created after a rewind event
         // can restore the counter and continue counting down correctly via continueNode.didSet.
-        continueNode?.context.flowContext.set(
+        node?.context.flowContext.set(
             key: SharedContext.Keys.pollingRetriesRemaining, value: retriesAllowed)
 
         if retriesAllowed <= 0 {
