@@ -298,6 +298,7 @@ let package = Package(
             name: "PingBinding",
             dependencies: [
                 "PingCommons",
+                "PingDeviceId",
                 "PingJourneyPlugin"
             ],
             path: "Binding/Binding",
