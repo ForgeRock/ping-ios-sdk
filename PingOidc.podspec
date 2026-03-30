@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingOidc'
-  s.version          = '2.0.0-beta3'
+  s.version          = '2.0.0-beta4'
   s.summary          = 'PingOidc SDK for iOS'
   s.description      = <<-DESC
   The PingOidc SDK provides OIDC client for PingOne and ForgeRock platform.
@@ -33,7 +33,7 @@ Pod::Spec.new do |s|
     'Oidc' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingBrowser', '~> 2.0.0-beta3'
-  s.ios.dependency 'PingOrchestrate', '~> 2.0.0-beta3'
-  s.ios.dependency 'PingCommons', '~> 2.0.0-beta3'
+  s.ios.dependency 'PingBrowser', '~> 2.0.0-beta4'
+  s.ios.dependency 'PingOrchestrate', '~> 2.0.0-beta4'
+  s.ios.dependency 'PingCommons', '~> 2.0.0-beta4'
 end

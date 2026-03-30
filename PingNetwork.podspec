@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingNetwork'
-  s.version          = '2.0.0-beta3'
+  s.version          = '2.0.0-beta4'
   s.summary          = 'PingNetwork module for the Ping iOS SDK'
   s.description      = <<-DESC
   The PingNetwork module for the Ping iOS SDK is a library for making network calls.
@@ -33,6 +33,6 @@ Pod::Spec.new do |s|
     'Network' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingLogger', '~> 2.0.0-beta3'
+  s.ios.dependency 'PingLogger', '~> 2.0.0-beta4'
     
 end
