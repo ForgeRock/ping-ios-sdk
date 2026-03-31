@@ -36,6 +36,6 @@ Pod::Spec.new do |s|
 
   s.ios.dependency 'PingDavinciPlugin', '~> 2.0.0'
   s.ios.dependency 'PingJourneyPlugin', '~> 2.0.0'
-  s.ios.dependency 'PingOneSignals', '~> 5.3.0'
+  s.ios.dependency 'PingOneSignals', '~> 5.4.0'
 
 end
