@@ -38,9 +38,9 @@ struct PollingCollectorView: View {
     init(collector: PollingCollector, onNext: @escaping (Bool) -> Void) {
         self.collector = collector
         self.onNext = onNext
-        // Seed from the collector's actual values. After a rewindStateToLastRenderedUI event
-        // the fresh collector has retriesAllowed restored from FlowContext, so the counter
-        // starts at the correct position without waiting for the first .task emission.
+        // Seed the initial UI state from the collector. After a DaVinci re-submission the fresh
+        // PollingCollector restores retriesAllowed from FlowContext (in continueNode.didSet),
+        // so the counter picks up from where the previous cycle left off rather than resetting.
         let total = Int(collector.pollRetries) ?? 60
         let attempt = max(1, total - collector.retriesAllowed + 1)
         _currentStatus = State(initialValue: .continuing(retryCount: attempt, maxRetries: total))

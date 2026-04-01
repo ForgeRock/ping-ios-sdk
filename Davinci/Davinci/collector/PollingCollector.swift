@@ -69,27 +69,18 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
     /// Declared `weak` to break the retain cycle: `ContinueNode → PollingCollector → ContinueNode`.
     /// The node is kept alive by the view layer that is currently displaying it, so the weak
     /// reference is always valid for the duration of an active polling session.
-    /// When set, restores `retriesAllowed` from FlowContext if a value was persisted by a previous
-    /// polling cycle (i.e. after a rewindStateToLastRenderedUI event creates a fresh collector).
     public weak var continueNode: ContinueNode? {
         didSet {
             guard let node = continueNode else { return }
 
-            // Restore retry count persisted by a previous polling cycle after a rewind event.
-            if let remaining = node.context.flowContext
-                .get(key: SharedContext.Keys.pollingRetriesRemaining) as? Int {
+            // Each polling cycle causes a DaVinci re-submission that produces a fresh
+            // PollingCollector parsed from JSON (retriesAllowed resets to pollRetries).
+            // Restore the persisted count so the counter continues from where it left off.
+            // The FlowContext key is scoped to this collector's field key so that multiple
+            // polling nodes in the same flow do not share state.
+            let contextKey = SharedContext.Keys.pollingRetriesRemaining(forFieldKey: key)
+            if let remaining = node.context.flowContext.get(key: contextKey) as? Int {
                 retriesAllowed = remaining
-            }
-
-            // The server places `pollChallengeStatus` and `challenge` at the root of the
-            // response JSON, not inside the individual field dict that is passed to init.
-            // Read them from continueNode.input as a fallback so challenge-polling works
-            // even when those keys are absent from the field-level JSON.
-            if !pollChallengeStatus {
-                pollChallengeStatus = node.input[Constants.pollChallengeStatus] as? Bool ?? false
-            }
-            if challenge.isEmpty {
-                challenge = node.input[Constants.challenge] as? String ?? ""
             }
         }
     }
@@ -172,8 +163,8 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
         guard
             let node = continueNode,
             let links = node.input[Constants._links] as? [String: Any],
-            let next = links[Constants.next] as? [String: Any],
-            let nextHref = next[Constants.href] as? String,
+            let next = links[Constants._self] as? [String: Any],
+            let selfHref = next[Constants.href] as? String,
             let interactionId = node.input[Constants.interactionId] as? String
         else {
             value = Constants.pollingValueError
@@ -185,7 +176,7 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
         // relying on DaVinciAware injection, which may not fire for closure-registered collectors.
         let httpClient = node.workflow.config.httpClient!
 
-        let baseUrl = nextHref.components(separatedBy: Constants.davinciConnectionsPathSegment).first ?? nextHref
+        let baseUrl = selfHref.components(separatedBy: Constants.davinciConnectionsPathSegment).first ?? selfHref
         let pollingUrl = "\(baseUrl)\(Constants.challengeStatusPathPrefix)\(challenge)\(Constants.challengeStatusPathSuffix)"
         let maxRetries = Int(pollRetries) ?? 60
         let intervalNs = UInt64((Double(pollInterval) ?? 2000) * 1_000_000)
@@ -268,10 +259,6 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
             return
         }
 
-        // Capture the node strongly before suspending. continueNode is weak to break the
-        // ContinueNode ↔ PollingCollector retain cycle; the local let keeps it alive for
-        // the duration of this single polling cycle.
-        let node = continueNode
         let totalRetries = Int(pollRetries) ?? 60
         let currentAttempt = totalRetries - retriesAllowed + 1
 
@@ -287,10 +274,11 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
 
         retriesAllowed -= 1
 
-        // Persist remaining retries so the fresh PollingCollector created after a rewind event
-        // can restore the counter and continue counting down correctly via continueNode.didSet.
-        node?.context.flowContext.set(
-            key: SharedContext.Keys.pollingRetriesRemaining, value: retriesAllowed)
+        // Persist the updated count so the next fresh PollingCollector instance (created after
+        // DaVinci re-submits and returns the same form) can restore the correct position.
+        continueNode?.context.flowContext.set(
+            key: SharedContext.Keys.pollingRetriesRemaining(forFieldKey: key),
+            value: retriesAllowed)
 
         if retriesAllowed <= 0 {
             value = Constants.pollingValueTimedOut
@@ -330,6 +318,14 @@ public enum PollingError: Error, LocalizedError, Sendable {
 }
 
 extension SharedContext.Keys {
-    /// Key used to persist remaining retry count across rewind-triggered polling cycles.
-    static let pollingRetriesRemaining = "com.pingidentity.davinci.POLLING_RETRIES_REMAINING"
+    /// Returns the FlowContext key used to persist `retriesAllowed` for a given polling field.
+    ///
+    /// Scoping the key to the collector's field key ensures that multiple polling collectors
+    /// in the same flow (e.g., at different steps) never share or overwrite each other's state.
+    ///
+    /// - Parameter fieldKey: The `key` value of the `PollingCollector` (e.g. `"polling-field"`).
+    static func pollingRetriesRemaining(forFieldKey fieldKey: String) -> String {
+        return "com.pingidentity.davinci.POLLING_RETRIES_REMAINING.\(fieldKey)"
+    }
 }
+
