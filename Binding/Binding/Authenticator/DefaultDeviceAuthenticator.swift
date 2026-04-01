@@ -13,6 +13,7 @@ import Foundation
 import PingJourneyPlugin
 import Security
 import PingCommons
+import PingOrchestrate
 
 /// A base class for device authenticators, providing default implementations for the `DeviceAuthenticator` protocol.
 /// Subclasses should override methods to provide specific authentication logic.

@@ -10,6 +10,7 @@
 
 import Foundation
 import PingJourneyPlugin
+import Combine
 
 /// A callback that is responsible to define and create Knowledge Based Authentication question and answer for a user.
 public class KbaCreateCallback: AbstractCallback, ObservableObject, @unchecked Sendable {

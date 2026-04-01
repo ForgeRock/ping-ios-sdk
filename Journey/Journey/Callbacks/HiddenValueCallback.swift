@@ -10,6 +10,7 @@
 
 import Foundation
 import PingJourneyPlugin
+import Combine
 
 /// A callback that handles hidden values in the authentication flow.
 public class HiddenValueCallback: AbstractCallback, ValueCallbackProtocol, ObservableObject, @unchecked Sendable {

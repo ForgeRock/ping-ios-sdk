@@ -11,7 +11,7 @@
 import Foundation
 import PingOrchestrate
 import PingJourneyPlugin
-
+import Combine
 
 /// A callback for providing metadata that can transform into specialized callbacks based on content.
 public class MetadataCallback: AbstractCallback, MetadataCallbackProtocol,ObservableObject, @unchecked Sendable, ContinueNodeAware, JourneyAware {

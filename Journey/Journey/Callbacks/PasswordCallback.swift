@@ -10,6 +10,7 @@
 
 import Foundation
 import PingJourneyPlugin
+import Combine
 
 /// A callback that collects a password input from the user.
 public class PasswordCallback: AbstractCallback, ObservableObject,  @unchecked Sendable {

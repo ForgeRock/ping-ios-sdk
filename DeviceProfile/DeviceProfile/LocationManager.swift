@@ -10,6 +10,7 @@
 
 import Foundation
 import CoreLocation
+import Combine
 
 // MARK: - LocationError
 

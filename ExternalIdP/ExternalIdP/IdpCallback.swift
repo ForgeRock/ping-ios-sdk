@@ -12,6 +12,7 @@
 import Foundation
 import PingOrchestrate
 import PingJourneyPlugin
+import PingNetwork
 
 @objc
 class IdpCallbacks: NSObject {

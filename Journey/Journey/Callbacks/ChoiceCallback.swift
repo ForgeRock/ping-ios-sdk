@@ -10,6 +10,7 @@
 
 import Foundation
 import PingJourneyPlugin
+import Combine
 
 /// A callback that collects single user input from available choices, with predefined default choice.
 public class ChoiceCallback: AbstractCallback, ObservableObject, @unchecked Sendable {

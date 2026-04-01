@@ -8,7 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 
 import PingOrchestrate
-import PingOneSignals
+internal import PingOneSignals
 
 /// Actor to manage Protect SDK state with thread safety
 @globalActor

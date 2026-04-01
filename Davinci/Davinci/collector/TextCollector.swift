@@ -10,6 +10,7 @@
 
 
 import Foundation
+import Combine
 
 /// Class representing a TEXT type.
 /// This class inherits from the ValidatedCollector class and implements the Collector protocol.

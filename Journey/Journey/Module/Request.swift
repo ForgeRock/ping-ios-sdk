@@ -14,6 +14,7 @@
 import Foundation
 import PingOrchestrate
 import PingJourneyPlugin
+import PingNetwork
 
 extension Request {
     /// Initializes a request to the authentication endpoint with the provided parameters.

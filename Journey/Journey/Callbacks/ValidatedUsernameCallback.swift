@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingJourneyPlugin
 
 /// A callback that collects a username with validation against given policies.
 public class ValidatedUsernameCallback: AbstractValidatedCallback, @unchecked Sendable {

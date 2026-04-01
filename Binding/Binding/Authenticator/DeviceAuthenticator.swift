@@ -12,6 +12,7 @@
 import Foundation
 import PingCommons
 import PingJourneyPlugin
+import PingOrchestrate
 
 /// A protocol defining the capabilities and requirements for any device authenticator.
 /// Authenticators conforming to this protocol are responsible for key management (generation, authentication, deletion)

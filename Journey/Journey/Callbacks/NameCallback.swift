@@ -10,6 +10,7 @@
 
 import Foundation
 import PingJourneyPlugin
+import Combine
 
 // A callback that collects a name input from the user.
 public class NameCallback: AbstractCallback, ObservableObject, @unchecked Sendable {

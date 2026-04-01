@@ -10,6 +10,7 @@
 
 import Foundation
 import PingJourneyPlugin
+import Combine
 
 /// A callback that collects consent mapping information from a user.
 public class ConsentMappingCallback: AbstractCallback, ObservableObject, @unchecked Sendable {

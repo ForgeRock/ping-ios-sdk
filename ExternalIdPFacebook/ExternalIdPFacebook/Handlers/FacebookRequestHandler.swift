@@ -10,8 +10,8 @@
 
 import Foundation
 import PingNetwork
-import FBSDKLoginKit
-import FBSDKCoreKit
+internal import FBSDKLoginKit
+internal import FBSDKCoreKit
 import UIKit
 import PingExternalIdP
 

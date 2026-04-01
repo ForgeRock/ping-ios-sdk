@@ -10,6 +10,7 @@
 
 import Foundation
 import PingJourneyPlugin
+import Combine
 
 /// Confirmation option type categories
 public enum OptionType: Int {
