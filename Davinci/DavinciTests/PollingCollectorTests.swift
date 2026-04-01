@@ -115,7 +115,7 @@ class PollingCollectorTests: XCTestCase {
 
         // First status is .continuing (emitted before sleeping), second is .timedOut.
         XCTAssertEqual(statuses.count, 2)
-        if case .continuing(let attempt, let total) = statuses[0] {
+        if case .continue(let attempt, let total) = statuses[0] {
             XCTAssertEqual(attempt, 1)
             XCTAssertEqual(total, 1)
         } else {
@@ -145,7 +145,7 @@ class PollingCollectorTests: XCTestCase {
 
         // First status is .continuing (emitted before sleeping), second is .complete.
         XCTAssertEqual(statuses.count, 2)
-        if case .continuing(let attempt, let total) = statuses[0] {
+        if case .continue(let attempt, let total) = statuses[0] {
             XCTAssertEqual(attempt, 1)
             XCTAssertEqual(total, 5)
         } else {
@@ -237,7 +237,7 @@ class PollingCollectorTests: XCTestCase {
 
         // Simple mode: .continuing emitted first, then .complete.
         XCTAssertEqual(statuses.count, 2)
-        if case .continuing = statuses[0] { } else {
+        if case .continue = statuses[0] { } else {
             XCTFail("Expected .continuing as first status, got \(statuses[0])")
         }
         if case .complete(let status) = statuses[1] {
@@ -249,6 +249,10 @@ class PollingCollectorTests: XCTestCase {
 
     // MARK: - Challenge mode: single-cycle polling with network
 
+    /// Strong reference kept here so the `weak var continueNode` on `PollingCollector`
+    /// isn't deallocated before `poll()` executes.
+    private var challengeNode: ContinueNode?
+
     /// Builds a challenge-mode collector wired to a mock HTTP client.
     private func makeChallengeCollector(retries: Int = 3) -> PollingCollector {
         let json: [String: Any] = [
@@ -259,7 +263,8 @@ class PollingCollectorTests: XCTestCase {
         ]
         let collector = PollingCollector(with: json)
         let input: [String: Any] = [
-            "_links": ["next": ["href": "http://localhost/davinci/connections/ABC/capabilities/customForm"]],
+            "id": "test-connector-id",
+            "_links": ["self": ["href": "http://localhost/davinci/connections/ABC/capabilities/customForm"]],
             "interactionId": "test-interaction-id"
         ]
         let flowCtx = FlowContext(flowContext: SharedContext())
@@ -270,6 +275,7 @@ class PollingCollectorTests: XCTestCase {
             context: flowCtx, workflow: workflow, input: input, actions: [])
         // Note: davinci is intentionally NOT set here — pollForChallengeStatus now derives the
         // HTTP client from continueNode.workflow directly, so DaVinciAware injection is not needed.
+        challengeNode = node  // retain strongly so the weak continueNode stays valid during poll()
         collector.continueNode = node
         return collector
     }
@@ -277,6 +283,7 @@ class PollingCollectorTests: XCTestCase {
     override func tearDown() {
         super.tearDown()
         MockURLProtocol.requestHandler = nil
+        challengeNode = nil
     }
 
     func testChallengePollEmitsContinuingThenCompletesWhenChallengeComplete() async {
@@ -291,7 +298,7 @@ class PollingCollectorTests: XCTestCase {
         for await status in collector.poll() { statuses.append(status) }
 
         XCTAssertEqual(statuses.count, 2)
-        if case .continuing(let attempt, let total) = statuses[0] {
+        if case .continue(let attempt, let total) = statuses[0] {
             XCTAssertEqual(attempt, 1)
             XCTAssertEqual(total, 3)
         } else { XCTFail("Expected .continuing, got \(statuses[0])") }
@@ -321,7 +328,7 @@ class PollingCollectorTests: XCTestCase {
         // Three .continuing updates then .complete — all inside one poll() invocation.
         XCTAssertEqual(statuses.count, 4)
         for (i, status) in statuses.dropLast().enumerated() {
-            if case .continuing(let attempt, let total) = status {
+            if case .continue(let attempt, let total) = status {
                 XCTAssertEqual(attempt, i + 1)
                 XCTAssertEqual(total, 5)
             } else { XCTFail("Expected .continuing at index \(i), got \(status)") }
@@ -370,7 +377,7 @@ class PollingCollectorTests: XCTestCase {
         for await status in collector.poll() { statuses.append(status) }
 
         XCTAssertEqual(statuses.count, 2)
-        if case .continuing(let attempt, let total) = statuses[0] {
+        if case .continue(let attempt, let total) = statuses[0] {
             XCTAssertEqual(attempt, 1)
             XCTAssertEqual(total, 1)
         } else { XCTFail("Expected .continuing, got \(statuses[0])") }
@@ -391,7 +398,7 @@ class PollingCollectorTests: XCTestCase {
         for await status in collector.poll() { statuses.append(status) }
 
         XCTAssertEqual(statuses.count, 2)
-        if case .continuing = statuses[0] { } else {
+        if case .continue = statuses[0] { } else {
             XCTFail("Expected .continuing, got \(statuses[0])")
         }
         if case .expired = statuses[1] {

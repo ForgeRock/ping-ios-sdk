@@ -44,13 +44,13 @@ struct PollingCollectorView: View {
         // so the counter picks up from where the previous cycle left off rather than resetting.
         let total = Int(collector.pollRetries) ?? 60
         let attempt = max(1, total - collector.retriesAllowed + 1)
-        _currentStatus = State(initialValue: .continuing(retryCount: attempt, maxRetries: total))
+        _currentStatus = State(initialValue: .continue(retryCount: attempt, maxRetries: total))
     }
 
     var body: some View {
         VStack(spacing: 16) {
             switch currentStatus {
-            case .continuing(let retry, let max):
+            case .continue(let retry, let max):
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle())
                     .scaleEffect(1.5)
@@ -117,7 +117,7 @@ struct PollingCollectorView: View {
                     // Surface the error; do not auto-submit.
                     break
 
-                case .continuing:
+                case .continue:
                     // In-flight update — UI already updated via currentStatus.
                     break
                 }

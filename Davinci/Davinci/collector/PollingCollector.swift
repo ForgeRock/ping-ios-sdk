@@ -19,7 +19,7 @@ public enum PollingStatus: Sendable {
     /// - Parameters:
     ///   - retryCount: The current retry count (1-based).
     ///   - maxRetries: The maximum number of retries configured.
-    case continuing(retryCount: Int, maxRetries: Int)
+    case `continue`(retryCount: Int, maxRetries: Int)
 
     /// Polling timed out because the maximum number of retries was reached.
     case timedOut
@@ -166,8 +166,8 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
         guard
             let node = continueNode,
             let links = node.input[Constants._links] as? [String: Any],
-            let next = links[Constants._self] as? [String: Any],
-            let selfHref = next[Constants.href] as? String,
+            let selfLink = links[Constants._self] as? [String: Any],
+            let selfHref = selfLink[Constants.href] as? String,
             let interactionId = node.input[Constants.interactionId] as? String
         else {
             value = Constants.pollingValueError
@@ -196,7 +196,7 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
         for retryCount in 1...maxRetries {
             // Emit the current attempt before sleeping so the UI counter updates immediately.
             value = Constants.pollingValueContinue
-            continuation.yield(.continuing(retryCount: retryCount, maxRetries: maxRetries))
+            continuation.yield(.continue(retryCount: retryCount, maxRetries: maxRetries))
 
             do {
                 try await Task.sleep(nanoseconds: intervalNs)
@@ -266,7 +266,7 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
         let currentAttempt = totalRetries - retriesAllowed + 1
 
         // Emit current attempt immediately so the UI updates the counter before sleeping.
-        continuation.yield(.continuing(retryCount: currentAttempt, maxRetries: totalRetries))
+        continuation.yield(.continue(retryCount: currentAttempt, maxRetries: totalRetries))
 
         do {
             try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000))
