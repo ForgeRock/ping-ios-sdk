@@ -82,10 +82,10 @@ public class NodeTransformModule {
         }
         
         // Handle rewindStateToLastRenderedUI and rewindStateToSpecificRenderedUI:
-        // Re-create a fresh Connector from the stored node's input so collectors
-        // (especially PollingCollector with its retriesAllowed counter) are reset to their
-        // initial state for a new cycle. Using a fresh instance (rather than the same one)
-        // lets the SwiftUI layer detect the change via ObjectIdentifier and restart .task.
+        // Re-create a fresh Connector from the stored node's input. This intentionally resets
+        // all collector state (including PollingCollector.retriesAllowed) back to its initial
+        // JSON values, giving the user a clean retry. The new ObjectIdentifier on each fresh
+        // collector lets the SwiftUI layer detect the change and restart any running .task.
         if let eventName = json[Constants.eventName] as? String,
            (eventName == "rewindStateToLastRenderedUI" || eventName == "rewindStateToSpecificRenderedUI") {
             if let storedNode = context.flowContext.get(key: SharedContext.Keys.continueNode) as? ContinueNode {

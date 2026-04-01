@@ -55,12 +55,12 @@ public enum PollingStatus: Sendable {
 /// completes, expires, times out, or an error occurs.
 ///
 /// ## Value Assignment
-/// The `value` property is updated automatically before each status is yielded:
+/// The `value` property is updated automatically before each terminal status is yielded:
 /// - `.complete` → the server status string (e.g. `"approved"` or `"continue"`)
 /// - `.timedOut` → `"timedOut"`
 /// - `.expired` → `"expired"`
 /// - `.error` → `"error"`
-/// - `.continuing` → `"continue"`
+/// - `.continuing` → `"continue"` 
 public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAware, DaVinciAware, Closeable, @unchecked Sendable {
 
     // MARK: - ContinueNodeAware
@@ -76,9 +76,12 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
             // Each polling cycle causes a DaVinci re-submission that produces a fresh
             // PollingCollector parsed from JSON (retriesAllowed resets to pollRetries).
             // Restore the persisted count so the counter continues from where it left off.
-            // The FlowContext key is scoped to this collector's field key so that multiple
-            // polling nodes in the same flow do not share state.
-            let contextKey = SharedContext.Keys.pollingRetriesRemaining(forFieldKey: key)
+            // The FlowContext key is scoped to both the connector id and the field key:
+            // - connector id changes between different polling steps in the flow, so two
+            //   sequential steps that both use key="polling-field" never share state.
+            // - field key disambiguates collectors on the same form (rare but safe).
+            let connectorId = node.input[Constants.id] as? String ?? ""
+            let contextKey = SharedContext.Keys.pollingRetriesRemaining(connectorId: connectorId, fieldKey: key)
             if let remaining = node.context.flowContext.get(key: contextKey) as? Int {
                 retriesAllowed = remaining
             }
@@ -276,8 +279,9 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
 
         // Persist the updated count so the next fresh PollingCollector instance (created after
         // DaVinci re-submits and returns the same form) can restore the correct position.
+        let connectorId = continueNode?.input[Constants.id] as? String ?? ""
         continueNode?.context.flowContext.set(
-            key: SharedContext.Keys.pollingRetriesRemaining(forFieldKey: key),
+            key: SharedContext.Keys.pollingRetriesRemaining(connectorId: connectorId, fieldKey: key),
             value: retriesAllowed)
 
         if retriesAllowed <= 0 {
@@ -320,12 +324,17 @@ public enum PollingError: Error, LocalizedError, Sendable {
 extension SharedContext.Keys {
     /// Returns the FlowContext key used to persist `retriesAllowed` for a given polling field.
     ///
-    /// Scoping the key to the collector's field key ensures that multiple polling collectors
-    /// in the same flow (e.g., at different steps) never share or overwrite each other's state.
+    /// Scoping by both connector id and field key ensures correctness even when multiple
+    /// polling steps in the same flow reuse the same generic field key (e.g. `"polling-field"`):
+    /// - `connectorId` changes between different nodes, so step 1 and step 2 each get their
+    ///   own entry even if their field keys are identical.
+    /// - `fieldKey` further disambiguates collectors that appear on the same form.
     ///
-    /// - Parameter fieldKey: The `key` value of the `PollingCollector` (e.g. `"polling-field"`).
-    static func pollingRetriesRemaining(forFieldKey fieldKey: String) -> String {
-        return "com.pingidentity.davinci.POLLING_RETRIES_REMAINING.\(fieldKey)"
+    /// - Parameters:
+    ///   - connectorId: The `id` of the enclosing connector (e.g. `"czys1qteu6"`).
+    ///   - fieldKey: The `key` value of the `PollingCollector` (e.g. `"polling-field"`).
+    static func pollingRetriesRemaining(connectorId: String, fieldKey: String) -> String {
+        return "com.pingidentity.davinci.POLLING_RETRIES_REMAINING.\(connectorId).\(fieldKey)"
     }
 }
 

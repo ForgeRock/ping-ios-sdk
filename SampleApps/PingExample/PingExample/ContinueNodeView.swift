@@ -72,10 +72,11 @@ struct ContinueNodeView: View {
                 case let phoneNumberCollector as PhoneNumberCollector:
                     PhoneNumberView(field: phoneNumberCollector, onNodeUpdated: onNodeUpdated)
                 case let pollingCollector as PollingCollector:
-                    // Use ObjectIdentifier (object identity) rather than pollingCollector.id
-                    // (the key string) so that a fresh PollingCollector returned after a
-                    // rewindStateToLastRenderedUI event forces SwiftUI to recreate the view
-                    // and restart the polling .task.
+                    // Use ObjectIdentifier (object identity) to force SwiftUI to recreate
+                    // PollingCollectorView — and restart its .task — whenever a new
+                    // PollingCollector instance is produced. This happens both on each normal
+                    // polling cycle (Transform creates a fresh collector after every next() call)
+                    // and after a rewindStateToLastRenderedUI event.
                     PollingCollectorView(collector: pollingCollector, onNext: onNext).id(ObjectIdentifier(pollingCollector))
                 case let qrCodeCollector as QRCodeCollector:
                     QRCodeCollectorView(collector: qrCodeCollector).id(qrCodeCollector.id)

@@ -19,8 +19,9 @@ import PingDavinci
 ///
 /// - `.complete(status: "continue")` (simple polling) — the collector slept for the configured
 ///   interval and emitted `value = "continue"`. `onNext` POSTs that value to the server, which
-///   replies with the **same ContinueNode** (a fresh `PollingCollector` with the original retry
-///   count). The developer sees the previous node re-rendered automatically.
+///   replies with the same step as a fresh `ContinueNode`. `Transform` creates a new
+///   `PollingCollector` from JSON, and `continueNode.didSet` restores `retriesAllowed` from
+///   `FlowContext` so the counter continues from where it left off.
 ///
 /// - `.complete(status: other)` (challenge polling succeeded) — `onNext` submits the server
 ///   status and the flow advances to the next step.
@@ -107,9 +108,9 @@ struct PollingCollectorView: View {
                     // Submit the collector's current value to the server.
                     // Use onNext(false) to bypass form validation — this is an automatic
                     // submission, not a user-initiated form submit.
-                    // For `.complete("continue")` the server echoes back the same ContinueNode.
-                    // `.id(davinciViewModel.state.id)` in DavinciView ensures SwiftUI recreates
-                    // ConnectorView so this .task restarts for the next polling cycle.
+                    // For `.complete("continue")` the server returns a new ContinueNode with a
+                    // fresh PollingCollector. ContinueNodeView uses .id(ObjectIdentifier(...))
+                    // on PollingCollectorView, so SwiftUI recreates the view and restarts .task.
                     onNext(false)
 
                 case .error:
