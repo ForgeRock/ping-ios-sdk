@@ -26,6 +26,11 @@ jobs:
       MEND_USER_KEY: ${{ secrets.MEND_USER_KEY }}
       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }} 
 
+  # Generate API Docs
+  generate-docs:
+    name: Generate API Docs
+    uses: ./.github/workflows/docs.yaml
+
   # Build BrowserStack test artifacts
   browserstack-prepare-artifacts:
     name: Prepare device farm artifacts
