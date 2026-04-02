@@ -87,7 +87,7 @@ public class NodeTransformModule {
         // JSON values, giving the user a clean retry. The new ObjectIdentifier on each fresh
         // collector lets the SwiftUI layer detect the change and restart any running .task.
         if let eventName = json[Constants.eventName] as? String,
-           (eventName == "rewindStateToLastRenderedUI" || eventName == "rewindStateToSpecificRenderedUI") {
+           (eventName == Constants.rewindStateToLastRenderedUI || eventName == Constants.rewindStateToSpecificRenderedUI) {
             if let storedNode = context.flowContext.get(key: SharedContext.Keys.continueNode) as? ContinueNode {
                 let storedInput = storedNode.input
                 var freshCollectors: Collectors = []

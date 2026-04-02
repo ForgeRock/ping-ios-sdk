@@ -96,10 +96,10 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
     // MARK: - Properties
 
     /// Polling interval in milliseconds between each attempt. Default: `"2000"`.
-    public private(set) var pollInterval: String = "2000"
+    public private(set) var pollInterval: String = String(Constants.defaultPollInterval)
 
     /// Maximum number of polling attempts before timing out. Default: `"60"`.
-    public private(set) var pollRetries: String = "60"
+    public private(set) var pollRetries: String = String(Constants.defaultPollRetries)
 
     /// Whether to actively poll the server endpoint for challenge completion. Default: `false`.
     public private(set) var pollChallengeStatus: Bool = false
@@ -117,11 +117,11 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
         super.init(with: json)
         // Accept both String ("2000") and numeric (2000) JSON representations so the collector
         // is robust regardless of whether the server quotes these values.
-        pollInterval = Self.jsonString(json, key: Constants.pollInterval) ?? "2000"
-        pollRetries  = Self.jsonString(json, key: Constants.pollRetries)  ?? "60"
+        pollInterval = Self.jsonString(json, key: Constants.pollInterval) ?? String(Constants.defaultPollInterval)
+        pollRetries  = Self.jsonString(json, key: Constants.pollRetries)  ?? String(Constants.defaultPollRetries)
         pollChallengeStatus = json[Constants.pollChallengeStatus] as? Bool ?? false
         challenge = json[Constants.challenge] as? String ?? ""
-        retriesAllowed = Int(pollRetries) ?? 60
+        retriesAllowed = Int(pollRetries) ?? Constants.defaultPollRetries
     }
 
     /// Reads a value from a JSON dict as a `String`, accepting both quoted (`"3"`) and
@@ -177,12 +177,16 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
 
         // Derive the HTTP client from the workflow stored in the ContinueNode rather than
         // relying on DaVinciAware injection, which may not fire for closure-registered collectors.
-        let httpClient = node.workflow.config.httpClient!
+        guard let httpClient = node.workflow.config.httpClient else {
+            value = Constants.pollingValueError
+            continuation.yield(.error(PollingError.missingConfiguration))
+            return
+        }
 
         let baseUrl = selfHref.components(separatedBy: Constants.davinciConnectionsPathSegment).first ?? selfHref
         let pollingUrl = "\(baseUrl)\(Constants.challengeStatusPathPrefix)\(challenge)\(Constants.challengeStatusPathSuffix)"
-        let maxRetries = Int(pollRetries) ?? 60
-        let intervalNs = UInt64((Double(pollInterval) ?? 2000) * 1_000_000)
+        let maxRetries = Int(pollRetries) ?? Constants.defaultPollRetries
+        let intervalNs = UInt64((Double(pollInterval) ?? Double(Constants.defaultPollInterval)) * 1_000_000)
 
         guard maxRetries > 0 else {
             value = Constants.pollingValueTimedOut
@@ -216,8 +220,8 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
 
                 // HTTP 400 means the challenge has expired on the server side.
                 // Other non-200 responses are transient — keep polling.
-                guard response.status == 200 else {
-                    if response.status == 400 {
+                guard response.status.isSuccess() else {
+                    if response.status.isClientError() {
                         value = Constants.pollingValueExpired
                         continuation.yield(.expired)
                         return
@@ -262,7 +266,7 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
             return
         }
 
-        let totalRetries = Int(pollRetries) ?? 60
+        let totalRetries = Int(pollRetries) ?? Constants.defaultPollRetries
         let currentAttempt = totalRetries - retriesAllowed + 1
 
         // Emit current attempt immediately so the UI updates the counter before sleeping.
@@ -319,6 +323,11 @@ public enum PollingError: Error, LocalizedError, Sendable {
             return "The polling response body could not be parsed."
         }
     }
+}
+
+fileprivate extension Constants {
+    static let defaultPollInterval = 2000
+    static let defaultPollRetries = 60
 }
 
 extension SharedContext.Keys {

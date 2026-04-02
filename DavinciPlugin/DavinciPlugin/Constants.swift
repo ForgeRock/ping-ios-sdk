@@ -98,6 +98,8 @@ public enum Constants {
     public static let pollChallengeStatus = "pollChallengeStatus"
     public static let challenge = "challenge"
     public static let isChallengeComplete = "isChallengeComplete"
+    public static let rewindStateToLastRenderedUI = "rewindStateToLastRenderedUI"
+    public static let rewindStateToSpecificRenderedUI = "rewindStateToSpecificRenderedUI"
     public static let interactionId = "interactionId"
     public static let fallbackText = "fallbackText"
     public static let base64Image = "base64Image"
