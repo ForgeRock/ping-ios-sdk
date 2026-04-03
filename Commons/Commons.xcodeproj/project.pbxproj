@@ -101,6 +101,11 @@
 			path = Util;
 			sourceTree = "<group>";
 		};
+		CC100001CC100001CC100001 /* Migration */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Migration;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,6 +177,7 @@
 				A567424B2EE21CBC009D29B9 /* Policy */,
 				A56742432EE21CBC009D29B9 /* URI */,
 				A56742542EE21CBC009D29B9 /* Util */,
+				CC100001CC100001CC100001 /* Migration */,
 			);
 			path = Commons;
 			sourceTree = "<group>";
@@ -220,6 +226,7 @@
 				A56742432EE21CBC009D29B9 /* URI */,
 				A567424B2EE21CBC009D29B9 /* Policy */,
 				A56742542EE21CBC009D29B9 /* Util */,
+				CC100001CC100001CC100001 /* Migration */,
 			);
 			name = PingCommons;
 			packageProductDependencies = (

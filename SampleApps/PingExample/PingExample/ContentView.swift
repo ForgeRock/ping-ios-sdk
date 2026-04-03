@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  PingExample
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -74,7 +74,7 @@ enum MenuSection: CaseIterable, Identifiable {
         case .mfa:
             return [.qrScanner, .oathAccounts, .pushAccounts, .pushNotifications]
         case .developerTools:
-            return [.deviceInfo, .logger, .storage, .bindingKeys, .configuration]
+            return [.deviceInfo, .logger, .storage, .bindingKeys, .migration, .configuration]
         }
     }
 }
@@ -96,6 +96,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case logger = "Logger"
     case storage = "Storage"
     case bindingKeys = "Binding Keys"
+    case migration = "Migration"
     case configuration = "Configuration"
 
     var id: String { rawValue }
@@ -117,6 +118,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .logger: return "doc.text.magnifyingglass"
         case .storage: return "externaldrive.fill"
         case .bindingKeys: return "key.icloud.fill"
+        case .migration: return "arrow.triangle.2.circlepath"
         case .configuration: return "gearshape.fill"
         }
     }
@@ -138,6 +140,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .logger: return "Logger"
         case .storage: return "Storage"
         case .bindingKeys: return "Binding Keys"
+        case .migration: return "Migration"
         case .configuration: return "Configuration"
         }
     }
@@ -159,6 +162,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .logger: return "Test logging"
         case .storage: return "Test storage"
         case .bindingKeys: return "Manage stored binding keys"
+        case .migration: return "Migrate legacy SDK data"
         case .configuration: return "Edit configuration"
         }
     }
@@ -236,6 +240,8 @@ struct ContentView: View {
                     StorageView(menuItem: item)
                 case .bindingKeys:
                     BindingKeysView()
+                case .migration:
+                    AuthMigrationView()
                 case .deviceInfo:
                     DeviceInfoView(menuItem: item)
                 }
