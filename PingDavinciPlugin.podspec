@@ -19,9 +19,9 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '16.0'
 
   base_dir = "DavinciPlugin"
-  s.source_files = base_dir + '/DavinciPlugin/PingDavinciPlugin/**/*.swift'
+  s.source_files = base_dir + '/DavinciPlugin/**/*.swift'
   s.resource_bundles = {
-    'PingDavinciPlugin' => [base_dir + '/DavinciPlugin/PingDavinciPlugin/*.xcprivacy']
+    'PingDavinciPlugin' => [base_dir + '/DavinciPlugin/*.xcprivacy']
   }
   
   s.dependency 'PingOrchestrate', '~> 1.3.1'
