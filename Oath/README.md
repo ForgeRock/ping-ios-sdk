@@ -49,12 +49,6 @@ Or add it through Xcode:
 2. Enter the repository URL
 3. Select PingOath module
 
-#### CocoaPods
-
-```ruby
-pod 'PingOath'
-```
-
 ## Usage
 
 ### Initialize the OATH Client

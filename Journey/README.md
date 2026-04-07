@@ -46,21 +46,7 @@ For a deeper understanding of PingOne AIC Journeys, refer to the official docume
 ### Add dependency to your project
 
 To integrate Journey into your iOS project, add the following dependency to your
-`Podfile` or `Package.swift` file:
-
-#### CocoaPods
-
-Add to your `Podfile`:
-
-```ruby
-pod 'PingJourney', '~> 1.3.1'
-```
-
-Then run:
-
-```bash
-pod install
-```
+`Package.swift` file:
 
 #### Swift Package Manager
 

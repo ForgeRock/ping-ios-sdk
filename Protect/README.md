@@ -7,7 +7,7 @@
 
 # PingProtect Module: Advanced Security Integration
 
-> **Note:** The module name differs depending on the dependency manager. Use **`PingProtect`** for Swift Package Manager (SPM), and **`PingOneProtect`** for CocoaPods.
+> **Note:** When using Swift Package Manager, add the `PingProtect` library product.
 
 ## Overview
 
@@ -22,14 +22,9 @@ user-friendly authentication experience.
 ### Add dependency to your project
 
 To integrate the PingProtect module into your iOS project, add the following dependency to your
-`Podfile` or `Package.swift` file. 
-> **Note:** The module name differs depending on the dependency manager. Use **`PingProtect`** for SPM, and **`PingOneProtect`** for CocoaPods.
+`Package.swift` file.
 
-```ruby
-pod 'PingOneProtect', '<version>'
-```
-
-or for Swift Package Manager:
+Swift Package Manager:
 
 ```swift
 .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")

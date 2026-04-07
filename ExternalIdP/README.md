@@ -17,7 +17,7 @@ This library abstracts away the complexities of dealing with different IDP proto
 
 ## Add dependency to your project
 
-You can add the dependency using Cocoapods or Swift Package Manager
+You can add the dependency using Swift Package Manager
 
 ## Configuration and Usage
 

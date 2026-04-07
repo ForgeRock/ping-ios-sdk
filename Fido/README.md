@@ -38,16 +38,6 @@ dependencies: [
 ]
 ```
 
-### CocoaPods
-
-Add the following to your `Podfile`:
-
-```ruby
-pod 'PingFido', '~> 1.3.1'
-```
-
-Then run `pod install`.
-
 ## Usage
 
 ### DaVinci Integration

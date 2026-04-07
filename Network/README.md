@@ -27,8 +27,6 @@ The module is built on Apple's native URLSession framework, ensuring zero extern
 
 ## Integrating the SDK into your project
 
-Use Cocoapods or Swift Package Manager
-
 ### Swift Package Manager
 
 ```swift
@@ -43,12 +41,6 @@ targets: [
         ]
     )
 ]
-```
-
-### CocoaPods
-
-```ruby
-pod 'PingNetwork'
 ```
 
 ## How to Use the SDK

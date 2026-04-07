@@ -8,7 +8,7 @@ on:
         required: true
   
 env:
-  WORKSPACE: SampleApps/Ping.xcworkspace
+  PROJECT: PingTestHost/PingTestHost.xcodeproj
   SCHEME: PingTestHost
   CONFIGURATION: Debug
   DESTINATION: platform=iOS Simulator,name=iPhone SE (3rd generation),OS=26.1
@@ -33,16 +33,6 @@ jobs:
       # https://github.com/actions/runner-images/blob/main/images/macos/macos-15-arm64-Readme.md
       - name: Select Xcode
         run: sudo xcode-select -switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app && /usr/bin/xcodebuild -version
-
-      # # Cache DerivedData
-      # - name: Cache DerivedData
-      #   if: always()
-      #   uses: actions/cache@v5
-      #   with:
-      #     path: ${{ env.DERIVED_DATA_PATH }}
-      #     key: ${{ runner.os }}-derived-data-${{ env.XCODE_VERSION }}-${{ hashFiles('**/Podfile.lock', '**/*.pbxproj') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-derived-data-${{ env.XCODE_VERSION }}-
 
       # Cache Swift Packages
       - name: Cache Swift Packages
@@ -84,7 +74,7 @@ jobs:
           set -o pipefail
           xcodebuild build-for-testing \
             -scheme "${{ env.SCHEME }}" \
-            -workspace "${{ env.WORKSPACE }}" \
+            -project "${{ env.PROJECT }}" \
             -destination '${{ env.DESTINATION }}' \
             -derivedDataPath ${{ env.DERIVED_DATA_PATH }} \
             -clonedSourcePackagesDirPath SourcePackages \
@@ -96,35 +86,13 @@ jobs:
           set -o pipefail
           xcodebuild test-without-building \
             -scheme "${{ env.SCHEME }}" \
-            -workspace "${{ env.WORKSPACE }}" \
+            -project "${{ env.PROJECT }}" \
             -destination '${{ env.DESTINATION }}' \
             -derivedDataPath ${{ env.DERIVED_DATA_PATH }} \
             -resultBundlePath TestResults.xcresult \
             -parallel-testing-enabled NO \
             -parallel-testing-worker-count 1 \
             -retry-tests-on-failure | xcbeautify
-
-      # # Run unit tests
-      # - name: Run tests
-      #   run: |
-      #     set -o pipefail && xcodebuild test \
-      #     -scheme ${{ env.SCHEME }} \
-      #     -workspace ${{ env.WORKSPACE }} \
-      #     -destination '${{ env.DESTINATION }}' \
-      #     -derivedDataPath ${{ env.DERIVED_DATA_PATH }} \
-      #     -clonedSourcePackagesDirPath SourcePackages \
-      #     -parallel-testing-enabled NO \
-      #     -retry-tests-on-failure \
-      #     COMPILER_INDEX_STORE_ENABLE=NO \
-      #     -resultBundlePath TestResults | xcbeautify
-
-      #     # -configuration ${{ env.CONFIGURATION}} \
-      #     # TEST_TARGET_SIGNING=YES \
-      #     # -enableCodeCoverage YES \
-      #     # -resultBundlePath TestResults \
-      #     # -disable-concurrent-destination-testing \
-      #     # -retry-tests-on-failure 
-          
       # Upload xcresult for debugging purposes
       - name: Upload xcresult (debug)
         if: always()

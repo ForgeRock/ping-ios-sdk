@@ -8,8 +8,6 @@ The PingBinding Module uses **ES256** (ECDSA with P-256 curve and SHA-256) for a
 
 ## Installation
 
-The PingBinding Module is available via Swift Package Manager and CocoaPods.
-
 ### Swift Package Manager
 
 Add the following dependency to your `Package.swift` file:
@@ -34,34 +32,6 @@ Alternatively, in Xcode:
 2. Enter the repository URL: `https://github.com/ForgeRock/ping-ios-sdk.git`
 3. Select the version (1.3.1 or later)
 4. Add the `PingBinding` library to your target
-
-### CocoaPods
-
-Add the following to your `Podfile`:
-
-```ruby
-pod 'PingBinding', '~> 1.3.1'
-```
-
-Then run:
-
-```bash
-pod install
-```
-
-#### Dependencies
-
-PingBinding has the following dependencies which will be automatically installed:
-
-| Dependency | Version | Description |
-|------------|---------|-------------|
-| `PingOrchestrate` | ~> 1.3.1 | Core orchestration framework |
-| `PingJourneyPlugin` | ~> 1.3.1 | Journey-based authentication flow management |
-| `PingCommons` | ~> 1.3.1 | Common utilities including JWT signing |
-| `PingStorage` | ~> 1.3.1 | Secure storage capabilities |
-| `PingLogger` | ~> 1.3.1 | Logging framework |
-
-These dependencies provide the foundation for device binding operations, including secure key storage, JWT signing, and authentication flow management.
 
 ## Migration from Legacy SDK
 

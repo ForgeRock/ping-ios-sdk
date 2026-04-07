@@ -43,12 +43,6 @@ dependencies: [
 ]
 ```
 
-### CocoaPods
-
-```ruby
-pod 'PingDeviceClient', '~> 1.3.0'
-```
-
 ## Quick Start
 
 ### 1. Import the SDK

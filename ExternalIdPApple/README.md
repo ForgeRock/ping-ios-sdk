@@ -16,7 +16,7 @@ This library acts as a plugin to the `PingExternalIdP` library, and it provides 
 
 ## Add dependency to your project
 
-You can add the dependency using Cocoapods or Swift Package Manager.
+You can add the dependency using Swift Package Manager.
 Make sure the `PingExternalIdPApple` is included in the `Frameworks and Libraries` section of the `General` configuration pane in Xcode
 
 ## Usage
