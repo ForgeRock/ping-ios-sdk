@@ -13,59 +13,79 @@ import SwiftUI
 import PingLogger
 import PingOidc
 
-/// A view model responsible for fetching and managing user information.
-/// - Provides a published `userInfo` property that is updated with user information or error messages.
-/// - Fetches user data asynchronously using the DaVinci SDK.
+enum UserInfoTab: String, CaseIterable, Identifiable {
+    case journey = "Journey"
+    case davinci = "DaVinci"
+    case oidc = "OIDC"
+    
+    var id: String { rawValue }
+    
+    var icon: String {
+        switch self {
+        case .journey: return "map.fill"
+        case .davinci: return "key.fill"
+        case .oidc: return "lock.shield.fill"
+        }
+    }
+}
+
+struct UserInfoResult {
+    var info: String = ""
+    var error: String? = nil
+    var isLoading: Bool = true
+}
+
 @MainActor
 class UserInfoViewModel: ObservableObject {
-    /// Published property to hold the user information or error messages.
-    @Published var userInfo: String = ""
+    @Published var results: [UserInfoTab: UserInfoResult] = [
+        .journey: UserInfoResult(),
+        .davinci: UserInfoResult(),
+        .oidc: UserInfoResult()
+    ]
     
-    /// Initializes the `UserInfoViewModel` and fetches user information.
-    /// - The data is fetched asynchronously during initialization.
     init() {
         Task {
-            await fetchUserInfo()
+            await fetchAllUserInfo()
         }
     }
     
-    /// Fetches user information from the DaVinci SDK.
-    /// - The method retrieves user details as a dictionary and formats them as a string for display.
-    /// - Updates the `userInfo` property with the fetched data or an error message.
-    /// - Logs success and error messages using `PingLogger`.
-    func fetchUserInfo() async {
-        let userInfo: Result<UserInfo, OidcError>?
-        
-        let journeyUser = await ConfigurationManager.shared.journeyUser
-        let davinci = await ConfigurationManager.shared.davinciUser
-        let oidcLoginUser = await ConfigurationManager.shared.oidcUser
-        
-        if journeyUser != nil {
-            userInfo = await journeyUser?.userinfo(cache: false)
-        } else if davinci != nil {
-            userInfo = await davinci?.userinfo(cache: false)
-        } else {
-            userInfo = await oidcLoginUser?.userinfo(cache: false)
+    func fetchAllUserInfo() async {
+        await withTaskGroup(of: (UserInfoTab, UserInfoResult).self) { group in
+            group.addTask { await (.journey, self.fetchUserInfo(for: .journey)) }
+            group.addTask { await (.davinci, self.fetchUserInfo(for: .davinci)) }
+            group.addTask { await (.oidc, self.fetchUserInfo(for: .oidc)) }
+            
+            for await (tab, result) in group {
+                results[tab] = result
+            }
+        }
+    }
+    
+    private func fetchUserInfo(for tab: UserInfoTab) async -> UserInfoResult {
+        let user: User?
+        switch tab {
+        case .journey:
+            user = await ConfigurationManager.shared.journeyUser
+        case .davinci:
+            user = await ConfigurationManager.shared.davinciUser
+        case .oidc:
+            user = await ConfigurationManager.shared.oidcUser
         }
         
+        guard let user = user else {
+            return UserInfoResult(info: "", error: "No session, please start \(tab.rawValue) flow to authenticate.", isLoading: false)
+        }
+        
+        let userInfo = await user.userinfo(cache: false)
         switch userInfo {
         case .success(let userInfoDictionary):
-            // On success, format the dictionary into a string and update `userInfo`.
-            await MainActor.run {
-                var userInfoDescription = ""
-                userInfoDictionary.forEach { userInfoDescription += "\($0): \($1)\n" }
-                self.userInfo = userInfoDescription
-            }
-            LogManager.standard.i("UserInfo: \(String(describing: self.userInfo))")
+            var description = ""
+            userInfoDictionary.forEach { description += "\($0): \($1)\n" }
+            LogManager.standard.i("\(tab.rawValue) UserInfo: \(description)")
+            return UserInfoResult(info: description, isLoading: false)
         case .failure(let error):
-            // On failure, update `userInfo` with an error message and log the error.
-            await MainActor.run {
-                self.userInfo = "Error: \(error.localizedDescription)"
-            }
             LogManager.standard.e("", error: error)
-        case .none:
-            // No data received, no further action required.
-            break
+            return UserInfoResult(info: "", error: error.localizedDescription, isLoading: false)
         }
     }
 }

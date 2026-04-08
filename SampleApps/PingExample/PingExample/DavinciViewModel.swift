@@ -33,7 +33,10 @@ public let davinci = DaVinci.createDaVinci { config in
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
         oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
         oidcValue.acrValues = "" //update with actual ACR values if needed or remove
+        oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_DAVINCI")
     }
+    config.logger = LogManager.standard
+
 }
 
 // MARK: - Multi-User DaVinci Instances with Separate Cookie Storage

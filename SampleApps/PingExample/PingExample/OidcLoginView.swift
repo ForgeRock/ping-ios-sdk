@@ -29,7 +29,7 @@ struct OidcLoginView: View {
                     case .success( _ ):
                         VStack{}.onAppear {
                             path.removeLast()
-                            path.append(.token)
+                            path.append(.oidcToken)
                         }
                     case .failure(let error):
                         ErrorView(message: error.localizedDescription)

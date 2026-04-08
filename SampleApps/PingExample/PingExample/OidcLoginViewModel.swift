@@ -12,6 +12,7 @@ import Foundation
 import PingOrchestrate
 import PingOidc
 import PingLogger
+import PingStorage
 
 public let oidcLogin = OidcWebClient.createOidcWebClient { config in
     let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
@@ -24,7 +25,7 @@ public let oidcLogin = OidcWebClient.createOidcWebClient { config in
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
         oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
         //oidcValue.acrValues = "ACR_VALUE" //update with actual ACR values if needed or remove
-        
+        oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_OIDCWEB")
     }
 }
 

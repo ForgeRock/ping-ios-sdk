@@ -54,7 +54,7 @@ struct JourneyView: View {
                             // Authentication successful, retrieve the session
                             VStack{}.onAppear {
                                 path.removeLast()
-                                path.append(.token)
+                                path.append(.journeyToken)
                             }
                         default:
                             EmptyView()

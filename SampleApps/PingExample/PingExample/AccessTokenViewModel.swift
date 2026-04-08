@@ -13,53 +13,62 @@ import Foundation
 import PingLogger
 import PingOidc
 
-/// A view model responsible for managing the access token state.
-/// - This class handles fetching the access token using the DaVinci SDK and logs the results.
-/// - Provides an observable published property for UI updates.
+struct AccessTokenResult {
+    var info: String = ""
+    var error: String? = nil
+    var isLoading: Bool = true
+}
+
 @MainActor
 class AccessTokenViewModel: ObservableObject {
-    /// Published property to hold the current access token.
-    /// - Updates are published to the UI whenever the value changes.
-    @Published var token: String = ""
+    @Published var results: [UserInfoTab: AccessTokenResult] = [
+        .journey: AccessTokenResult(),
+        .davinci: AccessTokenResult(),
+        .oidc: AccessTokenResult()
+    ]
     
-    /// Initializes the `TokenViewModel` and fetches the access token asynchronously.
     init() {
         Task {
-            await accessToken()
+            await fetchAllTokens()
         }
     }
     
-    /// Fetches the access token using the DaVinci SDK.
-    /// - The method checks for a successful token retrieval and updates the `accessToken` property.
-    /// - Logs the success or failure result using `PingLogger`.
-    func accessToken() async {
-        let token: Result<Token, OidcError>?
-        
-        let journeyUser = await ConfigurationManager.shared.journeyUser
-        let davinci = await ConfigurationManager.shared.davinciUser
-        let oidcLoginUser = await ConfigurationManager.shared.oidcUser
-        
-        if journeyUser != nil {
-            token = await journeyUser?.token()
-        } else if davinci != nil {
-            token = await davinci?.token()
-        } else {
-            token = await oidcLoginUser?.token()
+    func fetchAllTokens() async {
+        await withTaskGroup(of: (UserInfoTab, AccessTokenResult).self) { group in
+            group.addTask { await (.journey, self.fetchToken(for: .journey)) }
+            group.addTask { await (.davinci, self.fetchToken(for: .davinci)) }
+            group.addTask { await (.oidc, self.fetchToken(for: .oidc)) }
+            
+            for await (tab, result) in group {
+                results[tab] = result
+            }
         }
-
+    }
+    
+    private func fetchToken(for tab: UserInfoTab) async -> AccessTokenResult {
+        let user: User?
+        switch tab {
+        case .journey:
+            user = await ConfigurationManager.shared.journeyUser
+        case .davinci:
+            user = await ConfigurationManager.shared.davinciUser
+        case .oidc:
+            user = await ConfigurationManager.shared.oidcUser
+        }
+        
+        guard let user = user else {
+            return AccessTokenResult(info: "", error: "No session, please start \(tab.rawValue) flow to authenticate.", isLoading: false)
+        }
+        
+        let token = await user.token()
         switch token {
         case .success(let token):
-            await MainActor.run {
-                self.token = String(describing: token)
-            }
-            LogManager.standard.i("AccessToken: \(self.token)")
+            let description = String(describing: token)
+            LogManager.standard.i("\(tab.rawValue) AccessToken: \(description)")
+            return AccessTokenResult(info: description, isLoading: false)
         case .failure(let error):
-            await MainActor.run {
-                self.token = "Error: \(error.localizedDescription)"
-            }
             LogManager.standard.e("", error: error)
-        case .none:
-            break
+            return AccessTokenResult(info: "", error: error.localizedDescription, isLoading: false)
         }
     }
 }

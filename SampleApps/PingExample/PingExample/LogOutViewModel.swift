@@ -10,30 +10,61 @@
 
 
 import SwiftUI
-/// A view model responsible for managing the logout functionality.
-/// - Handles the logout process for the user and updates the state for UI display.
+import PingOidc
+
+struct SessionInfo: Identifiable {
+    let id = UUID()
+    let tab: UserInfoTab
+    let title: String
+    let description: String
+}
+
 @MainActor
 class LogOutViewModel: ObservableObject {
-    /// A published property that holds the status of the logout process.
-    @Published var logout: String = ""
+    @Published var activeSessions: [SessionInfo] = []
+    @Published var isLoading: Bool = true
     
-    /// Performs the user logout process using the DaVinci SDK.
-    /// - Executes the `logout()` method from the DaVinci or Journey user object asynchronously.
-    /// - Updates the `logout` property with a completion message upon success.
-    func logout() async {
-        let journeyUser = await ConfigurationManager.shared.journeyUser
-        let davinci = await ConfigurationManager.shared.davinciUser
+    init() {
+        Task {
+            await loadSessions()
+        }
+    }
+    
+    func loadSessions() async {
+        isLoading = true
+        var sessions: [SessionInfo] = []
         
-        if journeyUser != nil {
+        if await ConfigurationManager.shared.journeyUser != nil {
+            sessions.append(SessionInfo(tab: .journey, title: "Journey Session", description: "Logout from ForgeRock Journey authentication"))
+        }
+        if await ConfigurationManager.shared.davinciUser != nil {
+            sessions.append(SessionInfo(tab: .davinci, title: "DaVinci Session", description: "Logout from PingOne DaVinci authentication"))
+        }
+        if await ConfigurationManager.shared.oidcUser != nil,
+           case .success = await ConfigurationManager.shared.oidcUser?.token() {
+            sessions.append(SessionInfo(tab: .oidc, title: "OIDC Session", description: "Logout from OIDC Web authentication"))
+        }
+        
+        activeSessions = sessions
+        isLoading = false
+    }
+    
+    func logout(session: SessionInfo) async {
+        switch session.tab {
+        case .journey:
             await ConfigurationManager.shared.journeyUser?.logout()
-        } else if davinci != nil {
+        case .davinci:
             await ConfigurationManager.shared.davinciUser?.logout()
-        } else {
+        case .oidc:
             await ConfigurationManager.shared.oidcUser?.logout()
         }
-        
-        await MainActor.run {
-            logout =  "Logout completed"
-        }
+        activeSessions.removeAll { $0.tab == session.tab }
+    }
+    
+    func logoutAll() async {
+        await ConfigurationManager.shared.journeyUser?.logout()
+        await ConfigurationManager.shared.davinciUser?.logout()
+        await ConfigurationManager.shared.oidcUser?.logout()
+        activeSessions.removeAll()
     }
 }

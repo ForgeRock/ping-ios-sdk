@@ -35,7 +35,7 @@ struct DavinciView: View {
                         // Navigate to the token view on success.
                         VStack{}.onAppear {
                             path.removeLast()
-                            path.append(.token)
+                            path.append(.davinciToken)
                         }
                     case let failureNode as FailureNode:
                         let apiError = failureNode.cause as? ApiError

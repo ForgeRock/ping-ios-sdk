@@ -32,6 +32,7 @@ public let journey = Journey.createJourney { config in
         oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
         oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
+        oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_JOURNEY")
     }
 }
 

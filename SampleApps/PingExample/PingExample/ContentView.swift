@@ -97,6 +97,9 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case storage = "Storage"
     case bindingKeys = "Binding Keys"
     case configuration = "Configuration"
+    case journeyToken = "Journey Token"
+    case davinciToken = "DaVinci Token"
+    case oidcToken = "OIDC Token"
 
     var id: String { rawValue }
     
@@ -118,6 +121,9 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .storage: return "externaldrive.fill"
         case .bindingKeys: return "key.icloud.fill"
         case .configuration: return "gearshape.fill"
+        case .journeyToken: return "map.fill"
+        case .davinciToken: return "key.fill"
+        case .oidcToken: return "lock.shield.fill"
         }
     }
     
@@ -139,6 +145,9 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .storage: return "Storage"
         case .bindingKeys: return "Binding Keys"
         case .configuration: return "Configuration"
+        case .journeyToken: return "Journey Access Token"
+        case .davinciToken: return "DaVinci Access Token"
+        case .oidcToken: return "OIDC Access Token"
         }
     }
     
@@ -160,6 +169,9 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .storage: return "Test storage"
         case .bindingKeys: return "Manage stored binding keys"
         case .configuration: return "Edit configuration"
+        case .journeyToken: return "View Journey token"
+        case .davinciToken: return "View DaVinci token"
+        case .oidcToken: return "View OIDC token"
         }
     }
 }
@@ -224,6 +236,12 @@ struct ContentView: View {
                     PushNotificationsView(path: $path)
                 case .token:
                     AccessTokenView(menuItem: item)
+                case .journeyToken:
+                    AccessTokenView(menuItem: item, fixedTab: .journey)
+                case .davinciToken:
+                    AccessTokenView(menuItem: item, fixedTab: .davinci)
+                case .oidcToken:
+                    AccessTokenView(menuItem: item, fixedTab: .oidc)
                 case .user:
                     UserInfoView(menuItem: item)
                 case .deviceManagement:
