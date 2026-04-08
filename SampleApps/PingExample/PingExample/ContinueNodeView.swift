@@ -2,7 +2,7 @@
 //  ContinueNodeView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -77,9 +77,9 @@ struct ContinueNodeView: View {
                     // PollingCollector instance is produced. This happens both on each normal
                     // polling cycle (Transform creates a fresh collector after every next() call)
                     // and after a rewindStateToLastRenderedUI event.
-                    PollingCollectorView(collector: pollingCollector, onNext: onNext).id(ObjectIdentifier(pollingCollector))
+                    PollingView(collector: pollingCollector, onNext: onNext).id(ObjectIdentifier(pollingCollector))
                 case let qrCodeCollector as QRCodeCollector:
-                    QRCodeCollectorView(collector: qrCodeCollector).id(qrCodeCollector.id)
+                    QRCodeView(collector: qrCodeCollector).id(qrCodeCollector.id)
                 case let protectCollector as ProtectCollector:
                     ProtectView(field: protectCollector, onNodeUpdated: onNodeUpdated).id(protectCollector.hash)
                 case let fidoRegistrationCollector as FidoRegistrationCollector:

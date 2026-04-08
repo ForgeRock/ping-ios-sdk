@@ -1,5 +1,5 @@
 //
-//  PollingCollectorView.swift
+//  PollingView.swift
 //  PingExample
 //
 //  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
@@ -30,7 +30,7 @@ import PingDavinci
 ///   decide the next step.
 ///
 /// - `.error` — the error is surfaced to the user. No automatic submission is made.
-struct PollingCollectorView: View {
+struct PollingView: View {
     let collector: PollingCollector
     let onNext: (Bool) -> Void
 

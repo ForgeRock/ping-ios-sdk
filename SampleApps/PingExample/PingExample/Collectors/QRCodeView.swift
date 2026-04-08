@@ -1,5 +1,5 @@
 //
-//  QRCodeCollectorView.swift
+//  QRCodeView.swift
 //  PingExample
 //
 //  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
@@ -18,7 +18,7 @@ import PingDavinci
 /// If the image data is absent or invalid a placeholder icon is shown instead.
 /// A `fallbackText` (e.g. a URL or manual entry code) is shown below the image
 /// when provided by the server, matching the Android `QRCode` composable.
-struct QRCodeCollectorView: View {
+struct QRCodeView: View {
     let collector: QRCodeCollector
 
     var body: some View {

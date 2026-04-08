@@ -60,7 +60,7 @@ public enum PollingStatus: Sendable {
 /// - `.timedOut` → `"timedOut"`
 /// - `.expired` → `"expired"`
 /// - `.error` → `"error"`
-/// - `.continuing` → `"continue"` 
+/// - `.continue` → `"continue"` 
 public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAware, DaVinciAware, Closeable, @unchecked Sendable {
 
     // MARK: - ContinueNodeAware
@@ -184,7 +184,17 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
         }
 
         let baseUrl = selfHref.components(separatedBy: Constants.davinciConnectionsPathSegment).first ?? selfHref
-        let pollingUrl = "\(baseUrl)\(Constants.challengeStatusPathPrefix)\(challenge)\(Constants.challengeStatusPathSuffix)"
+        guard
+            let encodedChallenge = challenge.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed),
+            let urlComponents = URLComponents(string: "\(baseUrl)\(Constants.challengeStatusPathPrefix)\(encodedChallenge)\(Constants.challengeStatusPathSuffix)"),
+            urlComponents.url != nil,
+            let pollingUrl = urlComponents.url?.absoluteString
+        else {
+            value = Constants.pollingValueError
+            continuation.yield(.error(PollingError.missingConfiguration))
+            return
+        }
+        
         let maxRetries = Int(pollRetries) ?? Constants.defaultPollRetries
         let intervalNs = UInt64((Double(pollInterval) ?? Double(Constants.defaultPollInterval)) * 1_000_000)
 
@@ -218,7 +228,7 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
                     req.post(json: [:])
                 }
 
-                // HTTP 400 means the challenge has expired on the server side.
+                // Any HTTP 400 means the challenge has expired on the server side.
                 // Other non-200 responses are transient — keep polling.
                 guard response.status.isSuccess() else {
                     if response.status.isClientError() {
@@ -236,7 +246,8 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
                     let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
                 else {
                     value = Constants.pollingValueError
-                    continue
+                    continuation.yield(.error(PollingError.invalidResponse))
+                    return
                 }
 
                 let isChallengeComplete = json[Constants.isChallengeComplete] as? Bool ?? false

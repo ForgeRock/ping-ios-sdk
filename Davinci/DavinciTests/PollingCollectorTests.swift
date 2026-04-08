@@ -405,6 +405,66 @@ class PollingCollectorTests: XCTestCase {
             XCTAssertEqual(collector.value, Constants.pollingValueExpired)
         } else { XCTFail("Expected .expired on HTTP 400, got \(statuses[1])") }
     }
+
+    func testChallengePollEmitsErrorOnInvalidJSONResponse() async {
+        // Server returns 200 but the body is not valid JSON → must emit .error(.invalidResponse).
+        let body = "not-json".data(using: .utf8)!
+        MockURLProtocol.requestHandler = { _ in
+            (HTTPURLResponse(url: URL(string: "http://localhost")!, statusCode: 200,
+                             httpVersion: nil, headerFields: nil)!, body)
+        }
+        let collector = makeChallengeCollector(retries: 1)
+
+        var statuses: [PollingStatus] = []
+        for await status in collector.poll() { statuses.append(status) }
+
+        XCTAssertEqual(statuses.count, 2)
+        if case .continue = statuses[0] { } else {
+            XCTFail("Expected .continuing, got \(statuses[0])")
+        }
+        if case .error(let err) = statuses[1] {
+            XCTAssertEqual(collector.value, Constants.pollingValueError)
+            XCTAssertTrue(err is PollingError)
+        } else { XCTFail("Expected .error(.invalidResponse), got \(statuses[1])") }
+    }
+
+    func testChallengeWithSpecialCharactersIsURLEncoded() async {
+        // Challenge containing URL-unsafe characters (/, ?, #, %) must be percent-encoded.
+        let json: [String: Any] = [
+            "pollInterval": "1",
+            "pollRetries": "1",
+            "pollChallengeStatus": true,
+            "challenge": "abc/123?foo#bar%25"
+        ]
+        let collector = PollingCollector(with: json)
+        let input: [String: Any] = [
+            "id": "connector-id",
+            "_links": ["self": ["href": "http://localhost/davinci/connections/ABC/capabilities/customForm"]],
+            "interactionId": "interaction-id"
+        ]
+        let flowCtx = FlowContext(flowContext: SharedContext())
+        let workflow = Workflow.createWorkflow { config in
+            config.httpClient = MockURLProtocol.makeClient()
+        }
+        let node = MockContinueNodeForChallenge(
+            context: flowCtx, workflow: workflow, input: input, actions: [])
+        challengeNode = node
+        collector.continueNode = node
+
+        var capturedURL: String?
+        let body = #"{"isChallengeComplete":true,"status":"approved"}"#.data(using: .utf8)!
+        MockURLProtocol.requestHandler = { request in
+            capturedURL = request.url?.absoluteString
+            return (HTTPURLResponse(url: URL(string: "http://localhost")!, statusCode: 200,
+                                    httpVersion: nil, headerFields: nil)!, body)
+        }
+
+        for await _ in collector.poll() {}
+
+        // Verify the challenge was percent-encoded in the request URL.
+        XCTAssertNotNil(capturedURL)
+        XCTAssertTrue(capturedURL!.contains("abc%2F123%3Ffoo%23bar%2525"), "Expected URL-encoded challenge in: \(capturedURL!)")
+    }
 }
 
 // MARK: - Mock helpers

@@ -111,6 +111,8 @@
 		A5EFA97D2D35F78800F771FE /* ComboBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA97C2D35F78700F771FE /* ComboBoxView.swift */; };
 		A5EFA97F2D35F88D00F771FE /* PasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA97E2D35F88C00F771FE /* PasswordView.swift */; };
 		A5EFA9812D360ACC00F771FE /* ContinueNodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA9802D360AC800F771FE /* ContinueNodeView.swift */; };
+		BB2B00012F0002000000BB01 /* PollingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2B00002F0002000000BB01 /* PollingView.swift */; };
+		BB2B00032F0002000000BB02 /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2B00022F0002000000BB02 /* QRCodeView.swift */; };
 		EC0816BF2D4A832C00F1AD02 /* ConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */; };
 		EC0816C12D4A833400F1AD02 /* ConfigurationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */; };
 		EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */; };
@@ -166,8 +168,6 @@
 		ECE2B8812DB7DBEC00E2C51E /* PhoneNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */; };
 		ECF7EB862E464EDD002A5E8E /* IdpCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB852E464ED8002A5E8E /* IdpCallbackView.swift */; };
 		ECF7EB882E464F31002A5E8E /* SelectIdpCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB872E464F2C002A5E8E /* SelectIdpCallbackView.swift */; };
-		BB2B00012F0002000000BB01 /* PollingCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2B00002F0002000000BB01 /* PollingCollectorView.swift */; };
-		BB2B00032F0002000000BB02 /* QRCodeCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB2B00022F0002000000BB02 /* QRCodeCollectorView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -704,6 +704,8 @@
 		A5EFA97C2D35F78700F771FE /* ComboBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComboBoxView.swift; sourceTree = "<group>"; };
 		A5EFA97E2D35F88C00F771FE /* PasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordView.swift; sourceTree = "<group>"; };
 		A5EFA9802D360AC800F771FE /* ContinueNodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueNodeView.swift; sourceTree = "<group>"; };
+		BB2B00002F0002000000BB01 /* PollingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingView.swift; sourceTree = "<group>"; };
+		BB2B00022F0002000000BB02 /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
 		EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Browser.xcodeproj; path = ../../Browser/Browser.xcodeproj; sourceTree = SOURCE_ROOT; };
 		EC0816BE2D4A832C00F1AD02 /* ConfigurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationView.swift; sourceTree = "<group>"; };
 		EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewModel.swift; sourceTree = "<group>"; };
@@ -745,8 +747,6 @@
 		ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberView.swift; sourceTree = "<group>"; };
 		ECF7EB852E464ED8002A5E8E /* IdpCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpCallbackView.swift; sourceTree = "<group>"; };
 		ECF7EB872E464F2C002A5E8E /* SelectIdpCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectIdpCallbackView.swift; sourceTree = "<group>"; };
-		BB2B00002F0002000000BB01 /* PollingCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingCollectorView.swift; sourceTree = "<group>"; };
-		BB2B00022F0002000000BB02 /* QRCodeCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeCollectorView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1159,8 +1159,8 @@
 				A5E9AEDA2D30A01D000533ED /* LabelView.swift */,
 				A5EFA97E2D35F88C00F771FE /* PasswordView.swift */,
 				ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */,
-				BB2B00002F0002000000BB01 /* PollingCollectorView.swift */,
-				BB2B00022F0002000000BB02 /* QRCodeCollectorView.swift */,
+				BB2B00002F0002000000BB01 /* PollingView.swift */,
+				BB2B00022F0002000000BB02 /* QRCodeView.swift */,
 				A5A31CEB2E0A5B3F00ABBEF7 /* ProtectView.swift */,
 				A5EFA9782D35F62C00F771FE /* RadioButtonView.swift */,
 				ECBF06A32D5391610066A3BD /* SocialButtonView.swift */,
@@ -1974,8 +1974,8 @@
 				EC92B3932DA0422700E4246D /* DeviceCardView.swift in Sources */,
 				ECF7EB882E464F31002A5E8E /* SelectIdpCallbackView.swift in Sources */,
 				ECE2B8812DB7DBEC00E2C51E /* PhoneNumberView.swift in Sources */,
-				BB2B00012F0002000000BB01 /* PollingCollectorView.swift in Sources */,
-				BB2B00032F0002000000BB02 /* QRCodeCollectorView.swift in Sources */,
+				BB2B00012F0002000000BB01 /* PollingView.swift in Sources */,
+				BB2B00032F0002000000BB02 /* QRCodeView.swift in Sources */,
 				A5768D182E29AE87000290EE /* BooleanAttributeInputCallbackView.swift in Sources */,
 				A5768D062E288615000290EE /* PollingWaitCallbackView.swift in Sources */,
 				EC92B38A2DA02D7F00E4246D /* DeviceRegistrationView.swift in Sources */,

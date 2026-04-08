@@ -2,7 +2,7 @@
 //  DavinciViewModel.swift
 //  PingExample
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -32,7 +32,7 @@ public let davinci = DaVinci.createDaVinci { config in
         oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
         oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
         oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
-        oidcValue.acrValues = "ACR_VALUE" //update with actual ACR values if needed or remove
+        oidcValue.acrValues = "" //update with actual ACR values if needed or remove
     }
 
     // CustomHeader module: the supported public API for injecting custom headers into every outbound request.

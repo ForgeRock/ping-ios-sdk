@@ -84,6 +84,18 @@ class QRCodeCollectorTests: XCTestCase {
         XCTAssertEqual(collector.id, "qr-field")
     }
 
+    func testInitializesWithMalformedBase64Content() {
+        let json: [String: Any] = [
+            "key": "qr-field",
+            "content": "data:image/png;base64,%%%not-valid-base64!!!"
+        ]
+
+        let collector = QRCodeCollector(with: json)
+
+        XCTAssertEqual(collector.id, "qr-field")
+        XCTAssertNil(collector.imageData)
+    }
+
     // MARK: - id
 
     func testIdReflectsKeyFromJson() {

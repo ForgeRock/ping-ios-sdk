@@ -1,8 +1,8 @@
 //
 //  Constants.swift
-//  PingDavinci
+//  PingDavinciPlugin
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -91,6 +91,8 @@ public enum Constants {
     public static let phoneNumber = "phoneNumber"
     public static let defaultCountryCode = "defaultCountryCode"
     public static let validatePhoneNumber = "validatePhoneNumber"
+    
+    // MARK: - Polling & QR Code
     public static let POLLING = "POLLING"
     public static let QR_CODE = "QR_CODE"
     public static let pollInterval = "pollInterval"
@@ -102,7 +104,6 @@ public enum Constants {
     public static let rewindStateToSpecificRenderedUI = "rewindStateToSpecificRenderedUI"
     public static let interactionId = "interactionId"
     public static let fallbackText = "fallbackText"
-    public static let base64Image = "base64Image"
     public static let base64Separator = "base64,"
     public static let pollingEventType = "polling"
     public static let pollingValueContinue = "continue"
