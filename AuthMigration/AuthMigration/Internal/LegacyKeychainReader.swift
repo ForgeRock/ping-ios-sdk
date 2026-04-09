@@ -55,6 +55,13 @@ internal class LegacyKeychainReader {
     /// Keychain service for legacy push device tokens.
     static let deviceTokenService = "\(baseService).pushDeviceToken"
 
+    // MARK: - Legacy Class Names (for NSKeyedUnarchiver mapping)
+
+    private static let legacyAccountClass = "FRAuthenticator.Account"
+    private static let legacyTOTPClass = "FRAuthenticator.TOTPMechanism"
+    private static let legacyHOTPClass = "FRAuthenticator.HOTPMechanism"
+    private static let legacyPushClass = "FRAuthenticator.PushMechanism"
+
     // MARK: - Properties
 
     /// Optional Keychain access group matching the legacy SDK configuration.
@@ -193,7 +200,7 @@ internal class LegacyKeychainReader {
 
         unarchiver.requiresSecureCoding = false
         unarchiver.decodingFailurePolicy = .setErrorAndReturn
-        unarchiver.setClass(LegacyAccountArchive.self, forClassName: "FRAuthenticator.Account")
+        unarchiver.setClass(LegacyAccountArchive.self, forClassName: Self.legacyAccountClass)
 
         let account = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? LegacyAccountArchive
         unarchiver.finishDecoding()
@@ -220,9 +227,9 @@ internal class LegacyKeychainReader {
 
         unarchiver.requiresSecureCoding = false
         unarchiver.decodingFailurePolicy = .setErrorAndReturn
-        unarchiver.setClass(LegacyMechanismArchive.self, forClassName: "FRAuthenticator.TOTPMechanism")
-        unarchiver.setClass(LegacyMechanismArchive.self, forClassName: "FRAuthenticator.HOTPMechanism")
-        unarchiver.setClass(LegacyMechanismArchive.self, forClassName: "FRAuthenticator.PushMechanism")
+        unarchiver.setClass(LegacyMechanismArchive.self, forClassName: Self.legacyTOTPClass)
+        unarchiver.setClass(LegacyMechanismArchive.self, forClassName: Self.legacyHOTPClass)
+        unarchiver.setClass(LegacyMechanismArchive.self, forClassName: Self.legacyPushClass)
 
         let mechanism = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? LegacyMechanismArchive
         unarchiver.finishDecoding()

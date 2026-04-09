@@ -23,7 +23,7 @@ final class MigrationProgressTests: XCTestCase {
     }
 
     func testInProgressCase() {
-        let step = MigrationStep(description: "Test step")
+        let step = MigrationStep(id: "test", description: "Test step")
         let progress = MigrationProgress.inProgress(step: step, current: 1, total: 3)
 
         if case .inProgress(let s, let current, let total) = progress {
@@ -36,7 +36,7 @@ final class MigrationProgressTests: XCTestCase {
     }
 
     func testStepCompletedCase() {
-        let step = MigrationStep(description: "Completed step")
+        let step = MigrationStep(id: "completed", description: "Completed step")
         let progress = MigrationProgress.stepCompleted(step: step)
 
         if case .stepCompleted(let s) = progress {
@@ -58,7 +58,7 @@ final class MigrationProgressTests: XCTestCase {
     }
 
     func testErrorCase() {
-        let step = MigrationStep(description: "Error step")
+        let step = MigrationStep(id: "error", description: "Error step")
         let underlyingError = NSError(domain: "TestDomain", code: 42, userInfo: [NSLocalizedDescriptionKey: "Test error"])
         let progress = MigrationProgress.error(step: step, underlyingError: underlyingError)
 

@@ -26,7 +26,7 @@ extension MigrationStep {
     /// This step reads all accounts and mechanisms from the four legacy Keychain service
     /// identifiers, optionally decrypts them using the legacy Secure Enclave key, and
     /// deserializes the `NSKeyedArchiver` payloads into intermediate data models.
-    public static let importLegacyData = MigrationStep(description: "Import legacy data")
+    public static let importLegacyData = MigrationStep(id: "importLegacyData", description: "Import legacy data")
 
     /// Converts legacy mechanisms to new credential formats and stores them.
     ///
@@ -35,12 +35,12 @@ extension MigrationStep {
     /// ``OathStorage`` and ``PushStorage`` implementations. Duplicate credentials
     /// (matching issuer + accountName) are skipped. Individual credential failures do not
     /// abort the step.
-    public static let migrateCredentials = MigrationStep(description: "Migrate credentials")
+    public static let migrateCredentials = MigrationStep(id: "migrateCredentials", description: "Migrate credentials")
 
     /// Cleans up legacy Keychain data after successful migration.
     ///
     /// This step deletes all entries from the four legacy `FRAuthenticator` Keychain services
     /// (accounts, mechanisms, notifications, device tokens). Cleanup failures are logged as
     /// warnings but do not cause the migration to fail.
-    public static let cleanup = MigrationStep(description: "Cleanup legacy data")
+    public static let cleanup = MigrationStep(id: "cleanup", description: "Cleanup legacy data")
 }

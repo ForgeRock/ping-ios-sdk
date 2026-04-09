@@ -13,17 +13,45 @@ import XCTest
 
 final class MigrationStepTests: XCTestCase {
 
-    func testDescription() {
-        let step = MigrationStep(description: "Import legacy data")
+    func testIdAndDescription() {
+        let step = MigrationStep(id: "importData", description: "Import legacy data")
+        XCTAssertEqual(step.id, "importData")
         XCTAssertEqual(step.description, "Import legacy data")
     }
 
     func testCustomStringConvertible() {
-        let step = MigrationStep(description: "Migrate credentials")
+        let step = MigrationStep(id: "migrate", description: "Migrate credentials")
         XCTAssertEqual("\(step)", "Migrate credentials")
     }
 
+    func testEquatableUsesId() {
+        let step1 = MigrationStep(id: "cleanup", description: "Cleanup legacy data")
+        let step2 = MigrationStep(id: "cleanup", description: "Different description")
+        XCTAssertEqual(step1, step2)
+    }
+
+    func testNotEqualWithDifferentId() {
+        let step1 = MigrationStep(id: "step1", description: "Same description")
+        let step2 = MigrationStep(id: "step2", description: "Same description")
+        XCTAssertNotEqual(step1, step2)
+    }
+
+    func testHashableUsesId() {
+        let step1 = MigrationStep(id: "cleanup", description: "Cleanup legacy data")
+        let step2 = MigrationStep(id: "cleanup", description: "Different description")
+        XCTAssertEqual(step1.hashValue, step2.hashValue)
+
+        let set: Set<MigrationStep> = [step1, step2]
+        XCTAssertEqual(set.count, 1)
+    }
+
+    func testIdentifiable() {
+        let step = MigrationStep(id: "importData", description: "Import legacy data")
+        XCTAssertEqual(step.id, "importData")
+    }
+
     func testStaticExtension() {
+        XCTAssertEqual(TestMigrationStep.exampleStep.id, "example")
         XCTAssertEqual(TestMigrationStep.exampleStep.description, "Example step")
     }
 }
@@ -31,7 +59,7 @@ final class MigrationStepTests: XCTestCase {
 // MARK: - Test Extension
 
 private extension MigrationStep {
-    static let exampleStep = MigrationStep(description: "Example step")
+    static let exampleStep = MigrationStep(id: "example", description: "Example step")
 }
 
 private enum TestMigrationStep {

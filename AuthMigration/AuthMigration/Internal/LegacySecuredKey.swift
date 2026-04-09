@@ -103,8 +103,11 @@ internal struct LegacySecuredKey {
             return decrypted as Data
         }
 
-        // Fallback to legacy algorithm
-        error = nil
+        // Fallback to legacy algorithm — release the error from the first attempt
+        if let firstError = error {
+            _ = firstError.takeRetainedValue()
+            error = nil
+        }
         if let decrypted = SecKeyCreateDecryptedData(privateKey, Self.legacyAlgorithm, data as CFData, &error) {
             return decrypted as Data
         }

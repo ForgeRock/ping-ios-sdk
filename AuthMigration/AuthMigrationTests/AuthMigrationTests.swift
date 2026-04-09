@@ -558,6 +558,55 @@ final class AuthMigrationTests: XCTestCase {
         XCTAssertFalse(existsAfter)
     }
 
+    // MARK: - testStart_retryAllowedAfterFailure
+
+    func testStart_retryAllowedAfterFailure() async throws {
+        // Write an account with no mechanisms — pipeline will fail at "no mechanisms found"
+        try TestKeychainHelper.writeLegacyAccount(issuer: "Acme", accountName: "retry@example.com")
+
+        let oathStorage = MockOathStorage()
+
+        // First run — should fail (accounts exist but no mechanisms)
+        var firstEvents: [MigrationProgress] = []
+        let stream1 = AuthMigration.start { config in
+            config.oathStorage = oathStorage
+            config.cleanupLegacyData = false
+        }
+        for await progress in stream1 {
+            firstEvents.append(progress)
+        }
+
+        // Verify it failed
+        let firstRunFailed = firstEvents.contains { progress in
+            if case .error = progress { return true }
+            return false
+        }
+        XCTAssertTrue(firstRunFailed, "First run should fail with no mechanisms")
+
+        // Now add a mechanism so the second run can succeed
+        try TestKeychainHelper.writeLegacyTOTPMechanism(issuer: "Acme", accountName: "retry@example.com")
+
+        // Second run — should be allowed (hasRun is false after failure) and succeed
+        var secondEvents: [MigrationProgress] = []
+        let stream2 = AuthMigration.start { config in
+            config.oathStorage = oathStorage
+            config.cleanupLegacyData = false
+        }
+        for await progress in stream2 {
+            secondEvents.append(progress)
+        }
+
+        let secondRunSucceeded = secondEvents.contains { progress in
+            if case .success = progress { return true }
+            return false
+        }
+        XCTAssertTrue(secondRunSucceeded, "Retry after failure should be allowed and succeed")
+
+        // Verify the credential was actually migrated
+        let credentials = await oathStorage.getAllCredentials()
+        XCTAssertEqual(credentials.count, 1)
+    }
+
     // MARK: - testStart_secondRunIsNoOp_afterCleanup
 
     func testStart_secondRunIsNoOp_afterCleanup() async throws {

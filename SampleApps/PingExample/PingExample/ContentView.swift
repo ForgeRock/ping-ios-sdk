@@ -162,7 +162,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .logger: return "Test logging"
         case .storage: return "Test storage"
         case .bindingKeys: return "Manage stored binding keys"
-        case .migration: return "Migrate legacy SDK data"
+        case .migration: return "Migrate legacy FRAuthenticator data"
         case .configuration: return "Edit configuration"
         }
     }

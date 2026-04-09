@@ -16,15 +16,19 @@ import Foundation
 /// display metadata for a migration step. Each migration module defines its own
 /// steps as `static` properties via extensions.
 ///
+/// The ``id`` property provides a stable, non-localizable identifier for programmatic
+/// checks (e.g., UI state comparisons), while ``description`` is a human-readable,
+/// display-only field that can be freely translated.
+///
 /// ## Defining Custom Steps
 ///
 /// Migration modules extend `MigrationStep` with their own step constants:
 ///
 /// ```swift
 /// extension MigrationStep {
-///     static let importLegacyData   = MigrationStep(description: "Import legacy data")
-///     static let migrateCredentials = MigrationStep(description: "Migrate credentials")
-///     static let cleanup            = MigrationStep(description: "Cleanup legacy data")
+///     static let importLegacyData   = MigrationStep(id: "importLegacyData", description: "Import legacy data")
+///     static let migrateCredentials = MigrationStep(id: "migrateCredentials", description: "Migrate credentials")
+///     static let cleanup            = MigrationStep(id: "cleanup", description: "Cleanup legacy data")
 /// }
 /// ```
 ///
@@ -38,18 +42,36 @@ import Foundation
 /// ```
 ///
 /// - SeeAlso: ``MigrationProgress``
-public struct MigrationStep: Sendable, CustomStringConvertible {
+public struct MigrationStep: Sendable, Identifiable, Equatable, Hashable, CustomStringConvertible {
+
+    /// A stable, non-localizable identifier for the step.
+    ///
+    /// Use this for programmatic checks (e.g., `if step.id == "importLegacyData"`)
+    public let id: String
 
     /// A human-readable description of the step.
     ///
-    /// Used in progress reporting and log messages. Should be a short, descriptive phrase
-    /// such as `"Import legacy data"` or `"Migrate credentials"`.
+    /// Used in progress reporting, log messages, and UI display. Should be a short,
+    /// descriptive phrase such as `"Import legacy data"` or `"Migrate credentials"`.
     public let description: String
 
-    /// Creates a new migration step with the given description.
+    /// Creates a new migration step with the given identifier and description.
     ///
-    /// - Parameter description: A human-readable description of the step.
-    public init(description: String) {
+    /// - Parameters:
+    ///   - id: A stable, non-localizable identifier for programmatic use.
+    ///   - description: A human-readable description of the step.
+    public init(id: String, description: String) {
+        self.id = id
         self.description = description
+    }
+
+    // MARK: - Equatable & Hashable
+
+    public static func == (lhs: MigrationStep, rhs: MigrationStep) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

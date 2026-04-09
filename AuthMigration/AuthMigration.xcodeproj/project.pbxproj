@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4F98594575D26F3DA2349BB5 /* PingAuthMigration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E403689A177A17ADDFB00D1 /* PingAuthMigration.framework */; };
 		AA000001AA000001AA000001 /* AuthMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001BB000001BB000001 /* AuthMigration.swift */; };
 		AA000002AA000002AA000002 /* AuthMigrationConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000002BB000002BB000002 /* AuthMigrationConfig.swift */; };
 		AA000003AA000003AA000003 /* AuthMigrationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000003BB000003BB000003 /* AuthMigrationError.swift */; };
@@ -27,13 +28,12 @@
 		AA000020AA000020AA000020 /* MockOathStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000020BB000020BB000020 /* MockOathStorage.swift */; };
 		AA000021AA000021AA000021 /* MockPushStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000021BB000021BB000021 /* MockPushStorage.swift */; };
 		AA000022AA000022AA000022 /* TestKeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000022BB000022BB000022 /* TestKeychainHelper.swift */; };
-		4F98594575D26F3DA2349BB5 /* PingAuthMigration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E403689A177A17ADDFB00D1 /* PingAuthMigration.framework */; };
 		CE93AE29D8D30575500D1292 /* AuthMigration.h in Headers */ = {isa = PBXBuildFile; fileRef = 426F7D82751B633C4BCBC273 /* AuthMigration.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD8C9336BDB504D2F3C54F62 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C329415C2BDAEA4674A2F9BD /* PrivacyInfo.xcprivacy */; };
 		FF000001FF000001FF000001 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE000001EE000001EE000001 /* PingLogger.framework */; };
 		FF000002FF000002FF000002 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE000002EE000002EE000002 /* PingCommons.framework */; };
 		FF000003FF000003FF000003 /* PingOath.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE000003EE000003EE000003 /* PingOath.framework */; };
 		FF000004FF000004FF000004 /* PingPush.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE000004EE000004EE000004 /* PingPush.framework */; };
-		FD8C9336BDB504D2F3C54F62 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C329415C2BDAEA4674A2F9BD /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,14 +47,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		033FA8BE8B4A1BD353F35ADA /* AuthMigrationTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AuthMigrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		033FA8BE8B4A1BD353F35ADA /* AuthMigrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AuthMigrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		426F7D82751B633C4BCBC273 /* AuthMigration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthMigration.h; sourceTree = "<group>"; };
 		7E403689A177A17ADDFB00D1 /* PingAuthMigration.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingAuthMigration.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C329415C2BDAEA4674A2F9BD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		EE000001EE000001EE000001 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE000002EE000002EE000002 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE000003EE000003EE000003 /* PingOath.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOath.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EE000004EE000004EE000004 /* PingPush.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingPush.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB000001BB000001BB000001 /* AuthMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMigration.swift; sourceTree = "<group>"; };
 		BB000002BB000002BB000002 /* AuthMigrationConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMigrationConfig.swift; sourceTree = "<group>"; };
 		BB000003BB000003BB000003 /* AuthMigrationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMigrationError.swift; sourceTree = "<group>"; };
@@ -75,6 +70,11 @@
 		BB000020BB000020BB000020 /* MockOathStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockOathStorage.swift; sourceTree = "<group>"; };
 		BB000021BB000021BB000021 /* MockPushStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPushStorage.swift; sourceTree = "<group>"; };
 		BB000022BB000022BB000022 /* TestKeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestKeychainHelper.swift; sourceTree = "<group>"; };
+		C329415C2BDAEA4674A2F9BD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		EE000001EE000001EE000001 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE000002EE000002EE000002 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE000003EE000003EE000003 /* PingOath.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOath.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE000004EE000004EE000004 /* PingPush.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingPush.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,27 +100,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		CC000001CC000001CC000001 /* Internal */ = {
-			isa = PBXGroup;
-			children = (
-				BB000005BB000005BB000005 /* LegacyArchiveModels.swift */,
-				BB000006BB000006BB000006 /* LegacyDataConverter.swift */,
-				BB000007BB000007BB000007 /* LegacyKeychainReader.swift */,
-				BB000008BB000008BB000008 /* LegacySecuredKey.swift */,
-			);
-			path = Internal;
-			sourceTree = "<group>";
-		};
-		CC000002CC000002CC000002 /* Mocks */ = {
-			isa = PBXGroup;
-			children = (
-				BB000020BB000020BB000020 /* MockOathStorage.swift */,
-				BB000021BB000021BB000021 /* MockPushStorage.swift */,
-				BB000022BB000022BB000022 /* TestKeychainHelper.swift */,
-			);
-			path = Mocks;
-			sourceTree = "<group>";
-		};
 		02C3051453D35CF02FA83918 /* AuthMigrationTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -170,6 +149,27 @@
 				CC000001CC000001CC000001 /* Internal */,
 			);
 			path = AuthMigration;
+			sourceTree = "<group>";
+		};
+		CC000001CC000001CC000001 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				BB000005BB000005BB000005 /* LegacyArchiveModels.swift */,
+				BB000006BB000006BB000006 /* LegacyDataConverter.swift */,
+				BB000007BB000007BB000007 /* LegacyKeychainReader.swift */,
+				BB000008BB000008BB000008 /* LegacySecuredKey.swift */,
+			);
+			path = Internal;
+			sourceTree = "<group>";
+		};
+		CC000002CC000002CC000002 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				BB000020BB000020BB000020 /* MockOathStorage.swift */,
+				BB000021BB000021BB000021 /* MockPushStorage.swift */,
+				BB000022BB000022BB000022 /* TestKeychainHelper.swift */,
+			);
+			path = Mocks;
 			sourceTree = "<group>";
 		};
 		CF1F4BDD579F9ECD22AC0350 = {
@@ -463,7 +463,6 @@
 		5D1AB5BFF1A3B63F8E5682D6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -480,7 +479,6 @@
 		726A166B7F28BDD475398537 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
