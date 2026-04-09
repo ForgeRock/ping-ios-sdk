@@ -30,7 +30,9 @@ public class NodeTransformModule {
                 let message = json[Constants.message] as? String ?? ""
                 
                 // Filter out client-side "timeout" related unrecoverable failures
-                if json[Constants.code] as? Int == Constants.code_1999 || json[Constants.code] as? String == Constants.requestTimedOut {
+                if json[Constants.code] as? Int == Constants.code_1999 ||
+                    json[Constants.code] as? String == Constants.requestTimedOut ||
+                    json[Constants.code] as? String == Constants.pollingValueTimedOut {
                     return FailureNode(cause: ApiError.error(status, json, body))
                 }
                 

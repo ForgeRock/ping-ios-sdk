@@ -63,6 +63,10 @@ public enum PollingStatus: Sendable {
 /// - `.continue` → `"continue"` 
 public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAware, DaVinciAware, Closeable, @unchecked Sendable {
 
+    /// Serialises access to mutable state (`value`, `retriesAllowed`) that is written by the
+    /// background polling `Task` and read from the main actor (SwiftUI views, form submission).
+    private let lock = NSLock()
+
     // MARK: - ContinueNodeAware
 
     /// The continue node providing configuration context (links, interactionId) for challenge polling.
@@ -83,7 +87,7 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
             let connectorId = node.input[Constants.id] as? String ?? ""
             let contextKey = SharedContext.Keys.pollingRetriesRemaining(connectorId: connectorId, fieldKey: key)
             if let remaining = node.context.flowContext.get(key: contextKey) as? Int {
-                retriesAllowed = remaining
+                lock.withLock { retriesAllowed = remaining }
             }
         }
     }
@@ -95,11 +99,11 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
 
     // MARK: - Properties
 
-    /// Polling interval in milliseconds between each attempt. Default: `"2000"`.
-    public private(set) var pollInterval: String = String(Constants.defaultPollInterval)
+    /// Polling interval in milliseconds between each attempt. Default: `2000`.
+    public private(set) var pollInterval: Int = Constants.defaultPollInterval
 
-    /// Maximum number of polling attempts before timing out. Default: `"60"`.
-    public private(set) var pollRetries: String = String(Constants.defaultPollRetries)
+    /// Maximum number of polling attempts before timing out. Default: `60`.
+    public private(set) var pollRetries: Int = Constants.defaultPollRetries
 
     /// Whether to actively poll the server endpoint for challenge completion. Default: `false`.
     public private(set) var pollChallengeStatus: Bool = false
@@ -117,19 +121,19 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
         super.init(with: json)
         // Accept both String ("2000") and numeric (2000) JSON representations so the collector
         // is robust regardless of whether the server quotes these values.
-        pollInterval = Self.jsonString(json, key: Constants.pollInterval) ?? String(Constants.defaultPollInterval)
-        pollRetries  = Self.jsonString(json, key: Constants.pollRetries)  ?? String(Constants.defaultPollRetries)
+        pollInterval = Self.jsonInt(json, key: Constants.pollInterval) ?? Constants.defaultPollInterval
+        pollRetries  = Self.jsonInt(json, key: Constants.pollRetries)  ?? Constants.defaultPollRetries
         pollChallengeStatus = json[Constants.pollChallengeStatus] as? Bool ?? false
         challenge = json[Constants.challenge] as? String ?? ""
-        retriesAllowed = Int(pollRetries) ?? Constants.defaultPollRetries
+        retriesAllowed = pollRetries
     }
 
-    /// Reads a value from a JSON dict as a `String`, accepting both quoted (`"3"`) and
+    /// Reads a value from a JSON dict as an `Int`, accepting both quoted (`"3"`) and
     /// unquoted (`3`) JSON representations.
-    private static func jsonString(_ json: [String: Any], key: String) -> String? {
-        if let s = json[key] as? String  { return s }
-        if let n = json[key] as? Int     { return String(n) }
-        if let d = json[key] as? Double  { return String(Int(d)) }
+    private static func jsonInt(_ json: [String: Any], key: String) -> Int? {
+        if let s = json[key] as? String  { return Int(s) }
+        if let n = json[key] as? Int     { return n }
+        if let d = json[key] as? Double  { return Int(d) }
         return nil
     }
 
@@ -170,7 +174,8 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
             let selfHref = selfLink[Constants.href] as? String,
             let interactionId = node.input[Constants.interactionId] as? String
         else {
-            value = Constants.pollingValueError
+            davinci?.config.logger.w("Missing selfHref or interactionId for challenge polling", error: PollingError.missingConfiguration)
+            lock.withLock { value = Constants.pollingValueError }
             continuation.yield(.error(PollingError.missingConfiguration))
             return
         }
@@ -178,28 +183,32 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
         // Derive the HTTP client from the workflow stored in the ContinueNode rather than
         // relying on DaVinciAware injection, which may not fire for closure-registered collectors.
         guard let httpClient = node.workflow.config.httpClient else {
-            value = Constants.pollingValueError
+            lock.withLock { value = Constants.pollingValueError }
             continuation.yield(.error(PollingError.missingConfiguration))
             return
         }
 
         let baseUrl = selfHref.components(separatedBy: Constants.davinciConnectionsPathSegment).first ?? selfHref
+        // Use a character set that excludes '/' so slashes in the challenge are percent-encoded
+        // as %2F, preventing them from being interpreted as path separators.
+        var challengeAllowed = CharacterSet.urlPathAllowed
+        challengeAllowed.remove("/")
         guard
-            let encodedChallenge = challenge.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed),
+            let encodedChallenge = challenge.addingPercentEncoding(withAllowedCharacters: challengeAllowed),
             let urlComponents = URLComponents(string: "\(baseUrl)\(Constants.challengeStatusPathPrefix)\(encodedChallenge)\(Constants.challengeStatusPathSuffix)"),
             urlComponents.url != nil,
             let pollingUrl = urlComponents.url?.absoluteString
         else {
-            value = Constants.pollingValueError
+            lock.withLock { value = Constants.pollingValueError }
             continuation.yield(.error(PollingError.missingConfiguration))
             return
         }
         
-        let maxRetries = Int(pollRetries) ?? Constants.defaultPollRetries
-        let intervalNs = UInt64((Double(pollInterval) ?? Double(Constants.defaultPollInterval)) * 1_000_000)
+        let maxRetries = pollRetries
+        let intervalNs = UInt64(pollInterval) * 1_000_000
 
         guard maxRetries > 0 else {
-            value = Constants.pollingValueTimedOut
+            lock.withLock { value = Constants.pollingValueTimedOut }
             continuation.yield(.timedOut)
             return
         }
@@ -209,7 +218,7 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
         // cycles — the status endpoint is polled directly until isChallengeComplete is true.
         for retryCount in 1...maxRetries {
             // Emit the current attempt before sleeping so the UI counter updates immediately.
-            value = Constants.pollingValueContinue
+            lock.withLock { value = Constants.pollingValueContinue }
             continuation.yield(.continue(retryCount: retryCount, maxRetries: maxRetries))
 
             do {
@@ -231,12 +240,13 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
                 // Any HTTP 400 means the challenge has expired on the server side.
                 // Other non-200 responses are transient — keep polling.
                 guard response.status.isSuccess() else {
+                    davinci?.config.logger.i("Server returned non-200 response: \(response.status), \(response.bodyAsString())")
                     if response.status.isClientError() {
-                        value = Constants.pollingValueExpired
+                        lock.withLock { value = Constants.pollingValueExpired }
                         continuation.yield(.expired)
                         return
                     }
-                    value = Constants.pollingValueError
+                    lock.withLock { value = Constants.pollingValueError }
                     continue
                 }
 
@@ -245,7 +255,7 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
                     let data = bodyString.data(using: .utf8),
                     let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
                 else {
-                    value = Constants.pollingValueError
+                    lock.withLock { value = Constants.pollingValueError }
                     continuation.yield(.error(PollingError.invalidResponse))
                     return
                 }
@@ -253,65 +263,75 @@ public class PollingCollector: SingleValueCollector, Submittable, ContinueNodeAw
                 let isChallengeComplete = json[Constants.isChallengeComplete] as? Bool ?? false
                 if isChallengeComplete {
                     let serverStatus = json[Constants.status] as? String ?? ""
-                    value = serverStatus
+                    lock.withLock { value = serverStatus }
                     continuation.yield(.complete(status: serverStatus))
                     return
                 }
                 // Not yet complete — loop to next retry.
             } catch {
-                value = Constants.pollingValueError
+                davinci?.config.logger.w("Error polling challenge status", error: error)
+                lock.withLock { value = Constants.pollingValueError }
                 continuation.yield(.error(error))
                 return
             }
         }
 
-        value = Constants.pollingValueTimedOut
+        lock.withLock { value = Constants.pollingValueTimedOut }
         continuation.yield(.timedOut)
     }
 
     private func pollSimple(continuation: AsyncStream<PollingStatus>.Continuation) async {
-        let interval = Double(pollInterval) ?? 0
-        guard interval > 0 else {
-            value = Constants.pollingValueError
+        guard pollInterval > 0 else {
+            lock.withLock { value = Constants.pollingValueError }
             continuation.yield(.error(PollingError.invalidInterval))
             return
         }
 
-        let totalRetries = Int(pollRetries) ?? Constants.defaultPollRetries
-        let currentAttempt = totalRetries - retriesAllowed + 1
+        let currentAttempt = lock.withLock { pollRetries - retriesAllowed + 1 }
 
         // Emit current attempt immediately so the UI updates the counter before sleeping.
-        continuation.yield(.continue(retryCount: currentAttempt, maxRetries: totalRetries))
+        continuation.yield(.continue(retryCount: currentAttempt, maxRetries: pollRetries))
 
         do {
-            try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000))
+            try await Task.sleep(nanoseconds: UInt64(pollInterval) * 1_000_000)
         } catch {
             // Task.sleep only throws CancellationError.
             return
         }
 
-        retriesAllowed -= 1
+        // Atomically decrement retriesAllowed and determine the terminal status + value.
+        let (updatedRetries, status): (Int, PollingStatus) = lock.withLock {
+            retriesAllowed -= 1
+            if retriesAllowed <= 0 {
+                value = Constants.pollingValueTimedOut
+                return (retriesAllowed, .timedOut)
+            } else {
+                value = Constants.pollingValueContinue
+                return (retriesAllowed, .complete(status: Constants.pollingValueContinue))
+            }
+        }
 
         // Persist the updated count so the next fresh PollingCollector instance (created after
         // DaVinci re-submits and returns the same form) can restore the correct position.
         let connectorId = continueNode?.input[Constants.id] as? String ?? ""
         continueNode?.context.flowContext.set(
             key: SharedContext.Keys.pollingRetriesRemaining(connectorId: connectorId, fieldKey: key),
-            value: retriesAllowed)
+            value: updatedRetries)
 
-        if retriesAllowed <= 0 {
-            value = Constants.pollingValueTimedOut
-            continuation.yield(.timedOut)
-        } else {
-            value = Constants.pollingValueContinue
-            continuation.yield(.complete(status: Constants.pollingValueContinue))
-        }
+        continuation.yield(status)
+    }
+
+    // MARK: - Payload
+
+    /// Thread-safe read of `value` for form submission.
+    public override func payload() -> String? {
+        lock.withLock { value.isEmpty ? nil : value }
     }
 
     // MARK: - Closeable
 
     public func close() {
-        value = ""
+        lock.withLock { value = "" }
     }
 }
 

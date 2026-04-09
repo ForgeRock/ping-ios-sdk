@@ -21,8 +21,8 @@ class PollingCollectorTests: XCTestCase {
     func testDefaultInitialization() {
         let collector = PollingCollector(with: [:])
 
-        XCTAssertEqual(collector.pollInterval, "2000")
-        XCTAssertEqual(collector.pollRetries, "60")
+        XCTAssertEqual(collector.pollInterval, 2000)
+        XCTAssertEqual(collector.pollRetries, 60)
         XCTAssertFalse(collector.pollChallengeStatus)
         XCTAssertEqual(collector.challenge, "")
         XCTAssertEqual(collector.retriesAllowed, 60)
@@ -41,8 +41,8 @@ class PollingCollectorTests: XCTestCase {
 
         let collector = PollingCollector(with: json)
 
-        XCTAssertEqual(collector.pollInterval, "3000")
-        XCTAssertEqual(collector.pollRetries, "10")
+        XCTAssertEqual(collector.pollInterval, 3000)
+        XCTAssertEqual(collector.pollRetries, 10)
         XCTAssertTrue(collector.pollChallengeStatus)
         XCTAssertEqual(collector.challenge, "abc123")
         XCTAssertEqual(collector.retriesAllowed, 10)
@@ -64,9 +64,9 @@ class PollingCollectorTests: XCTestCase {
         // Server may send numeric values without quotes (e.g. pollRetries: 3, pollInterval: 2000).
         let json: [String: Any] = ["pollRetries": 3, "pollInterval": 2000]
         let collector = PollingCollector(with: json)
-        XCTAssertEqual(collector.pollRetries, "3")
+        XCTAssertEqual(collector.pollRetries, 3)
         XCTAssertEqual(collector.retriesAllowed, 3)
-        XCTAssertEqual(collector.pollInterval, "2000")
+        XCTAssertEqual(collector.pollInterval, 2000)
     }
 
     // MARK: - eventType

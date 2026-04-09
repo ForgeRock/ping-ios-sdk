@@ -42,7 +42,7 @@ struct PollingView: View {
         // Seed the initial UI state from the collector. After a DaVinci re-submission the fresh
         // PollingCollector restores retriesAllowed from FlowContext (in continueNode.didSet),
         // so the counter picks up from where the previous cycle left off rather than resetting.
-        let total = Int(collector.pollRetries) ?? 60
+        let total = collector.pollRetries
         let attempt = max(1, total - collector.retriesAllowed + 1)
         _currentStatus = State(initialValue: .continue(retryCount: attempt, maxRetries: total))
     }
