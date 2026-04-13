@@ -71,14 +71,9 @@ final class LegacySecuredKeyTests: XCTestCase {
             return
         }
 
-        // Decrypting random data should throw failedToDecryptLegacyData
+        // Decrypting random data should return nil (matching legacy fallback behavior)
         let randomData = Data([0x01, 0x02, 0x03, 0x04])
-        XCTAssertThrowsError(try key.decrypt(randomData)) { error in
-            if case AuthMigrationError.failedToDecryptLegacyData = error {
-                // Expected
-            } else {
-                XCTFail("Expected failedToDecryptLegacyData, got \(error)")
-            }
-        }
+        let result = key.decrypt(randomData)
+        XCTAssertNil(result, "Decrypting invalid data should return nil")
     }
 }

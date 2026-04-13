@@ -10,7 +10,7 @@
 
 import XCTest
 @testable import PingOath
-import PingPush
+@testable import PingPush
 @testable import PingAuthMigration
 
 final class LegacyDataConverterTests: XCTestCase {
@@ -169,6 +169,10 @@ final class LegacyDataConverterTests: XCTestCase {
     // MARK: - Push Tests
 
     func testToPushCredential_mapsAllFields() {
+        // Use a realistic base64url secret (as stored by the legacy iOS SDK)
+        let base64UrlSecret = "b3uYLkQ7dRPjBaIzV0t_aijoXRgMq-NP5AwVAvRfa_E"
+        let expectedBase64Secret = "b3uYLkQ7dRPjBaIzV0t/aijoXRgMq+NP5AwVAvRfa/E="
+
         let account = LegacyAccountArchive(
             issuer: "MyCompany", accountName: "user@example.com",
             displayIssuer: "My Company", displayAccountName: "User",
@@ -178,7 +182,7 @@ final class LegacyDataConverterTests: XCTestCase {
         )
         let mechanism = LegacyMechanismArchive(
             mechanismUUID: "push-uuid-1", type: "push",
-            secret: "PUSHSECRET", issuer: "MyCompany", accountName: "user@example.com",
+            secret: base64UrlSecret, issuer: "MyCompany", accountName: "user@example.com",
             uid: "user-uid", resourceId: "device-id",
             authEndpoint: "https://am.example.com/json/push?_action=authenticate"
         )
@@ -191,6 +195,7 @@ final class LegacyDataConverterTests: XCTestCase {
         XCTAssertEqual(credential.accountName, "user@example.com")
         XCTAssertEqual(credential.displayAccountName, "User")
         XCTAssertEqual(credential.serverEndpoint, "https://am.example.com/json/push")
+        XCTAssertEqual(credential.sharedSecret, expectedBase64Secret)
         XCTAssertEqual(credential.userId, "user-uid")
         XCTAssertEqual(credential.resourceId, "device-id")
         XCTAssertEqual(credential.imageURL, "https://example.com/img.png")
@@ -201,7 +206,7 @@ final class LegacyDataConverterTests: XCTestCase {
     func testToPushCredential_stripsQueryParamsFromEndpoint() {
         let account = LegacyAccountArchive(issuer: "Org", accountName: "bob")
         let mechanism = LegacyMechanismArchive(
-            mechanismUUID: "uuid", type: "push", secret: "S", issuer: "Org", accountName: "bob",
+            mechanismUUID: "uuid", type: "push", secret: "dGVzdA", issuer: "Org", accountName: "bob",
             authEndpoint: "https://host/path?_action=authenticate"
         )
 
@@ -212,7 +217,7 @@ final class LegacyDataConverterTests: XCTestCase {
     func testToPushCredential_handlesEndpointWithoutQueryParams() {
         let account = LegacyAccountArchive(issuer: "Org", accountName: "bob")
         let mechanism = LegacyMechanismArchive(
-            mechanismUUID: "uuid", type: "push", secret: "S", issuer: "Org", accountName: "bob",
+            mechanismUUID: "uuid", type: "push", secret: "dGVzdA", issuer: "Org", accountName: "bob",
             authEndpoint: "https://host/path"
         )
 
@@ -223,7 +228,7 @@ final class LegacyDataConverterTests: XCTestCase {
     func testToPushCredential_defaultPlatform() {
         let account = LegacyAccountArchive(issuer: "Org", accountName: "bob")
         let mechanism = LegacyMechanismArchive(
-            mechanismUUID: "uuid", type: "push", secret: "S", issuer: "Org", accountName: "bob"
+            mechanismUUID: "uuid", type: "push", secret: "dGVzdA", issuer: "Org", accountName: "bob"
         )
 
         let credential = LegacyDataConverter.toPushCredential(mechanism: mechanism, account: account)
@@ -233,11 +238,52 @@ final class LegacyDataConverterTests: XCTestCase {
     func testToPushCredential_usesResourceIdOrFallsBackToId() {
         let account = LegacyAccountArchive(issuer: "Org", accountName: "bob")
         let mechanism = LegacyMechanismArchive(
-            mechanismUUID: "mechanism-uuid", type: "push", secret: "S",
+            mechanismUUID: "mechanism-uuid", type: "push", secret: "dGVzdA",
             issuer: "Org", accountName: "bob", resourceId: nil
         )
 
         let credential = LegacyDataConverter.toPushCredential(mechanism: mechanism, account: account)
         XCTAssertEqual(credential.resourceId, "mechanism-uuid")
+    }
+
+    // MARK: - Push Secret Base64 Conversion Tests
+
+    func testToPushCredential_recodesBase64UrlSecretToStandardBase64() {
+        // base64url: uses '-' and '_', no padding
+        let base64UrlSecret = "b3uYLkQ7dRPjBaIzV0t_aijoXRgMq-NP5AwVAvRfa_E"
+        // standard base64: uses '+' and '/', with '=' padding
+        let expectedBase64 = "b3uYLkQ7dRPjBaIzV0t/aijoXRgMq+NP5AwVAvRfa/E="
+
+        let account = LegacyAccountArchive(issuer: "Org", accountName: "bob")
+        let mechanism = LegacyMechanismArchive(
+            mechanismUUID: "uuid", type: "push", secret: base64UrlSecret,
+            issuer: "Org", accountName: "bob"
+        )
+
+        let credential = LegacyDataConverter.toPushCredential(mechanism: mechanism, account: account)
+        XCTAssertEqual(credential.sharedSecret, expectedBase64)
+
+        // Verify the result is valid standard base64
+        XCTAssertNotNil(Data(base64Encoded: credential.sharedSecret),
+                        "Converted secret must be valid standard base64")
+    }
+
+    func testToPushCredential_handlesAlreadyStandardBase64Secret() {
+        // A secret that is already in standard base64 should not be corrupted
+        let standardBase64Secret = "b3uYLkQ7dRPjBaIzV0t/aijoXRgMq+NP5AwVAvRfa/E="
+
+        let account = LegacyAccountArchive(issuer: "Org", accountName: "bob")
+        let mechanism = LegacyMechanismArchive(
+            mechanismUUID: "uuid", type: "push", secret: standardBase64Secret,
+            issuer: "Org", accountName: "bob"
+        )
+
+        let credential = LegacyDataConverter.toPushCredential(mechanism: mechanism, account: account)
+
+        // The raw bytes should be identical regardless of input format
+        let expectedData = Data(base64Encoded: standardBase64Secret)
+        let actualData = Data(base64Encoded: credential.sharedSecret)
+        XCTAssertEqual(actualData, expectedData,
+                       "Standard base64 secret should decode to the same bytes")
     }
 }

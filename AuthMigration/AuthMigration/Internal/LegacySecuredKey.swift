@@ -10,6 +10,7 @@
 
 import Foundation
 import Security
+import PingLogger
 
 /// Reads the legacy Secure Enclave key used by `FRAuthenticator` for Keychain data encryption,
 /// and provides decryption of data encrypted by the legacy SDK.
@@ -44,6 +45,9 @@ internal struct LegacySecuredKey {
     /// The private key reference from the Keychain. Used for decryption.
     private let privateKey: SecKey
 
+    /// Logger for diagnostic output.
+    private let logger: Logger?
+
     /// Attempts to load the legacy Secure Enclave key from the Keychain.
     ///
     /// Queries the Keychain for an existing EC key pair with the given application tag.
@@ -53,10 +57,12 @@ internal struct LegacySecuredKey {
     ///   - applicationTag: The Keychain application tag for the legacy key.
     ///     Defaults to ``defaultApplicationTag``.
     ///   - accessGroup: The Keychain access group, if the legacy SDK was configured with one.
+    ///   - logger: Logger for diagnostic output, or `nil` to suppress logging.
     /// - Returns: A `LegacySecuredKey` if the key exists, or `nil` if not found.
     static func load(
         applicationTag: String = defaultApplicationTag,
-        accessGroup: String? = nil
+        accessGroup: String? = nil,
+        logger: Logger? = nil
     ) -> LegacySecuredKey? {
         var query: [String: Any] = [
             kSecClass as String: kSecClassKey,
@@ -73,51 +79,72 @@ internal struct LegacySecuredKey {
         let status = SecItemCopyMatching(query as CFDictionary, &result)
 
         guard status == errSecSuccess, let result = result else {
+            logger?.d("No legacy SecuredKey found in Keychain (OSStatus: \(status))")
             return nil
         }
 
         // result is typed as AnyObject; verify it is actually a SecKey via CFTypeID comparison
         guard CFGetTypeID(result) == SecKeyGetTypeID() else {
+            logger?.w("Keychain returned non-SecKey object for legacy key tag", error: nil)
             return nil
         }
 
         let privateKey = unsafeDowncast(result, to: SecKey.self)
+        logger?.d("Legacy SecuredKey loaded successfully")
 
-        return LegacySecuredKey(privateKey: privateKey)
+        return LegacySecuredKey(privateKey: privateKey, logger: logger)
     }
 
-    /// Decrypts data that was encrypted by the legacy SDK's `SecuredKey`.
+    /// Attempts to decrypt data that was encrypted by the legacy SDK's `SecuredKey`.
     ///
     /// Tries the current algorithm first (``eciesEncryptionCofactorVariableIVX963SHA256AESGCM``).
     /// If that fails, falls back to the legacy algorithm
     /// (``eciesEncryptionCofactorX963SHA256AESGCM``), matching the behavior of the
     /// legacy `FRCore.SecuredKey.decrypt(_:)` method.
     ///
-    /// - Parameter data: The encrypted `Data` blob from the Keychain.
-    /// - Returns: The decrypted `Data`.
-    /// - Throws: ``AuthMigrationError/failedToDecryptLegacyData(_:)`` if both algorithms fail.
-    func decrypt(_ data: Data) throws -> Data {
+    /// Returns `nil` if both algorithms fail, matching the legacy SDK's behavior where
+    /// callers fall back to using the raw (unencrypted) data.
+    ///
+    /// - Parameter data: The potentially encrypted `Data` blob from the Keychain.
+    /// - Returns: The decrypted `Data`, or `nil` if decryption failed with both algorithms.
+    func decrypt(_ data: Data) -> Data? {
+        logger?.d("Attempting decryption of \(data.count)-byte payload")
+
         // Try current algorithm first
         var error: Unmanaged<CFError>?
         if let decrypted = SecKeyCreateDecryptedData(privateKey, Self.currentAlgorithm, data as CFData, &error) {
+            logger?.d("Decryption succeeded with current algorithm (\(data.count) -> \((decrypted as Data).count) bytes)")
             return decrypted as Data
         }
 
-        // Fallback to legacy algorithm — release the error from the first attempt
+        // Log the first failure
+        let firstErrorDesc: String
         if let firstError = error {
-            _ = firstError.takeRetainedValue()
+            let cfError = firstError.takeRetainedValue()
+            firstErrorDesc = (cfError as Error).localizedDescription
             error = nil
+        } else {
+            firstErrorDesc = "unknown error"
         }
+        logger?.d("Current algorithm failed: \(firstErrorDesc) — trying legacy algorithm")
+
+        // Fallback to legacy algorithm
         if let decrypted = SecKeyCreateDecryptedData(privateKey, Self.legacyAlgorithm, data as CFData, &error) {
+            logger?.d("Decryption succeeded with legacy algorithm (\(data.count) -> \((decrypted as Data).count) bytes)")
             return decrypted as Data
         }
 
         // Both failed
-        let cfError = error?.takeRetainedValue()
-        throw AuthMigrationError.failedToDecryptLegacyData(
-            cfError.map { $0 as Error } ?? NSError(domain: "LegacySecuredKey", code: -1, userInfo: [
-                NSLocalizedDescriptionKey: "Failed to decrypt data with both current and legacy algorithms"
-            ])
-        )
+        let secondErrorDesc: String
+        if let secondError = error {
+            let cfError = secondError.takeRetainedValue()
+            secondErrorDesc = (cfError as Error).localizedDescription
+        } else {
+            secondErrorDesc = "unknown error"
+        }
+        logger?.w("Decryption failed with both algorithms for \(data.count)-byte payload. "
+                   + "Current: \(firstErrorDesc). Legacy: \(secondErrorDesc)", error: nil)
+
+        return nil
     }
 }

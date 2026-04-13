@@ -83,7 +83,7 @@ internal class LegacyKeychainReader {
     ///   - logger: Logger for diagnostic output, or `nil` to suppress logging.
     init(accessGroup: String? = nil, logger: Logger? = nil) {
         self.accessGroup = accessGroup
-        self.securedKey = LegacySecuredKey.load(accessGroup: accessGroup)
+        self.securedKey = LegacySecuredKey.load(accessGroup: accessGroup, logger: logger)
         self.logger = logger
 
         if securedKey != nil {
@@ -101,20 +101,25 @@ internal class LegacyKeychainReader {
     ///
     /// - Returns: `true` if at least one account or mechanism entry exists.
     func legacyDataExists() -> Bool {
-        return itemCount(service: Self.accountService) > 0
-            || itemCount(service: Self.mechanismService) > 0
+        let accountCount = itemCount(service: Self.accountService)
+        let mechanismCount = itemCount(service: Self.mechanismService)
+        logger?.d("Legacy Keychain item counts — accounts: \(accountCount), mechanisms: \(mechanismCount)")
+        return accountCount > 0 || mechanismCount > 0
     }
 
     /// Reads and deserializes all legacy accounts from the Keychain.
     ///
+    /// Individual items that fail decryption or deserialization are skipped (logged as warnings),
+    /// matching the legacy SDK's graceful degradation behavior.
+    ///
     /// - Returns: An array of ``LegacyAccountArchive`` instances.
     /// - Throws: ``AuthMigrationError/failedToReadLegacyData(_:)`` if the Keychain query fails.
-    /// - Throws: ``AuthMigrationError/failedToDecryptLegacyData(_:)`` if decryption fails.
-    /// - Throws: ``AuthMigrationError/failedToDeserializeLegacyData(_:)`` if unarchiving fails.
     func getAllAccounts() throws -> [LegacyAccountArchive] {
         let dataItems = try readAllItems(service: Self.accountService)
-        return try dataItems.compactMap { data in
-            try deserializeAccount(data)
+        logger?.d("Read \(dataItems.count) raw account items from Keychain")
+        return dataItems.enumerated().compactMap { index, data in
+            logger?.d("Deserializing account [\(index)]: \(data.count) bytes")
+            return deserializeAccount(data, index: index)
         }
     }
 
@@ -122,12 +127,12 @@ internal class LegacyKeychainReader {
     ///
     /// - Returns: An array of ``LegacyMechanismArchive`` instances.
     /// - Throws: ``AuthMigrationError/failedToReadLegacyData(_:)`` if the Keychain query fails.
-    /// - Throws: ``AuthMigrationError/failedToDecryptLegacyData(_:)`` if decryption fails.
-    /// - Throws: ``AuthMigrationError/failedToDeserializeLegacyData(_:)`` if unarchiving fails.
     func getAllMechanisms() throws -> [LegacyMechanismArchive] {
         let dataItems = try readAllItems(service: Self.mechanismService)
-        return try dataItems.compactMap { data in
-            try deserializeMechanism(data)
+        logger?.d("Read \(dataItems.count) raw mechanism items from Keychain")
+        return dataItems.enumerated().compactMap { index, data in
+            logger?.d("Deserializing mechanism [\(index)]: \(data.count) bytes")
+            return deserializeMechanism(data, index: index)
         }
     }
 
@@ -178,24 +183,33 @@ internal class LegacyKeychainReader {
     }
 
     /// Optionally decrypts data if a SecuredKey is available.
-    private func decryptIfNeeded(_ data: Data) throws -> Data {
+    ///
+    /// Matches the legacy SDK's fallback behavior: if decryption fails, the raw data
+    /// is returned as-is. This handles the case where data was stored unencrypted
+    /// despite a SecuredKey existing (e.g., encryption failed at write time).
+    private func decryptIfNeeded(_ data: Data) -> Data {
         guard let securedKey = securedKey else {
             return data
         }
-        return try securedKey.decrypt(data)
+        if let decrypted = securedKey.decrypt(data) {
+            return decrypted
+        }
+        // Fallback to raw data — matches legacy KeychainService.getData() behavior
+        logger?.w("Decryption failed — falling back to raw data (\(data.count) bytes). "
+                   + "Data may not have been encrypted.", error: nil)
+        return data
     }
 
     /// Deserializes a single Account from raw Keychain data.
-    private func deserializeAccount(_ data: Data) throws -> LegacyAccountArchive? {
-        let decrypted = try decryptIfNeeded(data)
+    private func deserializeAccount(_ data: Data, index: Int) -> LegacyAccountArchive? {
+        let decrypted = decryptIfNeeded(data)
 
         let unarchiver: NSKeyedUnarchiver
         do {
             unarchiver = try NSKeyedUnarchiver(forReadingFrom: decrypted)
         } catch {
-            throw AuthMigrationError.failedToDeserializeLegacyData(
-                "Failed to create unarchiver for Account: \(error.localizedDescription)"
-            )
+            logger?.e("Account [\(index)]: Failed to create unarchiver — \(error.localizedDescription)", error: error)
+            return nil
         }
 
         unarchiver.requiresSecureCoding = false
@@ -205,24 +219,25 @@ internal class LegacyKeychainReader {
         let account = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? LegacyAccountArchive
         unarchiver.finishDecoding()
 
-        if account == nil {
-            logger?.w("Failed to deserialize an Account entry — skipping", error: nil)
+        if let account = account {
+            logger?.d("Account [\(index)]: Deserialized — issuer=\(account.issuer), accountName=\(account.accountName)")
+        } else {
+            logger?.w("Account [\(index)]: Failed to deserialize — skipping", error: nil)
         }
 
         return account
     }
 
     /// Deserializes a single Mechanism from raw Keychain data.
-    private func deserializeMechanism(_ data: Data) throws -> LegacyMechanismArchive? {
-        let decrypted = try decryptIfNeeded(data)
+    private func deserializeMechanism(_ data: Data, index: Int) -> LegacyMechanismArchive? {
+        let decrypted = decryptIfNeeded(data)
 
         let unarchiver: NSKeyedUnarchiver
         do {
             unarchiver = try NSKeyedUnarchiver(forReadingFrom: decrypted)
         } catch {
-            throw AuthMigrationError.failedToDeserializeLegacyData(
-                "Failed to create unarchiver for Mechanism: \(error.localizedDescription)"
-            )
+            logger?.e("Mechanism [\(index)]: Failed to create unarchiver — \(error.localizedDescription)", error: error)
+            return nil
         }
 
         unarchiver.requiresSecureCoding = false
@@ -234,8 +249,12 @@ internal class LegacyKeychainReader {
         let mechanism = unarchiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? LegacyMechanismArchive
         unarchiver.finishDecoding()
 
-        if mechanism == nil {
-            logger?.w("Failed to deserialize a Mechanism entry — skipping", error: nil)
+        if let mechanism = mechanism {
+            logger?.d("Mechanism [\(index)]: Deserialized — type=\(mechanism.type), "
+                       + "issuer=\(mechanism.issuer), accountName=\(mechanism.accountName), "
+                       + "uuid=\(mechanism.mechanismUUID)")
+        } else {
+            logger?.w("Mechanism [\(index)]: Failed to deserialize — skipping", error: nil)
         }
 
         return mechanism

@@ -44,10 +44,14 @@ class AuthMigrationViewModel: ObservableObject {
     @Published var summaryMessage: String? = nil
     @Published var errorMessage: String? = nil
 
+    private var logger: Logger? { LogManager.logger }
+
     /// Checks whether legacy FRAuthenticator data exists in the Keychain.
     func checkMigrationNeeded() async {
         migrationStatus = .checking
+        logger?.i("Checking if migration is needed...")
         let needed = await AuthMigration.isMigrationNeeded()
+        logger?.i("Migration needed: \(needed)")
         isMigrationNeeded = needed
         migrationStatus = .idle
     }
@@ -60,6 +64,8 @@ class AuthMigrationViewModel: ObservableObject {
         errorMessage = nil
         migrationStatus = .running
 
+        logger?.i("Starting migration pipeline...")
+
         let stream = AuthMigration.start { config in
             config.logger = LogManager.logger
         }
@@ -67,9 +73,10 @@ class AuthMigrationViewModel: ObservableObject {
         for await progress in stream {
             switch progress {
             case .started:
-                break
+                logger?.i("Migration stream started")
 
-            case .inProgress(let step, _, _):
+            case .inProgress(let step, let current, let total):
+                logger?.i("Migration step \(current)/\(total): \(step.description)")
                 stepResults.append(
                     MigrationStepResult(
                         stepDescription: step.description,
@@ -78,17 +85,20 @@ class AuthMigrationViewModel: ObservableObject {
                 )
 
             case .stepCompleted(let step):
+                logger?.i("Migration step completed: \(step.description)")
                 if let index = stepResults.lastIndex(where: { $0.stepDescription == step.description }) {
                     stepResults[index].status = .completed
                 }
 
             case .success(let message):
+                logger?.i("Migration succeeded: \(message)")
                 summaryMessage = message
                 migrationStatus = .completed
                 // Refresh the check
                 isMigrationNeeded = false
 
             case .error(let step, let error):
+                logger?.e("Migration failed at \"\(step.description)\": \(error)", error: error)
                 if let index = stepResults.lastIndex(where: { $0.stepDescription == step.description }) {
                     stepResults[index].status = .failed(error.localizedDescription)
                 }
@@ -104,6 +114,7 @@ class AuthMigrationViewModel: ObservableObject {
         if migrationStatus == .running {
             migrationStatus = .completed
             if summaryMessage == nil {
+                logger?.i("Migration stream ended — no legacy data to migrate")
                 summaryMessage = "No legacy data to migrate."
             }
         }

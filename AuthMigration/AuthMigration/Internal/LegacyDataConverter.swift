@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingCommons
 import PingOath
 import PingPush
 
@@ -38,6 +39,20 @@ import PingPush
 internal struct LegacyDataConverter {
 
     // MARK: - Private Helpers
+
+    /// Recodes a legacy base64url-encoded secret to standard base64 for the new PingPush SDK.
+    ///
+    /// The legacy iOS `FRAuthenticator` SDK stores the push shared secret in base64url format
+    /// (with `-`/`_` characters and no `=` padding), exactly as received from the QR code URI.
+    /// The new `PingPush` SDK expects standard base64 (with `+`/`/` characters and `=` padding).
+    ///
+    /// Falls back to the original string if decoding fails (e.g., already standard base64).
+    private static func recodeSecretToStandardBase64(_ secret: String) -> String {
+        if let data = Base64.decodeBase64UrlToData(secret) {
+            return data.base64EncodedString()
+        }
+        return secret
+    }
 
     /// Returns the account's `timeAdded` if it has a positive epoch value; otherwise falls back
     /// to the mechanism's `timeAdded`.
@@ -135,7 +150,7 @@ internal struct LegacyDataConverter {
             accountName: account.accountName,
             displayAccountName: account.displayAccountName ?? account.accountName,
             serverEndpoint: serverEndpoint,
-            sharedSecret: mechanism.secret,
+            sharedSecret: recodeSecretToStandardBase64(mechanism.secret),
             createdAt: createdAt,
             imageURL: account.imageUrl,
             backgroundColor: account.backgroundColor,
