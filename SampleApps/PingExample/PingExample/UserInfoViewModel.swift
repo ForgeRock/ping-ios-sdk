@@ -13,9 +13,9 @@ import SwiftUI
 import PingLogger
 import PingOidc
 
-/// Authentication tab types used across User Info and Access Token views.
+/// Authentication tab types used across multiple views (User Info, Access Token, Log Out).
 /// Each case maps to an SDK auth flow with a display name and SF Symbol icon.
-enum UserInfoTab: String, CaseIterable, Identifiable {
+enum AuthTab: String, CaseIterable, Identifiable {
     case journey = "Journey"
     case davinci = "DaVinci"
     case oidc = "OIDC (Web)"
@@ -43,7 +43,7 @@ struct UserInfoResult {
 @MainActor
 class UserInfoViewModel: ObservableObject {
     /// Per-tab user info results, keyed by authentication type.
-    @Published var results: [UserInfoTab: UserInfoResult] = [
+    @Published var results: [AuthTab: UserInfoResult] = [
         .journey: UserInfoResult(),
         .davinci: UserInfoResult(),
         .oidc: UserInfoResult()
@@ -57,7 +57,7 @@ class UserInfoViewModel: ObservableObject {
     
     /// Fetches user info for all tabs concurrently.
     func fetchAllUserInfo() async {
-        await withTaskGroup(of: (UserInfoTab, UserInfoResult).self) { group in
+        await withTaskGroup(of: (AuthTab, UserInfoResult).self) { group in
             group.addTask { await (.journey, self.fetchUserInfo(for: .journey)) }
             group.addTask { await (.davinci, self.fetchUserInfo(for: .davinci)) }
             group.addTask { await (.oidc, self.fetchUserInfo(for: .oidc)) }
@@ -68,7 +68,7 @@ class UserInfoViewModel: ObservableObject {
         }
     }
     
-    private func fetchUserInfo(for tab: UserInfoTab) async -> UserInfoResult {
+    private func fetchUserInfo(for tab: AuthTab) async -> UserInfoResult {
         let user: User?
         switch tab {
         case .journey:

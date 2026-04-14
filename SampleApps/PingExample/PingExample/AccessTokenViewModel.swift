@@ -26,7 +26,7 @@ struct AccessTokenResult {
 @MainActor
 class AccessTokenViewModel: ObservableObject {
     /// Per-tab access token results, keyed by authentication type.
-    @Published var results: [UserInfoTab: AccessTokenResult] = [
+    @Published var results: [AuthTab: AccessTokenResult] = [
         .journey: AccessTokenResult(),
         .davinci: AccessTokenResult(),
         .oidc: AccessTokenResult()
@@ -40,7 +40,7 @@ class AccessTokenViewModel: ObservableObject {
     
     /// Fetches tokens for all tabs concurrently.
     func fetchAllTokens() async {
-        await withTaskGroup(of: (UserInfoTab, AccessTokenResult).self) { group in
+        await withTaskGroup(of: (AuthTab, AccessTokenResult).self) { group in
             group.addTask { await (.journey, self.fetchToken(for: .journey)) }
             group.addTask { await (.davinci, self.fetchToken(for: .davinci)) }
             group.addTask { await (.oidc, self.fetchToken(for: .oidc)) }
@@ -51,7 +51,7 @@ class AccessTokenViewModel: ObservableObject {
         }
     }
     
-    private func fetchToken(for tab: UserInfoTab) async -> AccessTokenResult {
+    private func fetchToken(for tab: AuthTab) async -> AccessTokenResult {
         let user: User?
         switch tab {
         case .journey:
@@ -79,7 +79,7 @@ class AccessTokenViewModel: ObservableObject {
     }
     
     /// Refreshes the access token for the given tab.
-    func refresh(tab: UserInfoTab) async {
+    func refresh(tab: AuthTab) async {
         let user = await userFor(tab: tab)
         guard let user = user else { return }
         
@@ -96,7 +96,7 @@ class AccessTokenViewModel: ObservableObject {
     }
     
     /// Revokes the access token for the given tab and checks if the session persists.
-    func revoke(tab: UserInfoTab) async {
+    func revoke(tab: AuthTab) async {
         let user = await userFor(tab: tab)
         guard let user = user else { return }
         
@@ -107,12 +107,12 @@ class AccessTokenViewModel: ObservableObject {
     }
     
     /// Re-fetches the token for the given tab (used after revoke when a session still exists).
-    func getToken(tab: UserInfoTab) async {
+    func getToken(tab: AuthTab) async {
         results[tab] = AccessTokenResult()
         results[tab] = await fetchToken(for: tab)
     }
     
-    private func userFor(tab: UserInfoTab) async -> User? {
+    private func userFor(tab: AuthTab) async -> User? {
         switch tab {
         case .journey:
             return await ConfigurationManager.shared.journeyUser

@@ -15,11 +15,11 @@ import SwiftUI
 struct UserInfoView: View {
     let menuItem: MenuItem
     @StateObject private var userInfoViewModel = UserInfoViewModel()
-    @State private var selectedTab: UserInfoTab = .journey
+    @State private var selectedTab: AuthTab = .journey
     
     var body: some View {
         VStack(spacing: 0) {
-            userInfoTabPicker
+            TabPicker(selection: $selectedTab, label: \.rawValue, icon: \.icon)
             
             let result = userInfoViewModel.results[selectedTab] ?? UserInfoResult()
             
@@ -28,7 +28,7 @@ struct UserInfoView: View {
                 ProgressView()
                 Spacer()
             } else if let error = result.error {
-                UserInfoErrorView(title: "\(selectedTab.rawValue) Error", message: error)
+                ErrorView(title: "\(selectedTab.rawValue) Error", message: error)
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
                 Spacer()
@@ -44,49 +44,6 @@ struct UserInfoView: View {
         .navigationTitle(menuItem.title)
     }
     
-    private var userInfoTabPicker: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                ForEach(UserInfoTab.allCases) { tab in
-                    userInfoTabButton(tab)
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-        }
-        .background(Color(.secondarySystemGroupedBackground))
-    }
-    
-    private func userInfoTabButton(_ tab: UserInfoTab) -> some View {
-        Button {
-            selectedTab = tab
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: tab.icon)
-                    .font(.system(size: 14))
-                Text(tab.rawValue)
-                    .font(.system(size: 14, weight: .medium))
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(
-                selectedTab == tab
-                    ? LinearGradient(
-                        colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                    : LinearGradient(
-                        colors: [Color(.systemGray5), Color(.systemGray5)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-            )
-            .foregroundColor(selectedTab == tab ? .white : .primary)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
     
     private func userInfoCard(_ info: String) -> some View {
         let pairs = parseUserInfo(info)
@@ -139,25 +96,3 @@ private struct UserInfoPair: Identifiable {
     var id: String { key }
 }
 
-/// A reusable error card view shown when user info or token fetch fails.
-struct UserInfoErrorView: View {
-    let title: String
-    let message: String
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(Color(.systemRed))
-            Text(message)
-                .font(.system(size: 13))
-                .foregroundStyle(Color(.systemRed))
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.red.opacity(0.08))
-        )
-    }
-}

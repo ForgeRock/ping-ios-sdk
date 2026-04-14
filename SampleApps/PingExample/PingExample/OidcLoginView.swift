@@ -32,7 +32,7 @@ struct OidcLoginView: View {
                             path.append(.oidcToken)
                         }
                     case .failure(let error):
-                        ErrorView(message: error.localizedDescription)
+                        ErrorView(title: "OIDC Error", message: error.localizedDescription)
                     case .none:
                         EmptyView()
                     }

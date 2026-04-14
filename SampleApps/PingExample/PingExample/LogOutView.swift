@@ -29,14 +29,10 @@ struct LogOutView: View {
                         }
                         .padding(.top, 40)
                     } else if logoutViewModel.activeSessions.isEmpty {
-                        VStack(spacing: 12) {
-                            Image(systemName: "checkmark.shield.fill")
-                                .font(.system(size: 40))
-                                .foregroundColor(.secondary)
-                            Text("No Active Sessions")
-                                .font(.headline)
-                                .foregroundColor(.primary)
-                        }
+                        EmptyStateView(
+                            icon: "checkmark.shield.fill",
+                            title: "No Active Sessions"
+                        )
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .padding(.top, 200)
                     } else {

@@ -49,7 +49,7 @@ struct JourneyView: View {
                                 CallbackView(journeyViewModel: journeyViewModel, node: nextNode)
                             }
                         case let failureNode as FailureNode:
-                            ErrorView(message: failureNode.cause.localizedDescription)
+                            ErrorView(title: "Journey Failure", message: failureNode.cause.localizedDescription)
                         case is SuccessNode:
                             // Authentication successful, retrieve the session
                             VStack{}.onAppear {

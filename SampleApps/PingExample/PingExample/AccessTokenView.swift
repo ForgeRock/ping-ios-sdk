@@ -17,11 +17,11 @@ import SwiftUI
 struct AccessTokenView: View {
     let menuItem: MenuItem
     /// When non-nil, locks the view to a single tab (hides the tab picker).
-    let fixedTab: UserInfoTab?
+    let fixedTab: AuthTab?
     @StateObject private var accessTokenViewModel = AccessTokenViewModel()
-    @State private var selectedTab: UserInfoTab = .journey
+    @State private var selectedTab: AuthTab = .journey
     
-    init(menuItem: MenuItem, fixedTab: UserInfoTab? = nil) {
+    init(menuItem: MenuItem, fixedTab: AuthTab? = nil) {
         self.menuItem = menuItem
         self.fixedTab = fixedTab
         self._selectedTab = State(initialValue: fixedTab ?? .journey)
@@ -30,17 +30,16 @@ struct AccessTokenView: View {
     var body: some View {
         VStack(spacing: 0) {
             if fixedTab == nil {
-                accessTokenTabPicker
+                TabPicker(selection: $selectedTab, label: \.rawValue, icon: \.icon)
             }
             
             let result = accessTokenViewModel.results[selectedTab] ?? AccessTokenResult()
             
             if result.isLoading {
-                Spacer()
-                ProgressView()
-                Spacer()
+                Color(.systemGroupedBackground)
+                    .overlay(ProgressView())
             } else if let error = result.error {
-                UserInfoErrorView(title: "\(selectedTab.rawValue) Error", message: error)
+                ErrorView(title: "\(selectedTab.rawValue) Error", message: error)
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
                 Spacer()
@@ -124,49 +123,6 @@ struct AccessTokenView: View {
         .background(Color(.secondarySystemGroupedBackground))
     }
     
-    private var accessTokenTabPicker: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                ForEach(UserInfoTab.allCases) { tab in
-                    accessTokenTabButton(tab)
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-        }
-        .background(Color(.secondarySystemGroupedBackground))
-    }
-    
-    private func accessTokenTabButton(_ tab: UserInfoTab) -> some View {
-        Button {
-            selectedTab = tab
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: tab.icon)
-                    .font(.system(size: 14))
-                Text(tab.rawValue)
-                    .font(.system(size: 14, weight: .medium))
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(
-                selectedTab == tab
-                    ? LinearGradient(
-                        colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                    : LinearGradient(
-                        colors: [Color(.systemGray5), Color(.systemGray5)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-            )
-            .foregroundColor(selectedTab == tab ? .white : .primary)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-        }
-        .buttonStyle(PlainButtonStyle())
-    }
     
     private func accessTokenCard(_ info: String) -> some View {
         let pairs = parseTokenInfo(info)

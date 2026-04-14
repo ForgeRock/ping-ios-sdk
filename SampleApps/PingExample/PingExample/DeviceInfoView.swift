@@ -27,7 +27,7 @@ struct DeviceInfoView: View {
                 ProgressView()
             } else if let error = deviceInfoViewModel.error {
                 VStack {
-                    UserInfoErrorView(title: "Device Info Error", message: error)
+                    ErrorView(title: "Device Info Error", message: error)
                         .padding(.horizontal, 20)
                         .padding(.top, 8)
                     Spacer()

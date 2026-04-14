@@ -77,7 +77,15 @@ struct DeviceManagementView: View {
     private var mainContentView: some View {
         VStack(spacing: 0) {
             // Device Type Picker
-            deviceTypePicker
+            TabPicker(
+                selection: $viewModel.selectedDeviceType,
+                label: \.rawValue,
+                icon: \.icon,
+                onSelect: { type in
+                    Task { await viewModel.loadDevices(for: type) }
+                },
+                isDisabled: viewModel.isLoading
+            )
             
             // Content
             if viewModel.isLoading {
@@ -109,23 +117,11 @@ struct DeviceManagementView: View {
     // MARK: - Initialization Error View
     
     private var initializationErrorView: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 60))
-                .foregroundColor(.orange)
-            
-            Text("Initialization Failed")
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(.primary)
-            
-            if let error = viewModel.errorMessage {
-                Text(error)
-                    .font(.system(size: 15))
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
-            }
-            
+        EmptyStateView(
+            icon: "exclamationmark.triangle.fill",
+            title: "Initialization Failed",
+            subtitle: viewModel.errorMessage
+        ) {
             Button {
                 Task {
                     initializationFailed = false
@@ -158,56 +154,6 @@ struct DeviceManagementView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
-    }
-    
-    // MARK: - Device Type Picker
-    
-    private var deviceTypePicker: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                ForEach(DeviceType.allCases) { type in
-                    deviceTypeButton(type)
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-        }
-        .background(Color(.secondarySystemGroupedBackground))
-    }
-    
-    private func deviceTypeButton(_ type: DeviceType) -> some View {
-        Button {
-            Task {
-                await viewModel.loadDevices(for: type)
-            }
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: type.icon)
-                    .font(.system(size: 14))
-                
-                Text(type.rawValue)
-                    .font(.system(size: 14, weight: .medium))
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(
-                viewModel.selectedDeviceType == type
-                    ? LinearGradient(
-                        colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                    : LinearGradient(
-                        colors: [Color(.systemGray5), Color(.systemGray5)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-            )
-            .foregroundColor(viewModel.selectedDeviceType == type ? .white : .primary)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-        }
-        .buttonStyle(PlainButtonStyle())
-        .disabled(viewModel.isLoading)
     }
     
     // MARK: - Loading View
@@ -270,21 +216,11 @@ struct DeviceManagementView: View {
     // MARK: - Empty State
     
     private var emptyStateView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "tray")
-                .font(.system(size: 48))
-                .foregroundColor(.secondary)
-            
-            Text("No Devices Found")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.primary)
-            
-            Text("No \(viewModel.selectedDeviceType.rawValue.lowercased()) devices are registered for this user.")
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-        }
+        EmptyStateView(
+            icon: "tray",
+            title: "No Devices Found",
+            subtitle: "No \(viewModel.selectedDeviceType.rawValue.lowercased()) devices are registered for this user."
+        )
         .frame(maxWidth: .infinity)
         .padding(.vertical, 80)
     }

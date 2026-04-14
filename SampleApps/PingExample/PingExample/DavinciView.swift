@@ -42,10 +42,10 @@ struct DavinciView: View {
                         switch apiError {
                         case .error(_, _, let message):
                             // Show error message from the API.
-                            ErrorView(message: message)
+                            ErrorView(title: "DaVinci Error", message: message)
                         default:
                             // Show a default error message.
-                            ErrorView(message: "unknown error")
+                            ErrorView(title: "DaVinci Error", message: "unknown error")
                         }
                     case let errorNode as ErrorNode:
                         ErrorNodeView(node: errorNode)

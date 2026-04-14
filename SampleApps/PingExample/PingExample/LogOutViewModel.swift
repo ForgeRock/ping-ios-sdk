@@ -15,7 +15,7 @@ import PingOidc
 /// Represents an active authentication session displayed in the logout screen.
 struct SessionInfo: Identifiable {
     let id = UUID()
-    let tab: UserInfoTab
+    let tab: AuthTab
     let title: String
     let description: String
 }
