@@ -723,3 +723,5 @@ HttpMethod.post                       // .post
 
 This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
 
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

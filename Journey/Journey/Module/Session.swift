@@ -12,6 +12,7 @@ import Foundation
 import PingOrchestrate
 import PingStorage
 import PingJourneyPlugin
+import PingNetwork
 
 /// A module that manages the session configuration and lifecycle within a Journey workflow.
 public class SessionModule {

@@ -64,3 +64,5 @@ For example, a module can get a reference to a service protocol from `PingJourne
 ## License
 
 `PingJourneyPlugin` is available under the MIT license. See the LICENSE file for more info.
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

@@ -103,3 +103,5 @@ The PingStorage SDK provides the following storage solutions:
 |------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
 | KeychainStorage  | Storage that stores data in iOS Keychain.                                                                                                    |
 | MemoryStorage    | Storage that stores data in memory.                                                                                                          |
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

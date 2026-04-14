@@ -12,6 +12,7 @@
 import Foundation
 import PingOidc
 import PingOrchestrate
+import PingNetwork
 
 extension OidcClientConfig {
     internal func populateRequest(

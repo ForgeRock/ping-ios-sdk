@@ -10,6 +10,7 @@
 
 import PingJourneyPlugin
 import PingOrchestrate
+import PingNetwork
 
 /// A ContinueNode specialized for Journey flows.
 ///

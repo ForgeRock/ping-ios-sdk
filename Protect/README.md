@@ -262,3 +262,5 @@ await Protect.resumeBehavioralData() // Resume data collection.
 
 These methods allow for granular control over data collection, enabling you to pause collection during sensitive
 operations or when required by user privacy preferences.
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

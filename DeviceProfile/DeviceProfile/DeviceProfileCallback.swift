@@ -13,6 +13,7 @@ import PingJourneyPlugin
 import PingDeviceId
 import PingLogger
 import PingCommons
+import Combine
 
 // MARK: - DeviceProfileCallback
 
