@@ -34,7 +34,7 @@ on:
         required: true
 jobs:
   prepare-device-farm-artifacts:
-    runs-on: macos-15-xlarge
+    runs-on: macos-26-xlarge
 
     env:
       XCODE_VERSION: ${{ vars.XCODE_VERSION }}
@@ -43,7 +43,7 @@ jobs:
     steps:
       # Clone the repo
       - name: Clone the repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
@@ -111,7 +111,7 @@ jobs:
 
       # Publish e2e tests
       - name: Publish PingTestArtifacts.zip
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: success()
         with:
           name: PingTestArtifacts.zip

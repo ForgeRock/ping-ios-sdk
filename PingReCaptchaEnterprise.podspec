@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingReCaptchaEnterprise'
-  s.version          = '1.3.1'
+  s.version          = '2.0.0'
   s.summary          = 'PingReCaptchaEnterprise module for the Ping iOS SDK'
   s.description      = <<-DESC
   The PingReCaptchaEnterprise module for the Ping iOS SDK provides seamless integration with Google reCAPTCHA Enterprise.
@@ -16,6 +16,7 @@ Pod::Spec.new do |s|
   s.homepage         = 'https://www.pingidentity.com/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = 'Ping Identity'
+  s.static_framework = true
 
   s.source           = {
       :git => 'https://github.com/ForgeRock/ping-ios-sdk.git',
@@ -33,8 +34,8 @@ Pod::Spec.new do |s|
     'PingReCaptchaEnterprise' => [base_dir + '/*.xcprivacy']
   }
 
-  s.ios.dependency 'PingCommons', '~> 1.3.1'
-  s.ios.dependency 'PingJourneyPlugin', '~> 1.3.1'
+  s.ios.dependency 'PingCommons', '~> 2.0.0'
+  s.ios.dependency 'PingJourneyPlugin', '~> 2.0.0'
   s.ios.dependency 'RecaptchaEnterprise', '~> 18.8.1'
 
 end

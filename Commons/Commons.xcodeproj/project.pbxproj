@@ -101,6 +101,11 @@
 			path = Util;
 			sourceTree = "<group>";
 		};
+		CC100001CC100001CC100001 /* Migration */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Migration;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,6 +177,7 @@
 				A567424B2EE21CBC009D29B9 /* Policy */,
 				A56742432EE21CBC009D29B9 /* URI */,
 				A56742542EE21CBC009D29B9 /* Util */,
+				CC100001CC100001CC100001 /* Migration */,
 			);
 			path = Commons;
 			sourceTree = "<group>";
@@ -220,6 +226,7 @@
 				A56742432EE21CBC009D29B9 /* URI */,
 				A567424B2EE21CBC009D29B9 /* Policy */,
 				A56742542EE21CBC009D29B9 /* Util */,
+				CC100001CC100001CC100001 /* Migration */,
 			);
 			name = PingCommons;
 			packageProductDependencies = (
@@ -493,7 +500,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0.0-alpha;
+				MARKETING_VERSION = 2.0.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Commons;
@@ -531,7 +538,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0.0-alpha;
+				MARKETING_VERSION = 2.0.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Commons;
@@ -556,7 +563,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 2.0.0-alpha.0;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.CommonsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -577,7 +584,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.2.0.0-alpha;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.CommonsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;

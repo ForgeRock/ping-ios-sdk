@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingPush'
-  s.version          = '1.3.1'
+  s.version          = '2.0.0'
   s.summary          = 'PingPush SDK for iOS'
   s.description      = <<-DESC
   The PingPush SDK provides Push client for PingOne and ForgeRock platform.
@@ -33,6 +33,6 @@ Pod::Spec.new do |s|
     'Push' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingNetwork', '~> 1.3.1'
-  s.ios.dependency 'PingTamperDetector', '~> 1.3.1'
+  s.ios.dependency 'PingNetwork', '~> 2.0.0'
+  s.ios.dependency 'PingTamperDetector', '~> 2.0.0'
 end

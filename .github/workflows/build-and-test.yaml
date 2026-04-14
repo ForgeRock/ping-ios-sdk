@@ -11,19 +11,19 @@ env:
   WORKSPACE: SampleApps/Ping.xcworkspace
   SCHEME: PingTestHost
   CONFIGURATION: Debug
-  DESTINATION: platform=iOS Simulator,name=iPhone SE (3rd generation),OS=26.1
-  XCODE_VERSION: '26.1.1'
+  DESTINATION: platform=iOS Simulator,name=iPhone 17,OS=26.2
+  XCODE_VERSION: '26.2'
   DERIVED_DATA_PATH: DerivedData
 
 jobs:
   build-and-test:
-    runs-on: macos-15-xlarge
+    runs-on: macos-26-xlarge
     timeout-minutes: 40
 
     steps:
       # Clone the repo
       - name: Clone the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{github.event.pull_request.head.repo.full_name}}
@@ -76,7 +76,7 @@ jobs:
       # Pre-boot the simulator to avoid timeouts during xcodebuild
       - name: Pre-boot Simulator
         run: |
-          xcrun simctl bootstatus "iPhone SE (3rd generation)" -b || true
+          xcrun simctl bootstatus "iPhone 17" -b || true
 
       # Build the SDK for testing
       - name: Build for testing
@@ -128,7 +128,7 @@ jobs:
       # Upload xcresult for debugging purposes
       - name: Upload xcresult (debug)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: TestResults.xcresult
           path: TestResults.xcresult

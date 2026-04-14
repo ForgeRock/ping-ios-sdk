@@ -74,7 +74,7 @@ enum MenuSection: CaseIterable, Identifiable {
         case .mfa:
             return [.qrScanner, .oathAccounts, .pushAccounts, .pushNotifications]
         case .developerTools:
-            return [.deviceInfo, .logger, .storage, .bindingKeys, .configuration]
+            return [.deviceInfo, .logger, .storage, .bindingKeys, .migration, .configuration]
         }
     }
 }
@@ -96,6 +96,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case logger = "Logger"
     case storage = "Storage"
     case bindingKeys = "Binding Keys"
+    case migration = "Migration"
     case configuration = "Configuration"
     case journeyToken = "Journey Token"
     case davinciToken = "DaVinci Token"
@@ -120,6 +121,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .logger: return "doc.text.magnifyingglass"
         case .storage: return "externaldrive.fill"
         case .bindingKeys: return "key.icloud.fill"
+        case .migration: return "arrow.triangle.2.circlepath"
         case .configuration: return "gearshape.fill"
         case .journeyToken: return "map.fill"
         case .davinciToken: return "key.fill"
@@ -144,7 +146,8 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .logger: return "Logger"
         case .storage: return "Storage"
         case .bindingKeys: return "Binding Keys"
-        case .configuration: return "Configurations"
+        case .migration: return "Migration"
+        case .configuration: return "Configurationss"
         case .journeyToken: return "Journey Access Token"
         case .davinciToken: return "DaVinci Access Token"
         case .oidcToken: return "OIDC (Web) Access Token"
@@ -168,7 +171,8 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .logger: return "Test logging"
         case .storage: return "Test storage"
         case .bindingKeys: return "Manage stored binding keys"
-        case .configuration: return "Manage configurations"
+        case .migration: return "Migrate legacy FRAuthenticator data"
+        case .configuration: return "Edit configurations"
         case .journeyToken: return "View Journey token"
         case .davinciToken: return "View DaVinci token"
         case .oidcToken: return "View OIDC token"
@@ -265,6 +269,8 @@ struct ContentView: View {
                     StorageView(menuItem: item)
                 case .bindingKeys:
                     BindingKeysView()
+                case .migration:
+                    AuthMigrationView()
                 case .deviceInfo:
                     DeviceInfoView(menuItem: item)
                 }

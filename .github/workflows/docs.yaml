@@ -1,0 +1,52 @@
+name: Generate Docs
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  generate-docs:
+    runs-on: macos-26-xlarge
+    timeout-minutes: 60
+    env:
+      XCODE_VERSION: '26.2'
+
+    steps:
+      # Clone the repo
+      - name: Clone the repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
+          fetch-depth: 0
+
+      # Set target Xcode version. For more details and options see:
+      # https://github.com/actions/runner-images/blob/main/images/macos/macos-15-arm64-Readme.md
+      - name: Select Xcode
+        run: sudo xcode-select -switch /Applications/Xcode_${{ env.XCODE_VERSION }}.app && /usr/bin/xcodebuild -version
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: false
+
+      - name: Install Jazzy
+        run: gem install jazzy -v 0.15.3
+
+      - name: Verify tools
+        run: |
+          ruby --version
+          gem --version
+          jazzy --version
+          xcodebuild -version
+
+      - name: Generate docs
+        run: bash ./generate-docs.sh
+
+      - name: Upload docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jazzy-docs
+          path: docs
+          if-no-files-found: error

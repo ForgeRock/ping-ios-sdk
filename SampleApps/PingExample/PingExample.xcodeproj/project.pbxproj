@@ -36,6 +36,8 @@
 		1B7A9C962EE7BD2A00989A55 /* ManualOathRegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B7A9C772EE7BD2A00989A55 /* ManualOathRegistrationView.swift */; };
 		1B7C4A022EAABAA300E3C0AC /* PingPush.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7C49F02EAAB6E400E3C0AC /* PingPush.framework */; };
 		1B7C4A032EAABAA300E3C0AC /* PingPush.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7C49F02EAAB6E400E3C0AC /* PingPush.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		1BC528FF2F86CFD20088DD90 /* PingAuthMigration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BC528FE2F86CFD20088DD90 /* PingAuthMigration.framework */; };
+		1BC529002F86CFD20088DD90 /* PingAuthMigration.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1BC528FE2F86CFD20088DD90 /* PingAuthMigration.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3A3709962BEB038200AA7B51 /* AccessTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3709952BEB038200AA7B51 /* AccessTokenView.swift */; };
 		3A5441332BCDF10900385131 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5441322BCDF10900385131 /* ContentView.swift */; };
 		3A5441352BCDF10B00385131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A5441342BCDF10B00385131 /* Assets.xcassets */; };
@@ -46,6 +48,7 @@
 		3A8092F42BE99F0F00AD667F /* CustomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8092F32BE99F0F00AD667F /* CustomViews.swift */; };
 		3A8532332BE2D5D800F8619D /* DavinciView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8532322BE2D5D800F8619D /* DavinciView.swift */; };
 		3ACD90E12BE586BC00DABCE6 /* DavinciViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACD90E02BE586BC00DABCE6 /* DavinciViewModel.swift */; };
+		9741A96DF1548BD5E5A6EE6D /* AuthMigrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FC525493FF7344F586E3C1 /* AuthMigrationView.swift */; };
 		A51FF3B22E0E11DC0094430B /* PingProtect.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A31CBD2E0A37C800ABBEF7 /* PingProtect.framework */; };
 		A51FF3B32E0E11DC0094430B /* PingProtect.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5A31CBD2E0A37C800ABBEF7 /* PingProtect.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A525E7B52DD7647200B02C17 /* PingExternalIdPApple.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B02DD7647200B02C17 /* PingExternalIdPApple.framework */; };
@@ -170,6 +173,7 @@
 		ECE2B8812DB7DBEC00E2C51E /* PhoneNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */; };
 		ECF7EB862E464EDD002A5E8E /* IdpCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB852E464ED8002A5E8E /* IdpCallbackView.swift */; };
 		ECF7EB882E464F31002A5E8E /* SelectIdpCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB872E464F2C002A5E8E /* SelectIdpCallbackView.swift */; };
+		FAE66EFD02A8526178953F13 /* AuthMigrationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BE27407BC6A20DE66B3B585 /* AuthMigrationViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -214,6 +218,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = 1B7C49B92EAAB6E300E3C0AC;
 			remoteInfo = PushTests;
+		};
+		1BB4C8F82F7EFC9100C1667E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1BB4C8EF2F7EFC9000C1667E /* AuthMigration.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 033FA8BE8B4A1BD353F35ADA;
+			remoteInfo = AuthMigrationTests;
+		};
+		1BC528FD2F86CFD20088DD90 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1BB4C8EF2F7EFC9000C1667E /* AuthMigration.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7E403689A177A17ADDFB00D1;
+			remoteInfo = PingAuthMigration;
 		};
 		3A54413E2BCDF10B00385131 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -573,6 +591,7 @@
 				A5560CA52CFE4EDA0076CA8D /* PingOidc.framework in Embed Frameworks */,
 				A569DBED2E78A78800F4D7A8 /* PingDeviceProfile.framework in Embed Frameworks */,
 				1B7C4A032EAABAA300E3C0AC /* PingPush.framework in Embed Frameworks */,
+				1BC529002F86CFD20088DD90 /* PingAuthMigration.framework in Embed Frameworks */,
 				A5560CA92CFE4EDA0076CA8D /* PingStorage.framework in Embed Frameworks */,
 				A58CFBD12EB0046B007C4A31 /* PingReCaptchaEnterprise.framework in Embed Frameworks */,
 				EC14474C2EA664C300882AF2 /* PingFido.framework in Embed Frameworks */,
@@ -629,6 +648,9 @@
 		1B7A9C832EE7BD2A00989A55 /* QRScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerView.swift; sourceTree = "<group>"; };
 		1B7A9C842EE7BD2A00989A55 /* QRScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerViewModel.swift; sourceTree = "<group>"; };
 		1B7C49C82EAAB6E400E3C0AC /* Push.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Push.xcodeproj; path = ../../Push/Push.xcodeproj; sourceTree = SOURCE_ROOT; };
+		1BB4C8EF2F7EFC9000C1667E /* AuthMigration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AuthMigration.xcodeproj; path = ../../AuthMigration/AuthMigration.xcodeproj; sourceTree = SOURCE_ROOT; };
+		22FC525493FF7344F586E3C1 /* AuthMigrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMigrationView.swift; sourceTree = "<group>"; };
+		2BE27407BC6A20DE66B3B585 /* AuthMigrationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMigrationViewModel.swift; sourceTree = "<group>"; };
 		3A3709952BEB038200AA7B51 /* AccessTokenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenView.swift; sourceTree = "<group>"; };
 		3A54412D2BCDF10900385131 /* PingExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PingExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A5441322BCDF10900385131 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -761,6 +783,7 @@
 				ECBF06732D5229BC0066A3BD /* PingBrowser.framework in Frameworks */,
 				A525E7B92DD7647200B02C17 /* PingExternalIdPGoogle.framework in Frameworks */,
 				ECA540BD2D6DD7D6002B35D4 /* AppTrackingTransparency.framework in Frameworks */,
+				1BC528FF2F86CFD20088DD90 /* PingAuthMigration.framework in Frameworks */,
 				A525E7B52DD7647200B02C17 /* PingExternalIdPApple.framework in Frameworks */,
 				EC92B3912DA03E0700E4246D /* SVGKitSwift in Frameworks */,
 				A56742022EE1EE15009D29B9 /* PingCommons.framework in Frameworks */,
@@ -840,9 +863,19 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		1BB4C8F22F7EFC9000C1667E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1BC528FE2F86CFD20088DD90 /* PingAuthMigration.framework */,
+				1BB4C8F92F7EFC9100C1667E /* AuthMigrationTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		3A5441242BCDF10900385131 = {
 			isa = PBXGroup;
 			children = (
+				1BB4C8EF2F7EFC9000C1667E /* AuthMigration.xcodeproj */,
 				A56741BC2EE1EBFD009D29B9 /* Commons.xcodeproj */,
 				A55A25022ED4A49100D8820C /* DeviceClient.xcodeproj */,
 				1B7A9A902ED52F6500989A55 /* Network.xcodeproj */,
@@ -900,6 +933,8 @@
 				A5E9AECD2D3037BC000533ED /* AccessTokenViewModel.swift */,
 				EC6F65A72EB240C800D4686D /* BindingKeysView.swift */,
 				EC6F65A82EB240C800D4686D /* BindingKeysViewModel.swift */,
+				22FC525493FF7344F586E3C1 /* AuthMigrationView.swift */,
+				2BE27407BC6A20DE66B3B585 /* AuthMigrationViewModel.swift */,
 				3A5441322BCDF10900385131 /* ContentView.swift */,
 				EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */,
 				A5EFA9802D360AC800F771FE /* ContinueNodeView.swift */,
@@ -1382,6 +1417,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 1BB4C8F22F7EFC9000C1667E /* Products */;
+					ProjectRef = 1BB4C8EF2F7EFC9000C1667E /* AuthMigration.xcodeproj */;
+				},
+				{
 					ProductGroup = EC4DD30A2EABBAE400ECC4E1 /* Products */;
 					ProjectRef = EC4DD3072EABBAE400ECC4E1 /* Binding.xcodeproj */;
 				},
@@ -1533,6 +1572,20 @@
 			fileType = wrapper.cfbundle;
 			path = PushTests.xctest;
 			remoteRef = 1B7C49F12EAAB6E400E3C0AC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1BB4C8F92F7EFC9100C1667E /* AuthMigrationTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AuthMigrationTests.xctest;
+			remoteRef = 1BB4C8F82F7EFC9100C1667E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1BC528FE2F86CFD20088DD90 /* PingAuthMigration.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingAuthMigration.framework;
+			remoteRef = 1BC528FD2F86CFD20088DD90 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		9578859D2EF33F98002E42FA /* PingDavinciPlugin.framework */ = {
@@ -1949,6 +2002,8 @@
 				EC6F65A92EB240C800D4686D /* BindingKeysViewModel.swift in Sources */,
 				1B18D6432EECC33C0004F205 /* PushNotificationDetailView.swift in Sources */,
 				EC6F65AA2EB240C800D4686D /* BindingKeysView.swift in Sources */,
+				9741A96DF1548BD5E5A6EE6D /* AuthMigrationView.swift in Sources */,
+				FAE66EFD02A8526178953F13 /* AuthMigrationViewModel.swift in Sources */,
 				A5768D202E29BFE7000290EE /* PingOneProtectInitializeCallbackView.swift in Sources */,
 				A5E9AED42D30385D000533ED /* LogOutViewModel.swift in Sources */,
 				A5BE8C742E8C3689007AF0B9 /* DeviceInfoView.swift in Sources */,
@@ -2193,7 +2248,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = "2.0.0-alpha";
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2230,7 +2285,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = "2.0.0-alpha";
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2246,7 +2301,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = "2.0.0-alpha";
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -2262,7 +2317,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = "2.0.0-alpha";
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -2277,7 +2332,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = "2.0.0-alpha";
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -2293,7 +2348,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = "2.0.0-alpha";
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
