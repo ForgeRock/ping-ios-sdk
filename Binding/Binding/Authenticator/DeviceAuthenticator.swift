@@ -3,7 +3,7 @@
 //  DeviceAuthenticator.swift
 //  PingBinding
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@
 import Foundation
 import PingCommons
 import PingJourneyPlugin
+import PingOrchestrate
 
 /// A protocol defining the capabilities and requirements for any device authenticator.
 /// Authenticators conforming to this protocol are responsible for key management (generation, authentication, deletion)

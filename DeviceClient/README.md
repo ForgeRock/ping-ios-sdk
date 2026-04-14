@@ -452,3 +452,5 @@ error.errorDescription      // Main error message
 error.failureReason        // Why the error occurred
 error.recoverySuggestion   // How to fix it
 ```
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

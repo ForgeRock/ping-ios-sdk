@@ -13,6 +13,7 @@ import Foundation
 import PingOidc
 import PingOrchestrate
 import PingDavinciPlugin
+import PingNetwork
 
 /// Module for transforming the response from DaVinci to `Node`.
 public class NodeTransformModule {

@@ -2,7 +2,7 @@
 //  OathAccountsView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -120,22 +120,11 @@ struct OathAccountsView: View {
     }
 
     private var emptyStateView: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "key.viewfinder")
-                .font(.system(size: 60))
-                .foregroundColor(.gray)
-                .padding()
-
-            Text("No OATH Accounts")
-                .font(.system(size: 22, weight: .semibold))
-                .foregroundColor(.primary)
-
-            Text("Add your first account using QR code or manual entry")
-                .font(.system(size: 15))
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
-
+        EmptyStateView(
+            icon: "key.viewfinder",
+            title: "No OATH Accounts",
+            subtitle: "Add your first account using QR code or manual entry"
+        ) {
             HStack(spacing: 16) {
                 Button {
                     path.append(.qrScanner)

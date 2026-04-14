@@ -199,6 +199,13 @@
         "identifier" : "EC5C81822ECF67B700C91570",
         "name" : "PingJourneyPluginTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/AuthMigration\/AuthMigration.xcodeproj",
+        "identifier" : "4D205FDC26F64EF2AE058C6C",
+        "name" : "AuthMigrationTests"
+      }
     }
   ],
   "version" : 1

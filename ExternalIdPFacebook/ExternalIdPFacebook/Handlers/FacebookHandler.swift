@@ -9,8 +9,8 @@
 //
 
 import Foundation
-import FBSDKLoginKit
-import FBSDKCoreKit
+internal import FBSDKLoginKit
+internal import FBSDKCoreKit
 import UIKit
 import PingExternalIdP
 

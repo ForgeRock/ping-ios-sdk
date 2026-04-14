@@ -12,23 +12,15 @@ import Foundation
 import PingOrchestrate
 import PingOidc
 import PingLogger
+import PingStorage
 
-public let oidcLogin = OidcWebClient.createOidcWebClient { config in
-    let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
-    config.browserMode = .login
-    config.browserType = .sfViewController
-    config.logger = LogManager.standard
-    config.module(PingOidc.OidcModule.config) { oidcValue in
-        oidcValue.clientId = currentConfig?.clientId ?? ""
-        oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
-        oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
-        oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
-        //oidcValue.acrValues = "ACR_VALUE" //update with actual ACR values if needed or remove
-        
-    }
-}
+/// Proxy to the current OidcWebClient instance managed by ConfigurationManager.
+/// Returns nil when no OIDC (Web) configuration exists.
+/// Rebuilt automatically when the selected configuration changes.
+@MainActor
+public var oidcLogin: OidcWebClient? { ConfigurationManager.shared.oidcLogin }
 
-// A view model that manages the flow and state of the Journey orchestration process.
+// A view model that manages the flow and state of the OIDC Web login process.
 /// - Responsible for:
 ///   - Starting the Journey flow
 ///   - Progressing to the next node in the flow
@@ -44,6 +36,7 @@ class OidcLoginViewModel: ObservableObject {
     /// Initializes the view model and starts the Journey orchestration process.
     init() {
         Task {
+            guard let oidcLogin = oidcLogin else { return }
             self.state = try await oidcLogin.authorize { options in
                 options.additionalParameters = ["foo": "bar"]
             }

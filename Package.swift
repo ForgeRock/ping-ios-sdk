@@ -48,6 +48,7 @@ let package = Package(
         // MARK: - MFA
         .library(name: "PingOath", targets: ["PingOath"]),
         .library(name: "PingPush", targets: ["PingPush"]),
+        .library(name: "PingAuthMigration", targets: ["PingAuthMigration"]),
         
         // MARK: - Utilities
         .library(name: "PingBinding", targets: ["PingBinding"])
@@ -290,6 +291,16 @@ let package = Package(
             ],
             path: "Push/Push",
             exclude: ["Push.h"],
+            resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+        .target(
+            name: "PingAuthMigration",
+            dependencies: [
+                "PingOath",
+                "PingPush"
+            ],
+            path: "AuthMigration/AuthMigration",
+            exclude: ["AuthMigration.h"],
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
         

@@ -10,6 +10,7 @@
 
 import Foundation
 import PingCommons
+import PingDeviceId
 
 // MARK: - DeviceProfileCollector
 

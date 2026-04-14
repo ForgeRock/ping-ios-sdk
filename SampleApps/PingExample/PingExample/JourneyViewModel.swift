@@ -1,7 +1,7 @@
 //  JourneyViewModel.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -14,26 +14,11 @@ import PingLogger
 import PingStorage
 import PingJourney
 
-/// Configures and initializes the Journey instance with the AIC/AM server and OAuth 2.0 client details.
-/// - This configuration includes:
-///   - Client ID
-///   - Scopes
-///   - Redirect URI
-///   - Discovery Endpoint
-///   - Other optional fields
-
-public let journey = Journey.createJourney { config in
-    let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
-    config.serverUrl = currentConfig?.serverUrl
-    config.realm = currentConfig?.realm ?? "root"
-    config.cookie = currentConfig?.cookieName ?? ""
-    config.module(PingJourney.OidcModule.config) { oidcValue in
-        oidcValue.clientId = currentConfig?.clientId ?? ""
-        oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
-        oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
-        oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
-    }
-}
+/// Proxy to the current Journey instance managed by ConfigurationManager.
+/// Returns nil when no Journey configuration exists.
+/// Rebuilt automatically when the selected configuration changes.
+@MainActor
+public var journey: Journey? { ConfigurationManager.shared.journey }
 
 // MARK: - Multi-User Journey Instances with Separate Session Storage
 // The following examples demonstrate how to create multiple Journey instances
@@ -164,6 +149,7 @@ class JourneyViewModel: ObservableObject {
             isLoading = true
         }
         
+        guard let journey = journey else { return }
         let next = await journey.start(journeyName) { options in
             options.forceAuth = false
             options.noSession = false

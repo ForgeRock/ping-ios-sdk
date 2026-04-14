@@ -11,7 +11,7 @@
 import Foundation
 import UIKit
 import PingExternalIdP
-import GoogleSignIn
+internal import GoogleSignIn
 
 /// A handler class for managing Google Identity Provider (IdP) authorization.
 @MainActor

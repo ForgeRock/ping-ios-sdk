@@ -2,7 +2,7 @@
 //  DavinciViewModel.swift
 //  PingExample
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -18,23 +18,11 @@ import PingStorage
 import PingExternalIdP
 import PingJourney
 
-/// Configures and initializes the DaVinci instance with the PingOne server and OAuth 2.0 client details.
-/// - This configuration includes:
-///   - Client ID
-///   - Scopes
-///   - Redirect URI
-///   - Discovery Endpoint
-///   - Other optional fields
-public let davinci = DaVinci.createDaVinci { config in
-    let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
-    config.module(PingDavinci.OidcModule.config) { oidcValue in
-        oidcValue.clientId = currentConfig?.clientId ?? ""
-        oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
-        oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
-        oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
-        oidcValue.acrValues = "" //update with actual ACR values if needed or remove
-    }
-}
+/// Proxy to the current DaVinci instance managed by ConfigurationManager.
+/// Returns nil when no DaVinci configuration exists.
+/// Rebuilt automatically when the selected configuration changes.
+@MainActor
+public var davinci: DaVinci? { ConfigurationManager.shared.davinci }
 
 // MARK: - Multi-User DaVinci Instances with Separate Cookie Storage
 // The following examples demonstrate how to create multiple DaVinci instances
@@ -119,6 +107,7 @@ class DavinciViewModel: ObservableObject {
         }
         
         // Starts the DaVinci orchestration process and retrieves the first node.
+        guard let davinci = davinci else { return }
         let next = await davinci.start()
         await MainActor.run {
             self.state = DavinciState(node: next)
