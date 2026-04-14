@@ -297,9 +297,7 @@ let package = Package(
             name: "PingAuthMigration",
             dependencies: [
                 "PingOath",
-                "PingPush",
-                "PingLogger",
-                "PingCommons"
+                "PingPush"
             ],
             path: "AuthMigration/AuthMigration",
             exclude: ["AuthMigration.h"],

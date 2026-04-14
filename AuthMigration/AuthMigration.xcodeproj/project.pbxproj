@@ -30,7 +30,6 @@
 		AA000022AA000022AA000022 /* TestKeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000022BB000022BB000022 /* TestKeychainHelper.swift */; };
 		CE93AE29D8D30575500D1292 /* AuthMigration.h in Headers */ = {isa = PBXBuildFile; fileRef = 426F7D82751B633C4BCBC273 /* AuthMigration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FD8C9336BDB504D2F3C54F62 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C329415C2BDAEA4674A2F9BD /* PrivacyInfo.xcprivacy */; };
-		FF000001FF000001FF000001 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE000001EE000001EE000001 /* PingLogger.framework */; };
 		FF000002FF000002FF000002 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE000002EE000002EE000002 /* PingCommons.framework */; };
 		FF000003FF000003FF000003 /* PingOath.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE000003EE000003EE000003 /* PingOath.framework */; };
 		FF000004FF000004FF000004 /* PingPush.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE000004EE000004EE000004 /* PingPush.framework */; };
@@ -82,7 +81,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FF000001FF000001FF000001 /* PingLogger.framework in Frameworks */,
 				FF000002FF000002FF000002 /* PingCommons.framework in Frameworks */,
 				FF000003FF000003FF000003 /* PingOath.framework in Frameworks */,
 				FF000004FF000004FF000004 /* PingPush.framework in Frameworks */,

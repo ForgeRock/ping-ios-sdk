@@ -23,6 +23,4 @@ Pod::Spec.new do |s|
   
   s.ios.dependency 'PingOath', '~> 2.0.0'
   s.ios.dependency 'PingPush', '~> 2.0.0'
-  s.ios.dependency 'PingLogger', '~> 2.0.0'
-  s.ios.dependency 'PingCommons', '~> 2.0.0'
 end
