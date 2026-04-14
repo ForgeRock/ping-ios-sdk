@@ -2,7 +2,7 @@
 //  UserInfoView.swift
 //  PingExample
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -112,6 +112,7 @@ struct UserInfoView: View {
                         Text(pair.value)
                             .font(.system(size: 12, design: .monospaced))
                             .foregroundColor(.primary)
+                            .textSelection(.enabled)
                     }
                 }
             }
@@ -138,6 +139,7 @@ private struct UserInfoPair: Identifiable {
     var id: String { key }
 }
 
+/// A reusable error card view shown when user info or token fetch fails.
 struct UserInfoErrorView: View {
     let title: String
     let message: String

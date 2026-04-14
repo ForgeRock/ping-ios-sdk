@@ -47,4 +47,7 @@ public enum IdpExceptions: LocalizedError, Sendable {
             return "illegalStateException Idp Exception: \(message ?? "Unknown")"
         }
     }
+    
+    /// A localized description of the error, used by `LocalizedError`.
+    public var errorDescription: String? { errorMessage }
 }

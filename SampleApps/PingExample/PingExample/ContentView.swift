@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  PingExample
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -83,7 +83,7 @@ enum MenuSection: CaseIterable, Identifiable {
 enum MenuItem: String, CaseIterable, Identifiable {
     case davinci = "DaVinci"
     case journey = "Journey"
-    case oidc = "OIDC"
+    case oidc = "OIDC (Web)"
     case oathAccounts = "OATH"
     case pushAccounts = "Push"
     case qrScanner = "QR Scanner"
@@ -131,7 +131,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         switch self {
         case .davinci: return "DaVinci Flow"
         case .journey: return "Journey Flow"
-        case .oidc: return "OIDC Login"
+        case .oidc: return "OIDC (Web) Login"
         case .oathAccounts: return "OATH"
         case .pushAccounts: return "Push"
         case .qrScanner: return "QR Scanner"
@@ -144,10 +144,10 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .logger: return "Logger"
         case .storage: return "Storage"
         case .bindingKeys: return "Binding Keys"
-        case .configuration: return "Configuration"
+        case .configuration: return "Configurations"
         case .journeyToken: return "Journey Access Token"
         case .davinciToken: return "DaVinci Access Token"
-        case .oidcToken: return "OIDC Access Token"
+        case .oidcToken: return "OIDC (Web) Access Token"
         }
     }
     
@@ -168,10 +168,20 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .logger: return "Test logging"
         case .storage: return "Test storage"
         case .bindingKeys: return "Manage stored binding keys"
-        case .configuration: return "Edit configuration"
+        case .configuration: return "Manage configurations"
         case .journeyToken: return "View Journey token"
         case .davinciToken: return "View DaVinci token"
         case .oidcToken: return "View OIDC token"
+        }
+    }
+    
+    /// The config type required to use this menu item, or nil if none required.
+    var requiredConfigType: ConfigType? {
+        switch self {
+        case .journey, .journeyToken: return .journey
+        case .davinci, .davinciToken: return .davinci
+        case .oidc, .oidcToken: return .oidcWeb
+        default: return nil
         }
     }
 }
@@ -181,9 +191,10 @@ struct ContentView: View {
     @State private var deviceID: String = ""
     @State private var startDavinci = false
     @State private var path: [MenuItem] = []
-    @State private var configurationViewModel: ConfigurationViewModel = ConfigurationManager.shared.loadConfigurationViewModel()
     @State private var deviceStatus: String = "Checking..."
     @State private var navigateToPushNotifications = false
+    @State private var showNoConfigAlert = false
+    @State private var noConfigTypeName = ""
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -219,7 +230,7 @@ struct ContentView: View {
             .navigationDestination(for: MenuItem.self) { item in
                 switch item {
                 case .configuration:
-                    ConfigurationView(menuItem: item, configurationViewModel: $configurationViewModel)
+                    ConfigurationListView()
                 case .davinci:
                     DavinciView(path: $path)
                 case .journey:
@@ -271,12 +282,20 @@ struct ContentView: View {
                     deviceStatus = "✓ Secure"
                 }
             }
+            .alert("No Configuration", isPresented: $showNoConfigAlert) {
+                Button("Go to Configurations") {
+                    path.append(.configuration)
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("No \(noConfigTypeName) configuration found. Please add one in Configurations.")
+            }
         }
     }
     
     // MARK: - Header Section
     private var headerSection: some View {
-        ZStack {
+        ZStack(alignment: .topTrailing) {
             LinearGradient(
                 colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
                 startPoint: .topLeading,
@@ -302,6 +321,21 @@ struct ContentView: View {
                     .foregroundColor(.white.opacity(0.7))
             }
             .padding(.vertical, 10)
+            .frame(maxWidth: .infinity)
+            
+            Button {
+                path.append(.configuration)
+            } label: {
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 20))
+                    .foregroundColor(.white.opacity(0.9))
+                    .frame(width: 36, height: 36)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(.white.opacity(0.4), lineWidth: 1)
+                    )
+                    .padding(12)
+            }
         }
     }
     
@@ -334,7 +368,13 @@ struct ContentView: View {
     // MARK: - Menu Item Button
     private func menuItemButton(_ item: MenuItem) -> some View {
         Button {
-            path.append(item)
+            if let requiredType = item.requiredConfigType,
+               !ConfigurationManager.shared.hasConfiguration(for: requiredType) {
+                noConfigTypeName = requiredType.rawValue
+                showNoConfigAlert = true
+            } else {
+                path.append(item)
+            }
         } label: {
             HStack(spacing: 16) {
                 Image(systemName: item.icon)

@@ -2,7 +2,7 @@
 //  UserInfoViewModel.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -13,10 +13,12 @@ import SwiftUI
 import PingLogger
 import PingOidc
 
+/// Authentication tab types used across User Info and Access Token views.
+/// Each case maps to an SDK auth flow with a display name and SF Symbol icon.
 enum UserInfoTab: String, CaseIterable, Identifiable {
     case journey = "Journey"
     case davinci = "DaVinci"
-    case oidc = "OIDC"
+    case oidc = "OIDC (Web)"
     
     var id: String { rawValue }
     
@@ -29,14 +31,18 @@ enum UserInfoTab: String, CaseIterable, Identifiable {
     }
 }
 
+/// The result of a user info fetch for a single tab.
 struct UserInfoResult {
     var info: String = ""
     var error: String? = nil
     var isLoading: Bool = true
 }
 
+/// Fetches user info concurrently for all three auth flows (Journey, DaVinci, OIDC)
+/// and exposes per-tab results.
 @MainActor
 class UserInfoViewModel: ObservableObject {
+    /// Per-tab user info results, keyed by authentication type.
     @Published var results: [UserInfoTab: UserInfoResult] = [
         .journey: UserInfoResult(),
         .davinci: UserInfoResult(),
@@ -49,6 +55,7 @@ class UserInfoViewModel: ObservableObject {
         }
     }
     
+    /// Fetches user info for all tabs concurrently.
     func fetchAllUserInfo() async {
         await withTaskGroup(of: (UserInfoTab, UserInfoResult).self) { group in
             group.addTask { await (.journey, self.fetchUserInfo(for: .journey)) }

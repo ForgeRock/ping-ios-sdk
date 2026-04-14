@@ -2,7 +2,7 @@
 //  ConfigurationManager.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -14,21 +14,48 @@ import SwiftUI
 import UIKit
 import PingOidc
 import PingJourney
+import PingDavinci
+import PingOrchestrate
+import PingStorage
 import PingOath
 import PingPush
 import PingLogger
 
 //The ConfigurationManager class is used to manage the configuration settings for the SDK.
 //The class provides the following functionality:
-//   - Load the current configuration
-//   - Save the current configuration
-//   - Delete the saved configuration
-//   - Provide the default configuration
-//   - Start the SDK with the current configuration
+//   - Manage per-type configuration selections (Journey, DaVinci, OIDC Web)
+//   - Build and cache optional SDK instances (Journey?, DaVinci?, OidcWebClient?)
+//   - Rebuild instances on configuration switch
+//   - Gracefully handle missing configurations (nil SDK instances)
+//   - CRUD operations for configurations with UserDefaults persistence
+//   - Provide user/session accessors
 
 class ConfigurationManager: ObservableObject, @unchecked Sendable {
     static let shared = ConfigurationManager()
-    public var currentConfigurationViewModel: ConfigurationViewModel?
+    
+    private static let selectionKeys: [ConfigType: String] = [
+        .journey: "SelectedJourneyConfigName",
+        .davinci: "SelectedDaVinciConfigName",
+        .oidcWeb: "SelectedOidcWebConfigName"
+    ]
+    
+    private static let userConfigsKey = "UserConfigurations"
+
+    // MARK: - Configurations
+    
+    /// All available configurations (defaults + user-added).
+    @Published public var configurations: [Configuration]
+
+    // MARK: - Per-Type Selections
+    
+    /// Tracks the selected configuration for each type.
+    @Published public var selections: [ConfigType: Configuration]
+    
+    // MARK: - SDK Instances (rebuilt on config switch)
+    
+    public var journey: Journey?
+    public var davinci: DaVinci?
+    public var oidcLogin: OidcWebClient?
 
     // MFA Clients
     public var oathClient: OathClient?
@@ -40,81 +67,235 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
     // Thread safety - use actor for initialization synchronization
     private let initActor = ClientInitializationActor()
 
+    // MARK: - Init
+    
+    private init() {
+        let allConfigs = ConfigurationManager.loadConfigurations()
+        self.configurations = allConfigs
+        
+        let journeyConfig = ConfigurationManager.loadSelection(for: .journey, from: allConfigs)
+        let davinciConfig = ConfigurationManager.loadSelection(for: .davinci, from: allConfigs)
+        let oidcWebConfig = ConfigurationManager.loadSelection(for: .oidcWeb, from: allConfigs)
+        
+        var sels = [ConfigType: Configuration]()
+        if let c = journeyConfig { sels[.journey] = c }
+        if let c = davinciConfig { sels[.davinci] = c }
+        if let c = oidcWebConfig { sels[.oidcWeb] = c }
+        self.selections = sels
+        
+        self.journey = journeyConfig.map { ConfigurationManager.buildJourney($0) }
+        self.davinci = davinciConfig.map { ConfigurationManager.buildDaVinci($0) }
+        self.oidcLogin = oidcWebConfig.map { ConfigurationManager.buildOidcWebClient($0) }
+    }
+    
+    // MARK: - Configuration Selection
+    
+    /// Select a new configuration. Persists the per-type selection and rebuilds the relevant SDK instance.
+    public func select(_ config: Configuration) {
+        selections[config.type] = config
+        if let key = ConfigurationManager.selectionKeys[config.type] {
+            UserDefaults.standard.set(config.name, forKey: key)
+        }
+        
+        // Rebuild only the SDK instance matching this config's type
+        rebuildInstance(for: config)
+    }
+    
+    /// Returns the selected configuration for the given type, if any.
+    public func selectedConfig(for type: ConfigType) -> Configuration? {
+        return selections[type] ?? configurations.first(where: { $0.type == type })
+    }
+    
+    /// Whether at least one configuration exists for the given type.
+    public func hasConfiguration(for type: ConfigType) -> Bool {
+        return configurations.contains(where: { $0.type == type })
+    }
+    
+    private func rebuildInstance(for config: Configuration) {
+        switch config.type {
+        case .journey:
+            journey = ConfigurationManager.buildJourney(config)
+        case .davinci:
+            davinci = ConfigurationManager.buildDaVinci(config)
+        case .oidcWeb:
+            oidcLogin = ConfigurationManager.buildOidcWebClient(config)
+        }
+    }
+    
+    // MARK: - CRUD Operations
+    
+    /// Add a new configuration and persist.
+    public func addConfiguration(_ config: Configuration) {
+        configurations.append(config)
+        saveUserConfigurations()
+        // If this is the first config of its type, auto-select it
+        if selections[config.type] == nil {
+            select(config)
+        }
+    }
+    
+    /// Update an existing configuration by name and persist.
+    public func updateConfiguration(oldName: String, with config: Configuration) {
+        if let index = configurations.firstIndex(where: { $0.name == oldName }) {
+            configurations[index] = config
+            saveUserConfigurations()
+            // If this was the selected config for its type, re-select to rebuild the SDK instance
+            if selections[config.type]?.name == oldName {
+                select(config)
+            }
+        }
+    }
+    
+    /// Delete a configuration by name and persist.
+    public func deleteConfiguration(_ config: Configuration) {
+        configurations.removeAll { $0.name == config.name }
+        saveUserConfigurations()
+        // If the deleted config was selected, fall back to the first of its type (or clear)
+        if selections[config.type]?.name == config.name {
+            if let fallback = configurations.first(where: { $0.type == config.type }) {
+                select(fallback)
+            } else {
+                selections.removeValue(forKey: config.type)
+                if let key = ConfigurationManager.selectionKeys[config.type] {
+                    UserDefaults.standard.removeObject(forKey: key)
+                }
+                switch config.type {
+                case .journey: journey = nil
+                case .davinci: davinci = nil
+                case .oidcWeb: oidcLogin = nil
+                }
+            }
+        }
+    }
+    
+    // MARK: - User / Session Accessors
+
     public var journeyUser: User? {
         get async {
-            let journeyUser = await journey.journeyUser()
-            return journeyUser
+            return await journey?.journeyUser()
         }
     }
     
     public var davinciUser: User? {
         get async {
-            let davinciUser = await davinci.daVinciUser()
-            return davinciUser
+            return await davinci?.daVinciUser()
         }
     }
     
     public var oidcUser: User? {
         get async {
-            let oidcLoginUser = await oidcLogin.oidcLoginUser()
-            return oidcLoginUser
+            return await oidcLogin?.oidcLoginUser()
         }
     }
     
     public var journeySession: SSOToken? {
         get async {
-            let journeySession = await journey.session()
-            return journeySession
+            return await journey?.session()
         }
     }
     
-    public func loadConfigurationViewModel() -> ConfigurationViewModel {
-        if self.currentConfigurationViewModel == nil {
-            self.currentConfigurationViewModel = defaultConfigurationViewModel()
-        }
-        return self.currentConfigurationViewModel!
-    }
+    // MARK: - Factory Methods
     
-    /// Save the current configuration
-    public func saveConfiguration() {
-        if let currentConfiguration = self.currentConfigurationViewModel {
-            let encoder = JSONEncoder()
-            let configuration = Configuration(clientId: currentConfiguration.clientId, scopes: currentConfiguration.scopes, redirectUri: currentConfiguration.redirectUri, signOutUri: currentConfiguration.signOutUri, discoveryEndpoint: currentConfiguration.discoveryEndpoint, environment: currentConfiguration.environment, cookieName: currentConfiguration.cookieName, serverUrl: currentConfiguration.serverUrl, realm: currentConfiguration.realm)
-            if let encoded = try? encoder.encode(configuration) {
-                let defaults = UserDefaults.standard
-                defaults.set(encoded, forKey: "CurrentConfiguration")
+    private static func buildJourney(_ config: Configuration) -> Journey {
+        Journey.createJourney { journeyConfig in
+            journeyConfig.serverUrl = config.serverUrl
+            journeyConfig.realm = config.realm ?? "root"
+            journeyConfig.cookie = config.cookieName ?? ""
+            journeyConfig.logger = LogManager.standard
+            journeyConfig.module(PingJourney.OidcModule.config) { oidcValue in
+                oidcValue.clientId = config.clientId
+                oidcValue.scopes = Set<String>(config.scopes)
+                oidcValue.redirectUri = config.redirectUri
+                oidcValue.discoveryEndpoint = config.discoveryEndpoint
+                oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_JOURNEY")
+                oidcValue.logger = LogManager.standard
             }
         }
     }
     
-    /// Delete the saved configuration
-    public func deleteSavedConfiguration() {
-        let defaults = UserDefaults.standard
-        defaults.removeObject(forKey: "CurrentConfiguration")
-    }
-    
-    /// Provide the default configuration. If empty or not found, provide the placeholder configuration
-    public func defaultConfigurationViewModel() -> ConfigurationViewModel {
-        let defaults = UserDefaults.standard
-        if let savedConfiguration = defaults.object(forKey: "CurrentConfiguration") as? Data {
-            let decoder = JSONDecoder()
-            if let loadedConfiguration = try? decoder.decode(Configuration.self, from: savedConfiguration) {
-                return ConfigurationViewModel(clientId: loadedConfiguration.clientId, scopes: loadedConfiguration.scopes, redirectUri: loadedConfiguration.redirectUri, signOutUri: loadedConfiguration.signOutUri, discoveryEndpoint: loadedConfiguration.discoveryEndpoint, environment: loadedConfiguration.environment, cookieName: loadedConfiguration.cookieName, serverUrl: loadedConfiguration.serverUrl, realm: loadedConfiguration.realm)
+    private static func buildDaVinci(_ config: Configuration) -> DaVinci {
+        DaVinci.createDaVinci { daVinciConfig in
+            daVinciConfig.logger = LogManager.standard
+            daVinciConfig.module(PingDavinci.OidcModule.config) { oidcValue in
+                oidcValue.clientId = config.clientId
+                oidcValue.scopes = Set<String>(config.scopes)
+                oidcValue.redirectUri = config.redirectUri
+                oidcValue.discoveryEndpoint = config.discoveryEndpoint
+                oidcValue.acrValues = config.acrValues ?? ""
+                oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_DAVINCI")
             }
         }
-        
-        //TODO: Provide here the Server configuration. Add the PingOne server Discovery Endpoint and the OAuth2.0 client details. Or the AIC server URL and Realm, server Discovery Endpoint and the OAuth2.0 client details.
-        return ConfigurationViewModel(
-            clientId: <#"Client ID"#>,
-            scopes: [<#"scope1"#>, <#"scope2"#>, <#"scope3"#>], // Alter the scopes based on your clients configuration
-            redirectUri: <#"Redirect URI"#>,
-            signOutUri: <#"Redirect URI"#>,
-            discoveryEndpoint: <#"Discovery Endpoint"#>,
-            environment: "PingOne", // or "AIC" for the AIC server
-            cookieName: <#"Cookie Name"#>, // Optional, can be nil if not used
-            serverUrl: <#"Server URL"#>, // Optional, can be nil if not used
-            realm: <#"Realm"#> // Optional, can be nil if not used
-        )
+    }
+    
+    private static func buildOidcWebClient(_ config: Configuration) -> OidcWebClient {
+        OidcWebClient.createOidcWebClient { webConfig in
+            webConfig.browserMode = .login
+            webConfig.browserType = .sfViewController
+            webConfig.logger = LogManager.standard
+            webConfig.module(PingOidc.OidcModule.config) { oidcValue in
+                oidcValue.clientId = config.clientId
+                oidcValue.scopes = Set<String>(config.scopes)
+                oidcValue.redirectUri = config.redirectUri
+                oidcValue.discoveryEndpoint = config.discoveryEndpoint
+                oidcValue.acrValues = config.acrValues ?? ""
+                oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_OIDCWEB")
+            }
+        }
+    }
+    
+    // MARK: - Persistence Helpers
+    
+    /// Loads all configurations: defaults merged with user-added configs from UserDefaults.
+    private static func loadConfigurations() -> [Configuration] {
+        var configs = defaultConfigurations
+        if let data = UserDefaults.standard.data(forKey: userConfigsKey),
+           let userConfigs = try? JSONDecoder().decode([Configuration].self, from: data) {
+            // Merge: replace defaults with matching user edits, append new ones
+            for userConfig in userConfigs {
+                if let index = configs.firstIndex(where: { $0.name == userConfig.name }) {
+                    configs[index] = userConfig
+                } else {
+                    configs.append(userConfig)
+                }
+            }
+        }
+        return configs
+    }
+    
+    /// Persists user modifications (anything different from defaults + any new configs).
+    private func saveUserConfigurations() {
+        // Save only configs that differ from defaults or are new
+        let userConfigs = configurations.filter { config in
+            if let defaultConfig = defaultConfigurations.first(where: { $0.name == config.name }) {
+                // Include if edited (differs from default)
+                return config.clientId != defaultConfig.clientId ||
+                       config.scopes != defaultConfig.scopes ||
+                       config.redirectUri != defaultConfig.redirectUri ||
+                       config.discoveryEndpoint != defaultConfig.discoveryEndpoint ||
+                       config.type != defaultConfig.type ||
+                       config.environment != defaultConfig.environment ||
+                       config.cookieName != defaultConfig.cookieName ||
+                       config.serverUrl != defaultConfig.serverUrl ||
+                       config.realm != defaultConfig.realm ||
+                       config.acrValues != defaultConfig.acrValues ||
+                       config.signOutUri != defaultConfig.signOutUri
+            }
+            // New config (not in defaults)
+            return true
+        }
+        if let data = try? JSONEncoder().encode(userConfigs) {
+            UserDefaults.standard.set(data, forKey: ConfigurationManager.userConfigsKey)
+        }
+    }
+    
+    /// Loads the persisted selection for a given type, falling back to the first config of that type.
+    private static func loadSelection(for type: ConfigType, from configs: [Configuration]) -> Configuration? {
+        if let key = selectionKeys[type],
+           let savedName = UserDefaults.standard.string(forKey: key),
+           let config = configs.first(where: { $0.name == savedName && $0.type == type }) {
+            return config
+        }
+        return configs.first(where: { $0.type == type })
     }
 
     // MARK: - MFA Client Initialization

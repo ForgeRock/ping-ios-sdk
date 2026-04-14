@@ -2,7 +2,7 @@
 //  AccessTokenView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,8 +11,12 @@
 
 import SwiftUI
 
+/// Displays access token details for Journey, DaVinci, and OIDC (Web) auth flows.
+/// Can show all tabs or be locked to a single tab via `fixedTab`.
+/// Provides Refresh, Revoke, and Get Token actions.
 struct AccessTokenView: View {
     let menuItem: MenuItem
+    /// When non-nil, locks the view to a single tab (hides the tab picker).
     let fixedTab: UserInfoTab?
     @StateObject private var accessTokenViewModel = AccessTokenViewModel()
     @State private var selectedTab: UserInfoTab = .journey
@@ -40,16 +44,84 @@ struct AccessTokenView: View {
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
                 Spacer()
+                
+                if result.hasSession {
+                    getTokenBar
+                }
             } else {
                 ScrollView {
                     accessTokenCard(result.info)
                         .padding(.horizontal, 20)
                         .padding(.top, 8)
                 }
+                
+                tokenActionBar
             }
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle(menuItem.title)
+    }
+    
+    private var tokenActionBar: some View {
+        HStack(spacing: 12) {
+            Button {
+                Task { await accessTokenViewModel.refresh(tab: selectedTab) }
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.system(size: 14))
+                    Text("Refresh")
+                        .font(.system(size: 14, weight: .semibold))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .foregroundColor(.white)
+                .background(Color.themeButtonBackground)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+            
+            Button {
+                Task { await accessTokenViewModel.revoke(tab: selectedTab) }
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "xmark.circle")
+                        .font(.system(size: 14))
+                    Text("Revoke")
+                        .font(.system(size: 14, weight: .semibold))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .foregroundColor(.themeButtonBackground)
+                .background(Color.themeButtonBackground.opacity(0.12))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(Color(.secondarySystemGroupedBackground))
+    }
+    
+    private var getTokenBar: some View {
+        Button {
+            Task { await accessTokenViewModel.getToken(tab: selectedTab) }
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "key.fill")
+                    .font(.system(size: 14))
+                Text("Get Token")
+                    .font(.system(size: 14, weight: .semibold))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .foregroundColor(.white)
+            .background(Color.themeButtonBackground)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+        }
+        .buttonStyle(PlainButtonStyle())
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(Color(.secondarySystemGroupedBackground))
     }
     
     private var accessTokenTabPicker: some View {
@@ -120,6 +192,7 @@ struct AccessTokenView: View {
                         Text(pair.value)
                             .font(.system(size: 12, design: .monospaced))
                             .foregroundColor(.primary)
+                            .textSelection(.enabled)
                     }
                 }
             }
