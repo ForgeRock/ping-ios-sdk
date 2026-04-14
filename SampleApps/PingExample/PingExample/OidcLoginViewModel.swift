@@ -17,6 +17,7 @@ import PingStorage
 /// Proxy to the current OidcWebClient instance managed by ConfigurationManager.
 /// Returns nil when no OIDC (Web) configuration exists.
 /// Rebuilt automatically when the selected configuration changes.
+@MainActor
 public var oidcLogin: OidcWebClient? { ConfigurationManager.shared.oidcLogin }
 
 // A view model that manages the flow and state of the OIDC Web login process.

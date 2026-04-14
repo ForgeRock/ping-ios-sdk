@@ -17,6 +17,7 @@ import PingJourney
 /// Proxy to the current Journey instance managed by ConfigurationManager.
 /// Returns nil when no Journey configuration exists.
 /// Rebuilt automatically when the selected configuration changes.
+@MainActor
 public var journey: Journey? { ConfigurationManager.shared.journey }
 
 // MARK: - Multi-User Journey Instances with Separate Session Storage

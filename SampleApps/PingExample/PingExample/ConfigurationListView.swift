@@ -119,53 +119,96 @@ struct ConfigurationListView: View {
             }
             .buttonStyle(PlainButtonStyle())
             
-            NavigationLink {
-                ConfigurationEditorView(editing: config)
-            } label: {
-                HStack(spacing: 16) {
-                    Image(systemName: config.type.icon)
-                        .font(.system(size: 20))
-                        .foregroundColor(.white)
-                        .frame(width: 40, height: 40)
-                        .background(
-                            LinearGradient(
-                                colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                    
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(config.name)
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.primary)
-                        Text(host)
-                            .font(.system(size: 13))
-                            .foregroundColor(.secondary)
-                        Text(config.clientId)
-                            .font(.system(size: 13))
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(Color(.tertiaryLabel))
+            if config.isDefault {
+                configRowContent(config: config, host: host)
+            } else {
+                NavigationLink {
+                    ConfigurationEditorView(editing: config)
+                } label: {
+                    configRowContent(config: config, host: host)
                 }
+                .buttonStyle(PlainButtonStyle())
             }
-            .buttonStyle(PlainButtonStyle())
         }
         .padding(16)
         .contentShape(Rectangle())
         .contextMenu {
             Button {
-                configToDelete = config
-                showDeleteConfirmation = true
+                duplicateConfiguration(config)
             } label: {
-                Label("Delete", systemImage: "trash")
+                Label("Duplicate", systemImage: "doc.on.doc")
             }
+            if !config.isDefault {
+                Button(role: .destructive) {
+                    configToDelete = config
+                    showDeleteConfirmation = true
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+            }
+        }
+    }
+    
+    private func configRowContent(config: Configuration, host: String) -> some View {
+        HStack(spacing: 16) {
+            Image(systemName: config.type.icon)
+                .font(.system(size: 20))
+                .foregroundColor(.white)
+                .frame(width: 40, height: 40)
+                .background(
+                    LinearGradient(
+                        colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(config.name)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.primary)
+                Text(host)
+                    .font(.system(size: 13))
+                    .foregroundColor(.secondary)
+                Text(config.clientId)
+                    .font(.system(size: 13))
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            if !config.isDefault {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(Color(.tertiaryLabel))
+            }
+        }
+    }
+    
+    private func duplicateConfiguration(_ config: Configuration) {
+        var baseName = config.name + " (Copy)"
+        var counter = 2
+        while configManager.configurations.contains(where: { $0.name == baseName }) {
+            baseName = config.name + " (Copy \(counter))"
+            counter += 1
+        }
+        let duplicate = Configuration(
+            name: baseName,
+            type: config.type,
+            clientId: config.clientId,
+            scopes: config.scopes,
+            redirectUri: config.redirectUri,
+            signOutUri: config.signOutUri,
+            discoveryEndpoint: config.discoveryEndpoint,
+            environment: config.environment,
+            cookieName: config.cookieName,
+            serverUrl: config.serverUrl,
+            realm: config.realm,
+            acrValues: config.acrValues
+        )
+        withAnimation {
+            configManager.addConfiguration(duplicate)
         }
     }
 }

@@ -21,6 +21,7 @@ import PingJourney
 /// Proxy to the current DaVinci instance managed by ConfigurationManager.
 /// Returns nil when no DaVinci configuration exists.
 /// Rebuilt automatically when the selected configuration changes.
+@MainActor
 public var davinci: DaVinci? { ConfigurationManager.shared.davinci }
 
 // MARK: - Multi-User DaVinci Instances with Separate Cookie Storage

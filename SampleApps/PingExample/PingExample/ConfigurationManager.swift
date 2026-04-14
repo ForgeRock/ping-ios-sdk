@@ -30,7 +30,8 @@ import PingLogger
 //   - CRUD operations for configurations with UserDefaults persistence
 //   - Provide user/session accessors
 
-class ConfigurationManager: ObservableObject, @unchecked Sendable {
+@MainActor
+class ConfigurationManager: ObservableObject {
     static let shared = ConfigurationManager()
     
     private static let selectionKeys: [ConfigType: String] = [
@@ -245,44 +246,19 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
     
     // MARK: - Persistence Helpers
     
-    /// Loads all configurations: defaults merged with user-added configs from UserDefaults.
+    /// Loads all configurations: defaults plus user-added configs from UserDefaults.
     private static func loadConfigurations() -> [Configuration] {
         var configs = defaultConfigurations
         if let data = UserDefaults.standard.data(forKey: userConfigsKey),
            let userConfigs = try? JSONDecoder().decode([Configuration].self, from: data) {
-            // Merge: replace defaults with matching user edits, append new ones
-            for userConfig in userConfigs {
-                if let index = configs.firstIndex(where: { $0.name == userConfig.name }) {
-                    configs[index] = userConfig
-                } else {
-                    configs.append(userConfig)
-                }
-            }
+            configs.append(contentsOf: userConfigs)
         }
         return configs
     }
     
-    /// Persists user modifications (anything different from defaults + any new configs).
+    /// Persists user-added configurations (non-defaults) to UserDefaults.
     private func saveUserConfigurations() {
-        // Save only configs that differ from defaults or are new
-        let userConfigs = configurations.filter { config in
-            if let defaultConfig = defaultConfigurations.first(where: { $0.name == config.name }) {
-                // Include if edited (differs from default)
-                return config.clientId != defaultConfig.clientId ||
-                       config.scopes != defaultConfig.scopes ||
-                       config.redirectUri != defaultConfig.redirectUri ||
-                       config.discoveryEndpoint != defaultConfig.discoveryEndpoint ||
-                       config.type != defaultConfig.type ||
-                       config.environment != defaultConfig.environment ||
-                       config.cookieName != defaultConfig.cookieName ||
-                       config.serverUrl != defaultConfig.serverUrl ||
-                       config.realm != defaultConfig.realm ||
-                       config.acrValues != defaultConfig.acrValues ||
-                       config.signOutUri != defaultConfig.signOutUri
-            }
-            // New config (not in defaults)
-            return true
-        }
+        let userConfigs = configurations.filter { !$0.isDefault }
         if let data = try? JSONEncoder().encode(userConfigs) {
             UserDefaults.standard.set(data, forKey: ConfigurationManager.userConfigsKey)
         }
@@ -310,11 +286,7 @@ class ConfigurationManager: ObservableObject, @unchecked Sendable {
         
         if let client = client {
             self.oathClient = client
-            
-            // Initialize the timer service with the client
-            await MainActor.run {
-                oathTimerService = OathTimerService(client: client)
-            }
+            self.oathTimerService = OathTimerService(client: client)
         }
     }
 
@@ -340,7 +312,7 @@ private actor ClientInitializationActor {
     private var oathInitialized = false
     private var pushInitialized = false
     
-    func initializeOath(factory: () async throws -> OathClient) async throws -> OathClient? {
+    func initializeOath(factory: @Sendable () async throws -> OathClient) async throws -> OathClient? {
         guard !oathInitialized && !isOathInitializing else { return nil }
         
         isOathInitializing = true
@@ -351,7 +323,7 @@ private actor ClientInitializationActor {
         return client
     }
     
-    func initializePush(factory: () async throws -> PushClient) async throws -> PushClient? {
+    func initializePush(factory: @Sendable () async throws -> PushClient) async throws -> PushClient? {
         guard !pushInitialized && !isPushInitializing else { return nil }
         
         isPushInitializing = true

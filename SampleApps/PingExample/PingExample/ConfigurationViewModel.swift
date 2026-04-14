@@ -32,6 +32,11 @@ struct Configuration: Codable, Sendable {
     var serverUrl: String?
     var realm: String?
     var acrValues: String?
+    
+    /// Whether this configuration is a bundled default (immutable in the UI).
+    var isDefault: Bool {
+        defaultConfigurations.contains(where: { $0.name == name })
+    }
 }
 
 enum ConfigType: String, Codable, CaseIterable, Sendable {
