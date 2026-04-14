@@ -13,7 +13,7 @@ The Commons module provides the core foundation and shared functionality for all
 The Commons module is typically included as a transitive dependency when you add other modules using it. However, you can also add it explicitly to your `Podfile`:
 
 ```ruby
-pod 'PingCommons', '~> 2.0.0'
+pod 'PingCommons', '~> 2.0.0-beta5'
 ```
 
 Then run:
@@ -40,7 +40,7 @@ Add the Ping iOS SDK to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "2.0.0")
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "2.0.0-beta5")
 ]
 ```
 
@@ -60,7 +60,7 @@ targets: [
 Alternatively, in Xcode:
 1. Go to **File** > **Add Package Dependencies...**
 2. Enter the repository URL: `https://github.com/ForgeRock/ping-ios-sdk.git`
-3. Select version 2.0.0 or later
+3. Select version 2.0.0-beta5 or later
 4. Add the `PingCommons` library to your target
 
 **Dependencies:** PingCommons depends on `PingLogger` which will be automatically installed.

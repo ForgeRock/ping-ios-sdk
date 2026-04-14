@@ -15,7 +15,7 @@ The PingBinding Module is available via Swift Package Manager and CocoaPods.
 Add the following dependency to your `Package.swift` file:
 
 ```swift
-.package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "2.0.0")
+.package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "2.0.0-beta5")
 ```
 
 Then, add `PingBinding` to your target's dependencies:
@@ -32,7 +32,7 @@ Then, add `PingBinding` to your target's dependencies:
 Alternatively, in Xcode:
 1. Go to **File** > **Add Package Dependencies...**
 2. Enter the repository URL: `https://github.com/ForgeRock/ping-ios-sdk.git`
-3. Select the version (2.0.0 or later)
+3. Select the version (2.0.0-beta5 or later)
 4. Add the `PingBinding` library to your target
 
 ### CocoaPods
@@ -40,7 +40,7 @@ Alternatively, in Xcode:
 Add the following to your `Podfile`:
 
 ```ruby
-pod 'PingBinding', '~> 2.0.0'
+pod 'PingBinding', '~> 2.0.0-beta5'
 ```
 
 Then run:
@@ -55,11 +55,11 @@ PingBinding has the following dependencies which will be automatically installed
 
 | Dependency | Version | Description |
 |------------|---------|-------------|
-| `PingOrchestrate` | ~> 2.0.0 | Core orchestration framework |
-| `PingJourneyPlugin` | ~> 2.0.0 | Journey-based authentication flow management |
-| `PingCommons` | ~> 2.0.0 | Common utilities including JWT signing |
-| `PingStorage` | ~> 2.0.0 | Secure storage capabilities |
-| `PingLogger` | ~> 2.0.0 | Logging framework |
+| `PingOrchestrate` | ~> 2.0.0-beta5 | Core orchestration framework |
+| `PingJourneyPlugin` | ~> 2.0.0-beta5 | Journey-based authentication flow management |
+| `PingCommons` | ~> 2.0.0-beta5 | Common utilities including JWT signing |
+| `PingStorage` | ~> 2.0.0-beta5 | Secure storage capabilities |
+| `PingLogger` | ~> 2.0.0-beta5 | Logging framework |
 
 These dependencies provide the foundation for device binding operations, including secure key storage, JWT signing, and authentication flow management.
 

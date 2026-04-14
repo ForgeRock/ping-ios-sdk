@@ -151,9 +151,9 @@ let ping = OidcClient(config: config)
 
 ## Migration Guide
 
-### Migrating to `OidcWebClient` (from 2.0.0)
+### Migrating to `OidcWebClient` (from 2.0.0-beta5)
 
-The following classes and methods have been renamed for consistency starting from version 2.0.0:
+The following classes and methods have been renamed for consistency starting from version 2.0.0-beta5:
 
 | Old Name | New Name |
 |----------|----------|

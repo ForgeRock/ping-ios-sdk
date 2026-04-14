@@ -25,7 +25,7 @@
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "2.0.0")
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "2.0.0-beta5")
 ]
 ```
 
@@ -41,7 +41,7 @@ Add `PingAuthMigration` to your target's dependencies:
 ### CocoaPods
 
 ```ruby
-pod 'PingAuthMigration', '~> 2.0.0'
+pod 'PingAuthMigration', '~> 2.0.0-beta5'
 ```
 
 ## Usage
