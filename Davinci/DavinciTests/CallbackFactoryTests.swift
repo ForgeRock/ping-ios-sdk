@@ -11,13 +11,18 @@
 
 import Foundation
 import XCTest
+import PingDavinciPlugin
 @testable import PingDavinci
 
 class CallbackFactoryTests: XCTestCase {
     let davinci = DaVinci.createDaVinci()
     override func setUp() async throws{
-        await CollectorFactory.shared.register(type: "type1", collector: DummyCallback.self)
-        await CollectorFactory.shared.register(type: "type2", collector: Dummy2Callback.self)
+        await CollectorFactory.shared.register(type: "type1") { json in
+            DummyCallback(with: json)
+        }
+        await CollectorFactory.shared.register(type: "type2") { json in
+            Dummy2Callback(with: json)
+        }
     }
     
     func testShouldReturnListOfCollectorsWhenValidTypesAreProvided() async {
@@ -54,6 +59,10 @@ class CallbackFactoryTests: XCTestCase {
 
 public class DummyCallback: Collector, @unchecked Sendable {
     
+    public func payload() -> String? {
+        return value
+    }
+    
     public typealias T = String
     
     public var id: String {
@@ -72,6 +81,10 @@ public class DummyCallback: Collector, @unchecked Sendable {
 }
 
 final class Dummy2Callback: Collector, @unchecked Sendable {
+    
+    public func payload() -> String? {
+        return value
+    }
     
     public typealias T = String
     

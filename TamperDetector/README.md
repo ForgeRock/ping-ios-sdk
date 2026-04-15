@@ -81,3 +81,5 @@ detectors.append(customDetector)
 let tamperDetector = TamperDetector(detectors: detectors)
 let score = tamperDetector.analyze()
 ```
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

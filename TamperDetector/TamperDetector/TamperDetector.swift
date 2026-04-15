@@ -20,6 +20,9 @@ public protocol TamperDetectorProtocol {
 }
 
 extension TamperDetectorProtocol {
+    /// A shared logger instance available to all detectors.
+    var logger: Logger { LogManager.logger }
+
     /// Checks if a file at a given path can be opened.
     /// - Parameter path: The path of the file to check.
     /// - Returns: `true` if the file can be opened, `false` otherwise.
@@ -111,8 +114,10 @@ public class TamperDetector {
         var maxResult = 0.0
         for detector in self.detectors {
             var detectorResult = detector.analyze()
+            let detectorName = String(describing: type(of: detector))
             if detectorResult >= 1.0 {
                 detectorResult = 1.0
+                self.logger.w("\(detectorName) flagged the device as rooted (score: 1.0).", error: nil)
             }
             else if detectorResult < 0 {
                 detectorResult = 0
@@ -121,6 +126,7 @@ public class TamperDetector {
             maxResult = max(maxResult, detectorResult)
         }
         
+        self.logger.d("TamperDetector analysis complete. Final score: \(maxResult).")
         return maxResult
     }
 }

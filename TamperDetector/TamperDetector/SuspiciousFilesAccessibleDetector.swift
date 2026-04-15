@@ -10,6 +10,7 @@
 
 
 import Foundation
+import PingLogger
 
 /// SuspiciousFilesAccessibleDetector is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
 public class SuspiciousFilesAccessibleDetector: TamperDetectorProtocol {
@@ -42,10 +43,12 @@ public class SuspiciousFilesAccessibleDetector: TamperDetectorProtocol {
         
         for path in paths {
             if self.canOpen(path: path) {
+                logger.w("SuspiciousFilesAccessibleDetector: suspicious file is accessible at path '\(path)'.", error: nil)
                 return 1.0
             }
         }
         
+        logger.d("SuspiciousFilesAccessibleDetector: no suspicious files are accessible.")
         return 0.0
     }
 }

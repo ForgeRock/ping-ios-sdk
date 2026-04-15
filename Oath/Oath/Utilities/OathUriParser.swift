@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import PingMfaCommons
+import PingCommons
 
 /// Utility class for parsing and formatting OATH URIs.
 /// Supports both otpauth:// and mfauth:// schemes as defined in RFC specifications.

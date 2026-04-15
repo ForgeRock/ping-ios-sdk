@@ -67,6 +67,7 @@ public class DefaultUserKeySelector: UserKeySelector, @unchecked Sendable {
     
     /// Gets the top-most view controller in the view hierarchy.
     /// - Returns: The top view controller, or nil if none is found.
+    @MainActor
     private func getTopViewController() -> UIViewController? {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first(where: { $0.isKeyWindow }),

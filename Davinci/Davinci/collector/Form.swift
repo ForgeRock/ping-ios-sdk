@@ -10,6 +10,7 @@
 
 
 import Foundation
+import PingDavinciPlugin
 
 /// Class that handles the parsing and JSON representation of collectors.
 /// This class provides functions to parse a JSON object into a list of collectors and to represent a list of collectors as a JSON object.

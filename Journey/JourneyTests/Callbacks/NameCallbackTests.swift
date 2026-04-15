@@ -2,21 +2,22 @@
 //  NameCallbackTests.swift
 //  JourneyTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import XCTest
+import PingJourneyPlugin
 @testable import PingJourney
 
 class NameCallbackTests: XCTestCase {
 
     private var callback: NameCallback!
     
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws{
+        try await super.setUp()
         callback = NameCallback()
 
         let jsonString = """
@@ -42,7 +43,7 @@ class NameCallbackTests: XCTestCase {
 
              // Initialize callback with parsed data
              callback = NameCallback()
-             _ = callback.initialize(with: jsonObject)
+             _ = await callback.initialize(with: jsonObject)
         } else {
             XCTFail("Failed to parse JSON string")
         }

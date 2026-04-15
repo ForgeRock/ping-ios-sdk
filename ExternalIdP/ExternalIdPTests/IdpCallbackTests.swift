@@ -10,7 +10,7 @@
 
 
 import XCTest
-import PingJourney
+import PingJourneyPlugin
 @testable import PingExternalIdP
 
 final class IdpCallbackTests: XCTestCase {

@@ -2,7 +2,7 @@
 //  Fido.swift
 //  Fido
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -321,20 +321,50 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     func didComplete(with credential: ASAuthorizationCredential) {
         switch credential {
         case let credential as ASAuthorizationPublicKeyCredentialRegistration:
+            // Determine authenticator attachment type
+            var attachmentValue: String = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
+            if let registrationCredential = credential as? ASAuthorizationPlatformPublicKeyCredentialRegistration {
+                if #available(iOS 16.6, *) {
+                    attachmentValue = registrationCredential.attachment == .platform ? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM : FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM
+                } else {
+                    // Fallback for iOS 15 - default to platform since that's the only option on iOS 15
+                    attachmentValue = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
+                }
+            }
+            if credential is ASAuthorizationSecurityKeyPublicKeyCredentialRegistration {
+                attachmentValue = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM
+            }
+            
             let result: [String: Any] = [
                 FidoConstants.FIELD_RAW_ID: credential.credentialID,
                 FidoConstants.FIELD_CLIENT_DATA_JSON: credential.rawClientDataJSON,
-                FidoConstants.FIELD_ATTESTATION_OBJECT: credential.rawAttestationObject as Any
+                FidoConstants.FIELD_ATTESTATION_OBJECT: credential.rawAttestationObject as Any,
+                FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: attachmentValue,
             ]
             completion?(.success(result))
             cleanup()
         case let credential as ASAuthorizationPublicKeyCredentialAssertion:
+            // Determine authenticator attachment type for assertion
+            var attachmentValue: String = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
+            if let assertionCredential = credential as? ASAuthorizationPlatformPublicKeyCredentialAssertion {
+                if #available(iOS 16.6, *) {
+                    attachmentValue = assertionCredential.attachment == .platform ? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM : FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM
+                } else {
+                    // Fallback for iOS 15 - default to platform since that's the only option on iOS 15
+                    attachmentValue = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
+                }
+            }
+            if credential is ASAuthorizationSecurityKeyPublicKeyCredentialAssertion {
+                attachmentValue = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM
+            }
+            
             let result: [String: Any] = [
                 FidoConstants.FIELD_CLIENT_DATA_JSON: credential.rawClientDataJSON,
                 FidoConstants.FIELD_AUTHENTICATOR_DATA: credential.rawAuthenticatorData ?? Data(),
                 FidoConstants.FIELD_SIGNATURE: credential.signature ?? Data(),
                 FidoConstants.FIELD_RAW_ID: credential.credentialID,
-                FidoConstants.FIELD_USER_HANDLE: credential.userID ?? Data()
+                FidoConstants.FIELD_USER_HANDLE: credential.userID ?? Data(),
+                FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: attachmentValue
             ]
             completion?(.success(result))
             cleanup()
@@ -346,7 +376,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
 }
 
 /// Represents an error that can occur during FIDO operations.
-public enum FidoError: Error, Equatable {
+public enum FidoError: Error, LocalizedError, Equatable, Sendable {
     case invalidChallenge
     case invalidWindow
     case invalidResponse
@@ -354,8 +384,8 @@ public enum FidoError: Error, Equatable {
     case unsupportedAction(String)
     case missingParameters(String)
     case timeout
-    
-    public var localizedDescription: String {
+
+    public var errorDescription: String? {
         switch self {
         case .timeout:
             return "ERROR::TimeoutError:Operation timedout"

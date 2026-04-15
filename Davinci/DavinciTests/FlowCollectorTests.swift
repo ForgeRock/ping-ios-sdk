@@ -35,4 +35,30 @@ class FlowCollectorTests: XCTestCase {
         fieldCollector.value = "test"
         XCTAssertEqual("test", fieldCollector.value)
     }
+    
+    func testCloseShouldClearValue() {
+        let flowCollector = FlowCollector(with: [:])
+        flowCollector.value = "testValue"
+        
+        XCTAssertEqual("testValue", flowCollector.value)
+        XCTAssertEqual("testValue", flowCollector.payload())
+        
+        flowCollector.close()
+        
+        XCTAssertEqual("", flowCollector.value)
+        XCTAssertNil(flowCollector.payload())
+    }
+    
+    func testCloseShouldAllowReuse() {
+        let flowCollector = FlowCollector(with: [:])
+        
+        flowCollector.value = "value1"
+        XCTAssertEqual("value1", flowCollector.payload())
+        
+        flowCollector.close()
+        XCTAssertEqual("", flowCollector.value)
+        
+        flowCollector.value = "value2"
+        XCTAssertEqual("value2", flowCollector.payload())
+    }
 }

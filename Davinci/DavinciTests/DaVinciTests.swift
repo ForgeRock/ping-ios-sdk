@@ -2,7 +2,7 @@
 //  DaVinciTests.swift
 //  DavinciTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -10,11 +10,13 @@
 
 
 import XCTest
+import PingDavinciPlugin
 @testable import PingOrchestrate
 @testable import PingLogger
 @testable import PingOidc
 @testable import PingStorage
 @testable import PingDavinci
+@testable import PingNetwork
 
 final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
     var davinci: DaVinci?
@@ -38,7 +40,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         MockURLProtocol.startInterceptingRequests()
-        _ = CollectorFactory()
+        _ = CollectorFactory.shared
         
         MockURLProtocol.requestHandler = { request in
             switch request.url!.path {
@@ -83,7 +85,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         
         let nosession = Module.of { setup in
             setup.next { ( context,connector, request) in
-                request.header(name: "nosession", value: "true")
+                request.setHeader(name: "nosession", value: "true")
                 return request
             }
         }
@@ -111,7 +113,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
     
     func testDaVinciDefaultModuleSequence() async throws {
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.testClientId
@@ -139,10 +141,10 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
     }
     
     func testDaVinciSimpleHappyPath() async throws {
-        let tokenStorage = MemoryStorage<Token>()
-        let cookieStorage = MemoryStorage<[CustomHTTPCookie]>()
+        let tokenStorage = MemoryStorage<Token>(cacheStrategy: .NO_CACHE)
+        let cookieStorage = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.testClientId
@@ -234,7 +236,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
     
     func testDaVinciAdditionOidcParameter() async throws {
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.testClientId
@@ -282,10 +284,10 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
     }
     
     func testDaVinciRevokeAccessToken() async throws {
-        let tokenStorage = MemoryStorage<Token>()
-        let cookieStorage = MemoryStorage<[CustomHTTPCookie]>()
+        let tokenStorage = MemoryStorage<Token>(cacheStrategy: .NO_CACHE)
+        let cookieStorage = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.testClientId
@@ -334,7 +336,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.testClientId

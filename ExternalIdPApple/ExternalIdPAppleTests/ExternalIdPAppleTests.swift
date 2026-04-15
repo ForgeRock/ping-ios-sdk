@@ -1,8 +1,8 @@
-// 
+//
 //  ExternalIdPAppleTests.swift
 //  ExternalIdPAppleTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,37 +12,67 @@
 import XCTest
 @testable import PingExternalIdPApple
 @testable import PingExternalIdP
-@testable import PingOrchestrate
-@testable import PingDavinci
+@testable import PingNetwork
+@testable import PingDavinciPlugin
 
 final class ExternalIdPAppleTests: XCTestCase {
-
+    
     override func setUpWithError() throws {
-            Task {
-                await CollectorFactory.shared.registerDefaultCollectors()
-            }
-        }
- 
+        IdpCollector.registerCollector()
+    }
+    
+    // MARK: - IdpCollector Tests
+    
     @MainActor func testidpCollectorParsingApple() throws {
-            let jsonObject: [String: Any] = [
-                "idpId" : "e1112ad5f29f4fef394c68fa90baa0fe",
-                "idpType" : "APPLE",
-                "type" : "SOCIAL_LOGIN_BUTTON",
-                "label" : "Sign in with Apple",
-                "idpEnabled" : true,
-                "links" : [
-                  "authenticate" : [
+        let jsonObject: [String: Any] = [
+            "idpId" : "e1112ad5f29f4fef394c68fa90baa0fe",
+            "idpType" : "APPLE",
+            "type" : "SOCIAL_LOGIN_BUTTON",
+            "label" : "Sign in with Apple",
+            "idpEnabled" : true,
+            "links" : [
+                "authenticate" : [
                     "href" : "https://auth.pingone.com/c2a669c0-c396-4544-994d-9c6eb3fb1602/davinci/connections/e1112ad5f29f4fef394c68fa90baa0fe/capabilities/loginFirstFactor?interactionId=009ddda1-0c65-493a-bf77-2d270a495280&interactionToken=1deb3916f674f28004e642ff53f91e4474b1561b1281e62a9a15133f118795ddfbaf3889eea8e7cbbe689b1c7f419b1306af9b0b4432a809b3a983f2dee7406857502a2592df3d2adbd88103fa1d078bfe5480f66c84b71c2d8fce065284a5708e8194689f92f4bbdc66bd683c6bfa0c35c2b43711dfbdd8ba94b083919ea1bf&skRefreshToken=true"
-                  ]
                 ]
             ]
-            
-            let idpCollector = IdpCollector(with: jsonObject)
-            let handler = idpCollector.getDefaultIdpHandler(httpClient: HttpClient.init(session: .shared))
-            XCTAssertTrue(idpCollector.idpType == "APPLE")
-            XCTAssertTrue(idpCollector.link?.absoluteString == "https://auth.pingone.com/c2a669c0-c396-4544-994d-9c6eb3fb1602/davinci/connections/e1112ad5f29f4fef394c68fa90baa0fe/capabilities/loginFirstFactor?interactionId=009ddda1-0c65-493a-bf77-2d270a495280&interactionToken=1deb3916f674f28004e642ff53f91e4474b1561b1281e62a9a15133f118795ddfbaf3889eea8e7cbbe689b1c7f419b1306af9b0b4432a809b3a983f2dee7406857502a2592df3d2adbd88103fa1d078bfe5480f66c84b71c2d8fce065284a5708e8194689f92f4bbdc66bd683c6bfa0c35c2b43711dfbdd8ba94b083919ea1bf&skRefreshToken=true")
-            XCTAssertNotNil(handler)
-            XCTAssertNotNil(handler as? AppleRequestHandler)
+        ]
+        
+        let idpCollector = IdpCollector(with: jsonObject)
+        let handler = idpCollector.getDefaultIdpHandler(httpClient: HttpClient.createClient())
+        XCTAssertTrue(idpCollector.idpType == "APPLE")
+        XCTAssertTrue(idpCollector.link?.absoluteString == "https://auth.pingone.com/c2a669c0-c396-4544-994d-9c6eb3fb1602/davinci/connections/e1112ad5f29f4fef394c68fa90baa0fe/capabilities/loginFirstFactor?interactionId=009ddda1-0c65-493a-bf77-2d270a495280&interactionToken=1deb3916f674f28004e642ff53f91e4474b1561b1281e62a9a15133f118795ddfbaf3889eea8e7cbbe689b1c7f419b1306af9b0b4432a809b3a983f2dee7406857502a2592df3d2adbd88103fa1d078bfe5480f66c84b71c2d8fce065284a5708e8194689f92f4bbdc66bd683c6bfa0c35c2b43711dfbdd8ba94b083919ea1bf&skRefreshToken=true")
+        XCTAssertNotNil(handler)
+        XCTAssertNotNil(handler as? AppleRequestHandler)
+    }
+    
+    // MARK: - AppleHandler Tests
+    
+    @MainActor func testAppleHandlerTokenType() {
+        let handler = AppleHandler()
+        XCTAssertEqual(handler.tokenType, IdpConstants.id_token)
+    }
+    
+    // MARK: - AppleRequestHandler Tests
+    
+    @MainActor func testAppleRequestHandlerInitialization() {
+        let httpClient = HttpClient.createClient()
+        let handler = AppleRequestHandler(httpClient: httpClient as! URLSessionHttpClient)
+        XCTAssertNotNil(handler)
+    }
+    
+    // MARK: - AppleHandler.authorize Tests
+    
+    @MainActor func testAppleHandlerAuthorizeThrowsWhenNoViewController() async {
+        let handler = AppleHandler()
+        let idpClient = IdpClient(clientId: "test", scopes: ["email", "name"])
+        
+        do {
+            _ = try await handler.authorize(idpClient: idpClient)
+            XCTFail("Expected error to be thrown when no view controller is available")
+        } catch {
+            // Expected - no view controller available in test environment
+            XCTAssertNotNil(error)
         }
-
+    }
+    
 }

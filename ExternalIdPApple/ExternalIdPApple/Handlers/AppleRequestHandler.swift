@@ -2,14 +2,14 @@
 //  AppleRequestHandler.swift
 //  ExternalIdPApple
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import Foundation
-import PingOrchestrate
+import PingNetwork
 import AuthenticationServices
 import PingExternalIdP
 
@@ -17,21 +17,21 @@ import PingExternalIdP
 @MainActor
 @objc class AppleRequestHandler: NSObject, IdpRequestHandler {
     /// The HTTP client to use for requests.
-    private let httpClient: HttpClient
+    private let httpClient: URLSessionHttpClient
     /// The IdpClient to use for requests.
     private var idpClient: IdpClient?
     
     /// Initializes a new instance of `AppleRequestHandler`.
     /// - Parameter httpClient: The HTTP client to use for requests.
     @objc(initWithHttpClient:)
-    init(httpClient: HttpClient) {
+    init(httpClient: URLSessionHttpClient) {
         self.httpClient = httpClient
     }
     
     /// Authorizes the user with the IDP.
     /// - Parameter url: The URL for the IDP.
-    /// - Returns: A `Request` object containing the result of the authorization.
-    func authorize(url: URL?) async throws -> Request {
+    /// - Returns: An `HttpRequest` object containing the result of the authorization.
+    func authorize(url: URL?) async throws -> HttpRequest {
         do {
             self.idpClient = try await self.fetch(httpClient: self.httpClient, url: url)
         } catch {
@@ -44,9 +44,10 @@ import PingExternalIdP
         guard let continueUrl = idpClient.continueUrl, !continueUrl.isEmpty else {
             throw IdpExceptions.illegalStateException(message: IdpErrorMessages.invalidConfiguration)
         }
-        let request = Request(urlString: continueUrl)
-        request.header(name: Request.Constants.accept, value: Request.ContentType.json.rawValue)
-        request.body(body: [Request.Constants.idToken: result.token])
+        let request = httpClient.request()
+        request.url = continueUrl
+        request.setHeader(name: NetworkConstants.headerAccept, value: NetworkConstants.contentTypeJSON)
+        request.post(json: [NetworkConstants.idToken: result.token])
         return request
     }
     

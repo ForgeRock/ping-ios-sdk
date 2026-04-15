@@ -2,7 +2,7 @@
 //  DeviceBindingStatus.swift
 //  PingBinding
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -19,7 +19,7 @@ struct BindingStatusConstants {
 }
 
 /// An enum representing the status of a device binding operation, which can be used to convey more specific information about the outcome of a binding or signing attempt.
-public enum DeviceBindingStatus: Error {
+public enum DeviceBindingStatus: Error, LocalizedError, Sendable {
     /// The operation timed out.
     case timeout
     /// The user aborted the operation.
@@ -33,6 +33,9 @@ public enum DeviceBindingStatus: Error {
     /// The custom claims are invalid.
     case invalidCustomClaims
     
+    /// A localized description of the error.
+    public var errorDescription: String? { errorMessage }
+
     /// A client error string that can be sent to the server.
     public var clientError: String {
         switch self {

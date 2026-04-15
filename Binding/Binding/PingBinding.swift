@@ -2,14 +2,15 @@
 //  PingBinding.swift
 //  PingBinding
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import Foundation
-import PingJourney
+import PingDeviceId
+import PingJourneyPlugin
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -37,6 +38,9 @@ class Binding {
     static func bind(callback: DeviceBindingCallback, journey: Journey?, config: (DeviceBindingConfig) -> Void = { _ in }) async throws -> String {
         let deviceBindingConfig = DeviceBindingConfig()
         config(deviceBindingConfig)
+        
+        // Check for and migrate legacy data if present
+        _ = await BindingMigration.migrateIfNeeded()
         
         var deviceAuthenticator = deviceBindingConfig.authenticator(type: callback.deviceBindingAuthenticationType, prompt: Prompt(title: callback.title, subtitle: callback.subtitle, description: callback.description))
         deviceAuthenticator.journey = callback.journey
@@ -79,11 +83,11 @@ class Binding {
         
         // Set the JWS, device ID, and device name on the callback.
         callback.setJws(jws)
-        #if canImport(UIKit)
-        if let deviceId = await UIDevice.current.identifierForVendor?.uuidString {
+        let deviceIdentifier: any DeviceIdentifier = deviceBindingConfig.deviceIdentifier
+            ?? ((try? DefaultDeviceIdentifier()) ?? UUIDDeviceIdentifier())
+        if let deviceId = try? await deviceIdentifier.id {
             callback.setDeviceId(deviceId)
         }
-        #endif
         callback.setDeviceName(deviceBindingConfig.deviceName)
         
         return jws
@@ -109,10 +113,16 @@ class Binding {
         let deviceBindingConfig = DeviceBindingConfig()
         config(deviceBindingConfig)
         
+        let startTime = Date()
+        
         let claims = deviceBindingConfig.claims
         try validate(customClaims: claims)
         
         let storage = deviceBindingConfig.keyStorage()
+        
+        // Check for and migrate legacy data if present
+        // This ensures legacy keys are available for signing
+        _ = await BindingMigration.migrateIfNeeded()
         
         // Retrieve the user key from storage.
         let retrievedUserKey: UserKey
@@ -181,7 +191,24 @@ class Binding {
                                                      expiration: deviceBindingConfig.expirationTime(callback.timeout),
                                                      customClaims: claims)
         
-        let jws = try deviceAuthenticator.sign(params: signingParams, journey: journey)
+        // Sign the JWS. If the signing operation fails with a non-DeviceBindingError (e.g., a
+        // Secure Enclave auth failure when the wrong PIN is used, surfaced as a JwtError from
+        // SecKeyCreateSignature), reclassify it as authenticationFailed so it maps to "Abort".
+        let jws: String
+        do {
+            jws = try deviceAuthenticator.sign(params: signingParams, journey: journey)
+        } catch let error as DeviceBindingError {
+            throw error
+        } catch {
+            throw DeviceBindingError.authenticationFailed
+        }
+        
+        // Check if the operation exceeded the allowed timeout (matching legacy SDK behaviour).
+        // A timeout of 0 means the operation is always considered expired.
+        let elapsed = Date().timeIntervalSince(startTime)
+        if elapsed > Double(callback.timeout) {
+            throw DeviceBindingError.timeout
+        }
         
         // Set the JWS on the callback.
         callback.setJws(jws)

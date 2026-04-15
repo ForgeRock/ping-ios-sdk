@@ -1,5 +1,5 @@
 {
-  "originHash" : "467015576e0f10ed2f04af56c5d90983d8300fa7693dc4ab675367f78e71c5bf",
+  "originHash" : "44575aec2722d35759ba0cd4a2217c471ffdcfd02f2e14febb8bb35f46b45cbc",
   "pins" : [
     {
       "identity" : "app-check",
@@ -65,12 +65,21 @@
       }
     },
     {
+      "identity" : "interop-ios-for-google-sdks",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/google/interop-ios-for-google-sdks.git",
+      "state" : {
+        "revision" : "040d087ac2267d2ddd4cca36c757d1c6a05fdbfe",
+        "version" : "101.0.0"
+      }
+    },
+    {
       "identity" : "pingone-signals-sdk-ios",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pingidentity/pingone-signals-sdk-ios.git",
       "state" : {
-        "revision" : "bf37bd85fa909428d764630c71cf0d4f3d2d7e05",
-        "version" : "5.3.0"
+        "revision" : "e41f7070fdbb43dd7762274ec610c099256a7c7e",
+        "version" : "5.4.0"
       }
     },
     {
@@ -80,6 +89,15 @@
       "state" : {
         "revision" : "540318ecedd63d883069ae7f1ed811a2df00b6ac",
         "version" : "2.4.0"
+      }
+    },
+    {
+      "identity" : "recaptcha-enterprise-mobile-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk.git",
+      "state" : {
+        "revision" : "fb634e89a36fd91725ad654d5576d800c061b37d",
+        "version" : "18.8.2"
       }
     }
   ],

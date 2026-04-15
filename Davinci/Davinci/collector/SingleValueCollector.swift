@@ -8,6 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
+import PingDavinciPlugin
 
 /// A class representing a single value collector,
 /// Inheriting from `FieldCollector` and conforming to `Collector`.

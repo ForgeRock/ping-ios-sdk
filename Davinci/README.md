@@ -68,7 +68,7 @@ let daVinci = DaVinci.createDaVinci { config in
     config.logger = LogManager.standard
     config.module(OidcModule.config) { oidcValue in
         //...
-        oidcValue.storage = MemoryStorage<Token>()
+        oidcValue.storage = MemoryStorage<Token>(cacheStrategy: .NO_CACHE)
     }
 }
 ```
@@ -324,3 +324,5 @@ _ = await user?.userinfo(cache: false)
 await user?.logout()
 
 ```
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

@@ -9,7 +9,7 @@
 //
 
 import XCTest
-import PingJourney
+import PingJourneyPlugin
 import PingLogger
 @testable import PingDeviceProfile
 
@@ -384,8 +384,9 @@ class DeviceProfileCallbackTests: XCTestCase {
     
     // MARK: - Integration Tests
     
-    func testCallbackRegistration() {
+    func testCallbackRegistration() async {
         // Test the static registration method
+        
         DeviceProfile.registerCallbacks()
         
         // Should not crash

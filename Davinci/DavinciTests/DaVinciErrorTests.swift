@@ -2,7 +2,7 @@
 //  DaVinciErrorTests.swift
 //  DavinciTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,11 +11,13 @@
 
 import Foundation
 import XCTest
+import PingDavinciPlugin
 @testable import PingOrchestrate
 @testable import PingStorage
 @testable import PingLogger
 @testable import PingOidc
 @testable import PingDavinci
+@testable import PingNetwork
 
 class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
     
@@ -29,7 +31,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         self.config.discoveryEndpoint = "http://localhost/.well-known/openid-configuration"
         
         MockURLProtocol.startInterceptingRequests()
-        _ = CollectorFactory()
+        _ = CollectorFactory.shared
     }
     
     override func tearDown() {
@@ -49,7 +51,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
@@ -100,7 +102,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
@@ -148,7 +150,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
@@ -196,7 +198,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
@@ -243,7 +245,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
@@ -290,7 +292,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
@@ -332,7 +334,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
@@ -384,7 +386,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
@@ -435,7 +437,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
@@ -476,7 +478,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
@@ -513,7 +515,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         
         
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
@@ -569,7 +571,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
@@ -612,7 +614,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         }
         
         let daVinci = DaVinci.createDaVinci { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId

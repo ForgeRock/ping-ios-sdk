@@ -2,7 +2,7 @@
 //  OrchestrateTests.swift
 //  OrchestrateTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -26,14 +26,14 @@
 //      let config = setup.config
 //      setup.next { ( context, _, request) in
 //        if config.enable {
-//          request.header(name: config.headerName, value: config.headerValue)
+//          request.setHeader(name: config.headerName, value: config.headerValue)
 //        }
 //        return request
 //      }
 //      
 //      setup.start { ( context, request) in
 //        if config.enable {
-//          request.header(name: config.headerName, value: config.headerValue)
+//          request.setHeader(name: config.headerName, value: config.headerValue)
 //        }
 //        return request
 //      }
@@ -43,7 +43,7 @@
 //    
 //    let nosession = Module.of { setup in
 //      setup.next { ( context,_, request) in
-//        request.header(name: "nosession", value: "true")
+//        request.setHeader(name: "nosession", value: "true")
 //        return request
 //      }
 //    }
@@ -51,7 +51,7 @@
 //    
 //    let forceAuth = Module.of { setup in
 //      setup.start { ( context, request) in
-//        request.header(name: "forceAuth", value: "true")
+//        request.setHeader(name: "forceAuth", value: "true")
 //        return request
 //      }
 //    }
@@ -92,14 +92,14 @@
 //      let config = setup.config
 //      setup.next { ( context,_, request) in
 //        if config.enable {
-//          request.header(name: config.headerName, value: config.headerValue)
+//          request.setHeader(name: config.headerName, value: config.headerValue)
 //        }
 //        return request
 //      }
 //      
 //      setup.start { ( context, request) in
 //        if config.enable {
-//          request.header(name: config.headerName, value: config.headerValue)
+//          request.setHeader(name: config.headerName, value: config.headerValue)
 //        }
 //        return request
 //      }
@@ -109,7 +109,7 @@
 //    
 //    let nosession = Module.of { setup in
 //      setup.next { ( context, _, request) in
-//        request.header(name: "nosession", value: "true")
+//        request.setHeader(name: "nosession", value: "true")
 //        return request
 //      }
 //    }
@@ -117,7 +117,7 @@
 //    
 //    let forceAuth = Module.of{ setup in
 //      setup.start { ( context, request) in
-//        request.header(name: "forceAuth", value: "true")
+//        request.setHeader(name: "forceAuth", value: "true")
 //        return request
 //      }
 //    }
@@ -175,14 +175,14 @@
 ////      let config = setup.config
 ////      setup.next { ( context,_, request) in
 ////        if config.enable {
-////          request.header(name: config.headerName, value: config.headerValue)
+////          request.setHeader(name: config.headerName, value: config.headerValue)
 ////        }
 ////        return request
 ////      }
 ////      
 ////      setup.start { ( context, request) in
 ////        if config.enable {
-////          request.header(name: config.headerName, value: config.headerValue)
+////          request.setHeader(name: config.headerName, value: config.headerValue)
 ////        }
 ////        return request
 ////      }
@@ -192,7 +192,7 @@
 ////    
 ////    let nosession = Module.of(priority: .high) { setup in
 ////      setup.next { ( context, _, request) in
-////        request.header(name: "nosession", value: "true")
+////        request.setHeader(name: "nosession", value: "true")
 ////        return request
 ////      }
 ////    }
@@ -200,7 +200,7 @@
 ////    
 ////    let forceAuth = Module.of{ setup in
 ////      setup.start { ( context, request) in
-////        request.header(name: "forceAuth", value: "true")
+////        request.setHeader(name: "forceAuth", value: "true")
 ////        return request
 ////      }
 ////    }

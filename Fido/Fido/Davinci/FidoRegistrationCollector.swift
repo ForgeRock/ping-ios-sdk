@@ -2,20 +2,27 @@
 //  FidoRegistrationCollector.swift
 //  Fido
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import Foundation
-import PingDavinci
 import PingLogger
 import UIKit
 import AuthenticationServices
+import PingDavinciPlugin
+import PingOrchestrate
+import PingCommons
 
 /// A collector for FIDO registration within a DaVinci flow.
-public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendable {
+public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unchecked Sendable {
+    
+    /// Resets the collector's state by clearing the attestation value.
+    public func close() {
+        self.attestationValue = nil
+    }
     
     /// The public key credential creation options provided by the server.
     public var publicKeyCredentialCreationOptions: [String: Any] = [:]
@@ -69,7 +76,8 @@ public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendab
                 fido.register(options: publicKeyCredentialCreationOptions, window: window) { [continuation] result in
                     Task {
                         await MainActor.run {
-                            continuation.resume(with: result) // Resume with the Result<[String: Any>, Error>
+                            nonisolated(unsafe) let sendableResult = result
+                            continuation.resume(with: sendableResult) // Resume with the Result<[String: Any>, Error>
                         }
                     }
                 }
@@ -82,22 +90,22 @@ public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendab
                   let clientDataJSONData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
                   let attestationObjectData = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? Data else {
                 
-                let error = FidoError.invalidResponse // Define your error type
+                let error = FidoError.invalidResponse
                 logger?.e(error.localizedDescription, error: error)
-                // Note: No call to self.handleError here as it's specific to the callback context
-                return .failure(error) // Return failure
+                let transformedError = self.handleError(error: error)
+                return .failure(transformedError) // Return failure with transformed error
             }
             
             // 3. Construct the attestationValue payload
-            let authenticatorAttachment = "platform"
+            let authenticatorAttachment = response[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String ?? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
             let newAttestationValue: [String: Any] = [
-                FidoConstants.FIELD_ID: rawIdData.base64urlEncodedString(),
+                FidoConstants.FIELD_ID: rawIdData.base64URLEncodedString(),
                 FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,
                 FidoConstants.FIELD_RAW_ID: rawIdData.base64EncodedString(),
                 FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: authenticatorAttachment,
                 FidoConstants.FIELD_RESPONSE: [
-                    FidoConstants.FIELD_CLIENT_DATA_JSON: clientDataJSONData.base64urlEncodedString(),
-                    FidoConstants.FIELD_ATTESTATION_OBJECT: attestationObjectData.base64urlEncodedString()
+                    FidoConstants.FIELD_CLIENT_DATA_JSON: clientDataJSONData.base64URLEncodedString(),
+                    FidoConstants.FIELD_ATTESTATION_OBJECT: attestationObjectData.base64URLEncodedString()
                 ]
             ]
             
@@ -110,8 +118,8 @@ public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendab
         } catch {
             // 5. Handle any error caught from the continuation
             logger?.e("FIDO registration failed", error: error)
-            // Note: No call to self.handleError here
-            return .failure(error) // Return failure
+            let transformedError = self.handleError(error: error)
+            return .failure(transformedError) // Return failure with transformed error
         }
     }
     
@@ -140,6 +148,13 @@ public class FidoRegistrationCollector: AbstractFidoCollector, @unchecked Sendab
             logger?.d("Challenge: \(challenge)")
             let data = Data(challenge.map { UInt8(bitPattern: Int8($0)) })
             output[FidoConstants.FIELD_CHALLENGE] = data.base64EncodedString()
+        }
+        
+        // Handle timeout field - use default if not provided
+        if let timeout = output[FidoConstants.FIELD_TIMEOUT] as? Int {
+            output[FidoConstants.FIELD_TIMEOUT] = timeout
+        } else {
+            output[FidoConstants.FIELD_TIMEOUT] = FidoConstants.DEFAULT_TIMEOUT
         }
         
         if let excludeCredentials = output[FidoConstants.FIELD_EXCLUDE_CREDENTIALS] as? [[String: Any]] {

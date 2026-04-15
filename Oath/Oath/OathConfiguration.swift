@@ -10,7 +10,7 @@
 
 import Foundation
 import PingLogger
-import PingMfaCommons
+import PingCommons
 
 /// Configuration class specific for OATH MFA functionality.
 /// Extends the base configuration with OATH-specific settings.

@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  PingExample
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -18,11 +18,16 @@ import PingTamperDetector
 import PingOidc
 import PingProtect
 import PingBinding
+import PingOath
+import PingPush
 
 /// The main application entry point.
 @main
 struct MyApp: App {
-    
+
+    // Connect AppDelegate for push notifications
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     // Create an instance of the manager.
     // @StateObject ensures it's kept alive for the app's lifecycle.
     @StateObject private var sceneManager = ScenePhaseManager()
@@ -46,26 +51,30 @@ struct MyApp: App {
 enum MenuSection: CaseIterable, Identifiable {
     case authentication
     case userManagement
+    case mfa
     case developerTools
-    
+
     var id: String { title }
-    
+
     var title: String {
         switch self {
         case .authentication: return "Authentication"
         case .userManagement: return "User Management"
+        case .mfa: return "MFA"
         case .developerTools: return "Developer Tools"
         }
     }
-    
+
     var items: [MenuItem] {
         switch self {
         case .authentication:
             return [.davinci, .journey, .oidc]
         case .userManagement:
-            return [.token, .user, .logout]
+            return [.token, .user, .deviceManagement, .logout]
+        case .mfa:
+            return [.qrScanner, .oathAccounts, .pushAccounts, .pushNotifications]
         case .developerTools:
-            return [.deviceInfo, .logger, .storage, .bindingKeys, .configuration]
+            return [.deviceInfo, .logger, .storage, .bindingKeys, .migration, .configuration]
         }
     }
 }
@@ -74,16 +83,25 @@ enum MenuSection: CaseIterable, Identifiable {
 enum MenuItem: String, CaseIterable, Identifiable {
     case davinci = "DaVinci"
     case journey = "Journey"
-    case oidc = "OIDC"
+    case oidc = "OIDC (Web)"
+    case oathAccounts = "OATH"
+    case pushAccounts = "Push"
+    case qrScanner = "QR Scanner"
+    case pushNotifications = "Push Notifications"
     case token = "Token"
     case user = "User"
     case logout = "Logout"
+    case deviceManagement = "Device Management"
     case deviceInfo = "DeviceInfo"
     case logger = "Logger"
     case storage = "Storage"
     case bindingKeys = "Binding Keys"
+    case migration = "Migration"
     case configuration = "Configuration"
-    
+    case journeyToken = "Journey Token"
+    case davinciToken = "DaVinci Token"
+    case oidcToken = "OIDC Token"
+
     var id: String { rawValue }
     
     var icon: String {
@@ -91,14 +109,23 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .davinci: return "key.fill"
         case .journey: return "map.fill"
         case .oidc: return "lock.shield.fill"
+        case .oathAccounts: return "key.viewfinder"
+        case .pushAccounts: return "bell.badge.fill"
+        case .qrScanner: return "qrcode.viewfinder"
+        case .pushNotifications: return "bell.fill"
         case .token: return "ticket.fill"
         case .user: return "person.fill"
         case .logout: return "rectangle.portrait.and.arrow.right"
+        case .deviceManagement: return "iphone.and.arrow.forward"
         case .deviceInfo: return "iphone"
         case .logger: return "doc.text.magnifyingglass"
         case .storage: return "externaldrive.fill"
         case .bindingKeys: return "key.icloud.fill"
+        case .migration: return "arrow.triangle.2.circlepath"
         case .configuration: return "gearshape.fill"
+        case .journeyToken: return "map.fill"
+        case .davinciToken: return "key.fill"
+        case .oidcToken: return "lock.shield.fill"
         }
     }
     
@@ -106,15 +133,24 @@ enum MenuItem: String, CaseIterable, Identifiable {
         switch self {
         case .davinci: return "DaVinci Flow"
         case .journey: return "Journey Flow"
-        case .oidc: return "OIDC Login"
+        case .oidc: return "OIDC (Web) Login"
+        case .oathAccounts: return "OATH"
+        case .pushAccounts: return "Push"
+        case .qrScanner: return "QR Scanner"
+        case .pushNotifications: return "Push Notifications"
         case .token: return "Access Token"
         case .user: return "User Info"
         case .logout: return "Logout"
+        case .deviceManagement: return "Device Management"
         case .deviceInfo: return "Device Info"
         case .logger: return "Logger"
         case .storage: return "Storage"
         case .bindingKeys: return "Binding Keys"
-        case .configuration: return "Configuration"
+        case .migration: return "Migration"
+        case .configuration: return "Configurationss"
+        case .journeyToken: return "Journey Access Token"
+        case .davinciToken: return "DaVinci Access Token"
+        case .oidcToken: return "OIDC (Web) Access Token"
         }
     }
     
@@ -123,14 +159,33 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .davinci: return "Test DaVinci authentication"
         case .journey: return "Test Journey authentication"
         case .oidc: return "OpenID Connect flow"
+        case .oathAccounts: return "Manage TOTP and HOTP accounts"
+        case .pushAccounts: return "Manage push authentication accounts"
+        case .qrScanner: return "Scan QR codes for registration"
+        case .pushNotifications: return "View and respond to push requests"
         case .token: return "View current token"
         case .user: return "View user details"
         case .logout: return "End session"
+        case .deviceManagement: return "Manage registered devices"
         case .deviceInfo: return "Collect device data"
         case .logger: return "Test logging"
         case .storage: return "Test storage"
         case .bindingKeys: return "Manage stored binding keys"
-        case .configuration: return "Edit configuration"
+        case .migration: return "Migrate legacy FRAuthenticator data"
+        case .configuration: return "Edit configurations"
+        case .journeyToken: return "View Journey token"
+        case .davinciToken: return "View DaVinci token"
+        case .oidcToken: return "View OIDC token"
+        }
+    }
+    
+    /// The config type required to use this menu item, or nil if none required.
+    var requiredConfigType: ConfigType? {
+        switch self {
+        case .journey, .journeyToken: return .journey
+        case .davinci, .davinciToken: return .davinci
+        case .oidc, .oidcToken: return .oidcWeb
+        default: return nil
         }
     }
 }
@@ -140,8 +195,10 @@ struct ContentView: View {
     @State private var deviceID: String = ""
     @State private var startDavinci = false
     @State private var path: [MenuItem] = []
-    @State private var configurationViewModel: ConfigurationViewModel = ConfigurationManager.shared.loadConfigurationViewModel()
     @State private var deviceStatus: String = "Checking..."
+    @State private var navigateToPushNotifications = false
+    @State private var showNoConfigAlert = false
+    @State private var noConfigTypeName = ""
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -168,20 +225,42 @@ struct ContentView: View {
                 }
             }
             .background(Color(.systemGroupedBackground))
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("NavigateToPushNotifications"))) { _ in
+                // Navigate to Push Notifications view
+                if !path.contains(.pushNotifications) {
+                    path.append(.pushNotifications)
+                }
+            }
             .navigationDestination(for: MenuItem.self) { item in
                 switch item {
                 case .configuration:
-                    ConfigurationView(menuItem: item, configurationViewModel: $configurationViewModel)
+                    ConfigurationListView()
                 case .davinci:
                     DavinciView(path: $path)
                 case .journey:
                     JourneyView(path: $path)
                 case .oidc:
                     OidcLoginView(path: $path)
+                case .oathAccounts:
+                    OathAccountsView(path: $path)
+                case .pushAccounts:
+                    PushAccountsView(path: $path)
+                case .qrScanner:
+                    QRScannerContainerView(path: $path)
+                case .pushNotifications:
+                    PushNotificationsView(path: $path)
                 case .token:
                     AccessTokenView(menuItem: item)
+                case .journeyToken:
+                    AccessTokenView(menuItem: item, fixedTab: .journey)
+                case .davinciToken:
+                    AccessTokenView(menuItem: item, fixedTab: .davinci)
+                case .oidcToken:
+                    AccessTokenView(menuItem: item, fixedTab: .oidc)
                 case .user:
                     UserInfoView(menuItem: item)
+                case .deviceManagement:
+                    DeviceManagementView(menuItem: item)
                 case .logout:
                     LogOutView(path: $path)
                 case .logger:
@@ -190,6 +269,8 @@ struct ContentView: View {
                     StorageView(menuItem: item)
                 case .bindingKeys:
                     BindingKeysView()
+                case .migration:
+                    AuthMigrationView()
                 case .deviceInfo:
                     DeviceInfoView(menuItem: item)
                 }
@@ -207,12 +288,20 @@ struct ContentView: View {
                     deviceStatus = "✓ Secure"
                 }
             }
+            .alert("No Configuration", isPresented: $showNoConfigAlert) {
+                Button("Go to Configurations") {
+                    path.append(.configuration)
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("No \(noConfigTypeName) configuration found. Please add one in Configurations.")
+            }
         }
     }
     
     // MARK: - Header Section
     private var headerSection: some View {
-        ZStack {
+        ZStack(alignment: .topTrailing) {
             LinearGradient(
                 colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
                 startPoint: .topLeading,
@@ -238,6 +327,21 @@ struct ContentView: View {
                     .foregroundColor(.white.opacity(0.7))
             }
             .padding(.vertical, 10)
+            .frame(maxWidth: .infinity)
+            
+            Button {
+                path.append(.configuration)
+            } label: {
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 20))
+                    .foregroundColor(.white.opacity(0.9))
+                    .frame(width: 36, height: 36)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(.white.opacity(0.4), lineWidth: 1)
+                    )
+                    .padding(12)
+            }
         }
     }
     
@@ -270,7 +374,13 @@ struct ContentView: View {
     // MARK: - Menu Item Button
     private func menuItemButton(_ item: MenuItem) -> some View {
         Button {
-            path.append(item)
+            if let requiredType = item.requiredConfigType,
+               !ConfigurationManager.shared.hasConfiguration(for: requiredType) {
+                noConfigTypeName = requiredType.rawValue
+                showNoConfigAlert = true
+            } else {
+                path.append(item)
+            }
         } label: {
             HStack(spacing: 16) {
                 Image(systemName: item.icon)

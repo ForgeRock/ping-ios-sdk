@@ -2,7 +2,7 @@
 //  Transform.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,8 @@
 import Foundation
 import PingOidc
 import PingOrchestrate
+import PingDavinciPlugin
+import PingNetwork
 
 /// Module for transforming the response from DaVinci to `Node`.
 public class NodeTransformModule {
@@ -19,9 +21,9 @@ public class NodeTransformModule {
     /// The module configuration for transforming the response from DaVinci to `Node`.
     public static let config: Module<Void> = Module.of(setup: { setup in
         setup.transform { @Sendable flowContext, response in
-            let status = response.status()
+            let status = response.status
             
-            let body = await response.body()
+            let body = response.bodyAsString()
             
             // Check for 4XX errors that are unrecoverable
             if (400..<500).contains(status) {
@@ -63,7 +65,7 @@ public class NodeTransformModule {
             
             // Handle success (3XX) responses
             if (300..<400).contains(status) {
-                let locationHeader = response.header(name: Constants.location) ?? ""
+                let locationHeader = response.getHeader(name: Constants.location) ?? ""
                 return FailureNode(cause: ApiError.error(status, [:], "Location: \(String(describing: locationHeader))" ))
             }
             
@@ -115,11 +117,23 @@ public struct SessionResponse: Session, @unchecked Sendable {
 
 
 /// Represents API errors that occur during response transformation.
-public enum ApiError: Error, @unchecked Sendable {
+///
+/// `@unchecked Sendable` is used here because the associated `[String: Any]` JSON dictionary
+/// does not conform to `Sendable` in Swift's type system. However, this is safe in practice
+/// because the dictionary is populated once at the call site during response parsing and is
+/// never mutated after the error value is constructed. All access is read-only.
+public enum ApiError: Error, LocalizedError, @unchecked Sendable {
     /// An error containing an HTTP status code, a JSON object, and a descriptive message.
     /// - Parameters:
     ///   - status: The HTTP status code of the error.
     ///   - json: The JSON data associated with the error.
     ///   - message: A descriptive message explaining the error.
     case error(Int, [String: Any], String)
+
+    public var errorDescription: String? {
+        switch self {
+        case .error(let status, _, let message):
+            return "API error (HTTP \(status)): \(message)"
+        }
+    }
 }

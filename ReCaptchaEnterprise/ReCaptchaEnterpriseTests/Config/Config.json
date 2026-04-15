@@ -1,0 +1,19 @@
+{
+    "username" : "sdkuser",
+    "userFname" : "Sdk",
+    "userLname" : "User",
+    "password" : "password",
+    "newPassword" : "New1234#1",
+    "verificationCode" : "1234",
+    
+    "clientId": "iosclient",
+    "scopes": "openid profile email address",
+    "redirectUri": "frauth://oauth2redirect",
+    "signOutUri": "frauth://oauth2redirect",
+    "discoveryEndpoint": "https://openam-sdks.forgeblocks.com/am/oauth2/alpha/.well-known/openid-configuration",
+    "environment": "AIC",
+    "cookieName": "5421aeddf91aa20",
+    "serverUrl": "https://openam-sdks.forgeblocks.com/am",
+    "realm": "alpha",
+    "acrValues" : "79220c5e3a217a3d9b6739585cb160aa"
+}

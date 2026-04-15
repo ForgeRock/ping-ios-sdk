@@ -19,4 +19,30 @@ final class SubmitCollectorTests: XCTestCase {
         let submitCollector = SubmitCollector(with: [:])
         XCTAssertNotNil(submitCollector)
     }
+    
+    func testCloseShouldClearValue() {
+        let submitCollector = SubmitCollector(with: [:])
+        submitCollector.value = "submitValue"
+        
+        XCTAssertEqual("submitValue", submitCollector.value)
+        XCTAssertEqual("submitValue", submitCollector.payload())
+        
+        submitCollector.close()
+        
+        XCTAssertEqual("", submitCollector.value)
+        XCTAssertNil(submitCollector.payload())
+    }
+    
+    func testCloseShouldAllowReuse() {
+        let submitCollector = SubmitCollector(with: [:])
+        
+        submitCollector.value = "submit1"
+        XCTAssertEqual("submit1", submitCollector.payload())
+        
+        submitCollector.close()
+        XCTAssertEqual("", submitCollector.value)
+        
+        submitCollector.value = "submit2"
+        XCTAssertEqual("submit2", submitCollector.payload())
+    }
 }

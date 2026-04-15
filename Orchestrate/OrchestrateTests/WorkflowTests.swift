@@ -2,7 +2,7 @@
 //  WorkflowTests.swift
 //  OrchestrateTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,7 @@
 
 import XCTest
 @testable import PingOrchestrate
+import PingNetwork
 
 class CustomHeaderConfig: @unchecked Sendable {
     var enable = true
@@ -24,14 +25,14 @@ class WorkflowTest: XCTestCase {
         let config = setup.config
         setup.next { ( context, _, request) in
             if config.enable {
-                request.header(name: config.headerName, value: config.headerValue)
+                request.setHeader(name: config.headerName, value: config.headerValue)
             }
             return request
         }
         
         setup.start { ( context, request) in
             if config.enable {
-                request.header(name: config.headerName, value: config.headerValue)
+                request.setHeader(name: config.headerName, value: config.headerValue)
             }
             return request
         }
@@ -39,7 +40,7 @@ class WorkflowTest: XCTestCase {
     
     let nosession = Module.of { setup in
         setup.next { ( context,_, request) in
-            request.header(name: "nosession", value: "true")
+            request.setHeader(name: "nosession", value: "true")
             return request
         }
     }
@@ -47,7 +48,7 @@ class WorkflowTest: XCTestCase {
     
     let forceAuth = Module.of { setup in
         setup.start { ( context, request) in
-            request.header(name: "forceAuth", value: "true")
+            request.setHeader(name: "forceAuth", value: "true")
             return request
         }
     }
@@ -306,7 +307,7 @@ class WorkflowTest: XCTestCase {
         
         // Initialize with a temporary workflow
         let initialWorkflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
         }
         let workflowContainer = WorkflowContainer(workflow: initialWorkflow)
         
@@ -346,7 +347,7 @@ class WorkflowTest: XCTestCase {
         
         // Create the final workflow and update the container
         workflowContainer.workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             config.module(dummy)
         }
         
@@ -387,7 +388,7 @@ class WorkflowTest: XCTestCase {
         
         // Initialize with a temporary workflow
         let initialWorkflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
         }
         let workflowContainer = WorkflowContainer(workflow: initialWorkflow)
         
@@ -434,7 +435,7 @@ class WorkflowTest: XCTestCase {
         }
         
         workflowContainer.workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             config.module(dummy)
         }
         
@@ -489,7 +490,7 @@ class WorkflowTest: XCTestCase {
             }
         }
         let workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             config.module(responseFailed)
         }
         
@@ -510,7 +511,7 @@ class WorkflowTest: XCTestCase {
             }
         }
         let workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             config.module(transformFailed)
         }
         
@@ -526,7 +527,7 @@ class WorkflowTest: XCTestCase {
         }
         // Initialize with a temporary workflow
         let initialWorkflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
         }
         let workflowContainer = WorkflowContainer(workflow: initialWorkflow)
         
@@ -541,7 +542,7 @@ class WorkflowTest: XCTestCase {
         }
         
         workflowContainer.workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             config.module(nextFailed)
         }
         
@@ -558,7 +559,7 @@ class WorkflowTest: XCTestCase {
         }
         // Initialize with a temporary workflow
         let initialWorkflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
         }
         let workflowContainer = WorkflowContainer(workflow: initialWorkflow)
         
@@ -573,7 +574,7 @@ class WorkflowTest: XCTestCase {
         }
         
         workflowContainer.workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             config.module(nodeFailed)
         }
         
@@ -587,7 +588,7 @@ class WorkflowTest: XCTestCase {
             return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, Data())
         }
         var workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
         }
         
         let successFailed = Module.of({CustomHeaderConfig()}) { module in
@@ -601,7 +602,7 @@ class WorkflowTest: XCTestCase {
         }
         
         workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             config.module(successFailed)
         }
         
@@ -622,7 +623,7 @@ class WorkflowTest: XCTestCase {
         }
         
         let workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             config.module(dummy)
         }
         
@@ -639,7 +640,7 @@ class WorkflowTest: XCTestCase {
         }
         
         let workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
         }
         
         let result = await workflow.signOff()
@@ -661,7 +662,7 @@ class WorkflowTest: XCTestCase {
         }
         
         let workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
         }
         
         let result = await workflow.signOff()

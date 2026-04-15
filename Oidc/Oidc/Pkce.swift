@@ -11,6 +11,7 @@
 
 import Foundation
 import CryptoKit
+import PingCommons
 
 /// Struct for PKCE (Proof Key for Code Exchange).
 /// - property codeVerifier: The code verifier for the PKCE.
@@ -51,13 +52,3 @@ public struct Pkce: Sendable {
     }
 }
 
-
-extension Data {
-    func base64URLEncodedString() -> String {
-        return base64EncodedString()
-            .replacingOccurrences(of: "+", with: "-")
-            .replacingOccurrences(of: "/", with: "_")
-            .replacingOccurrences(of: "=", with: "")
-            .trimmingCharacters(in: .whitespaces)
-    }
-}

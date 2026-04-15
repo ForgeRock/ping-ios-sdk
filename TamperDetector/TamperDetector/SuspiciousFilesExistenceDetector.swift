@@ -10,6 +10,7 @@
 
 
 import Foundation
+import PingLogger
 
 /// SuspiciousFilesExistenceDetector is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
 public class SuspiciousFilesExistenceDetector: TamperDetectorProtocol {
@@ -110,10 +111,12 @@ public class SuspiciousFilesExistenceDetector: TamperDetectorProtocol {
         
         for path in paths {
             if fileManager.fileExists(atPath: path) {
+                logger.w("SuspiciousFilesExistenceDetector: suspicious file found at path '\(path)'.", error: nil)
                 return 1.0
             }
         }
         
+        logger.d("SuspiciousFilesExistenceDetector: no suspicious files found.")
         return 0.0
     }
 }

@@ -10,6 +10,7 @@
 
 
 import Foundation
+import PingDavinciPlugin
 
 /// Open class representing a validated collector.
 open class ValidatedCollector: SingleValueCollector, @unchecked Sendable {

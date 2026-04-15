@@ -2,21 +2,22 @@
 //  ConfirmationCallbackTests.swift
 //  JourneyTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import XCTest
+import PingJourneyPlugin
 @testable import PingJourney
 
 class ConfirmationCallbackTests: XCTestCase {
 
     private var callback: ConfirmationCallback!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws{
+        try await super.setUp()
         callback = ConfirmationCallback()
 
         let jsonString = """
@@ -61,7 +62,7 @@ class ConfirmationCallbackTests: XCTestCase {
            let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
             // Set up the original json property to simulate the initial state
             callback = ConfirmationCallback()
-            _ = callback.initialize(with: jsonObject)
+            _ = await callback.initialize(with: jsonObject)
         } else {
             XCTFail("Failed to parse JSON string")
         }

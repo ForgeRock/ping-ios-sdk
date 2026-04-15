@@ -2,7 +2,7 @@
 //  NodeTests.swift
 //  OrchestrateTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@
 import Foundation
 import XCTest
 @testable import PingOrchestrate
+@testable import PingNetwork
 
 final class NodeTests: XCTestCase {
     
@@ -52,7 +53,9 @@ final class NodeMock: Node {}
 
 class TestContinueNode: ContinueNode, @unchecked Sendable {
     override func asRequest() -> Request {
-        return RequestMock(urlString: "https://openam.example.com")
+        let request = RequestMock()
+        request.url = "https://openam.example.com"
+        return request
     }
 }
 
@@ -63,4 +66,4 @@ class TestAction: Action, Closeable, @unchecked Sendable {
     }
 }
 
-class RequestMock: Request, @unchecked Sendable {}
+class RequestMock: URLSessionHttpRequest, @unchecked Sendable {}

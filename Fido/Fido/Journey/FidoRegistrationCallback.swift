@@ -2,16 +2,17 @@
 //  FidoRegistrationCallback.swift
 //  Fido
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 import AuthenticationServices
 import PingLogger
+import PingCommons
 
 /// A callback for handling FIDO registration in a PingOne Journey.
 public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
@@ -54,7 +55,8 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
                 fido.register(options: publicKeyCredentialCreationOptions, window: window) { [continuation] result in
                     Task {
                         await MainActor.run {
-                            continuation.resume(with: result) // Resume with the Result<[String: Any>, Error>
+                            nonisolated(unsafe) let safeResult = result
+                            continuation.resume(with: safeResult) // Resume with the Result<[String: Any>, Error>
                         }
                     }
                 }
@@ -75,19 +77,19 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
             // 3. Process data and set callback value (side effect)
             let legacyData = [
                 String(decoding: rawClientDataJSON, as: UTF8.self),
-                convertInt8ArrToStr(rawAttestationObject.bytesArray.map { Int8(bitPattern: $0) }),
-                base64ToBase64url(base64: rawIdData.base64EncodedString())
+                Int8.convertInt8ArrToStr(rawAttestationObject.bytesArray.map { Int8(bitPattern: $0) }, separator: FidoConstants.INT_SEPARATOR),
+                rawIdData.base64URLEncodedString()
             ].joined(separator: FidoConstants.DATA_SEPARATOR)
             
             var finalData = legacyData
             if let deviceName = deviceName, !deviceName.isEmpty { // Only add if deviceName has content
                 finalData += "\(FidoConstants.DATA_SEPARATOR)\(deviceName)"
             }
-            
+            let authenticatorAttachment = response[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String ?? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
             let callbackValue: String
             if self.supportsJsonResponse {
                 let jsonResponse: [String: Any] = [
-                    FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: FidoConstants.AUTHENTICATOR_PLATFORM,
+                    FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: authenticatorAttachment,
                     FidoConstants.FIELD_LEGACY_DATA: finalData
                 ]
                 // Safely create JSON string

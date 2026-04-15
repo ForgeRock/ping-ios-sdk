@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 import PingOrchestrate
 
 /// A Journey callback for handling device binding.

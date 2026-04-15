@@ -2,16 +2,17 @@
 //  FidoAuthenticationCallback.swift
 //  Fido
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 import AuthenticationServices
 import PingLogger
+import PingCommons
 
 /// A callback for handling FIDO authentication in a PingOne Journey.
 public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
@@ -52,7 +53,8 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
                 fido.authenticate(options: publicKeyCredentialRequestOptions, window: window) { [continuation] result in
                     Task {
                         await MainActor.run {
-                            continuation.resume(with: result) // Resume with the Result<[String: Any>, Error>
+                            nonisolated(unsafe) let sendableResult = result
+                            continuation.resume(with: sendableResult) // Resume with the Result<[String: Any>, Error>
                         }
                     }
                 }
@@ -76,16 +78,17 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
             // 3. Process data and set callback value (side effect)
             let legacyData = [
                 String(decoding: clientData, as: UTF8.self),
-                convertInt8ArrToStr(authenticatorData.bytesArray.map { Int8(bitPattern: $0) }),
-                convertInt8ArrToStr(signatureData.bytesArray.map { Int8(bitPattern: $0) }),
-                base64ToBase64url(base64: credIDData.base64EncodedString()),
+                Int8.convertInt8ArrToStr(authenticatorData.bytesArray.map { Int8(bitPattern: $0) }, separator: FidoConstants.INT_SEPARATOR),
+                Int8.convertInt8ArrToStr(signatureData.bytesArray.map { Int8(bitPattern: $0) }, separator: FidoConstants.INT_SEPARATOR),
+                credIDData.base64URLEncodedString(),
                 String(decoding: userHandleData, as: UTF8.self)
             ].joined(separator: FidoConstants.DATA_SEPARATOR)
             
             let callbackValue: String
+            let authenticatorAttachment = response[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String ?? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
             if self.supportsJsonResponse {
                 let jsonResponse: [String: Any] = [
-                    FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: FidoConstants.AUTHENTICATOR_PLATFORM,
+                    FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: authenticatorAttachment,
                     FidoConstants.FIELD_LEGACY_DATA: legacyData
                 ]
                 // Safely create JSON string

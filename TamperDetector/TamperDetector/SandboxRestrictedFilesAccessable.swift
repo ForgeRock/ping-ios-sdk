@@ -10,6 +10,7 @@
 
 
 import Foundation
+import PingLogger
 
 /// SandboxRestrictedFilesAccessable is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
 public class SandboxRestrictedFilesAccessable: TamperDetectorProtocol {
@@ -24,10 +25,12 @@ public class SandboxRestrictedFilesAccessable: TamperDetectorProtocol {
         let restrictedPaths = ["/var/root/", "/var/mobile/Library/Preferences"]
         for path in restrictedPaths {
             if FileManager.default.isReadableFile(atPath: path) {
+                logger.w("SandboxRestrictedFilesAccessable: app can read sandbox-restricted path '\(path)'.", error: nil)
                 return 1.0
             }
         }
         
+        logger.d("SandboxRestrictedFilesAccessable: no sandbox-restricted paths are readable.")
         return 0.0
     }
 }

@@ -2,7 +2,7 @@
 //  DefaultDeviceIdentifier.swift
 //  DeviceId
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -19,6 +19,32 @@ import PingStorage
 /// ```swift
 /// let deviceId = DefaultDeviceIdentifier()
 /// let identifier = try await deviceId.id
+///
+/// // In case of migration from the FR SDK when using a custom Keychain Access Group use the following
+///
+///
+/// func setupDeviceIdentifierWithMigration() async throws -> String {
+///     // If your legacy FRAuth SDK used a custom keychain access group,
+///     // specify it here to enable migration
+///     let configuration = DeviceIdentifierConfiguration(
+///         keySize: DeviceIdentifierConfiguration.default.keySize,
+///         keychainAccount: DeviceIdentifierConfiguration.default.keychainAccount,
+///         useEncryption: DeviceIdentifierConfiguration.default.useEncryption,
+///         legacyKeychainAccessGroup: "com.test" // Set Legacy Keychain Access Group
+///     )
+///
+///     // Initialize with configuration
+///    let deviceIdentifier = try DefaultDeviceIdentifier(
+///         configuration: configuration,
+///         logger: LogManager.standard  // Optional: for debugging migration
+///     )
+///
+///     // First access will trigger migration if legacy identifier exists
+///     let deviceId = try await deviceIdentifier.id
+///     print("Device ID: \(deviceId)")
+///
+///     return deviceId
+/// }
 /// ```
 public actor DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     /// Configuration for the device identifier
@@ -106,6 +132,7 @@ public actor DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
     
     /// Asynchronously regenerates the device identifier by deleting the existing keychain item.
     /// This method cancels any ongoing generation task and clears the cache.
+    /// Also clears any legacy identifier storage to ensure a completely new identifier is generated.
     /// - Throws: `DeviceIdentifierError` if keychain operations fail.
     /// - Returns: The new unique identifier for the device.
     public func regenerateIdentifier() async throws -> String {
@@ -115,8 +142,56 @@ public actor DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
         generationTask = nil
         
         clearCache()
+        
+        // Delete from new storage
         try await keychainService.delete()
+        
+        // Delete from legacy storage using direct keychain calls
+        await deleteLegacyIdentifiers()
+        
         return try await self.id
+    }
+    
+    /// Deletes legacy identifiers from keychain
+    private func deleteLegacyIdentifiers() async {
+        // Delete legacy identifier
+        let identifierQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: LegacyDeviceIdentifier.LegacyKeychainKeys.identifier
+        ]
+        
+        let identifierStatus = SecItemDelete(identifierQuery as CFDictionary)
+        if identifierStatus == errSecSuccess {
+            logger?.i("Deleted legacy identifier")
+        } else if identifierStatus != errSecItemNotFound {
+            logger?.w("Failed to delete legacy identifier. Status: \(identifierStatus)", error: nil)
+        }
+        
+        // Delete legacy public key data
+        let publicKeyQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: LegacyDeviceIdentifier.LegacyKeychainKeys.publicKeyData
+        ]
+        
+        let publicKeyStatus = SecItemDelete(publicKeyQuery as CFDictionary)
+        if publicKeyStatus == errSecSuccess {
+            logger?.i("Deleted legacy public key data")
+        } else if publicKeyStatus != errSecItemNotFound {
+            logger?.w("Failed to delete legacy public key data. Status: \(publicKeyStatus)", error: nil)
+        }
+        
+        // Delete legacy private key data (if it exists)
+        let privateKeyQuery: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: LegacyDeviceIdentifier.LegacyKeychainKeys.privateKeyData
+        ]
+        
+        let privateKeyStatus = SecItemDelete(privateKeyQuery as CFDictionary)
+        if privateKeyStatus == errSecSuccess {
+            logger?.i("Deleted legacy private key data")
+        } else if privateKeyStatus != errSecItemNotFound {
+            logger?.w("Failed to delete legacy private key data. Status: \(privateKeyStatus)", error: nil)
+        }
     }
     
     /// Performs the logic of getting an ID from keychain or generating a new one.
@@ -132,16 +207,83 @@ public actor DefaultDeviceIdentifier: DeviceIdentifier, Sendable {
             return id
         }
         
-        // 2. Keychain is empty, so generate a new key pair
+        // 2. Check for legacy device identifier before generating new one
+        logger?.i("Checking for legacy device identifier")
+        do {
+            if let legacyId = try await migrateLegacyIdentifier() {
+                logger?.i("Successfully migrated legacy device identifier")
+                cachedId = legacyId
+                return legacyId
+            }
+            // No legacy identifier found, continue to generation
+            logger?.d("No legacy identifier found, will generate new one")
+        } catch {
+            // Migration found a legacy ID but failed to store it in new format
+            // Log the error and continue with generating a new identifier
+            logger?.e("Failed to migrate legacy device identifier, will generate new one instead", error: error)
+            // Fall through to generation step below
+        }
+        
+        // 3. Keychain is empty and no legacy identifier, so generate a new key pair
         logger?.i("Generating new device identifier key pair")
         let keyPair = try await generateKeyPair()
         
-        // 3. Persist and cache the new identifier
+        // 4. Persist and cache the new identifier
         let impl = DeviceIdentifierImpl(deviceIdentifierKeyPair: keyPair)
         try await keychainService.save(item: impl)
         let identifier = try await impl.id
         cachedId = identifier // Cache the result
         return identifier
+    }
+    
+    /// Attempts to migrate a legacy device identifier from FRAuth SDK format
+    /// - Returns: The legacy identifier if found and successfully migrated, otherwise nil
+    private func migrateLegacyIdentifier() async throws -> String? {
+        let legacyIdentifier = LegacyDeviceIdentifier(
+            accessGroup: configuration.legacyKeychainAccessGroup,
+            logger: logger
+        )
+        
+        // First try direct retrieval of the identifier string
+        if let legacyId = try await legacyIdentifier.getLegacyIdentifier() {
+            logger?.i("Found legacy identifier string via direct keychain query")
+            // Store in new format with empty key pair (identifier only)
+            try await storeLegacyIdentifierInNewFormat(legacyId, keyPair: nil)
+            return legacyId
+        }
+        
+        // If direct retrieval failed, try migrating the full key pair from system keychain
+        if let migration = try await legacyIdentifier.migrateLegacyKeyPair() {
+            logger?.i("Successfully migrated legacy key pair from system keychain")
+            // Store both the identifier and the actual key pair data
+            try await storeLegacyIdentifierInNewFormat(migration.identifier, keyPair: migration.keyPair)
+            return migration.identifier
+        }
+        
+        logger?.d("No legacy identifier found to migrate")
+        return nil
+    }
+    
+    /// Stores the legacy identifier in the new DeviceIdentifierImpl format
+    /// - Parameters:
+    ///   - legacyId: The legacy identifier to store
+    ///   - keyPair: Optional key pair data (if available from system keychain migration)
+    private func storeLegacyIdentifierInNewFormat(_ legacyId: String, keyPair: DeviceIdentifierKeyPair?) async throws {
+        logger?.i("Storing migrated legacy identifier in new format")
+        
+        let finalKeyPair: DeviceIdentifierKeyPair
+        if let keyPair = keyPair {
+            // We have the actual key pair from legacy system keychain
+            logger?.i("Storing with migrated key pair (public: \(keyPair.publicKey.count) bytes, private: \(keyPair.privateKey?.count ?? 0) bytes)")
+            finalKeyPair = keyPair
+        } else {
+            // We only have the identifier string, use empty key data
+            logger?.i("Storing identifier only (no key pair available)")
+            finalKeyPair = DeviceIdentifierKeyPair(privateKey: Data(), publicKey: Data())
+        }
+        
+        let impl = DeviceIdentifierImpl(deviceIdentifierKeyPair: finalKeyPair, legacyIdentifier: legacyId)
+        try await keychainService.save(item: impl)
     }
     
     /// Asynchronously generates a key pair on a background task.

@@ -2,7 +2,7 @@
 //  KeychainStorage.swift
 //  PingStorage
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -85,7 +85,7 @@ public actor Keychain<T: Codable & Sendable>: Storage {
 
 
 /// `KeychainError` represents errors that can occur while interacting with the keychain.
-public enum KeychainError: LocalizedError {
+public enum KeychainError: LocalizedError, Sendable {
     case unableToSave
     case unableToRetrieve
     case unableToDelete
@@ -101,6 +101,9 @@ public enum KeychainError: LocalizedError {
             return "Unable to delete from the keychain"
         }
     }
+
+    /// A localized description of the error, used by `LocalizedError`.
+    public var errorDescription: String? { errorMessage }
 }
 
 
@@ -118,8 +121,8 @@ public class KeychainStorage<T: Codable & Sendable>: StorageDelegate<T>, @unchec
     ///   - account: A `String` identifying the keychain account under which the data will be stored. This is used
     ///              to differentiate between different sets of data within the keychain.
     ///   - encryptor: An `Encryptor` instance for encrypting/decrypting the stored data. Default value is `NoEncryptor()`
-    ///   - cacheable: A `Bool` indicating whether the stored data should be cached. Defaults to `false`.
-    public init(account: String, encryptor: Encryptor = NoEncryptor(), cacheable: Bool = false) {
-        super.init(delegate: Keychain<T>(account: account, encryptor: encryptor), cacheable: cacheable)
+    ///   - cacheStrategy: A CacheStrategy `ENUM` indicating whether the stored data should be cached. Defaults to `NO_CACHE`.
+    public init(account: String, encryptor: Encryptor = NoEncryptor(), cacheStrategy: CacheStrategy = .NO_CACHE) {
+        super.init(delegate: Keychain<T>(account: account, encryptor: encryptor), cacheStrategy: cacheStrategy)
     }
 }

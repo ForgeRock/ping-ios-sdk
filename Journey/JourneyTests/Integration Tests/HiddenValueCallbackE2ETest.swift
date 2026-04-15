@@ -30,7 +30,7 @@ class HiddenValueCallbackE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
             return
         }
 
-        XCTAssertEqual("myId", hiddenValueCallback.hiddenId)
+        XCTAssertEqual("myId", hiddenValueCallback.valueId)
         XCTAssertEqual("myValue", hiddenValueCallback.value)
 
         hiddenValueCallback.value = "test"

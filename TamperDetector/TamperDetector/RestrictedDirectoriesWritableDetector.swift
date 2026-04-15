@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingLogger
 
 /// RestrictedDirectoriesWritableDetector is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
 public class RestrictedDirectoriesWritableDetector: TamperDetectorProtocol {
@@ -47,15 +48,17 @@ public class RestrictedDirectoriesWritableDetector: TamperDetectorProtocol {
                 do {
                     try fileManager.removeItem(atPath: path)
                 } catch {
-                    // Warn that file is created, but was able to delete
+                    logger.w("RestrictedDirectoriesWritableDetector: file written to restricted path '\(restrictedPath)' but could not be deleted.", error: nil)
                 }
             }
             
             if isFileWritable {
+                logger.w("RestrictedDirectoriesWritableDetector: app can write to restricted directory '\(restrictedPath)'.", error: nil)
                 return 1.0
             }
         }
         
+        logger.d("RestrictedDirectoriesWritableDetector: no restricted directories are writable.")
         return 0.0
     }
 }

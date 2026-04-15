@@ -142,3 +142,5 @@ For implementing Native Signin with Apple see the [PingExternalIdPApple](/Extern
 For implementing Native Signin with Google see the [PingExternalIdPGoogle](/ExternalIdPGoogle/README.md) module.
 
 For implementing Native Signin with Facebook see the [PingExternalIdPFacebook](/ExternalIdPFacebook/README.md) module.
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

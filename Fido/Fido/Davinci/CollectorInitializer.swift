@@ -9,7 +9,7 @@
 //
 
 import Foundation
-import PingDavinci
+import PingDavinciPlugin
 
 /// A class responsible for registering FIDO callbacks with the Davinci framework.
 public class CollectorInitializer: NSObject {

@@ -2,7 +2,7 @@
 //  Web.swift
 //  Oidc
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@
 import PingOrchestrate
 import PingBrowser
 import Foundation
+import PingNetwork
 
 /// A module that integrates OIDC capabilities into the DaVinci workflow.
 public class WebModule {
@@ -22,7 +23,7 @@ public class WebModule {
     /// The module configuration for transforming the response from Journey to `Node`.
     public static let config: Module<Void> = Module.of(setup: { setup in
         
-        let oidcLoginFlow: OidcWeb = setup.workflow
+        let oidcLoginFlow: OidcWebClient = setup.workflow
         
         // Initializes the module.
         setup.initialize {  @Sendable in
@@ -32,14 +33,14 @@ public class WebModule {
         // Start the browser authorization flow. Returns the authorization code in the response.
         setup.transport { @Sendable context, request in
             let callbackURLScheme = context.flowContext.get(key: SharedContext.Keys.callbackURLSchemeKey) as? String ?? ""
-            let oidcLoginConfig = oidcLoginFlow.config as? OidcWebConfig
+            let oidcLoginConfig = oidcLoginFlow.config as? OidcWebClientConfig
             
             do {
-                guard let url = request.urlRequest.url else {
+                guard let urlString = request.url, let url = URL(string: urlString) else {
                     throw OidcError.authorizeError(message: "Browser authorization failed: URL not found")
                 }
                 // Ensure the redirect URI scheme is valid
-                let result = try await BrowserLauncher.currentBrowser.launch(url: url, customParams: nil, browserType: oidcLoginConfig?.browserType ?? .authSession, browserMode: oidcLoginConfig?.browserMode ?? .login, callbackURLScheme: callbackURLScheme)
+                let result = try await BrowserLauncher.currentBrowser.launch(url: url, customParams: nil, browserType: oidcLoginConfig?.browserType ?? .authSession, browserMode: oidcLoginConfig?.browserMode ?? .login, callbackURLScheme: callbackURLScheme, logger: oidcLoginFlow.config.logger)
                 
                 // Extract and verify the auth code response
                 let code = try WebModule.extractCode(from: result)
@@ -47,7 +48,7 @@ public class WebModule {
                         "code": code
                     ]
                 // Return the authorization code response
-                return await HttpResponse(data: WebModule.body(code: code), response: URLResponse())
+                return await URLSessionHttpResponse(request: request, body: WebModule.body(code: code), httpURLResponse: HTTPURLResponse())
             } catch {
                 throw OidcError.authorizeError(message: "Browser authorization failed: \(error.localizedDescription)")
             }

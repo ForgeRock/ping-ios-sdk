@@ -2,7 +2,7 @@
 //  Oidc.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@
 import Foundation
 import PingOidc
 import PingOrchestrate
+import PingNetwork
 
 /// A module that integrates OIDC capabilities into the DaVinci workflow.
 public class OidcModule {
@@ -64,11 +65,11 @@ public class OidcModule {
         
         // Handles sign off of the module.
         setup.signOff { @Sendable request in
-            request.url(config.openId?.endSessionEndpoint ?? "")
+            request.url = config.openId?.endSessionEndpoint ?? ""
             
             _ = await OidcClient(config: config).endSession { idToken in
-                request.parameter(name: OidcClient.Constants.id_token_hint, value: idToken)
-                request.parameter(name: OidcClient.Constants.client_id, value: config.clientId)
+                request.setParameter(name: OidcClient.Constants.id_token_hint, value: idToken)
+                request.setParameter(name: OidcClient.Constants.client_id, value: config.clientId)
                 return true
             }
             
