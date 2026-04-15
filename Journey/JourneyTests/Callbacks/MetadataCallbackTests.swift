@@ -2,21 +2,22 @@
 //  MetadataCallbackTests.swift
 //  JourneyTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import XCTest
+import PingJourneyPlugin
 @testable import PingJourney
 
 class MetadataCallbackTests: XCTestCase {
 
     private var callback: MetadataCallback!
     
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws{
+        try await super.setUp()
         callback = MetadataCallback()
 
         let jsonString = """
@@ -47,7 +48,7 @@ class MetadataCallbackTests: XCTestCase {
 
              // Initialize callback with parsed data
              callback = MetadataCallback()
-             _ = callback.initialize(with: jsonObject)
+             _ = await callback.initialize(with: jsonObject)
         } else {
             XCTFail("Failed to parse JSON string")
         }
@@ -89,7 +90,7 @@ class MetadataCallbackTests: XCTestCase {
         }
     }
 
-    func testInitWithProtectInitialize() {
+    func testInitWithProtectInitialize() async {
         let protectInitializeJsonString = """
         {
           "type": "MetadataCallback",
@@ -120,7 +121,7 @@ class MetadataCallbackTests: XCTestCase {
            let parsed = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
 
             let newCallback = MetadataCallback()
-            let actualCallback = newCallback.initialize(with: parsed)
+            let actualCallback = await newCallback.initialize(with: parsed)
 
             // If PingOneProtectInitializeCallback is registered, it should return that type
             // Otherwise, it should return the original MetadataCallback
@@ -142,7 +143,7 @@ class MetadataCallbackTests: XCTestCase {
         }
     }
 
-    func testInitWithProtectEvaluation() {
+    func testInitWithProtectEvaluation() async {
         let protectEvaluationJsonString = """
         {
           "type": "MetadataCallback",
@@ -165,7 +166,7 @@ class MetadataCallbackTests: XCTestCase {
            let parsed = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
 
             let newCallback = MetadataCallback()
-            let actualCallback = newCallback.initialize(with: parsed)
+            let actualCallback = await newCallback.initialize(with: parsed)
 
             // If PingOneProtectEvaluationCallback is registered, it should return that type
             // Otherwise, it should return the original MetadataCallback
@@ -188,7 +189,7 @@ class MetadataCallbackTests: XCTestCase {
         }
     }
 
-    func testFidoRegistrationDetection() {
+    func testFidoRegistrationDetection() async {
         let fidoRegJsonString = """
         {
           "type": "MetadataCallback",
@@ -211,7 +212,7 @@ class MetadataCallbackTests: XCTestCase {
            let parsed = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
 
             let newCallback = MetadataCallback()
-            _ = newCallback.initialize(with: parsed)
+            _ = await newCallback.initialize(with: parsed)
 
             // Test that the metadata contains FIDO registration data
             XCTAssertEqual(newCallback.value["_action"] as? String, "webauthn_registration")
@@ -278,9 +279,9 @@ class MetadataCallbackTests: XCTestCase {
         }
     }
 
-    func testMetadataCallbackReturnsSelfWhenNoSpecializedCallback() {
+    func testMetadataCallbackReturnsSelfWhenNoSpecializedCallback() async {
         // Test that when no specialized callback is registered, it returns self
-        let actualCallback = callback.initialize(with: callback.json)
+        let actualCallback = await callback.initialize(with: callback.json)
 
         // Should return the same instance when no transformation occurs
         XCTAssertTrue(type(of: actualCallback) == MetadataCallback.self)

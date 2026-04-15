@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingOneProtect'
-  s.version          = '1.3.1'
+  s.version          = '2.0.0'
   s.summary          = 'PingProtect module for the Ping iOS SDK'
   s.description      = <<-DESC
   The PingProtect module for the Ping iOS SDK is a library designed to seamlessly integrate Ping Identity's Protect service into your mobile applications..
@@ -26,7 +26,7 @@ Pod::Spec.new do |s|
   s.module_name = 'PingOneProtect'
   s.swift_versions = ['5.0', '5.1', '6.0']
 
-  s.ios.deployment_target = '13.0'
+  s.ios.deployment_target = '16.0'
 
   base_dir = "Protect/Protect"
   s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.c', base_dir + '/**/*.h'
@@ -34,7 +34,8 @@ Pod::Spec.new do |s|
     'Protect' => [base_dir + '/*.xcprivacy']
   }
 
-  s.ios.dependency 'PingDavinci', '~> 1.3.1'
-  s.ios.dependency 'PingOneSignals', '~> 5.3.0'
+  s.ios.dependency 'PingDavinciPlugin', '~> 2.0.0'
+  s.ios.dependency 'PingJourneyPlugin', '~> 2.0.0'
+  s.ios.dependency 'PingOneSignals', '~> 5.4.0'
 
 end

@@ -2,13 +2,16 @@
 //  Transform.swift
 //  Journey
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import PingOrchestrate
+import PingJourneyPlugin
+import Foundation
+import PingNetwork
 
 /// Define the module that transforms the response from Journey to a `Node`.
 public class NodeTransformModule: @unchecked Sendable {
@@ -19,12 +22,12 @@ public class NodeTransformModule: @unchecked Sendable {
     /// The module configuration for transforming the response from Journey to `Node`.
     public static let config: Module<Void> = Module.of(setup: { setup in
         setup.transform { @Sendable flowContext, response in
-            let status = response.status()
+            let status = response.status
             
-            let body = await response.body()
+            let body = response.bodyAsString()
             
             // Check for 4XX errors that are unrecoverable
-            if (400..<500).contains(status) {
+            if status.isClientError() {
                 do {
                     let json = try response.json()
                     let message = json[JourneyConstants.message] as? String ?? ""
@@ -35,14 +38,14 @@ public class NodeTransformModule: @unchecked Sendable {
             }
             
             // Handle success (2XX) responses
-            if status == 200 {
+            if status.isSuccess() {
                 let json = try response.json()
                 return await transform(context: flowContext, journey: setup.workflow, json: json)
             }
             
             // Handle success (3XX) responses
-            if (300..<400).contains(status) {
-                let locationHeader = response.header(name: JourneyConstants.location) ?? ""
+            if status.isRedirect() {
+                let locationHeader = response.getHeader(name: JourneyConstants.location) ?? ""
                 return FailureNode(cause: ApiError.error(status, [:], "Location: \(String(describing: locationHeader))" ))
             }
             
@@ -63,11 +66,11 @@ public class NodeTransformModule: @unchecked Sendable {
         
         if json.keys.contains(JourneyConstants.authId) {
             if let callbackArray = json[JourneyConstants.callbacks] as? [[String: any Sendable]] {
-                callbacks.append(contentsOf: CallbackRegistry.shared.callback(from: callbackArray))
+                callbacks.append(contentsOf: await CallbackRegistry.shared.callback(from: callbackArray))
             }
             
             let node = JourneyContinueNode(context: context, workflow: journey, input: json, actions: callbacks)
-            CallbackRegistry.shared.inject(continueNode: node, journey: journey)
+            await CallbackRegistry.shared.inject(continueNode: node, journey: journey)
             
             return node
         } else {
@@ -94,11 +97,23 @@ public class NodeTransformModule: @unchecked Sendable {
 }
 
 /// Represents API errors that occur during response transformation.
-public enum ApiError: Error, @unchecked Sendable {
+///
+/// `@unchecked Sendable` is used here because the associated `[String: Any]` JSON dictionary
+/// does not conform to `Sendable` in Swift's type system. However, this is safe in practice
+/// because the dictionary is populated once at the call site during response parsing and is
+/// never mutated after the error value is constructed. All access is read-only.
+public enum ApiError: Error, LocalizedError, @unchecked Sendable {
     /// An error containing an HTTP status code, a JSON object, and a descriptive message.
     /// - Parameters:
     ///   - status: The HTTP status code of the error.
     ///   - json: The JSON data associated with the error.
     ///   - message: A descriptive message explaining the error.
     case error(Int, [String: Any], String)
+
+    public var errorDescription: String? {
+        switch self {
+        case .error(let status, _, let message):
+            return "API error (HTTP \(status)): \(message)"
+        }
+    }
 }

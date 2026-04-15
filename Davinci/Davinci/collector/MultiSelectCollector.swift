@@ -10,6 +10,7 @@
 
 
 import Foundation
+import PingDavinciPlugin
 
 /// Class representing CHECKBOX, COMBOBOX type with MULTI_SELECT inputType.
 /// Inherits from  `FieldCollector` and is used to collect multiple values from a list of options.

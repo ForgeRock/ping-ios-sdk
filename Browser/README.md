@@ -44,3 +44,4 @@ The `BrowserLauncher` supports the following types of `BrowserType` (Not fully i
 4. `ephemeralAuthSession`
 
 At the current time only `authSession` and `ephemeralAuthSession` are implemented. Both types rely on the `ASWebAuthenticationSession` in-app browser type.
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

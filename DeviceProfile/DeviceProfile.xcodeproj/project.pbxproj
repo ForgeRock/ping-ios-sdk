@@ -17,24 +17,18 @@
 		A50143C82E84AF4C00FC2E9A /* LocationCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50143C72E84AF4A00FC2E9A /* LocationCollectorTests.swift */; };
 		A5554B232E840E9700BA6217 /* BluetoothCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5554B222E840E8B00BA6217 /* BluetoothCollector.swift */; };
 		A5554B252E840EFA00BA6217 /* DeviceProfileCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5554B242E840EF200BA6217 /* DeviceProfileCollector.swift */; };
-		A5554B272E840F6C00BA6217 /* DeviceProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A5554B262E840F6400BA6217 /* DeviceProfile.h */; };
 		A5554B292E840FC200BA6217 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5554B282E840FB800BA6217 /* LocationManager.swift */; };
 		A5554B2B2E84107100BA6217 /* BluetoothCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5554B2A2E84106F00BA6217 /* BluetoothCollectorTests.swift */; };
 		A5554B2D2E84109400BA6217 /* BrowserCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5554B2C2E84109300BA6217 /* BrowserCollectorTests.swift */; };
 		A569DBAA2E789BD200F4D7A8 /* PingDeviceProfile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A569DBA02E789BD200F4D7A8 /* PingDeviceProfile.framework */; };
 		A569DBE82E78A0FC00F4D7A8 /* DeviceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A569DBE62E78A0FC00F4D7A8 /* DeviceProfile.swift */; };
 		A5BE8BAA2E84C599007AF0B9 /* LocationManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BE8BA92E84C597007AF0B9 /* LocationManagerTests.swift */; };
-		A5BE8C782E8C40A8007AF0B9 /* DeviceProfileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BE8C772E8C40A1007AF0B9 /* DeviceProfileUtils.swift */; };
 		A5BE8C7A2E8C4A8F007AF0B9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5BE8C792E8C4A8F007AF0B9 /* PrivacyInfo.xcprivacy */; };
-		A5BE8CA72E8C8411007AF0B9 /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5BE8CA62E8C8411007AF0B9 /* PingLogger.framework */; };
-		A5BE8CA82E8C8411007AF0B9 /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5BE8CA62E8C8411007AF0B9 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5BE8CAA2E8C8424007AF0B9 /* PingTamperDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5BE8CA92E8C8424007AF0B9 /* PingTamperDetector.framework */; };
 		A5BE8CAB2E8C8424007AF0B9 /* PingTamperDetector.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5BE8CA92E8C8424007AF0B9 /* PingTamperDetector.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5BE8CAD2E8C881D007AF0B9 /* PingDeviceId.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5BE8CAC2E8C881D007AF0B9 /* PingDeviceId.framework */; };
 		A5BE8CAE2E8C881D007AF0B9 /* PingDeviceId.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5BE8CAC2E8C881D007AF0B9 /* PingDeviceId.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5D2967E2E79D4BB0093A761 /* DeviceProfileCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D2967D2E79D4BA0093A761 /* DeviceProfileCallback.swift */; };
-		A5D296812E79D5A60093A761 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D296802E79D5A60093A761 /* PingJourney.framework */; };
-		A5D296822E79D5A60093A761 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5D296802E79D5A60093A761 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5D296872E79DD600093A761 /* DeviceCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296862E79DD5C0093A761 /* DeviceCollector.swift */; };
 		A5D296892E79DE170093A761 /* PlatformCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296882E79DE110093A761 /* PlatformCollector.swift */; };
 		A5D2968B2E79DE9B0093A761 /* HardwareCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D2968A2E79DE9A0093A761 /* HardwareCollector.swift */; };
@@ -44,6 +38,9 @@
 		A5D296952E7B46FF0093A761 /* LocationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296942E7B46FD0093A761 /* LocationCollector.swift */; };
 		A5D296972E7B475C0093A761 /* DefaultDeviceCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296962E7B475A0093A761 /* DefaultDeviceCollector.swift */; };
 		A5D296992E7C72350093A761 /* NetworkPathMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296982E7C72330093A761 /* NetworkPathMonitor.swift */; };
+		EC5C81F02ED0851000C91570 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */; };
+		EC5C81F12ED0851000C91570 /* PingJourneyPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECB2A2892F226F9200B0F5F1 /* DeviceProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A5554B262E840F6400BA6217 /* DeviceProfile.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,10 +60,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A5BE8CA82E8C8411007AF0B9 /* PingLogger.framework in Embed Frameworks */,
+				EC5C81F12ED0851000C91570 /* PingJourneyPlugin.framework in Embed Frameworks */,
 				A5BE8CAE2E8C881D007AF0B9 /* PingDeviceId.framework in Embed Frameworks */,
 				A5BE8CAB2E8C8424007AF0B9 /* PingTamperDetector.framework in Embed Frameworks */,
-				A5D296822E79D5A60093A761 /* PingJourney.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -88,12 +84,12 @@
 		A5554B282E840FB800BA6217 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		A5554B2A2E84106F00BA6217 /* BluetoothCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothCollectorTests.swift; sourceTree = "<group>"; };
 		A5554B2C2E84109300BA6217 /* BrowserCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserCollectorTests.swift; sourceTree = "<group>"; };
+		A56742662EE21DD9009D29B9 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A569DBA02E789BD200F4D7A8 /* PingDeviceProfile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingDeviceProfile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A569DBA92E789BD200F4D7A8 /* DeviceProfileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DeviceProfileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A569DBE62E78A0FC00F4D7A8 /* DeviceProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProfile.swift; sourceTree = "<group>"; };
 		A569DBEB2E78A3C600F4D7A8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A5BE8BA92E84C597007AF0B9 /* LocationManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerTests.swift; sourceTree = "<group>"; };
-		A5BE8C772E8C40A1007AF0B9 /* DeviceProfileUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProfileUtils.swift; sourceTree = "<group>"; };
 		A5BE8C792E8C4A8F007AF0B9 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A5BE8CA62E8C8411007AF0B9 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5BE8CA92E8C8424007AF0B9 /* PingTamperDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingTamperDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -109,6 +105,7 @@
 		A5D296942E7B46FD0093A761 /* LocationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationCollector.swift; sourceTree = "<group>"; };
 		A5D296962E7B475A0093A761 /* DefaultDeviceCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDeviceCollector.swift; sourceTree = "<group>"; };
 		A5D296982E7C72330093A761 /* NetworkPathMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPathMonitor.swift; sourceTree = "<group>"; };
+		EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,10 +113,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5BE8CA72E8C8411007AF0B9 /* PingLogger.framework in Frameworks */,
+				EC5C81F02ED0851000C91570 /* PingJourneyPlugin.framework in Frameworks */,
 				A5BE8CAD2E8C881D007AF0B9 /* PingDeviceId.framework in Frameworks */,
 				A5BE8CAA2E8C8424007AF0B9 /* PingTamperDetector.framework in Frameworks */,
-				A5D296812E79D5A60093A761 /* PingJourney.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -175,12 +171,11 @@
 		A569DBE72E78A0FC00F4D7A8 /* DeviceProfile */ = {
 			isa = PBXGroup;
 			children = (
-				A5554B262E840F6400BA6217 /* DeviceProfile.h */,
 				A5BE8C792E8C4A8F007AF0B9 /* PrivacyInfo.xcprivacy */,
+				A5554B262E840F6400BA6217 /* DeviceProfile.h */,
 				A5D296852E79D73D0093A761 /* Collectors */,
 				A569DBE62E78A0FC00F4D7A8 /* DeviceProfile.swift */,
 				A5D2967D2E79D4BA0093A761 /* DeviceProfileCallback.swift */,
-				A5BE8C772E8C40A1007AF0B9 /* DeviceProfileUtils.swift */,
 				A5554B282E840FB800BA6217 /* LocationManager.swift */,
 				A5D296982E7C72330093A761 /* NetworkPathMonitor.swift */,
 			);
@@ -190,6 +185,8 @@
 		A5D2967F2E79D5A60093A761 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A56742662EE21DD9009D29B9 /* PingCommons.framework */,
+				EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */,
 				A5BE8CAC2E8C881D007AF0B9 /* PingDeviceId.framework */,
 				A5BE8CA92E8C8424007AF0B9 /* PingTamperDetector.framework */,
 				A5BE8CA62E8C8411007AF0B9 /* PingLogger.framework */,
@@ -222,7 +219,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5554B272E840F6C00BA6217 /* DeviceProfile.h in Headers */,
+				ECB2A2892F226F9200B0F5F1 /* DeviceProfile.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,7 +275,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1640;
-				LastUpgradeCheck = 1640;
+				LastUpgradeCheck = 2610;
 				TargetAttributes = {
 					A569DB9F2E789BD200F4D7A8 = {
 						CreatedOnToolsVersion = 16.4;
@@ -344,7 +341,6 @@
 				A5554B292E840FC200BA6217 /* LocationManager.swift in Sources */,
 				A5554B252E840EFA00BA6217 /* DeviceProfileCollector.swift in Sources */,
 				A569DBE82E78A0FC00F4D7A8 /* DeviceProfile.swift in Sources */,
-				A5BE8C782E8C40A8007AF0B9 /* DeviceProfileUtils.swift in Sources */,
 				A5D2968F2E79E1C10093A761 /* TelephonyCollector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -414,6 +410,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -438,6 +435,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -481,6 +479,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -498,6 +497,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -509,8 +509,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -519,13 +521,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "2.0.0";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.DeviceProfile;
@@ -533,7 +535,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -543,8 +546,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -553,13 +558,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = "2.0.0";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.DeviceProfile;
@@ -567,7 +572,8 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -580,8 +586,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = "2.0.0";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.DeviceProfileTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -598,8 +604,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = "2.0.0";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.DeviceProfileTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;

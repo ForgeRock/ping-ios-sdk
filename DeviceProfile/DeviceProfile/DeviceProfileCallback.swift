@@ -2,16 +2,18 @@
 //  DeviceProfileCallback.swift
 //  DeviceProfile
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 import PingDeviceId
 import PingLogger
+import PingCommons
+import Combine
 
 // MARK: - DeviceProfileCallback
 
@@ -151,7 +153,7 @@ public class DeviceProfileCallback: AbstractCallback, ObservableObject, @uncheck
             }
             
             // Submit to server
-            let jsonString = DeviceProfileUtils.jsonStringify(value: profileDict as AnyObject)
+            let jsonString = JSONUtils.jsonStringify(value: profileDict as AnyObject)
             _ = input(jsonString)
             
             // JSON serialization produces only Sendable types (String, Number, Bool, Array, Dictionary)
@@ -186,7 +188,7 @@ public final class DeviceProfileConfig: @unchecked Sendable {
     public var location: Bool = false
     
     /// Logger instance for recording collection events
-    public var logger: Logger = LogManager.warning
+    public var logger: Logger = LogManager.logger
     
     /// Device identifier generator for unique device identification.
     /// Default value is `DefaultDeviceIdentifier()`
@@ -195,6 +197,10 @@ public final class DeviceProfileConfig: @unchecked Sendable {
     /// Array of collectors to use for metadata gathering.
     /// Defaults valuse is `DefaultDeviceCollector.defaultDeviceCollectors()`
     public var collectors: [any DeviceCollector] =  DefaultDeviceCollector.defaultDeviceCollectors()
+    
+    /// Collector to use for location gathering.
+    /// Defaults valuse is `DefaultDeviceCollector.defaultLocationCollector()`
+    var locationCollector: LocationCollector =  DefaultDeviceCollector.defaultLocationCollector()
     
     /// Configures the collectors array using a builder pattern
     /// - Parameter configBlock: Block that returns the desired collectors array
@@ -220,7 +226,7 @@ public final class DeviceProfileConfig: @unchecked Sendable {
 // MARK: - Error Types
 
 /// Errors that can occur during device profile collection
-public enum DeviceProfileError: Error, LocalizedError {
+public enum DeviceProfileError: Error, LocalizedError, Sendable {
     case collectionFailed
     case serializationFailed
     

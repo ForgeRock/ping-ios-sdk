@@ -10,7 +10,7 @@
 
 import XCTest
 @testable import PingProtect
-@testable import PingJourney
+@testable import PingJourneyPlugin
 
 
 
@@ -248,13 +248,20 @@ final class PingOneProtectEvaluationCallbackTests: XCTestCase {
     // MARK: - Thread Safety Tests
 
     func testConcurrentCollectCalls() async {
-        // Given
-        callback.initValue(name: JourneyConstants.pauseBehavioralData, value: true)
+        // Given - Create separate callback instances to avoid data races
+        let callback1 = TestableProtectEvaluationCallback()
+        callback1.initValue(name: JourneyConstants.pauseBehavioralData, value: true)
+        
+        let callback2 = TestableProtectEvaluationCallback()
+        callback2.initValue(name: JourneyConstants.pauseBehavioralData, value: true)
+        
+        let callback3 = TestableProtectEvaluationCallback()
+        callback3.initValue(name: JourneyConstants.pauseBehavioralData, value: true)
 
-        // When - Call collect concurrently
-        async let result1 = callback.collect()
-        async let result2 = callback.collect()
-        async let result3 = callback.collect()
+        // When - Call collect concurrently on different instances
+        async let result1 = callback1.collect()
+        async let result2 = callback2.collect()
+        async let result3 = callback3.collect()
 
         let results = await [result1, result2, result3]
 

@@ -8,23 +8,22 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 import Foundation
+import PingDavinciPlugin
+import PingOrchestrate
 
-/// Class representing a device registration collector.
-/// Inherits from `FieldCollector` and is used to collect device information.
-/// - property devices: The list of devices.
-/// - property value: The selected device.
-/// - method eventType: Returns the event type.
-/// - method payload: Returns the selected device type.
-/// - method init: Initializes a new instance of `DeviceRegistrationCollector`.
+/// A collector for device registration information.
 ///
-open class DeviceRegistrationCollector: FieldCollector<String>, Submittable, @unchecked Sendable {
+/// This class is responsible for collecting information about device registration,
+/// including the available devices and the user's selection.
+open class DeviceRegistrationCollector: FieldCollector<String>, Submittable, Closeable, @unchecked Sendable {
     
-    /// The list of devices.
+    /// The list of available registration devices.
     public private(set) var devices: [Device] = []
-    /// The selected device.
+    /// The device selected by the user for registration.
     public var value: Device? = nil
     
     /// Initializes a new instance of `DeviceRegistrationCollector` with the given JSON input.
+    /// - Parameter json: A dictionary containing the collector's configuration.
     public required init(with json: [String : Any]) {
         super.init(with: json)
         let devicesJson = json[Constants.options] as? [[String: Any]] ?? [[:]]
@@ -33,13 +32,20 @@ open class DeviceRegistrationCollector: FieldCollector<String>, Submittable, @un
         }
     }
     
-    /// Return event type
+    /// Returns the event type for this collector.
+    /// - Returns: A string representing the event type, which is "submit".
     public func eventType() -> String {
         return Constants.submit
     }
     
-    /// Returns the selected device type.
+    /// Constructs the payload to be sent to the server.
+    /// - Returns: The type of the selected device, or `nil` if no device is selected.
     override open func payload() -> String? {
         return value?.type
+    }
+    
+    /// Resets the collector's state by clearing the selected device.
+    public func close() {
+        self.value = nil
     }
 }

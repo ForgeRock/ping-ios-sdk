@@ -1,3 +1,14 @@
+//
+//  AppPinAuthenticator.swift
+//  PingBinding
+//
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
+//
+
+
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -61,8 +72,9 @@ public class AppPinAuthenticator: DefaultDeviceAuthenticator {
             let success = context.setCredential(pinData, type: .applicationPassword)
             
             if !success {
-                // The call succeeded but returned false (e.g., credential could not be set)
-                return .failure(DeviceBindingError.deviceNotSupported)
+                // The credential could not be set on this context; treat as an authentication
+                // failure so it maps to the "Abort" client error (not "Unsupported").
+                return .failure(DeviceBindingError.authenticationFailed)
             }
             
             
@@ -87,11 +99,19 @@ public class AppPinAuthenticator: DefaultDeviceAuthenticator {
         return .failure(DeviceBindingError.authenticationFailed)
     }
     
-    /// Checks if the authenticator is supported. Since it's a software-based PIN, it is always supported.
+    /// Checks if the authenticator is supported.
     /// - Parameter attestation: The attestation type (currently ignored).
-    /// - Returns: `true`.
+    /// - Returns: `true` on real devices, `false` on simulator.
+    /// - Note: Always returns `false` on simulator — `LAContext.setCredential(_:type:)` with
+    ///         `.applicationPassword` is not supported on simulator, so authentication always
+    ///         fails. Returning `false` here produces a consistent "Unsupported" error rather
+    ///         than the misleading "Abort" that would result from failing inside `authenticate()`.
     public override func isSupported(attestation: Attestation) -> Bool {
+        #if targetEnvironment(simulator)
+        return false
+        #else
         return true
+        #endif
     }
     
     /// Deletes all keys associated with the application PIN authenticator.

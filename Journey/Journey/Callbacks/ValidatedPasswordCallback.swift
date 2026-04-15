@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingJourneyPlugin
 
 /// A callback that collects a password with validation against given policies.
 public class ValidatedPasswordCallback: AbstractValidatedCallback, @unchecked Sendable {

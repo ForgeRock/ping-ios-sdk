@@ -3,7 +3,7 @@
 //  BiometricOnlyAuthenticator.swift
 //  PingBinding
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,7 +11,7 @@
 
 import Foundation
 import LocalAuthentication
-import PingJourney
+import PingJourneyPlugin
 
 /// An authenticator that uses biometrics (Face ID or Touch ID) for user authentication.
 /// This class extends `DefaultDeviceAuthenticator` and provides specific implementations
@@ -77,11 +77,18 @@ public class BiometricOnlyAuthenticator: DefaultDeviceAuthenticator {
     /// Checks if the device supports biometrics for authentication.
     /// - Parameter attestation: The attestation type (currently ignored).
     /// - Returns: `true` if the device supports biometric authentication, `false` otherwise.
+    /// - Note: Always returns `false` on simulator — biometric keys require Secure Enclave
+    ///         to enforce the authentication challenge. Without it the key is accessible
+    ///         with no user verification, which is equivalent to the NONE type.
     public override func isSupported(attestation: Attestation) -> Bool {
+        #if targetEnvironment(simulator)
+        return false
+        #else
         let context = LAContext()
         var error: NSError?
         // Check if the device can evaluate the biometric policy
         return context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+        #endif
     }
     
     /// Deletes all biometric keys associated with this authenticator.

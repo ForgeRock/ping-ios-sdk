@@ -2,7 +2,7 @@
 //  MockURLProtocol.swift
 //  OidcTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,6 +12,7 @@
 import Foundation
 import XCTest
 import PingLogger
+import PingNetwork
 
 class MockURLProtocol: URLProtocol, @unchecked Sendable {
     nonisolated(unsafe) public static var requestHistory: [URLRequest] = [URLRequest]()
@@ -56,3 +57,13 @@ class MockURLProtocol: URLProtocol, @unchecked Sendable {
         
     }
 }
+
+extension MockURLProtocol {
+    static func makeClient(config: HttpClientConfig = HttpClientConfig()) -> URLSessionHttpClient {
+        let sessionConfig = URLSessionConfiguration.ephemeral
+        sessionConfig.protocolClasses = [MockURLProtocol.self]
+        let session = URLSession(configuration: sessionConfig, delegate: nil, delegateQueue: nil)
+        return URLSessionHttpClient(config: config, session: session, delegate: nil)
+    }
+}
+

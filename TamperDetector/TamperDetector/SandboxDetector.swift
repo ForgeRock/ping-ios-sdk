@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingLogger
 
 /// SandboxDetector is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
 public class SandboxDetector: TamperDetectorProtocol {
@@ -34,9 +35,11 @@ public class SandboxDetector: TamperDetectorProtocol {
             if forkResult > 0 {
                 kill(forkResult, SIGTERM)
             }
+            logger.w("SandboxDetector: fork() succeeded (pid: \(forkResult)), indicating the app is running outside the sandbox.", error: nil)
             return 1.0
         }
         
+        logger.d("SandboxDetector: fork() failed as expected on a non-jailbroken device.")
         return 0.0
     }
 }

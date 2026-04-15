@@ -2,7 +2,7 @@
 //  BiometricAndDeviceCredentialAuthenticator.swift
 //  PingBinding
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -72,11 +72,18 @@ public class BiometricDeviceCredentialAuthenticator: DefaultDeviceAuthenticator 
     /// Checks if the device supports biometric or device credential authentication.
     /// - Parameter attestation: The attestation type (currently ignored).
     /// - Returns: `true` if the device supports the authentication policy, `false` otherwise.
+    /// - Note: Always returns `false` on simulator — biometric keys require Secure Enclave
+    ///         to enforce the authentication challenge. Without it the key is accessible
+    ///         with no user verification, which is equivalent to the NONE type.
     public override func isSupported(attestation: Attestation) -> Bool {
+        #if targetEnvironment(simulator)
+        return false
+        #else
         let laContext = LAContext()
         var evalError: NSError?
         // Check if the device can evaluate the defined policy
         return laContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &evalError)
+        #endif
     }
     
     /// Deletes all biometric and device credential keys associated with this authenticator.

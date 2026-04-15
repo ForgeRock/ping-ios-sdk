@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingOrchestrate'
-  s.version          = '1.3.1'
+  s.version          = '2.0.0'
   s.summary          = 'PingOrchestrate SDK for iOS'
   s.description      = <<-DESC
   The PingOrchestrate SDK provides a simple way to build a state machine for ForgeRock Journey and PingOne DaVinci.
@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   s.module_name   = 'PingOrchestrate'
   s.swift_versions = ['5.0', '5.1', '6.0']
 
-  s.ios.deployment_target = '13.0'
+  s.ios.deployment_target = '16.0'
 
   base_dir = "Orchestrate/Orchestrate"
   s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.h'
@@ -33,6 +33,6 @@ Pod::Spec.new do |s|
     'Orchestrate' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingLogger', '~> 1.3.1'
-  s.ios.dependency 'PingStorage', '~> 1.3.1'
+  s.ios.dependency 'PingStorage', '~> 2.0.0'
+  s.ios.dependency 'PingNetwork', '~> 2.0.0'
 end

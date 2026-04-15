@@ -10,6 +10,7 @@
 
 
 import Foundation
+import PingLogger
 
 /// SuspiciousObjCClassesDetector is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
 public class SuspiciousObjCClassesDetector: TamperDetectorProtocol {
@@ -24,10 +25,12 @@ public class SuspiciousObjCClassesDetector: TamperDetectorProtocol {
         if let shadowRulesetClass = objc_getClass("ShadowRuleset") as? NSObject.Type {
             let selector = Selector(("internalDictionary"))
             if class_getInstanceMethod(shadowRulesetClass, selector) != nil {
+                logger.w("SuspiciousObjCClassesDetector: suspicious Objective-C class 'ShadowRuleset' with method 'internalDictionary' was found, indicating the Shadow jailbreak detection bypass tweak is active.", error: nil)
                 return 1.0
             }
         }
         
+        logger.d("SuspiciousObjCClassesDetector: no suspicious Objective-C classes found.")
         return 0.0
     }
 }

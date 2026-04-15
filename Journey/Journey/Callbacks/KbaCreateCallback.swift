@@ -2,13 +2,15 @@
 //  KbaCreateCallback.swift
 //  Journey
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import Foundation
+import PingJourneyPlugin
+import Combine
 
 /// A callback that is responsible to define and create Knowledge Based Authentication question and answer for a user.
 public class KbaCreateCallback: AbstractCallback, ObservableObject, @unchecked Sendable {

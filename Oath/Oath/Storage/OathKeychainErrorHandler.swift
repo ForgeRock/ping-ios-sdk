@@ -191,7 +191,7 @@ internal enum OathKeychainErrorHandler {
                 )
             }
 
-        case .storageCorrupted(let message):
+        case .storageCorrupted( _):
             return (
                 title: "Storage Corrupted",
                 message: "The credential storage appears to be corrupted.",
@@ -202,7 +202,7 @@ internal enum OathKeychainErrorHandler {
                 ]
             )
 
-        case .duplicateCredential(let credentialId):
+        case .duplicateCredential( _):
             return (
                 title: "Duplicate Credential",
                 message: "A credential with this identifier already exists.",

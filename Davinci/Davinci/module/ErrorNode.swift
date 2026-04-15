@@ -2,7 +2,7 @@
 //  ErrorNode.swift
 //  Davinci
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,7 @@
 
 import Foundation
 import PingOrchestrate
+import PingDavinciPlugin
 
 /// Extension to provide additional functionality to `ErrorNode`.
 extension ErrorNode {
@@ -141,7 +142,14 @@ public struct InnerError: Codable, Sendable {
 }
 
 /// Represents errors that occur during serialization.
-public enum SerializationError: Error {
+public enum SerializationError: Error, LocalizedError, Sendable {
     /// Indicates that the provided data has an invalid format.
     case invalidFormat
+
+    public var errorDescription: String? {
+        switch self {
+        case .invalidFormat:
+            return "The response data has an invalid format."
+        }
+    }
 }

@@ -10,6 +10,8 @@
 
 import Foundation
 import MachO
+import PingLogger
+
 /// DyldDetector is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
 public class DyldDetector: TamperDetectorProtocol {
     
@@ -55,11 +57,13 @@ public class DyldDetector: TamperDetectorProtocol {
             
             for suspiciousLibrary in suspiciousLibraries {
                 if loadedLibrary.lowercased().contains(suspiciousLibrary.lowercased()) {
+                    logger.w("DyldDetector: suspicious dynamically loaded library found — '\(loadedLibrary)' matches '\(suspiciousLibrary)'.", error: nil)
                     return 1.0
                 }
             }
         }
         
+        logger.d("DyldDetector: no suspicious dynamically loaded libraries found.")
         return 0.0
     }
 }

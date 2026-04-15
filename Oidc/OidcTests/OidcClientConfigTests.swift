@@ -2,7 +2,7 @@
 //  OidcClientConfigTests.swift
 //  OidcTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,7 +11,7 @@
 
 import XCTest
 @testable import PingOidc
-@testable import PingOrchestrate
+@testable import PingNetwork
 @testable import PingLogger
 @testable import PingStorage
 
@@ -24,7 +24,7 @@ final class OidcClientConfigTests: XCTestCase {
         oidcClientConfig = OidcClientConfig()
         oidcClientConfig.discoveryEndpoint = MockAPIEndpoint.discovery.url.absoluteString
         oidcClientConfig.storage = MockStorage<Token>()
-        oidcClientConfig.httpClient = HttpClient(session: .shared)
+        oidcClientConfig.httpClient = MockURLProtocol.makeClient()
         MockURLProtocol.startInterceptingRequests()
     }
     
@@ -120,7 +120,7 @@ final class OidcClientConfigTests: XCTestCase {
         oidcClientConfig.uiLocales = "uiLocales"
         oidcClientConfig.acrValues = "acrValues"
         oidcClientConfig.additionalParameters = ["param": "value"]
-        oidcClientConfig.httpClient = HttpClient()
+        oidcClientConfig.httpClient = MockURLProtocol.makeClient()
         
         let clonedConfig = oidcClientConfig.clone()
         
@@ -158,7 +158,7 @@ final class OidcClientConfigTests: XCTestCase {
         otherConfig.uiLocales = "uiLocales"
         otherConfig.acrValues = "acrValues"
         otherConfig.additionalParameters = ["param": "value"]
-        otherConfig.httpClient = HttpClient()
+        otherConfig.httpClient = MockURLProtocol.makeClient()
         
         oidcClientConfig.update(with: otherConfig)
         
@@ -190,13 +190,17 @@ class MockAgent: Agent, @unchecked Sendable {
             "client_id": oidcConfig.oidcClientConfig.clientId,
             "id_token_hint": idToken
         ]
-        let request = Request()
-        request.url(MockAPIEndpoint.endSession.url.absoluteString)
-        request.form(formData: params)
-        do {
-            let (_, _) = try await oidcConfig.oidcClientConfig.httpClient!.sendRequest(request: request)
-        } catch {
+        
+        guard let httpClient = oidcConfig.oidcClientConfig.httpClient else {
+            XCTFail("httpClient should not be nil")
+            return false
         }
+        
+        _ = try await httpClient.request { request in
+            request.url = MockAPIEndpoint.endSession.url.absoluteString
+            request.form(parameters: params)
+        }
+        
         return true
     }
     

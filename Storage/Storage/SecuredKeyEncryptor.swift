@@ -2,7 +2,7 @@
 //  SecuredKeyEncryptor.swift
 //  PingStorage
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -52,12 +52,12 @@ public struct SecuredKeyEncryptor: Encryptor {
 
 
 /// `EncryptorError` represents errors that can occur while encrypting/decrypting.
-public enum EncryptorError: LocalizedError {
+public enum EncryptorError: LocalizedError, Sendable {
     case failedToEncrypt
     case failedToDecrypt
     
-    /// A localized message describing what error occurred.
-    public var errorMessage: String {
+    /// A localized description of the error, used by `LocalizedError`.
+    public var errorDescription: String? {
         switch self {
         case .failedToEncrypt:
             return "Failed to encrypt given data"

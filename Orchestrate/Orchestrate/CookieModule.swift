@@ -2,7 +2,7 @@
 //  CookieModule.swift
 //  PingOrchestrate
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,7 @@
 
 import Foundation
 import PingStorage
+import PingNetwork
 
 /// A module that manages cookies.
 public class CookieModule {
@@ -28,7 +29,7 @@ public class CookieModule {
         
         setup.start { @Sendable context, request in
             let cookies = try? await setup.config.cookieStorage.get()
-            if let url = request.urlRequest.url, let cookies = cookies {
+            if let urlString = request.url, let url = URL(string: urlString), let cookies = cookies {
                 await CookieModule.inject(url: url,
                                           cookies: cookies,
                                           request: request)
@@ -37,10 +38,10 @@ public class CookieModule {
         }
         
         setup.next { @Sendable context, _, request in
-            if let url = request.urlRequest.url {
+            if let urlString = request.url, let url = URL(string: urlString) {
                 let allCookies = await setup.config.inMemoryStorage.cookies(for: url)
                 if let allCookies = allCookies {
-                    request.cookies(cookies: allCookies)
+                    request.setCookies(cookies: allCookies.map({$0.stringValue}))
                 }
                 // Inject persisted cookies from cookie storage if available
                 if let cookies = try? await setup.config.cookieStorage.get() {
@@ -52,7 +53,7 @@ public class CookieModule {
         
         setup.response { @Sendable context, response in
             let cookies = response.getCookies()
-            if cookies.count > 0, let httpResponse = response as? HttpResponse, let url = httpResponse.response.url {
+            if cookies.count > 0, let urlString = response.request.url, let url = URL(string: urlString) {
                 await CookieModule.parseResponseForCookie(context: context,
                                                           url: url,
                                                           cookies: cookies,
@@ -62,7 +63,7 @@ public class CookieModule {
         }
         
         setup.signOff { @Sendable request in
-            if let url = request.urlRequest.url {
+            if let urlString = request.url, let url = URL(string: urlString) {
                 if let cookies = try? await setup.config.cookieStorage.get() {
                     await CookieModule.inject(url: url, cookies: cookies, request: request)
                 }
@@ -88,8 +89,8 @@ public class CookieModule {
             await persistedTempCookiesStorage.setCookie(cookie)
         }
         
-        if let cookie = await persistedTempCookiesStorage.cookies(for: url) {
-            request.cookies(cookies: cookie)
+        if let cookies = await persistedTempCookiesStorage.cookies(for: url) {
+            request.setCookies(cookies: cookies.map({ $0.stringValue }))
         }
     }
     
@@ -147,20 +148,201 @@ public class CookieModule {
 
 
 /// Configuration for managing cookies in the application.
+///
+/// `CookieConfig` provides control over how HTTP cookies are stored, persisted,
+/// and managed across requests in your Journey or DaVinci workflows. It supports
+/// both in-memory storage (for temporary cookies) and persistent storage (for
+/// cookies that should survive app restarts).
+///
+/// ## Cookie Persistence
+///
+/// By default, cookies are stored in memory only. To persist specific cookies
+/// to Keychain storage, add their names to the ``persist`` array:
+///
+/// ```swift
+/// let cookieConfig = CookieConfig()
+/// cookieConfig.persist = ["iPlanetDirectoryPro", "session_token"]
+/// ```
+///
+/// Only cookies whose names appear in the ``persist`` array will be saved to
+/// the Keychain. All other cookies remain in memory only and are cleared when
+/// the app terminates.
+///
+/// ## Custom Storage Configuration
+///
+/// For multi-user scenarios or apps requiring isolated cookie storage, use the
+/// custom account initializer:
+///
+/// ```swift
+/// // User-specific cookie storage
+/// let userCookieConfig = CookieConfig(account: "user_12345_cookies")
+///
+/// // Another user with separate storage
+/// let adminCookieConfig = CookieConfig(account: "admin_cookies")
+/// ```
+///
+/// ## Integration with Modules
+///
+/// `CookieConfig` is typically used with ``CookieModule`` in Journey workflows:
+///
+/// ```swift
+/// let journey = Journey.createJourney { config in
+///     config.module(CookieModule.config) { cookieConfig in
+///         cookieConfig.persist = ["iPlanetDirectoryPro"]
+///         // Cookies will be persisted to default Keychain storage
+///     }
+/// }
+/// ```
+///
+/// - Note: This class is marked as `@unchecked Sendable` because its properties
+///   are mutable but access is coordinated through the Journey module system.
+///
+/// - SeeAlso: ``CookieModule`` for the module that uses this configuration
+/// - SeeAlso: ``CustomHTTPCookie`` for the cookie type used in persistent storage
 public final class CookieConfig: @unchecked Sendable {
     typealias Cookies = [String]
     
-    /// A list of Cookies name that should be persisted to the storage. For cookies that should not be persisted, do not add the cookie name to this list.
+    /// A list of cookie names that should be persisted to secure storage.
+    ///
+    /// Only cookies whose names appear in this array will be saved to the
+    /// Keychain when received from the server. Cookies not in this list are
+    /// stored in memory only and will be lost when the app terminates.
+    ///
+    /// ## Common Cookies to Persist
+    ///
+    /// Authentication cookies that maintain session state across app launches
+    /// should be added to this array:
+    ///
+    /// ```swift
+    /// cookieConfig.persist = [
+    ///     "iPlanetDirectoryPro",  // ForgeRock/PingAM session cookie
+    ///     "session_token",         // Custom session cookie
+    ///     "remember_me"            // Persistent login cookie
+    /// ]
+    /// ```
+    ///
+    /// ## Default Behavior
+    ///
+    /// By default, this array is empty (`[]`), meaning no cookies are persisted.
+    /// All cookies are stored in memory only.
+    ///
+    /// - Important: Only include cookie names that are required for maintaining
+    ///   authentication state. Persisting unnecessary cookies can impact storage
+    ///   size and may have privacy implications.
     public var persist: [String] = []
-    /// In-memory storage for cookies.
-    public private(set) var inMemoryStorage: InMemoryCookieStorage
-    /// Persistent storage for cookies.
-    public internal(set) var cookieStorage: StorageDelegate<[CustomHTTPCookie]>
     
-    /// Initializes a new instance of `CookieConfig`.
+    /// In-memory storage for cookies that are not persisted.
+    ///
+    /// This actor-based storage manages cookies that should only exist for the
+    /// current app session. Cookies in this storage are automatically cleared
+    /// when the app terminates.
+    ///
+    /// The storage is used for:
+    /// - Cookies not listed in ``persist``
+    /// - Temporary cookies received during authentication flows
+    /// - Session-only cookies
+    ///
+    /// - Note: This property is read-only. The storage is initialized automatically
+    ///   and managed by the ``CookieModule``.
+    public private(set) var inMemoryStorage: InMemoryCookieStorage
+    
+    /// Persistent storage for cookies listed in the ``persist`` array.
+    ///
+    /// This storage backend (typically Keychain) maintains cookies across app
+    /// launches. Only cookies whose names appear in ``persist`` are saved here.
+    ///
+    /// ## Default Storage
+    ///
+    /// By default, uses `KeychainStorage` with:
+    /// - Account identifier: `"COOKIE_STORAGE"`
+    /// - Encryption: Secured key encryption when available
+    ///
+    /// ## Custom Storage
+    ///
+    /// You can replace this with custom storage implementations:
+    ///
+    /// ```swift
+    /// cookieConfig.cookieStorage = KeychainStorage<[CustomHTTPCookie]>(
+    ///     account: "my_custom_cookies",
+    ///     encryptor: SecuredKeyEncryptor() ?? NoEncryptor()
+    /// )
+    /// ```
+    ///
+    /// - SeeAlso: ``CustomHTTPCookie`` for the cookie type stored persistently
+    public var cookieStorage: StorageDelegate<[CustomHTTPCookie]>
+    
+    /// Initializes a new `CookieConfig` with default Keychain storage.
+    ///
+    /// This creates a cookie configuration using:
+    /// - Empty ``persist`` array (no cookies persisted by default)
+    /// - Default Keychain account identifier (`"COOKIE_STORAGE"`)
+    /// - Secured key encryption for persistent storage
+    /// - Fresh in-memory storage instance
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let cookieConfig = CookieConfig()
+    /// cookieConfig.persist = ["iPlanetDirectoryPro"]
+    ///
+    /// // Use in a Journey module
+    /// config.module(CookieModule.config) { cookie in
+    ///     cookie.persist = cookieConfig.persist
+    /// }
+    /// ```
+    ///
+    /// - SeeAlso: `init(account:)` for custom storage accounts
     public init() {
         cookieStorage = KeychainStorage<[CustomHTTPCookie]>(account: SharedContext.Keys.cookieStorage, encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
         inMemoryStorage = InMemoryCookieStorage()
+    }
+    
+    /// Initializes a new `CookieConfig` with a custom account identifier for Keychain storage.
+    ///
+    /// Use this initializer when you need to isolate cookie storage with a unique
+    /// identifier. This is particularly useful for:
+    /// - Multi-user applications where each user needs separate cookie storage
+    /// - Multiple DaVinci workflow instances requiring isolated state
+    /// - Testing scenarios requiring clean storage separation
+    ///
+    /// The account identifier serves as the Keychain account attribute, allowing
+    /// multiple cookie stores to coexist without conflicts.
+    ///
+    /// ## Example: Multi-User Cookie Storage
+    ///
+    /// ```swift
+    /// // Create cookie config for a specific user
+    /// let userCookieConfig = CookieConfig(account: "user_12345_cookies")
+    /// userCookieConfig.persist = ["iPlanetDirectoryPro"]
+    ///
+    /// // Use in Journey configuration
+    /// let journey = Journey.createJourney { config in
+    ///     config.module(CookieModule.config) { cookie in
+    ///         cookie.cookieStorage = userCookieConfig.cookieStorage
+    ///         cookie.persist = userCookieConfig.persist
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// ## Example: Isolated Workflow Storage
+    ///
+    /// ```swift
+    /// // Different workflows with separate cookie storage
+    /// let loginCookies = CookieConfig(account: "login_flow_cookies")
+    /// let checkoutCookies = CookieConfig(account: "checkout_flow_cookies")
+    /// ```
+    ///
+    /// - Parameter account: A unique identifier for this cookie storage instance.
+    ///   This value is used as the Keychain account attribute. Choose a descriptive
+    ///   and unique value to avoid conflicts with other storage instances.
+    ///
+    /// - Important: Ensure account identifiers are unique across your app to prevent
+    ///   unintended cookie data sharing between different users or workflow contexts.
+    ///
+    /// - SeeAlso: `init()` for the default configuration
+    public convenience init(account: String) {
+        self.init()
+        cookieStorage = KeychainStorage<[CustomHTTPCookie]>(account: account, encryptor: SecuredKeyEncryptor() ?? NoEncryptor())
     }
 }
 
@@ -230,6 +412,10 @@ extension SharedContext.Keys {
 
 
 extension HTTPCookie {
+    var stringValue: String {
+        return "\(self.name)=\(self.value)"
+    }
+    
     var isExpired: Bool {
         get {
             if let expDate = self.expiresDate, expDate.timeIntervalSince1970 < Date().timeIntervalSince1970 {

@@ -2,7 +2,7 @@
 //  ReCaptchaEnterpriseCallback.swift
 //  ReCaptchaEnterprise
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -10,9 +10,10 @@
 
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 import PingLogger
-@_exported import RecaptchaEnterprise
+import PingCommons
+internal import RecaptchaEnterprise
 
 // MARK: - ReCaptchaEnterpriseCallback
 
@@ -61,8 +62,8 @@ public class ReCaptchaEnterpriseCallback: AbstractCallback, @unchecked Sendable 
     // MARK: - Initialization
     
     /// Initializes a new instance of `ReCaptchaEnterpriseCallback` with the provided JSON.
-    public override func initialize(with json: [String: Any]) -> any Callback {
-        _ = super.initialize(with: json)
+    public override func initialize(with json: [String: Any]) async -> any Callback {
+        _ = await super.initialize(with: json)
         
         // Assign input keys
         if let inputItems = json[JourneyConstants.input] as? [[String: Any]] {
@@ -206,7 +207,7 @@ public class ReCaptchaEnterpriseCallback: AbstractCallback, @unchecked Sendable 
             guard !payloadKey.isEmpty else { return }
             
             if let payload = value, !payload.isEmpty {
-                let jsonString = ReCaptchaEnterpriseUtils.jsonStringify(value: payload)
+                let jsonString = JSONUtils.jsonStringify(value: payload)
                 _ = input(jsonString, forKey: payloadKey)
             }
         }
@@ -236,7 +237,7 @@ public final class ReCaptchaEnterpriseConfig: @unchecked Sendable {
     public var timeout: Double = ReCaptchaEnterpriseConstants.defaultTimeout
     
     /// Logger instance for recording reCAPTCHA events
-    public var logger: Logger = LogManager.warning
+    public var logger: Logger = LogManager.logger
     
     /// Sets additional payload value for the reCAPTCHA in callback response.
     /// Dictionary value of additional data

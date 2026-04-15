@@ -3,16 +3,17 @@
 //  DefaultDeviceAuthenticator.swift
 //  PingBinding
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import Foundation
-import PingJourney
+import PingJourneyPlugin
 import Security
-import PingMfaCommons
+import PingCommons
+import PingOrchestrate
 
 /// A base class for device authenticators, providing default implementations for the `DeviceAuthenticator` protocol.
 /// Subclasses should override methods to provide specific authentication logic.

@@ -47,7 +47,11 @@ struct FidoAuthenticationCollectorView: View {
                     }
                 }
             }) {
-                Text("Authenticate with FIDO")
+                if collector.label.isEmpty {
+                    Text("Authenticate with FIDO")
+                } else {
+                    Text(collector.label)
+                }
             }
         }
     }

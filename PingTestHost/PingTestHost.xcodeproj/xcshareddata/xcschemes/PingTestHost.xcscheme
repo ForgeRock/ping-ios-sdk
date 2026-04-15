@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1640"
+   LastUpgradeVersion = "2610"
    version = "2.1">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -33,6 +33,20 @@
                BuildableName = "ProtectTests.xctest"
                BlueprintName = "ProtectTests"
                ReferencedContainer = "container:../Protect/Protect.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B7A9A802ED52F6400989A55"
+               BuildableName = "NetworkTests.xctest"
+               BlueprintName = "NetworkTests"
+               ReferencedContainer = "container:../Network/Network.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -397,6 +411,96 @@
                BuildableName = "ReCaptchaEnterpriseTests.xctest"
                BlueprintName = "ReCaptchaEnterpriseTests"
                ReferencedContainer = "container:../ReCaptchaEnterprise/ReCaptchaEnterprise.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A570D4CB2ECC0D6200CBBCCF"
+               BuildableName = "DeviceClientTests.xctest"
+               BlueprintName = "DeviceClientTests"
+               ReferencedContainer = "container:../DeviceClient/DeviceClient.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B7C49B82EAAB6E300E3C0AC"
+               BuildableName = "PushTests.xctest"
+               BlueprintName = "PushTests"
+               ReferencedContainer = "container:../Push/Push.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EC5C814D2ECF66D100C91570"
+               BuildableName = "PingDavinciPluginTests.xctest"
+               BlueprintName = "PingDavinciPluginTests"
+               ReferencedContainer = "container:../DavinciPlugin/DavinciPlugin/DavinciPlugin.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4D205FDC26F64EF2AE058C6C"
+               BuildableName = "AuthMigrationTests.xctest"
+               BlueprintName = "AuthMigrationTests"
+               ReferencedContainer = "container:../AuthMigration/AuthMigration.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A56741AC2EE1EBFD009D29B9"
+               BuildableName = "CommonsTests.xctest"
+               BlueprintName = "CommonsTests"
+               ReferencedContainer = "container:../Commons/Commons.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EC5C81822ECF67B700C91570"
+               BuildableName = "PingJourneyPluginTests.xctest"
+               BlueprintName = "PingJourneyPluginTests"
+               ReferencedContainer = "container:../JourneyPlugin/JourneyPlugin/JourneyPlugin.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B7A9A802ED52F6400989A55"
+               BuildableName = "NetworkTests.xctest"
+               BlueprintName = "NetworkTests"
+               ReferencedContainer = "container:../Network/Network.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EC5C814D2ECF66D100C91570"
+               BuildableName = "PingDavinciPluginTests.xctest"
+               BlueprintName = "PingDavinciPluginTests"
+               ReferencedContainer = "container:../DavinciPlugin/DavinciPlugin.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "EC5C81822ECF67B700C91570"
+               BuildableName = "PingJourneyPluginTests.xctest"
+               BlueprintName = "PingJourneyPluginTests"
+               ReferencedContainer = "container:../JourneyPlugin/JourneyPlugin.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>

@@ -253,3 +253,5 @@ You can optionally enable the "Store reCAPTCHA assessment JSON" option in the no
 
 - [Google reCAPTCHA Enterprise Documentation](https://cloud.google.com/recaptcha-enterprise/docs)
 - [PingOne reCAPTCHA Enterprise Node Reference](https://docs.pingidentity.com)
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

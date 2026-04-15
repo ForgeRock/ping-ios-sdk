@@ -2,7 +2,7 @@
 //  CookieModuleTests.swift
 //  OrchestrateTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -13,6 +13,7 @@ import Foundation
 import XCTest
 @testable import PingStorage
 @testable import PingOrchestrate
+@testable import PingNetwork
 
 final class CookieModuleTests: XCTestCase {
     
@@ -39,9 +40,9 @@ final class CookieModuleTests: XCTestCase {
                 return SuccessNode(session: EmptySession())
             }
         }
-        let memory = MemoryStorage<[CustomHTTPCookie]>()
+        let memory = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         let workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             config.module(dummy)
             
             config.module(CookieModule.config) { cookieValue in
@@ -69,9 +70,9 @@ final class CookieModuleTests: XCTestCase {
                 return SuccessNode(session: EmptySession())
             }
         }
-        let memory = MemoryStorage<[CustomHTTPCookie]>()
+        let memory = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         let workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             config.module(dummy)
             
             config.module(CookieModule.config) { cookieValue in
@@ -99,7 +100,7 @@ final class CookieModuleTests: XCTestCase {
         
         // Create initial workflow
         let initialWorkflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
         }
         
         // Create state container
@@ -117,11 +118,11 @@ final class CookieModuleTests: XCTestCase {
             }
         }
         
-        let memory = MemoryStorage<[CustomHTTPCookie]>()
+        let memory = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         
         // Update the workflow in the shared state
         workflowContainer.workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             config.module(dummy)
             
             config.module(CookieModule.config) { cookieValue in
@@ -134,8 +135,18 @@ final class CookieModuleTests: XCTestCase {
         let node = await workflowContainer.workflow.start()
         _ = await (node as? ContinueNode)?.next()
         
-        XCTAssertTrue(MockURLProtocol.requestHistory[1].allHTTPHeaderFields!["Cookie"]!.contains("interactionId=178ce234-afd2-4207-984e-bda28bd7042c"))
-        XCTAssertTrue(MockURLProtocol.requestHistory[1].allHTTPHeaderFields!["Cookie"]!.contains("interactionToken=abc"))
+        guard MockURLProtocol.requestHistory.count > 1 else {
+            XCTFail("Expected at least two requests in history")
+            return
+        }
+        
+        guard let cookieHeader = MockURLProtocol.requestHistory[1].allHTTPHeaderFields?["Cookie"] else {
+            XCTFail("Cookie header not found in request")
+            return
+        }
+        
+        XCTAssertTrue(cookieHeader.contains("interactionId=178ce234-afd2-4207-984e-bda28bd7042c"))
+        XCTAssertTrue(cookieHeader.contains("interactionToken=abc"))
         
         let cookies = try? await memory.get()
         XCTAssertNotNil(cookies)
@@ -169,9 +180,9 @@ final class CookieModuleTests: XCTestCase {
                 return SuccessNode(session: EmptySession())
             }
         }
-        let memory = MemoryStorage<[CustomHTTPCookie]>()
+        let memory = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         let workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             config.module(dummy)
             
             config.module(CookieModule.config) { cookieValue in
@@ -209,7 +220,7 @@ final class CookieModuleTests: XCTestCase {
         
         // Create initial workflow
         let initialWorkflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
         }
         
         // Create state container
@@ -227,10 +238,10 @@ final class CookieModuleTests: XCTestCase {
             }
         }
         
-        let memory = MemoryStorage<[CustomHTTPCookie]>()
+        let memory = MemoryStorage<[CustomHTTPCookie]>(cacheStrategy: .NO_CACHE)
         // Update the workflow in the shared state
         workflowContainer.workflow = Workflow.createWorkflow { config in
-            config.httpClient = HttpClient(session: .shared)
+            config.httpClient = MockURLProtocol.makeClient()
             config.module(dummy)
             
             config.module(CookieModule.config) { cookieValue in

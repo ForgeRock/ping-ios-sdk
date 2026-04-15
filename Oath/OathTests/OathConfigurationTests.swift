@@ -10,7 +10,7 @@
 
 import XCTest
 import PingLogger
-import PingMfaCommons
+import PingCommons
 @testable import PingOath
 
 final class OathConfigurationTests: XCTestCase {

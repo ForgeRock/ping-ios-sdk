@@ -2,14 +2,14 @@
 //  OathService.swift
 //  PingOath
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import Foundation
-import PingMfaCommons
+import PingCommons
 import PingLogger
 
 /// Internal service class that provides OATH functionality including credential management
@@ -118,10 +118,28 @@ actor OathService {
     /// Add and store a new credential.
     /// - Parameter credential: The credential to add.
     /// - Returns: The stored credential with any updates.
+    /// - Throws: `OathError.duplicateCredential` if a credential with the same issuer and account name already exists.
     /// - Throws: `OathError.policyViolation` if policies are not met.
     /// - Throws: `OathStorageError` if storage operations fail.
     func addCredential(_ credential: OathCredential) async throws -> OathCredential {
         logger.d("Adding new OATH credential: \(credential.id)")
+        
+        // Check for duplicate credential by issuer and account name
+        let existingCredential = try await storage.getCredentialByIssuerAndAccount(
+            issuer: credential.issuer,
+            accountName: credential.accountName
+        )
+        
+        // Only throw duplicate exception if the existing credential has a different ID
+        // (same ID means we're updating, not creating a duplicate)
+        if let existing = existingCredential, existing.id != credential.id {
+            logger.w("Credential already exists for issuer '\(credential.issuer)' and account '\(credential.accountName)'", error: nil)
+            throw OathError.duplicateCredential(
+                issuer: credential.issuer,
+                accountName: credential.accountName
+            )
+        }
+        
         // Validate credential
         try credential.validate()
 

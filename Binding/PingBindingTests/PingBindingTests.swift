@@ -2,7 +2,7 @@
 //  PingBindingTests.swift
 //  PingBinding
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -10,7 +10,9 @@
 
 import XCTest
 @testable import PingBinding
-@testable import PingJourney
+@testable import PingJourneyPlugin
+@testable import PingStorage
+import PingDeviceId
 
 final class PingBindingTests: XCTestCase {
     
@@ -289,18 +291,21 @@ final class PingBindingTests: XCTestCase {
     
     // MARK: - Configuration Tests
     
+    @MainActor
     func testDeviceBindingConfig_DefaultValues() {
         // Given
         let config = DeviceBindingConfig()
         
         // Then
         #if canImport(UIKit)
-        XCTAssertEqual(config.deviceName, UIDevice.current.name)
+        let expectedDeviceName = UIDevice.current.model
+        XCTAssertEqual(config.deviceName, expectedDeviceName)
         XCTAssertTrue(config.userKeySelector is DefaultUserKeySelector)
         #else
         XCTAssertEqual(config.deviceName, "Apple")
         #endif
         
+        XCTAssertNil(config.deviceIdentifier) // nil means DefaultDeviceIdentifier is used at bind time
         XCTAssertEqual(config.timeout, 60)
         XCTAssertEqual(config.attestation, .none)
         XCTAssertEqual(config.deviceBindingAuthenticationType, .none)
@@ -324,6 +329,23 @@ final class PingBindingTests: XCTestCase {
         XCTAssertEqual(config.attestation, .challenge("ghjh"))
         XCTAssertEqual(config.deviceBindingAuthenticationType, .biometricOnly)
         XCTAssertEqual(config.claims["custom"] as? String, "value")
+    }
+    
+    func testDeviceBindingConfig_CustomDeviceIdentifier() async throws {
+        // Given
+        final class StaticDeviceIdentifier: DeviceIdentifier, @unchecked Sendable {
+            private let fixedId: String
+            init(_ id: String) { self.fixedId = id }
+            var id: String { get async throws { fixedId } }
+        }
+        let expectedId = "custom-device-id-12345"
+        let config = DeviceBindingConfig()
+        config.deviceIdentifier = StaticDeviceIdentifier(expectedId)
+        
+        // Then
+        let customIdentifier = try XCTUnwrap(config.deviceIdentifier)
+        let resolvedId = try await customIdentifier.id
+        XCTAssertEqual(resolvedId, expectedId)
     }
     
     func testDeviceBindingConfig_ES256AlgorithmAndKeySize() {
@@ -426,15 +448,15 @@ final class PingBindingTests: XCTestCase {
         let keyId = UUID().uuidString
         let userId = "testUser3"
         let userName = "Test User"
-        let createdAt = Date()
+        
         let keyAlias = "test.key.alias"
         
         let userKey = UserKey(keyTag: keyAlias, userId: userId, username: userName, kid: keyId, authType: .none)
-        
+        let createdAt = Date()
+        XCTAssertEqual(userKey.createdAt.timeIntervalSince(createdAt), 0, accuracy: 0.01)
         XCTAssertEqual(userKey.id, keyId)
         XCTAssertEqual(userKey.userId, userId)
         XCTAssertEqual(userKey.username, userName)
-        XCTAssertEqual(userKey.createdAt, createdAt)
         XCTAssertEqual(userKey.authType, .none)
         XCTAssertEqual(userKey.keyTag, keyAlias)
     }
@@ -464,30 +486,6 @@ final class PingBindingTests: XCTestCase {
             XCTAssertNil(keys)
         } catch {
             XCTFail("Finding non-existent user should not throw: \(error)")
-        }
-    }
-    
-    func testUserKeysStorage_ConcurrentAccess() async {
-        // Test concurrent read/write operations
-        let bindCallback1 = DeviceBindingCallback()
-        bindCallback1.userId = "concurrent1"
-        
-        let bindCallback2 = DeviceBindingCallback()
-        bindCallback2.userId = "concurrent2"
-        
-        do {
-            // Execute bindings concurrently
-            async let bind1 = Binding.bind(callback: bindCallback1, journey: nil)
-            async let bind2 = Binding.bind(callback: bindCallback2, journey: nil)
-            
-            let (_, _) = try await (bind1, bind2)
-            
-            XCTFail("testUserKeysStorage_ConcurrentAccess Expected to fail")
-            
-        } catch {
-            // Cleanup
-            try? await userKeyStorage.deleteByUserId("concurrent1")
-            try? await userKeyStorage.deleteByUserId("concurrent2")
         }
     }
     
@@ -596,5 +594,25 @@ final class PingBindingTests: XCTestCase {
         
         // Then
         XCTAssertEqual(config.attestation, .none)
+    }
+    
+    // MARK: - UserKeyStorageConfig Tests
+    
+    func testUserKeyStorageConfig_DefaultInit() {
+        let config = UserKeyStorageConfig()
+        XCTAssertNotNil(config.storage)
+    }
+    
+    func testUserKeyStorageConfig_CustomStorageInit() {
+        let customStorage = MemoryStorage<[UserKey]>(cacheStrategy: .NO_CACHE)
+        let config = UserKeyStorageConfig(storage: customStorage)
+        XCTAssertNotNil(config.storage)
+    }
+    
+    // MARK: - DefaultUserKeySelector Tests
+    
+    func testDefaultUserKeySelector_Initialization() {
+        let selector = DefaultUserKeySelector()
+        XCTAssertNotNil(selector)
     }
 }

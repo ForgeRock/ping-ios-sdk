@@ -11,6 +11,7 @@
 
 import Foundation
 import UIKit
+import PingLogger
 
 /// URLSchemeDetector is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
 public class URLSchemeDetector: TamperDetectorProtocol {
@@ -35,11 +36,13 @@ public class URLSchemeDetector: TamperDetectorProtocol {
             if let url = URL(string: urlScheme) {
                 let canOpen = canOpenURL(url)
                 if canOpen {
+                    logger.w("URLSchemeDetector: jailbreak-related URL scheme '\(urlScheme)' can be opened.", error: nil)
                     return 1.0
                 }
             }
         }
         
+        logger.d("URLSchemeDetector: no jailbreak-related URL schemes can be opened.")
         return 0.0
     }
     

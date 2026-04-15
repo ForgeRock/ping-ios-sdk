@@ -78,7 +78,7 @@ class PlatformCollectorTests: XCTestCase {
         // Locale can be nil in some cases, but if present should match system
         if let locale = platformInfo.locale {
             XCTAssertFalse(locale.isEmpty, "Locale should not be empty if present")
-            XCTAssertEqual(locale, Locale.current.languageCode,
+            XCTAssertEqual(locale, Locale.current.language.languageCode?.identifier ?? "",
                           "Locale should match current language code")
         }
     }
@@ -455,11 +455,11 @@ class PlatformCollectorTests: XCTestCase {
         let currentLocale = Locale.current
         
         if let platformLocale = platformInfo.locale {
-            XCTAssertEqual(platformLocale, currentLocale.languageCode,
+            XCTAssertEqual(platformLocale, currentLocale.language.languageCode?.identifier ?? "",
                           "Locale should match system language code")
         } else {
             // Locale can be nil if language code is unavailable
-            XCTAssertNil(currentLocale.languageCode, "If platform locale is nil, system locale should also be nil")
+            XCTAssertNil(currentLocale.language.languageCode?.identifier, "If platform locale is nil, system locale should also be nil")
         }
     }
 }

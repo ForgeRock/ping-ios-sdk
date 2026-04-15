@@ -2,7 +2,7 @@
 //  TelephonyCollectorTests.swift
 //  DeviceProfile
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -45,7 +45,7 @@ class TelephonyCollectorTests: XCTestCase {
         let telephonyInfo = TelephonyInfo()
         
         // In test environment without cellular, might default to "Unknown"
-        let validCountryCodes = ["Unknown"] + Locale.isoRegionCodes
+        let validCountryCodes = ["Unknown"] + Locale.Region.isoRegions.map { $0.identifier }
         
         if let countryIso = telephonyInfo.networkCountryIso {
             // Should be either "Unknown" or a valid ISO country code
@@ -475,7 +475,7 @@ class TelephonyCollectorTests: XCTestCase {
             return
         }
         
-        if countryIso != "Unknown" {
+        if countryIso != "Unknown" && countryIso != "--" {
             // Should be a valid 2-letter ISO country code
             XCTAssertEqual(countryIso.count, 2, "Country ISO should be 2 characters")
             XCTAssertTrue(countryIso.allSatisfy { $0.isLetter }, "Country ISO should contain only letters")

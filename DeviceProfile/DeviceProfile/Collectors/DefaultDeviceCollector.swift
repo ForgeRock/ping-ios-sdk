@@ -2,7 +2,7 @@
 //  DefaultDeviceCollector.swift
 //  DeviceProfile
 //
-//  Copyright (c) 2019 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2019 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -60,5 +60,12 @@ public struct DefaultDeviceCollector {
             NetworkCollector(),
             BluetoothCollector(),
         ]
+    }
+
+    /// Creates and returns the default location collector.
+    /// This method provides a pre-configured location collector
+    /// that gathers device location information, subject to user permissions.
+    public static func defaultLocationCollector() -> LocationCollector {
+        return LocationCollector()
     }
 }

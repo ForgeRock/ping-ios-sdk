@@ -2,7 +2,7 @@
 //  OathError.swift
 //  PingOath
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -66,8 +66,8 @@ public enum OathError: LocalizedError, Sendable {
     /// The credential is locked and cannot be used.
     case credentialLocked(String)
 
-    /// A credential with the same ID already exists.
-    case duplicateCredential(String)
+    /// A credential with the same issuer and account name already exists.
+    case duplicateCredential(issuer: String, accountName: String)
 
     
     // MARK: - URI Parsing Errors
@@ -123,8 +123,8 @@ public enum OathError: LocalizedError, Sendable {
             return "Credential with ID '\(id)' was not found"
         case .credentialLocked(let id):
             return "Credential with ID '\(id)' is locked and cannot be used"
-        case .duplicateCredential(let id):
-            return "A credential with ID '\(id)' already exists"
+        case .duplicateCredential(let issuer, let accountName):
+            return "A credential for issuer '\(issuer)' and account '\(accountName)' already exists"
         case .invalidUri(let message):
             return "Invalid URI: \(message)"
         case .missingRequiredParameter(let message):
@@ -156,8 +156,8 @@ public enum OathError: LocalizedError, Sendable {
             return "The requested credential does not exist in storage"
         case .credentialLocked(_):
             return "The credential is locked by a policy and cannot generate codes"
-        case .duplicateCredential(_):
-            return "Cannot store credential because one with the same ID already exists"
+        case .duplicateCredential(_, _):
+            return "Cannot store credential because one with the same issuer and account name already exists"
         case .invalidUri(_):
             return "The URI format is not valid or is not supported"
         case .missingRequiredParameter(_):

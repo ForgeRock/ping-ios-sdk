@@ -12,10 +12,10 @@ NC='\033[0m' # No Color
 
 # Array of libraries to release in order of dependency
 # First items should be the ones with no dependencies
-LIBRARIES=("PingLogger" "PingStorage" "PingBrowser" "PingOrchestrate" "PingOidc" "PingDavinci" "PingExternalIdP" "PingExternalIdPApple" "PingExternalIdPGoogle" "PingExternalIdPFacebook" "PingOneProtect")
+LIBRARIES=("PingLogger" "PingStorage" "PingNetwork" "PingCommons" "PingBrowser" "PingOrchestrate" "PingDavinciPlugin" "PingJourneyPlugin" "PingOidc" "PingDavinci" "PingTamperDetector" "PingDeviceId" "PingDeviceProfile" "PingJourney" "PingDeviceClient" "PingExternalIdP" "PingExternalIdPApple" "PingExternalIdPGoogle" "PingExternalIdPFacebook" "PingOneProtect" "PingReCaptchaEnterprise" "PingFido" "PingOath" "PingPush" "PingBinding" "PingAuthMigration")
 
 # Version being published for all libraries
-VERSION="1.3.1"
+VERSION="2.0.0"
 
 # Maximum waiting time in seconds (60 minutes = 3600 seconds)
 MAX_WAIT_TIME=3600

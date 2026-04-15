@@ -1,6 +1,6 @@
 // 
 //  Collectors.swift
-//  Davinci
+//  PingDavinciPlugin
 //
 //  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
 //
@@ -10,6 +10,7 @@
 
 import PingOrchestrate
 import Foundation
+import PingDavinciPlugin
 
 ///  Type alias for a list of collectors.
 public typealias Collectors = [any Collector]
@@ -18,7 +19,7 @@ extension Collectors {
     /// Finds the event type from a list of collectors.
     /// This function iterates over the list of collectors and returns the value if the collector's value is not empty.
     /// - Returns: The event type as a String if found, otherwise nil.
-    func eventType() -> String? {
+    public func eventType() -> String? {
         for collector in self {
             if let submittable = collector as? Submittable {
                 if collector.payload() != nil {
@@ -33,7 +34,7 @@ extension Collectors {
     /// This function takes a list of collectors and represents it as a JSON object. It iterates over the list of collectors,
     /// adding each collector's key and value to the JSON object if the collector's value is not empty.
     /// - Returns: JSON object representing the list of collectors.
-    func asJson() -> [String: Any] {
+    public func asJson() -> [String: Any] {
         var jsonObject: [String: Any] = [:]
         var formData: [String: Any] = [:]
         for collector in self {
@@ -57,11 +58,4 @@ extension Collectors {
         return jsonObject
     }
         
-}
-
-extension ContinueNode {
-    /// Returns the list of collectors from the actions.
-    public var collectors: [any Collector] {
-        return actions.compactMap { $0 as? (any Collector) }
-    }
 }

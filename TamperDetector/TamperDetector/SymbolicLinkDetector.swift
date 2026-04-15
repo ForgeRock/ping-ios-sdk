@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingLogger
 
 /// SymbolicLinkDetector is a TamperDetector class, and is used as one of default TamperDetector's detectors to determine whether the device is Jailbroken or not
 public class SymbolicLinkDetector: TamperDetectorProtocol {
@@ -37,10 +38,12 @@ public class SymbolicLinkDetector: TamperDetectorProtocol {
             if let ok = try? url.checkResourceIsReachable(), ok {
                 let vals = try? url.resourceValues(forKeys: [.isSymbolicLinkKey])
                 if let vals = vals, let islink = vals.isSymbolicLink, islink {
+                    logger.w("SymbolicLinkDetector: path '\(urlString)' is a symbolic link, which is a common indicator of jailbreaking.", error: nil)
                     return 1.0
                 }
             }
         }
+        logger.d("SymbolicLinkDetector: no suspicious symbolic links found.")
         return 0.0
     }
 }

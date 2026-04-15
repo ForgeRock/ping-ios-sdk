@@ -2,7 +2,7 @@
 //  PingBrowserTests.swift
 //  PingBrowserTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -12,7 +12,109 @@ import XCTest
 @testable import PingBrowser
 @testable import PingExternalIdP
 @testable import PingOrchestrate
+@testable import PingNetwork
+@testable import PingLogger
+// MARK: - BrowserType Tests
 
+@MainActor
+final class BrowserTypeTests: XCTestCase {
+    
+    func testBrowserTypeRawValues() {
+        XCTAssertEqual(BrowserType.authSession.rawValue, 0)
+        XCTAssertEqual(BrowserType.nativeBrowserApp.rawValue, 1)
+        XCTAssertEqual(BrowserType.sfViewController.rawValue, 2)
+        XCTAssertEqual(BrowserType.ephemeralAuthSession.rawValue, 3)
+    }
+    
+    func testBrowserTypeInitFromRawValue() {
+        XCTAssertEqual(BrowserType(rawValue: 0), .authSession)
+        XCTAssertEqual(BrowserType(rawValue: 1), .nativeBrowserApp)
+        XCTAssertEqual(BrowserType(rawValue: 2), .sfViewController)
+        XCTAssertEqual(BrowserType(rawValue: 3), .ephemeralAuthSession)
+        XCTAssertNil(BrowserType(rawValue: 99))
+    }
+}
+
+// MARK: - BrowserError Tests
+
+@MainActor
+final class BrowserErrorTests: XCTestCase {
+    
+    func testBrowserErrorEquality() {
+        XCTAssertEqual(BrowserError.externalUserAgentFailure, BrowserError.externalUserAgentFailure)
+        XCTAssertEqual(BrowserError.externalUserAgentAuthenticationInProgress, BrowserError.externalUserAgentAuthenticationInProgress)
+        XCTAssertEqual(BrowserError.externalUserAgentCancelled, BrowserError.externalUserAgentCancelled)
+    }
+    
+    func testBrowserErrorIsError() {
+        let error: Error = BrowserError.externalUserAgentFailure
+        XCTAssertNotNil(error)
+    }
+}
+
+// MARK: - BrowserMode Tests
+
+@MainActor
+final class BrowserModeTests: XCTestCase {
+    
+    func testBrowserModeValues() {
+        let loginMode: BrowserMode = .login
+        let logoutMode: BrowserMode = .logout
+        let customMode: BrowserMode = .custom
+        
+        XCTAssertNotNil(loginMode)
+        XCTAssertNotNil(logoutMode)
+        XCTAssertNotNil(customMode)
+    }
+}
+
+// MARK: - OpenURLMonitor Tests
+
+@MainActor
+final class OpenURLMonitorTests: XCTestCase {
+    
+    func testOpenURLMonitorSharedInstance() {
+        let monitor1 = OpenURLMonitor.shared
+        let monitor2 = OpenURLMonitor.shared
+        XCTAssertTrue(monitor1 === monitor2)
+    }
+    
+    func testOpenURLMonitorHandleURLReturnsTrue() {
+        let url = URL(string: "myapp://callback?code=123")!
+        let result = OpenURLMonitor.shared.handleOpenURL(url)
+        XCTAssertTrue(result)
+    }
+}
+
+// MARK: - BrowserLauncher Tests
+
+@MainActor
+final class BrowserLauncherTests: XCTestCase {
+    
+    func testBrowserLauncherCurrentBrowserExists() {
+        let browser = BrowserLauncher.currentBrowser
+        XCTAssertNotNil(browser)
+    }
+    
+    func testBrowserLauncherIsNotInProgressInitially() {
+        let browser = BrowserLauncher()
+        XCTAssertFalse(browser.isInProgress)
+    }
+    
+    func testBrowserLauncherResetWhenIdle() {
+        let browser = BrowserLauncher()
+        // Should not crash when reset is called in idle state
+        browser.reset()
+        XCTAssertFalse(browser.isInProgress)
+    }
+    
+    func testBrowserLauncherHandleAppActivationWhenIdle() {
+        let browser = BrowserLauncher()
+        // Should not crash when called in idle state
+        browser.handleAppActivation()
+        XCTAssertFalse(browser.isInProgress)
+    }
+}
 
 /// Tests for the BrowserHandler class.
 @MainActor
@@ -43,9 +145,9 @@ final class PingBrowserTests: XCTestCase {
         
         
         connector = TestContinueNode(context: mockContext, workflow: mockWorkflow, input: [
-            Request.Constants._links: [
-                Request.Constants._continue: [
-                    Request.Constants.href: continueURL
+            NetworkConstants._links: [
+                NetworkConstants.continue: [
+                    NetworkConstants.href: continueURL
                 ]
             ]
         ], actions: [])
@@ -85,9 +187,9 @@ final class PingBrowserTests: XCTestCase {
         let request = try await handler.authorize(url: url)
         
         // Assert
-        XCTAssertEqual(request.urlRequest.url!.absoluteString, continueURL)
-        XCTAssertEqual(request.urlRequest.allHTTPHeaderFields?[Request.Constants.authorization], "Bearer \(continueToken)")
-        XCTAssertEqual(request.urlRequest.httpMethod, "POST")
+        XCTAssertEqual(request.url, continueURL)
+        XCTAssertEqual(request.getHeader(name: NetworkConstants.headerAuthorization), "Bearer \(continueToken)")
+        XCTAssertEqual(request.getMethod(), HttpMethod.post)
     }
     
     
@@ -189,11 +291,13 @@ final class NodeMock: Node {}
 
 class TestContinueNode: ContinueNode, @unchecked Sendable {
     override func asRequest() -> Request {
-        return RequestMock(urlString: "https://openam.example.com")
+        let request = RequestMock()
+        request.url = "https://openam.example.com"
+        return request
     }
 }
 
-class RequestMock: Request, @unchecked Sendable {}
+class RequestMock: URLSessionHttpRequest, @unchecked Sendable {}
 
 /// A mock BrowserLauncher that you can control in tests.
 class MockBrowserLauncher: BrowserLauncherProtocol {
@@ -210,7 +314,7 @@ class MockBrowserLauncher: BrowserLauncherProtocol {
     /// A closure that will be called when `launch` is invoked.
     var launchHandler: ((URL, BrowserType, String) async throws -> URL)?
     
-    func launch(url: URL, customParams: [String : String]?, browserType: PingBrowser.BrowserType, browserMode: PingBrowser.BrowserMode, callbackURLScheme: String) async throws -> URL {
+    func launch(url: URL, customParams: [String : String]?, browserType: PingBrowser.BrowserType, browserMode: PingBrowser.BrowserMode, callbackURLScheme: String, logger: Logger = LogManager.logger) async throws -> URL {
         if let handler = launchHandler {
             return try await handler(url, browserType, callbackURLScheme)
         }

@@ -2,7 +2,7 @@
 //  OidcClientTests.swift
 //  OidcTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,7 +11,7 @@
 
 import XCTest
 @testable import PingOidc
-@testable import PingOrchestrate
+@testable import PingNetwork
 @testable import PingStorage
 
 final class OidcClientTests: XCTestCase {
@@ -26,7 +26,7 @@ final class OidcClientTests: XCTestCase {
         oidcClientConfig.discoveryEndpoint = MockAPIEndpoint.discovery.url.absoluteString
         oidcClientConfig.storage = MockStorage<Token>()
         oidcClientConfig.clientId = "test-client-id"
-        oidcClientConfig.httpClient = HttpClient(session: .shared)
+        oidcClientConfig.httpClient = makeClient()
         oidcClient = OidcClient(config: oidcClientConfig)
         
         MockURLProtocol.startInterceptingRequests()
@@ -117,6 +117,7 @@ final class OidcClientTests: XCTestCase {
             break
         case .failure(_):
             XCTFail("Should have succeeded")
+            return
         }
         
         // Advance time by 1 second
@@ -126,7 +127,7 @@ final class OidcClientTests: XCTestCase {
         
         // auto refresh has been triggered
         XCTAssertEqual(MockURLProtocol.requestHistory.count, 3)
-        XCTAssertEqual(Int(MockURLProtocol.requestHistory.last!.value(forHTTPHeaderField: "Content-Length")!), "grant_type=refresh_token&refresh_token=Dummy RefreshToken&client_id=test-client-id".count)
+        XCTAssertEqual(Int(MockURLProtocol.requestHistory.last!.value(forHTTPHeaderField: "Content-Length")!), "grant_type=refresh_token&refresh_token=Dummy%20RefreshToken&client_id=test-client-id".count)
     }
     
     // TestRailCase(24712)
@@ -286,7 +287,7 @@ final class OidcClientTests: XCTestCase {
                 return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfiguration)
             case MockAPIEndpoint.token.url.path:
                 // as httpBody is not available here (it is nil), we will check the `Content-Length` header value to see if the `grant_type` is `refresh_token'
-                if Int(request.value(forHTTPHeaderField: "Content-Length")!) == "grant_type=refresh_token&refresh_token=Dummy RefreshToken&client_id=test-client-id".count {
+                if Int(request.value(forHTTPHeaderField: "Content-Length")!) == "grant_type=refresh_token&refresh_token=Dummy%20RefreshToken&client_id=test-client-id".count {
                     return (HTTPURLResponse(url: MockAPIEndpoint.token.url, statusCode: 400, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.tokenErrorResponse)
                 } else {
                     return (HTTPURLResponse(url: MockAPIEndpoint.token.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.token)
@@ -315,5 +316,12 @@ final class OidcClientTests: XCTestCase {
         })
         
         XCTAssertTrue(revokeCalled, "The /revoke endpoint was not called.")
+    }
+    
+    private func makeClient(config: HttpClientConfig = HttpClientConfig()) -> URLSessionHttpClient {
+        let sessionConfig = URLSessionConfiguration.ephemeral
+        sessionConfig.protocolClasses = [MockURLProtocol.self]
+        let session = URLSession(configuration: sessionConfig, delegate: nil, delegateQueue: nil)
+        return URLSessionHttpClient(config: config, session: session, delegate: nil)
     }
 }
