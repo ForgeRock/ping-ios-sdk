@@ -65,7 +65,7 @@ public class BiometricDeviceCredentialAuthenticator: DefaultDeviceAuthenticator 
     /// - When only passcode is set: `.devicePasscode` only — avoids Secure Enclave rejecting
     ///   key creation when biometry flags are present but no biometrics are enrolled.
     ///
-    /// - Throws: `DeviceBindingError` if key generation fails.
+    /// - Throws: `DeviceBindingError.unknown` if access control creation fails, or a `CryptoKey` error if key generation fails.
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
     public override func register() async throws -> KeyPair {
         let cryptoKey = CryptoKey(keyTag: config.keyTag)
