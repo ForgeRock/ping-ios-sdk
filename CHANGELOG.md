@@ -10,6 +10,7 @@
 - Added new `PingCommons` module [SDKS-4104]
 - Added new `PingOath` module [SDKS-4100]
 - Added new `PingPush` module [SDKS-4105]
+- Added new `PingAuthMigration` module [SDKS-4773]
 - Added new `PingFido` module [SDKS-4137]
 - Added new `PingBinding` module [SDKS-4117]
 - Added new `PingReCaptchaEnterprise` module [SDKS-4440]
