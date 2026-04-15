@@ -54,6 +54,7 @@
 		EC9CC3862EC751FB00795E4F /* BindingMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9CC3822EC751FB00795E4F /* BindingMigration.swift */; };
 		EC9CC3872EC751FB00795E4F /* LegacyUserKeysStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9CC3832EC751FB00795E4F /* LegacyUserKeysStorage.swift */; };
 		EC9CC3892EC752C800795E4F /* BindingMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC9CC3882EC752C800795E4F /* BindingMigrationTests.swift */; };
+		AA1234562F0E000000000001 /* BiometricDeviceCredentialAuthenticatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1234552F0E000000000001 /* BiometricDeviceCredentialAuthenticatorTests.swift */; };
 		ECB255E82EB90CEF00F25CBE /* AppPinConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255E72EB90CEF00F25CBE /* AppPinConfig.swift */; };
 		ECB255EA2EB9125600F25CBE /* BiometricAuthenticatorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255E92EB9125600F25CBE /* BiometricAuthenticatorConfig.swift */; };
 		ECB255EC2EB9141800F25CBE /* AuthenticatorConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB255EB2EB9141100F25CBE /* AuthenticatorConfig.swift */; };
@@ -149,8 +150,7 @@
 		EC9CC3822EC751FB00795E4F /* BindingMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindingMigration.swift; sourceTree = "<group>"; };
 		EC9CC3832EC751FB00795E4F /* LegacyUserKeysStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyUserKeysStorage.swift; sourceTree = "<group>"; };
 		EC9CC3842EC751FB00795E4F /* MigrationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationError.swift; sourceTree = "<group>"; };
-		EC9CC3882EC752C800795E4F /* BindingMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindingMigrationTests.swift; sourceTree = "<group>"; };
-		ECB255E72EB90CEF00F25CBE /* AppPinConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPinConfig.swift; sourceTree = "<group>"; };
+		EC9CC3882EC752C800795E4F /* BindingMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindingMigrationTests.swift; sourceTree = "<group>"; };			AA1234552F0E000000000001 /* BiometricDeviceCredentialAuthenticatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricDeviceCredentialAuthenticatorTests.swift; sourceTree = "<group>"; };		ECB255E72EB90CEF00F25CBE /* AppPinConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPinConfig.swift; sourceTree = "<group>"; };
 		ECB255E92EB9125600F25CBE /* BiometricAuthenticatorConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuthenticatorConfig.swift; sourceTree = "<group>"; };
 		ECB255EB2EB9141100F25CBE /* AuthenticatorConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatorConfig.swift; sourceTree = "<group>"; };
 		ECB255ED2EB92E9C00F25CBE /* DefaultUserKeySelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultUserKeySelector.swift; sourceTree = "<group>"; };
@@ -344,6 +344,7 @@
 			children = (
 				A56F97D52F4F6EFA003DC037 /* Config */,
 				A56F97CC2F4F5247003DC037 /* Integration Tests */,
+				AA1234552F0E000000000001 /* BiometricDeviceCredentialAuthenticatorTests.swift */,
 				EC9CC3882EC752C800795E4F /* BindingMigrationTests.swift */,
 				EC4DD32B2EABCE8F00ECC4E1 /* PingBinderTests.swift */,
 				EC4DD3282EABCE7D00ECC4E1 /* PingBindingTests.swift */,
@@ -528,6 +529,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA1234562F0E000000000001 /* BiometricDeviceCredentialAuthenticatorTests.swift in Sources */,
 				EC9CC3892EC752C800795E4F /* BindingMigrationTests.swift in Sources */,
 				A56F97D02F4F52D8003DC037 /* DeviceSigningVerifierCallbackE2ETests.swift in Sources */,
 				A56F97CE2F4F52C5003DC037 /* DeviceBindingCallbackE2ETests.swift in Sources */,

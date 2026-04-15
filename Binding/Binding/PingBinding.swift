@@ -60,8 +60,11 @@ class Binding {
         
         switch authResult {
         case .success:
+            // Capture biometric domain state for biometricAllowFallback authenticators
+            let biometricState: Data? = (deviceAuthenticator as? BiometricDeviceCredentialAuthenticator)?.biometricDomainState()
+            
             // Store the new user key.
-            let newUserKey = UserKey(keyTag: keyPair.keyTag, userId: callback.userId, username: callback.userName, kid: keyPair.keyTag, authType: callback.deviceBindingAuthenticationType)
+            let newUserKey = UserKey(keyTag: keyPair.keyTag, userId: callback.userId, username: callback.userName, kid: keyPair.keyTag, authType: callback.deviceBindingAuthenticationType, biometricDomainState: biometricState)
             
             try await userKeyStorage.save(userKey: newUserKey)
         case .failure(let error):
