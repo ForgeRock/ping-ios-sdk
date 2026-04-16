@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingTamperDetector'
-  s.version          = '1.3.1'
+  s.version          = '2.0.0'
   s.summary          = 'PingTamperDetector module for the Ping iOS SDK'
   s.description      = <<-DESC
   PingTamperDetector module for the Ping iOS SDK.
@@ -33,6 +33,6 @@ Pod::Spec.new do |s|
     'TamperDetector' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingCommons', '~> 1.3.1'
+  s.ios.dependency 'PingCommons', '~> 2.0.0'
     
 end

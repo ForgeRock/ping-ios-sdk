@@ -2,7 +2,7 @@
 //  DavinciView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -35,17 +35,17 @@ struct DavinciView: View {
                         // Navigate to the token view on success.
                         VStack{}.onAppear {
                             path.removeLast()
-                            path.append(.token)
+                            path.append(.davinciToken)
                         }
                     case let failureNode as FailureNode:
                         let apiError = failureNode.cause as? ApiError
                         switch apiError {
                         case .error(_, _, let message):
                             // Show error message from the API.
-                            ErrorView(message: message)
+                            ErrorView(title: "DaVinci Error", message: message)
                         default:
                             // Show a default error message.
-                            ErrorView(message: "unknown error")
+                            ErrorView(title: "DaVinci Error", message: "unknown error")
                         }
                     case let errorNode as ErrorNode:
                         ErrorNodeView(node: errorNode)

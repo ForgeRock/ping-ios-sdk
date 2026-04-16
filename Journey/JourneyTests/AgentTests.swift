@@ -121,7 +121,7 @@ final class AgentTests: XCTestCase {
             XCTFail("Should throw error for non-302 response")
         } catch {
             XCTAssertTrue(error is OidcError)
-            XCTAssertTrue(error.localizedDescription.contains("Error"))
+            XCTAssertTrue(error.localizedDescription.contains("API error"))
         }
     }
     

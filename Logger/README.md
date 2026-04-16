@@ -102,3 +102,5 @@ The PingLogger SDK provides the following loggers:
 | standard | Logs messages to iOS Console                          |
 | warning  | Logs warning and error messages to iOS Console        |
 | none     | Disables logging                                      |
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

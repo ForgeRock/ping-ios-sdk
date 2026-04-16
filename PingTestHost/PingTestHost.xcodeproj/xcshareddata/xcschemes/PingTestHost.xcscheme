@@ -447,6 +447,16 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4D205FDC26F64EF2AE058C6C"
+               BuildableName = "AuthMigrationTests.xctest"
+               BlueprintName = "AuthMigrationTests"
+               ReferencedContainer = "container:../AuthMigration/AuthMigration.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "A56741AC2EE1EBFD009D29B9"
                BuildableName = "CommonsTests.xctest"
                BlueprintName = "CommonsTests"

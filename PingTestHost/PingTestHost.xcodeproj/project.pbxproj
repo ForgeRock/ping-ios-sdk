@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1BB4C92F2F7EFCF200C1667E /* PingAuthMigration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BB4C92E2F7EFCF200C1667E /* PingAuthMigration.framework */; };
+		1BB4C9302F7EFCF200C1667E /* PingAuthMigration.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1BB4C92E2F7EFCF200C1667E /* PingAuthMigration.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9512229E2EAFEB6400421313 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9512229D2EAFEB6400421313 /* PingJourney.framework */; };
 		9512229F2EAFEB6400421313 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9512229D2EAFEB6400421313 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		951222A12EAFEE6E00421313 /* PingProtect.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 951222A02EAFEE6E00421313 /* PingProtect.framework */; };
@@ -75,6 +77,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				1BB4C9302F7EFCF200C1667E /* PingAuthMigration.framework in Embed Frameworks */,
 				ECB7C6932D5A27840006F1C8 /* PingBrowser.framework in Embed Frameworks */,
 				EC59E3712E7D8BFC00A91E66 /* PingTamperDetector.framework in Embed Frameworks */,
 				A5997CED2F2922CA0037537D /* PingDavinciPlugin.framework in Embed Frameworks */,
@@ -107,6 +110,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1BB4C92E2F7EFCF200C1667E /* PingAuthMigration.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingAuthMigration.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9512229D2EAFEB6400421313 /* PingJourney.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourney.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		951222A02EAFEE6E00421313 /* PingProtect.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingProtect.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		951222A32EAFEEC300421313 /* PingMfaCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingMfaCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -167,6 +171,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BB4C92F2F7EFCF200C1667E /* PingAuthMigration.framework in Frameworks */,
 				95DD7DFB2EF5EF7F00ED05D7 /* PingPush.framework in Frameworks */,
 				ECED512E2DC1111800FA39A7 /* FacebookLogin in Frameworks */,
 				EC59E3702E7D8BFC00A91E66 /* PingTamperDetector.framework in Frameworks */,
@@ -236,6 +241,7 @@
 		A54BF4822BF2E5B800CD24D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1BB4C92E2F7EFCF200C1667E /* PingAuthMigration.framework */,
 				A55D59342F2A78D400078FBC /* PingJourneyPlugin.framework */,
 				A55D59312F2A78B600078FBC /* PingDeviceId.framework */,
 				A5997CEB2F2922CA0037537D /* PingDavinciPlugin.framework */,
@@ -532,7 +538,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = "2.0.0-alpha";
+				MARKETING_VERSION = "2.0.0";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -569,7 +575,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = "2.0.0-alpha";
+				MARKETING_VERSION = "2.0.0";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

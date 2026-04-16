@@ -31,3 +31,5 @@ If the library is present in the project, calling `IdpCollector.authorize()` wil
 In the App project file go to `Target -> Signing and Capabilities` file, add the `Sign in with Apple` capability.
 
 Follow the PingOne and DaVinci documentation to configuring the External IDP or Davinci Connector with Apple for a Sign in with Apple integration.
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

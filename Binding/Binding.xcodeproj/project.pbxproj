@@ -47,8 +47,6 @@
 		EC4DD3842EB0E0B200ECC4E1 /* BiometricDeviceCredentialAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD3802EB0E0B200ECC4E1 /* BiometricDeviceCredentialAuthenticator.swift */; };
 		EC4DD3852EB0E0B200ECC4E1 /* BiometricOnlyAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD3812EB0E0B200ECC4E1 /* BiometricOnlyAuthenticator.swift */; };
 		EC4DD3862EB0E0B200ECC4E1 /* AppPinAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4DD37F2EB0E0B200ECC4E1 /* AppPinAuthenticator.swift */; };
-		EC53851D2F23B1CB00FC28AD /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC4DD3152EABBB1D00ECC4E1 /* PingLogger.framework */; };
-		EC53851E2F23B1CB00FC28AD /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC4DD3152EABBB1D00ECC4E1 /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC6F660A2EB3782100D4686D /* PinCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6F66092EB3782100D4686D /* PinCollector.swift */; };
 		EC8E4CBA2F23A8BF003F7620 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81E82ED084F700C91570 /* PingJourneyPlugin.framework */; };
 		EC8E4CBB2F23A8BF003F7620 /* PingJourneyPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81E82ED084F700C91570 /* PingJourneyPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -94,7 +92,6 @@
 				EC8E4CBB2F23A8BF003F7620 /* PingJourneyPlugin.framework in Embed Frameworks */,
 				A5COM0022F0100000000007 /* PingCommons.framework in Embed Frameworks */,
 				A5DID0022F0100000000007 /* PingDeviceId.framework in Embed Frameworks */,
-				EC53851E2F23B1CB00FC28AD /* PingLogger.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -168,7 +165,6 @@
 				EC8E4CBA2F23A8BF003F7620 /* PingJourneyPlugin.framework in Frameworks */,
 				A5COM0012F0100000000007 /* PingCommons.framework in Frameworks */,
 				A5DID0012F0100000000007 /* PingDeviceId.framework in Frameworks */,
-				EC53851D2F23B1CB00FC28AD /* PingLogger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -700,7 +696,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = "2.0.0-alpha";
+				MARKETING_VERSION = "2.0.0";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Binding;
@@ -737,7 +733,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = "2.0.0-alpha";
+				MARKETING_VERSION = "2.0.0";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Binding;
@@ -762,7 +758,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = "2.0.0-alpha";
+				MARKETING_VERSION = "2.0.0";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingBindingTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -783,7 +779,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = "2.0.0-alpha";
+				MARKETING_VERSION = "2.0.0";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingBindingTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;

@@ -2,7 +2,7 @@
 //  BindingKeysView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -17,9 +17,11 @@ struct BindingKeysView: View {
     var body: some View {
         VStack {
             if viewModel.userKeys.isEmpty {
-                Text("No Binding Keys Found")
-                    .font(.headline)
-                    .foregroundColor(.gray)
+                EmptyStateView(
+                    icon: "key.slash",
+                    title: "No Binding Keys Found"
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List {
                     ForEach(viewModel.userKeys) { key in

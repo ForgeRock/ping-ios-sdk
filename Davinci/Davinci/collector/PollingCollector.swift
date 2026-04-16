@@ -12,6 +12,7 @@ import Foundation
 import PingDavinciPlugin
 import PingOrchestrate
 import PingNetwork
+import PingLogger
 
 /// Represents the status of a polling operation.
 public enum PollingStatus: Sendable {

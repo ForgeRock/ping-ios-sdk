@@ -46,7 +46,7 @@ The `PingDavinciPlugin` module consists of several key files that define its cor
 `PingDavinciPlugin` is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your `Podfile`:
 
 ```ruby
-pod 'PingDavinciPlugin', '~> 1.3.1'
+pod 'PingDavinciPlugin', '~> 2.0.0'
 ```
 
 Then, run the command:
@@ -56,8 +56,10 @@ pod install
 
 ## Dependencies
 
--   [PingLogger](https://github.com/ForgeRock/ping-ios-sdk) (~> 1.3.1)
+-   [PingLogger](https://github.com/ForgeRock/ping-ios-sdk) (~> 2.0.0)
 
 ## License
 
 `PingDavinciPlugin` is available under the MIT license. See the LICENSE file for more info.
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

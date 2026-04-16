@@ -18,30 +18,11 @@ import PingStorage
 import PingExternalIdP
 import PingJourney
 
-/// Configures and initializes the DaVinci instance with the PingOne server and OAuth 2.0 client details.
-/// - This configuration includes:
-///   - Client ID
-///   - Scopes
-///   - Redirect URI
-///   - Discovery Endpoint
-///   - Other optional fields
-public let davinci = DaVinci.createDaVinci { config in
-    let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
-    config.module(PingDavinci.OidcModule.config) { oidcValue in
-        oidcValue.clientId = currentConfig?.clientId ?? ""
-        oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])
-        oidcValue.redirectUri = currentConfig?.redirectUri ?? ""
-        oidcValue.discoveryEndpoint = currentConfig?.discoveryEndpoint ?? ""
-        oidcValue.acrValues = "" //update with actual ACR values if needed or remove
-    }
-
-    // CustomHeader module: the supported public API for injecting custom headers into every outbound request.
-    // Note: config.httpClient is internal(set) and cannot be set from outside PingOrchestrate.
-    // For custom URL query parameters there is currently no public module equivalent.
-    config.module(CustomHeader.config) { customHeaderConfig in
-        customHeaderConfig.header(name: "X-Custom-Header", value: "PingExample")
-    }
-}
+/// Proxy to the current DaVinci instance managed by ConfigurationManager.
+/// Returns nil when no DaVinci configuration exists.
+/// Rebuilt automatically when the selected configuration changes.
+@MainActor
+public var davinci: DaVinci? { ConfigurationManager.shared.davinci }
 
 // MARK: - Multi-User DaVinci Instances with Separate Cookie Storage
 // The following examples demonstrate how to create multiple DaVinci instances
@@ -126,6 +107,7 @@ class DavinciViewModel: ObservableObject {
         }
         
         // Starts the DaVinci orchestration process and retrieves the first node.
+        guard let davinci = davinci else { return }
         let next = await davinci.start()
         await MainActor.run {
             self.state = DavinciState(node: next)

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'PingDavinciPlugin'
-  s.version          = '1.3.1'
+  s.version          = '2.0.0'
   s.summary          = 'Davinci Plugin for PingDavinci SDK'
   s.description      = <<-DESC
     The PingDavinciPlugin provides plugin functionality for the PingDavinci SDK.
@@ -18,11 +18,11 @@ Pod::Spec.new do |s|
   s.swift_versions   = ['5.0', '5.1', '6.0']
   s.ios.deployment_target = '16.0'
 
-  base_dir = "DavinciPlugin"
-  s.source_files = base_dir + '/DavinciPlugin/PingDavinciPlugin/**/*.swift'
+  base_dir = "DavinciPlugin/DavinciPlugin"
+  s.source_files = base_dir + '/**/*.swift', base_dir + '/**/*.h'
   s.resource_bundles = {
-    'PingDavinciPlugin' => [base_dir + '/DavinciPlugin/PingDavinciPlugin/*.xcprivacy']
+    'DavinciPlugin' => [base_dir + '/*.xcprivacy']
   }
   
-  s.dependency 'PingOrchestrate', '~> 1.3.1'
+  s.dependency 'PingOrchestrate', '~> 2.0.0'
 end

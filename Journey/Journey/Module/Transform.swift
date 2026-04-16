@@ -11,6 +11,7 @@
 import PingOrchestrate
 import PingJourneyPlugin
 import Foundation
+import PingNetwork
 
 /// Define the module that transforms the response from Journey to a `Node`.
 public class NodeTransformModule: @unchecked Sendable {

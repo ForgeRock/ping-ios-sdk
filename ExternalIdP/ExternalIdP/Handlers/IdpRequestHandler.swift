@@ -10,6 +10,7 @@
 
 import Foundation
 import PingNetwork
+import PingOrchestrate
 
 /// Interface representing an Identity Provider (IdP) handler.
 public protocol IdpRequestHandler: Sendable {

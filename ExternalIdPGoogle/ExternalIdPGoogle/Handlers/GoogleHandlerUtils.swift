@@ -11,7 +11,7 @@
 import Foundation
 import UIKit
 import PingExternalIdP
-import GoogleSignIn
+internal import GoogleSignIn
 
 /// Utility class for handling Google Sign-In operations.
 @MainActor

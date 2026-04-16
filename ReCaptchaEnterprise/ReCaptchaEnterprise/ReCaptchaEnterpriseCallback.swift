@@ -13,7 +13,7 @@ import Foundation
 import PingJourneyPlugin
 import PingLogger
 import PingCommons
-@_exported import RecaptchaEnterprise
+internal import RecaptchaEnterprise
 
 // MARK: - ReCaptchaEnterpriseCallback
 

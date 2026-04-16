@@ -1,0 +1,578 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4F98594575D26F3DA2349BB5 /* PingAuthMigration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E403689A177A17ADDFB00D1 /* PingAuthMigration.framework */; };
+		AA000001AA000001AA000001 /* AuthMigration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000001BB000001BB000001 /* AuthMigration.swift */; };
+		AA000002AA000002AA000002 /* AuthMigrationConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000002BB000002BB000002 /* AuthMigrationConfig.swift */; };
+		AA000003AA000003AA000003 /* AuthMigrationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000003BB000003BB000003 /* AuthMigrationError.swift */; };
+		AA000004AA000004AA000004 /* AuthMigrationStep+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000004BB000004BB000004 /* AuthMigrationStep+Extensions.swift */; };
+		AA000005AA000005AA000005 /* LegacyArchiveModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000005BB000005BB000005 /* LegacyArchiveModels.swift */; };
+		AA000006AA000006AA000006 /* LegacyDataConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000006BB000006BB000006 /* LegacyDataConverter.swift */; };
+		AA000007AA000007AA000007 /* LegacyKeychainReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000007BB000007BB000007 /* LegacyKeychainReader.swift */; };
+		AA000008AA000008AA000008 /* LegacySecuredKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000008BB000008BB000008 /* LegacySecuredKey.swift */; };
+		AA000011AA000011AA000011 /* AuthMigrationConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000011BB000011BB000011 /* AuthMigrationConfigTests.swift */; };
+		AA000012AA000012AA000012 /* AuthMigrationErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000012BB000012BB000012 /* AuthMigrationErrorTests.swift */; };
+		AA000013AA000013AA000013 /* AuthMigrationStepExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000013BB000013BB000013 /* AuthMigrationStepExtensionsTests.swift */; };
+		AA000014AA000014AA000014 /* AuthMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000014BB000014BB000014 /* AuthMigrationTests.swift */; };
+		AA000015AA000015AA000015 /* LegacyArchiveModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000015BB000015BB000015 /* LegacyArchiveModelsTests.swift */; };
+		AA000016AA000016AA000016 /* LegacyDataConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000016BB000016BB000016 /* LegacyDataConverterTests.swift */; };
+		AA000017AA000017AA000017 /* LegacyKeychainReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000017BB000017BB000017 /* LegacyKeychainReaderTests.swift */; };
+		AA000018AA000018AA000018 /* LegacySecuredKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000018BB000018BB000018 /* LegacySecuredKeyTests.swift */; };
+		AA000019AA000019AA000019 /* LegacyClassNameVerificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000019BB000019BB000019 /* LegacyClassNameVerificationTests.swift */; };
+		AA000020AA000020AA000020 /* MockOathStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000020BB000020BB000020 /* MockOathStorage.swift */; };
+		AA000021AA000021AA000021 /* MockPushStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000021BB000021BB000021 /* MockPushStorage.swift */; };
+		AA000022AA000022AA000022 /* TestKeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000022BB000022BB000022 /* TestKeychainHelper.swift */; };
+		CE93AE29D8D30575500D1292 /* AuthMigration.h in Headers */ = {isa = PBXBuildFile; fileRef = 426F7D82751B633C4BCBC273 /* AuthMigration.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FD8C9336BDB504D2F3C54F62 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C329415C2BDAEA4674A2F9BD /* PrivacyInfo.xcprivacy */; };
+		FF000002FF000002FF000002 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE000002EE000002EE000002 /* PingCommons.framework */; };
+		FF000003FF000003FF000003 /* PingOath.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE000003EE000003EE000003 /* PingOath.framework */; };
+		FF000004FF000004FF000004 /* PingPush.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE000004EE000004EE000004 /* PingPush.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		23F36976BBBB339FFFC89D26 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5533D39370A01839F80F03B3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D84AACEE604986A6D67203B0;
+			remoteInfo = PingAuthMigration;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		033FA8BE8B4A1BD353F35ADA /* AuthMigrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AuthMigrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		426F7D82751B633C4BCBC273 /* AuthMigration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthMigration.h; sourceTree = "<group>"; };
+		7E403689A177A17ADDFB00D1 /* PingAuthMigration.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingAuthMigration.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB000001BB000001BB000001 /* AuthMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMigration.swift; sourceTree = "<group>"; };
+		BB000002BB000002BB000002 /* AuthMigrationConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMigrationConfig.swift; sourceTree = "<group>"; };
+		BB000003BB000003BB000003 /* AuthMigrationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMigrationError.swift; sourceTree = "<group>"; };
+		BB000004BB000004BB000004 /* AuthMigrationStep+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthMigrationStep+Extensions.swift"; sourceTree = "<group>"; };
+		BB000005BB000005BB000005 /* LegacyArchiveModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyArchiveModels.swift; sourceTree = "<group>"; };
+		BB000006BB000006BB000006 /* LegacyDataConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyDataConverter.swift; sourceTree = "<group>"; };
+		BB000007BB000007BB000007 /* LegacyKeychainReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyKeychainReader.swift; sourceTree = "<group>"; };
+		BB000008BB000008BB000008 /* LegacySecuredKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacySecuredKey.swift; sourceTree = "<group>"; };
+		BB000011BB000011BB000011 /* AuthMigrationConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMigrationConfigTests.swift; sourceTree = "<group>"; };
+		BB000012BB000012BB000012 /* AuthMigrationErrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMigrationErrorTests.swift; sourceTree = "<group>"; };
+		BB000013BB000013BB000013 /* AuthMigrationStepExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMigrationStepExtensionsTests.swift; sourceTree = "<group>"; };
+		BB000014BB000014BB000014 /* AuthMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMigrationTests.swift; sourceTree = "<group>"; };
+		BB000015BB000015BB000015 /* LegacyArchiveModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyArchiveModelsTests.swift; sourceTree = "<group>"; };
+		BB000016BB000016BB000016 /* LegacyDataConverterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyDataConverterTests.swift; sourceTree = "<group>"; };
+		BB000017BB000017BB000017 /* LegacyKeychainReaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyKeychainReaderTests.swift; sourceTree = "<group>"; };
+		BB000018BB000018BB000018 /* LegacySecuredKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacySecuredKeyTests.swift; sourceTree = "<group>"; };
+		BB000019BB000019BB000019 /* LegacyClassNameVerificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegacyClassNameVerificationTests.swift; sourceTree = "<group>"; };
+		BB000020BB000020BB000020 /* MockOathStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockOathStorage.swift; sourceTree = "<group>"; };
+		BB000021BB000021BB000021 /* MockPushStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPushStorage.swift; sourceTree = "<group>"; };
+		BB000022BB000022BB000022 /* TestKeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestKeychainHelper.swift; sourceTree = "<group>"; };
+		C329415C2BDAEA4674A2F9BD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		EE000001EE000001EE000001 /* PingLogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingLogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE000002EE000002EE000002 /* PingCommons.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingCommons.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE000003EE000003EE000003 /* PingOath.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOath.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE000004EE000004EE000004 /* PingPush.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingPush.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		93CFFF21B3298B1B8B7313A2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FF000002FF000002FF000002 /* PingCommons.framework in Frameworks */,
+				FF000003FF000003FF000003 /* PingOath.framework in Frameworks */,
+				FF000004FF000004FF000004 /* PingPush.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A14E1F393C6FDBCA1B128158 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F98594575D26F3DA2349BB5 /* PingAuthMigration.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		02C3051453D35CF02FA83918 /* AuthMigrationTests */ = {
+			isa = PBXGroup;
+			children = (
+				BB000011BB000011BB000011 /* AuthMigrationConfigTests.swift */,
+				BB000012BB000012BB000012 /* AuthMigrationErrorTests.swift */,
+				BB000013BB000013BB000013 /* AuthMigrationStepExtensionsTests.swift */,
+				BB000014BB000014BB000014 /* AuthMigrationTests.swift */,
+				BB000015BB000015BB000015 /* LegacyArchiveModelsTests.swift */,
+				BB000016BB000016BB000016 /* LegacyDataConverterTests.swift */,
+				BB000017BB000017BB000017 /* LegacyKeychainReaderTests.swift */,
+				BB000018BB000018BB000018 /* LegacySecuredKeyTests.swift */,
+				BB000019BB000019BB000019 /* LegacyClassNameVerificationTests.swift */,
+				CC000002CC000002CC000002 /* Mocks */,
+			);
+			path = AuthMigrationTests;
+			sourceTree = "<group>";
+		};
+		8687DA601B8FA3D86F50EF12 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				033FA8BE8B4A1BD353F35ADA /* AuthMigrationTests.xctest */,
+				7E403689A177A17ADDFB00D1 /* PingAuthMigration.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		88D725A2D381F8C821C56B8D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EE000001EE000001EE000001 /* PingLogger.framework */,
+				EE000002EE000002EE000002 /* PingCommons.framework */,
+				EE000003EE000003EE000003 /* PingOath.framework */,
+				EE000004EE000004EE000004 /* PingPush.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C926B428E9E729B5419ED37D /* AuthMigration */ = {
+			isa = PBXGroup;
+			children = (
+				426F7D82751B633C4BCBC273 /* AuthMigration.h */,
+				C329415C2BDAEA4674A2F9BD /* PrivacyInfo.xcprivacy */,
+				BB000001BB000001BB000001 /* AuthMigration.swift */,
+				BB000002BB000002BB000002 /* AuthMigrationConfig.swift */,
+				BB000003BB000003BB000003 /* AuthMigrationError.swift */,
+				BB000004BB000004BB000004 /* AuthMigrationStep+Extensions.swift */,
+				CC000001CC000001CC000001 /* Internal */,
+			);
+			path = AuthMigration;
+			sourceTree = "<group>";
+		};
+		CC000001CC000001CC000001 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				BB000005BB000005BB000005 /* LegacyArchiveModels.swift */,
+				BB000006BB000006BB000006 /* LegacyDataConverter.swift */,
+				BB000007BB000007BB000007 /* LegacyKeychainReader.swift */,
+				BB000008BB000008BB000008 /* LegacySecuredKey.swift */,
+			);
+			path = Internal;
+			sourceTree = "<group>";
+		};
+		CC000002CC000002CC000002 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				BB000020BB000020BB000020 /* MockOathStorage.swift */,
+				BB000021BB000021BB000021 /* MockPushStorage.swift */,
+				BB000022BB000022BB000022 /* TestKeychainHelper.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
+		CF1F4BDD579F9ECD22AC0350 = {
+			isa = PBXGroup;
+			children = (
+				C926B428E9E729B5419ED37D /* AuthMigration */,
+				02C3051453D35CF02FA83918 /* AuthMigrationTests */,
+				88D725A2D381F8C821C56B8D /* Frameworks */,
+				8687DA601B8FA3D86F50EF12 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		D59FD3E66C59E65CA7DF5022 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE93AE29D8D30575500D1292 /* AuthMigration.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		4D205FDC26F64EF2AE058C6C /* AuthMigrationTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A2BD9D7D960153AB72860EDB /* Build configuration list for PBXNativeTarget "AuthMigrationTests" */;
+			buildPhases = (
+				E96ECAA6BF115848CC7D6BFE /* Sources */,
+				A14E1F393C6FDBCA1B128158 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CB833CDE4C002D0F774AECE2 /* PBXTargetDependency */,
+			);
+			name = AuthMigrationTests;
+			packageProductDependencies = (
+			);
+			productName = AuthMigrationTests;
+			productReference = 033FA8BE8B4A1BD353F35ADA /* AuthMigrationTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D84AACEE604986A6D67203B0 /* PingAuthMigration */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5A814531E24CA43805B9DECC /* Build configuration list for PBXNativeTarget "PingAuthMigration" */;
+			buildPhases = (
+				D59FD3E66C59E65CA7DF5022 /* Headers */,
+				1249106534101B68E34C7F2C /* Sources */,
+				F0A0683F920D1D772717E67E /* Resources */,
+				93CFFF21B3298B1B8B7313A2 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PingAuthMigration;
+			packageProductDependencies = (
+			);
+			productName = PingAuthMigration;
+			productReference = 7E403689A177A17ADDFB00D1 /* PingAuthMigration.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5533D39370A01839F80F03B3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					4D205FDC26F64EF2AE058C6C = {
+						DevelopmentTeam = 9QSE66762D;
+						ProvisioningStyle = Automatic;
+					};
+					D84AACEE604986A6D67203B0 = {
+						DevelopmentTeam = 9QSE66762D;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 86C6630566404AE0196EC9EF /* Build configuration list for PBXProject "AuthMigration" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = CF1F4BDD579F9ECD22AC0350;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 8687DA601B8FA3D86F50EF12 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D84AACEE604986A6D67203B0 /* PingAuthMigration */,
+				4D205FDC26F64EF2AE058C6C /* AuthMigrationTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F0A0683F920D1D772717E67E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FD8C9336BDB504D2F3C54F62 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1249106534101B68E34C7F2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000001AA000001AA000001 /* AuthMigration.swift in Sources */,
+				AA000002AA000002AA000002 /* AuthMigrationConfig.swift in Sources */,
+				AA000003AA000003AA000003 /* AuthMigrationError.swift in Sources */,
+				AA000004AA000004AA000004 /* AuthMigrationStep+Extensions.swift in Sources */,
+				AA000005AA000005AA000005 /* LegacyArchiveModels.swift in Sources */,
+				AA000006AA000006AA000006 /* LegacyDataConverter.swift in Sources */,
+				AA000007AA000007AA000007 /* LegacyKeychainReader.swift in Sources */,
+				AA000008AA000008AA000008 /* LegacySecuredKey.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E96ECAA6BF115848CC7D6BFE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000011AA000011AA000011 /* AuthMigrationConfigTests.swift in Sources */,
+				AA000012AA000012AA000012 /* AuthMigrationErrorTests.swift in Sources */,
+				AA000013AA000013AA000013 /* AuthMigrationStepExtensionsTests.swift in Sources */,
+				AA000014AA000014AA000014 /* AuthMigrationTests.swift in Sources */,
+				AA000015AA000015AA000015 /* LegacyArchiveModelsTests.swift in Sources */,
+				AA000016AA000016AA000016 /* LegacyDataConverterTests.swift in Sources */,
+				AA000017AA000017AA000017 /* LegacyKeychainReaderTests.swift in Sources */,
+				AA000018AA000018AA000018 /* LegacySecuredKeyTests.swift in Sources */,
+				AA000019AA000019AA000019 /* LegacyClassNameVerificationTests.swift in Sources */,
+				AA000020AA000020AA000020 /* MockOathStorage.swift in Sources */,
+				AA000021AA000021AA000021 /* MockPushStorage.swift in Sources */,
+				AA000022AA000022AA000022 /* TestKeychainHelper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CB833CDE4C002D0F774AECE2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D84AACEE604986A6D67203B0 /* PingAuthMigration */;
+			targetProxy = 23F36976BBBB339FFFC89D26 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2EFCFCED6401E3EFF0F6D745 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 2.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		565BCE78035CD1A2592F783C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9QSE66762D;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 2.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		5D1AB5BFF1A3B63F8E5682D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingAuthMigrationTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
+			};
+			name = Debug;
+		};
+		726A166B7F28BDD475398537 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingAuthMigrationTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
+			};
+			name = Release;
+		};
+		93FA558A6B48E3E33A8AD110 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2026 Ping Identity Corporation. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.AuthMigration;
+				PRODUCT_NAME = PingAuthMigration;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		AF6BA8E21C52FA638B7A20E2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright (c) 2026 Ping Identity Corporation. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.AuthMigration;
+				PRODUCT_NAME = PingAuthMigration;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5A814531E24CA43805B9DECC /* Build configuration list for PBXNativeTarget "PingAuthMigration" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				93FA558A6B48E3E33A8AD110 /* Debug */,
+				AF6BA8E21C52FA638B7A20E2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		86C6630566404AE0196EC9EF /* Build configuration list for PBXProject "AuthMigration" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2EFCFCED6401E3EFF0F6D745 /* Debug */,
+				565BCE78035CD1A2592F783C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A2BD9D7D960153AB72860EDB /* Build configuration list for PBXNativeTarget "AuthMigrationTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D1AB5BFF1A3B63F8E5682D6 /* Debug */,
+				726A166B7F28BDD475398537 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5533D39370A01839F80F03B3 /* Project object */;
+}
