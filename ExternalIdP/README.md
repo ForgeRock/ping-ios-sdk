@@ -1,11 +1,10 @@
-<p align="center">
-  <a href="https://github.com/ForgeRock/ping-android-sdk">
-    <img src="https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg" alt="Logo">
-  </a>
-  <hr/>
-</p>
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
 
-# Ping External IDP
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
+
+# PingExternalIdP
 
 ## Overview
 
@@ -15,9 +14,31 @@ This library abstracts away the complexities of dealing with different IDP proto
 
 <img src="images/socialLogin.png" width="250">
 
-## Add dependency to your project
+## Getting Started
 
-You can add the dependency using Cocoapods or Swift Package Manager
+### Prerequisites
+
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingExternalIdP` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingExternalIdP', '~> <version>'
+```
 
 ## Configuration and Usage
 
@@ -142,5 +163,9 @@ For implementing Native Signin with Apple see the [PingExternalIdPApple](/Extern
 For implementing Native Signin with Google see the [PingExternalIdPGoogle](/ExternalIdPGoogle/README.md) module.
 
 For implementing Native Signin with Facebook see the [PingExternalIdPFacebook](/ExternalIdPFacebook/README.md) module.
+
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
 © Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

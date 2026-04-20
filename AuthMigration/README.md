@@ -1,27 +1,24 @@
-![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
-
-# Ping SDK – MFA Auth Migration Module
-
 [![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
 [![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
 
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
+
+# PingAuthMigration Module
+
 `PingAuthMigration` migrates OATH (TOTP/HOTP) and Push credentials from the legacy `FRAuthenticator` SDK Keychain storage to the modern `PingOath` / `PingPush` storage format.
 
-## Features
+## Getting Started
 
-- Reads legacy `FRAuthenticator` Keychain data (accounts, mechanisms)
-- Handles Secure Enclave–encrypted legacy data automatically
-- Converts TOTP and HOTP mechanisms to `OathCredential`
-- Converts Push mechanisms to `PushCredential`
-- Skips duplicate credentials (idempotent)
-- Optionally cleans up legacy Keychain entries after migration
-- Emits fine-grained `AsyncStream<MigrationProgress>` for UI feedback
-- Configurable via a DSL-style closure (`AuthMigrationConfig`)
+### Prerequisites
 
-## Installation
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
 
-### Swift Package Manager
+### Installation
+
+#### Swift Package Manager
 
 ```swift
 dependencies: [
@@ -38,7 +35,7 @@ Add `PingAuthMigration` to your target's dependencies:
 )
 ```
 
-### CocoaPods
+#### CocoaPods
 
 ```ruby
 pod 'PingAuthMigration', '~> 2.0.0'

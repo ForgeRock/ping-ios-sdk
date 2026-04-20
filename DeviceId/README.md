@@ -1,11 +1,10 @@
-<p align="center">
-  <a href="https://github.com/ForgeRock/ping-ios-sdk">
-    <img src="https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg" alt="Logo">
-  </a>
-  <hr/>
-</p>
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
 
-# Device ID Module for Swift
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
+
+# PingDeviceId
 
 The Device ID module for Swift provides a robust and secure method for generating and managing a unique identifier for a device. It leverages the iOS Keychain to persistently store a cryptographic key pair, ensuring the identifier remains stable across app installations and device backups.
 
@@ -13,35 +12,33 @@ The core implementation, `DefaultDeviceIdentifier`, is built as a Swift `actor` 
 
 ***
 
-## Features
+## Getting Started
 
-- **🔑 Keychain-Based Persistence**: Generates an RSA key pair and stores it securely in the device's Keychain.
-- **🔄 Stable Identifier**: The ID persists even if the user uninstalls and reinstalls the application.
-- **🔒 Concurrency-Safe**: Implemented as a Swift `actor` to prevent race conditions when accessing the identifier from multiple threads.
-- **⚙️ Configurable**: Allows customization of the Keychain account name, key size, and optional data encryption.
-- **⚡️ Asynchronous API**: Fully embraces modern Swift concurrency with an `async/await` interface.
-- **🧩 Extensible**: Define your own identifier strategy by conforming to the `DeviceIdentifier` protocol.
-- **🔄 Legacy Migration**: Automatically migrates device identifiers from FRAuth SDK format, ensuring seamless transition for existing users.
+### Prerequisites
 
-***
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
 
-## Installation
+### Installation
 
-Add dependency to your project
-To integrate the DeviceId module into your iOS project, add the following dependency to your Podfile or Package.swift file:
+To integrate the DeviceId module into your iOS project, add the following dependency to your `Podfile` or `Package.swift` file.
 
-```
-pod 'PingDeviceId', '<version>'
-```
-or for Swift Package Manager:
+#### Swift Package Manager
 
-```
+```swift
 .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
 ```
 
-Replace `<version>` with the latest version of the SDK.
-
 Select the `PingDeviceId` library from the list of package products.
+
+#### CocoaPods
+
+```ruby
+pod 'PingDeviceId', '~> <version>'
+```
+
+Replace `<version>` with the latest version of the SDK.
 
 ***
 
@@ -330,4 +327,5 @@ This makes it safe to use from multiple parts of your application without additi
 ## License
 
 This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
+
 © Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

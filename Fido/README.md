@@ -1,3 +1,8 @@
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
+
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
 
 # PingFido
 
@@ -26,9 +31,17 @@ The module is organized into the following structure:
     - `FidoAuthenticationCallback.swift`: Handles FIDO authentication.
     - `CallbackInitializer.swift`: Registers the FIDO callbacks with the Journey framework.
 
-## Installation
+## Getting Started
 
-### Swift Package Manager
+### Prerequisites
+
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+#### Swift Package Manager
 
 Add the following to your `Package.swift` file:
 
@@ -38,7 +51,7 @@ dependencies: [
 ]
 ```
 
-### CocoaPods
+#### CocoaPods
 
 Add the following to your `Podfile`:
 
@@ -140,5 +153,9 @@ func handleJourneyNode(node: Node) {
     }
 }
 ```
+
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
 © Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

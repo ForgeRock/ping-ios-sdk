@@ -1,4 +1,10 @@
-# PingBinding Module
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
+
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
+
+# PingBinding
 
 The PingBinding Module provides device binding and signing capabilities for native applications. 
 
@@ -6,11 +12,19 @@ The PingBinding Module provides device binding and signing capabilities for nati
 
 The PingBinding Module uses **ES256** (ECDSA with P-256 curve and SHA-256) for all signing operations. This algorithm is compatible with iOS Secure Enclave, providing hardware-backed security for private keys.
 
-## Installation
+## Getting Started
+
+### Prerequisites
+
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
 
 The PingBinding Module is available via Swift Package Manager and CocoaPods.
 
-### Swift Package Manager
+#### Swift Package Manager
 
 Add the following dependency to your `Package.swift` file:
 
@@ -35,7 +49,7 @@ Alternatively, in Xcode:
 3. Select the version (2.0.0 or later)
 4. Add the `PingBinding` library to your target
 
-### CocoaPods
+#### CocoaPods
 
 Add the following to your `Podfile`:
 

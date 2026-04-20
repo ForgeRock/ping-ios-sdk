@@ -1,17 +1,38 @@
-<p align="center">
-  <a href="https://github.com/ForgeRock/ping-ios-sdk">
-    <img src="https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg" alt="Logo">
-  </a>
-  <hr/>
-</p>
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
 
-# PingStorage SDK
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
+
+# PingStorage
 
 The PingStorage SDK provides a flexible storage interface and a set of common storage solutions for the Ping SDKs.
 
-## Integrating the SDK into your project
+## Getting Started
 
-Use Cocoapods or Swift Package Manager
+### Prerequisites
+
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingStorage` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingStorage', '~> <version>'
+```
 
 ## How to Use the SDK
 
@@ -103,5 +124,9 @@ The PingStorage SDK provides the following storage solutions:
 |------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
 | KeychainStorage  | Storage that stores data in iOS Keychain.                                                                                                    |
 | MemoryStorage    | Storage that stores data in memory.                                                                                                          |
+
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
 © Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

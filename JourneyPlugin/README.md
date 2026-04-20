@@ -1,7 +1,10 @@
-# PingJourneyPlugin
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
 
-[![Version](https://img.shields.io/cocoapods/v/PingJourneyPlugin.svg?style=flat)](https://cocoapods.org/pods/PingJourneyPlugin)
-[![License](https://img.shields.io/cocoapods/l/PingJourneyPlugin.svg?style=flat)](https://cocoapods.org/pods/PingJourneyPlugin)
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
+
+# PingJourneyPlugin
 
 ## Overview
 
@@ -35,9 +38,27 @@ The `PingJourneyPlugin` module is built around a few core concepts that enable i
 
 - **`Constants.swift`**: A centralized enum that holds all the string constants used in Journey flows, such as callback type names, JSON keys, and API parameters. This improves code maintainability and reduces errors from typos.
 
-## Installation
+## Getting Started
 
-### CocoaPods
+### Prerequisites
+
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingJourneyPlugin` product to your target's dependencies.
+
+#### CocoaPods
 
 `PingJourneyPlugin` is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your `Podfile`:
 

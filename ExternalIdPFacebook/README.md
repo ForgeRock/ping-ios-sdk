@@ -1,11 +1,10 @@
-<p align="center">
-  <a href="https://github.com/ForgeRock/ping-android-sdk">
-    <img src="https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg" alt="Logo">
-  </a>
-  <hr/>
-</p>
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
 
-# Ping External IDP Facebook
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
+
+# PingExternalIdPFacebook
 
 ## Overview
 
@@ -14,10 +13,32 @@ This library acts as a plugin to the `PingExternalIdP` library, and it provides 
 
 <img src="images/FacebookLogin-step1.png" width="250"> <img src="images/FacebookLogin-step2.png" width="250">
 
-## Add dependency to your project
+## Getting Started
 
-You can add the dependency using Cocoapods or Swift Package Manager
-Make sure the `PingExternalIdPFacebook` is included in the `Frameworks and Libraries` section of the `General` configuration pane in Xcode
+### Prerequisites
+
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+- A Facebook Developer account with a configured application
+
+### Installation
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingExternalIdPFacebook` product to your target's dependencies. Make sure it is also included in the **Frameworks and Libraries** section of your target's General configuration pane in Xcode.
+
+#### CocoaPods
+
+```ruby
+pod 'PingExternalIdPFacebook', '~> <version>'
+```
 
 ## Usage
 
@@ -98,5 +119,9 @@ struct MyApp: App {
 }
 }
 ```
+
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
 © Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

@@ -5,6 +5,9 @@
 The Ping SDK for iOS is designed for creating mobile native apps that seamlessly integrate with the PingOne platform.
 It offers a range of APIs for user authentication, user device management, and accessing resources secured by PingOne.
 
+> [!NOTE]
+> If you are migrating from the ForgeRock iOS SDK, refer to [MIGRATION.md](./MIGRATION.md).
+
 # Documentation
 
 - **Quick Starts** - Find specific setup instructions in the quick start guide for each SDK module.

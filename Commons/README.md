@@ -1,10 +1,20 @@
-[![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)](https://github.com/ForgeRock/ping-ios-sdk)
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
 
-# Ping SDK - Commons Module
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
+
+# PingCommons
 
 The Commons module provides the core foundation and shared functionality for all  modules within the Ping Identity iOS SDK. It includes base implementations for MFA Policies and other common utilities that are leveraged by other modules, including specialized MFA modules like Oath, Push, and Fido.
 
 ## Getting Started
+
+### Prerequisites
+
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
 
 ### Installation
 

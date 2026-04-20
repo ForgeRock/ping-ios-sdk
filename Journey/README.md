@@ -1,11 +1,10 @@
-<p align="center">
-  <a href="https://github.com/ForgeRock/ping-ios-sdk">
-    <img src="https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg" alt="Ping Identity Logo" width="200">
-  </a>
-  <hr/>
-</p>
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
 
-# Journey: Authentication and Authorization SDK
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
+
+# PingJourney
 
 ## Overview
 
@@ -41,9 +40,16 @@ sequenceDiagram
 For a deeper understanding of PingOne AIC Journeys, refer to the official documentation available
 [here](https://docs.pingidentity.com/pingoneaic/latest/realms/journeys.html).
 
-## Installation
+## Getting Started
 
-### Add dependency to your project
+### Prerequisites
+
+- PingOne Advanced Identity Cloud (AIC) or PingAM
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
 
 To integrate Journey into your iOS project, add the following dependency to your
 `Podfile` or `Package.swift` file:
@@ -89,7 +95,7 @@ Alternatively, in Xcode:
 
 **Note:** PingJourney depends on `PingOrchestrate` which will be automatically installed.
 
-## Getting Started
+## Usage
 
 ### Basic Usage
 
@@ -524,5 +530,9 @@ Callbacks below will be supported by other modules:
 | WebAuthnAuthenticationCallback   | WebAuthn Authentication.                                                       |
 | SelectIdpCallback                | External Identity provider selection.                                          |
 | IdpCallback                      | External Identity provider authentication.                                     |
+
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
 © Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
