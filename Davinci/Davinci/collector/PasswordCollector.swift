@@ -20,10 +20,24 @@ public class PasswordCollector: ValidatedCollector, ContinueNodeAware, Closeable
     /// The continue node for the DaVinci flow.
     /// Declared `weak` to break the retain cycle: `ContinueNode → PasswordCollector → ContinueNode`.
     public weak var continueNode: ContinueNode?
-    /// Caches the decoded password policy so it’s only decoded once.
+    /// Caches the decoded password policy so it's only decoded once.
     private var cachedPasswordPolicy: PasswordPolicy?
     /// A flag to determine whether to clear the password or not after submission.
     public var clearPassword: Bool = true
+    
+    /// Initializes a new instance of `PasswordCollector`.
+    /// Extracts the password policy from the field-level JSON if present.
+    /// - Parameter json: The JSON dictionary for this field component.
+    public required init(with json: [String: Any]) {
+        super.init(with: json)
+        
+        // Extract passwordPolicy from the field-level JSON (component scope)
+        if let policyDict = json[Constants.passwordPolicy] as? [String: Any] {
+            if let data = try? JSONSerialization.data(withJSONObject: policyDict, options: []) {
+                cachedPasswordPolicy = try? JSONDecoder().decode(PasswordPolicy.self, from: data)
+            }
+        }
+    }
     
     /// Overrides the close function from the Closeable protocol.
     /// It is used to clear the value of the password field when the collector is closed.
@@ -34,25 +48,24 @@ public class PasswordCollector: ValidatedCollector, ContinueNodeAware, Closeable
     }
     
     /// Method to retrieve the password policy, if available.
+    /// Checks the field-level (component scope) first, then falls back to the global scope
+    /// for backward compatibility with older server responses.
     /// - Returns: The password policy, if available.
     public func passwordPolicy() -> PasswordPolicy? {
         if cachedPasswordPolicy == nil {
-            // If there's a dictionary under "passwordPolicy"
+            // Fallback: check the global scope (top-level input) for backward compatibility
             if let policyDict = continueNode?.input[Constants.passwordPolicy] as? [String: Any] {
-                
-                guard let data = try? JSONSerialization.data(withJSONObject: policyDict, options: []) else { return nil }
-                return try? JSONDecoder().decode(PasswordPolicy.self, from: data)
+                if let data = try? JSONSerialization.data(withJSONObject: policyDict, options: []) {
+                    cachedPasswordPolicy = try? JSONDecoder().decode(PasswordPolicy.self, from: data)
+                }
             }
         }
         return cachedPasswordPolicy
     }
     
     public override func validate() -> [ValidationError] {
-        let errors = super.validate()
+        var errors = super.validate()
         
-        // If we have a password policy, check additional constraints
-        // TODO: Uncomment password policy validation
-        /*
         if let policy = passwordPolicy() {
             // 1. Check length range
             if !(policy.length.min...policy.length.max).contains(value.count) {
@@ -74,17 +87,15 @@ public class PasswordCollector: ValidatedCollector, ContinueNodeAware, Closeable
                 errors.append(.maxRepeat(max: policy.maxRepeatedCharacters))
             }
             
-            // 4. Check minimum required characters (e.g. "digits" -> 2)
+            // 4. Check minimum required characters
             for (chars, minCount) in policy.minCharacters {
-                // `chars` might be a string of characters, or some other token
-                // We count how many characters in `value` are in `chars`
                 let foundCount = value.filter { chars.contains($0) }.count
                 if foundCount < minCount {
                     errors.append(.minCharacters(character: chars, min: minCount))
                 }
             }
         }
-        */
+        
         return errors
     }
 }

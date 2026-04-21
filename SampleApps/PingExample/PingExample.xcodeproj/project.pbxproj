@@ -172,6 +172,7 @@
 		ECC52B0D2E81AF5B00C468C7 /* ScenePhaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC52B0C2E81AF5B00C468C7 /* ScenePhaseManager.swift */; };
 		ECCAB3692E3A6C3300BA1C73 /* PingDeviceId.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB3682E3A6C3300BA1C73 /* PingDeviceId.framework */; };
 		ECCAB36A2E3A6C3300BA1C73 /* PingDeviceId.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECCAB3682E3A6C3300BA1C73 /* PingDeviceId.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECD372762F924A1D002AC7EB /* PasswordRequirementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD372752F924A1C002AC7EB /* PasswordRequirementsView.swift */; };
 		ECE2B8812DB7DBEC00E2C51E /* PhoneNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */; };
 		ECF7EB862E464EDD002A5E8E /* IdpCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB852E464ED8002A5E8E /* IdpCallbackView.swift */; };
 		ECF7EB882E464F31002A5E8E /* SelectIdpCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB872E464F2C002A5E8E /* SelectIdpCallbackView.swift */; };
@@ -773,6 +774,7 @@
 		ECC52B0C2E81AF5B00C468C7 /* ScenePhaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenePhaseManager.swift; sourceTree = "<group>"; };
 		ECCAB3682E3A6C3300BA1C73 /* PingDeviceId.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDeviceId.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECCAB3A42E3B600B00BA1C73 /* DeviceId.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DeviceId.xcodeproj; path = ../../DeviceId/DeviceId.xcodeproj; sourceTree = SOURCE_ROOT; };
+		ECD372752F924A1C002AC7EB /* PasswordRequirementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordRequirementsView.swift; sourceTree = "<group>"; };
 		ECD5A3132E90218200A27205 /* PingFido2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingFido2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberView.swift; sourceTree = "<group>"; };
 		ECF7EB852E464ED8002A5E8E /* IdpCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpCallbackView.swift; sourceTree = "<group>"; };
@@ -1207,6 +1209,7 @@
 				A5E9AEE22D318521000533ED /* FlowButtonView.swift */,
 				A5E9AEDA2D30A01D000533ED /* LabelView.swift */,
 				A5EFA97E2D35F88C00F771FE /* PasswordView.swift */,
+				ECD372752F924A1C002AC7EB /* PasswordRequirementsView.swift */,
 				ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */,
 				A5A31CEB2E0A5B3F00ABBEF7 /* ProtectView.swift */,
 				A5EFA9782D35F62C00F771FE /* RadioButtonView.swift */,
@@ -1980,6 +1983,7 @@
 				A5E9AED62D30393F000533ED /* LoggerView.swift in Sources */,
 				A5768D1C2E29B369000290EE /* ConsentMappingCallbackView.swift in Sources */,
 				A5EFA97B2D35F6D700F771FE /* DropdownView.swift in Sources */,
+				ECD372762F924A1D002AC7EB /* PasswordRequirementsView.swift in Sources */,
 				A5E9AECC2D303428000533ED /* LogOutView.swift in Sources */,
 				A5768D0A2E2958C7000290EE /* TermsAndConditionsCallbackView.swift in Sources */,
 				A5768D082E288DB7000290EE /* ChoiceCallbackView.swift in Sources */,

@@ -100,7 +100,6 @@ class FormFieldValidationTests: DaVinciBaseTests, @unchecked Sendable {
     }
     
     // TestRailCase(26034, 26031)
-    // TODO: Reinclude PasswordPolicy test
     func testPasswordValidation() async throws {
         // Go to the "Form Fields Validation" form
         var node = await daVinci.start() as! ContinueNode
@@ -140,24 +139,22 @@ class FormFieldValidationTests: DaVinciBaseTests, @unchecked Sendable {
         // Validate should return list of all the failing password policy items
         var passwordValidationResult = password.validate()
         
-        XCTAssertEqual(1, passwordValidationResult.count) //TODO: change to 7 when all validations are reenabled
+        XCTAssertEqual(7, passwordValidationResult.count)
         XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("This field cannot be empty."))
-        // TODO: Reenable these assertions when multiple password validation errors are supported
-//        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input length must be between 8 and 255 characters."))
-//        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must contain at least 5 unique characters."))
-//        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'ABCDEFGHIJKLMNOPQRSTUVWXYZ\'."))
-//        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'abcdefghijklmnopqrstuvwxyz\'."))
-//        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'~!@#$%^&*()-_=+[]{}|;:,.<>/?\'."))
-//        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'0123456789\'."))
+        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input length must be between 8 and 255 characters."))
+        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must contain at least 5 unique characters."))
+        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'ABCDEFGHIJKLMNOPQRSTUVWXYZ\'."))
+        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'abcdefghijklmnopqrstuvwxyz\'."))
+        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'~!@#$%^&*()-_=+[]{}|;:,.<>/?\'."))
+        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'0123456789\'."))
         
         // Set password that meets some of the policy requirements
         password.value = "password123"
         passwordValidationResult = password.validate()
         
-        XCTAssertEqual(0, passwordValidationResult.count) // TODO: change to 2 when all validations are reenabled
-        // TODO: Reenable these assertions when multiple password validation errors are supported
-//        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'ABCDEFGHIJKLMNOPQRSTUVWXYZ\'."))
-//        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'~!@#$%^&*()-_=+[]{}|;:,.<>/?\'."))
+        XCTAssertEqual(2, passwordValidationResult.count)
+        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'ABCDEFGHIJKLMNOPQRSTUVWXYZ\'."))
+        XCTAssert(passwordValidationResult.map { $0.errorMessage }.contains("The input must include at least 1 character(s) from this set: \'~!@#$%^&*()-_=+[]{}|;:,.<>/?\'."))
         
         // Set password that meets all of the policy requirements
         password.value = "Password123!"
