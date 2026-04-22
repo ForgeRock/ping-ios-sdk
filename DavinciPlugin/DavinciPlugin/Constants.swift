@@ -91,6 +91,9 @@ public enum Constants {
     public static let phoneNumber = "phoneNumber"
     public static let defaultCountryCode = "defaultCountryCode"
     public static let validatePhoneNumber = "validatePhoneNumber"
+    public static let showExtension = "showExtension"
+    public static let extensionLabel = "extensionLabel"
+    public static let phoneExtension = "extension"
     
     // MARK: - Polling & QR Code
     public static let POLLING = "POLLING"

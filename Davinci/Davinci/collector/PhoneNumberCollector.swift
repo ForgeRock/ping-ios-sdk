@@ -2,7 +2,7 @@
 //  PhoneNumberCollector.swift
 //  Davinci
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -17,15 +17,23 @@ open class PhoneNumberCollector: FieldCollector<[String: Any]>, @unchecked Senda
     public private(set) var defaultCountryCode: String
     /// validate phone number
     public private(set) var validatePhoneNumber: Bool
+    /// show extension field
+    public private(set) var showExtension: Bool
+    /// extension label
+    public private(set) var extensionLabel: String
     /// country code
     public var countryCode: String = ""
     /// phone number
     public var phoneNumber: String = ""
+    /// extension
+    public var `extension`: String = ""
     
     /// Initializes a new instance of `PhoneNumberCollector` with the given JSON input.
     public required init(with json: [String : Any]) {
         self.defaultCountryCode = json[Constants.defaultCountryCode] as? String ?? ""
         self.validatePhoneNumber = json[Constants.validatePhoneNumber] as? Bool ?? false
+        self.showExtension = json[Constants.showExtension] as? Bool ?? false
+        self.extensionLabel = json[Constants.extensionLabel] as? String ?? ""
         super.init(with: json)
     }
     
@@ -37,6 +45,7 @@ open class PhoneNumberCollector: FieldCollector<[String: Any]>, @unchecked Senda
         if let dictValue = input as? [String: Any] {
             self.phoneNumber = dictValue[Constants.phoneNumber] as? String ?? ""
             self.countryCode = dictValue[Constants.countryCode] as? String ?? ""
+            self.extension = dictValue[Constants.phoneExtension] as? String ?? ""
         }
         // Fallback to the legacy structure (a simple string)
         else if let stringValue = input as? String {
@@ -52,6 +61,7 @@ open class PhoneNumberCollector: FieldCollector<[String: Any]>, @unchecked Senda
         var payload: [String: Any] = [:]
         payload[Constants.phoneNumber] = phoneNumber
         payload[Constants.countryCode] = countryCode
+        payload[Constants.phoneExtension] = self.extension
         return payload
     }
 }

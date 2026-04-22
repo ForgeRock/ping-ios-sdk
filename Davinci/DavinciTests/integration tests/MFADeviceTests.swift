@@ -430,10 +430,13 @@ class MFADeviceTests: XCTestCase {
         // Then a phone number collector for the phone number
         let phoneNumberCollector = node.collectors[2] as! PhoneNumberCollector
         
+        XCTAssertTrue(phoneNumberCollector.showExtension)
+        
         // Select a country code and enter a valid phone number:...
         dropdown.value = "359"  // Select Bulgaria...
         phoneNumberCollector.phoneNumber = phone
         phoneNumberCollector.countryCode = "BG"
+        phoneNumberCollector.extension = "100" // Enter extension
         
         // Submit the form
         (node.collectors[3] as? SubmitCollector)?.value = "click"
