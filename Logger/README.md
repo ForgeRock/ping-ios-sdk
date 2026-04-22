@@ -19,6 +19,8 @@ SDKs.
 
 ### Installation
 
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
 #### Swift Package Manager
 
 ```swift
@@ -33,6 +35,12 @@ Then add the `PingLogger` product to your target's dependencies.
 
 ```ruby
 pod 'PingLogger', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingLogger
 ```
 
 ## How to Use the SDK

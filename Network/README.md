@@ -22,26 +22,28 @@ The module is built on Apple's native URLSession framework, ensuring zero extern
 
 ### Installation
 
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
 #### Swift Package Manager
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "1.0.0")
-],
-targets: [
-    .target(
-        name: "YourTarget",
-        dependencies: [
-            .product(name: "PingNetwork", package: "ping-ios-sdk")
-        ]
-    )
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
 ]
 ```
+
+Then add the `PingNetwork` product to your target's dependencies.
 
 #### CocoaPods
 
 ```ruby
 pod 'PingNetwork'
+```
+
+### Import the Module
+
+```swift
+import PingNetwork
 ```
 
 ## How to Use the SDK
@@ -51,8 +53,6 @@ pod 'PingNetwork'
 Make a simple GET request:
 
 ```swift
-import PingNetwork
-
 let client = HttpClient.createClient()
 
 let response = try await client.request { request in request in
@@ -706,15 +706,8 @@ NetworkConstants.contentTypeJSON      // "application/json"
 HttpMethod.post                       // .post
 ```
 
-## Platform Requirements
-
-- **iOS**: 16.0+
-- **Swift**: 6.0+
-- **Xcode**: 15+
-
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
-
-© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
+© Copyright (c) 2026 Ping Identity Corporation. All rights reserved.

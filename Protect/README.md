@@ -15,14 +15,14 @@
 
 ### Prerequisites
 
-- PingOne DaVinci or Ping Advanced Identity Cloud / PingAM
+- PingOne DaVinci or Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
 - iOS 16.0+
 - Swift 6.0+
 - Xcode 15+
 
 ### Installation
 
-To integrate this module into your iOS project, add the following dependency to your `Podfile` or `Package.swift` file.
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
 
 > [!NOTE]
 > The module name differs depending on the dependency manager. Use **`PingProtect`** for Swift Package Manager (SPM), and **`PingOneProtect`** for CocoaPods.
@@ -43,9 +43,15 @@ pod 'PingOneProtect', '~> <version>'
 
 Replace `<version>` with the latest version of the SDK.
 
+### Import the Module
+
+```swift
+import PingProtect
+```
+
 ## Overview
 
-The `PingProtect` module is a powerful component of the Ping Identity iOS SDK, designed to seamlessly integrate Ping
+The `PingProtect` module is a powerful component of the Ping Orchestration SDK for iOS, designed to seamlessly integrate Ping
 Identity's Protect service into your mobile applications. It provides comprehensive tools for real-time behavioral data
 collection, sophisticated risk analysis, and adaptive authentication strategies. By leveraging this module, developers
 can significantly enhance application security, detect and mitigate fraudulent activities, and create a more secure and

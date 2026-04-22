@@ -6,10 +6,8 @@
 
 # PingBrowser
 
-## Overview
-
 Ping Browser is a library that allows you to instantiate and use an in-app browser for performing OIDC flows. 
-This library act as a plugin to the `External_idp` library,
+This library act as a plugin to the `ExternalIdp` module,
 and it provides the necessary configuration to launch the browser to authenticate with the External IDP.
 
 ## Getting Started
@@ -21,6 +19,8 @@ and it provides the necessary configuration to launch the browser to authenticat
 - Xcode 15+
 
 ### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
 
 #### Swift Package Manager
 
@@ -36,6 +36,12 @@ Then add the `PingBrowser` product to your target's dependencies.
 
 ```ruby
 pod 'PingBrowser', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingBrowser
 ```
 
 ## Usage

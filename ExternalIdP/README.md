@@ -6,8 +6,6 @@
 
 # PingExternalIdP
 
-## Overview
-
 The Ping External IdP library empowers your iOS applications to seamlessly authenticate users through various external Identity Providers (IDPs) such as Google, Facebook, and Apple. Acting as a plugin for the `PingDavinci` modules, it streamlines the integration process by providing the necessary configurations and functionalities to initiate and manage authentication flows with these external services.
 
 This library abstracts away the complexities of dealing with different IDP protocols and SDKs, offering a unified and developer-friendly API. By leveraging Ping External IDP, you can enhance your application's user experience by offering familiar and convenient login options.
@@ -18,11 +16,14 @@ This library abstracts away the complexities of dealing with different IDP proto
 
 ### Prerequisites
 
+- PingOne DaVinci or Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
 - iOS 16.0+
 - Swift 6.0+
 - Xcode 15+
 
 ### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
 
 #### Swift Package Manager
 
@@ -40,9 +41,21 @@ Then add the `PingExternalIdP` product to your target's dependencies.
 pod 'PingExternalIdP', '~> <version>'
 ```
 
+### Import the Module
+
+```swift
+import PingExternalIdP
+```
+
 ## Configuration and Usage
 
-The `PingExternalIdP` library is designed to work in conjunction with the 'PingDavinci' module. The authentication flow is orchestrated by a DaVinci journey that includes an `IdpCollector` node. The configuration of the external IDPs is handled either within the PingOne platform directly or through DaVinci Connectors.
+The `PingExternalIdP` library is designed to work in conjunction with the 'PingDavinci' and 'PingJourney' modules. 
+
+### DaVinci
+The authentication flow is orchestrated by a DaVinci journey that includes an `IdpCollector` node. The configuration of the external IDPs is handled either within the PingOne platform directly or through DaVinci Connectors.
+
+### Journey
+The authentication flow is orchestrated by a Journey that includes a `SelectIdPCallback` node to present the available identity providers and an `IdpCallback` node to perform the authentication. The configuration of the external IDPs is handled within the Ping Advanced Identity Cloud or PingAM administrative console.
 
 ## Authentication Experience Options
 
@@ -151,6 +164,50 @@ When calling `await idpCollector.authorize()` developers can optionally pass a `
 await idpCollector.authorize(callbackURLScheme: "myAppScheme")
 ``` 
 The value needs to match with the configuration of the Social Provider.
+
+## Journey Authentication Flow
+
+When using `PingExternalIdP` with the `PingJourney` module, the authentication flow uses two callbacks: `SelectIdpCallback` to let the user choose a provider, and `IdpCallback` to perform the authentication with the selected provider.
+
+### SelectIdpCallback
+
+When the Journey step contains a `SelectIdpCallback`, present the available providers to the user and set the selected value before advancing to the next node:
+
+```swift
+node.callbacks.forEach { callback in
+    if let selectIdpCallback = callback as? SelectIdpCallback {
+        // Present the list of providers to the user
+        let providers = selectIdpCallback.providers // [IdPValue]
+        // Set the user's selection
+        selectIdpCallback.value = providers.first?.provider ?? ""
+    }
+}
+let nextNode = await continueNode.next()
+```
+
+### IdpCallback
+
+When the Journey step contains an `IdpCallback`, call `authorize()` to initiate the authentication flow with the external identity provider:
+
+```swift
+node.callbacks.forEach { callback in
+    if let idpCallback = callback as? IdpCallback {
+        Task {
+            let result = await idpCallback.authorize()
+            switch result {
+            case .success(_):
+                // Authentication successful, advance the journey
+                let nextNode = await continueNode.next()
+            case .failure(let error):
+                // Handle authentication error
+                print("Authentication failed: \(error)")
+            }
+        }
+    }
+}
+```
+
+The `idpCallback.authorize()` method selects the appropriate handler based on the `provider` property. For browser-based authentication, it launches an in-app browser. If a native library (`PingExternalIdPApple`, `PingExternalIdPGoogle`, or `PingExternalIdPFacebook`) is present, it uses the corresponding native SDK instead.
 
 ## Native External Identity Providers (IDP) Integration with Google and Facebook and Apple for iOS
 

@@ -2,7 +2,7 @@
 
 [![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)](https://github.com/ForgeRock/ping-ios-sdk)
 
-The Ping SDK for iOS is designed for creating mobile native apps that seamlessly integrate with the PingOne platform.
+The Ping Orchestration SDK for iOS is designed for creating mobile native apps that seamlessly integrate with the PingAM, Ping AIC, and PingOne platforms.
 It offers a range of APIs for user authentication, user device management, and accessing resources secured by PingOne.
 
 > [!NOTE]

@@ -6,8 +6,6 @@
 
 # PingExternalIdPApple
 
-## Overview
-
 Ping External IDP Apple is a library that allows you to authenticate with External IDP for Apple using native Sign in With Apple.
 This library acts as a plugin to the `PingExternalIdP` library, and it provides the necessary configuration to authenticate with `Sign In with Apple` natively.
 
@@ -17,12 +15,15 @@ This library acts as a plugin to the `PingExternalIdP` library, and it provides 
 
 ### Prerequisites
 
+- PingOne DaVinci or Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
 - iOS 16.0+
 - Swift 6.0+
 - Xcode 15+
 - Sign in with Apple capability enabled in your Xcode project
 
 ### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
 
 #### Swift Package Manager
 
@@ -32,7 +33,7 @@ dependencies: [
 ]
 ```
 
-Then add the `PingExternalIdPApple` product to your target's dependencies. Make sure it is also included in the **Frameworks and Libraries** section of your target's General configuration pane in Xcode.
+Then add the `PingExternalIdPApple` product to your target's dependencies.
 
 #### CocoaPods
 
@@ -40,12 +41,18 @@ Then add the `PingExternalIdPApple` product to your target's dependencies. Make 
 pod 'PingExternalIdPApple', '~> <version>'
 ```
 
+### Import the Module
+
+```swift
+import PingExternalIdPApple
+```
+
 ## Usage
 
-To use the `PingExternalIdPApple` with `IdpCollector`, you need to integrate with `PingDavinci` module.
+To use the `PingExternalIdPApple` with `IdpCollector` (DaVinci) or `IdpCallback` (Journey), you need to integrate with the `PingDavinci` or `PingJourney` module respectively.
 Read more about Configuration and Usage in [PingExternalIdP](/ExternalIdP/README.md)
 
-If the library is present in the project, calling `IdpCollector.authorize()` will use native Sign in With Apple to perform the authentication.
+If the library is present in the project, calling `IdpCollector.authorize()` (DaVinci) or `IdpCallback.authorize()` (Journey) will use native Sign in With Apple to perform the authentication.
 
 ### Enable the SIWA capability in Xcode
 

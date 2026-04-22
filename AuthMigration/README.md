@@ -4,7 +4,7 @@
 
 ![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
 
-# PingAuthMigration Module
+# PingAuthMigration
 
 `PingAuthMigration` migrates OATH (TOTP/HOTP) and Push credentials from the legacy `FRAuthenticator` SDK Keychain storage to the modern `PingOath` / `PingPush` storage format.
 
@@ -12,33 +12,35 @@
 
 ### Prerequisites
 
+- Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
 - iOS 16.0+
 - Swift 6.0+
 - Xcode 15+
 
 ### Installation
 
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
 #### Swift Package Manager
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "2.0.0")
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
 ]
 ```
 
-Add `PingAuthMigration` to your target's dependencies:
-
-```swift
-.target(
-    name: "MyApp",
-    dependencies: ["PingAuthMigration"]
-)
-```
+Then add the `PingAuthMigration` product to your target's dependencies.
 
 #### CocoaPods
 
 ```ruby
-pod 'PingAuthMigration', '~> 2.0.0'
+pod 'PingAuthMigration', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingAuthMigration
 ```
 
 ## Usage
@@ -156,4 +158,6 @@ xcodebuild test \
 
 ## License
 
-PingAuthMigration is released under the [MIT License](../LICENSE).
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
+
+© Copyright (c) 2026 Ping Identity Corporation. All rights reserved.

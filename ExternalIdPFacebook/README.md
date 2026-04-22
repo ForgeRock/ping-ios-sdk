@@ -6,8 +6,6 @@
 
 # PingExternalIdPFacebook
 
-## Overview
-
 Ping External IDP Facebook is a library that allows you to authenticate with External IDP for Facebook using the [facebook-ios-sdk](hhttps://github.com/facebook/facebook-ios-sdk) for Native iOS experience.
 This library acts as a plugin to the `PingExternalIdP` library, and it provides the necessary configuration to authenticate with Facebook Login natively.
 
@@ -17,6 +15,7 @@ This library acts as a plugin to the `PingExternalIdP` library, and it provides 
 
 ### Prerequisites
 
+- PingOne DaVinci or Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
 - iOS 16.0+
 - Swift 6.0+
 - Xcode 15+
@@ -24,15 +23,15 @@ This library acts as a plugin to the `PingExternalIdP` library, and it provides 
 
 ### Installation
 
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
 #### Swift Package Manager
 
 ```swift
-dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
-]
+.package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
 ```
 
-Then add the `PingExternalIdPFacebook` product to your target's dependencies. Make sure it is also included in the **Frameworks and Libraries** section of your target's General configuration pane in Xcode.
+Then add the `PingExternalIdPFacebook` product to your target's dependencies.
 
 #### CocoaPods
 
@@ -40,12 +39,20 @@ Then add the `PingExternalIdPFacebook` product to your target's dependencies. Ma
 pod 'PingExternalIdPFacebook', '~> <version>'
 ```
 
+Replace `<version>` with the latest version of the SDK.
+
+### Import the Module
+
+```swift
+import PingExternalIdPFacebook
+```
+
 ## Usage
 
-To use the `PingExternalIdPFacebook` with `IdpCollector`, you need to integrate with `PingDavinci` module.
+To use the `PingExternalIdPFacebook` with `IdpCollector` (DaVinci) or `IdpCallback` (Journey), you need to integrate with the `PingDavinci` or `PingJourney` module respectively.
 Read more about Configuration and Usage in [PingExternalIdP](/ExternalIdP/README.md)
 
-If the library is present in the project, calling `IdpCollector.authorize()` will use the Facebook iOS SDK to perform the authentication.
+If the library is present in the project, calling `IdpCollector.authorize()` (DaVinci) or `IdpCallback.authorize()` (Journey) will use the Facebook iOS SDK to perform the authentication.
 
 ## Facebook Developer Console Configuration for Native Integration
 

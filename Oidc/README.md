@@ -22,6 +22,8 @@ access token, revoke the token, and sign out from the OIDC server.
 
 ### Installation
 
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
 #### Swift Package Manager
 
 ```swift
@@ -36,6 +38,12 @@ Then add the `PingOidc` product to your target's dependencies.
 
 ```ruby
 pod 'PingOidc', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingOidc
 ```
 
 ## Oidc Client Configuration

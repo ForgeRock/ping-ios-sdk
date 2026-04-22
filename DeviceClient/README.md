@@ -6,22 +6,20 @@
 
 # PingDeviceClient
 
-Comprehensive device management SDK for Ping AIC with Result-based API for robust error handling.
-
-## Overview
-
 PingDeviceClient module simplifies device management operations for Ping AIC. It provides a clean, type-safe, Result-based API for managing authentication devices including OATH, Push, Bound, Profile, and WebAuthn devices.
-
 
 ## Getting Started
 
 ### Prerequisites
 
+- Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
 - iOS 16.0+
 - Swift 6.0+
 - Xcode 15+
 
 ### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
 
 #### Swift Package Manager
 
@@ -39,11 +37,13 @@ dependencies: [
 pod 'PingDeviceClient', '~> <version>'
 ```
 
-## Usage
+### Import the Module
 
 ```swift
 import PingDeviceClient
 ```
+
+## Usage
 
 ### 2. Configure and Initialize
 

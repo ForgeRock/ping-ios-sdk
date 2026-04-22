@@ -12,11 +12,14 @@ PingOath is a comprehensive iOS SDK module that provides One-Time Password (OTP)
 
 ### Prerequisites
 
-- **iOS**: 13.0+
-- **Swift**: 5.7+
-- **Xcode**: 15.0+
+- Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
 
 ### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
 
 #### Swift Package Manager
 
@@ -24,19 +27,21 @@ Add PingOath to your `Package.swift` file:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/pingidentity/ping-ios-sdk", from: "1.0.0")
+    .package(url: "https://github.com/pingidentity/ping-ios-sdk", from: "<version>")
 ]
 ```
 
-Or add it through Xcode:
-1. File → Add Package Dependencies
-2. Enter the repository URL
-3. Select PingOath module
+Then add the `PingOath` product to your target's dependencies.
 
 #### CocoaPods
 
 ```ruby
-pod 'PingOath'
+pod 'PingOath', '~> <version>'
+```
+### Import the Module
+
+```swift
+import PingOath
 ```
 
 ## Usage
@@ -47,8 +52,6 @@ Before using the OATH MFA functionality, you need to initialize the `OathClient`
 
 #### Basic Initialization
 ```swift
-import PingOath
-
 // Create an OATH client
 let client = try await OathClient.createClient { config in
     config.logger = LogManager.logger
@@ -218,5 +221,6 @@ do {
 
 ## License
 
-© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
 This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
+
+© Copyright (c) 2026 Ping Identity Corporation. All rights reserved.

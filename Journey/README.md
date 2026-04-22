@@ -6,6 +6,45 @@
 
 # PingJourney
 
+Journey is an iOS module designed to streamline Authentication and Authorization processes for applications utilizing Ping Advanced Identity Cloud and PingAM.
+
+## Getting Started
+
+### Prerequisites
+
+- Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
+**Note:** PingJourney depends on `PingOrchestrate` which will be automatically installed.
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingJourney` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingJourney', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingJourney
+```
+
 ## Overview
 
 **Journey** is a robust and adaptable library designed to streamline Authentication and
@@ -39,61 +78,6 @@ sequenceDiagram
 
 For a deeper understanding of PingOne AIC Journeys, refer to the official documentation available
 [here](https://docs.pingidentity.com/pingoneaic/latest/realms/journeys.html).
-
-## Getting Started
-
-### Prerequisites
-
-- PingOne Advanced Identity Cloud (AIC) or PingAM
-- iOS 16.0+
-- Swift 6.0+
-- Xcode 15+
-
-### Installation
-
-To integrate Journey into your iOS project, add the following dependency to your
-`Podfile` or `Package.swift` file:
-
-#### CocoaPods
-
-Add to your `Podfile`:
-
-```ruby
-pod 'PingJourney', '~> 2.0.0'
-```
-
-Then run:
-
-```bash
-pod install
-```
-
-#### Swift Package Manager
-
-Add the following dependency to your `Package.swift` file:
-
-```swift
-.package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "2.0.0")
-```
-
-Then add `PingJourney` to your target's dependencies:
-
-```swift
-.target(
-    name: "YourTarget",
-    dependencies: [
-        .product(name: "PingJourney", package: "ping-ios-sdk")
-    ]
-)
-```
-
-Alternatively, in Xcode:
-1. Go to **File** > **Add Package Dependencies...**
-2. Enter the repository URL: `https://github.com/ForgeRock/ping-ios-sdk.git`
-3. Select version 2.0.0 or later
-4. Add the `PingJourney` library to your target
-
-**Note:** PingJourney depends on `PingOrchestrate` which will be automatically installed.
 
 ## Usage
 

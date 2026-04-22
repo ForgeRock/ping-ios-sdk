@@ -6,23 +6,22 @@
 
 # PingDeviceProfile
 
-> **A flexible, extensible, and privacy-conscious framework for collecting device information in iOS applications.**
-
 The Device Profile module provides a structured framework for collecting device information in
 iOS applications. It uses a modular collector system that makes it easy to gather, extend, and
 customize the device data you need with modern Swift async/await patterns.
-
----
 
 ## Getting Started
 
 ### Prerequisites
 
+- Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
 - iOS 16.0+
 - Swift 6.0+
 - Xcode 15+
 
 ### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
 
 #### Swift Package Manager
 
@@ -32,12 +31,18 @@ dependencies: [
 ]
 ```
 
-Then add the `DeviceProfile` product to your target's dependencies.
+Then add the `PingDeviceProfile` product to your target's dependencies.
 
 #### CocoaPods
 
 ```ruby
 pod 'PingDeviceProfile', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingDeviceProfile
 ```
 
 ### Permissions
@@ -63,8 +68,6 @@ The module respects iOS's permission model. Some collectors may require specific
 2. **Create collectors** and collect device information:
 
 ```swift
-import DeviceProfile
-
 func collectDeviceProfile() async {
     // Initialize collectors with default set
     let collectors = DefaultDeviceCollector.defaultDeviceCollectors()
@@ -85,7 +88,6 @@ func collectDeviceProfile() async {
 
 ```swift
 import SwiftUI
-import DeviceProfile
 
 struct ContentView: View {
     @State private var deviceProfile: [String: Any] = [:]
@@ -276,8 +278,6 @@ Collects GPS coordinates with automatic permission handling:
 The module comes with several built-in collectors that you can use:
 
 ```swift
-import DeviceProfile
-
 // Use all default collectors
 let collectors = DefaultDeviceCollector.defaultDeviceCollectors()
 

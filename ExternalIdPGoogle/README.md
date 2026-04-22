@@ -6,8 +6,6 @@
 
 # PingExternalIdPGoogle
 
-## Overview
-
 Ping External IDP Google is a library that allows you to authenticate with External IDP for Google using the [GoogleSignIn-iOS](https://github.com/google/GoogleSignIn-iOS) SDK for Native iOS experience.
 This library acts as a plugin to the `PingExternalIdP` library, and it provides the necessary configuration to authenticate with Google Sign In natively.
 
@@ -17,12 +15,15 @@ This library acts as a plugin to the `PingExternalIdP` library, and it provides 
 
 ### Prerequisites
 
+- PingOne DaVinci or Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
 - iOS 16.0+
 - Swift 6.0+
 - Xcode 15+
 - A Google Cloud Platform project with an iOS OAuth client configured
 
 ### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
 
 #### Swift Package Manager
 
@@ -32,7 +33,7 @@ dependencies: [
 ]
 ```
 
-Then add the `PingExternalIdPGoogle` product to your target's dependencies. Make sure it is also included in the **Frameworks and Libraries** section of your target's General configuration pane in Xcode.
+Then add the `PingExternalIdPGoogle` product to your target's dependencies.
 
 #### CocoaPods
 
@@ -40,12 +41,19 @@ Then add the `PingExternalIdPGoogle` product to your target's dependencies. Make
 pod 'PingExternalIdPGoogle', '~> <version>'
 ```
 
+### Import the Module
+
+```swift
+import PingExternalIdPGoogle
+```
+
+
 ## Usage
 
-To use the `PingExternalIdPGoogle` with `IdpCollector`, you need to integrate with `PingDavinci` module.
+To use the `PingExternalIdPGoogle` with `IdpCollector` (DaVinci) or `IdpCallback` (Journey), you need to integrate with the `PingDavinci` or `PingJourney` module respectively.
 Read more about Configuration and Usage in [PingExternalIdP](/ExternalIdP/README.md)
 
-If the library is present in the project, calling `IdpCollector.authorize()` will use the Google Sign In SDK to perform the authentication.
+If the library is present in the project, calling `IdpCollector.authorize()` (DaVinci) or `IdpCallback.authorize()` (Journey) will use the Google Sign In SDK to perform the authentication.
 
 ## Google Developer Console Configuration for Native Integration
 

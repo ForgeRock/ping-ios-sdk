@@ -1,6 +1,6 @@
-# Contributing to the Ping Identity iOS SDK
+# Contributing to the Ping Orchestration SDK for iOS 
 
-Thank you for considering contributing to the Ping Identity iOS SDK! We appreciate your time and effort.
+Thank you for considering contributing to the Ping Orchestration SDK for iOS! We appreciate your time and effort.
 
 This document outlines the guidelines for contributing to this project. Please read it before getting started.
 
@@ -11,7 +11,7 @@ This document outlines the guidelines for contributing to this project. Please r
 - A GitHub account with Git installed locally.
 - The latest stable version of [Xcode](https://developer.apple.com/xcode/).
 - iOS 16.0 or higher.
-- A PingOne tenant or PingAM instance — see the [documentation](https://docs.pingidentity.com/sdks/latest/sdks/index.html) for setup instructions.
+- A PingOne and Ping AIC tenants or PingAM instance
 
 ### Fork and Clone the Repository
 
@@ -32,7 +32,7 @@ This document outlines the guidelines for contributing to this project. Please r
 
 ## 2. Project Structure
 
-This is the Ping SDK for iOS, a modular Swift Package Manager-based SDK that integrates with the PingAM, Ping AIC, and PingOne platforms. The SDK is organized into multiple target modules:
+This is the Ping Orchestration SDK for iOS, a modular Swift Package Manager-based SDK that integrates with the PingAM, Ping AIC, and PingOne platforms. The SDK is organized into multiple target modules:
 
 ### Core Modules
 - **PingBrowser**: Browser-based authentication flows
@@ -63,7 +63,7 @@ This is the Ping SDK for iOS, a modular Swift Package Manager-based SDK that int
 - **PingJourney**: Authentication journey management
 
 ### Module Dependencies
-The modules follow a clear dependency hierarchy:
+A number of the modules have a dependency hierarchy, as follows:
 - `PingOrchestrate` depends on `PingLogger` and `PingStorage`
 - `PingOidc` depends on `PingOrchestrate`
 - `PingDavinci` depends on `PingOidc`
@@ -208,6 +208,6 @@ Your PR will be reviewed by the project maintainers. Be prepared to address feed
 
 ## License
 
-By contributing to the Ping Identity iOS SDK, you agree that your contributions will be licensed under the [MIT License](LICENSE) that covers the project.
+By contributing to the Ping Orchestration SDK for iOS, you agree that your contributions will be licensed under the [MIT License](LICENSE) that covers the project.
 
 &copy; Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved.

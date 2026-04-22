@@ -6,6 +6,43 @@
 
 # PingDavinci
 
+DaVinci is a flexible iOS module for Authentication and Authorization, utilizing the PingOne DaVinci orchestration engine.
+
+## Getting Started
+
+### Prerequisites
+
+- PingOne DaVinci
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingDavinci` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingDavinci', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingDavinci
+```
+
 ## Overview
 
 PingDavinci is a powerful and flexible library for Authentication and Authorization. It is designed to be easy to use and extensible. It provides a simple API for navigating the authentication flow and handling the various states that can occur during the authentication process.
@@ -31,32 +68,6 @@ sequenceDiagram
 
 You can find more information about PingOne
 DaVinci [here](https://docs.pingidentity.com/davinci/davinci_introduction.html).
-
-## Getting Started
-
-### Prerequisites
-
-- iOS 16.0+
-- Swift 6.0+
-- Xcode 15+
-
-### Installation
-
-#### Swift Package Manager
-
-```swift
-dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
-]
-```
-
-Then add the `PingDavinci` product to your target's dependencies.
-
-#### CocoaPods
-
-```ruby
-pod 'PingDavinci', '~> <version>'
-```
 
 ## Usage
 

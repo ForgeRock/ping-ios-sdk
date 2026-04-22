@@ -6,11 +6,44 @@
 
 # PingDavinciPlugin
 
-## Overview
-
 The `PingDavinciPlugin` is a lightweight abstraction layer for the `PingDavinci` SDK. It defines a set of protocols and interfaces that encapsulate the core functionalities of the `PingDavinci` SDK, providing a high-level API for other modules.
 
 The main purpose of this plugin is to decouple modules from the concrete implementation of the `PingDavinci` SDK, allowing them to interact with its features through a stable, abstract API.
+
+## Getting Started
+
+### Prerequisites
+
+- PingOne DaVinci
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingDavinciPlugin` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingDavinciPlugin', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingDavinciPlugin
+```
 
 ## Architecture
 
@@ -42,45 +75,9 @@ The `PingDavinciPlugin` module consists of several key files that define its cor
 
 - **`Constants.swift`**: Contains a centralized enumeration of string constants used throughout the DaVinci integration, such as JSON keys, collector types, and event names. This helps avoid typos and magic strings.
 
-## Getting Started
-
-### Prerequisites
-
-- iOS 16.0+
-- Swift 6.0+
-- Xcode 15+
-
-### Installation
-
-#### Swift Package Manager
-
-```swift
-dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
-]
-```
-
-Then add the `PingDavinciPlugin` product to your target's dependencies.
-
-#### CocoaPods
-
-`PingDavinciPlugin` is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your `Podfile`:
-
-```ruby
-pod 'PingDavinciPlugin', '~> 2.0.0'
-```
-
-Then, run the command:
-```bash
-pod install
-```
-
-## Dependencies
-
--   [PingLogger](https://github.com/ForgeRock/ping-ios-sdk) (~> 2.0.0)
 
 ## License
 
-`PingDavinciPlugin` is available under the MIT license. See the LICENSE file for more info.
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
-© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
+© Copyright (c) 2026 Ping Identity Corporation. All rights reserved.

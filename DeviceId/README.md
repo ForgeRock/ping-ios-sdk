@@ -10,8 +10,6 @@ The Device ID module for Swift provides a robust and secure method for generatin
 
 The core implementation, `DefaultDeviceIdentifier`, is built as a Swift `actor` to guarantee thread-safe access in concurrent environments.
 
-***
-
 ## Getting Started
 
 ### Prerequisites
@@ -22,7 +20,7 @@ The core implementation, `DefaultDeviceIdentifier`, is built as a Swift `actor` 
 
 ### Installation
 
-To integrate the DeviceId module into your iOS project, add the following dependency to your `Podfile` or `Package.swift` file.
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
 
 #### Swift Package Manager
 
@@ -40,7 +38,11 @@ pod 'PingDeviceId', '~> <version>'
 
 Replace `<version>` with the latest version of the SDK.
 
-***
+### Import the Module
+
+```swift
+import PingDeviceId
+```
 
 ## Usage
 
@@ -321,8 +323,6 @@ This makes it safe to use from multiple parts of your application without additi
 - Access the identifier early in app lifecycle to warm the cache
 - Use `.default` configuration (2048-bit keys) for most applications
 - Reserve `.highSecurity` configuration (4096-bit keys) for high-security requirements
-
------
 
 ## License
 

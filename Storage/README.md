@@ -18,6 +18,8 @@ The PingStorage SDK provides a flexible storage interface and a set of common st
 
 ### Installation
 
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
 #### Swift Package Manager
 
 ```swift
@@ -32,6 +34,12 @@ Then add the `PingStorage` product to your target's dependencies.
 
 ```ruby
 pod 'PingStorage', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingStorage
 ```
 
 ## How to Use the SDK
@@ -129,4 +137,4 @@ The PingStorage SDK provides the following storage solutions:
 
 This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
-© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved.
