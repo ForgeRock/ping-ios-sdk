@@ -76,4 +76,4 @@ At the current time only `authSession` and `ephemeralAuthSession` are implemente
 
 This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
-© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved.

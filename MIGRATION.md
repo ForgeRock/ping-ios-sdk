@@ -6,7 +6,7 @@ This guide helps you transition from the legacy ForgeRock iOS SDK to the modern 
 It covers authentication flow migration as well as MFA data migration tools.
 
 For the full official migration documentation, visit:
-**[Ping SDK Migration Guide](https://docs.pingidentity.com/sdks/latest/sdks/index.html)**.
+**[Ping SDK Migration Guide](https://developer.pingidentity.com/orchsdks/journey/migration.html)**.
 
 
 ## Journey Migration

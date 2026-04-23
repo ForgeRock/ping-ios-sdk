@@ -12,13 +12,13 @@ It offers a range of APIs for user authentication, user device management, and a
 
 - **Quick Starts** - Find specific setup instructions in the quick start guide for each SDK module.
   Begin with
-  the [DaVinci](https://docs.pingidentity.com/sdks/latest/davinci/tutorials/ios/index.html)
-  or [Journey](https://docs.pingidentity.com/sdks/latest/sdks/tutorials/ios/index.html)
+  the [DaVinci](./Davinci/README.md)
+  or [Journey](./Journey/README.md)
   guide, based on your chosen orchestration platform.
 - **Sample Apps** - Visit our [sample apps](https://github.com/ForgeRock/sdk-sample-apps) repository
   on GitHub for examples showcasing various use cases.
 - **Official Docs** - Refer to our
-  main [documentation site](https://docs.pingidentity.com/sdks/latest/sdks/index.html) for
+  main [documentation site](https://developer.pingidentity.com/orchsdks/index.html) for
   comprehensive information on the SDKs.
 
 # Modules
