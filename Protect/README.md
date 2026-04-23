@@ -9,7 +9,7 @@
 > [!NOTE]
 > **This module is a wrapper for the standalone PingOne Protect SDK. Its purpose is to facilitate integration between your application and PingOne services, typically as part of a DaVinci flow or an Advanced Identity Cloud/PingAM journey. The Protect service is invoked server-side as a step within the orchestration layer, not directly from the client application. This architecture means that the business logic for triggering PingOne Protect resides on the server, allowing you to update this logic without requiring a new client application release.**
 >
-> **Alternatively, for scenarios where you need to call the service independently outside of an orchestrated flow, Protect offers a standalone [PingOne Protect SDK](https://developer.pingidentity.com/pingone-api/native-sdks/pingone-risk-sdks/risk_evaluation_sdk_android.html). This option allows for direct application integration with the specific PingOne service using purpose-built REST APIs.**
+> **Alternatively, for scenarios where you need to call the service independently outside of an orchestrated flow, Protect offers a standalone [PingOne Protect SDK](https://developer.pingidentity.com/pingone-api/native-sdks/pingone-risk-sdks/risk_evaluation_sdk_ios.html). This option allows for direct application integration with the specific PingOne service using purpose-built REST APIs.**
 
 ## Getting Started
 
