@@ -66,8 +66,8 @@ internal final class CreateAgent: Agent, Sendable {
         
         // Create a fresh request, populate it (handles both PAR and standard flow),
         // then attach Journey-specific headers before sending.
-        let request = httpClient.request()
-        let _ = try await config.populateRequest(request: request, pkce: pkce, responseMode: "")
+        var request = httpClient.request()
+        request = try await config.populateRequest(request: request, pkce: pkce, responseMode: "")
         request.setHeader(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource21Protocol10)
         request.setHeader(name: self.cookieName, value: self.session.value)
         

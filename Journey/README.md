@@ -149,6 +149,25 @@ let journey = Journey.createJourney { config in
           }
 ```
 
+### Pushed Authorization Requests (PAR)
+
+Journey supports [Pushed Authorization Requests (RFC 9126)](https://datatracker.ietf.org/doc/html/rfc9126). When enabled, authorization parameters are sent to the server via a secure back-channel POST before the authorization redirect, improving security by keeping sensitive parameters out of the URL.
+
+```swift
+let journey = Journey.createJourney { config in
+            config.serverUrl = "https://openam-sdks.forgeblocks.com/am"
+            config.module(PingJourney.OidcModule.config) { oidcValue in
+                oidcValue.clientId = "test"
+                oidcValue.discoveryEndpoint = "https://your_openam_domain/am/oauth2/alpha/.well-known/openid-configuration"
+                oidcValue.scopes = ["openid", "email", "address"]
+                oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
+                oidcValue.par = true // Enable Pushed Authorization Requests
+            }
+          }
+```
+
+The PAR endpoint is discovered automatically from the OpenID configuration. If the server does not advertise a `pushed_authorization_request_endpoint`, the SDK falls back to the standard authorization flow.
+
 ### Navigating the Authentication Flow
 
 The `start()` method initiates the authentication journey and returns a `Node` instance,

@@ -35,8 +35,9 @@ public class OidcClient {
             throw OidcError.networkError(message: "HTTP client not found")
         }
         var request = httpClient.request()
-        self.pkce = Pkce.generate()
-        request = config.populateRequest(request: request, pkce: pkce!, responseMode: OidcClient.Constants.query)
+        let generatedPkce = Pkce.generate()
+        self.pkce = generatedPkce
+        request = config.populateRequest(request: request, pkce: generatedPkce, responseMode: OidcClient.Constants.query)
         if let customParams = customParams {
             for parameter in customParams {
                 request.setParameter(name: parameter.key, value: parameter.value)
@@ -57,8 +58,9 @@ public class OidcClient {
             throw OidcError.networkError(message: "HTTP client not found")
         }
         var request = httpClient.request()
-        self.pkce = Pkce.generate()
-        request = try await config.populateRequest(request: request, pkce: pkce!, responseMode: OidcClient.Constants.query)
+        let generatedPkce = Pkce.generate()
+        self.pkce = generatedPkce
+        request = try await config.populateRequest(request: request, pkce: generatedPkce, responseMode: OidcClient.Constants.query)
         if let customParams = customParams {
             for parameter in customParams {
                 request.setParameter(name: parameter.key, value: parameter.value)
