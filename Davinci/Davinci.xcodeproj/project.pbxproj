@@ -13,6 +13,7 @@
 		3A292C822BF58462006977EF /* Agent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A292C812BF58462006977EF /* Agent.swift */; };
 		3A5441AA2BCDF20700385131 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5441A12BCDF20700385131 /* PingDavinci.framework */; };
 		3A5441AF2BCDF20700385131 /* DaVinciTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5441AE2BCDF20700385131 /* DaVinciTests.swift */; };
+		25554859C34DBAACE79ABA36 /* DaVinciPARTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD0544A9787573F4A02A278 /* DaVinciPARTests.swift */; };
 		3A5441B02BCDF20700385131 /* Davinci.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A5441A42BCDF20700385131 /* Davinci.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A57CB622C44D68C001EC9A0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A57CB612C44D688001EC9A0 /* User.swift */; };
 		3AC13E352C3FFF1000DEF23A /* Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E322C3FFF1000DEF23A /* Form.swift */; };
@@ -107,6 +108,7 @@
 		3A5441A42BCDF20700385131 /* Davinci.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Davinci.h; sourceTree = "<group>"; };
 		3A5441A92BCDF20700385131 /* DavinciTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DavinciTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A5441AE2BCDF20700385131 /* DaVinciTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciTests.swift; sourceTree = "<group>"; };
+		2AD0544A9787573F4A02A278 /* DaVinciPARTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciPARTests.swift; sourceTree = "<group>"; };
 		3A57CB612C44D688001EC9A0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		3AC13E312C3FFF1000DEF23A /* Connector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connector.swift; sourceTree = "<group>"; };
 		3AC13E322C3FFF1000DEF23A /* Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form.swift; sourceTree = "<group>"; };
@@ -242,6 +244,7 @@
 				A51D4CF12C65729A00FE09E0 /* DaVinciErrorTests.swift */,
 				EC7279B32DF9B289005D9E28 /* DaVinciBaseTests.swift */,
 				3A5441AE2BCDF20700385131 /* DaVinciTests.swift */,
+				2AD0544A9787573F4A02A278 /* DaVinciPARTests.swift */,
 				EC92B3A22DA52DA200E4246D /* DeviceAuthenticatorCollectorTests.swift */,
 				EC92B3A42DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift */,
 				A51D4CED2C656EE100FE09E0 /* FieldCollectorTests.swift */,
@@ -499,6 +502,7 @@
 				A51D4CF42C6572E600FE09E0 /* MockURLProtocol.swift in Sources */,
 				A51D4CF82C65978300FE09E0 /* DaVinciIntegrationTests.swift in Sources */,
 				3A5441AF2BCDF20700385131 /* DaVinciTests.swift in Sources */,
+				25554859C34DBAACE79ABA36 /* DaVinciPARTests.swift in Sources */,
 				A51D4CF22C65729A00FE09E0 /* DaVinciErrorTests.swift in Sources */,
 				A5EFAA102D3F50A700F771FE /* SingleSelectCollectorTests.swift in Sources */,
 				95C256792DF22BFB004266AB /* MFADeviceTests.swift in Sources */,

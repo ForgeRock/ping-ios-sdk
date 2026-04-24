@@ -28,6 +28,7 @@ struct ConfigurationEditorView: View {
     @State private var serverUrl: String = ""
     @State private var realm: String = ""
     @State private var acrValues: String = ""
+    @State private var par: Bool = false
     
     @State private var showValidationError = false
     @State private var validationMessage = ""
@@ -137,6 +138,19 @@ struct ConfigurationEditorView: View {
                 // MARK: - Advanced
                 editorSection(header: "ADVANCED") {
                     labeledField("ACR Values", text: $acrValues, field: .acrValues)
+                    
+                    VStack(alignment: .leading, spacing: 6) {
+                        Toggle(isOn: $par) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("PAR (Pushed Authorization Request)")
+                                    .font(.system(size: 14, weight: .medium))
+                                Text("RFC 9126 — Push authorization parameters to the server before authorization")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .tint(.blue)
+                    }
                 }
             }
             .padding(.horizontal, 20)
@@ -246,6 +260,7 @@ struct ConfigurationEditorView: View {
         serverUrl = config.serverUrl ?? ""
         realm = config.realm ?? ""
         acrValues = config.acrValues ?? ""
+        par = config.par ?? false
     }
     
     private func save() {
@@ -303,7 +318,8 @@ struct ConfigurationEditorView: View {
             cookieName: cookieName.isEmpty ? nil : cookieName.trimmingCharacters(in: .whitespaces),
             serverUrl: serverUrl.isEmpty ? nil : serverUrl.trimmingCharacters(in: .whitespaces),
             realm: realm.isEmpty ? nil : realm.trimmingCharacters(in: .whitespaces),
-            acrValues: acrValues.isEmpty ? nil : acrValues.trimmingCharacters(in: .whitespaces)
+            acrValues: acrValues.isEmpty ? nil : acrValues.trimmingCharacters(in: .whitespaces),
+            par: par
         )
         
         if let existing = editingConfig {

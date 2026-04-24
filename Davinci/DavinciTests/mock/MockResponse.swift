@@ -27,6 +27,30 @@ struct MockResponse {
         """.data(using: .utf8)!
     }
     
+    // Return the OpenID configuration response with PAR endpoint as Data
+    static var openIdConfigurationWithPARResponse: Data {
+        return """
+        {
+            "authorization_endpoint" : "http://auth.test-one-pingone.com/authorize",
+            "token_endpoint" : "https://auth.test-one-pingone.com/token",
+            "userinfo_endpoint" : "https://auth.test-one-pingone.com/userinfo",
+            "end_session_endpoint" : "https://auth.test-one-pingone.com/signoff",
+            "revocation_endpoint" : "https://auth.test-one-pingone.com/revoke",
+            "pushed_authorization_request_endpoint" : "https://auth.test-one-pingone.com/par"
+        }
+        """.data(using: .utf8)!
+    }
+    
+    // Return a successful PAR response as Data
+    static var parResponse: Data {
+        return """
+        {
+            "request_uri" : "urn:ietf:params:oauth:request_uri:test-request-uri",
+            "expires_in" : 60
+        }
+        """.data(using: .utf8)!
+    }
+    
     // return the token response as Data
     static var tokenResponse: Data {
         return """

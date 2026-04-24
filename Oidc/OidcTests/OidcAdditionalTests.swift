@@ -74,6 +74,86 @@ final class OpenIdConfigurationTests: XCTestCase {
         XCTAssertEqual(decoded.endSessionEndpoint, config.endSessionEndpoint)
         XCTAssertEqual(decoded.revocationEndpoint, config.revocationEndpoint)
     }
+    
+    // MARK: - PAR (Pushed Authorization Request) Tests
+    
+    func testDecodingWithPAREndpoint() throws {
+        let json = """
+        {
+            "authorization_endpoint": "https://auth.example.com/authorize",
+            "token_endpoint": "https://auth.example.com/token",
+            "userinfo_endpoint": "https://auth.example.com/userinfo",
+            "end_session_endpoint": "https://auth.example.com/logout",
+            "revocation_endpoint": "https://auth.example.com/revoke",
+            "pushed_authorization_request_endpoint": "https://auth.example.com/par"
+        }
+        """.data(using: .utf8)!
+        
+        let config = try JSONDecoder().decode(OpenIdConfiguration.self, from: json)
+        
+        XCTAssertEqual(config.pushedAuthorizationRequestEndpoint, "https://auth.example.com/par")
+        XCTAssertEqual(config.authorizationEndpoint, "https://auth.example.com/authorize")
+    }
+    
+    func testDecodingWithoutPAREndpointDefaultsToNil() throws {
+        let json = """
+        {
+            "authorization_endpoint": "https://auth.example.com/authorize",
+            "token_endpoint": "https://auth.example.com/token",
+            "userinfo_endpoint": "https://auth.example.com/userinfo",
+            "end_session_endpoint": "https://auth.example.com/logout",
+            "revocation_endpoint": "https://auth.example.com/revoke"
+        }
+        """.data(using: .utf8)!
+        
+        let config = try JSONDecoder().decode(OpenIdConfiguration.self, from: json)
+        
+        XCTAssertNil(config.pushedAuthorizationRequestEndpoint)
+    }
+    
+    func testPAREndpointSurvivesEncodeDecode() throws {
+        let json = """
+        {
+            "authorization_endpoint": "https://auth.example.com/authorize",
+            "token_endpoint": "https://auth.example.com/token",
+            "userinfo_endpoint": "https://auth.example.com/userinfo",
+            "end_session_endpoint": "https://auth.example.com/logout",
+            "revocation_endpoint": "https://auth.example.com/revoke",
+            "pushed_authorization_request_endpoint": "https://auth.example.com/par"
+        }
+        """.data(using: .utf8)!
+        
+        let config = try JSONDecoder().decode(OpenIdConfiguration.self, from: json)
+        let encoded = try JSONEncoder().encode(config)
+        let decoded = try JSONDecoder().decode(OpenIdConfiguration.self, from: encoded)
+        
+        XCTAssertEqual(decoded.pushedAuthorizationRequestEndpoint, "https://auth.example.com/par")
+    }
+    
+    func testExplicitInitWithPAREndpoint() {
+        let config = OpenIdConfiguration(
+            authorizationEndpoint: "https://auth.example.com/authorize",
+            tokenEndpoint: "https://auth.example.com/token",
+            userinfoEndpoint: "https://auth.example.com/userinfo",
+            endSessionEndpoint: "https://auth.example.com/logout",
+            revocationEndpoint: "https://auth.example.com/revoke",
+            pushedAuthorizationRequestEndpoint: "https://auth.example.com/par"
+        )
+        
+        XCTAssertEqual(config.pushedAuthorizationRequestEndpoint, "https://auth.example.com/par")
+    }
+    
+    func testExplicitInitWithoutPAREndpointDefaultsToNil() {
+        let config = OpenIdConfiguration(
+            authorizationEndpoint: "https://auth.example.com/authorize",
+            tokenEndpoint: "https://auth.example.com/token",
+            userinfoEndpoint: "https://auth.example.com/userinfo",
+            endSessionEndpoint: "https://auth.example.com/logout",
+            revocationEndpoint: "https://auth.example.com/revoke"
+        )
+        
+        XCTAssertNil(config.pushedAuthorizationRequestEndpoint)
+    }
 }
 
 // MARK: - DefaultAgent Tests

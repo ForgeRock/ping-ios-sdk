@@ -51,7 +51,7 @@ public class OidcModule {
             let url = URL(string: config.redirectUri)
             context.flowContext.set(key: SharedContext.Keys.callbackURLSchemeKey, value: url?.scheme ?? "https")
                 
-            let oidcRequest = config.populateRequest(request: request, pkce: pkce, responseMode: "")
+            let oidcRequest = try await config.populateRequest(request: request, pkce: pkce, responseMode: "")
             
             let parameters = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcParameters) as? [String: String] ?? [:]
             for parameter in parameters {

@@ -53,6 +53,7 @@ final class OidcClientConfigTests: XCTestCase {
         XCTAssertNil(oidcClientConfig.uiLocales)
         XCTAssertNil(oidcClientConfig.acrValues)
         XCTAssertTrue(oidcClientConfig.additionalParameters.isEmpty)
+        XCTAssertFalse(oidcClientConfig.par)
         XCTAssertNil(oidcClientConfig.httpClient)
     }
     
@@ -121,6 +122,7 @@ final class OidcClientConfigTests: XCTestCase {
         oidcClientConfig.acrValues = "acrValues"
         oidcClientConfig.additionalParameters = ["param": "value"]
         oidcClientConfig.httpClient = MockURLProtocol.makeClient()
+        oidcClientConfig.par = true
         
         let clonedConfig = oidcClientConfig.clone()
         
@@ -139,6 +141,7 @@ final class OidcClientConfigTests: XCTestCase {
         XCTAssertEqual(oidcClientConfig.acrValues, clonedConfig.acrValues)
         XCTAssertEqual(oidcClientConfig.additionalParameters, clonedConfig.additionalParameters)
         XCTAssertEqual(oidcClientConfig.httpClient.debugDescription, clonedConfig.httpClient.debugDescription)
+        XCTAssertEqual(oidcClientConfig.par, clonedConfig.par)
     }
     
     // TestRailCase(24719)
@@ -159,6 +162,7 @@ final class OidcClientConfigTests: XCTestCase {
         otherConfig.acrValues = "acrValues"
         otherConfig.additionalParameters = ["param": "value"]
         otherConfig.httpClient = MockURLProtocol.makeClient()
+        otherConfig.par = true
         
         oidcClientConfig.update(with: otherConfig)
         
@@ -176,6 +180,7 @@ final class OidcClientConfigTests: XCTestCase {
         XCTAssertEqual(otherConfig.acrValues, oidcClientConfig.acrValues)
         XCTAssertEqual(otherConfig.additionalParameters, oidcClientConfig.additionalParameters)
         XCTAssertEqual(otherConfig.httpClient.debugDescription, oidcClientConfig.httpClient.debugDescription)
+        XCTAssertEqual(otherConfig.par, oidcClientConfig.par)
     }
 }
 

@@ -210,6 +210,7 @@ class ConfigurationManager: ObservableObject {
                 oidcValue.discoveryEndpoint = config.discoveryEndpoint
                 oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_JOURNEY")
                 oidcValue.logger = LogManager.standard
+                oidcValue.par = config.par ?? false
             }
         }
     }
@@ -224,6 +225,7 @@ class ConfigurationManager: ObservableObject {
                 oidcValue.discoveryEndpoint = config.discoveryEndpoint
                 oidcValue.acrValues = config.acrValues ?? ""
                 oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_DAVINCI")
+                oidcValue.par = config.par ?? false
             }
         }
     }
@@ -240,6 +242,7 @@ class ConfigurationManager: ObservableObject {
                 oidcValue.discoveryEndpoint = config.discoveryEndpoint
                 oidcValue.acrValues = config.acrValues ?? ""
                 oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_OIDCWEB")
+                oidcValue.par = config.par ?? false
             }
         }
     }

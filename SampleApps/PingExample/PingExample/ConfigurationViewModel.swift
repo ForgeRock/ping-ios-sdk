@@ -32,6 +32,8 @@ struct Configuration: Codable, Sendable {
     var serverUrl: String?
     var realm: String?
     var acrValues: String?
+    /// Enable PAR (Pushed Authorization Request) RFC 9126.
+    var par: Bool?
     
     /// Whether this configuration is a bundled default (immutable in the UI).
     var isDefault: Bool {
