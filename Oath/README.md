@@ -27,7 +27,7 @@ Add PingOath to your `Package.swift` file:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/pingidentity/ping-ios-sdk", from: "<version>")
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk", from: "<version>")
 ]
 ```
 
@@ -223,4 +223,4 @@ do {
 
 This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
-© Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
+© Copyright 2025-2026 Ping Identity Corporation. All rights reserved.

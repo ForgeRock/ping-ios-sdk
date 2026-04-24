@@ -80,4 +80,4 @@ The `PingDavinciPlugin` module consists of several key files that define its cor
 
 This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
-© Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
+© Copyright 2025-2026 Ping Identity Corporation. All rights reserved.
