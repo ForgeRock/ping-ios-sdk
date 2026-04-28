@@ -418,4 +418,92 @@ final class OidcClientPARTests: XCTestCase {
         XCTAssertFalse(authorizeUrl.contains("login_hint="), "Authorize URL should NOT contain login_hint when PAR is used")
         XCTAssertFalse(authorizeUrl.contains("nonce="), "Authorize URL should NOT contain nonce when PAR is used")
     }
+    
+    // MARK: - state parameter behavior
+    
+    /// Standard (non-PAR) flow: `state` must be present on the authorize URL,
+    /// defaulting to the PKCE-generated state when the integrator did not set
+    /// `OidcClientConfig.state` explicitly.
+    func testStandardFlowAlwaysSendsStateDefaultingToPkceState() async throws {
+        MockURLProtocol.requestHandler = { request in
+            switch request.url!.path {
+            case MockAPIEndpoint.discovery.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.openIdConfigurationWithPAR)
+            default:
+                XCTFail("Unexpected request: \(request.url!.path)")
+                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+            }
+        }
+        
+        try await oidcClientConfig.oidcInitialize()
+        
+        let pkce = Pkce.generate()
+        let httpClient = oidcClientConfig.httpClient!
+        var request = httpClient.request()
+        request = try await oidcClientConfig.populateRequest(request: request, pkce: pkce, responseMode: "pi.flow")
+        
+        let authorizeUrl = request.url!
+        XCTAssertTrue(authorizeUrl.contains("state=\(pkce.state)"), "Authorize URL should contain state=<pkce.state>")
+    }
+    
+    /// Standard (non-PAR) flow: an integrator-supplied `OidcClientConfig.state`
+    /// takes precedence over `pkce.state`.
+    func testStandardFlowConfigStateOverridesPkceState() async throws {
+        oidcClientConfig.state = "integrator-state"
+        
+        MockURLProtocol.requestHandler = { request in
+            switch request.url!.path {
+            case MockAPIEndpoint.discovery.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.openIdConfigurationWithPAR)
+            default:
+                XCTFail("Unexpected request: \(request.url!.path)")
+                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+            }
+        }
+        
+        try await oidcClientConfig.oidcInitialize()
+        
+        let pkce = Pkce.generate()
+        let httpClient = oidcClientConfig.httpClient!
+        var request = httpClient.request()
+        request = try await oidcClientConfig.populateRequest(request: request, pkce: pkce, responseMode: "pi.flow")
+        
+        let authorizeUrl = request.url!
+        XCTAssertTrue(authorizeUrl.contains("state=integrator-state"), "Authorize URL should use integrator-supplied state")
+        XCTAssertFalse(authorizeUrl.contains("state=\(pkce.state)"), "Authorize URL should NOT fall back to pkce.state when config.state is set")
+    }
+    
+    /// PAR flow: `state` must be present in the PAR POST body, defaulting to
+    /// the PKCE-generated state.
+    func testPARFlowSendsStateInPARBodyDefaultingToPkceState() async throws {
+        oidcClientConfig.par = true
+        
+        MockURLProtocol.requestHandler = { request in
+            switch request.url!.path {
+            case MockAPIEndpoint.discovery.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.openIdConfigurationWithPAR)
+            case OidcClientPARTests.parEndpointURL.path:
+                return (HTTPURLResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.parResponse)
+            default:
+                XCTFail("Unexpected request: \(request.url!.path)")
+                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+            }
+        }
+        
+        try await oidcClientConfig.oidcInitialize()
+        
+        let pkce = Pkce.generate()
+        let httpClient = oidcClientConfig.httpClient!
+        var request = httpClient.request()
+        request = try await oidcClientConfig.populateRequest(request: request, pkce: pkce, responseMode: "pi.flow")
+        
+        let parRequest = MockURLProtocol.requestHistory[1]
+        let parBody = String(data: bodyData(from: parRequest), encoding: .utf8) ?? ""
+        XCTAssertTrue(parBody.contains("state=\(pkce.state)"), "PAR body should contain state=<pkce.state>")
+        
+        // The authorize URL after PAR carries only request_uri/client_id/response_mode,
+        // so state should NOT leak into it.
+        let authorizeUrl = request.url!
+        XCTAssertFalse(authorizeUrl.contains("state="), "Authorize URL should NOT contain state when PAR is used")
+    }
 }

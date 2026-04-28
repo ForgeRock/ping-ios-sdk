@@ -369,9 +369,11 @@ extension OidcClientConfig {
             onParam(OidcClient.Constants.login_hint, loginHint)
         }
         
-        if let state = state {
-            onParam("state", state)
-        }
+        // Always emit `state`. Prefer the integrator-supplied value on
+        // `OidcClientConfig.state`; otherwise fall back to the PKCE-generated
+        // state so the parameter is present for CSRF protection on
+        // redirect-based flows and remains available to server-side policies.
+        onParam(OidcClient.Constants.state, self.state ?? pkce.state)
         
         if let nonce = nonce {
             onParam(OidcClient.Constants.nonce, nonce)
@@ -485,6 +487,7 @@ extension OidcClient.Constants {
     static let prompt = "prompt"
     static let ui_locales = "ui_locales"
     static let login_hint = "login_hint"
+    static let state = "state"
     static let piflow = "pi.flow"
     static let query = "query"
 }

@@ -15,27 +15,13 @@ import PingOrchestrate
 import PingNetwork
 
 extension OidcClientConfig {
-    /// Populates a DaVinci authorization request (synchronous, non-PAR).
-    /// Kept for backwards compatibility.
-    internal func populateRequest(
-        request: Request,
-        pkce: Pkce
-    ) -> Request {
-        let request = request
-        request.url = openId?.authorizationEndpoint ?? ""
-        request.setParameter(name: OidcClient.Constants.response_mode, value: OidcClient.Constants.piflow)
-        buildAuthorizeParams(pkce: pkce) { key, value in
-            request.setParameter(name: key, value: value)
-        }
-        return request
-    }
-    
-    /// Populates a DaVinci authorization request handling both standard and PAR (RFC 9126) flows.
+    /// Populates a DaVinci authorization request, handling both standard and
+    /// PAR (RFC 9126) flows. Delegates to the shared async `populateRequest`
+    /// in `PingOidc` with the DaVinci-specific `pi.flow` response mode.
     internal func populateRequest(
         request: Request,
         pkce: Pkce
     ) async throws -> Request {
-        // Delegate to the shared async populateRequest with pi.flow response mode
         return try await populateRequest(request: request, pkce: pkce, responseMode: OidcClient.Constants.piflow)
     }
 }
