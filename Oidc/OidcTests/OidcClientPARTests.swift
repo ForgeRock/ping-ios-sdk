@@ -90,6 +90,21 @@ final class OidcClientPARTests: XCTestCase {
         super.tearDown()
     }
     
+    /// Creates an `HTTPURLResponse` or throws, replacing force-unwrap (`!`) in mock handlers.
+    private func mockResponse(url: URL, statusCode: Int, headers: [String: String]? = nil) throws -> HTTPURLResponse {
+        guard let response = HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: headers) else {
+            throw URLError(.badServerResponse)
+        }
+        return response
+    }
+    
+    /// Returns a 500 response for an unexpected request URL, falling back to the discovery URL
+    /// when the inbound request has no URL.
+    private func unexpectedResponse(for request: URLRequest) throws -> (HTTPURLResponse, Data) {
+        XCTFail("Unexpected request: \(request.url?.path ?? "<no url>")")
+        return (try mockResponse(url: request.url ?? MockAPIEndpoint.discovery.url, statusCode: 500), Data())
+    }
+    
     // MARK: - populateRequest Tests
     
     func testPopulateRequestWithPAREnabled() async throws {
@@ -97,15 +112,14 @@ final class OidcClientPARTests: XCTestCase {
         oidcClientConfig.par = true
         
         // Set up mock handler
-        MockURLProtocol.requestHandler = { request in
-            switch request.url!.path {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
             case MockAPIEndpoint.discovery.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.openIdConfigurationWithPAR)
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
             case OidcClientPARTests.parEndpointURL.path:
-                return (HTTPURLResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.parResponse)
+                return (try mockResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, headers: MockResponse.headers), OidcClientPARTests.parResponse)
             default:
-                XCTFail("Unexpected request: \(request.url!.path)")
-                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+                return try unexpectedResponse(for: request)
             }
         }
         
@@ -113,7 +127,7 @@ final class OidcClientPARTests: XCTestCase {
         try await oidcClientConfig.oidcInitialize()
         
         let pkce = Pkce.generate()
-        let httpClient = oidcClientConfig.httpClient!
+        let httpClient = try XCTUnwrap(oidcClientConfig.httpClient, "HTTP client should be configured")
         var request = httpClient.request()
         
         request = try await oidcClientConfig.populateRequest(request: request, pkce: pkce, responseMode: "pi.flow")
@@ -122,7 +136,8 @@ final class OidcClientPARTests: XCTestCase {
         XCTAssertEqual(MockURLProtocol.requestHistory.count, 2)
         
         let parRequest = MockURLProtocol.requestHistory[1]
-        XCTAssertEqual(parRequest.url!.path, "/par")
+        let parUrl = try XCTUnwrap(parRequest.url, "PAR request should have a URL")
+        XCTAssertEqual(parUrl.path, "/par")
         XCTAssertEqual(parRequest.httpMethod, "POST")
         
         // Verify PAR POST body contains the expected form parameters
@@ -135,7 +150,7 @@ final class OidcClientPARTests: XCTestCase {
         XCTAssertTrue(parBody.contains("response_mode=pi.flow"), "PAR body should contain response_mode")
         
         // Verify the resulting authorize request URL uses request_uri (not full params)
-        let authorizeUrl = request.url!
+        let authorizeUrl = try XCTUnwrap(request.url, "Populated request should have a URL")
         XCTAssertTrue(authorizeUrl.contains(MockAPIEndpoint.authorization.url.absoluteString), "Authorize URL should point to authorization endpoint")
         XCTAssertTrue(authorizeUrl.contains("request_uri="), "Authorize URL should contain request_uri parameter")
         XCTAssertTrue(authorizeUrl.contains("client_id=test-client"), "Authorize URL should contain client_id")
@@ -151,20 +166,19 @@ final class OidcClientPARTests: XCTestCase {
         // PAR is disabled by default
         XCTAssertFalse(oidcClientConfig.par)
         
-        MockURLProtocol.requestHandler = { request in
-            switch request.url!.path {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
             case MockAPIEndpoint.discovery.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.openIdConfigurationWithPAR)
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
             default:
-                XCTFail("Unexpected request: \(request.url!.path)")
-                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+                return try unexpectedResponse(for: request)
             }
         }
         
         try await oidcClientConfig.oidcInitialize()
         
         let pkce = Pkce.generate()
-        let httpClient = oidcClientConfig.httpClient!
+        let httpClient = try XCTUnwrap(oidcClientConfig.httpClient, "HTTP client should be configured")
         var request = httpClient.request()
         
         request = try await oidcClientConfig.populateRequest(request: request, pkce: pkce, responseMode: "pi.flow")
@@ -173,7 +187,7 @@ final class OidcClientPARTests: XCTestCase {
         XCTAssertEqual(MockURLProtocol.requestHistory.count, 1)
         
         // Verify the authorize URL contains full OIDC params (standard flow)
-        let authorizeUrl = request.url!
+        let authorizeUrl = try XCTUnwrap(request.url, "Populated request should have a URL")
         XCTAssertTrue(authorizeUrl.contains("client_id=test-client"))
         XCTAssertTrue(authorizeUrl.contains("response_type=code"))
         XCTAssertTrue(authorizeUrl.contains("code_challenge="))
@@ -185,22 +199,21 @@ final class OidcClientPARTests: XCTestCase {
     func testPopulateRequestPARWithEmptyResponseMode() async throws {
         oidcClientConfig.par = true
         
-        MockURLProtocol.requestHandler = { request in
-            switch request.url!.path {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
             case MockAPIEndpoint.discovery.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.openIdConfigurationWithPAR)
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
             case OidcClientPARTests.parEndpointURL.path:
-                return (HTTPURLResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.parResponse)
+                return (try mockResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, headers: MockResponse.headers), OidcClientPARTests.parResponse)
             default:
-                XCTFail("Unexpected request: \(request.url!.path)")
-                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+                return try unexpectedResponse(for: request)
             }
         }
         
         try await oidcClientConfig.oidcInitialize()
         
         let pkce = Pkce.generate()
-        let httpClient = oidcClientConfig.httpClient!
+        let httpClient = try XCTUnwrap(oidcClientConfig.httpClient, "HTTP client should be configured")
         var request = httpClient.request()
         
         // Empty responseMode (as used by Journey)
@@ -212,7 +225,7 @@ final class OidcClientPARTests: XCTestCase {
         XCTAssertFalse(parBody.contains("response_mode"), "PAR body should NOT contain response_mode when empty")
         
         // Verify authorize URL does NOT contain response_mode when empty
-        let authorizeUrl = request.url!
+        let authorizeUrl = try XCTUnwrap(request.url, "Populated request should have a URL")
         XCTAssertFalse(authorizeUrl.contains("response_mode"), "Authorize URL should NOT contain response_mode when empty")
         XCTAssertTrue(authorizeUrl.contains("request_uri="), "Authorize URL should contain request_uri")
     }
@@ -220,26 +233,25 @@ final class OidcClientPARTests: XCTestCase {
     func testPopulateRequestPARFailure() async throws {
         oidcClientConfig.par = true
         
-        MockURLProtocol.requestHandler = { request in
-            switch request.url!.path {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
             case MockAPIEndpoint.discovery.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.openIdConfigurationWithPAR)
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
             case OidcClientPARTests.parEndpointURL.path:
                 // PAR endpoint returns 400 error
-                let errorResponse = """
+                let errorResponse = Data("""
                 {"error": "invalid_request", "error_description": "Invalid client"}
-                """.data(using: .utf8)!
-                return (HTTPURLResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 400, httpVersion: nil, headerFields: MockResponse.headers)!, errorResponse)
+                """.utf8)
+                return (try mockResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 400, headers: MockResponse.headers), errorResponse)
             default:
-                XCTFail("Unexpected request: \(request.url!.path)")
-                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+                return try unexpectedResponse(for: request)
             }
         }
         
         try await oidcClientConfig.oidcInitialize()
         
         let pkce = Pkce.generate()
-        let httpClient = oidcClientConfig.httpClient!
+        let httpClient = try XCTUnwrap(oidcClientConfig.httpClient, "HTTP client should be configured")
         var request = httpClient.request()
         
         do {
@@ -258,26 +270,25 @@ final class OidcClientPARTests: XCTestCase {
     func testPopulateRequestPARMissingRequestUri() async throws {
         oidcClientConfig.par = true
         
-        MockURLProtocol.requestHandler = { request in
-            switch request.url!.path {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
             case MockAPIEndpoint.discovery.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.openIdConfigurationWithPAR)
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
             case OidcClientPARTests.parEndpointURL.path:
                 // PAR endpoint returns 200 but without request_uri
-                let badResponse = """
+                let badResponse = Data("""
                 {"expires_in": 60}
-                """.data(using: .utf8)!
-                return (HTTPURLResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, badResponse)
+                """.utf8)
+                return (try mockResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 200, headers: MockResponse.headers), badResponse)
             default:
-                XCTFail("Unexpected request: \(request.url!.path)")
-                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+                return try unexpectedResponse(for: request)
             }
         }
         
         try await oidcClientConfig.oidcInitialize()
         
         let pkce = Pkce.generate()
-        let httpClient = oidcClientConfig.httpClient!
+        let httpClient = try XCTUnwrap(oidcClientConfig.httpClient, "HTTP client should be configured")
         var request = httpClient.request()
         
         do {
@@ -296,21 +307,20 @@ final class OidcClientPARTests: XCTestCase {
         // PAR is enabled but discovery does NOT include PAR endpoint
         oidcClientConfig.par = true
         
-        MockURLProtocol.requestHandler = { request in
-            switch request.url!.path {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
             case MockAPIEndpoint.discovery.url.path:
                 // Standard discovery without PAR endpoint
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfiguration)
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), MockResponse.openIdConfiguration)
             default:
-                XCTFail("Unexpected request: \(request.url!.path)")
-                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+                return try unexpectedResponse(for: request)
             }
         }
         
         try await oidcClientConfig.oidcInitialize()
         
         let pkce = Pkce.generate()
-        let httpClient = oidcClientConfig.httpClient!
+        let httpClient = try XCTUnwrap(oidcClientConfig.httpClient, "HTTP client should be configured")
         var request = httpClient.request()
         
         request = try await oidcClientConfig.populateRequest(request: request, pkce: pkce, responseMode: "pi.flow")
@@ -319,7 +329,7 @@ final class OidcClientPARTests: XCTestCase {
         XCTAssertEqual(MockURLProtocol.requestHistory.count, 1)
         
         // Falls back to standard flow
-        let authorizeUrl = request.url!
+        let authorizeUrl = try XCTUnwrap(request.url, "Populated request should have a URL")
         XCTAssertTrue(authorizeUrl.contains("client_id=test-client"))
         XCTAssertTrue(authorizeUrl.contains("response_type=code"))
         XCTAssertTrue(authorizeUrl.contains("code_challenge="))
@@ -331,15 +341,14 @@ final class OidcClientPARTests: XCTestCase {
     func testGenerateAuthorizeUrlWithPAR() async throws {
         oidcClientConfig.par = true
         
-        MockURLProtocol.requestHandler = { request in
-            switch request.url!.path {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
             case MockAPIEndpoint.discovery.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.openIdConfigurationWithPAR)
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
             case OidcClientPARTests.parEndpointURL.path:
-                return (HTTPURLResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.parResponse)
+                return (try mockResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, headers: MockResponse.headers), OidcClientPARTests.parResponse)
             default:
-                XCTFail("Unexpected request: \(request.url!.path)")
-                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+                return try unexpectedResponse(for: request)
             }
         }
         
@@ -357,15 +366,14 @@ final class OidcClientPARTests: XCTestCase {
     func testGenerateAuthorizeUrlWithPARAndCustomParams() async throws {
         oidcClientConfig.par = true
         
-        MockURLProtocol.requestHandler = { request in
-            switch request.url!.path {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
             case MockAPIEndpoint.discovery.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.openIdConfigurationWithPAR)
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
             case OidcClientPARTests.parEndpointURL.path:
-                return (HTTPURLResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.parResponse)
+                return (try mockResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, headers: MockResponse.headers), OidcClientPARTests.parResponse)
             default:
-                XCTFail("Unexpected request: \(request.url!.path)")
-                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+                return try unexpectedResponse(for: request)
             }
         }
         
@@ -385,22 +393,21 @@ final class OidcClientPARTests: XCTestCase {
         oidcClientConfig.loginHint = "user@example.com"
         oidcClientConfig.nonce = "test-nonce"
         
-        MockURLProtocol.requestHandler = { request in
-            switch request.url!.path {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
             case MockAPIEndpoint.discovery.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.openIdConfigurationWithPAR)
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
             case OidcClientPARTests.parEndpointURL.path:
-                return (HTTPURLResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.parResponse)
+                return (try mockResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, headers: MockResponse.headers), OidcClientPARTests.parResponse)
             default:
-                XCTFail("Unexpected request: \(request.url!.path)")
-                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+                return try unexpectedResponse(for: request)
             }
         }
         
         try await oidcClientConfig.oidcInitialize()
         
         let pkce = Pkce.generate()
-        let httpClient = oidcClientConfig.httpClient!
+        let httpClient = try XCTUnwrap(oidcClientConfig.httpClient, "HTTP client should be configured")
         var request = httpClient.request()
         
         request = try await oidcClientConfig.populateRequest(request: request, pkce: pkce, responseMode: "pi.flow")
@@ -413,7 +420,7 @@ final class OidcClientPARTests: XCTestCase {
         XCTAssertTrue(parBody.contains("nonce=test-nonce"), "PAR body should contain nonce")
         
         // Verify the authorize URL only has the minimal params
-        let authorizeUrl = request.url!
+        let authorizeUrl = try XCTUnwrap(request.url, "Populated request should have a URL")
         XCTAssertFalse(authorizeUrl.contains("acr_values="), "Authorize URL should NOT contain acr_values when PAR is used")
         XCTAssertFalse(authorizeUrl.contains("login_hint="), "Authorize URL should NOT contain login_hint when PAR is used")
         XCTAssertFalse(authorizeUrl.contains("nonce="), "Authorize URL should NOT contain nonce when PAR is used")
@@ -425,24 +432,23 @@ final class OidcClientPARTests: XCTestCase {
     /// defaulting to the PKCE-generated state when the integrator did not set
     /// `OidcClientConfig.state` explicitly.
     func testStandardFlowAlwaysSendsStateDefaultingToPkceState() async throws {
-        MockURLProtocol.requestHandler = { request in
-            switch request.url!.path {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
             case MockAPIEndpoint.discovery.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.openIdConfigurationWithPAR)
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
             default:
-                XCTFail("Unexpected request: \(request.url!.path)")
-                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+                return try unexpectedResponse(for: request)
             }
         }
         
         try await oidcClientConfig.oidcInitialize()
         
         let pkce = Pkce.generate()
-        let httpClient = oidcClientConfig.httpClient!
+        let httpClient = try XCTUnwrap(oidcClientConfig.httpClient, "HTTP client should be configured")
         var request = httpClient.request()
         request = try await oidcClientConfig.populateRequest(request: request, pkce: pkce, responseMode: "pi.flow")
         
-        let authorizeUrl = request.url!
+        let authorizeUrl = try XCTUnwrap(request.url, "Populated request should have a URL")
         XCTAssertTrue(authorizeUrl.contains("state=\(pkce.state)"), "Authorize URL should contain state=<pkce.state>")
     }
     
@@ -451,24 +457,23 @@ final class OidcClientPARTests: XCTestCase {
     func testStandardFlowConfigStateOverridesPkceState() async throws {
         oidcClientConfig.state = "integrator-state"
         
-        MockURLProtocol.requestHandler = { request in
-            switch request.url!.path {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
             case MockAPIEndpoint.discovery.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.openIdConfigurationWithPAR)
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
             default:
-                XCTFail("Unexpected request: \(request.url!.path)")
-                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+                return try unexpectedResponse(for: request)
             }
         }
         
         try await oidcClientConfig.oidcInitialize()
         
         let pkce = Pkce.generate()
-        let httpClient = oidcClientConfig.httpClient!
+        let httpClient = try XCTUnwrap(oidcClientConfig.httpClient, "HTTP client should be configured")
         var request = httpClient.request()
         request = try await oidcClientConfig.populateRequest(request: request, pkce: pkce, responseMode: "pi.flow")
         
-        let authorizeUrl = request.url!
+        let authorizeUrl = try XCTUnwrap(request.url, "Populated request should have a URL")
         XCTAssertTrue(authorizeUrl.contains("state=integrator-state"), "Authorize URL should use integrator-supplied state")
         XCTAssertFalse(authorizeUrl.contains("state=\(pkce.state)"), "Authorize URL should NOT fall back to pkce.state when config.state is set")
     }
@@ -478,22 +483,21 @@ final class OidcClientPARTests: XCTestCase {
     func testPARFlowSendsStateInPARBodyDefaultingToPkceState() async throws {
         oidcClientConfig.par = true
         
-        MockURLProtocol.requestHandler = { request in
-            switch request.url!.path {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
             case MockAPIEndpoint.discovery.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.openIdConfigurationWithPAR)
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
             case OidcClientPARTests.parEndpointURL.path:
-                return (HTTPURLResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, httpVersion: nil, headerFields: MockResponse.headers)!, OidcClientPARTests.parResponse)
+                return (try mockResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, headers: MockResponse.headers), OidcClientPARTests.parResponse)
             default:
-                XCTFail("Unexpected request: \(request.url!.path)")
-                return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+                return try unexpectedResponse(for: request)
             }
         }
         
         try await oidcClientConfig.oidcInitialize()
         
         let pkce = Pkce.generate()
-        let httpClient = oidcClientConfig.httpClient!
+        let httpClient = try XCTUnwrap(oidcClientConfig.httpClient, "HTTP client should be configured")
         var request = httpClient.request()
         request = try await oidcClientConfig.populateRequest(request: request, pkce: pkce, responseMode: "pi.flow")
         
@@ -503,7 +507,7 @@ final class OidcClientPARTests: XCTestCase {
         
         // The authorize URL after PAR carries only request_uri/client_id/response_mode,
         // so state should NOT leak into it.
-        let authorizeUrl = request.url!
+        let authorizeUrl = try XCTUnwrap(request.url, "Populated request should have a URL")
         XCTAssertFalse(authorizeUrl.contains("state="), "Authorize URL should NOT contain state when PAR is used")
     }
 }

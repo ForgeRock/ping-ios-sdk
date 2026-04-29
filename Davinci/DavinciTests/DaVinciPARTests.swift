@@ -72,7 +72,8 @@ final class DaVinciPARTests: XCTestCase, @unchecked Sendable {
     
     func testDaVinciPARHappyPath() async throws {
         MockURLProtocol.requestHandler = { [self] request in
-            switch request.url!.path {
+            let path = request.url?.path ?? ""
+            switch path {
             case MockAPIEndpoint.discovery.url.path:
                 return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), MockResponse.openIdConfigurationWithPARResponse)
             case MockAPIEndpoint.par.url.path:
@@ -110,14 +111,15 @@ final class DaVinciPARTests: XCTestCase, @unchecked Sendable {
         }
         
         var node = await daVinci.start()
-        XCTAssertTrue(node is ContinueNode, "Expected ContinueNode, got \(type(of: node))")
+        let continueNode = try XCTUnwrap(node as? ContinueNode, "Expected ContinueNode, got \(type(of: node))")
         
         // Verify request sequence: [0]=discovery, [1]=PAR POST, [2]=authorize
         XCTAssertGreaterThanOrEqual(MockURLProtocol.requestHistory.count, 3)
         
         // Verify PAR request
         let parRequest = MockURLProtocol.requestHistory[1]
-        XCTAssertEqual(parRequest.url!.path, "/par")
+        let parUrl = try XCTUnwrap(parRequest.url, "PAR request should have a URL")
+        XCTAssertEqual(parUrl.path, "/par")
         XCTAssertEqual(parRequest.httpMethod, "POST")
         
         // Verify PAR POST body contains expected OIDC params
@@ -130,31 +132,31 @@ final class DaVinciPARTests: XCTestCase, @unchecked Sendable {
         
         // Verify authorize request uses request_uri
         let authorizeReq = MockURLProtocol.requestHistory[2]
-        XCTAssertTrue(authorizeReq.url!.query?.contains("request_uri=") ?? false, "Authorize URL should contain request_uri")
-        XCTAssertTrue(authorizeReq.url!.query?.contains("client_id=test") ?? false, "Authorize URL should contain client_id")
-        XCTAssertTrue(authorizeReq.url!.query?.contains("response_mode=pi.flow") ?? false, "Authorize URL should contain response_mode")
+        let authorizeUrl = try XCTUnwrap(authorizeReq.url, "Authorize request should have a URL")
+        let authorizeQuery = authorizeUrl.query ?? ""
+        XCTAssertTrue(authorizeQuery.contains("request_uri="), "Authorize URL should contain request_uri")
+        XCTAssertTrue(authorizeQuery.contains("client_id=test"), "Authorize URL should contain client_id")
+        XCTAssertTrue(authorizeQuery.contains("response_mode=pi.flow"), "Authorize URL should contain response_mode")
         
         // Verify authorize URL does NOT contain full OIDC params
-        XCTAssertFalse(authorizeReq.url!.query?.contains("code_challenge=") ?? true, "Authorize URL should NOT contain code_challenge when PAR is used")
-        XCTAssertFalse(authorizeReq.url!.query?.contains("response_type=") ?? true, "Authorize URL should NOT contain response_type when PAR is used")
+        XCTAssertFalse(authorizeQuery.contains("code_challenge="), "Authorize URL should NOT contain code_challenge when PAR is used")
+        XCTAssertFalse(authorizeQuery.contains("response_type="), "Authorize URL should NOT contain response_type when PAR is used")
         
         // Complete the flow
-        let continueNode = node as! ContinueNode
         (continueNode.collectors[0] as? TextCollector)?.value = "My First Name"
         (continueNode.collectors[1] as? PasswordCollector)?.value = "My Password"
         (continueNode.collectors[2] as? SubmitCollector)?.value = "click me"
         
         node = await continueNode.next()
-        XCTAssertTrue(node is SuccessNode, "Expected SuccessNode, got \(type(of: node))")
+        let successNode = try XCTUnwrap(node as? SuccessNode, "Expected SuccessNode, got \(type(of: node))")
         
-        let successNode = node as! SuccessNode
-        let user = successNode.user
-        let userToken = await user?.token()
-        switch userToken! {
+        let user = try XCTUnwrap(successNode.user, "SuccessNode should have a user")
+        let userToken = await user.token()
+        switch userToken {
         case .success(let token):
             XCTAssertEqual(token.accessToken, "Dummy AccessToken")
-        case .failure(_):
-            XCTFail("Should have succeeded")
+        case .failure(let error):
+            XCTFail("Should have succeeded, got error: \(error)")
         }
     }
     
@@ -162,7 +164,8 @@ final class DaVinciPARTests: XCTestCase, @unchecked Sendable {
     
     func testDaVinciWithoutPAR() async throws {
         MockURLProtocol.requestHandler = { [self] request in
-            switch request.url!.path {
+            let path = request.url?.path ?? ""
+            switch path {
             case MockAPIEndpoint.discovery.url.path:
                 return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), MockResponse.openIdConfigurationWithPARResponse)
             case MockAPIEndpoint.token.url.path:
@@ -196,21 +199,21 @@ final class DaVinciPARTests: XCTestCase, @unchecked Sendable {
         }
         
         var node = await daVinci.start()
-        XCTAssertTrue(node is ContinueNode, "Expected ContinueNode, got \(type(of: node))")
+        let continueNode = try XCTUnwrap(node as? ContinueNode, "Expected ContinueNode, got \(type(of: node))")
         
         // Verify request sequence: [0]=discovery, [1]=authorize (NO PAR request)
         XCTAssertEqual(MockURLProtocol.requestHistory.count, 2)
         
         // Verify authorize request has full OIDC params (standard flow)
         let authorizeReq = MockURLProtocol.requestHistory[1]
-        XCTAssertTrue(authorizeReq.url!.query?.contains("client_id=test") ?? false)
-        XCTAssertTrue(authorizeReq.url!.query?.contains("response_mode=pi.flow") ?? false)
-        XCTAssertTrue(authorizeReq.url!.query?.contains("code_challenge=") ?? false)
-        XCTAssertTrue(authorizeReq.url!.query?.contains("code_challenge_method=S256") ?? false)
-        XCTAssertFalse(authorizeReq.url!.query?.contains("request_uri=") ?? true, "Standard flow should NOT use request_uri")
+        let authorizeQuery = try XCTUnwrap(authorizeReq.url?.query, "Authorize request should have a query string")
+        XCTAssertTrue(authorizeQuery.contains("client_id=test"))
+        XCTAssertTrue(authorizeQuery.contains("response_mode=pi.flow"))
+        XCTAssertTrue(authorizeQuery.contains("code_challenge="))
+        XCTAssertTrue(authorizeQuery.contains("code_challenge_method=S256"))
+        XCTAssertFalse(authorizeQuery.contains("request_uri="), "Standard flow should NOT use request_uri")
         
         // Complete the flow
-        let continueNode = node as! ContinueNode
         (continueNode.collectors[0] as? TextCollector)?.value = "My First Name"
         (continueNode.collectors[1] as? PasswordCollector)?.value = "My Password"
         (continueNode.collectors[2] as? SubmitCollector)?.value = "click me"
@@ -223,7 +226,8 @@ final class DaVinciPARTests: XCTestCase, @unchecked Sendable {
     
     func testDaVinciPARWithAdditionalOidcParameters() async throws {
         MockURLProtocol.requestHandler = { [self] request in
-            switch request.url!.path {
+            let path = request.url?.path ?? ""
+            switch path {
             case MockAPIEndpoint.discovery.url.path:
                 return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), MockResponse.openIdConfigurationWithPARResponse)
             case MockAPIEndpoint.par.url.path:
@@ -273,8 +277,9 @@ final class DaVinciPARTests: XCTestCase, @unchecked Sendable {
         
         // Verify authorize URL does NOT contain these params
         let authorizeReq = MockURLProtocol.requestHistory[2]
-        XCTAssertFalse(authorizeReq.url!.query?.contains("acr_values=") ?? true, "Authorize URL should NOT contain acr_values when PAR is used")
-        XCTAssertFalse(authorizeReq.url!.query?.contains("login_hint=") ?? true, "Authorize URL should NOT contain login_hint when PAR is used")
-        XCTAssertFalse(authorizeReq.url!.query?.contains("nonce=") ?? true, "Authorize URL should NOT contain nonce when PAR is used")
+        let authorizeQuery = try XCTUnwrap(authorizeReq.url?.query, "Authorize request should have a query string")
+        XCTAssertFalse(authorizeQuery.contains("acr_values="), "Authorize URL should NOT contain acr_values when PAR is used")
+        XCTAssertFalse(authorizeQuery.contains("login_hint="), "Authorize URL should NOT contain login_hint when PAR is used")
+        XCTAssertFalse(authorizeQuery.contains("nonce="), "Authorize URL should NOT contain nonce when PAR is used")
     }
 }

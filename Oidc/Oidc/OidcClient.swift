@@ -28,8 +28,18 @@ public class OidcClient {
         self.logger = config.logger
     }
     
-    /// OidcClient generateAuthorizeUrl.
+    /// Generates an OIDC authorization URL synchronously.
+    ///
+    /// - Warning: This synchronous variant does **not** support Pushed
+    ///   Authorization Requests (PAR, RFC 9126). Even when
+    ///   `OidcClientConfig.par` is set to `true`, this method will fall back
+    ///   to the standard authorization flow and emit all parameters in the
+    ///   URL query string. To use PAR, call the `async` overload
+    ///   `generateAuthorizeUrl(customParams:) async throws -> URL` instead.
+    ///
     /// - Parameter customParams: Custom parameters to include in the authorization request.
+    /// - Returns: The fully-built authorization URL.
+    /// - Throws: `OidcError.networkError` if the HTTP client or URL cannot be resolved.
     public func generateAuthorizeUrl(customParams: [String: String]? = nil) throws -> URL {
         guard let httpClient = config.httpClient else {
             throw OidcError.networkError(message: "HTTP client not found")
@@ -37,7 +47,7 @@ public class OidcClient {
         var request = httpClient.request()
         let generatedPkce = Pkce.generate()
         self.pkce = generatedPkce
-        request = config.populateRequest(request: request, pkce: generatedPkce, responseMode: OidcClient.Constants.query)
+        request = config.populateStandardAuthorizeRequest(request: request, pkce: generatedPkce, responseMode: OidcClient.Constants.query)
         if let customParams = customParams {
             for parameter in customParams {
                 request.setParameter(name: parameter.key, value: parameter.value)
@@ -392,12 +402,14 @@ extension OidcClientConfig {
         }
     }
     
-    /// Populates an OIDC authorization request with the necessary parameters (synchronous, non-PAR).
-    /// This method is kept for backwards compatibility.
-    internal func populateRequest(
+    /// Builds a standard (non-PAR) OIDC authorization request by emitting all
+    /// parameters onto the request URL's query string. Shared by the sync
+    /// `OidcClient.generateAuthorizeUrl` and by the async `populateRequest`
+    /// fallback path when PAR is not enabled or unavailable.
+    internal func populateStandardAuthorizeRequest(
         request: Request,
         pkce: Pkce,
-        responseMode: String = OidcClient.Constants.piflow
+        responseMode: String
     ) -> Request {
         request.url = openId?.authorizationEndpoint ?? ""
         if !responseMode.isEmpty {
@@ -406,7 +418,6 @@ extension OidcClientConfig {
         buildAuthorizeParams(pkce: pkce) { key, value in
             request.setParameter(name: key, value: value)
         }
-        
         return request
     }
     
@@ -423,7 +434,7 @@ extension OidcClientConfig {
     public func populateRequest(
         request: Request,
         pkce: Pkce,
-        responseMode: String = "pi.flow"
+        responseMode: String = OidcClient.Constants.piflow
     ) async throws -> Request {
         if par, let parEndpoint = openId?.pushedAuthorizationRequestEndpoint {
             // PAR flow: POST all params to PAR endpoint
@@ -448,7 +459,10 @@ extension OidcClientConfig {
                 throw OidcError.apiError(code: response.status, message: "Failed to create PAR request: \(response.bodyAsString())")
             }
             
-            let json = try JSONSerialization.jsonObject(with: response.body ?? Data()) as? [String: Any] ?? [:]
+            guard let responseBody = response.body else {
+                throw OidcError.authorizeError(message: "PAR response body is empty")
+            }
+            let json = try JSONSerialization.jsonObject(with: responseBody) as? [String: Any] ?? [:]
             guard let requestUri = json[OidcClient.Constants.request_uri] as? String else {
                 throw OidcError.authorizeError(message: "PAR response missing required 'request_uri' field")
             }
@@ -462,20 +476,14 @@ extension OidcClientConfig {
             request.setParameter(name: OidcClient.Constants.client_id, value: clientId)
         } else {
             // Standard flow: all params on the authorization URL
-            request.url = openId?.authorizationEndpoint ?? ""
-            if !responseMode.isEmpty {
-                request.setParameter(name: OidcClient.Constants.response_mode, value: responseMode)
-            }
-            buildAuthorizeParams(pkce: pkce) { key, value in
-                request.setParameter(name: key, value: value)
-            }
+            _ = populateStandardAuthorizeRequest(request: request, pkce: pkce, responseMode: responseMode)
         }
         return request
     }
 }
 
 
-extension OidcClient.Constants {
+public extension OidcClient.Constants {
     static let response_mode = "response_mode"
     static let response_type = "response_type"
     static let scope = "scope"
