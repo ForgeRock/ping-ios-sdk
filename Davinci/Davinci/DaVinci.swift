@@ -94,6 +94,9 @@ extension DaVinci {
             await CollectorFactory.shared.register(type: Constants.QR_CODE, closure: { json in
                 return QRCodeCollector(with: json)
             })
+            await CollectorFactory.shared.register(type: Constants.BOOLEAN, closure: { json in
+                return SingleCheckboxCollector(with: json)
+            })
             if let c: NSObject.Type = NSClassFromString("PingProtect.ProtectCollector") as? NSObject.Type {
                 c.perform(Selector(("registerCollector")))
             }

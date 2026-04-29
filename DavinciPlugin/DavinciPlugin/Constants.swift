@@ -116,4 +116,10 @@ public enum Constants {
     public static let davinciConnectionsPathSegment = "/davinci/connections"
     public static let challengeStatusPathPrefix = "/davinci/user/credentials/challenge/"
     public static let challengeStatusPathSuffix = "/status"
+    
+    //SingleCheckboxCollector
+    public static let BOOLEAN = "BOOLEAN"
+    public static let appearance = "appearance"
+    public static let richContent = "richContent"
+    public static let replacements = "replacements"
 }
