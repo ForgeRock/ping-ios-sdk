@@ -96,7 +96,7 @@ case is SuccessNode: do {}
 | SuccessNode| Successful authentication. Use ```node.session``` to retrieve the session.                                      |
 
 ### Provide input
-For a `ContinueNode`, you can access the list of collectors using `node.collectors` and and provide input to the desired `Collector`. Currently, the available collectors include `TextCollector`, `PasswordCollector`, `SubmitCollector`, `FlowCollector`, `LabelCollector`, `MultiSelectCollector`, `SingleSelectCollector`, and `AgreementCollector`. Additional collectors, such as `Fido` and `IdpCollector`, will be added in the future.
+For a `ContinueNode`, you can access the list of collectors using `node.collectors` and and provide input to the desired `Collector`. Currently, the available collectors include `TextCollector`, `PasswordCollector`, `SubmitCollector`, `FlowCollector`, `LabelCollector`, `MultiSelectCollector`, `SingleSelectCollector`, and `ReadOnlyTextCollector`. Additional collectors, such as `Fido` and `IdpCollector`, will be added in the future.
 
 To access the collectors, you can use the following code:
 ```swift
@@ -191,17 +191,17 @@ singleSelectCollector.options //To access the options attribute
 singleSelectCollector.value = "option1" //To set the value
 ```
 
-#### AgreementCollector (READ_ONLY_TEXT)
+#### ReadOnlyTextCollector (READ_ONLY_TEXT)
 
 ```swift
-agreementCollector.key //To access the key attribute
-agreementCollector.type //To access the type attribute
-agreementCollector.content //To access the agreement text content
-agreementCollector.title //To access the title
-agreementCollector.titleEnabled //Whether to display the title
-agreementCollector.enabled //Whether this collector is enabled
-agreementCollector.agreementId //The unique ID of the agreement definition
-agreementCollector.useDynamicAgreement //Whether the agreement content is loaded dynamically
+readOnlyTextCollector.key //To access the key attribute
+readOnlyTextCollector.type //To access the type attribute
+readOnlyTextCollector.content //To access the agreement text content
+readOnlyTextCollector.title //To access the title
+readOnlyTextCollector.titleEnabled //Whether to display the title
+readOnlyTextCollector.enabled //Whether this collector is enabled
+readOnlyTextCollector.agreementId //The unique ID of the agreement definition
+readOnlyTextCollector.useDynamicAgreement //Whether the agreement content is loaded dynamically
 ```
 
 ### Collector Validation

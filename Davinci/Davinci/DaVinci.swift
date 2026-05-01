@@ -95,7 +95,7 @@ extension DaVinci {
                 return QRCodeCollector(with: json)
             })
             await CollectorFactory.shared.register(type: Constants.READ_ONLY_TEXT, closure: { json in
-                return AgreementCollector(with: json)
+                return ReadOnlyTextCollector(with: json)
             })
             if let c: NSObject.Type = NSClassFromString("PingProtect.ProtectCollector") as? NSObject.Type {
                 c.perform(Selector(("registerCollector")))

@@ -1,5 +1,5 @@
 //
-//  AgreementCollector.swift
+//  ReadOnlyTextCollector.swift
 //  PingDavinci
 //
 //  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
@@ -32,7 +32,7 @@ import PingDavinciPlugin
 ///   "enabled": true
 /// }
 /// ```
-public class AgreementCollector: Collector, @unchecked Sendable {
+public class ReadOnlyTextCollector: Collector, @unchecked Sendable {
     
     /// The UUID of the collector.
     public var id: String {
@@ -63,7 +63,7 @@ public class AgreementCollector: Collector, @unchecked Sendable {
     /// Whether the agreement content is loaded dynamically.
     public private(set) var useDynamicAgreement: Bool = false
     
-    /// Initializes a new instance of `AgreementCollector`.
+    /// Initializes a new instance of `ReadOnlyTextCollector`.
     /// - Parameter json: The json to initialize from.
     public required init(with json: [String: Any]) {
         key = json[Constants.key] as? String ?? ""
@@ -79,11 +79,11 @@ public class AgreementCollector: Collector, @unchecked Sendable {
         }
     }
     
-    /// Initializes the `AgreementCollector` with the given value. The `AgreementCollector` does not hold any value.
+    /// Initializes the `ReadOnlyTextCollector` with the given value. The `ReadOnlyTextCollector` does not hold any value.
     /// - Parameter value: The value to initialize the collector with.
     public func initialize(with value: Any) {}
     
-    /// Function returning the `Payload` of the AgreementCollector. This is a function that returns `Never` as a _nonreturning_ function as the AgreementCollector has no payload to return.
+    /// Function returning the `Payload` of the ReadOnlyTextCollector. This is a function that returns `Never` as a _nonreturning_ function as the ReadOnlyTextCollector has no payload to return.
     public func payload() -> Never? {
         return nil
     }

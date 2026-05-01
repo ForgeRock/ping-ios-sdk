@@ -1,5 +1,5 @@
 //
-//  AgreementView.swift
+//  ReadOnlyTextView.swift
 //  PingExample
 //
 //  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
@@ -11,8 +11,8 @@
 import SwiftUI
 import PingDavinci
 
-struct AgreementView: View {
-    var field: AgreementCollector
+struct ReadOnlyTextView: View {
+    var field: ReadOnlyTextCollector
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {

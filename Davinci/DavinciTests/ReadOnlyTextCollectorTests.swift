@@ -1,5 +1,5 @@
 //
-//  AgreementCollectorTests.swift
+//  ReadOnlyTextCollectorTests.swift
 //  DavinciTests
 //
 //  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 @testable import PingDavinci
 
-class AgreementCollectorTests: XCTestCase {
+class ReadOnlyTextCollectorTests: XCTestCase {
     
     private func buildFullAgreementJson() -> [String: Any] {
         return [
@@ -31,17 +31,17 @@ class AgreementCollectorTests: XCTestCase {
     }
     
     func testInitializesKeyFromJson() {
-        let collector = AgreementCollector(with: buildFullAgreementJson())
+        let collector = ReadOnlyTextCollector(with: buildFullAgreementJson())
         XCTAssertEqual("agreement", collector.key)
     }
     
     func testInitializesTypeFromJson() {
-        let collector = AgreementCollector(with: buildFullAgreementJson())
+        let collector = ReadOnlyTextCollector(with: buildFullAgreementJson())
         XCTAssertEqual("AGREEMENT", collector.type)
     }
     
     func testInitializesContentFromJson() {
-        let collector = AgreementCollector(with: buildFullAgreementJson())
+        let collector = ReadOnlyTextCollector(with: buildFullAgreementJson())
         XCTAssertEqual(
             "This is example agreement text, you can edit this text in the agreements section.",
             collector.content
@@ -49,37 +49,37 @@ class AgreementCollectorTests: XCTestCase {
     }
     
     func testInitializesTitleFromJson() {
-        let collector = AgreementCollector(with: buildFullAgreementJson())
+        let collector = ReadOnlyTextCollector(with: buildFullAgreementJson())
         XCTAssertEqual("Terms of Service Agreement", collector.title)
     }
     
     func testInitializesTitleEnabledFromJson() {
-        let collector = AgreementCollector(with: buildFullAgreementJson())
+        let collector = ReadOnlyTextCollector(with: buildFullAgreementJson())
         XCTAssertTrue(collector.titleEnabled)
     }
     
     func testInitializesEnabledFromJson() {
-        let collector = AgreementCollector(with: buildFullAgreementJson())
+        let collector = ReadOnlyTextCollector(with: buildFullAgreementJson())
         XCTAssertTrue(collector.enabled)
     }
     
     func testInitializesAgreementIdFromJson() {
-        let collector = AgreementCollector(with: buildFullAgreementJson())
+        let collector = ReadOnlyTextCollector(with: buildFullAgreementJson())
         XCTAssertEqual("6ff30c9e-cd98-4fe5-85ca-01111ca20702", collector.agreementId)
     }
     
     func testInitializesUseDynamicAgreementFromJson() {
-        let collector = AgreementCollector(with: buildFullAgreementJson())
+        let collector = ReadOnlyTextCollector(with: buildFullAgreementJson())
         XCTAssertFalse(collector.useDynamicAgreement)
     }
     
     func testIdReturnsKey() {
-        let collector = AgreementCollector(with: buildFullAgreementJson())
+        let collector = ReadOnlyTextCollector(with: buildFullAgreementJson())
         XCTAssertEqual("agreement", collector.id)
     }
     
     func testInitializesWithDefaultsWhenJsonIsEmpty() {
-        let collector = AgreementCollector(with: [:])
+        let collector = ReadOnlyTextCollector(with: [:])
         XCTAssertEqual("", collector.key)
         XCTAssertEqual("", collector.type)
         XCTAssertEqual("", collector.content)
@@ -92,12 +92,12 @@ class AgreementCollectorTests: XCTestCase {
     
     func testTitleEnabledFalseWhenNotProvided() {
         let input: [String: Any] = ["key": "agreement"]
-        let collector = AgreementCollector(with: input)
+        let collector = ReadOnlyTextCollector(with: input)
         XCTAssertFalse(collector.titleEnabled)
     }
     
     func testPayloadReturnsNil() {
-        let collector = AgreementCollector(with: buildFullAgreementJson())
+        let collector = ReadOnlyTextCollector(with: buildFullAgreementJson())
         XCTAssertNil(collector.payload())
     }
 }
