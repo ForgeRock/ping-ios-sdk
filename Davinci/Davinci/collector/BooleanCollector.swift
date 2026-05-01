@@ -1,5 +1,5 @@
 //
-//  SingleCheckboxCollector.swift
+//  BooleanCollector.swift
 //  PingDavinci
 //
 //  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
@@ -14,10 +14,10 @@ import PingDavinciPlugin
 
 /// A collector representing a single checkbox field (e.g., agreement acceptance).
 /// The value is a boolean indicating whether the checkbox is checked.
-public class SingleCheckboxCollector: FieldCollector<Bool>, @unchecked Sendable {
+public class BooleanCollector: FieldCollector<Bool>, @unchecked Sendable {
     
     /// The appearance of the checkbox (CHECKBOX or SWITCH).
-    public private(set) var appearance: SingleCheckboxAppearance = .checkbox
+    public private(set) var appearance: BooleanCollectorAppearance = .checkbox
     
     /// The error message to display when validation fails.
     public private(set) var errorMessage: String?
@@ -28,10 +28,10 @@ public class SingleCheckboxCollector: FieldCollector<Bool>, @unchecked Sendable 
     /// The current checked state of the checkbox.
     public var value: Bool = false
     
-    /// Initializes a new instance of `SingleCheckboxCollector` with the given JSON input.
+    /// Initializes a new instance of `BooleanCollector` with the given JSON input.
     public required init(with json: [String: Any]) {
         if let appearanceString = json[Constants.appearance] as? String,
-           let parsedAppearance = SingleCheckboxAppearance(rawValue: appearanceString) {
+           let parsedAppearance = BooleanCollectorAppearance(rawValue: appearanceString) {
             self.appearance = parsedAppearance
         } else {
             self.appearance = .checkbox
@@ -110,7 +110,7 @@ public struct RichContent: Sendable {
 /// The appearance options for a single checkbox field.
 /// - `checkbox`: A traditional checkbox appearance.
 /// - `switch`: A switch/toggle appearance.
-public enum SingleCheckboxAppearance: String, Sendable {
+public enum BooleanCollectorAppearance: String, Sendable {
     case checkbox = "CHECKBOX"
     case `switch` = "SWITCH"
 }

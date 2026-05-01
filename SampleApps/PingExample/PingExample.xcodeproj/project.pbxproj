@@ -60,7 +60,7 @@
 		A525E7B82DD7647200B02C17 /* PingExternalIdPFacebook.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B12DD7647200B02C17 /* PingExternalIdPFacebook.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A525E7B92DD7647200B02C17 /* PingExternalIdPGoogle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B22DD7647200B02C17 /* PingExternalIdPGoogle.framework */; };
 		A525E7BA2DD7647200B02C17 /* PingExternalIdPGoogle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B22DD7647200B02C17 /* PingExternalIdPGoogle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A53B6EE22F9FA30C00B279CE /* SingleCheckboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53B6EE12F9FA30C00B279CE /* SingleCheckboxView.swift */; };
+		A55177322FA502D100E575CF /* BooleanCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55177312FA502D100E575CF /* BooleanCollectorView.swift */; };
 		A5560CA22CFE4EDA0076CA8D /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A57A08FA2CE50D51006F0CBB /* PingLogger.framework */; };
 		A5560CA32CFE4EDA0076CA8D /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A57A08FA2CE50D51006F0CBB /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5560CA42CFE4EDA0076CA8D /* PingOidc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A57A09122CE51162006F0CBB /* PingOidc.framework */; };
@@ -680,7 +680,7 @@
 		A525E7BB2DD7680900B02C17 /* ExternalIdP.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdP.xcodeproj; path = ../../ExternalIdP/ExternalIdP.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A525E7C62DD7683500B02C17 /* ExternalIdPGoogle.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdPGoogle.xcodeproj; path = ../../ExternalIdPGoogle/ExternalIdPGoogle.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A525E7DC2DD7687800B02C17 /* ExternalIdPApple.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdPApple.xcodeproj; path = ../../ExternalIdPApple/ExternalIdPApple.xcodeproj; sourceTree = SOURCE_ROOT; };
-		A53B6EE12F9FA30C00B279CE /* SingleCheckboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleCheckboxView.swift; sourceTree = "<group>"; };
+		A55177312FA502D100E575CF /* BooleanCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanCollectorView.swift; sourceTree = "<group>"; };
 		A55A25022ED4A49100D8820C /* DeviceClient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DeviceClient.xcodeproj; path = ../../DeviceClient/DeviceClient.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A56741BC2EE1EBFD009D29B9 /* Commons.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Commons.xcodeproj; path = ../../Commons/Commons.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A569DBB82E789BD200F4D7A8 /* DeviceProfile.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DeviceProfile.xcodeproj; path = ../../DeviceProfile/DeviceProfile.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -1201,6 +1201,7 @@
 				ECA7D60B2F91466A000FB45F /* QRCodeView.swift */,
 				EC5598012E96799200A07329 /* FidoAuthenticationCollectorView.swift */,
 				EC5598022E96799200A07329 /* FidoRegistrationCollectorView.swift */,
+				A55177312FA502D100E575CF /* BooleanCollectorView.swift */,
 				A5EFA96C2D35F2F800F771FE /* CheckBoxView.swift */,
 				A5EFA97C2D35F78700F771FE /* ComboBoxView.swift */,
 				EC92B3792DA02D6400E4246D /* DeviceAuthenticationView.swift */,
@@ -1215,7 +1216,6 @@
 				ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */,
 				A5A31CEB2E0A5B3F00ABBEF7 /* ProtectView.swift */,
 				A5EFA9782D35F62C00F771FE /* RadioButtonView.swift */,
-				A53B6EE12F9FA30C00B279CE /* SingleCheckboxView.swift */,
 				ECBF06A32D5391610066A3BD /* SocialButtonView.swift */,
 				A5E9AEE02D30D301000533ED /* SubmitButtonView.swift */,
 				A5E9AEDC2D30A226000533ED /* TextView.swift */,
@@ -1984,6 +1984,7 @@
 				A588D0062BF6A0E500F9052A /* StorageViewModel.swift in Sources */,
 				A5768D162E29AD45000290EE /* StringAttributeInputCallbackView.swift in Sources */,
 				A5E9AED62D30393F000533ED /* LoggerView.swift in Sources */,
+				A55177322FA502D100E575CF /* BooleanCollectorView.swift in Sources */,
 				A5768D1C2E29B369000290EE /* ConsentMappingCallbackView.swift in Sources */,
 				A5EFA97B2D35F6D700F771FE /* DropdownView.swift in Sources */,
 				ECD372762F924A1D002AC7EB /* PasswordRequirementsView.swift in Sources */,
@@ -2034,7 +2035,6 @@
 				ABCD12340001000100010001 /* TabPicker.swift in Sources */,
 				ABCD12340002000200020001 /* EmptyStateView.swift in Sources */,
 				A5E9AEE12D30D304000533ED /* SubmitButtonView.swift in Sources */,
-				A53B6EE22F9FA30C00B279CE /* SingleCheckboxView.swift in Sources */,
 				3A8092F42BE99F0F00AD667F /* CustomViews.swift in Sources */,
 				EC23D5712E2E8ECF00C43D42 /* OidcLoginView.swift in Sources */,
 				A570D52E2ECCE47500CBBCCF /* DeviceManagementViewModel.swift in Sources */,

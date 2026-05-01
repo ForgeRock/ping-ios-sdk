@@ -1,5 +1,5 @@
 //
-//  SingleCheckboxCollectorTests.swift
+//  BooleanCollectorTests.swift
 //  Davinci
 //
 //  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
@@ -12,12 +12,12 @@
 import XCTest
 @testable import PingDavinci
 
-class SingleCheckboxCollectorTests: XCTestCase {
+class BooleanCollectorTests: XCTestCase {
     
     // MARK: - Parsing / Initialization
     
     func testInitializationWithEmptyDictionary() {
-        let collector = SingleCheckboxCollector(with: [:])
+        let collector = BooleanCollector(with: [:])
         XCTAssertNotNil(collector)
         XCTAssertEqual(collector.key, "")
         XCTAssertEqual(collector.label, "")
@@ -56,7 +56,7 @@ class SingleCheckboxCollectorTests: XCTestCase {
             ]
         ]
         
-        let collector = SingleCheckboxCollector(with: input)
+        let collector = BooleanCollector(with: input)
         XCTAssertEqual(collector.type, "SINGLE_CHECKBOX")
         XCTAssertEqual(collector.key, "single-checkbox-field")
         XCTAssertEqual(collector.label, "Welcome to Apple and Google")
@@ -92,7 +92,7 @@ class SingleCheckboxCollectorTests: XCTestCase {
             "appearance": "SWITCH"
         ]
         
-        let collector = SingleCheckboxCollector(with: input)
+        let collector = BooleanCollector(with: input)
         XCTAssertEqual(collector.appearance, .switch
         )
     }
@@ -105,7 +105,7 @@ class SingleCheckboxCollectorTests: XCTestCase {
             "required": true
         ]
         
-        let collector = SingleCheckboxCollector(with: input)
+        let collector = BooleanCollector(with: input)
         XCTAssertEqual(collector.appearance, .checkbox)
     }
     
@@ -117,7 +117,7 @@ class SingleCheckboxCollectorTests: XCTestCase {
             "required": false
         ]
         
-        let collector = SingleCheckboxCollector(with: input)
+        let collector = BooleanCollector(with: input)
         XCTAssertEqual(collector.required, false)
         XCTAssertNil(collector.errorMessage)
     }
@@ -131,7 +131,7 @@ class SingleCheckboxCollectorTests: XCTestCase {
             "errorMessage": "Required"
         ]
         
-        let collector = SingleCheckboxCollector(with: input)
+        let collector = BooleanCollector(with: input)
         XCTAssertNil(collector.richContent)
         XCTAssertEqual(collector.errorMessage, "Required")
     }
@@ -147,7 +147,7 @@ class SingleCheckboxCollectorTests: XCTestCase {
             ]
         ]
         
-        let collector = SingleCheckboxCollector(with: input)
+        let collector = BooleanCollector(with: input)
         XCTAssertNotNil(collector.richContent)
         XCTAssertEqual(collector.richContent?.content, "Plain text content")
         XCTAssertEqual(collector.richContent?.replacements.count, 0)
@@ -156,31 +156,31 @@ class SingleCheckboxCollectorTests: XCTestCase {
     // MARK: - Value Handling
     
     func testValueDefaultsToFalse() {
-        let collector = SingleCheckboxCollector(with: [:])
+        let collector = BooleanCollector(with: [:])
         XCTAssertEqual(collector.value, false)
     }
     
     func testSetValueToTrue() {
-        let collector = SingleCheckboxCollector(with: [:])
+        let collector = BooleanCollector(with: [:])
         collector.value = true
         XCTAssertEqual(collector.value, true)
     }
     
     func testInitializeWithBoolValue() {
-        let collector = SingleCheckboxCollector(with: [:])
+        let collector = BooleanCollector(with: [:])
         collector.initialize(with: true)
         XCTAssertEqual(collector.value, true)
     }
     
     func testInitializeWithFalseValue() {
-        let collector = SingleCheckboxCollector(with: [:])
+        let collector = BooleanCollector(with: [:])
         collector.value = true
         collector.initialize(with: false)
         XCTAssertEqual(collector.value, false)
     }
     
     func testInitializeWithNonBoolValueIsIgnored() {
-        let collector = SingleCheckboxCollector(with: [:])
+        let collector = BooleanCollector(with: [:])
         collector.initialize(with: "true")
         XCTAssertEqual(collector.value, false)
     }
@@ -188,12 +188,12 @@ class SingleCheckboxCollectorTests: XCTestCase {
     // MARK: - Payload
     
     func testPayloadReturnsFalseWhenUnchecked() {
-        let collector = SingleCheckboxCollector(with: [:])
+        let collector = BooleanCollector(with: [:])
         XCTAssertEqual(collector.payload(), false)
     }
     
     func testPayloadReturnsTrueWhenChecked() {
-        let collector = SingleCheckboxCollector(with: [:])
+        let collector = BooleanCollector(with: [:])
         collector.value = true
         XCTAssertEqual(collector.payload(), true)
     }
@@ -206,7 +206,7 @@ class SingleCheckboxCollectorTests: XCTestCase {
             "label": "Agree",
             "required": true
         ]
-        let collector = SingleCheckboxCollector(with: input)
+        let collector = BooleanCollector(with: input)
         
         let errors = collector.validate()
         XCTAssertEqual(errors.count, 1)
@@ -219,7 +219,7 @@ class SingleCheckboxCollectorTests: XCTestCase {
             "label": "Agree",
             "required": true
         ]
-        let collector = SingleCheckboxCollector(with: input)
+        let collector = BooleanCollector(with: input)
         collector.value = true
         
         let errors = collector.validate()
@@ -232,7 +232,7 @@ class SingleCheckboxCollectorTests: XCTestCase {
             "label": "Agree",
             "required": false
         ]
-        let collector = SingleCheckboxCollector(with: input)
+        let collector = BooleanCollector(with: input)
         
         let errors = collector.validate()
         XCTAssertTrue(errors.isEmpty)
@@ -245,7 +245,7 @@ class SingleCheckboxCollectorTests: XCTestCase {
             "required": true,
             "errorMessage": "Select the checkbox to continue."
         ]
-        let collector = SingleCheckboxCollector(with: input)
+        let collector = BooleanCollector(with: input)
         
         let errors = collector.validate()
         XCTAssertEqual(errors.count, 1)
@@ -259,7 +259,7 @@ class SingleCheckboxCollectorTests: XCTestCase {
             "required": true,
             "errorMessage": ""
         ]
-        let collector = SingleCheckboxCollector(with: input)
+        let collector = BooleanCollector(with: input)
         
         let errors = collector.validate()
         XCTAssertEqual(errors.count, 1)
@@ -273,7 +273,7 @@ class SingleCheckboxCollectorTests: XCTestCase {
             "required": true,
             "errorMessage": "Select the checkbox to continue."
         ]
-        let collector = SingleCheckboxCollector(with: input)
+        let collector = BooleanCollector(with: input)
         collector.value = true
         
         let errors = collector.validate()

@@ -86,8 +86,8 @@ struct ContinueNodeView: View {
                     FidoRegistrationCollectorView(collector: fidoRegistrationCollector, onNext: { onNext(true) })
                 case let fidoAuthenticationCollector as FidoAuthenticationCollector:
                     FidoAuthenticationCollectorView(collector: fidoAuthenticationCollector, onNext: { onNext(true) })
-                case let singleCheckboxCollector as SingleCheckboxCollector:
-                    SingleCheckboxView(field: singleCheckboxCollector, onNodeUpdated: onNodeUpdated)
+                case let booleanCollector as BooleanCollector:
+                    BooleanCollectorView(field: booleanCollector, onNodeUpdated: onNodeUpdated)
                 default:
                     EmptyView()
                 }

@@ -117,7 +117,7 @@ public enum Constants {
     public static let challengeStatusPathPrefix = "/davinci/user/credentials/challenge/"
     public static let challengeStatusPathSuffix = "/status"
     
-    //SingleCheckboxCollector
+    //BooleanCollector
     public static let BOOLEAN = "BOOLEAN"
     public static let appearance = "appearance"
     public static let richContent = "richContent"

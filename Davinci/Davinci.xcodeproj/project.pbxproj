@@ -36,8 +36,8 @@
 		A51D4CF62C65743100FE09E0 /* MockAPIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CF52C65743100FE09E0 /* MockAPIEndpoint.swift */; };
 		A51D4CF82C65978300FE09E0 /* DaVinciIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CF72C65978300FE09E0 /* DaVinciIntegrationTests.swift */; };
 		A51D4CFA2C6BA75000FE09E0 /* CallbackFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CF92C6BA75000FE09E0 /* CallbackFactoryTests.swift */; };
-		A53B6EDE2F9FA25600B279CE /* SingleCheckboxCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53B6EDD2F9FA25600B279CE /* SingleCheckboxCollector.swift */; };
-		A53B6EE02F9FA2D900B279CE /* SingleCheckboxCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53B6EDF2F9FA2D900B279CE /* SingleCheckboxCollectorTests.swift */; };
+		A53B6EDE2F9FA25600B279CE /* BooleanCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53B6EDD2F9FA25600B279CE /* BooleanCollector.swift */; };
+		A53B6EE02F9FA2D900B279CE /* BooleanCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53B6EDF2F9FA2D900B279CE /* BooleanCollectorTests.swift */; };
 		A5A61E032D4A92BF00767C2D /* ErrorNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A61E022D4A92B000767C2D /* ErrorNode.swift */; };
 		A5A712482CAC527200B7DD58 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A5A712472CAC527200B7DD58 /* PrivacyInfo.xcprivacy */; };
 		A5E9AEB22D2F1F93000533ED /* SingleValueCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */; };
@@ -131,8 +131,8 @@
 		A51D4CF72C65978300FE09E0 /* DaVinciIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciIntegrationTests.swift; sourceTree = "<group>"; };
 		A51D4CF92C6BA75000FE09E0 /* CallbackFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackFactoryTests.swift; sourceTree = "<group>"; };
 		A53A9B582F1984C8000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		A53B6EDD2F9FA25600B279CE /* SingleCheckboxCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleCheckboxCollector.swift; sourceTree = "<group>"; };
-		A53B6EDF2F9FA2D900B279CE /* SingleCheckboxCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleCheckboxCollectorTests.swift; sourceTree = "<group>"; };
+		A53B6EDD2F9FA25600B279CE /* BooleanCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanCollector.swift; sourceTree = "<group>"; };
+		A53B6EDF2F9FA2D900B279CE /* BooleanCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanCollectorTests.swift; sourceTree = "<group>"; };
 		A5A61E022D4A92B000767C2D /* ErrorNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorNode.swift; sourceTree = "<group>"; };
 		A5A712472CAC527200B7DD58 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleValueCollector.swift; sourceTree = "<group>"; };
@@ -257,7 +257,7 @@
 				ECE2B8702DB7C35400E2C51E /* PhoneNumberCollectorTests.swift */,
 				AA1A00032F0000000000AA01 /* PollingCollectorTests.swift */,
 				AA1A00072F0000000000AA01 /* QRCodeCollectorTests.swift */,
-				A53B6EDF2F9FA2D900B279CE /* SingleCheckboxCollectorTests.swift */,
+				A53B6EDF2F9FA2D900B279CE /* BooleanCollectorTests.swift */,
 				A5EFAA0F2D3F50A500F771FE /* SingleSelectCollectorTests.swift */,
 				A5EFAA112D3F518800F771FE /* SubmitCollectorTests.swift */,
 				A5EFAA132D3F51CA00F771FE /* TextCollectorTests.swift */,
@@ -305,7 +305,7 @@
 				EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */,
 				AA1A00012F0000000000AA01 /* PollingCollector.swift */,
 				AA1A00052F0000000000AA01 /* QRCodeCollector.swift */,
-				A53B6EDD2F9FA25600B279CE /* SingleCheckboxCollector.swift */,
+				A53B6EDD2F9FA25600B279CE /* BooleanCollector.swift */,
 				A5E9AEB52D2F243C000533ED /* SingleSelectCollector.swift */,
 				A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */,
 				A51D4CD62C585E2D00FE09E0 /* SubmitCollector.swift */,
@@ -472,7 +472,7 @@
 				3AC13E362C3FFF1000DEF23A /* Connector.swift in Sources */,
 				A51D4CD92C585E5700FE09E0 /* TextCollector.swift in Sources */,
 				3A57CB622C44D68C001EC9A0 /* User.swift in Sources */,
-				A53B6EDE2F9FA25600B279CE /* SingleCheckboxCollector.swift in Sources */,
+				A53B6EDE2F9FA25600B279CE /* BooleanCollector.swift in Sources */,
 				A5E9AEB42D2F2256000533ED /* LabelCollector.swift in Sources */,
 				A5E9AEBA2D2F2731000533ED /* ValidatedCollector.swift in Sources */,
 				3A203D7F2BDB136C0020C995 /* DaVinci.swift in Sources */,
@@ -502,7 +502,7 @@
 				A5EFAA162D3F52F500F771FE /* ValidatedCollectorTests.swift in Sources */,
 				A5EFAA062D3F304500F771FE /* FlowCollectorTests.swift in Sources */,
 				EC7279B42DF9B295005D9E28 /* DaVinciBaseTests.swift in Sources */,
-				A53B6EE02F9FA2D900B279CE /* SingleCheckboxCollectorTests.swift in Sources */,
+				A53B6EE02F9FA2D900B279CE /* BooleanCollectorTests.swift in Sources */,
 				A5EFAA0A2D3F325B00F771FE /* MultiSelectCollectorTests.swift in Sources */,
 				A51D4CF42C6572E600FE09E0 /* MockURLProtocol.swift in Sources */,
 				A51D4CF82C65978300FE09E0 /* DaVinciIntegrationTests.swift in Sources */,

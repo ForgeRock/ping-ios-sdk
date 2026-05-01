@@ -1,5 +1,5 @@
 // 
-//  SingleCheckboxView.swift
+//  BooleanCollectorView.swift
 //  PingExample
 //
 //  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
@@ -12,8 +12,8 @@
 import SwiftUI
 import PingDavinci
 
-struct SingleCheckboxView: View {
-    var field: SingleCheckboxCollector
+struct BooleanCollectorView: View {
+    var field: BooleanCollector
     var onNodeUpdated: () -> Void
     
     @EnvironmentObject var validationViewModel: ValidationViewModel
