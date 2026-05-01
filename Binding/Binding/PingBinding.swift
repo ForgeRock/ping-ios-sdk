@@ -57,17 +57,21 @@ class Binding {
         // Generate a new key pair and authenticate the user.
         let keyPair = try await deviceAuthenticator.register()
         let authResult = await deviceAuthenticator.authenticate(keyTag: keyPair.keyTag)
-        
+
         switch authResult {
         case .success:
             // Capture biometric domain state for biometricAllowFallback authenticators
             let biometricState: Data? = (deviceAuthenticator as? BiometricDeviceCredentialAuthenticator)?.biometricDomainState()
-            
+
             // Store the new user key.
             let newUserKey = UserKey(keyTag: keyPair.keyTag, userId: callback.userId, username: callback.userName, kid: keyPair.keyTag, authType: callback.deviceBindingAuthenticationType, biometricDomainState: biometricState)
-            
+
             try await userKeyStorage.save(userKey: newUserKey)
         case .failure(let error):
+            // The key-pair was created by register() but post-register authentication
+            // failed (e.g. a mismatched PIN on the verify prompt). Delete the orphan
+            // Keychain entry so repeated failed attempts don't accumulate.
+            try? CryptoKey(keyTag: keyPair.keyTag).deleteKeyPair()
             throw error
         }
         
