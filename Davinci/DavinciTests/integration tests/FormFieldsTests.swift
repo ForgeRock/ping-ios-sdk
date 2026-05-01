@@ -2,7 +2,7 @@
 //  FormFieldsTests.swift
 //  DavinciTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -17,6 +17,21 @@ import XCTest
 
 class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
     private var daVinci: DaVinci!
+    
+    private enum FormFieldIndex {
+        static let labelTextBlob = 0
+        static let labelTranslatable = 1
+        static let labelRichText = 2
+        static let textInput = 3
+        static let checkbox = 4
+        static let dropdown = 5
+        static let radio = 6
+        static let combobox = 7
+        static let phoneNumber = 8
+        static let singleCheckbox = 9
+        static let flowButton = 10
+        static let flowLink = 11
+    }
     
     override func setUp() {
         self.configFileName = "Config"
@@ -36,19 +51,23 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
         }
     }
     
-    // TestRailCase(26023)
-    func testLabelCollector() async throws {
-        // Go to the "Form Fields" form
+    private func goToFormFieldsForm() async -> ContinueNode {
         var node = await daVinci.start() as! ContinueNode
         (node.collectors[0] as? SubmitCollector)?.value = "click"
         node = await node.next() as! ContinueNode
+        return node
+    }
+    
+    // TestRailCase(26023)
+    func testLabelCollector() async throws {
+        let node = await goToFormFieldsForm()
         
         // Make sure that the first 2 collectors in the form are LabelCollectors
-        XCTAssertTrue(node.collectors[0] is LabelCollector)
-        XCTAssertTrue(node.collectors[1] is LabelCollector)
+        XCTAssertTrue(node.collectors[FormFieldIndex.labelTextBlob] is LabelCollector)
+        XCTAssertTrue(node.collectors[FormFieldIndex.labelTranslatable] is LabelCollector)
         
-        let labelCollector1 = node.collectors[0] as! LabelCollector
-        let labelCollector2 = node.collectors[1] as! LabelCollector
+        let labelCollector1 = node.collectors[FormFieldIndex.labelTextBlob] as! LabelCollector
+        let labelCollector2 = node.collectors[FormFieldIndex.labelTranslatable] as! LabelCollector
         
         XCTAssertTrue(labelCollector1.content.contains("Rich Text fields produce LABELs"))
         XCTAssertEqual("Translatable Rich Text produce LABELs too!\n\n", labelCollector2.content)
@@ -61,14 +80,11 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
     
     // TestRailCase(26032, 26031)
     func testTextCollector() async throws {
-        // Go to the "Form Fields" form
-        var node = await daVinci.start() as! ContinueNode
-        (node.collectors[0] as? SubmitCollector)?.value = "click"
-        node = await node.next() as! ContinueNode
+        let node = await goToFormFieldsForm()
         
         // 3rd collector in the form is a TextCollector
-        XCTAssertTrue(node.collectors[2] is TextCollector)
-        let textCollector = node.collectors[2] as! TextCollector
+        XCTAssertTrue(node.collectors[FormFieldIndex.textInput] is TextCollector)
+        let textCollector = node.collectors[FormFieldIndex.textInput] as! TextCollector
         
         XCTAssertEqual("TEXT", textCollector.type)
         XCTAssertEqual("Text Input Label", textCollector.label)
@@ -94,14 +110,11 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
     
     // TestRailCase(26024, 26031)
     func testCheckboxCollector() async throws {
-        // Go to the "Form Fields" form
-        var node = await daVinci.start() as! ContinueNode
-        (node.collectors[0] as? SubmitCollector)?.value = "click"
-        node = await node.next() as! ContinueNode
+        let node = await goToFormFieldsForm()
         
         // 4th collector in the form is a Checkbox group
-        XCTAssertTrue(node.collectors[3] is MultiSelectCollector)
-        let checkbox = node.collectors[3] as! MultiSelectCollector
+        XCTAssertTrue(node.collectors[FormFieldIndex.checkbox] is MultiSelectCollector)
+        let checkbox = node.collectors[FormFieldIndex.checkbox] as! MultiSelectCollector
         
         XCTAssertEqual("CHECKBOX", checkbox.type)
         XCTAssertEqual("Checkbox List Label", checkbox.label)
@@ -133,14 +146,11 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
     
     // TestRailCase(26025, 26031)
     func testDropdownCollector() async throws {
-        // Go to the "Form Fields" form
-        var node = await daVinci.start() as! ContinueNode
-        (node.collectors[0] as? SubmitCollector)?.value = "click"
-        node = await node.next() as! ContinueNode
+        let node = await goToFormFieldsForm()
         
         // 5th collector in the form is a Dropdown field
-        XCTAssertTrue(node.collectors[4] is SingleSelectCollector)
-        let dropdown = node.collectors[4] as! SingleSelectCollector
+        XCTAssertTrue(node.collectors[FormFieldIndex.dropdown] is SingleSelectCollector)
+        let dropdown = node.collectors[FormFieldIndex.dropdown] as! SingleSelectCollector
         
         XCTAssertEqual("DROPDOWN", dropdown.type)
         XCTAssertEqual("Dropdown List Label", dropdown.label)
@@ -172,14 +182,11 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
     
     // TestRailCase(26026, 26031)
     func testRadioCollector() async throws {
-        // Go to the "Form Fields" form
-        var node = await daVinci.start() as! ContinueNode
-        (node.collectors[0] as? SubmitCollector)?.value = "click"
-        node = await node.next() as! ContinueNode
+        let node = await goToFormFieldsForm()
         
         // 6th collector in the form is a Radio Group field
-        XCTAssertTrue(node.collectors[5] is SingleSelectCollector)
-        let radio = node.collectors[5] as! SingleSelectCollector
+        XCTAssertTrue(node.collectors[FormFieldIndex.radio] is SingleSelectCollector)
+        let radio = node.collectors[FormFieldIndex.radio] as! SingleSelectCollector
         
         XCTAssertEqual("RADIO", radio.type)
         XCTAssertEqual("Radio Group Label", radio.label)
@@ -211,14 +218,11 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
     
     // TestRailCase(26027, 26031)
     func testComboboxCollector() async throws {
-        // Go to the "Form Fields" form
-        var node = await daVinci.start() as! ContinueNode
-        (node.collectors[0] as? SubmitCollector)?.value = "click"
-        node = await node.next() as! ContinueNode
+        let node = await goToFormFieldsForm()
         
         // 7th collector in the form is a Combobox
-        XCTAssertTrue(node.collectors[6] is MultiSelectCollector)
-        let combobox = node.collectors[6] as! MultiSelectCollector
+        XCTAssertTrue(node.collectors[FormFieldIndex.combobox] is MultiSelectCollector)
+        let combobox = node.collectors[FormFieldIndex.combobox] as! MultiSelectCollector
         
         XCTAssertEqual("COMBOBOX", combobox.type)
         XCTAssertEqual("Combobox Label", combobox.label)
@@ -253,13 +257,10 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
     
     // TestRailCase(26027, 31735)
     func testPhoneNumberCollector() async throws {
-        // Go to the "Form Fields" form
-        var node = await daVinci.start() as! ContinueNode
-        (node.collectors[0] as? SubmitCollector)?.value = "click"
-        node = await node.next() as! ContinueNode
+        let node = await goToFormFieldsForm()
         
-        XCTAssertTrue(node.collectors[7] is PhoneNumberCollector)
-        let phone = node.collectors[7] as! PhoneNumberCollector
+        XCTAssertTrue(node.collectors[FormFieldIndex.phoneNumber] is PhoneNumberCollector)
+        let phone = node.collectors[FormFieldIndex.phoneNumber] as! PhoneNumberCollector
         
         XCTAssertEqual("PHONE_NUMBER", phone.type)
         XCTAssertEqual("Phone Collector", phone.label)
@@ -294,16 +295,43 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
         XCTAssertTrue(validationResult.isEmpty)
     }
     
+    func testBooleanCollector() async throws {
+        let node = await goToFormFieldsForm()
+
+        // 10th collector in the form is a SingleCheckbox (index 9)
+        XCTAssertTrue(node.collectors[FormFieldIndex.singleCheckbox] is BooleanCollector)
+        let singleCheckbox = node.collectors[FormFieldIndex.singleCheckbox] as! BooleanCollector
+
+        XCTAssertEqual("SINGLE_CHECKBOX", singleCheckbox.type)
+        XCTAssertEqual("single-checkbox-field", singleCheckbox.key)
+        XCTAssertEqual("I agree to the Terms and Conditions", singleCheckbox.label)
+
+        let richContent = singleCheckbox.richContent
+        XCTAssertNotNil(richContent)
+        XCTAssertEqual("I agree to the {{link1}}", richContent?.content)
+        XCTAssertEqual(1, richContent?.replacements.count)
+        XCTAssertNotNil(richContent?.replacements["link1"])
+
+        XCTAssertEqual(true, singleCheckbox.required)
+
+        // Default value should be false
+        XCTAssertEqual(false, singleCheckbox.value)
+
+        let requiredErrors = singleCheckbox.validate()
+        XCTAssertFalse(requiredErrors.isEmpty)
+
+        singleCheckbox.value = true
+        let validationResult = singleCheckbox.validate()
+        XCTAssertTrue(validationResult.isEmpty)
+    }
+    
     // TestRailCase(26033)
     func testFlowButtonCollector() async throws {
-        // Go to the "Form Fields" form
-        var node = await daVinci.start() as! ContinueNode
-        (node.collectors[0] as? SubmitCollector)?.value = "click"
-        node = await node.next() as! ContinueNode
+        var node = await goToFormFieldsForm()
         
         // Make sure that FlowButton is present
-        XCTAssertTrue(node.collectors[8] is FlowCollector)
-        let flowButton = node.collectors[8] as! FlowCollector
+        XCTAssertTrue(node.collectors[FormFieldIndex.flowButton] is FlowCollector)
+        let flowButton = node.collectors[FormFieldIndex.flowButton] as! FlowCollector
         
         XCTAssertEqual("FLOW_BUTTON", flowButton.type)
         XCTAssertEqual("Flow Button", flowButton.label)
@@ -318,14 +346,11 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
     
     // TestRailCase(26033)
     func testFlowLinkCollector() async throws {
-        // Go to the "Form Fields" form
-        var node = await daVinci.start() as! ContinueNode
-        (node.collectors[0] as? SubmitCollector)?.value = "click"
-        node = await node.next() as! ContinueNode
+        var node = await goToFormFieldsForm()
         
         // Make sure that FlowLink is present
-        XCTAssertTrue(node.collectors[9] is FlowCollector)
-        let flowLink = node.collectors[9] as! FlowCollector
+        XCTAssertTrue(node.collectors[FormFieldIndex.flowLink] is FlowCollector)
+        let flowLink = node.collectors[FormFieldIndex.flowLink] as! FlowCollector
         
         XCTAssertEqual("FLOW_LINK", flowLink.type)
         XCTAssertEqual("Flow Link", flowLink.label)
