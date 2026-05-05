@@ -11,10 +11,8 @@
 import Foundation
 import PingDavinciPlugin
 
-/// Class representing an AGREEMENT type collector.
-///
-/// This class handles the response from a DaVinci form field of type AGREEMENT.
-/// It displays agreement/terms-of-service text and collects the user's acceptance.
+/// This class handles the response from a DaVinci form field of inputType READ_ONLY_TEXT .
+/// It displays read-only text content such as agreement/terms-of-service text.
 ///
 /// Example JSON:
 /// ```json
