@@ -45,15 +45,15 @@ struct BooleanCollectorView: View {
     // MARK: - Checkbox Appearance
     
     private var checkboxAppearance: some View {
-        Button(action: toggleValue) {
-            HStack(alignment: .top) {
+        HStack(alignment: .top) {
+            Button(action: toggleValue) {
                 Image(systemName: isChecked ? "checkmark.square.fill" : "square")
                     .foregroundStyle(isChecked ? Color.themeButtonBackground : Color.gray)
-                labelContent
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .buttonStyle(PlainButtonStyle())
+            labelContent
         }
-        .buttonStyle(PlainButtonStyle())
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 8)
