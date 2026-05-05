@@ -64,28 +64,14 @@ internal final class CreateAgent: Agent, Sendable {
             throw OidcError.networkError(message: "HTTP client not found")
         }
         
-        guard let openId = config.openId else {
-            throw OidcError.unknown(message: "OpenID configuration not found")
-        }
+        // Create a fresh request, populate it (handles both PAR and standard flow),
+        // then attach Journey-specific headers before sending.
+        var request = httpClient.request()
+        request = try await config.populateRequest(request: request, pkce: pkce, responseMode: "")
+        request.setHeader(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource21Protocol10)
+        request.setHeader(name: self.cookieName, value: self.session.value)
         
-        let params: [String: String] = [
-            JourneyConstants.response_type: JourneyConstants.code,
-            JourneyConstants.redirect_uri: config.redirectUri,
-            JourneyConstants.client_id: config.clientId,
-            JourneyConstants.scope: config.scopes.joined(separator: " "),
-            JourneyConstants.state: pkce.state,
-            JourneyConstants.code_challenge: pkce.codeChallenge,
-            JourneyConstants.code_challenge_method: pkce.codeChallengeMethod
-        ]
-        
-        let response = try await httpClient.request { request in
-            request.url = openId.authorizationEndpoint
-            for (name, value) in params {
-                request.setParameter(name: name, value: value)
-                request.setHeader(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource21Protocol10)
-                request.setHeader(name: self.cookieName, value: self.session.value)
-            }
-        }
+        let response = try await httpClient.request(request: request)
         
         guard response.status.isRedirect() else {
             throw OidcError.apiError(code: response.status, message: response.bodyAsString())

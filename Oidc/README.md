@@ -98,6 +98,28 @@ config.display = "test"
 let ping = OidcClient(config: config)
 ```
 
+## Pushed Authorization Requests (PAR)
+
+`PingOidc` supports [Pushed Authorization Requests (RFC 9126)](https://datatracker.ietf.org/doc/html/rfc9126). When PAR is enabled, authorization parameters are sent to the server via a POST request to the `pushed_authorization_request_endpoint` before the authorization redirect. The server returns a `request_uri` which is then used in the authorization URL instead of the full set of parameters.
+
+To enable PAR, set the `par` property to `true` in the OIDC configuration:
+
+```swift
+let oidcLogin = OidcWebClient.createOidcWebClient { config in
+    config.module(PingOidc.OidcModule.config) { oidcValue in
+        oidcValue.clientId = "ClientID"
+        oidcValue.scopes = ["openid", "email", "address", "profile", "phone"]
+        oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
+        oidcValue.discoveryEndpoint = "https://example.com/.well-known/openid-configuration"
+        oidcValue.par = true // Enable Pushed Authorization Requests
+    }
+}
+```
+
+**Requirements:**
+- The server's OpenID configuration (discovery document) must include a `pushed_authorization_request_endpoint`.
+- If `par` is enabled but the discovery document does not include the PAR endpoint, the SDK falls back to the standard authorization flow automatically.
+
 ## Custom Agent
 
 You can also provide a custom agent to launch the authorization request.

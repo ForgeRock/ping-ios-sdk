@@ -122,4 +122,11 @@ public enum Constants {
     public static let appearance = "appearance"
     public static let richContent = "richContent"
     public static let replacements = "replacements"
+    // MARK: - Agreement
+    public static let READ_ONLY_TEXT = "READ_ONLY_TEXT"
+    public static let title = "title"
+    public static let titleEnabled = "titleEnabled"
+    public static let enabled = "enabled"
+    public static let agreement = "agreement"
+    public static let useDynamicAgreement = "useDynamicAgreement"
 }

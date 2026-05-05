@@ -50,6 +50,9 @@ public class OidcClientConfig: @unchecked Sendable {
     public var acrValues: String?
     /// Additional parameters for OIDC.
     public var additionalParameters = [String: String]()
+    /// Enable PAR (Pushed Authorization Request) RFC 9126.
+    /// When enabled, authorization parameters are pushed to the server before authorization.
+    public var par: Bool = false
     /// HTTP client for making network requests.
     public var httpClient: (any HttpClientProtocol)?
     
@@ -136,6 +139,7 @@ public class OidcClientConfig: @unchecked Sendable {
         self.uiLocales = other.uiLocales
         self.acrValues = other.acrValues
         self.additionalParameters = other.additionalParameters
+        self.par = other.par
         self.httpClient = other.httpClient
     }
 }

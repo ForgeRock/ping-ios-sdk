@@ -73,6 +73,24 @@ let daVinci = DaVinci.createDaVinci { config in
 }
 ```
 
+### Pushed Authorization Requests (PAR)
+
+DaVinci supports [Pushed Authorization Requests (RFC 9126)](https://datatracker.ietf.org/doc/html/rfc9126). When enabled, authorization parameters are sent to the server via a secure back-channel POST before the authorization redirect, improving security by keeping sensitive parameters out of the URL.
+
+```swift
+let daVinci = DaVinci.createDaVinci { config in
+    config.module(OidcModule.config) { oidcValue in
+        oidcValue.clientId = "test"
+        oidcValue.discoveryEndpoint = "https://auth.example.com/.well-known/openid-configuration"
+        oidcValue.scopes = ["openid", "email", "address"]
+        oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
+        oidcValue.par = true // Enable Pushed Authorization Requests
+    }
+}
+```
+
+The PAR endpoint is discovered automatically from the OpenID configuration. If the server does not advertise a `pushed_authorization_request_endpoint`, the SDK falls back to the standard authorization flow.
+
 
 ### Navigate the authentication Flow
 
@@ -96,7 +114,7 @@ case is SuccessNode: do {}
 | SuccessNode| Successful authentication. Use ```node.session``` to retrieve the session.                                      |
 
 ### Provide input
-For a `ContinueNode`, you can access the list of collectors using `node.collectors` and and provide input to the desired `Collector`. Currently, the available collectors include `TextCollector`, `PasswordCollector`, `SubmitCollector`, `FlowCollector`, `LabelCollector`, `MultiSelectCollector`, and `SingleSelectCollector`. Additional collectors, such as `Fido` and `IdpCollector`, will be added in the future.
+For a `ContinueNode`, you can access the list of collectors using `node.collectors` and and provide input to the desired `Collector`. Currently, the available collectors include `TextCollector`, `PasswordCollector`, `SubmitCollector`, `FlowCollector`, `LabelCollector`, `MultiSelectCollector`, `SingleSelectCollector`, and `ReadOnlyTextCollector`. Additional collectors, such as `Fido` and `IdpCollector`, will be added in the future.
 
 To access the collectors, you can use the following code:
 ```swift
@@ -189,6 +207,19 @@ singleSelectCollector.required //To access the required attribute
 singleSelectCollector.options //To access the options attribute
 
 singleSelectCollector.value = "option1" //To set the value
+```
+
+#### ReadOnlyTextCollector (READ_ONLY_TEXT)
+
+```swift
+readOnlyTextCollector.key //To access the key attribute
+readOnlyTextCollector.type //To access the type attribute
+readOnlyTextCollector.content //To access the agreement text content
+readOnlyTextCollector.title //To access the title
+readOnlyTextCollector.titleEnabled //Whether to display the title
+readOnlyTextCollector.enabled //Whether this collector is enabled
+readOnlyTextCollector.agreementId //The unique ID of the agreement definition
+readOnlyTextCollector.useDynamicAgreement //Whether the agreement content is loaded dynamically
 ```
 
 ### Collector Validation

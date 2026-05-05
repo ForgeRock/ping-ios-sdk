@@ -45,7 +45,7 @@ public class OidcModule {
             
             let pkce = Pkce.generate()
             context.flowContext.set(key: SharedContext.Keys.pkceKey, value: pkce)
-            return config.populateRequest(request: request, pkce: pkce)
+            return try await config.populateRequest(request: request, pkce: pkce)
         }
         
         // Handles success of the module.

@@ -21,6 +21,7 @@ enum MockAPIEndpoint {
     case revocation
     case discovery
     case customHTMLTemplate
+    case par
     
     var url: URL {
         switch self {
@@ -38,6 +39,8 @@ enum MockAPIEndpoint {
             return URL(string: "\(MockAPIEndpoint.baseURL)/.well-known/openid-configuration")!
         case .customHTMLTemplate:
             return URL(string: "\(MockAPIEndpoint.baseURL)/customHTMLTemplate")!
+        case .par:
+            return URL(string: "\(MockAPIEndpoint.baseURL)/par")!
         }
     }
 }
