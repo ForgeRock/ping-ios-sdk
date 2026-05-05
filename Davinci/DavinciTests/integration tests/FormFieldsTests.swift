@@ -295,7 +295,7 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
         XCTAssertTrue(validationResult.isEmpty)
     }
     
-    func testSingleCheckboxCollector() async throws {
+    func testBooleanCollector() async throws {
         let node = await goToFormFieldsForm()
 
         // 10th collector in the form is a SingleCheckbox (index 9)
