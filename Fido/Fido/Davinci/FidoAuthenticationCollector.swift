@@ -73,7 +73,9 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
             // 1. Wrap the closure-based fido.authenticate in a continuation
             //    This still throws internally within the 'do' block if the continuation resumes with an error.
             let response: [String: Any] = try await withUnsafeThrowingContinuation { continuation in
-                // Assuming 'fido' instance is accessible
+                // Propagate the workflow logger into the FIDO instance so the underlying
+                // ASAuthorization ceremony emits log messages through the same logger.
+                fido.logger = logger
                 fido.authenticate(options: publicKeyCredentialRequestOptions, window: window) { [continuation] result in
                     Task {
                         await MainActor.run {

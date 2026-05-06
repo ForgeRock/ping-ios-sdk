@@ -35,6 +35,7 @@
 		ECD780602EA24FFA0050E60F /* FidoCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD780512EA24FC40050E60F /* FidoCallbackTests.swift */; };
 		ECD780612EA24FFF0050E60F /* FidoCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD780522EA24FC40050E60F /* FidoCollectorTests.swift */; };
 		ECD780642EA2500E0050E60F /* Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD780552EA24FC40050E60F /* Mocks.swift */; };
+		ECD780712EA251000050E60F /* FidoLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD780702EA251000050E60F /* FidoLoggerTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,6 +106,7 @@
 		ECD780522EA24FC40050E60F /* FidoCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoCollectorTests.swift; sourceTree = "<group>"; };
 		ECD780552EA24FC40050E60F /* Mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mocks.swift; sourceTree = "<group>"; };
 		ECD780562EA24FC40050E60F /* PingFidoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingFidoTests.swift; sourceTree = "<group>"; };
+		ECD780702EA251000050E60F /* FidoLoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FidoLoggerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -208,6 +210,7 @@
 				ECA2E7DD2ED740E000C32766 /* FidoRegistrationCollectorTests.swift */,
 				ECD780512EA24FC40050E60F /* FidoCallbackTests.swift */,
 				ECD780522EA24FC40050E60F /* FidoCollectorTests.swift */,
+				ECD780702EA251000050E60F /* FidoLoggerTests.swift */,
 				ECD780552EA24FC40050E60F /* Mocks.swift */,
 				ECD780562EA24FC40050E60F /* PingFidoTests.swift */,
 			);
@@ -354,6 +357,7 @@
 				ECD780612EA24FFF0050E60F /* FidoCollectorTests.swift in Sources */,
 				ECD780602EA24FFA0050E60F /* FidoCallbackTests.swift in Sources */,
 				ECD780642EA2500E0050E60F /* Mocks.swift in Sources */,
+				ECD780712EA251000050E60F /* FidoLoggerTests.swift in Sources */,
 				ECA2E7DE2ED740E000C32766 /* FidoRegistrationCollectorTests.swift in Sources */,
 				ECA2E7DF2ED740E000C32766 /* FidoAuthenticationCollectorTests.swift in Sources */,
 			);
