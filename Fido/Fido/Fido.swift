@@ -14,21 +14,26 @@ import UIKit
 import PingLogger
 
 /// Fido is a class that provides FIDO registration and authentication functionalities.
+///
+/// `Fido` is single-flight: a registration or authentication ceremony retains state on the
+/// instance (window, completion handler, logger, timeout task) until the underlying
+/// `ASAuthorization` delegate callback or timeout fires. Concurrent ceremonies on the same
+/// instance will overwrite each other, which is why callers consume it through the
+/// `Fido.shared` singleton serialized by the surrounding workflow.
 public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
 
     /// The shared singleton FIDO instance.
     @MainActor
     public static let shared = Fido()
 
-    /// Logger instance used for debugging and monitoring FIDO operations.
-    /// Callers (e.g. the DaVinci collector or Journey callback) inject the logger
-    /// from their workflow configuration before invoking `register` or `authenticate`.
-    public var logger: Logger?
-
     var window: ASPresentationAnchor?
     var completion: ((Result<[String: Any], Error>) -> Void)?
     var timeoutTask: Task<Void, Never>?
     var authorizationController: ASAuthorizationController?
+
+    /// Logger for the in-flight ceremony. Set by `register`/`authenticate` and cleared in
+    /// `cleanup()`, so each ceremony uses its caller's workflow logger and nothing else.
+    var logger: Logger?
     
     func makeAuthorizationController(requests: [ASAuthorizationRequest]) -> ASAuthorizationController {
         let authorizationController = ASAuthorizationController(authorizationRequests: requests)
@@ -43,8 +48,13 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     /// - Parameters:
     ///   - options: A dictionary containing the registration options.
     ///   - window: The window to present the registration UI in.
+    ///   - logger: Optional logger for ceremony state transitions and errors. Pass the
+    ///     workflow logger (e.g. `davinci?.config.logger`); when `nil` no log output is
+    ///     produced. Scoped to this call only — overwritten by subsequent ceremonies and
+    ///     cleared in `cleanup()`.
     ///   - completion: A closure to be called with the registration result.
-    public func register(options: [String: Any], window: ASPresentationAnchor, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+    public func register(options: [String: Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+        self.logger = logger
         logger?.d("Fido: Starting registration")
         self.window = window
         self.completion = completion
@@ -115,8 +125,13 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     /// - Parameters:
     ///   - options: A dictionary containing the authentication options.
     ///   - window: The window to present the authentication UI in.
+    ///   - logger: Optional logger for ceremony state transitions and errors. Pass the
+    ///     workflow logger (e.g. `journey?.config.logger`); when `nil` no log output is
+    ///     produced. Scoped to this call only — overwritten by subsequent ceremonies and
+    ///     cleared in `cleanup()`.
     ///   - completion: A closure to be called with the authentication result.
-    public func authenticate(options: [String: Any], window: ASPresentationAnchor, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+    public func authenticate(options: [String: Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+        self.logger = logger
         logger?.d("Fido: Starting authentication")
         self.window = window
         self.completion = completion
@@ -245,6 +260,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
         authorizationController = nil
         window = nil
         completion = nil
+        logger = nil
         cancelTimeout()
     }
     

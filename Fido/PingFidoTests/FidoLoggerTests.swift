@@ -11,19 +11,24 @@
 import XCTest
 @testable import PingFido
 @testable import PingLogger
+@testable import PingJourneyPlugin
+@testable import PingJourney
+@testable import PingDavinci
+@testable import PingOrchestrate
+internal import PingCommons
 
 final class FidoLoggerTests: XCTestCase {
 
-    func testLoggerDefaultsToNil() {
-        let fido = Fido()
-        XCTAssertNil(fido.logger, "Fido.logger should default to nil so callers opt in")
-    }
+    // MARK: - Fido direct API
 
     func testRegisterRoutesLogsThroughInjectedLogger() {
         let mockLogger = MockFidoLogger()
         let fido = Fido()
-        fido.logger = mockLogger
 
+        // The challenge below contains '!' characters that are non-base64. Combined with
+        // .ignoreUnknownCharacters this still leaves an odd-length input that cannot be
+        // decoded, so the invalid-challenge guard fires and `register` returns
+        // synchronously without launching an ASAuthorization ceremony.
         let options: [String: Any] = [
             "challenge": "!!!not-valid-base64!!!",
             "rp": ["id": "example.com", "name": "Example"],
@@ -31,7 +36,7 @@ final class FidoLoggerTests: XCTestCase {
             "pubKeyCredParams": [["type": "public-key", "alg": -7]]
         ]
         let exp = expectation(description: "completion called")
-        fido.register(options: options, window: MockASPresentationAnchor()) { _ in
+        fido.register(options: options, window: MockASPresentationAnchor(), logger: mockLogger) { _ in
             exp.fulfill()
         }
         wait(for: [exp], timeout: 1.0)
@@ -43,15 +48,15 @@ final class FidoLoggerTests: XCTestCase {
     func testAuthenticateRoutesLogsThroughInjectedLogger() {
         let mockLogger = MockFidoLogger()
         let fido = Fido()
-        fido.logger = mockLogger
 
+        // See note in testRegisterRoutesLogsThroughInjectedLogger about the challenge string.
         let options: [String: Any] = [
             "challenge": "!!!not-valid-base64!!!",
             "rpId": "example.com",
             "userVerification": "preferred"
         ]
         let exp = expectation(description: "completion called")
-        fido.authenticate(options: options, window: MockASPresentationAnchor()) { _ in
+        fido.authenticate(options: options, window: MockASPresentationAnchor(), logger: mockLogger) { _ in
             exp.fulfill()
         }
         wait(for: [exp], timeout: 1.0)
@@ -62,8 +67,6 @@ final class FidoLoggerTests: XCTestCase {
 
     func testNoLoggerInjectedDoesNotCrash() {
         let fido = Fido()
-        XCTAssertNil(fido.logger)
-
         let options: [String: Any] = [
             "challenge": "!!!not-valid-base64!!!",
             "rpId": "example.com"
@@ -73,6 +76,93 @@ final class FidoLoggerTests: XCTestCase {
             exp.fulfill()
         }
         wait(for: [exp], timeout: 1.0)
+    }
+
+    // MARK: - Collector / Callback propagation
+    //
+    // These tests guard the four call sites that pass `logger:` into the underlying Fido
+    // instance. Removing the propagation in any of them must fail a test here.
+
+    @MainActor
+    func testFidoRegistrationCollectorPropagatesWorkflowLoggerToFido() async {
+        let mockLogger = MockFidoLogger()
+        let mockFido = MockFido()
+        let davinci = DaVinci.createDaVinci { config in
+            config.logger = mockLogger
+        }
+        let collector = FidoRegistrationCollector(with: [
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]
+        ])
+        collector.davinci = davinci
+        collector.fido = mockFido
+        mockFido.registrationResult = .failure(FidoError.invalidChallenge)
+
+        _ = await collector.register(window: MockASPresentationAnchor())
+
+        XCTAssertTrue(mockFido.capturedLogger as AnyObject? === mockLogger,
+                      "Collector must pass the DaVinci config logger to fido.register")
+    }
+
+    @MainActor
+    func testFidoAuthenticationCollectorPropagatesWorkflowLoggerToFido() async {
+        let mockLogger = MockFidoLogger()
+        let mockFido = MockFido()
+        let davinci = DaVinci.createDaVinci { config in
+            config.logger = mockLogger
+        }
+        let collector = FidoAuthenticationCollector(with: [
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]
+        ])
+        collector.davinci = davinci
+        collector.fido = mockFido
+        mockFido.authenticationResult = .failure(FidoError.invalidChallenge)
+
+        _ = await collector.authenticate(window: MockASPresentationAnchor())
+
+        XCTAssertTrue(mockFido.capturedLogger as AnyObject? === mockLogger,
+                      "Collector must pass the DaVinci config logger to fido.authenticate")
+    }
+
+    @MainActor
+    func testFidoRegistrationCallbackPropagatesWorkflowLoggerToFido() async {
+        let mockLogger = MockFidoLogger()
+        let mockFido = MockFido()
+        let journey = Journey.createJourney { config in
+            config.logger = mockLogger
+        }
+        let callback = FidoRegistrationCallback()
+        let hiddenValueCallback = HiddenValueCallback()
+        hiddenValueCallback.initValue(name: JourneyConstants.id, value: FidoConstants.WEB_AUTHN_OUTCOME)
+        callback.journey = journey
+        callback.continueNode = MockContinueNode(callbacks: Callbacks([hiddenValueCallback]))
+        callback.fido = mockFido
+        mockFido.registrationResult = .failure(FidoError.invalidChallenge)
+
+        _ = await callback.register(window: MockASPresentationAnchor())
+
+        XCTAssertTrue(mockFido.capturedLogger as AnyObject? === mockLogger,
+                      "Callback must pass the Journey config logger to fido.register")
+    }
+
+    @MainActor
+    func testFidoAuthenticationCallbackPropagatesWorkflowLoggerToFido() async {
+        let mockLogger = MockFidoLogger()
+        let mockFido = MockFido()
+        let journey = Journey.createJourney { config in
+            config.logger = mockLogger
+        }
+        let callback = FidoAuthenticationCallback()
+        let hiddenValueCallback = HiddenValueCallback()
+        hiddenValueCallback.initValue(name: JourneyConstants.id, value: FidoConstants.WEB_AUTHN_OUTCOME)
+        callback.journey = journey
+        callback.continueNode = MockContinueNode(callbacks: Callbacks([hiddenValueCallback]))
+        callback.fido = mockFido
+        mockFido.authenticationResult = .failure(FidoError.invalidChallenge)
+
+        _ = await callback.authenticate(window: MockASPresentationAnchor())
+
+        XCTAssertTrue(mockFido.capturedLogger as AnyObject? === mockLogger,
+                      "Callback must pass the Journey config logger to fido.authenticate")
     }
 }
 
@@ -86,7 +176,11 @@ final class MockFidoLogger: Logger, @unchecked Sendable {
         return _messages
     }
 
-    var hasMessages: Bool { !messages.isEmpty }
+    var hasMessages: Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return !_messages.isEmpty
+    }
 
     private func append(_ level: String, _ message: String) {
         lock.lock()

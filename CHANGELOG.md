@@ -1,3 +1,7 @@
+## [Unreleased]
+#### Added
+- Routed FIDO ceremony logs through the workflow logger by adding a `logger:` parameter to `Fido.register` and `Fido.authenticate`. The DaVinci collectors and Journey callbacks pass the workflow's configured logger so FIDO ceremony state transitions and errors emit through the same logger as the surrounding flow [SDKS-4924]
+
 ## [2.0.0]
 #### Added
 - Added new `PingJourney` module [SDKS-3918]

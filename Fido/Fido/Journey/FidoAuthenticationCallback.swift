@@ -49,10 +49,9 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
             // 1. Wrap the closure-based fido.authenticate in a continuation
             //    This still throws internally within the 'do' block if the continuation resumes with an error.
             let response: [String: Any] = try await withUnsafeThrowingContinuation { continuation in
-                // Propagate the workflow logger into the FIDO instance so the underlying
-                // ASAuthorization ceremony emits log messages through the same logger.
-                fido.logger = logger
-                fido.authenticate(options: publicKeyCredentialRequestOptions, window: window) { [continuation] result in
+                // Pass the workflow logger so the underlying ASAuthorization ceremony
+                // emits log messages through the same logger as the surrounding flow.
+                fido.authenticate(options: publicKeyCredentialRequestOptions, window: window, logger: logger) { [continuation] result in
                     Task {
                         await MainActor.run {
                             nonisolated(unsafe) let sendableResult = result

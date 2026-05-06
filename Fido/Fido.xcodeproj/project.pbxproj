@@ -19,6 +19,7 @@
 		EC5C81B42ECF6DE400C91570 /* PingDavinciPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81B22ECF6DE400C91570 /* PingDavinciPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC5C81F82ED0920300C91570 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81F72ED0920300C91570 /* PingJourney.framework */; };
 		EC5C81F92ED0920300C91570 /* PingJourney.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81F72ED0920300C91570 /* PingJourney.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		ECD780722EA251010050E60F /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 955861222EB0657300DD55A6 /* PingDavinci.framework */; };
 		ECA2E7DE2ED740E000C32766 /* FidoRegistrationCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA2E7DD2ED740E000C32766 /* FidoRegistrationCollectorTests.swift */; };
 		ECA2E7DF2ED740E000C32766 /* FidoAuthenticationCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA2E7DC2ED740E000C32766 /* FidoAuthenticationCollectorTests.swift */; };
 		ECD5A2F72E8FE49C00A27205 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = ECD5A2F62E8FE49C00A27205 /* PrivacyInfo.xcprivacy */; };
@@ -126,6 +127,7 @@
 			files = (
 				ECD7804A2EA24F1B0050E60F /* PingFido.framework in Frameworks */,
 				EC5C81F82ED0920300C91570 /* PingJourney.framework in Frameworks */,
+				ECD780722EA251010050E60F /* PingDavinci.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
