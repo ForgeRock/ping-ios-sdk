@@ -115,6 +115,7 @@
 		A5E9AED62D30393F000533ED /* LoggerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AED52D30393B000533ED /* LoggerView.swift */; };
 		A5E9AED82D303962000533ED /* StorageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AED72D30395D000533ED /* StorageView.swift */; };
 		A5E9AEDB2D30A020000533ED /* LabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEDA2D30A01D000533ED /* LabelView.swift */; };
+		SDKS42450002000000000001 /* RichTextBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS42450002000000000000 /* RichTextBuilder.swift */; };
 		A5E9AEDD2D30A22A000533ED /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEDC2D30A226000533ED /* TextView.swift */; };
 		A5E9AEDF2D30CA34000533ED /* ErrorMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEDE2D30CA2C000533ED /* ErrorMessageView.swift */; };
 		A5E9AEE12D30D304000533ED /* SubmitButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEE02D30D301000533ED /* SubmitButtonView.swift */; };
@@ -727,6 +728,7 @@
 		A5E9AED52D30393B000533ED /* LoggerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerView.swift; sourceTree = "<group>"; };
 		A5E9AED72D30395D000533ED /* StorageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageView.swift; sourceTree = "<group>"; };
 		A5E9AEDA2D30A01D000533ED /* LabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelView.swift; sourceTree = "<group>"; };
+		SDKS42450002000000000000 /* RichTextBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextBuilder.swift; sourceTree = "<group>"; };
 		A5E9AEDC2D30A226000533ED /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 		A5E9AEDE2D30CA2C000533ED /* ErrorMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessageView.swift; sourceTree = "<group>"; };
 		A5E9AEE02D30D301000533ED /* SubmitButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitButtonView.swift; sourceTree = "<group>"; };
@@ -1214,6 +1216,7 @@
 				A5E9AEDE2D30CA2C000533ED /* ErrorMessageView.swift */,
 				A5E9AEE22D318521000533ED /* FlowButtonView.swift */,
 				A5E9AEDA2D30A01D000533ED /* LabelView.swift */,
+				SDKS42450002000000000000 /* RichTextBuilder.swift */,
 				A5EFA97E2D35F88C00F771FE /* PasswordView.swift */,
 				ECD372752F924A1C002AC7EB /* PasswordRequirementsView.swift */,
 				ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */,
@@ -2067,6 +2070,7 @@
 				A5768D222E29BFF6000290EE /* PingOneProtectEvaluationCallbackView.swift in Sources */,
 				3A3709962BEB038200AA7B51 /* AccessTokenView.swift in Sources */,
 				A5E9AEDB2D30A020000533ED /* LabelView.swift in Sources */,
+				SDKS42450002000000000001 /* RichTextBuilder.swift in Sources */,
 				A5D296932E7B37DB0093A761 /* DeviceProfileCallbackView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
