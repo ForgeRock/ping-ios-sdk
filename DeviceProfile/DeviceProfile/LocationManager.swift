@@ -249,27 +249,40 @@ public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
         }
         
         // Handle different authorization states
-        switch await authorizationStatus {
-        case .authorizedAlways, .authorizedWhenInUse:
-            // Already authorized, fetch location
+        let currentStatus = await authorizationStatus
+        let isAuthorized: Bool
+        #if canImport(UIKit)
+        isAuthorized = (currentStatus == .authorizedAlways || currentStatus == .authorizedWhenInUse)
+        #else
+        isAuthorized = (currentStatus == .authorizedAlways)
+        #endif
+        if isAuthorized {
             return try await fetchLocationWithAuthorization()
-            
+        }
+
+        switch currentStatus {
         case .notDetermined:
             // Need to request authorization first
             let status = try await requestAuthorizationIfNeeded()
-            if status == .authorizedAlways || status == .authorizedWhenInUse {
+            let statusAuthorized: Bool
+            #if canImport(UIKit)
+            statusAuthorized = (status == .authorizedAlways || status == .authorizedWhenInUse)
+            #else
+            statusAuthorized = (status == .authorizedAlways)
+            #endif
+            if statusAuthorized {
                 return try await fetchLocationWithAuthorization()
             } else {
                 throw authorizationErrorForStatus(status)
             }
-            
+
         case .denied:
             throw LocationError.authorizationDenied
-            
+
         case .restricted:
             throw LocationError.authorizationRestricted
-            
-        @unknown default:
+
+        default:
             throw LocationError.authorizationDenied
         }
     }

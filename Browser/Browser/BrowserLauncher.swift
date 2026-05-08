@@ -11,9 +11,11 @@
 import Foundation
 import AuthenticationServices
 import PingLogger
+#if canImport(UIKit)
 import SafariServices
 import Combine
 import UIKit
+#endif
 
 // MARK: - Enums
 /// BrowserType enum to specify the type of external user-agent;
@@ -65,6 +67,7 @@ public protocol BrowserLauncherProtocol: Sendable {
 
 // MARK: - BrowserLauncher
 
+#if canImport(UIKit)
 /// BrowserLauncher class to launch external user-agent for web requests
 @MainActor
 public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
@@ -443,3 +446,4 @@ public final class OpenURLMonitor: NSObject {
         return true
     }
 }
+#endif

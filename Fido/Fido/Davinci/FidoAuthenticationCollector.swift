@@ -12,7 +12,9 @@
 import Foundation
 import PingDavinciPlugin
 import PingLogger
+#if canImport(UIKit)
 import UIKit
+#endif
 import AuthenticationServices
 import PingOrchestrate
 import PingCommons

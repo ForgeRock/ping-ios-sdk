@@ -10,7 +10,9 @@
 
 import Foundation
 import AuthenticationServices
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// Fido is a class that provides FIDO registration and authentication functionalities.
 public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
@@ -153,10 +155,12 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     ///- Returns: The presentation anchor.
     public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         guard let window = window else {
+            #if canImport(UIKit)
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let window = windowScene.windows.first {
                 return window
             }
+            #endif
             fatalError("Window not set. This should never occur.")
         }
         return window
@@ -244,7 +248,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
         
         // Map excludeCredentials to ASAuthorizationPlatformPublicKeyCredentialDescriptor
         if let excludeCredentials = options.excludeCredentials {
-            if #available(iOS 17.4, *) {
+            if #available(iOS 17.4, macOS 13.5, *) {
                 request.excludedCredentials = excludeCredentials.compactMap { descriptor -> ASAuthorizationPlatformPublicKeyCredentialDescriptor? in
                     guard let credentialIDData = Data(base64Encoded: descriptor.id, options: .ignoreUnknownCharacters) else {
                         return nil
@@ -324,7 +328,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
             // Determine authenticator attachment type
             var attachmentValue: String = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
             if let registrationCredential = credential as? ASAuthorizationPlatformPublicKeyCredentialRegistration {
-                if #available(iOS 16.6, *) {
+                if #available(iOS 16.6, macOS 13.5, *) {
                     attachmentValue = registrationCredential.attachment == .platform ? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM : FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM
                 } else {
                     // Fallback for iOS 15 - default to platform since that's the only option on iOS 15
@@ -347,7 +351,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
             // Determine authenticator attachment type for assertion
             var attachmentValue: String = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
             if let assertionCredential = credential as? ASAuthorizationPlatformPublicKeyCredentialAssertion {
-                if #available(iOS 16.6, *) {
+                if #available(iOS 16.6, macOS 13.5, *) {
                     attachmentValue = assertionCredential.attachment == .platform ? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM : FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM
                 } else {
                     // Fallback for iOS 15 - default to platform since that's the only option on iOS 15

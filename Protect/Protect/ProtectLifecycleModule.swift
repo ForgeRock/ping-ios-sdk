@@ -8,6 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
+#if canImport(PingOneSignals)
 import Foundation
 import PingDavinciPlugin
 import PingOrchestrate
@@ -66,3 +67,4 @@ public class ProtectLifecycleConfig: ProtectConfig, @unchecked Sendable {
     
     public override init() {}
 }
+#endif

@@ -8,6 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
+#if canImport(PingOneSignals)
 import PingJourneyPlugin
 import Foundation
 
@@ -27,3 +28,4 @@ extension JourneyConstants {
     public static let pingOneProtectInitializeCallback = "PingOneProtectInitializeCallback"
     public static let pingOneProtectEvaluationCallback = "PingOneProtectEvaluationCallback"
 }
+#endif

@@ -2,7 +2,7 @@
 //  TelephonyCollector.swift
 //  DeviceProfile
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -61,6 +61,7 @@ public struct TelephonyInfo: Codable, Sendable {
     /// - Selects the primary or most complete carrier information
     /// - Prioritizes carriers with complete information
     init() {
+        #if canImport(UIKit)
         let networkInfo = CTTelephonyNetworkInfo()
         
         var selectedCarrier: (carrierName: String?, isoCountryCode: String?)?
@@ -86,6 +87,10 @@ public struct TelephonyInfo: Codable, Sendable {
             self.carrierName = DeviceProfileConstants.unknown
             self.networkCountryIso = DeviceProfileConstants.unknown
         }
+        #else
+        self.carrierName = DeviceProfileConstants.unknown
+        self.networkCountryIso = DeviceProfileConstants.unknown
+        #endif
     }
 }
 

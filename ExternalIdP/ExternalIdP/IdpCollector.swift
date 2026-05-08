@@ -181,6 +181,7 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
     ///  - url: The URL for the IdP authentication.
     /// - Returns: A Result of type Bool or An IdpExceptions error.
     public func fallbackToBrowserHandler(callbackURLScheme: String? = nil, url: URL) async -> Result<Bool, IdpExceptions> {
+        #if canImport(UIKit)
         let urlScheme: String
         if let customScheme = callbackURLScheme {
             urlScheme = customScheme
@@ -200,6 +201,9 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
         } catch {
             return .failure(.idpCanceledException(message: error.localizedDescription))
         }
+        #else
+        return .failure(.illegalStateException(message: "Browser authentication is not supported on this platform"))
+        #endif
     }
     
     /// Authorizes the IdP

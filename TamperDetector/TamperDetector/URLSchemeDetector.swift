@@ -2,13 +2,13 @@
 //  URLSchemeDetector.swift
 //  PingTamperDetector
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
-
+#if canImport(UIKit)
 import Foundation
 import UIKit
 import PingLogger
@@ -58,3 +58,4 @@ public class URLSchemeDetector: TamperDetectorProtocol {
         }
     }
 }
+#endif

@@ -14,6 +14,7 @@ import PingOrchestrate
 import PingNetwork
 import PingLogger
 
+#if canImport(UIKit)
 /// A handler class for managing browser-based Identity Provider (IdP) authorization.
 @MainActor
 public class BrowserHandler: IdpRequestHandler {
@@ -68,3 +69,4 @@ public class BrowserHandler: IdpRequestHandler {
         }
     }
 }
+#endif

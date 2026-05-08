@@ -17,9 +17,11 @@ class ReCaptchaEnterprise: NSObject {
     /// Registers the ReCaptchaEnterpriseCallback with the collector factory
     @objc
     public static func registerCallbacks() {
+        #if canImport(RecaptchaEnterprise)
         Task {
             await CallbackRegistry.shared.register(type: JourneyConstants.reCaptchaEnterpriseCallback, callback: ReCaptchaEnterpriseCallback.self)
         }
+        #endif
     }
 }
 
