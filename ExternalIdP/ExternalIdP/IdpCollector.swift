@@ -49,9 +49,15 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
     
     /// The native handler for the IdP request.
     public var nativeHandler: IdpRequestHandler?
-    
+
     ///  The request to resume the DaVinci flow.
     public var resumeRequest: HttpRequest?
+
+    /// When `true`, `getDefaultIdpHandler` instantiates `FacebookRequestHandler` using the
+    /// `@objc(initWithHttpClient:isLimitedLogin:)` bridge initializer with `true`, enabling
+    /// Facebook Limited Login (restricted data collection, `id_token` instead of `access_token`).
+    /// Defaults to `false` so existing behaviour is preserved for all callers that do not set this flag.
+    public var facebookLimitedLoginEnabled: Bool = false
     
     /// Initializes the `IdpCollector` with the given JSON input.
     public required init(with json: [String : Any]) {
@@ -131,7 +137,11 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
             }
         case Constants.FACEBOOK:
             if let c: NSObject.Type = NSClassFromString("PingExternalIdPFacebook.FacebookRequestHandler") as? NSObject.Type {
-                return makeNativeRequestHandler(from: c, httpClient: httpClient)
+                if facebookLimitedLoginEnabled {
+                    return makeFacebookRequestHandler(from: c, httpClient: httpClient, isLimitedLogin: true)
+                } else {
+                    return makeNativeRequestHandler(from: c, httpClient: httpClient)
+                }
             } else {
                 return nil
             }
@@ -175,6 +185,44 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
         return initialized
     }
     
+    /// Creates a `FacebookRequestHandler` using the two-argument ObjC bridge initializer
+    /// `@objc(initWithHttpClient:isLimitedLogin:)`, allowing the `Bool` limited-login flag
+    /// to cross the module boundary without importing `PingExternalIdPFacebook`.
+    ///
+    /// - Parameters:
+    ///     - c: The `FacebookRequestHandler` class obtained via `NSClassFromString`.
+    ///     - httpClient: The HTTP client to use.
+    ///     - isLimitedLogin: Pass `true` to enable Facebook Limited Login (`.limited` tracking);
+    ///       pass `false` for standard login (`.enabled` tracking).
+    /// - Returns: The configured `IdpRequestHandler`, or `nil` if instantiation fails.
+    private func makeFacebookRequestHandler(from c: AnyClass, httpClient: any HttpClientProtocol, isLimitedLogin: Bool) -> IdpRequestHandler? {
+        // 1) Cast the class object to NSObject.Type so we can call `perform(_:)` on it
+        guard let nsObjcClass = c as? NSObject.Type else {
+            return nil
+        }
+
+        // 2) Call +alloc
+        let allocSel = NSSelectorFromString("alloc")
+        guard
+            let allocUnmanaged = nsObjcClass.perform(allocSel),
+            let allocated = allocUnmanaged.takeUnretainedValue() as? NSObject
+        else {
+            return nil
+        }
+
+        // 3) Call -initWithHttpClient:isLimitedLogin: with the Bool flag as NSNumber
+        let initSel = NSSelectorFromString("initWithHttpClient:isLimitedLogin:")
+        let limitedLoginNumber = NSNumber(value: isLimitedLogin)
+        guard
+            let initUnmanaged = allocated.perform(initSel, with: httpClient, with: limitedLoginNumber),
+            let initialized = initUnmanaged.takeUnretainedValue() as? IdpRequestHandler
+        else {
+            return nil
+        }
+
+        return initialized
+    }
+
     /// Fallback to the browser handler.
     /// - Parameters:
     ///  - callbackURLScheme: The callback URL scheme.
