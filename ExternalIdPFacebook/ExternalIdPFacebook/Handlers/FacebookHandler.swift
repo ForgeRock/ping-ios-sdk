@@ -17,10 +17,12 @@ import PingExternalIdP
 /// A handler class for managing Facebook Identity Provider (IdP) authorization.
 @MainActor
 @objc public class FacebookHandler: NSObject, @preconcurrency IdpHandler, Sendable {
-    
+
     /// The type of token this handler supports.
-    public var tokenType: String = IdpConstants.access_token
-    
+    public var tokenType: String
+
+    /// The tracking mode that controls whether standard or limited login is used.
+    private let trackingMode: FacebookTrackingMode
     /// `LoginManager` instance for Facebook SDK
     private var manager: LoginManager
     /// The IdpClient to use for requests.
@@ -32,36 +34,49 @@ import PingExternalIdP
             let permission = FBSDKCoreKit.Permission(stringLiteral: scope)
             scopes.insert(permission)
         }
+        let tracking: LoginTracking = (trackingMode == .limited) ? .limited : .enabled
         if let nonce = idpClient?.nonce, !nonce.isEmpty {
             return LoginConfiguration(
                 permissions: scopes,
-                tracking: .enabled,
+                tracking: tracking,
                 nonce: nonce
             )
         }
         else {
             return LoginConfiguration(
                 permissions: scopes,
-                tracking: .enabled
+                tracking: tracking
             )
         }
     }
-    
-    /// Initializes a new instance of `FacebookRequestHandler`.
-    /// - Parameter httpClient: The `HttpClient` to use for requests
-    @objc(init)
-    override init() {
+
+    /// Initializes a new instance of `FacebookHandler`.
+    /// - Parameter trackingMode: The tracking mode to use for Facebook login. Defaults to `.enabled`.
+    ///   Pass `.limited` to opt in to Facebook Limited Login, which restricts data collection and
+    ///   uses an authentication token (`id_token`) instead of an access token.
+    public init(trackingMode: FacebookTrackingMode = .enabled) {
+        self.trackingMode = trackingMode
+        self.tokenType = trackingMode == .limited ? IdpConstants.id_token : IdpConstants.access_token
         DispatchQueue.main.async {
             /// Initialize Facebook SDK
             Settings.shared.isAdvertiserIDCollectionEnabled = true
             Settings.shared.isAutoLogAppEventsEnabled = true
-            
+
             ApplicationDelegate.shared.initializeSDK()
         }
         //  Initialize Facebook LoginManager instance
         self.manager = LoginManager()
         //  Perform logout to clear previously authenticated session
         self.manager.logOut()
+    }
+
+    /// Initializes a new instance of `FacebookHandler` with standard tracking enabled.
+    ///
+    /// This no-arg ObjC-accessible initializer preserves backward compatibility for
+    /// Objective-C callers and produces a handler equivalent to `init(trackingMode: .enabled)`.
+    @objc(init)
+    override convenience init() {
+        self.init(trackingMode: .enabled)
     }
     
     /// Handles the opening of a URL in the application.
