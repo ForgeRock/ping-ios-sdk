@@ -56,7 +56,17 @@ final class ExternalIdPFacebookTests: XCTestCase {
         let handler = FacebookHandler()
         XCTAssertNotNil(handler)
     }
-    
+
+    @MainActor func testFacebookHandlerLimitedLoginTokenType() {
+        let handler = FacebookHandler(trackingMode: .limited)
+        XCTAssertEqual(handler.tokenType, IdpConstants.id_token)
+    }
+
+    @MainActor func testFacebookHandlerEnabledTokenType() {
+        let handler = FacebookHandler(trackingMode: .enabled)
+        XCTAssertEqual(handler.tokenType, IdpConstants.access_token)
+    }
+
     // MARK: - FacebookRequestHandler Tests
     
     @MainActor func testFacebookRequestHandlerInitialization() {
