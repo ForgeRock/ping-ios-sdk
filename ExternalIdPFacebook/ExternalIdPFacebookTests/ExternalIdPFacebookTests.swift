@@ -68,18 +68,86 @@ final class ExternalIdPFacebookTests: XCTestCase {
     }
 
     // MARK: - FacebookRequestHandler Tests
-    
+
     @MainActor func testFacebookRequestHandlerInitialization() {
         let httpClient = HttpClient.createClient()
         let handler = FacebookRequestHandler(httpClient: httpClient as! URLSessionHttpClient)
         XCTAssertNotNil(handler)
     }
-    
+
+    /// Verifies that the default `@objc(initWithHttpClient:)` initializer produces a non-nil handler.
+    /// The default init delegates to `init(httpClient:trackingMode: .enabled)` so `.enabled` is the default.
+    @MainActor func testFacebookTrackingModeDefaultIsEnabled() {
+        let httpClient = HttpClient.createClient()
+        let handler = FacebookRequestHandler(httpClient: httpClient as! URLSessionHttpClient)
+        // The default init uses .enabled tracking; the handler must be non-nil
+        XCTAssertNotNil(handler)
+    }
+
+    /// Verifies that `FacebookRequestHandler(httpClient:trackingMode: .limited)` initializes without crash.
+    @MainActor func testFacebookTrackingModeLimitedInit() {
+        let httpClient = HttpClient.createClient()
+        let handler = FacebookRequestHandler(httpClient: httpClient as! URLSessionHttpClient, trackingMode: .limited)
+        XCTAssertNotNil(handler)
+    }
+
+    /// Verifies that `getDefaultIdpHandler` with `facebookLimitedLoginEnabled = false` returns a non-nil
+    /// `FacebookRequestHandler` (standard login path, `@objc(initWithHttpClient:)` selector).
+    @MainActor func testFacebookRequestHandlerObjCBridgeEnabled() {
+        let jsonObject: [String: Any] = [
+            "idpId": "testid",
+            "idpType": "FACEBOOK",
+            "type": "SOCIAL_LOGIN_BUTTON",
+            "label": "Sign in with Facebook",
+            "idpEnabled": true,
+            "links": [
+                "authenticate": [
+                    "href": "https://example.com/facebook"
+                ]
+            ]
+        ]
+        let idpCollector = IdpCollector(with: jsonObject)
+        idpCollector.facebookLimitedLoginEnabled = false
+        let handler = idpCollector.getDefaultIdpHandler(httpClient: HttpClient.createClient())
+        XCTAssertNotNil(handler)
+        XCTAssertNotNil(handler as? FacebookRequestHandler)
+    }
+
+    /// Verifies that `getDefaultIdpHandler` with `facebookLimitedLoginEnabled = true` returns a non-nil
+    /// `FacebookRequestHandler` (limited login path, `@objc(initWithHttpClient:isLimitedLogin:)` selector).
+    @MainActor func testFacebookRequestHandlerObjCBridgeLimited() {
+        let jsonObject: [String: Any] = [
+            "idpId": "testid",
+            "idpType": "FACEBOOK",
+            "type": "SOCIAL_LOGIN_BUTTON",
+            "label": "Sign in with Facebook",
+            "idpEnabled": true,
+            "links": [
+                "authenticate": [
+                    "href": "https://example.com/facebook"
+                ]
+            ]
+        ]
+        let idpCollector = IdpCollector(with: jsonObject)
+        idpCollector.facebookLimitedLoginEnabled = true
+        let handler = idpCollector.getDefaultIdpHandler(httpClient: HttpClient.createClient())
+        XCTAssertNotNil(handler)
+        XCTAssertNotNil(handler as? FacebookRequestHandler)
+    }
+
+    // MARK: - FacebookHandler Default Token Type Tests
+
+    /// Verifies that `FacebookHandler()` (no-arg) produces `tokenType == IdpConstants.access_token`.
+    @MainActor func testFacebookHandlerDefaultTokenType() {
+        let handler = FacebookHandler()
+        XCTAssertEqual(handler.tokenType, IdpConstants.access_token)
+    }
+
     // MARK: - FacebookHandlerUtils Tests
-    
+
     @MainActor func testFacebookHandlerUtilsAuthorizeThrowsWithNilConfiguration() async {
         let idpClient = IdpClient(clientId: "test", scopes: ["email"])
-        
+
         do {
             _ = try await FacebookHandlerUtils.authorize(idpClient: idpClient, configuration: nil, manager: nil)
             XCTFail("Expected error to be thrown with nil configuration")
@@ -87,17 +155,26 @@ final class ExternalIdPFacebookTests: XCTestCase {
             XCTAssertNotNil(error)
         }
     }
-    
+
     @MainActor func testFacebookHandlerUtilsAuthorizeThrowsWhenNoViewController() async {
         let idpClient = IdpClient(clientId: "test", scopes: ["email"])
-        
+
         do {
             _ = try await FacebookHandlerUtils.authorize(idpClient: idpClient, configuration: nil, manager: nil)
             XCTFail("Expected error to be thrown when no view controller is available")
         } catch {
             // Expected - validation fails with no view controller or invalid config
+            // The error message (IdpErrorMessages.facebookTokenMissing) acknowledges that either
+            // access token or authentication token may be absent.
             XCTAssertNotNil(error)
         }
     }
-    
+
+    /// Verifies that `IdpErrorMessages.facebookTokenMissing` references both token types
+    /// (updated in Task 2 to acknowledge that either token may be absent in Limited Login flows).
+    @MainActor func testFacebookHandlerUtilsErrorMessageCoversTokenType() {
+        let message = IdpErrorMessages.facebookTokenMissing
+        XCTAssertTrue(message.contains("token"), "facebookTokenMissing error message must reference 'token'")
+    }
+
 }
