@@ -25,12 +25,11 @@ final class FidoLoggerTests: XCTestCase {
         let mockLogger = MockFidoLogger()
         let fido = Fido()
 
-        // The challenge below contains '!' characters that are non-base64. Combined with
-        // .ignoreUnknownCharacters this still leaves an odd-length input that cannot be
-        // decoded, so the invalid-challenge guard fires and `register` returns
-        // synchronously without launching an ASAuthorization ceremony.
+        // "a" is a single valid base64 character. After stripping unknown characters,
+        // the length (1) has remainder 1 mod 4, which Data(base64Encoded:) cannot decode
+        // — it returns nil, causing the invalidChallenge guard to fire synchronously.
         let options: [String: Any] = [
-            "challenge": "!!!not-valid-base64!!!",
+            "challenge": "a",
             "rp": ["id": "example.com", "name": "Example"],
             "user": ["id": "userId", "name": "user", "displayName": "User"],
             "pubKeyCredParams": [["type": "public-key", "alg": -7]]
@@ -51,7 +50,7 @@ final class FidoLoggerTests: XCTestCase {
 
         // See note in testRegisterRoutesLogsThroughInjectedLogger about the challenge string.
         let options: [String: Any] = [
-            "challenge": "!!!not-valid-base64!!!",
+            "challenge": "a",
             "rpId": "example.com",
             "userVerification": "preferred"
         ]
@@ -66,9 +65,10 @@ final class FidoLoggerTests: XCTestCase {
     }
 
     func testNoLoggerInjectedDoesNotCrash() {
+        let mockLogger = MockFidoLogger()
         let fido = Fido()
         let options: [String: Any] = [
-            "challenge": "!!!not-valid-base64!!!",
+            "challenge": "a",
             "rpId": "example.com"
         ]
         let exp = expectation(description: "completion called")
@@ -76,6 +76,8 @@ final class FidoLoggerTests: XCTestCase {
             exp.fulfill()
         }
         wait(for: [exp], timeout: 1.0)
+
+        XCTAssertFalse(mockLogger.hasMessages, "No logger injected — mock logger should have received no calls")
     }
 
     // MARK: - Collector / Callback propagation
@@ -99,7 +101,7 @@ final class FidoLoggerTests: XCTestCase {
 
         _ = await collector.register(window: MockASPresentationAnchor())
 
-        XCTAssertTrue(mockFido.capturedLogger as AnyObject? === mockLogger,
+        XCTAssertTrue(mockFido.capturedLogger as? MockFidoLogger === mockLogger,
                       "Collector must pass the DaVinci config logger to fido.register")
     }
 
@@ -119,7 +121,7 @@ final class FidoLoggerTests: XCTestCase {
 
         _ = await collector.authenticate(window: MockASPresentationAnchor())
 
-        XCTAssertTrue(mockFido.capturedLogger as AnyObject? === mockLogger,
+        XCTAssertTrue(mockFido.capturedLogger as? MockFidoLogger === mockLogger,
                       "Collector must pass the DaVinci config logger to fido.authenticate")
     }
 
@@ -140,7 +142,7 @@ final class FidoLoggerTests: XCTestCase {
 
         _ = await callback.register(window: MockASPresentationAnchor())
 
-        XCTAssertTrue(mockFido.capturedLogger as AnyObject? === mockLogger,
+        XCTAssertTrue(mockFido.capturedLogger as? MockFidoLogger === mockLogger,
                       "Callback must pass the Journey config logger to fido.register")
     }
 
@@ -161,7 +163,7 @@ final class FidoLoggerTests: XCTestCase {
 
         _ = await callback.authenticate(window: MockASPresentationAnchor())
 
-        XCTAssertTrue(mockFido.capturedLogger as AnyObject? === mockLogger,
+        XCTAssertTrue(mockFido.capturedLogger as? MockFidoLogger === mockLogger,
                       "Callback must pass the Journey config logger to fido.authenticate")
     }
 }

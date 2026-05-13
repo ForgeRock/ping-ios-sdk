@@ -33,7 +33,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
 
     /// Logger for the in-flight ceremony. Set by `register`/`authenticate` and cleared in
     /// `cleanup()`, so each ceremony uses its caller's workflow logger and nothing else.
-    var logger: Logger?
+    private var logger: Logger?
     
     func makeAuthorizationController(requests: [ASAuthorizationRequest]) -> ASAuthorizationController {
         let authorizationController = ASAuthorizationController(authorizationRequests: requests)
@@ -68,6 +68,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
             guard let challengeData = Data(base64Encoded: registrationOptions.challenge, options: .ignoreUnknownCharacters) else {
                 logger?.e("Fido: Registration failed - invalid challenge", error: nil)
                 completion(.failure(FidoError.invalidChallenge))
+                cleanup()
                 return
             }
             let userID = Data(registrationOptions.user.id.utf8)
@@ -103,6 +104,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
             if requests.isEmpty {
                 logger?.e("Fido: Registration failed - no suitable authentication methods available", error: nil)
                 completion(.failure(FidoError.unsupportedAction("No suitable authentication methods available")))
+                cleanup()
             } else {
                 // 4. Start timeout if specified
                 if let timeout = registrationOptions.timeout, timeout > 0 {
@@ -145,6 +147,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
             guard let challengeData = Data(base64Encoded: authenticationOptions.challenge, options: .ignoreUnknownCharacters) else {
                 logger?.e("Fido: Authentication failed - invalid challenge", error: nil)
                 completion(.failure(FidoError.invalidChallenge))
+                cleanup()
                 return
             }
             let assertionRequest = platformProvider.createCredentialAssertionRequest(challenge: challengeData)
@@ -223,9 +226,10 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     private func startTimeout(milliseconds: Int) {
         // Cancel any existing timeout
         cancelTimeout()
-        
+
         let timeoutSeconds = Double(milliseconds) / 1000.0
-        
+        let capturedLogger = logger
+
         timeoutTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: UInt64(timeoutSeconds * 1_000_000_000))
 
@@ -234,7 +238,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
             await MainActor.run { [weak self] in
                 guard let self = self else { return }
 
-                logger?.d("Fido: Operation timed out after \(Int(timeoutSeconds))s")
+                capturedLogger?.d("Fido: Operation timed out after \(Int(timeoutSeconds))s")
 
                 // Cancel the authorization controller if still active
                 self.authorizationController?.cancel()
