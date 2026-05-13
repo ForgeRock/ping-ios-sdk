@@ -2,7 +2,7 @@
 //  IdpValidationUtils.swift
 //  ExternalIdP
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -57,7 +57,7 @@ public struct IdpErrorMessages {
     public static let googleUserMissing = "Google Sign In completed but no user token was received"
     
     // MARK: - Facebook Sign-In Errors
-    public static let facebookTokenMissing = "Facebook login completed but no access token was received"
+    public static let facebookTokenMissing = "Facebook login completed but no access token or authentication token was received"
     public static let facebookConfigurationInvalid = "Facebook login configuration is invalid"
     public static let facebookManagerMissing = "Facebook login manager is not initialized"
 }

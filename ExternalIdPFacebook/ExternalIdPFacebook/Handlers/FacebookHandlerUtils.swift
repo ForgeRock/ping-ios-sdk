@@ -45,11 +45,13 @@ class FacebookHandlerUtils {
                     case .failed(let error):
                         continuation.resume(throwing: IdpExceptions.illegalStateException(message: error.localizedDescription))
                     case .success(_, _, let token):
-                        guard let accessToken = token?.tokenString else {
+                        if let accessToken = token?.tokenString {
+                            continuation.resume(returning: IdpResult(token: accessToken, additionalParameters: nil))
+                        } else if let authToken = AuthenticationToken.current?.tokenString {
+                            continuation.resume(returning: IdpResult(token: authToken, additionalParameters: nil))
+                        } else {
                             continuation.resume(throwing: IdpExceptions.illegalStateException(message: IdpErrorMessages.facebookTokenMissing))
-                            return
                         }
-                        continuation.resume(returning: IdpResult(token: accessToken, additionalParameters: nil))
                     }
                 }
             }
