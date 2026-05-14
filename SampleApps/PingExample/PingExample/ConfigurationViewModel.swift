@@ -34,6 +34,8 @@ struct Configuration: Codable, Sendable {
     var acrValues: String?
     /// Enable PAR (Pushed Authorization Request) RFC 9126.
     var par: Bool?
+    /// Enable Facebook Limited Login (restricts data collection; posts id_token instead of access_token).
+    var facebookLimitedLogin: Bool? = nil
     
     /// Whether this configuration is a bundled default (immutable in the UI).
     var isDefault: Bool {

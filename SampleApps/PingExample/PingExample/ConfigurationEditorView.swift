@@ -29,6 +29,7 @@ struct ConfigurationEditorView: View {
     @State private var realm: String = ""
     @State private var acrValues: String = ""
     @State private var par: Bool = false
+    @State private var facebookLimitedLogin: Bool = false
     
     @State private var showValidationError = false
     @State private var validationMessage = ""
@@ -151,6 +152,19 @@ struct ConfigurationEditorView: View {
                         }
                         .tint(.blue)
                     }
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        Toggle(isOn: $facebookLimitedLogin) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Facebook Limited Login")
+                                    .font(.system(size: 14, weight: .medium))
+                                Text("Use Facebook Limited Login — restricts data collection, posts id_token instead of access_token")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .tint(.blue)
+                    }
                 }
             }
             .padding(.horizontal, 20)
@@ -261,6 +275,7 @@ struct ConfigurationEditorView: View {
         realm = config.realm ?? ""
         acrValues = config.acrValues ?? ""
         par = config.par ?? false
+        facebookLimitedLogin = config.facebookLimitedLogin ?? false
     }
     
     private func save() {
@@ -319,7 +334,8 @@ struct ConfigurationEditorView: View {
             serverUrl: serverUrl.isEmpty ? nil : serverUrl.trimmingCharacters(in: .whitespaces),
             realm: realm.isEmpty ? nil : realm.trimmingCharacters(in: .whitespaces),
             acrValues: acrValues.isEmpty ? nil : acrValues.trimmingCharacters(in: .whitespaces),
-            par: par
+            par: par,
+            facebookLimitedLogin: facebookLimitedLogin ? true : nil
         )
         
         if let existing = editingConfig {

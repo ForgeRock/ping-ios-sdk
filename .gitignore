@@ -92,3 +92,5 @@ AGENTS.md
 # Merge / Finder leftovers
 *.orig
 **/* copy.xcodeproj/
+
+.polaris/

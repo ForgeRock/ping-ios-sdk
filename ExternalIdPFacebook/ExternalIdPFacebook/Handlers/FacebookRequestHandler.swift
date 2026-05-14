@@ -92,17 +92,18 @@ public enum FacebookTrackingMode: Sendable {
 
     /// Initializes a new instance of `FacebookRequestHandler` via an ObjC bridge.
     ///
-    /// This initializer is called from `IdpCollector` via ObjC message-send when
-    /// `facebookLimitedLoginEnabled` is set on the collector. The `isLimitedLogin`
-    /// flag maps `true` to `.limited` and `false` to `.enabled`.
+    /// This initializer is called from `IdpCollector` via `perform(_:with:with:)`, which can
+    /// only pass `id`-typed (object pointer) arguments. Declaring the parameter as `NSNumber`
+    /// rather than `Bool` keeps the argument slot as an object pointer on both sides, so the
+    /// runtime delivers the actual NSNumber rather than truncating its address to a byte.
     ///
     /// - Parameters:
     ///   - httpClient: The `URLSessionHttpClient` to use for requests.
-    ///   - isLimitedLogin: Pass `true` to use Facebook Limited Login (`.limited` tracking);
-    ///     pass `false` for standard login (`.enabled` tracking).
+    ///   - isLimitedLogin: `NSNumber` wrapping `true` for Facebook Limited Login (`.limited`
+    ///     tracking) or `false` for standard login (`.enabled` tracking).
     @objc(initWithHttpClient:isLimitedLogin:)
-    convenience init(httpClient: URLSessionHttpClient, isLimitedLogin: Bool) {
-        self.init(httpClient: httpClient, trackingMode: isLimitedLogin ? .limited : .enabled)
+    convenience init(httpClient: URLSessionHttpClient, isLimitedLogin: NSNumber) {
+        self.init(httpClient: httpClient, trackingMode: isLimitedLogin.boolValue ? .limited : .enabled)
     }
 
     @discardableResult

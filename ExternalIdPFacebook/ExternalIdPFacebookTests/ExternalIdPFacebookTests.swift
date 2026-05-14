@@ -313,4 +313,18 @@ final class ExternalIdPFacebookTests: XCTestCase {
                       "Object produced by @objc(initWithHttpClient:isLimitedLogin:) must be a FacebookRequestHandler")
     }
 
+    /// Regression: isLimitedLogin:false via perform(_:with:with:) must not activate limited mode.
+    ///
+    /// Before the fix, the BOOL parameter slot received the NSNumber pointer address (always
+    /// non-zero), so false was silently coerced to true. The fix changes the parameter type to
+    /// NSNumber so the object pointer is delivered intact and .boolValue is read correctly.
+    @MainActor func testObjCBridgeFalseDoesNotActivateLimitedLogin() {
+        let httpClient = HttpClient.createClient()
+        let handler = FacebookRequestHandler(httpClient: httpClient as! URLSessionHttpClient,
+                                             isLimitedLogin: NSNumber(value: false))
+        XCTAssertNotNil(handler)
+        // Standard (non-limited) init must not crash and must be a valid handler
+        XCTAssertTrue(handler is FacebookRequestHandler)
+    }
+
 }

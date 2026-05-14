@@ -53,6 +53,10 @@ public class SocialButtonViewModel: ObservableObject {
     
     public init(idpCollector: IdpCollector) {
         self.idpCollector = idpCollector
+        if idpCollector.idpType == "FACEBOOK" {
+            let config = ConfigurationManager.shared.selectedConfig(for: .davinci)
+            idpCollector.facebookLimitedLoginEnabled = config?.facebookLimitedLogin ?? false
+        }
     }
     
     public func startSocialAuthentication() async -> Result<Bool, IdpExceptions> {

@@ -11,6 +11,7 @@
 import Foundation
 import SwiftUI
 import PingExternalIdP
+import PingExternalIdPFacebook
 
 struct IdpCallbackView: View {
     @StateObject var viewModel: IdpCallbackViewModel
@@ -93,7 +94,10 @@ class IdpCallbackViewModel: ObservableObject {
             guard !hasStartedAuthorization else { return }
             hasStartedAuthorization = true
             
-            let result = await callback.authorize()
+            let isFacebookLimited = callback.provider.lowercased().contains("facebook")
+                && (ConfigurationManager.shared.selectedConfig(for: .journey)?.facebookLimitedLogin ?? false)
+            let facebookHandler: IdpHandler? = isFacebookLimited ? FacebookHandler(trackingMode: .limited) : nil
+            let result = await callback.authorize(idpHandler: facebookHandler)
             
             switch result {
             case .success:
