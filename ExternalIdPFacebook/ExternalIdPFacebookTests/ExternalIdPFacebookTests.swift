@@ -170,11 +170,12 @@ final class ExternalIdPFacebookTests: XCTestCase {
         }
     }
 
-    /// Verifies that `IdpErrorMessages.facebookTokenMissing` references both token types
-    /// (updated in Task 2 to acknowledge that either token may be absent in Limited Login flows).
+    /// Verifies that `IdpErrorMessages.facebookTokenMissing` references both access token and
+    /// authentication token (updated in Task 2 for Limited Login fallback path).
     @MainActor func testFacebookHandlerUtilsErrorMessageCoversTokenType() {
         let message = IdpErrorMessages.facebookTokenMissing
-        XCTAssertTrue(message.contains("token"), "facebookTokenMissing error message must reference 'token'")
+        XCTAssertTrue(message.contains("access token"), "facebookTokenMissing must reference 'access token'")
+        XCTAssertTrue(message.contains("authentication token"), "facebookTokenMissing must reference 'authentication token'")
     }
 
 }
