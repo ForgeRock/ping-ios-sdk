@@ -1,6 +1,7 @@
 ## [Unreleased]
 #### Added
 - Routed FIDO ceremony logs through the workflow logger by adding a `logger:` parameter to `Fido.register` and `Fido.authenticate`. The DaVinci collectors and Journey callbacks pass the workflow's configured logger so FIDO ceremony state transitions and errors emit through the same logger as the surrounding flow [SDKS-4924]
+- Added Facebook Limited Login support: new `public enum FacebookTrackingMode { case enabled, case limited }`, `public init FacebookHandler.init(trackingMode:)` for the Journey path, and `public var IdpCollector.facebookLimitedLoginEnabled: Bool` for the DaVinci path. Pass `.limited` / set the flag to `true` to use Facebook's restricted-tracking login mode, which returns an OIDC `id_token` (authentication token) instead of an access token [SDKS-4924]
 
 ## [2.0.0]
 #### Added

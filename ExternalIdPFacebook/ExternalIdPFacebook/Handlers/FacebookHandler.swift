@@ -102,6 +102,7 @@ import PingExternalIdP
     /// - Throws: An error if the authorization fails.
     /// - Returns: An `IdpResult` object containing the result of the authorization.
     public func authorize(idpClient: IdpClient) async throws -> IdpResult {
+        self.idpClient = idpClient
         return try await FacebookHandlerUtils.authorize(idpClient: idpClient, configuration: self.configuration, manager: self.manager)
     }
 }
