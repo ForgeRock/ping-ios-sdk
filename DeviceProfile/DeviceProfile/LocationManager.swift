@@ -276,13 +276,21 @@ public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
                 throw authorizationErrorForStatus(status)
             }
 
+        case .authorizedAlways:
+            return try await fetchLocationWithAuthorization()
+
+        #if canImport(UIKit)
+        case .authorizedWhenInUse:
+            return try await fetchLocationWithAuthorization()
+        #endif
+
         case .denied:
             throw LocationError.authorizationDenied
 
         case .restricted:
             throw LocationError.authorizationRestricted
 
-        default:
+        @unknown default:
             throw LocationError.authorizationDenied
         }
     }

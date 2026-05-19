@@ -88,6 +88,7 @@ public struct TelephonyInfo: Codable, Sendable {
             self.networkCountryIso = DeviceProfileConstants.unknown
         }
         #else
+        // macOS: build target only — telephony not available on this platform
         self.carrierName = DeviceProfileConstants.unknown
         self.networkCountryIso = DeviceProfileConstants.unknown
         #endif

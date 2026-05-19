@@ -222,7 +222,7 @@ let package = Package(
             name: "PingExternalIdPGoogle",
             dependencies: [
                 "PingExternalIdP",
-                .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
+                .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS", condition: .when(platforms: [.iOS]))
             ],
             path: "ExternalIdPGoogle/ExternalIdPGoogle",
             exclude: ["ExternalIdPGoogle.h"],

@@ -202,6 +202,7 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
             return .failure(.idpCanceledException(message: error.localizedDescription))
         }
         #else
+        // macOS: build target only — browser-based IdP authentication requires UIKit and is not a supported use case
         return .failure(.illegalStateException(message: "Browser authentication is not supported on this platform"))
         #endif
     }

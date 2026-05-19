@@ -81,7 +81,8 @@ public struct PlatformInfo: Codable, Sendable {
         self.deviceName = await UIDevice.current.name
         #else
         self.platform = "macOS"
-        self.version = ProcessInfo.processInfo.operatingSystemVersionString
+        let v = ProcessInfo.processInfo.operatingSystemVersion
+        self.version = "\(v.majorVersion).\(v.minorVersion).\(v.patchVersion)"
         self.device = "Mac"
         self.deviceName = Host.current().localizedName ?? "Mac"
         #endif

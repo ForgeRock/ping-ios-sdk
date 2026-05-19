@@ -105,6 +105,7 @@ public struct HardwareInfo: Codable, Sendable {
             "orientation": isPortrait ? 1 : 0
         ]
         #else
+        // macOS: build target only for 3rd-party library compatibility — not a supported runtime platform
         return [:]
         #endif
     }
@@ -139,6 +140,7 @@ public struct HardwareInfo: Codable, Sendable {
         let cameraCount = discoverySession.devices.count
         return ["numberOfCameras": cameraCount]
         #else
+        // macOS: build target only for 3rd-party library compatibility — not a supported runtime platform
         return [:]
         #endif
     }

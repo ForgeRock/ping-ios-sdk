@@ -161,6 +161,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
                 return window
             }
             #endif
+            // macOS: build target only — this path is unreachable in practice
             fatalError("Window not set. This should never occur.")
         }
         return window
