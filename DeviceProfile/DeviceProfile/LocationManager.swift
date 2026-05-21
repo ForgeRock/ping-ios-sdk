@@ -260,6 +260,11 @@ public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
             return try await fetchLocationWithAuthorization()
         }
 
+        // The isAuthorized guard above already handles .authorizedAlways (and .authorizedWhenInUse
+        // on UIKit), so the switch only needs to cover the remaining non-authorised states:
+        // .notDetermined, .denied, .restricted, and @unknown default.
+        // .authorizedAlways is listed below only to satisfy compiler exhaustiveness — it is
+        // unreachable at runtime because the guard above always short-circuits first.
         switch currentStatus {
         case .notDetermined:
             // Need to request authorization first
@@ -276,7 +281,7 @@ public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
                 throw authorizationErrorForStatus(status)
             }
 
-        case .authorizedAlways:
+        case .authorizedAlways: // unreachable — handled by isAuthorized guard above
             return try await fetchLocationWithAuthorization()
 
         #if canImport(UIKit)
