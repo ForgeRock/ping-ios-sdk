@@ -209,6 +209,8 @@ class LabelCollectorTests: XCTestCase {
         XCTAssertNil(LabelCollector(with: rich).payload())
     }
 
+    // Verifies that LabelCollector and BooleanCollector accept the same richContent JSON shape
+    // (structural equivalence, not a shared instance).
     func testRichContentTypeIsSharedBetweenCollectors() {
         let richInput: [String: Any] = [
             "content": "template {{link}}",

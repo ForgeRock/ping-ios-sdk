@@ -38,21 +38,8 @@ public class BooleanCollector: FieldCollector<Bool>, @unchecked Sendable {
         }
         self.errorMessage = json[Constants.errorMessage] as? String
         
-        if let richContentDict = json[Constants.richContent] as? [String: Any],
-           let content = richContentDict[Constants.content] as? String {
-            var replacements: [String: RichContentReplacement] = [:]
-            if let replacementsDict = richContentDict[Constants.replacements] as? [String: [String: Any]] {
-                for (key, replacementDict) in replacementsDict {
-                    let replacement = RichContentReplacement(
-                        value: replacementDict[Constants.value] as? String ?? "",
-                        href: replacementDict[Constants.href] as? String,
-                        type: replacementDict[Constants.type] as? String ?? "",
-                        target: replacementDict[Constants.target] as? String
-                    )
-                    replacements[key] = replacement
-                }
-            }
-            self.richContent = RichContent(content: content, replacements: replacements)
+        if let richContentDict = json[Constants.richContent] as? [String: Any] {
+            self.richContent = RichContent.parse(from: richContentDict)
         }
         
         super.init(with: json)

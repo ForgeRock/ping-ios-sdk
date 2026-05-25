@@ -1,3 +1,7 @@
+## [Unreleased]
+#### Added
+- Added `RichContent` and `RichContentReplacement` types and `richContent` property on `LabelCollector` to support template-based rich text with embedded links [SDKS-4245]
+
 ## [2.0.0]
 #### Added
 - Added new `PingJourney` module [SDKS-3918]

@@ -11,44 +11,52 @@
 import SwiftUI
 import PingDavinci
 
-func buildAttributedString(from richContent: RichContent) -> AttributedString {
-    let template = richContent.content
-    var result = AttributedString()
+enum RichTextBuilder {
+    static func build(from richContent: RichContent) -> AttributedString {
+        let template = richContent.content
+        var result = AttributedString()
 
-    var remaining = template[template.startIndex...]
+        var remaining = template[template.startIndex...]
 
-    while let openRange = remaining.range(of: "{{") {
-        let prefix = String(remaining[remaining.startIndex..<openRange.lowerBound])
-        result.append(AttributedString(prefix))
+        while let openRange = remaining.range(of: "{{") {
+            let prefix = String(remaining[remaining.startIndex..<openRange.lowerBound])
+            result.append(AttributedString(prefix))
 
-        let afterOpen = openRange.upperBound
-        guard let closeRange = remaining[afterOpen...].range(of: "}}") else {
-            result.append(AttributedString(String(remaining[openRange.lowerBound...])))
-            remaining = remaining[remaining.endIndex...]
-            break
-        }
-
-        let placeholderKey = String(remaining[afterOpen..<closeRange.lowerBound])
-
-        if let replacement = richContent.replacements[placeholderKey] {
-            if replacement.type == "link", let href = replacement.href, let url = URL(string: href) {
-                var linkText = AttributedString(replacement.value)
-                linkText.link = url
-                linkText.foregroundColor = Color.themeButtonBackground
-                result.append(linkText)
-            } else {
-                result.append(AttributedString(replacement.value))
+            let afterOpen = openRange.upperBound
+            guard let closeRange = remaining[afterOpen...].range(of: "}}") else {
+                result.append(AttributedString(String(remaining[openRange.lowerBound...])))
+                remaining = remaining[remaining.endIndex...]
+                break
             }
-        } else {
-            result.append(AttributedString("{{\(placeholderKey)}}"))
+
+            let placeholderKey = String(remaining[afterOpen..<closeRange.lowerBound])
+
+            if let replacement = richContent.replacements[placeholderKey] {
+                if replacement.type == "link", let href = replacement.href {
+                    if let url = URL(string: href) {
+                        var linkText = AttributedString(replacement.value)
+                        linkText.link = url
+                        linkText.foregroundColor = Color.themeButtonBackground
+                        result.append(linkText)
+                    } else {
+                        // Server returned a malformed URL; render as plain text so content is not lost.
+                        assertionFailure("RichTextBuilder: invalid URL from server: \(href)")
+                        result.append(AttributedString(replacement.value))
+                    }
+                } else {
+                    result.append(AttributedString(replacement.value))
+                }
+            } else {
+                result.append(AttributedString("{{\(placeholderKey)}}"))
+            }
+
+            remaining = remaining[closeRange.upperBound...]
         }
 
-        remaining = remaining[closeRange.upperBound...]
-    }
+        if !remaining.isEmpty {
+            result.append(AttributedString(String(remaining)))
+        }
 
-    if !remaining.isEmpty {
-        result.append(AttributedString(String(remaining)))
+        return result
     }
-
-    return result
 }

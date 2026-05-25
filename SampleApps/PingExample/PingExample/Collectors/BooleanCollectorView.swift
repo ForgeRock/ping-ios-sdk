@@ -86,7 +86,7 @@ struct BooleanCollectorView: View {
     @ViewBuilder
     private var labelContent: some View {
         if let richContent = field.richContent {
-            Text(buildAttributedString(from: richContent))
+            Text(RichTextBuilder.build(from: richContent))
         } else {
             Text(field.required ? "\(field.label)*" : field.label)
         }

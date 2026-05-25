@@ -33,21 +33,8 @@ public class LabelCollector: Collector, @unchecked Sendable {
         content = json[Constants.content] as? String ?? ""
         key = json[Constants.key] as? String ?? ""
 
-        if let richContentDict = json[Constants.richContent] as? [String: Any],
-           let richContentContent = richContentDict[Constants.content] as? String {
-            var replacements: [String: RichContentReplacement] = [:]
-            if let replacementsDict = richContentDict[Constants.replacements] as? [String: [String: Any]] {
-                for (replacementKey, replacementDict) in replacementsDict {
-                    let replacement = RichContentReplacement(
-                        value: replacementDict[Constants.value] as? String ?? "",
-                        href: replacementDict[Constants.href] as? String,
-                        type: replacementDict[Constants.type] as? String ?? "",
-                        target: replacementDict[Constants.target] as? String
-                    )
-                    replacements[replacementKey] = replacement
-                }
-            }
-            self.richContent = RichContent(content: richContentContent, replacements: replacements)
+        if let richContentDict = json[Constants.richContent] as? [String: Any] {
+            self.richContent = RichContent.parse(from: richContentDict)
         }
     }
     
