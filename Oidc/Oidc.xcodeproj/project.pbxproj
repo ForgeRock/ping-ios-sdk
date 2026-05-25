@@ -11,6 +11,11 @@
 		3AB1CA162BD6F99C003FCE3C /* Oidc.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AB1CA0A2BD6F99C003FCE3C /* Oidc.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3AB1CA2D2BD7727B003FCE3C /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CA2A2BD7727B003FCE3C /* Token.swift */; };
 		3AB1CA2E2BD7727B003FCE3C /* Pkce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CA2B2BD7727B003FCE3C /* Pkce.swift */; };
+		SDKS4785A001 /* DeviceAuthorizationResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS4785F001 /* DeviceAuthorizationResponse.swift */; };
+		SDKS4785A002 /* DeviceFlowStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS4785F002 /* DeviceFlowStatus.swift */; };
+		SDKS4785A003 /* OidcDeviceClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS4785F003 /* OidcDeviceClientTests.swift */; };
+		SDKS4785A005 /* OidcDeviceClientAdditionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS4785F005 /* OidcDeviceClientAdditionalTests.swift */; };
+		SDKS4785A004 /* OidcDeviceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS4785F004 /* OidcDeviceClient.swift */; };
 		3AB1CA312BD859BC003FCE3C /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CA302BD859BC003FCE3C /* User.swift */; };
 		3AB1CA332BD8823C003FCE3C /* Agent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CA322BD8823C003FCE3C /* Agent.swift */; };
 		3AB1CA352BD884E4003FCE3C /* OidcClientConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB1CA342BD884E4003FCE3C /* OidcClientConfig.swift */; };
@@ -101,6 +106,11 @@
 		EC0CB5942E266F3400A82D6C /* Oidc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Oidc.swift; sourceTree = "<group>"; };
 		EC23D5122E295AAB00C43D42 /* Web.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Web.swift; sourceTree = "<group>"; };
 		EC23D5142E2E7A1100C43D42 /* OidcWebClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcWebClientTests.swift; sourceTree = "<group>"; };
+		SDKS4785F001 /* DeviceAuthorizationResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthorizationResponse.swift; sourceTree = "<group>"; };
+		SDKS4785F002 /* DeviceFlowStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFlowStatus.swift; sourceTree = "<group>"; };
+		SDKS4785F003 /* OidcDeviceClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcDeviceClientTests.swift; sourceTree = "<group>"; };
+		SDKS4785F005 /* OidcDeviceClientAdditionalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcDeviceClientAdditionalTests.swift; sourceTree = "<group>"; };
+		SDKS4785F004 /* OidcDeviceClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcDeviceClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -163,6 +173,9 @@
 				EC0CB5932E266F2D00A82D6C /* Module */,
 				3AB1CA322BD8823C003FCE3C /* Agent.swift */,
 				A50966B72C4C34CB00A4E5B5 /* AuthCode.swift */,
+				SDKS4785F001 /* DeviceAuthorizationResponse.swift */,
+				SDKS4785F002 /* DeviceFlowStatus.swift */,
+				SDKS4785F004 /* OidcDeviceClient.swift */,
 				3AB1CA3C2BD961A2003FCE3C /* OidcClient.swift */,
 				3AB1CA342BD884E4003FCE3C /* OidcClientConfig.swift */,
 				A50966B52C4C342800A4E5B5 /* OidcError.swift */,
@@ -184,6 +197,8 @@
 				A50966E22C4F2F4300A4E5B5 /* OidcClientTests.swift */,
 						7101980CC54DBB835D4F7DB3 /* OidcClientPARTests.swift */,
 						77E2E5250895DD43A8388F8A /* OidcAdditionalTests.swift */,
+				SDKS4785F003 /* OidcDeviceClientTests.swift */,
+				SDKS4785F005 /* OidcDeviceClientAdditionalTests.swift */,
 				EC23D5142E2E7A1100C43D42 /* OidcWebClientTests.swift */,
 				A50966DA2C4DDFAE00A4E5B5 /* PkceTests.swift */,
 				A50966D42C4DD79000A4E5B5 /* TokenTests.swift */,
@@ -326,6 +341,9 @@
 			files = (
 				3AB1CA312BD859BC003FCE3C /* User.swift in Sources */,
 				EC0CB5952E266F3900A82D6C /* Oidc.swift in Sources */,
+				SDKS4785A001 /* DeviceAuthorizationResponse.swift in Sources */,
+				SDKS4785A002 /* DeviceFlowStatus.swift in Sources */,
+				SDKS4785A004 /* OidcDeviceClient.swift in Sources */,
 				3AB1CA3D2BD961A2003FCE3C /* OidcClient.swift in Sources */,
 				3AB1CA332BD8823C003FCE3C /* Agent.swift in Sources */,
 				A50966B82C4C34CB00A4E5B5 /* AuthCode.swift in Sources */,
@@ -355,6 +373,8 @@
 				A50966E32C4F2F4300A4E5B5 /* OidcClientTests.swift in Sources */,
 						700AADB6B22EDCF175F25320 /* OidcClientPARTests.swift in Sources */,
 						CE68EBE71BABE65295E0CFCA /* OidcAdditionalTests.swift in Sources */,
+				SDKS4785A003 /* OidcDeviceClientTests.swift in Sources */,
+				SDKS4785A005 /* OidcDeviceClientAdditionalTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

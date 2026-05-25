@@ -68,7 +68,7 @@ enum MenuSection: CaseIterable, Identifiable {
     var items: [MenuItem] {
         switch self {
         case .authentication:
-            return [.davinci, .journey, .oidc]
+            return [.davinci, .journey, .oidc, .device]
         case .userManagement:
             return [.token, .user, .deviceManagement, .logout]
         case .mfa:
@@ -84,6 +84,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case davinci = "DaVinci"
     case journey = "Journey"
     case oidc = "OIDC (Web)"
+    case device = "Device Flow"
     case oathAccounts = "OATH"
     case pushAccounts = "Push"
     case qrScanner = "QR Scanner"
@@ -101,6 +102,10 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case journeyToken = "Journey Token"
     case davinciToken = "DaVinci Token"
     case oidcToken = "OIDC Token"
+    case deviceToken = "Device Token"
+    case davinciDeviceApprove = "Approve with DaVinci"
+    case journeyDeviceApprove = "Approve with Journey"
+    case approveDevice = "Approve Device"
 
     var id: String { rawValue }
     
@@ -109,6 +114,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .davinci: return "key.fill"
         case .journey: return "map.fill"
         case .oidc: return "lock.shield.fill"
+        case .device: return "tv"
         case .oathAccounts: return "key.viewfinder"
         case .pushAccounts: return "bell.badge.fill"
         case .qrScanner: return "qrcode.viewfinder"
@@ -126,6 +132,10 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .journeyToken: return "map.fill"
         case .davinciToken: return "key.fill"
         case .oidcToken: return "lock.shield.fill"
+        case .deviceToken: return "tv"
+        case .davinciDeviceApprove: return "key.fill"
+        case .journeyDeviceApprove: return "map.fill"
+        case .approveDevice: return "checkmark.shield.fill"
         }
     }
     
@@ -134,6 +144,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .davinci: return "DaVinci Flow"
         case .journey: return "Journey Flow"
         case .oidc: return "OIDC (Web) Login"
+        case .device: return "Device Flow"
         case .oathAccounts: return "OATH"
         case .pushAccounts: return "Push"
         case .qrScanner: return "QR Scanner"
@@ -147,10 +158,14 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .storage: return "Storage"
         case .bindingKeys: return "Binding Keys"
         case .migration: return "Migration"
-        case .configuration: return "Configurationss"
+        case .configuration: return "Configurations"
         case .journeyToken: return "Journey Access Token"
         case .davinciToken: return "DaVinci Access Token"
         case .oidcToken: return "OIDC (Web) Access Token"
+        case .deviceToken: return "Device Flow Access Token"
+        case .davinciDeviceApprove: return "Approve with DaVinci"
+        case .journeyDeviceApprove: return "Approve with Journey"
+        case .approveDevice: return "Approve Device"
         }
     }
     
@@ -159,6 +174,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .davinci: return "Test DaVinci authentication"
         case .journey: return "Test Journey authentication"
         case .oidc: return "OpenID Connect flow"
+        case .device: return "RFC 8628 device authorization"
         case .oathAccounts: return "Manage TOTP and HOTP accounts"
         case .pushAccounts: return "Manage push authentication accounts"
         case .qrScanner: return "Scan QR codes for registration"
@@ -176,6 +192,10 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .journeyToken: return "View Journey token"
         case .davinciToken: return "View DaVinci token"
         case .oidcToken: return "View OIDC token"
+        case .deviceToken: return "View Device Flow token"
+        case .davinciDeviceApprove: return "Approve device flow via DaVinci"
+        case .journeyDeviceApprove: return "Approve device flow via Journey"
+        case .approveDevice: return "Approve a device's verification URL"
         }
     }
     
@@ -185,6 +205,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .journey, .journeyToken: return .journey
         case .davinci, .davinciToken: return .davinci
         case .oidc, .oidcToken: return .oidcWeb
+        case .device, .deviceToken: return .device
         default: return nil
         }
     }
@@ -241,6 +262,8 @@ struct ContentView: View {
                     JourneyView(path: $path)
                 case .oidc:
                     OidcLoginView(path: $path)
+                case .device:
+                    DeviceFlowView(path: $path)
                 case .oathAccounts:
                     OathAccountsView(path: $path)
                 case .pushAccounts:
@@ -257,6 +280,8 @@ struct ContentView: View {
                     AccessTokenView(menuItem: item, fixedTab: .davinci)
                 case .oidcToken:
                     AccessTokenView(menuItem: item, fixedTab: .oidc)
+                case .deviceToken:
+                    AccessTokenView(menuItem: item, fixedTab: .device)
                 case .user:
                     UserInfoView(menuItem: item)
                 case .deviceManagement:
@@ -273,6 +298,12 @@ struct ContentView: View {
                     AuthMigrationView()
                 case .deviceInfo:
                     DeviceInfoView(menuItem: item)
+                case .davinciDeviceApprove:
+                    DavinciView(path: $path, verificationUriComplete: DeviceApproval.pendingVerificationUri)
+                case .journeyDeviceApprove:
+                    JourneyView(path: $path, verificationUriComplete: DeviceApproval.pendingVerificationUri)
+                case .approveDevice:
+                    ApproveDeviceView(path: $path)
                 }
             }
             .task {
@@ -307,28 +338,28 @@ struct ContentView: View {
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
-            
+
             VStack(spacing: 12) {
                 Image("Logo")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 80, height: 80)
-                
+
                 Text("Ping SDK")
                     .font(.system(size: 28, weight: .bold))
                     .foregroundColor(.white)
-                
+
                 Text("Development Testing Suite")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.white.opacity(0.9))
-                
+
                 Text(sdkVersion)
                     .font(.system(size: 13, design: .monospaced))
                     .foregroundColor(.white.opacity(0.7))
             }
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity)
-            
+
             Button {
                 path.append(.configuration)
             } label: {

@@ -27,6 +27,7 @@ struct Configuration: Codable, Sendable {
     var redirectUri: String
     var signOutUri: String?
     var discoveryEndpoint: String
+    var deviceAuthorizationEndpoint: String?
     var environment: String
     var cookieName: String?
     var serverUrl: String?
@@ -45,12 +46,14 @@ enum ConfigType: String, Codable, CaseIterable, Sendable {
     case journey = "Journey"
     case davinci = "DaVinci"
     case oidcWeb = "OIDC (Web)"
-    
+    case device = "Device Flow"
+
     var iconName: String {
         switch self {
         case .journey: return "map.fill"
         case .davinci: return "key.fill"
         case .oidcWeb: return "lock.shield.fill"
+        case .device: return "tv"
         }
     }
 }

@@ -124,6 +124,20 @@ let daVinci = DaVinci.createDaVinci { config in
 The PAR endpoint is discovered automatically from the OpenID configuration. If the server does not advertise a `pushed_authorization_request_endpoint`, the SDK falls back to the standard authorization flow.
 
 
+### Device Authorization Grant — approving device (RFC 8628)
+
+When this device is acting as the *approving* device for an [RFC 8628](https://datatracker.ietf.org/doc/html/rfc8628) device-flow request initiated elsewhere (e.g., a smart TV), pass the `verificationUriComplete` URL into `start(_:)`. The DaVinci `OidcModule` extracts the `user_code` query parameter and routes the start request to the device-flow verification endpoint, approving the requesting device after the user authenticates.
+
+```swift
+let node = await daVinci.start { options in
+    options.verificationUriComplete = URL(string: verificationUriCompleteString)
+}
+```
+
+`verificationUriComplete` is the URL returned in the `verification_uri_complete` field of the requesting device's `DeviceAuthorizationResponse` — typically scanned from a QR code or pasted by the user. The flow then proceeds normally (the user authenticates via the DaVinci flow); on success, the requesting device receives its access token via its own polling loop.
+
+The supplied URL is consumed after the first `start()` — a subsequent plain `start()` reverts to the standard authorization flow. Pass `nil` to clear any previously stored value.
+
 ### Navigate the authentication Flow
 
 ```swift

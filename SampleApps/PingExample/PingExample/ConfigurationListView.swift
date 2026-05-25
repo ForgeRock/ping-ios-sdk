@@ -219,6 +219,7 @@ private extension ConfigType {
         case .journey: return "map.fill"
         case .davinci: return "key.fill"
         case .oidcWeb: return "lock.shield.fill"
+        case .device: return "tv"
         }
     }
 }

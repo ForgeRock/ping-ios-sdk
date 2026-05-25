@@ -17,9 +17,16 @@ import PingDavinci
 /// The main view for orchestrating the Davinci flow.
 struct DavinciView: View {
     /// The view model that manages the Davinci flow logic.
-    @StateObject private var davinciViewModel = DavinciViewModel()
+    @StateObject private var davinciViewModel: DavinciViewModel
     /// A binding to the navigation stack path.
     @Binding var path: [MenuItem]
+
+    init(path: Binding<[MenuItem]>, verificationUriComplete: URL? = nil) {
+        self._path = path
+        self._davinciViewModel = StateObject(
+            wrappedValue: DavinciViewModel(verificationUriComplete: verificationUriComplete)
+        )
+    }
     
     var body: some View {
         ZStack {

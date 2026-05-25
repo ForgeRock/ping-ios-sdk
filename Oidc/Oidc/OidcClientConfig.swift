@@ -55,6 +55,10 @@ public class OidcClientConfig: @unchecked Sendable {
     public var par: Bool = false
     /// HTTP client for making network requests.
     public var httpClient: (any HttpClientProtocol)?
+    /// Called once after OpenID discovery completes, allowing callers to patch any field
+    /// on the discovered `OpenIdConfiguration` before it is used (e.g. override
+    /// `deviceAuthorizationEndpoint` for a non-standard server).
+    public var openIdOverride: ((inout OpenIdConfiguration) -> Void)?
     
     /// Initializes a new `OidcClientConfig` instance.
     public init() {
@@ -84,8 +88,12 @@ public class OidcClientConfig: @unchecked Sendable {
         if openId != nil {
             return
         }
-        
+
         openId = try await discover()
+        if var discovered = openId {
+            openIdOverride?(&discovered)
+            openId = discovered
+        }
     }
     
     /// Discovers the OpenID configuration from the discovery endpoint.
@@ -141,5 +149,6 @@ public class OidcClientConfig: @unchecked Sendable {
         self.additionalParameters = other.additionalParameters
         self.par = other.par
         self.httpClient = other.httpClient
+        self.openIdOverride = other.openIdOverride
     }
 }

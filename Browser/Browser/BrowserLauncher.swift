@@ -279,10 +279,14 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
         safariVC.modalPresentationStyle = .fullScreen
         
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let presentingVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
+              let root = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
             logger.e("Fail to launch SFSafariViewController; missing presenting ViewController", error: nil)
             state = .idle
             throw BrowserError.externalUserAgentFailure
+        }
+        var presentingVC = root
+        while let presented = presentingVC.presentedViewController {
+            presentingVC = presented
         }
         
         // We set state BEFORE presenting to prevent race conditions

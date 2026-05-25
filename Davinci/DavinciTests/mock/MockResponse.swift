@@ -27,6 +27,20 @@ struct MockResponse {
         """.data(using: .utf8)!
     }
     
+    // Return the OpenID configuration response with device_authorization_endpoint as Data
+    static var openIdConfigurationWithDeviceEndpointResponse: Data {
+        return """
+        {
+            "authorization_endpoint" : "http://auth.test-one-pingone.com/authorize",
+            "token_endpoint" : "https://auth.test-one-pingone.com/token",
+            "userinfo_endpoint" : "https://auth.test-one-pingone.com/userinfo",
+            "end_session_endpoint" : "https://auth.test-one-pingone.com/signoff",
+            "revocation_endpoint" : "https://auth.test-one-pingone.com/revoke",
+            "device_authorization_endpoint" : "https://auth.test-one-pingone.com/as/device_authorization"
+        }
+        """.data(using: .utf8)!
+    }
+
     // Return the OpenID configuration response with PAR endpoint as Data
     static var openIdConfigurationWithPARResponse: Data {
         return """

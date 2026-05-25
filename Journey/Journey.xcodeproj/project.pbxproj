@@ -99,6 +99,7 @@
 		ECD562AC2E0C494200F0B5A9 /* MockResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD562A92E0C494200F0B5A9 /* MockResponse.swift */; };
 		ECEFDC282ED4B0AC00B56E87 /* MetadataCallbackSpecializationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEFDC242ED4AF3C00B56E87 /* MetadataCallbackSpecializationTests.swift */; };
 		ECEFDC292ED4B10E00B56E87 /* MetadataCallbackInjectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEFDC262ED4AF8500B56E87 /* MetadataCallbackInjectionTests.swift */; };
+		AA4785041F0000000000AA04 /* OidcDeviceApprovalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4785051F0000000000AA05 /* OidcDeviceApprovalTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -229,6 +230,7 @@
 		ECD562AA2E0C494200F0B5A9 /* MockAPIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIEndpoint.swift; sourceTree = "<group>"; };
 		ECEFDC242ED4AF3C00B56E87 /* MetadataCallbackSpecializationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCallbackSpecializationTests.swift; sourceTree = "<group>"; };
 		ECEFDC262ED4AF8500B56E87 /* MetadataCallbackInjectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCallbackInjectionTests.swift; sourceTree = "<group>"; };
+		AA4785051F0000000000AA05 /* OidcDeviceApprovalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcDeviceApprovalTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -355,6 +357,7 @@
 				ECEFDC242ED4AF3C00B56E87 /* MetadataCallbackSpecializationTests.swift */,
 				EC727A5E2E019258005D9E28 /* JourneyTests.swift */,
 				EC2326A52E0D744A00634A50 /* JourneyUserTests.swift */,
+				AA4785051F0000000000AA05 /* OidcDeviceApprovalTests.swift */,
 				A5CFC86A2E42920A00CBFC3B /* Callbacks */,
 				ECD562AD2E0C494B00F0B5A9 /* Mock */,
 			);
@@ -632,6 +635,7 @@
 				EC2326A82E0D7C7900634A50 /* AgentTests.swift in Sources */,
 				A5CFC8742E4392D900CBFC3B /* ConsentMappingCallbackTests.swift in Sources */,
 				ECEFDC292ED4B10E00B56E87 /* MetadataCallbackInjectionTests.swift in Sources */,
+				AA4785041F0000000000AA04 /* OidcDeviceApprovalTests.swift in Sources */,
 				ECD562AB2E0C494200F0B5A9 /* MockAPIEndpoint.swift in Sources */,
 				A5CFC87C2E439A9B00CBFC3B /* PollingWaitCallbackTests.swift in Sources */,
 				EC2326A42E0D671700634A50 /* JourneyContinueNodeTests.swift in Sources */,

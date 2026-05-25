@@ -37,7 +37,8 @@ class ConfigurationManager: ObservableObject {
     private static let selectionKeys: [ConfigType: String] = [
         .journey: "SelectedJourneyConfigName",
         .davinci: "SelectedDaVinciConfigName",
-        .oidcWeb: "SelectedOidcWebConfigName"
+        .oidcWeb: "SelectedOidcWebConfigName",
+        .device: "SelectedDeviceConfigName"
     ]
     
     private static let userConfigsKey = "UserConfigurations"
@@ -57,6 +58,7 @@ class ConfigurationManager: ObservableObject {
     public var journey: Journey?
     public var davinci: DaVinci?
     public var oidcLogin: OidcWebClient?
+    public var deviceClient: OidcDeviceClient?
 
     // MFA Clients
     public var oathClient: OathClient?
@@ -77,16 +79,19 @@ class ConfigurationManager: ObservableObject {
         let journeyConfig = ConfigurationManager.loadSelection(for: .journey, from: allConfigs)
         let davinciConfig = ConfigurationManager.loadSelection(for: .davinci, from: allConfigs)
         let oidcWebConfig = ConfigurationManager.loadSelection(for: .oidcWeb, from: allConfigs)
-        
+        let deviceConfig = ConfigurationManager.loadSelection(for: .device, from: allConfigs)
+
         var sels = [ConfigType: Configuration]()
         if let c = journeyConfig { sels[.journey] = c }
         if let c = davinciConfig { sels[.davinci] = c }
         if let c = oidcWebConfig { sels[.oidcWeb] = c }
+        if let c = deviceConfig { sels[.device] = c }
         self.selections = sels
-        
+
         self.journey = journeyConfig.map { ConfigurationManager.buildJourney($0) }
         self.davinci = davinciConfig.map { ConfigurationManager.buildDaVinci($0) }
         self.oidcLogin = oidcWebConfig.map { ConfigurationManager.buildOidcWebClient($0) }
+        self.deviceClient = deviceConfig.map { ConfigurationManager.buildDeviceClient($0) }
     }
     
     // MARK: - Configuration Selection
@@ -120,6 +125,8 @@ class ConfigurationManager: ObservableObject {
             davinci = ConfigurationManager.buildDaVinci(config)
         case .oidcWeb:
             oidcLogin = ConfigurationManager.buildOidcWebClient(config)
+        case .device:
+            deviceClient = ConfigurationManager.buildDeviceClient(config)
         }
     }
     
@@ -164,6 +171,7 @@ class ConfigurationManager: ObservableObject {
                 case .journey: journey = nil
                 case .davinci: davinci = nil
                 case .oidcWeb: oidcLogin = nil
+                case .device: deviceClient = nil
                 }
             }
         }
@@ -174,6 +182,12 @@ class ConfigurationManager: ObservableObject {
     public var journeyUser: User? {
         get async {
             return await journey?.journeyUser()
+        }
+    }
+
+    public var deviceUser: User? {
+        get async {
+            return await deviceClient?.user()
         }
     }
     
@@ -247,6 +261,22 @@ class ConfigurationManager: ObservableObject {
         }
     }
     
+    private static func buildDeviceClient(_ config: Configuration) -> OidcDeviceClient {
+        OidcDeviceClient.createOidcDeviceClient { oidcConfig in
+            oidcConfig.clientId = config.clientId
+            oidcConfig.scopes = Set<String>(config.scopes)
+            oidcConfig.redirectUri = config.redirectUri
+            oidcConfig.discoveryEndpoint = config.discoveryEndpoint
+            oidcConfig.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_DEVICE")
+            oidcConfig.logger = LogManager.standard
+            oidcConfig.openIdOverride = { openId in
+                if config.deviceAuthorizationEndpoint != nil {
+                    openId.deviceAuthorizationEndpoint = config.deviceAuthorizationEndpoint
+                }
+            }
+        }
+    }
+
     // MARK: - Persistence Helpers
     
     /// Loads all configurations: defaults plus user-added configs from UserDefaults.
