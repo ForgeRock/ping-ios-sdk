@@ -38,6 +38,7 @@
 		1B7C4A032EAABAA300E3C0AC /* PingPush.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1B7C49F02EAAB6E400E3C0AC /* PingPush.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1BC528FF2F86CFD20088DD90 /* PingAuthMigration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BC528FE2F86CFD20088DD90 /* PingAuthMigration.framework */; };
 		1BC529002F86CFD20088DD90 /* PingAuthMigration.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1BC528FE2F86CFD20088DD90 /* PingAuthMigration.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2E3F8F972FBEF9D3003826C7 /* PingOneMFA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E3F8F872FBEF977003826C7 /* PingOneMFA.framework */; };
 		3A3709962BEB038200AA7B51 /* AccessTokenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A3709952BEB038200AA7B51 /* AccessTokenView.swift */; };
 		3A5441332BCDF10900385131 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5441322BCDF10900385131 /* ContentView.swift */; };
 		3A5441352BCDF10B00385131 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3A5441342BCDF10B00385131 /* Assets.xcassets */; };
@@ -60,8 +61,8 @@
 		A525E7B82DD7647200B02C17 /* PingExternalIdPFacebook.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B12DD7647200B02C17 /* PingExternalIdPFacebook.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A525E7B92DD7647200B02C17 /* PingExternalIdPGoogle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B22DD7647200B02C17 /* PingExternalIdPGoogle.framework */; };
 		A525E7BA2DD7647200B02C17 /* PingExternalIdPGoogle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B22DD7647200B02C17 /* PingExternalIdPGoogle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A55177322FA502D100E575CF /* BooleanCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55177312FA502D100E575CF /* BooleanCollectorView.swift */; };
 		A53B6E5B2F9A659B00B279CE /* ReadOnlyTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53B6E5A2F9A659B00B279CE /* ReadOnlyTextView.swift */; };
+		A55177322FA502D100E575CF /* BooleanCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55177312FA502D100E575CF /* BooleanCollectorView.swift */; };
 		A5560CA22CFE4EDA0076CA8D /* PingLogger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A57A08FA2CE50D51006F0CBB /* PingLogger.framework */; };
 		A5560CA32CFE4EDA0076CA8D /* PingLogger.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A57A08FA2CE50D51006F0CBB /* PingLogger.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A5560CA42CFE4EDA0076CA8D /* PingOidc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A57A09122CE51162006F0CBB /* PingOidc.framework */; };
@@ -179,6 +180,15 @@
 		ECF7EB862E464EDD002A5E8E /* IdpCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB852E464ED8002A5E8E /* IdpCallbackView.swift */; };
 		ECF7EB882E464F31002A5E8E /* SelectIdpCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB872E464F2C002A5E8E /* SelectIdpCallbackView.swift */; };
 		FAE66EFD02A8526178953F13 /* AuthMigrationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BE27407BC6A20DE66B3B585 /* AuthMigrationViewModel.swift */; };
+		3074472F832D46029B7AE6DB /* PingOneMFAScannerContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF0D8E9742614F118A97A517 /* PingOneMFAScannerContainerView.swift */; };
+		E53994EB73A94FEF922CA2F8 /* PingOneMFAScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB284B4547584EE8B336A683 /* PingOneMFAScannerViewModel.swift */; };
+		7A9BF49E00FF4A58BE05D5FC /* PingOneMFAAccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BCBE4945371450488BD9A81 /* PingOneMFAAccountsView.swift */; };
+		ED77D23063D546D98A95B48F /* PingOneMFAAccountsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B50FB61D3934BE18ECD79BB /* PingOneMFAAccountsViewModel.swift */; };
+		9F34A9E1A2B8403B9AE1A4AA /* PingOneMFAOtpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29A730854404FF9B3D4F464 /* PingOneMFAOtpView.swift */; };
+		16BDC26EB2374FB3A95DBB76 /* PingOneMFAOtpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B7EC470BB8432687F1F9B3 /* PingOneMFAOtpViewModel.swift */; };
+		120E5437B27D472BB79C67F6 /* PingOneMFAPayloadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75CB5955575F41E2958DDBFF /* PingOneMFAPayloadView.swift */; };
+		01852DC5DF3248029AA327B0 /* PingOneMFAPayloadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E55D3866D734C13A50F7571 /* PingOneMFAPayloadViewModel.swift */; };
+		A5F39AB82F9B0000001AB5C7 /* PingOneMFANotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5F39AB72F9B0000001AB5C7 /* PingOneMFANotificationView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -237,6 +247,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = 7E403689A177A17ADDFB00D1;
 			remoteInfo = PingAuthMigration;
+		};
+		2E3F8F862FBEF977003826C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2E3F8F552FBEF976003826C7 /* PingOneMFA.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = FDE1452E7C56416FA24BE3FC;
+			remoteInfo = PingOneMFA;
+		};
+		2E3F8F882FBEF977003826C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2E3F8F552FBEF976003826C7 /* PingOneMFA.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F748FD268F5344689F9DC02E;
+			remoteInfo = PingOneMFATests;
 		};
 		3A54413E2BCDF10B00385131 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -657,6 +681,7 @@
 		218B6391FB004507BA8CE637 /* ConfigurationEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationEditorView.swift; sourceTree = "<group>"; };
 		22FC525493FF7344F586E3C1 /* AuthMigrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMigrationView.swift; sourceTree = "<group>"; };
 		2BE27407BC6A20DE66B3B585 /* AuthMigrationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthMigrationViewModel.swift; sourceTree = "<group>"; };
+		2E3F8F552FBEF976003826C7 /* PingOneMFA.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PingOneMFA.xcodeproj; path = ../../PingOneMFA/PingOneMFA.xcodeproj; sourceTree = SOURCE_ROOT; };
 		3A3709952BEB038200AA7B51 /* AccessTokenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenView.swift; sourceTree = "<group>"; };
 		3A54412D2BCDF10900385131 /* PingExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PingExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A5441322BCDF10900385131 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -681,8 +706,8 @@
 		A525E7BB2DD7680900B02C17 /* ExternalIdP.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdP.xcodeproj; path = ../../ExternalIdP/ExternalIdP.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A525E7C62DD7683500B02C17 /* ExternalIdPGoogle.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdPGoogle.xcodeproj; path = ../../ExternalIdPGoogle/ExternalIdPGoogle.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A525E7DC2DD7687800B02C17 /* ExternalIdPApple.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdPApple.xcodeproj; path = ../../ExternalIdPApple/ExternalIdPApple.xcodeproj; sourceTree = SOURCE_ROOT; };
-		A55177312FA502D100E575CF /* BooleanCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanCollectorView.swift; sourceTree = "<group>"; };
 		A53B6E5A2F9A659B00B279CE /* ReadOnlyTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyTextView.swift; sourceTree = "<group>"; };
+		A55177312FA502D100E575CF /* BooleanCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanCollectorView.swift; sourceTree = "<group>"; };
 		A55A25022ED4A49100D8820C /* DeviceClient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DeviceClient.xcodeproj; path = ../../DeviceClient/DeviceClient.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A56741BC2EE1EBFD009D29B9 /* Commons.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Commons.xcodeproj; path = ../../Commons/Commons.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A569DBB82E789BD200F4D7A8 /* DeviceProfile.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DeviceProfile.xcodeproj; path = ../../DeviceProfile/DeviceProfile.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -783,6 +808,15 @@
 		ECE2B8722DB7DBE500E2C51E /* PhoneNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberView.swift; sourceTree = "<group>"; };
 		ECF7EB852E464ED8002A5E8E /* IdpCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpCallbackView.swift; sourceTree = "<group>"; };
 		ECF7EB872E464F2C002A5E8E /* SelectIdpCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectIdpCallbackView.swift; sourceTree = "<group>"; };
+		FF0D8E9742614F118A97A517 /* PingOneMFAScannerContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAScannerContainerView.swift; sourceTree = "<group>"; };
+		BB284B4547584EE8B336A683 /* PingOneMFAScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAScannerViewModel.swift; sourceTree = "<group>"; };
+		9BCBE4945371450488BD9A81 /* PingOneMFAAccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAAccountsView.swift; sourceTree = "<group>"; };
+		1B50FB61D3934BE18ECD79BB /* PingOneMFAAccountsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAAccountsViewModel.swift; sourceTree = "<group>"; };
+		E29A730854404FF9B3D4F464 /* PingOneMFAOtpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAOtpView.swift; sourceTree = "<group>"; };
+		F9B7EC470BB8432687F1F9B3 /* PingOneMFAOtpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAOtpViewModel.swift; sourceTree = "<group>"; };
+		75CB5955575F41E2958DDBFF /* PingOneMFAPayloadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAPayloadView.swift; sourceTree = "<group>"; };
+		3E55D3866D734C13A50F7571 /* PingOneMFAPayloadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAPayloadViewModel.swift; sourceTree = "<group>"; };
+		A5F39AB72F9B0000001AB5C7 /* PingOneMFANotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFANotificationView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -790,6 +824,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E3F8F972FBEF9D3003826C7 /* PingOneMFA.framework in Frameworks */,
 				ECBF06732D5229BC0066A3BD /* PingBrowser.framework in Frameworks */,
 				A525E7B92DD7647200B02C17 /* PingExternalIdPGoogle.framework in Frameworks */,
 				ECA540BD2D6DD7D6002B35D4 /* AppTrackingTransparency.framework in Frameworks */,
@@ -882,9 +917,19 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		2E3F8F582FBEF976003826C7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2E3F8F872FBEF977003826C7 /* PingOneMFA.framework */,
+				2E3F8F892FBEF977003826C7 /* PingOneMFATests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		3A5441242BCDF10900385131 = {
 			isa = PBXGroup;
 			children = (
+				2E3F8F552FBEF976003826C7 /* PingOneMFA.xcodeproj */,
 				1BB4C8EF2F7EFC9000C1667E /* AuthMigration.xcodeproj */,
 				A56741BC2EE1EBFD009D29B9 /* Commons.xcodeproj */,
 				A55A25022ED4A49100D8820C /* DeviceClient.xcodeproj */,
@@ -998,6 +1043,15 @@
 				1B7A9C832EE7BD2A00989A55 /* QRScannerView.swift */,
 				1B7A9C842EE7BD2A00989A55 /* QRScannerViewModel.swift */,
 				1B18D6402EECC30F0004F205 /* JsonExportView.swift */,
+				FF0D8E9742614F118A97A517 /* PingOneMFAScannerContainerView.swift */,
+				BB284B4547584EE8B336A683 /* PingOneMFAScannerViewModel.swift */,
+				9BCBE4945371450488BD9A81 /* PingOneMFAAccountsView.swift */,
+				1B50FB61D3934BE18ECD79BB /* PingOneMFAAccountsViewModel.swift */,
+				E29A730854404FF9B3D4F464 /* PingOneMFAOtpView.swift */,
+				F9B7EC470BB8432687F1F9B3 /* PingOneMFAOtpViewModel.swift */,
+				75CB5955575F41E2958DDBFF /* PingOneMFAPayloadView.swift */,
+				3E55D3866D734C13A50F7571 /* PingOneMFAPayloadViewModel.swift */,
+				A5F39AB72F9B0000001AB5C7 /* PingOneMFANotificationView.swift */,
 				3A5441342BCDF10B00385131 /* Assets.xcassets */,
 				3A5441362BCDF10B00385131 /* Preview Content */,
 			);
@@ -1516,6 +1570,10 @@
 					ProjectRef = 3A5442212BCE1F3800385131 /* Orchestrate.xcodeproj */;
 				},
 				{
+					ProductGroup = 2E3F8F582FBEF976003826C7 /* Products */;
+					ProjectRef = 2E3F8F552FBEF976003826C7 /* PingOneMFA.xcodeproj */;
+				},
+				{
 					ProductGroup = A5A31CB82E0A37C800ABBEF7 /* Products */;
 					ProjectRef = A5A31CB52E0A37C700ABBEF7 /* Protect.xcodeproj */;
 				},
@@ -1601,6 +1659,20 @@
 			fileType = wrapper.framework;
 			path = PingAuthMigration.framework;
 			remoteRef = 1BC528FD2F86CFD20088DD90 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2E3F8F872FBEF977003826C7 /* PingOneMFA.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingOneMFA.framework;
+			remoteRef = 2E3F8F862FBEF977003826C7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		2E3F8F892FBEF977003826C7 /* PingOneMFATests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = PingOneMFATests.xctest;
+			remoteRef = 2E3F8F882FBEF977003826C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		9578859D2EF33F98002E42FA /* PingDavinciPlugin.framework */ = {
@@ -2068,6 +2140,15 @@
 				3A3709962BEB038200AA7B51 /* AccessTokenView.swift in Sources */,
 				A5E9AEDB2D30A020000533ED /* LabelView.swift in Sources */,
 				A5D296932E7B37DB0093A761 /* DeviceProfileCallbackView.swift in Sources */,
+				3074472F832D46029B7AE6DB /* PingOneMFAScannerContainerView.swift in Sources */,
+				E53994EB73A94FEF922CA2F8 /* PingOneMFAScannerViewModel.swift in Sources */,
+				7A9BF49E00FF4A58BE05D5FC /* PingOneMFAAccountsView.swift in Sources */,
+				ED77D23063D546D98A95B48F /* PingOneMFAAccountsViewModel.swift in Sources */,
+				9F34A9E1A2B8403B9AE1A4AA /* PingOneMFAOtpView.swift in Sources */,
+				16BDC26EB2374FB3A95DBB76 /* PingOneMFAOtpViewModel.swift in Sources */,
+				120E5437B27D472BB79C67F6 /* PingOneMFAPayloadView.swift in Sources */,
+				01852DC5DF3248029AA327B0 /* PingOneMFAPayloadViewModel.swift in Sources */,
+				A5F39AB82F9B0000001AB5C7 /* PingOneMFANotificationView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

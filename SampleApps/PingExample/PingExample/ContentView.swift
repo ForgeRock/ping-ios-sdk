@@ -20,6 +20,7 @@ import PingProtect
 import PingBinding
 import PingOath
 import PingPush
+import PingOneMFA
 
 /// The main application entry point.
 @main
@@ -52,6 +53,7 @@ enum MenuSection: CaseIterable, Identifiable {
     case authentication
     case userManagement
     case mfa
+    case pingOneMFA
     case developerTools
 
     var id: String { title }
@@ -61,6 +63,7 @@ enum MenuSection: CaseIterable, Identifiable {
         case .authentication: return "Authentication"
         case .userManagement: return "User Management"
         case .mfa: return "MFA"
+        case .pingOneMFA: return "PingOne MFA"
         case .developerTools: return "Developer Tools"
         }
     }
@@ -73,6 +76,8 @@ enum MenuSection: CaseIterable, Identifiable {
             return [.token, .user, .deviceManagement, .logout]
         case .mfa:
             return [.qrScanner, .oathAccounts, .pushAccounts, .pushNotifications]
+        case .pingOneMFA:
+            return [.pingOneMFAScanner, .pingOneMFAAccounts, .pingOneMFAOtp, .pingOneMFAPayload]
         case .developerTools:
             return [.deviceInfo, .logger, .storage, .bindingKeys, .migration, .configuration]
         }
@@ -101,6 +106,10 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case journeyToken = "Journey Token"
     case davinciToken = "DaVinci Token"
     case oidcToken = "OIDC Token"
+    case pingOneMFAScanner = "PingOne MFA Scanner"
+    case pingOneMFAAccounts = "PingOne MFA Accounts"
+    case pingOneMFAOtp = "PingOne MFA OTP"
+    case pingOneMFAPayload = "PingOne MFA Payload"
 
     var id: String { rawValue }
     
@@ -126,9 +135,13 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .journeyToken: return "map.fill"
         case .davinciToken: return "key.fill"
         case .oidcToken: return "lock.shield.fill"
+        case .pingOneMFAScanner: return "qrcode.viewfinder"
+        case .pingOneMFAAccounts: return "person.2.fill"
+        case .pingOneMFAOtp: return "number.square.fill"
+        case .pingOneMFAPayload: return "doc.badge.gearshape.fill"
         }
     }
-    
+
     var title: String {
         switch self {
         case .davinci: return "DaVinci Flow"
@@ -151,9 +164,13 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .journeyToken: return "Journey Access Token"
         case .davinciToken: return "DaVinci Access Token"
         case .oidcToken: return "OIDC (Web) Access Token"
+        case .pingOneMFAScanner: return "PingOne MFA Scanner"
+        case .pingOneMFAAccounts: return "MFA Accounts"
+        case .pingOneMFAOtp: return "One-Time Passcode"
+        case .pingOneMFAPayload: return "Mobile Payload"
         }
     }
-    
+
     var subtitle: String {
         switch self {
         case .davinci: return "Test DaVinci authentication"
@@ -176,9 +193,13 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .journeyToken: return "View Journey token"
         case .davinciToken: return "View DaVinci token"
         case .oidcToken: return "View OIDC token"
+        case .pingOneMFAScanner: return "Scan QR code to pair with PingOne MFA"
+        case .pingOneMFAAccounts: return "View paired MFA accounts"
+        case .pingOneMFAOtp: return "OTP for your paired account"
+        case .pingOneMFAPayload: return "Generate mobile payload for authentication"
         }
     }
-    
+
     /// The config type required to use this menu item, or nil if none required.
     var requiredConfigType: ConfigType? {
         switch self {
@@ -199,6 +220,7 @@ struct ContentView: View {
     @State private var navigateToPushNotifications = false
     @State private var showNoConfigAlert = false
     @State private var noConfigTypeName = ""
+    @State private var pingOneMFANotification: PingOneMFA.PushNotification? = nil
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -230,6 +252,14 @@ struct ContentView: View {
                 if !path.contains(.pushNotifications) {
                     path.append(.pushNotifications)
                 }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowPingOneMFANotification"))) { notification in
+                if let pushNotification = notification.userInfo?["notification"] as? PingOneMFA.PushNotification {
+                    pingOneMFANotification = pushNotification
+                }
+            }
+            .sheet(item: $pingOneMFANotification) { pushNotification in
+                PingOneMFANotificationView(notification: pushNotification)
             }
             .navigationDestination(for: MenuItem.self) { item in
                 switch item {
@@ -273,6 +303,14 @@ struct ContentView: View {
                     AuthMigrationView()
                 case .deviceInfo:
                     DeviceInfoView(menuItem: item)
+                case .pingOneMFAScanner:
+                    PingOneMFAScannerContainerView(path: $path)
+                case .pingOneMFAAccounts:
+                    PingOneMFAAccountsView(path: $path)
+                case .pingOneMFAOtp:
+                    PingOneMFAOtpView(path: $path)
+                case .pingOneMFAPayload:
+                    PingOneMFAPayloadView(path: $path)
                 }
             }
             .task {

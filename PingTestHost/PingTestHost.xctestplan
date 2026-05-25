@@ -206,6 +206,13 @@
         "identifier" : "4D205FDC26F64EF2AE058C6C",
         "name" : "AuthMigrationTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/PingOneMFA\/PingOneMFA.xcodeproj",
+        "identifier" : "14C0CBAE9D4D412388F63F45",
+        "name" : "PingOneMFATests"
+      }
     }
   ],
   "version" : 1

@@ -20,6 +20,7 @@ import PingStorage
 import PingOath
 import PingPush
 import PingLogger
+import PingOneMFA
 
 //The ConfigurationManager class is used to manage the configuration settings for the SDK.
 //The class provides the following functionality:
@@ -61,6 +62,7 @@ class ConfigurationManager: ObservableObject {
     // MFA Clients
     public var oathClient: OathClient?
     public var pushClient: PushClient?
+    public var isPingOneMFAInitialized: Bool = false
     
     // MFA Services
     public var oathTimerService: OathTimerService?
@@ -300,9 +302,20 @@ class ConfigurationManager: ObservableObject {
                 config.logger = LogManager.logger
             }
         }
-        
+
         if let client = client {
             self.pushClient = client
+        }
+    }
+
+    /// Initialize the PingOne MFA SDK
+    public func initializePingOneMFAClient() async throws {
+        let didInitialize = try await initActor.initializePingOneMFA {
+            await PingOneMFA.config { $0.geo = .northAmerica }
+            try await PingOneMFA.initialize()
+        }
+        if didInitialize {
+            isPingOneMFAInitialized = true
         }
     }
 }
@@ -312,29 +325,42 @@ class ConfigurationManager: ObservableObject {
 private actor ClientInitializationActor {
     private var isOathInitializing = false
     private var isPushInitializing = false
+    private var isPingOneMFAInitializing = false
     private var oathInitialized = false
     private var pushInitialized = false
-    
+    private var pingOneMFAInitialized = false
+
     func initializeOath(factory: @Sendable () async throws -> OathClient) async throws -> OathClient? {
         guard !oathInitialized && !isOathInitializing else { return nil }
-        
+
         isOathInitializing = true
         defer { isOathInitializing = false }
-        
+
         let client = try await factory()
         oathInitialized = true
         return client
     }
-    
+
     func initializePush(factory: @Sendable () async throws -> PushClient) async throws -> PushClient? {
         guard !pushInitialized && !isPushInitializing else { return nil }
-        
+
         isPushInitializing = true
         defer { isPushInitializing = false }
-        
+
         let client = try await factory()
         pushInitialized = true
         return client
+    }
+
+    func initializePingOneMFA(factory: @Sendable () async throws -> Void) async throws -> Bool {
+        guard !pingOneMFAInitialized && !isPingOneMFAInitializing else { return false }
+
+        isPingOneMFAInitializing = true
+        defer { isPingOneMFAInitializing = false }
+
+        try await factory()
+        pingOneMFAInitialized = true
+        return true
     }
 }
 
