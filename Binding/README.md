@@ -1,52 +1,46 @@
-# PingBinding Module
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
+
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
+
+# PingBinding
 
 The PingBinding Module provides device binding and signing capabilities for native applications. 
 
-## Cryptographic Algorithm
+## Getting Started
 
-The PingBinding Module uses **ES256** (ECDSA with P-256 curve and SHA-256) for all signing operations. This algorithm is compatible with iOS Secure Enclave, providing hardware-backed security for private keys.
+### Prerequisites
 
-## Installation
+- Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
 
-The PingBinding Module is available via Swift Package Manager and CocoaPods.
+### Installation
 
-### Swift Package Manager
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
 
-Add the following dependency to your `Package.swift` file:
-
-```swift
-.package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "2.0.0")
-```
-
-Then, add `PingBinding` to your target's dependencies:
+#### Swift Package Manager
 
 ```swift
-.target(
-    name: "YourTarget",
-    dependencies: [
-        .product(name: "PingBinding", package: "ping-ios-sdk")
-    ]
-)
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
 ```
 
-Alternatively, in Xcode:
-1. Go to **File** > **Add Package Dependencies...**
-2. Enter the repository URL: `https://github.com/ForgeRock/ping-ios-sdk.git`
-3. Select the version (2.0.0 or later)
-4. Add the `PingBinding` library to your target
+Then add the `PingBinding` product to your target's dependencies.
 
-### CocoaPods
-
-Add the following to your `Podfile`:
+#### CocoaPods
 
 ```ruby
-pod 'PingBinding', '~> 2.0.0'
+pod 'PingBinding', '~> <version>'
 ```
 
-Then run:
+### Import the Module
 
-```bash
-pod install
+```swift
+import PingBinding
 ```
 
 #### Dependencies
@@ -62,6 +56,10 @@ PingBinding has the following dependencies which will be automatically installed
 | `PingLogger` | ~> 2.0.0 | Logging framework |
 
 These dependencies provide the foundation for device binding operations, including secure key storage, JWT signing, and authentication flow management.
+
+## Cryptographic Algorithm
+
+The PingBinding Module uses **ES256** (ECDSA with P-256 curve and SHA-256) for all signing operations. This algorithm is compatible with iOS Secure Enclave, providing hardware-backed security for private keys.
 
 ## Migration from Legacy SDK
 
@@ -679,5 +677,6 @@ func handleDeviceSigning(callback: DeviceSigningVerifierCallback, onNext: @escap
 
 ## License
 
-The PingBinding SDK is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
-© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
+
+© Copyright 2025-2026 Ping Identity Corporation. All rights reserved.

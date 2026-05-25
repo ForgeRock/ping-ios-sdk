@@ -1,6 +1,10 @@
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
+
 [![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)](https://github.com/ForgeRock/ping-ios-sdk)
 
-# ReCAPTCHA Enterprise Module - iOS
+# PingReCaptchaEnterprise
 
 ## Overview
 
@@ -8,23 +12,34 @@ The `PingReCaptchaEnterprise` module provides seamless integration with Google r
 
 Google reCAPTCHA Enterprise offers enhanced detection capabilities including granular risk scores, reason codes for risky events, password breach detection, and the ability to tune site-specific models for enterprise security needs.
 
-## Installation
+## Getting Started
 
-### Add dependency to your project
+### Prerequisites
 
-To integrate the PingReCaptchaEnterprise module into your iOS project, add the following dependency to your `Podfile` or `Package.swift` file:
+- Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
 
-**CocoaPods**
-```ruby
-pod 'PingReCaptchaEnterprise', '<version>'
-```
+### Installation
 
-**Swift Package Manager**
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
+#### Swift Package Manager
+
 ```swift
-.package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
 ```
 
-Replace `<version>` with the latest version of the Ping iOS SDK.
+Then add the `PingReCaptchaEnterprise` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingReCaptchaEnterprise', '~> <version>'
+```
 
 ### Import the Module
 
@@ -254,4 +269,8 @@ You can optionally enable the "Store reCAPTCHA assessment JSON" option in the no
 - [Google reCAPTCHA Enterprise Documentation](https://cloud.google.com/recaptcha-enterprise/docs)
 - [PingOne reCAPTCHA Enterprise Node Reference](https://docs.pingidentity.com)
 
-© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
+
+© Copyright 2025-2026 Ping Identity Corporation. All rights reserved.

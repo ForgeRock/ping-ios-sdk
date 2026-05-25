@@ -36,13 +36,13 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
     /// - Throws: An error if the required `publicKeyCredentialRequestOptions` parameter is missing from the JSON.
     required public init(with json: [String : Any]) {
         super.init(with: json)
-        logger?.d("Initializing Fido authentication collector")
+        logger.d("Initializing Fido authentication collector")
         guard let options = json[FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS] as? [String: Any] else {
-            logger?.e("Missing \(FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS)", error: nil)
+            logger.e("Missing \(FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS)", error: nil)
             return
         }
         self.publicKeyCredentialRequestOptions = self.transform(options)
-        logger?.d("Fido authentication collector initialized with request options")
+        logger.d("Fido authentication collector initialized with request options")
     }
     
     /// The payload to be sent to the DaVinci server.
@@ -50,10 +50,10 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
     /// - Returns: A dictionary containing the assertion value, or `nil` if authentication has not been completed.
     override public func payload() -> [String: Any]? {
         guard let assertionValue = assertionValue else {
-            logger?.d("No assertion value available, returning null payload")
+            logger.d("No assertion value available, returning null payload")
             return nil
         }
-        logger?.d("Returning assertion payload for Fido authentication")
+        logger.d("Returning assertion payload for Fido authentication")
         return [FidoConstants.FIELD_ASSERTION_VALUE: assertionValue]
     }
     
@@ -67,14 +67,15 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
     /// - Throws: An error if the authentication process fails or the response is invalid.
     @MainActor
     public func authenticate(window: ASPresentationAnchor) async -> Result<[String: Any], Error> {
-        logger?.d("Starting FIDO authentication (async Result)")
+        logger.d("Starting FIDO authentication (async Result)")
         
         do {
             // 1. Wrap the closure-based fido.authenticate in a continuation
             //    This still throws internally within the 'do' block if the continuation resumes with an error.
             let response: [String: Any] = try await withUnsafeThrowingContinuation { continuation in
-                // Assuming 'fido' instance is accessible
-                fido.authenticate(options: publicKeyCredentialRequestOptions, window: window) { [continuation] result in
+                // Pass the workflow logger so the underlying ASAuthorization ceremony
+                // emits log messages through the same logger as the surrounding flow.
+                fido.authenticate(options: publicKeyCredentialRequestOptions, window: window, logger: logger) { [continuation] result in
                     Task {
                         await MainActor.run {
                             nonisolated(unsafe) let sendableResult = result
@@ -85,7 +86,7 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
             }
             
             // 2. Process the successful response data extraction
-            logger?.d("FIDO authentication successful, building assertionValue object...")
+            logger.d("FIDO authentication successful, building assertionValue object...")
             
             guard let signatureData = response[FidoConstants.FIELD_SIGNATURE] as? Data,
                   let clientData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
@@ -94,7 +95,7 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
                   let userHandleData = response[FidoConstants.FIELD_USER_HANDLE] as? Data else {
                 
                 let error = FidoError.invalidResponse
-                logger?.e(error.localizedDescription, error: error)
+                logger.e(error.localizedDescription, error: error)
                 let transformedError = self.handleError(error: error)
                 return .failure(transformedError) // Return failure with transformed error
             }
@@ -114,7 +115,7 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
                 ]
             ]
             
-            logger?.d("assertionValue object created successfully")
+            logger.d("assertionValue object created successfully")
             self.assertionValue = newAssertionValue // Store the value (side effect)
             
             // 4. Return success with the constructed assertionValue
@@ -122,7 +123,7 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
             
         } catch {
             // 5. Handle any error caught from the continuation
-            logger?.e("FIDO authentication failed", error: error)
+            logger.e("FIDO authentication failed", error: error)
             let transformedError = self.handleError(error: error)
             return .failure(transformedError) // Return failure with transformed error
         }
@@ -134,7 +135,7 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
     /// - Parameter input: The dictionary of options received from the server.
     /// - Returns: A transformed dictionary of options.
     private func transform(_ input: [String: Any]) -> [String: Any] {
-        logger?.d("Transforming FIDO authentication request options")
+        logger.d("Transforming FIDO authentication request options")
         var output = input
         
         if let challenge = output[FidoConstants.FIELD_CHALLENGE] as? [Int] {
@@ -159,7 +160,7 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
             output[FidoConstants.FIELD_ALLOW_CREDENTIALS] = updatedCredentials
         }
         
-        logger?.d("FIDO authentication request options transformed successfully")
+        logger.d("FIDO authentication request options transformed successfully")
         return output
     }
 }

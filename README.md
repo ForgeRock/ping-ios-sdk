@@ -2,20 +2,23 @@
 
 [![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)](https://github.com/ForgeRock/ping-ios-sdk)
 
-The Ping SDK for iOS is designed for creating mobile native apps that seamlessly integrate with the PingOne platform.
+The Ping Orchestration SDK for iOS is designed for creating mobile native apps that seamlessly integrate with the PingAM, Ping AIC, and PingOne platforms.
 It offers a range of APIs for user authentication, user device management, and accessing resources secured by PingOne.
+
+> [!NOTE]
+> If you are migrating from the ForgeRock iOS SDK, refer to [MIGRATION.md](./MIGRATION.md).
 
 # Documentation
 
 - **Quick Starts** - Find specific setup instructions in the quick start guide for each SDK module.
   Begin with
-  the [DaVinci](https://docs.pingidentity.com/sdks/latest/davinci/tutorials/ios/index.html)
-  or [Journey](https://docs.pingidentity.com/sdks/latest/sdks/tutorials/ios/index.html)
+  the [DaVinci](./Davinci/README.md)
+  or [Journey](./Journey/README.md)
   guide, based on your chosen orchestration platform.
 - **Sample Apps** - Visit our [sample apps](https://github.com/ForgeRock/sdk-sample-apps) repository
   on GitHub for examples showcasing various use cases.
 - **Official Docs** - Refer to our
-  main [documentation site](https://docs.pingidentity.com/sdks/latest/sdks/index.html) for
+  main [documentation site](https://developer.pingidentity.com/orchsdks/index.html) for
   comprehensive information on the SDKs.
 
 # Modules
@@ -74,7 +77,7 @@ The support portal shows all currently open support tickets and allows you to ra
 # Contributing
 
 If you would like to contribute to this project, please see
-the [contributions guide](./CONTRIBUTION.md).
+the [contributions guide](./CONTRIBUTING.md).
 
 # Disclaimer
 

@@ -1,42 +1,49 @@
-[![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)](https://github.com/ForgeRock/ping-ios-sdk)
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
 
-# Device Profile Module
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
 
-> **A flexible, extensible, and privacy-conscious framework for collecting device information in iOS applications.**
+# PingDeviceProfile
 
 The Device Profile module provides a structured framework for collecting device information in
 iOS applications. It uses a modular collector system that makes it easy to gather, extend, and
 customize the device data you need with modern Swift async/await patterns.
 
----
-
-## Features
-
-- **Modular Architecture**: Plug-and-play collector system for maximum flexibility
-- **Async/Await Support**: Modern Swift concurrency for smooth UI performance
-- **AIC Journey Integration**: Built-in support for PingOne AIC Device Profile workflows
-- **Codable Output**: JSON-ready data structures for easy network transmission
-- **Extensible Framework**: Create custom collectors for any device signals you need
-- **Privacy-Aware**: Handles iOS permissions gracefully with automatic permission requests
-- **Location Services**: Built-in location collection with privacy-first permission handling
-- **SwiftUI Ready**: ObservableObject support for seamless SwiftUI integration
-
----
-
-## Overview
-
-This module helps you collect various device attributes through dedicated collectors:
-
-- **Hardware information**: Camera capabilities, display properties, CPU cores, memory specifications
-- **Platform details**: iOS version, device model, system name, locale, timezone, security status
-- **Network information**: Connection status, interface type, expense and constraint characteristics
-- **Telephony information**: Carrier name, network country code with multi-SIM support
-- **Browser information**: User agent string from WebKit engine
-- **Bluetooth capabilities**: BLE support detection
-- **Location data**: GPS coordinates with automatic permission handling
-- **Custom collectors**: Extend with your own logic for any device data
-
 ## Getting Started
+
+### Prerequisites
+
+- Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingDeviceProfile` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingDeviceProfile', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingDeviceProfile
+```
 
 ### Permissions
 
@@ -56,19 +63,11 @@ The module respects iOS's permission model. Some collectors may require specific
 
 ### Basic Usage
 
-1. **Add the module dependency** to your project:
-
-```swift
-dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk", from: "x.y.z")
-]
-```
+1. **Add the module dependency** to your project as described above.
 
 2. **Create collectors** and collect device information:
 
 ```swift
-import DeviceProfile
-
 func collectDeviceProfile() async {
     // Initialize collectors with default set
     let collectors = DefaultDeviceCollector.defaultDeviceCollectors()
@@ -89,7 +88,6 @@ func collectDeviceProfile() async {
 
 ```swift
 import SwiftUI
-import DeviceProfile
 
 struct ContentView: View {
     @State private var deviceProfile: [String: Any] = [:]
@@ -280,8 +278,6 @@ Collects GPS coordinates with automatic permission handling:
 The module comes with several built-in collectors that you can use:
 
 ```swift
-import DeviceProfile
-
 // Use all default collectors
 let collectors = DefaultDeviceCollector.defaultDeviceCollectors()
 
@@ -420,5 +416,9 @@ print("Server message: \(callback.message)")
 ```
 
 ---
+
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
 © Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

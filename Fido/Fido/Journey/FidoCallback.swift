@@ -2,7 +2,7 @@
 //  FidoCallback.swift
 //  Fido
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -28,8 +28,8 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
     public var journey: Journey?
     
     /// Logger instance for this callback, obtained from the workflow configuration.
-    public var logger: Logger? {
-        return journey?.config.logger
+    public var logger: Logger {
+        return journey?.config.logger ?? LogManager.logger
     }
     
     /// Private storage for the Fido instance
@@ -51,11 +51,11 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
     ///
     /// - Parameter value: The value to set for the WebAuthn outcome.
     public func valueCallback(value: String) {
-        logger?.d("Setting WebAuthn outcome value")
+        logger.d("Setting WebAuthn outcome value")
         if let valueCallback = continueNode?.callbacks.first(where: { ($0 as? ValueCallbackProtocol)?.valueId == FidoConstants.WEB_AUTHN_OUTCOME }) as? ValueCallbackProtocol {
             valueCallback.setValue(value)
         } else {
-            logger?.w("WebAuthn outcome callback not found", error: nil)
+            logger.w("WebAuthn outcome callback not found", error: nil)
         }
     }
     
@@ -64,17 +64,17 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
     /// This method converts `ASAuthorizationError` codes into error messages that the Journey server can process.
     /// - Parameter error: The error to handle and convert.
     public func handleError(error: Error) {
-        logger?.e("Handling FIDO error: \(error.localizedDescription)", error: error)
+        logger.e("Handling FIDO error: \(error.localizedDescription)", error: error)
         
         // Check if it's a FidoError first
         if let fidoError = error as? FidoError {
             switch fidoError {
             case .timeout:
-                logger?.d("FIDO operation timed out")
+                logger.d("FIDO operation timed out")
                 setError(error: FidoConstants.ERROR_TIMEOUT, message: "Operation timedout")
                 return
             case .unsupportedAction(let message):
-                logger?.d("FIDO ERROR NOT SUPPORTED: \(message)")
+                logger.d("FIDO ERROR NOT SUPPORTED: \(message)")
                 setError(error: FidoConstants.ERROR_NOT_SUPPORTED, message: message)
                 return
             default:
@@ -88,23 +88,23 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
         case ASAuthorizationError.errorDomain:
             switch nsError.code {
             case ASAuthorizationError.canceled.rawValue:
-                logger?.d("Credential creation cancelled")
+                logger.d("Credential creation cancelled")
                 setError(error: FidoConstants.ERROR_NOT_ALLOWED, message: FidoConstants.ERROR_NOT_ALLOWED_MESSAGE)
             case ASAuthorizationError.invalidResponse.rawValue:
-                logger?.d("DOM exception occurred: InvalidStateError")
+                logger.d("DOM exception occurred: InvalidStateError")
                 setError(error: FidoConstants.ERROR_INVALID_STATE, message: error.localizedDescription)
             case ASAuthorizationError.notHandled.rawValue:
-                logger?.d("DOM exception occurred: NotSupportedError")
+                logger.d("DOM exception occurred: NotSupportedError")
                 setError(error: FidoConstants.ERROR_NOT_SUPPORTED, message: error.localizedDescription)
             case ASAuthorizationError.unknown.rawValue:
-                logger?.d("Unknown error occurred")
+                logger.d("Unknown error occurred")
                 setError(error: FidoConstants.ERROR_UNKNOWN, message: error.localizedDescription)
             default:
-                logger?.d("Unknown error occurred")
+                logger.d("Unknown error occurred")
                 setError(error: FidoConstants.ERROR_UNKNOWN, message: error.localizedDescription)
             }
         default:
-            logger?.d("Unknown error occurred")
+            logger.d("Unknown error occurred")
             setError(error: FidoConstants.ERROR_UNKNOWN, message: error.localizedDescription)
         }
     }
@@ -115,13 +115,13 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
     ///  - error: The error type or code.
     ///  - message: A descriptive message about the error.
     private func setError(error: String?, message: String?) {
-        logger?.d("Setting error - type: \(error ?? "nil"), message: \(message ?? "nil")")
+        logger.d("Setting error - type: \(error ?? "nil"), message: \(message ?? "nil")")
         if let valueCallback = continueNode?.callbacks.first(where: { ($0 as? ValueCallbackProtocol)?.valueId == FidoConstants.WEB_AUTHN_OUTCOME }) as? ValueCallbackProtocol {
             let errorValue = "\(FidoConstants.ERROR_PREFIX)\(error ?? ""):\(message ?? "")"
-            logger?.d("Setting error value: \(errorValue)")
+            logger.d("Setting error value: \(errorValue)")
             valueCallback.setValue(errorValue)
         } else {
-            logger?.e("WebAuthn outcome callback not found for error setting", error: nil)
+            logger.e("WebAuthn outcome callback not found for error setting", error: nil)
         }
     }
 }

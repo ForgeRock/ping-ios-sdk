@@ -11,18 +11,29 @@
 import Foundation
 import AuthenticationServices
 import UIKit
+import PingLogger
 
 /// Fido is a class that provides FIDO registration and authentication functionalities.
+///
+/// `Fido` is single-flight: a registration or authentication ceremony retains state on the
+/// instance (window, completion handler, logger, timeout task) until the underlying
+/// `ASAuthorization` delegate callback or timeout fires. Concurrent ceremonies on the same
+/// instance will overwrite each other, which is why callers consume it through the
+/// `Fido.shared` singleton serialized by the surrounding workflow.
 public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
-    
+
     /// The shared singleton FIDO instance.
     @MainActor
     public static let shared = Fido()
-    
+
     var window: ASPresentationAnchor?
     var completion: ((Result<[String: Any], Error>) -> Void)?
     var timeoutTask: Task<Void, Never>?
     var authorizationController: ASAuthorizationController?
+
+    /// Logger for the in-flight ceremony. Set by `register`/`authenticate` and cleared in
+    /// `cleanup()`, so each ceremony uses its caller's workflow logger and nothing else.
+    private var logger: Logger?
     
     func makeAuthorizationController(requests: [ASAuthorizationRequest]) -> ASAuthorizationController {
         let authorizationController = ASAuthorizationController(authorizationRequests: requests)
@@ -37,23 +48,31 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     /// - Parameters:
     ///   - options: A dictionary containing the registration options.
     ///   - window: The window to present the registration UI in.
+    ///   - logger: Optional logger for ceremony state transitions and errors. Pass the
+    ///     workflow logger (e.g. `davinci?.config.logger`); when `nil` no log output is
+    ///     produced. Scoped to this call only — overwritten by subsequent ceremonies and
+    ///     cleared in `cleanup()`.
     ///   - completion: A closure to be called with the registration result.
-    public func register(options: [String: Any], window: ASPresentationAnchor, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+    public func register(options: [String: Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+        self.logger = logger
+        logger?.d("Fido: Starting registration")
         self.window = window
         self.completion = completion
-        
+
         do {
             // 1. Decode options
             let jsonData = try JSONSerialization.data(withJSONObject: options, options: [])
             let registrationOptions = try JSONDecoder().decode(PublicKeyCredentialCreationOptions.self, from: jsonData)
-            
+
             // 2. Prepare common parameters
             guard let challengeData = Data(base64Encoded: registrationOptions.challenge, options: .ignoreUnknownCharacters) else {
+                logger?.e("Fido: Registration failed - invalid challenge", error: nil)
                 completion(.failure(FidoError.invalidChallenge))
+                cleanup()
                 return
             }
             let userID = Data(registrationOptions.user.id.utf8)
-            
+
             // 3. Determine which requests to create based on selection criteria
             var requests: [ASAuthorizationRequest] = []
             let attachment = registrationOptions.authenticatorSelection?.authenticatorAttachment
@@ -70,7 +89,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
                 )
                 requests.append(platformRequest)
             }
-            
+
             // Add security key request if:
             // - Attachment is .crossPlatform OR nil (no preference)
             if attachment != .platform {
@@ -81,20 +100,24 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
                 )
                 requests.append(securityKeyRequest)
             }
-            
+
             if requests.isEmpty {
+                logger?.e("Fido: Registration failed - no suitable authentication methods available", error: nil)
                 completion(.failure(FidoError.unsupportedAction("No suitable authentication methods available")))
+                cleanup()
             } else {
                 // 4. Start timeout if specified
                 if let timeout = registrationOptions.timeout, timeout > 0 {
                     startTimeout(milliseconds: timeout)
                 }
-                
+
                 // 5. Perform requests
+                logger?.d("Fido: Performing registration requests (\(requests.count) request(s))")
                 let authorizationController = makeAuthorizationController(requests: requests)
                 authorizationController.performRequests()
             }
         } catch {
+            logger?.e("Fido: Registration failed", error: error)
             completion(.failure(error))
         }
     }
@@ -104,26 +127,34 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     /// - Parameters:
     ///   - options: A dictionary containing the authentication options.
     ///   - window: The window to present the authentication UI in.
+    ///   - logger: Optional logger for ceremony state transitions and errors. Pass the
+    ///     workflow logger (e.g. `journey?.config.logger`); when `nil` no log output is
+    ///     produced. Scoped to this call only — overwritten by subsequent ceremonies and
+    ///     cleared in `cleanup()`.
     ///   - completion: A closure to be called with the authentication result.
-    public func authenticate(options: [String: Any], window: ASPresentationAnchor, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+    public func authenticate(options: [String: Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+        self.logger = logger
+        logger?.d("Fido: Starting authentication")
         self.window = window
         self.completion = completion
-        
+
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: options, options: [])
             let authenticationOptions = try JSONDecoder().decode(PublicKeyCredentialRequestOptions.self, from: jsonData)
-            
+
             let platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier: authenticationOptions.rpId ?? "")
-            
+
             guard let challengeData = Data(base64Encoded: authenticationOptions.challenge, options: .ignoreUnknownCharacters) else {
+                logger?.e("Fido: Authentication failed - invalid challenge", error: nil)
                 completion(.failure(FidoError.invalidChallenge))
+                cleanup()
                 return
             }
             let assertionRequest = platformProvider.createCredentialAssertionRequest(challenge: challengeData)
             assertionRequest.userVerificationPreference = ASAuthorizationPublicKeyCredentialUserVerificationPreference(rawValue: authenticationOptions.userVerification?.rawValue ?? "preferred")
-            
+
             var requests: [ASAuthorizationRequest] = [assertionRequest]
-            
+
             if let allowCredentials = authenticationOptions.allowCredentials, !allowCredentials.isEmpty {
                 let securityKeyProvider = ASAuthorizationSecurityKeyPublicKeyCredentialProvider(relyingPartyIdentifier: authenticationOptions.rpId ?? "")
                 let securityKeyRequest = securityKeyProvider.createCredentialAssertionRequest(challenge: challengeData)
@@ -132,20 +163,22 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
                     guard let idData = Data(base64Encoded: cred.id) else {
                         return nil
                     }
-                    
+
                     return ASAuthorizationSecurityKeyPublicKeyCredentialDescriptor(credentialID: idData, transports: [])
                 }
                 requests.append(securityKeyRequest)
             }
-            
+
             // Start timeout if specified
             if let timeout = authenticationOptions.timeout, timeout > 0 {
                 startTimeout(milliseconds: timeout)
             }
-            
+
+            logger?.d("Fido: Performing authentication requests (\(requests.count) request(s))")
             let authorizationController = makeAuthorizationController(requests: requests)
             authorizationController.performRequests()
         } catch {
+            logger?.e("Fido: Authentication failed", error: error)
             completion(.failure(error))
         }
     }
@@ -168,16 +201,18 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     ///   - controller: The authorization controller.
     ///   - authorization: The authorization object containing the credential.
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        logger?.d("Fido: Authorization completed successfully")
         cancelTimeout()
         didComplete(with: authorization.credential)
     }
-    
+
     /// Handles the completion of an authorization request with an error.
     ///
     /// - Parameters:
     ///   - controller: The authorization controller.
     ///   - error: The error that occurred.
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        logger?.e("Fido: Authorization failed", error: error)
         cancelTimeout()
         completion?(.failure(error))
         cleanup()
@@ -191,24 +226,27 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     private func startTimeout(milliseconds: Int) {
         // Cancel any existing timeout
         cancelTimeout()
-        
+
         let timeoutSeconds = Double(milliseconds) / 1000.0
-        
+        let capturedLogger = logger
+
         timeoutTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: UInt64(timeoutSeconds * 1_000_000_000))
-            
+
             guard !Task.isCancelled else { return }
-            
+
             await MainActor.run { [weak self] in
                 guard let self = self else { return }
-                
+
+                capturedLogger?.d("Fido: Operation timed out after \(Int(timeoutSeconds))s")
+
                 // Cancel the authorization controller if still active
                 self.authorizationController?.cancel()
-                
+
                 // Call completion with timeout error
                 let timeoutError = FidoError.timeout
                 self.completion?(.failure(timeoutError))
-                
+
                 // Clean up
                 self.cleanup()
             }
@@ -226,6 +264,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
         authorizationController = nil
         window = nil
         completion = nil
+        logger = nil
         cancelTimeout()
     }
     
@@ -321,6 +360,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     func didComplete(with credential: ASAuthorizationCredential) {
         switch credential {
         case let credential as ASAuthorizationPublicKeyCredentialRegistration:
+            logger?.d("Fido: Processing registration credential")
             // Determine authenticator attachment type
             var attachmentValue: String = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
             if let registrationCredential = credential as? ASAuthorizationPlatformPublicKeyCredentialRegistration {
@@ -344,6 +384,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
             completion?(.success(result))
             cleanup()
         case let credential as ASAuthorizationPublicKeyCredentialAssertion:
+            logger?.d("Fido: Processing authentication credential")
             // Determine authenticator attachment type for assertion
             var attachmentValue: String = FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
             if let assertionCredential = credential as? ASAuthorizationPlatformPublicKeyCredentialAssertion {

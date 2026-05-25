@@ -1,13 +1,48 @@
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
+
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
+
 # PingJourneyPlugin
-
-[![Version](https://img.shields.io/cocoapods/v/PingJourneyPlugin.svg?style=flat)](https://cocoapods.org/pods/PingJourneyPlugin)
-[![License](https://img.shields.io/cocoapods/l/PingJourneyPlugin.svg?style=flat)](https://cocoapods.org/pods/PingJourneyPlugin)
-
-## Overview
 
 The `PingJourneyPlugin` is a lightweight abstraction layer for the `PingJourney` SDK. It defines a set of protocols and interfaces that encapsulate the core functionalities of the `PingJourney` SDK, providing a high-level API for other modules.
 
 The main purpose of this plugin is to decouple modules from the concrete implementation of the `PingJourney` SDK, allowing them to interact with its features through a stable, abstract API.
+
+## Getting Started
+
+### Prerequisites
+
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingJourneyPlugin` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingJourneyPlugin', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingJourneyPlugin
+```
 
 ## Architecture
 
@@ -35,21 +70,6 @@ The `PingJourneyPlugin` module is built around a few core concepts that enable i
 
 - **`Constants.swift`**: A centralized enum that holds all the string constants used in Journey flows, such as callback type names, JSON keys, and API parameters. This improves code maintainability and reduces errors from typos.
 
-## Installation
-
-### CocoaPods
-
-`PingJourneyPlugin` is available through [CocoaPods](https://cocoapods.org). To install it, simply add the following line to your `Podfile`:
-
-```ruby
-pod 'PingJourneyPlugin', '~> 2.0.0'
-```
-
-Then, run the command:
-```bash
-pod install
-```
-
 ## Usage
 
 Your application modules can interact with the `PingJourney` functionality through the protocols exposed by this plugin.
@@ -57,12 +77,8 @@ Your application modules can interact with the `PingJourney` functionality throu
 For example, a module can get a reference to a service protocol from `PingJourneyPlugin` and use it, without knowing about the underlying implementation provided by the `PingJourney` SDK.
 
 
-## Dependencies
-
--   [PingLogger](https://github.com/ForgeRock/ping-ios-sdk) (~> 2.0.0)
-
 ## License
 
-`PingJourneyPlugin` is available under the MIT license. See the LICENSE file for more info.
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
-© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
+© Copyright 2025-2026 Ping Identity Corporation. All rights reserved.

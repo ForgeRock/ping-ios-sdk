@@ -1,6 +1,46 @@
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
+
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
+
 # PingTamperDetector
 
-PingTamperDetector module for the Ping iOS SDK.
+PingTamperDetector module provides comprehensive utilities for analyzing iOS device tampering, including jailbreak detection, system integrity verification, and security compromise identification. It employs multiple detection strategies to provide reliable assessment of device security status.
+
+## Getting Started
+
+### Prerequisites
+
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingTamperDetector` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingTamperDetector', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingTamperDetector
+```
 
 ## How to use
 
@@ -82,4 +122,8 @@ let tamperDetector = TamperDetector(detectors: detectors)
 let score = tamperDetector.analyze()
 ```
 
-© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved.

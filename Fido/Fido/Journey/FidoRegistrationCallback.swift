@@ -30,10 +30,10 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
     ///   - value: The value of the property.
     public override func initValue(name: String, value: Any) {
         if name == FidoConstants.FIELD_DATA, let data = value as? [String: Any] {
-            logger?.d("Processing FIDO registration data")
+            logger.d("Processing FIDO registration data")
             supportsJsonResponse = data[FidoConstants.FIELD_SUPPORTS_JSON_RESPONSE] as? Bool ?? false
             publicKeyCredentialCreationOptions = transform(data)
-            logger?.d("FIDO registration callback initialized successfully")
+            logger.d("FIDO registration callback initialized successfully")
         }
     }
     
@@ -45,14 +45,15 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
     /// - Throws: An error if the registration process fails.
     @MainActor
     public func register(deviceName: String? = nil, window: ASPresentationAnchor) async -> Result<[String: Any], Error> {
-        logger?.d("Starting FIDO registration with device name: \(deviceName ?? "nil") (async Result)")
+        logger.d("Starting FIDO registration with device name: \(deviceName ?? "nil") (async Result)")
         
         do {
             // 1. Wrap the closure-based fido.register in a continuation
             //    This still throws internally within the 'do' block if the continuation resumes with an error.
             let response: [String: Any] = try await withUnsafeThrowingContinuation { continuation in
-                // Assuming 'fido' instance is accessible
-                fido.register(options: publicKeyCredentialCreationOptions, window: window) { [continuation] result in
+                // Pass the workflow logger so the underlying ASAuthorization ceremony
+                // emits log messages through the same logger as the surrounding flow.
+                fido.register(options: publicKeyCredentialCreationOptions, window: window, logger: logger) { [continuation] result in
                     Task {
                         await MainActor.run {
                             nonisolated(unsafe) let safeResult = result
@@ -63,13 +64,13 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
             }
             
             // 2. Handle the successful response data extraction
-            self.logger?.d("FIDO registration successful, processing response...")
+            self.logger.d("FIDO registration successful, processing response...")
             guard let rawAttestationObject = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? Data,
                   let rawClientDataJSON = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
                   let rawIdData = response[FidoConstants.FIELD_RAW_ID] as? Data else {
                 
                 let error = FidoError.invalidResponse // Define your error type
-                self.logger?.e(error.localizedDescription, error: error)
+                self.logger.e(error.localizedDescription, error: error)
                 self.handleError(error: error) // Keep existing error handling side-effect
                 return .failure(error) // Return failure
             }
@@ -100,13 +101,13 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
                     // Handle potential JSON serialization error if needed, maybe return failure?
                     // For now, setting empty string as before.
                     callbackValue = ""
-                    logger?.w("Failed to serialize FIDO JSON response", error: nil)
+                    logger.w("Failed to serialize FIDO JSON response", error: nil)
                 }
             } else {
                 callbackValue = finalData
             }
             
-            self.logger?.d("Setting registration callback value")
+            self.logger.d("Setting registration callback value")
             self.valueCallback(value: callbackValue) // Perform side effect
             
             // 4. Return success with the original response dictionary
@@ -114,7 +115,7 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
             
         } catch {
             // 5. Handle any error caught from the continuation
-            self.logger?.e("FIDO registration failed", error: error)
+            self.logger.e("FIDO registration failed", error: error)
             self.handleError(error: error) // Keep existing error handling side-effect
             return .failure(error) // Return failure
         }
@@ -127,7 +128,7 @@ public class FidoRegistrationCallback: FidoCallback, @unchecked Sendable {
     /// - Parameter input: The input dictionary containing FIDO registration options.
     /// - Returns: A transformed dictionary suitable for FIDO registration.
     func transform(_ input: [String: Any]) -> [String: Any] {
-        logger?.d("Transforming FIDO registration creation options")
+        logger.d("Transforming FIDO registration creation options")
         var output: [String: Any] = [:]
         
         if let challenge = input[FidoConstants.FIELD_CHALLENGE] as? String {

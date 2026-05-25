@@ -35,13 +35,13 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
     /// - Throws: An error if the required `publicKeyCredentialCreationOptions` parameter is missing from the JSON.
     required public init(with json: [String : Any]) {
         super.init(with: json)
-        logger?.d("Initializing FIDO registration collector")
+        logger.d("Initializing FIDO registration collector")
         guard let options = json[FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS] as? [String: Any] else {
-            logger?.e("Missing \(FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS)", error: nil)
+            logger.e("Missing \(FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS)", error: nil)
             return
         }
         self.publicKeyCredentialCreationOptions = self.transform(options)
-        logger?.d("FIDO registration collector initialized with creation options")
+        logger.d("FIDO registration collector initialized with creation options")
     }
     
     /// The payload to be sent to the DaVinci server.
@@ -49,10 +49,10 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
     /// - Returns: A dictionary containing the attestation value, or `nil` if registration has not been completed.
     override public func payload() -> [String: Any]? {
         guard let attestationValue = attestationValue else {
-            logger?.d("No attestation value available, returning null payload")
+            logger.d("No attestation value available, returning null payload")
             return nil
         }
-        logger?.d("Returning attestation payload for FIDO registration")
+        logger.d("Returning attestation payload for FIDO registration")
         return [FidoConstants.FIELD_ATTESTATION_VALUE: attestationValue]
     }
     
@@ -66,14 +66,15 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
     /// - Throws: An error if the registration process fails or the response is invalid.
     @MainActor
     public func register(window: ASPresentationAnchor) async -> Result<[String: Any], Error> {
-        logger?.d("Starting FIDO registration (async Result)")
+        logger.d("Starting FIDO registration (async Result)")
         
         do {
             // 1. Wrap the closure-based fido.register in a continuation
             //    This still throws internally within the 'do' block if the continuation resumes with an error.
             let response: [String: Any] = try await withUnsafeThrowingContinuation { continuation in
-                // Assuming 'fido' instance is accessible
-                fido.register(options: publicKeyCredentialCreationOptions, window: window) { [continuation] result in
+                // Pass the workflow logger so the underlying ASAuthorization ceremony
+                // emits log messages through the same logger as the surrounding flow.
+                fido.register(options: publicKeyCredentialCreationOptions, window: window, logger: logger) { [continuation] result in
                     Task {
                         await MainActor.run {
                             nonisolated(unsafe) let sendableResult = result
@@ -84,14 +85,14 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
             }
             
             // 2. Process the successful response data extraction
-            logger?.d("FIDO registration successful, building attestationValue object...")
+            logger.d("FIDO registration successful, building attestationValue object...")
             
             guard let rawIdData = response[FidoConstants.FIELD_RAW_ID] as? Data,
                   let clientDataJSONData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
                   let attestationObjectData = response[FidoConstants.FIELD_ATTESTATION_OBJECT] as? Data else {
                 
                 let error = FidoError.invalidResponse
-                logger?.e(error.localizedDescription, error: error)
+                logger.e(error.localizedDescription, error: error)
                 let transformedError = self.handleError(error: error)
                 return .failure(transformedError) // Return failure with transformed error
             }
@@ -109,7 +110,7 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
                 ]
             ]
             
-            logger?.d("attestationValue object created successfully")
+            logger.d("attestationValue object created successfully")
             self.attestationValue = newAttestationValue // Store the value (side effect)
             
             // 4. Return success with the constructed attestationValue
@@ -117,7 +118,7 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
             
         } catch {
             // 5. Handle any error caught from the continuation
-            logger?.e("FIDO registration failed", error: error)
+            logger.e("FIDO registration failed", error: error)
             let transformedError = self.handleError(error: error)
             return .failure(transformedError) // Return failure with transformed error
         }
@@ -131,11 +132,11 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
     /// - Parameter input: The dictionary of options received from the server.
     /// - Returns: A transformed dictionary of options.
     private func transform(_ input: [String: Any]) -> [String: Any] {
-        logger?.d("Transforming FIDO registration creation options")
+        logger.d("Transforming FIDO registration creation options")
         var output = input
         
         if let user = output[FidoConstants.FIELD_USER] as? [String: Any] {
-            logger?.d("User: \(user)")
+            logger.d("User: \(user)")
             if let userId = user[FidoConstants.FIELD_ID] as? [Int] {
                 var newUser = user
                 let data = Data(userId.map { UInt8(bitPattern: Int8($0)) })
@@ -145,7 +146,7 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
         }
         
         if let challenge = output[FidoConstants.FIELD_CHALLENGE] as? [Int] {
-            logger?.d("Challenge: \(challenge)")
+            logger.d("Challenge: \(challenge)")
             let data = Data(challenge.map { UInt8(bitPattern: Int8($0)) })
             output[FidoConstants.FIELD_CHALLENGE] = data.base64EncodedString()
         }
@@ -158,7 +159,7 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
         }
         
         if let excludeCredentials = output[FidoConstants.FIELD_EXCLUDE_CREDENTIALS] as? [[String: Any]] {
-            logger?.d("Exclude credentials: \(excludeCredentials)")
+            logger.d("Exclude credentials: \(excludeCredentials)")
             let updatedCredentials = excludeCredentials.map { credential -> [String: Any] in
                 var newCredential = credential
                 if let id = newCredential[FidoConstants.FIELD_ID] as? [Int] {
@@ -170,7 +171,7 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
             output[FidoConstants.FIELD_EXCLUDE_CREDENTIALS] = updatedCredentials
         }
         
-        logger?.d("FIDO registration creation options transformed successfully")
+        logger.d("FIDO registration creation options transformed successfully")
         return output
     }
 }

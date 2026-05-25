@@ -81,3 +81,14 @@ SampleApps/PingExample/PingExample/ConfigurationManager_LOCAL_78086.swift
 SampleApps/PingExample/PingExample/ConfigurationManager_REMOTE_78086.swift
 /Android/
 GEMINI.MD
+
+# Local agent / planning artefacts (not shipped with the SDK)
+.claude/
+ai-tasks/
+CLAUDE.md
+AGENTS.md
+.github/copilot-instructions.md
+
+# Merge / Finder leftovers
+*.orig
+**/* copy.xcodeproj/

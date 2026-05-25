@@ -1,13 +1,10 @@
-<p align="center">
-  <a href="https://github.com/ForgeRock/ping-android-sdk">
-    <img src="https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg" alt="Logo">
-  </a>
-  <hr/>
-</p>
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
 
-# Ping External IDP
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
 
-## Overview
+# PingExternalIdP
 
 The Ping External IdP library empowers your iOS applications to seamlessly authenticate users through various external Identity Providers (IDPs) such as Google, Facebook, and Apple. Acting as a plugin for the `PingDavinci` modules, it streamlines the integration process by providing the necessary configurations and functionalities to initiate and manage authentication flows with these external services.
 
@@ -15,13 +12,50 @@ This library abstracts away the complexities of dealing with different IDP proto
 
 <img src="images/socialLogin.png" width="250">
 
-## Add dependency to your project
+## Getting Started
 
-You can add the dependency using Cocoapods or Swift Package Manager
+### Prerequisites
+
+- PingOne DaVinci or Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingExternalIdP` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingExternalIdP', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingExternalIdP
+```
 
 ## Configuration and Usage
 
-The `PingExternalIdP` library is designed to work in conjunction with the 'PingDavinci' module. The authentication flow is orchestrated by a DaVinci journey that includes an `IdpCollector` node. The configuration of the external IDPs is handled either within the PingOne platform directly or through DaVinci Connectors.
+The `PingExternalIdP` library is designed to work in conjunction with the 'PingDavinci' and 'PingJourney' modules. 
+
+### DaVinci
+The authentication flow is orchestrated by a DaVinci journey that includes an `IdpCollector` node. The configuration of the external IDPs is handled either within the PingOne platform directly or through DaVinci Connectors.
+
+### Journey
+The authentication flow is orchestrated by a Journey that includes a `SelectIdPCallback` node to present the available identity providers and an `IdpCallback` node to perform the authentication. The configuration of the external IDPs is handled within the Ping Advanced Identity Cloud or PingAM administrative console.
 
 ## Authentication Experience Options
 
@@ -131,6 +165,50 @@ await idpCollector.authorize(callbackURLScheme: "myAppScheme")
 ``` 
 The value needs to match with the configuration of the Social Provider.
 
+## Journey Authentication Flow
+
+When using `PingExternalIdP` with the `PingJourney` module, the authentication flow uses two callbacks: `SelectIdpCallback` to let the user choose a provider, and `IdpCallback` to perform the authentication with the selected provider.
+
+### SelectIdpCallback
+
+When the Journey step contains a `SelectIdpCallback`, present the available providers to the user and set the selected value before advancing to the next node:
+
+```swift
+node.callbacks.forEach { callback in
+    if let selectIdpCallback = callback as? SelectIdpCallback {
+        // Present the list of providers to the user
+        let providers = selectIdpCallback.providers // [IdPValue]
+        // Set the user's selection
+        selectIdpCallback.value = providers.first?.provider ?? ""
+    }
+}
+let nextNode = await continueNode.next()
+```
+
+### IdpCallback
+
+When the Journey step contains an `IdpCallback`, call `authorize()` to initiate the authentication flow with the external identity provider:
+
+```swift
+node.callbacks.forEach { callback in
+    if let idpCallback = callback as? IdpCallback {
+        Task {
+            let result = await idpCallback.authorize()
+            switch result {
+            case .success(_):
+                // Authentication successful, advance the journey
+                let nextNode = await continueNode.next()
+            case .failure(let error):
+                // Handle authentication error
+                print("Authentication failed: \(error)")
+            }
+        }
+    }
+}
+```
+
+The `idpCallback.authorize()` method selects the appropriate handler based on the `provider` property. For browser-based authentication, it launches an in-app browser. If a native library (`PingExternalIdPApple`, `PingExternalIdPGoogle`, or `PingExternalIdPFacebook`) is present, it uses the corresponding native SDK instead.
+
 ## Native External Identity Providers (IDP) Integration with Google and Facebook and Apple for iOS
 
 To provide a more seamless and integrated user experience, especially for frequently used IDPs like Google and Facebook, the Ping External IDP library can leverage their native iOS SDKs (if the corresponing PingExternal IDP *native library* is imported). This allows for a login flow that feels more integrated within the app, potentially avoiding full browser redirects.
@@ -142,5 +220,9 @@ For implementing Native Signin with Apple see the [PingExternalIdPApple](/Extern
 For implementing Native Signin with Google see the [PingExternalIdPGoogle](/ExternalIdPGoogle/README.md) module.
 
 For implementing Native Signin with Facebook see the [PingExternalIdPFacebook](/ExternalIdPFacebook/README.md) module.
+
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
 © Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
