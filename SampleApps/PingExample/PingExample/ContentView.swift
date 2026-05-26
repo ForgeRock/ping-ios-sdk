@@ -220,7 +220,7 @@ struct ContentView: View {
     @State private var navigateToPushNotifications = false
     @State private var showNoConfigAlert = false
     @State private var noConfigTypeName = ""
-    @State private var pingOneMFANotification: PingOneMFA.PushNotification? = nil
+    @State private var pingOneMFANotification: MFAPushNotification? = nil
     
     var body: some View {
         NavigationStack(path: $path) {
@@ -254,7 +254,7 @@ struct ContentView: View {
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowPingOneMFANotification"))) { notification in
-                if let pushNotification = notification.userInfo?["notification"] as? PingOneMFA.PushNotification {
+                if let pushNotification = notification.userInfo?["notification"] as? MFAPushNotification {
                     pingOneMFANotification = pushNotification
                 }
             }

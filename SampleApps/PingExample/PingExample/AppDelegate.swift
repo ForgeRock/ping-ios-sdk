@@ -163,7 +163,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
                     if !ConfigurationManager.shared.isPingOneMFAInitialized {
                         try await ConfigurationManager.shared.initializePingOneMFAClient()
                     }
-                    let pingOneMFANotification: PingOneMFA.PushNotification = try await PingOneMFA.collectPush(userInfo: userInfoCopy)
+                    let pingOneMFANotification: MFAPushNotification = try await PingOneMFA.collectPush(userInfo: userInfoCopy)
                     print("Processed PingOneMFA foreground push notification")
                     NotificationCenter.default.post(
                         name: NSNotification.Name("ShowPingOneMFANotification"),
@@ -216,7 +216,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
                     if !ConfigurationManager.shared.isPingOneMFAInitialized {
                         try await ConfigurationManager.shared.initializePingOneMFAClient()
                     }
-                    if let pingOneMFANotification: PingOneMFA.PushNotification = try await PingOneMFA.processNotificationAction(
+                    if let pingOneMFANotification: MFAPushNotification = try await PingOneMFA.processNotificationAction(
                         identifier: actionIdentifier,
                         authenticationMethod: "user",
                         userInfo: userInfoCopy

@@ -11,6 +11,10 @@
 import Foundation
 internal import PingOneSDK
 
+/// A type alias to use when `PingOneMFA.PushNotification` is ambiguous (e.g. when the
+/// `PingOneMFA` module name shadows the `PingOneMFA` class name at the call site).
+public typealias MFAPushNotification = PushNotification
+
 /// A value type representing an incoming push notification for MFA authentication.
 public struct PushNotification: @unchecked Sendable, Identifiable {
     /// A stable unique identifier for this notification instance, used to drive SwiftUI `.sheet(item:)` bindings.
