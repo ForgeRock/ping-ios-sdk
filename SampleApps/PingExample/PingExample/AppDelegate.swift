@@ -38,10 +38,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         // actionable banner notifications (approve / deny actions).
         Task {
             do {
-                if !ConfigurationManager.shared.isPingOneMFAInitialized {
-                    try await ConfigurationManager.shared.initializePingOneMFAClient()
-                }
-
+                try await ensurePingOneMFAInitialized()
                 let pingOneMFACategories = PingOneMFA.getNotificationCategories()
                 pingOneMFACategoryIdentifiers = Set(pingOneMFACategories.map { $0.identifier })
 
