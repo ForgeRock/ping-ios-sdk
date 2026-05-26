@@ -38,21 +38,8 @@ public class BooleanCollector: FieldCollector<Bool>, @unchecked Sendable {
         }
         self.errorMessage = json[Constants.errorMessage] as? String
         
-        if let richContentDict = json[Constants.richContent] as? [String: Any],
-           let content = richContentDict[Constants.content] as? String {
-            var replacements: [String: RichContentReplacement] = [:]
-            if let replacementsDict = richContentDict[Constants.replacements] as? [String: [String: Any]] {
-                for (key, replacementDict) in replacementsDict {
-                    let replacement = RichContentReplacement(
-                        value: replacementDict[Constants.value] as? String ?? "",
-                        href: replacementDict[Constants.href] as? String,
-                        type: replacementDict[Constants.type] as? String ?? "",
-                        target: replacementDict[Constants.target] as? String
-                    )
-                    replacements[key] = replacement
-                }
-            }
-            self.richContent = RichContent(content: content, replacements: replacements)
+        if let richContentDict = json[Constants.richContent] as? [String: Any] {
+            self.richContent = RichContent.parse(from: richContentDict)
         }
         
         super.init(with: json)
@@ -85,26 +72,6 @@ public class BooleanCollector: FieldCollector<Bool>, @unchecked Sendable {
         
         return errors
     }
-}
-
-/// A replacement entry within rich content.
-/// - `value`: The display text for the replacement.
-/// - `href`: The URL for link-type replacements.
-/// - `type`: The type of replacement (e.g., "link").
-/// - `target`: The link target (e.g., "_self", "_blank").
-public struct RichContentReplacement: Sendable {
-    public let value: String
-    public let href: String?
-    public let type: String
-    public let target: String?
-}
-
-/// Rich content associated with a single checkbox field.
-/// - `content`: A template string with `{{placeholder}}` tokens.
-/// - `replacements`: A dictionary mapping placeholder keys to their replacement details.
-public struct RichContent: Sendable {
-    public let content: String
-    public let replacements: [String: RichContentReplacement]
 }
 
 /// The appearance options for a single checkbox field.

@@ -265,6 +265,7 @@ let package = Package(
         .target(
             name: "PingFido",
             dependencies: [
+                "PingLogger",
                 "PingCommons",
                 "PingDavinciPlugin",
                 "PingJourneyPlugin"

@@ -215,6 +215,7 @@ flowCollector.type == "FLOW_LINK" // Check if the type is "FLOW_LINK". Note that
 
 ```swift
 labelCollector.content //To access the Content
+labelCollector.richContent //To access the optional RichContent (template text with link replacements)
 ```
 
 #### MultiSelectCollector (COMBOBOX, CHECKBOX)

@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		25554859C34DBAACE79ABA36 /* DaVinciPARTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD0544A9787573F4A02A278 /* DaVinciPARTests.swift */; };
 		3A203D7F2BDB136C0020C995 /* DaVinci.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A203D7E2BDB136C0020C995 /* DaVinci.swift */; };
 		3A203D972BDB2CD70020C995 /* Oidc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A203D962BDB2CD70020C995 /* Oidc.swift */; };
 		3A203D9B2BDE155D0020C995 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A203D9A2BDE155D0020C995 /* Transform.swift */; };
 		3A292C822BF58462006977EF /* Agent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A292C812BF58462006977EF /* Agent.swift */; };
 		3A5441AA2BCDF20700385131 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5441A12BCDF20700385131 /* PingDavinci.framework */; };
 		3A5441AF2BCDF20700385131 /* DaVinciTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5441AE2BCDF20700385131 /* DaVinciTests.swift */; };
-		25554859C34DBAACE79ABA36 /* DaVinciPARTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD0544A9787573F4A02A278 /* DaVinciPARTests.swift */; };
 		3A5441B02BCDF20700385131 /* Davinci.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A5441A42BCDF20700385131 /* Davinci.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A57CB622C44D68C001EC9A0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A57CB612C44D688001EC9A0 /* User.swift */; };
 		3AC13E352C3FFF1000DEF23A /* Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E322C3FFF1000DEF23A /* Form.swift */; };
@@ -37,6 +37,7 @@
 		A51D4CF62C65743100FE09E0 /* MockAPIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CF52C65743100FE09E0 /* MockAPIEndpoint.swift */; };
 		A51D4CF82C65978300FE09E0 /* DaVinciIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CF72C65978300FE09E0 /* DaVinciIntegrationTests.swift */; };
 		A51D4CFA2C6BA75000FE09E0 /* CallbackFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51D4CF92C6BA75000FE09E0 /* CallbackFactoryTests.swift */; };
+		A5245B012FABCD1200000001 /* RichContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5245B002FABCD1200000001 /* RichContent.swift */; };
 		A53B6EDE2F9FA25600B279CE /* BooleanCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53B6EDD2F9FA25600B279CE /* BooleanCollector.swift */; };
 		A53B6EE02F9FA2D900B279CE /* BooleanCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53B6EDF2F9FA2D900B279CE /* BooleanCollectorTests.swift */; };
 		A5A61E032D4A92BF00767C2D /* ErrorNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A61E022D4A92B000767C2D /* ErrorNode.swift */; };
@@ -61,6 +62,8 @@
 		AA1A00042F0000000000AA01 /* PollingCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1A00032F0000000000AA01 /* PollingCollectorTests.swift */; };
 		AA1A00062F0000000000AA01 /* QRCodeCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1A00052F0000000000AA01 /* QRCodeCollector.swift */; };
 		AA1A00082F0000000000AA01 /* QRCodeCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1A00072F0000000000AA01 /* QRCodeCollectorTests.swift */; };
+		BB4928012F0900000000BB01 /* ReadOnlyTextCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */; };
+		BB4928032F0900000000BB01 /* ReadOnlyTextCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928022F0900000000BB01 /* ReadOnlyTextCollectorTests.swift */; };
 		EC5C81C92ECF7A1700C91570 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */; };
 		EC5C81CA2ECF7A1700C91570 /* PingDavinciPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC5C81FC2ED0CAA100C91570 /* Collectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81FB2ED0CAA100C91570 /* Collectors.swift */; };
@@ -68,8 +71,6 @@
 		EC7279B02DF9976E005D9E28 /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = EC7279AF2DF99766005D9E28 /* Config.json */; };
 		EC7279B42DF9B295005D9E28 /* DaVinciBaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7279B32DF9B289005D9E28 /* DaVinciBaseTests.swift */; };
 		EC92B3742D9FF67F00E4246D /* DeviceAuthenticationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3732D9FF67E00E4246D /* DeviceAuthenticationCollector.swift */; };
-		BB4928012F0900000000BB01 /* ReadOnlyTextCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */; };
-		BB4928032F0900000000BB01 /* ReadOnlyTextCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928022F0900000000BB01 /* ReadOnlyTextCollectorTests.swift */; };
 		EC92B3782DA0132100E4246D /* PhoneNumberCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */; };
 		EC92B3A32DA52DAB00E4246D /* DeviceAuthenticatorCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3A22DA52DA200E4246D /* DeviceAuthenticatorCollectorTests.swift */; };
 		EC92B3A52DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3A42DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift */; };
@@ -104,6 +105,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2AD0544A9787573F4A02A278 /* DaVinciPARTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciPARTests.swift; sourceTree = "<group>"; };
 		3A203D7E2BDB136C0020C995 /* DaVinci.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinci.swift; sourceTree = "<group>"; };
 		3A203D962BDB2CD70020C995 /* Oidc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Oidc.swift; sourceTree = "<group>"; };
 		3A203D9A2BDE155D0020C995 /* Transform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
@@ -112,7 +114,6 @@
 		3A5441A42BCDF20700385131 /* Davinci.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Davinci.h; sourceTree = "<group>"; };
 		3A5441A92BCDF20700385131 /* DavinciTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DavinciTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A5441AE2BCDF20700385131 /* DaVinciTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciTests.swift; sourceTree = "<group>"; };
-		2AD0544A9787573F4A02A278 /* DaVinciPARTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciPARTests.swift; sourceTree = "<group>"; };
 		3A57CB612C44D688001EC9A0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		3AC13E312C3FFF1000DEF23A /* Connector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connector.swift; sourceTree = "<group>"; };
 		3AC13E322C3FFF1000DEF23A /* Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form.swift; sourceTree = "<group>"; };
@@ -134,6 +135,7 @@
 		A51D4CF52C65743100FE09E0 /* MockAPIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIEndpoint.swift; sourceTree = "<group>"; };
 		A51D4CF72C65978300FE09E0 /* DaVinciIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciIntegrationTests.swift; sourceTree = "<group>"; };
 		A51D4CF92C6BA75000FE09E0 /* CallbackFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackFactoryTests.swift; sourceTree = "<group>"; };
+		A5245B002FABCD1200000001 /* RichContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichContent.swift; sourceTree = "<group>"; };
 		A53A9B582F1984C8000E2F2C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		A53B6EDD2F9FA25600B279CE /* BooleanCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanCollector.swift; sourceTree = "<group>"; };
 		A53B6EDF2F9FA2D900B279CE /* BooleanCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanCollectorTests.swift; sourceTree = "<group>"; };
@@ -159,14 +161,14 @@
 		AA1A00032F0000000000AA01 /* PollingCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingCollectorTests.swift; sourceTree = "<group>"; };
 		AA1A00052F0000000000AA01 /* QRCodeCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeCollector.swift; sourceTree = "<group>"; };
 		AA1A00072F0000000000AA01 /* QRCodeCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeCollectorTests.swift; sourceTree = "<group>"; };
+		BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyTextCollector.swift; sourceTree = "<group>"; };
+		BB4928022F0900000000BB01 /* ReadOnlyTextCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyTextCollectorTests.swift; sourceTree = "<group>"; };
 		EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinciPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81FB2ED0CAA100C91570 /* Collectors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collectors.swift; sourceTree = "<group>"; };
 		EC7279AD2DF98CD6005D9E28 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		EC7279AF2DF99766005D9E28 /* Config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Config.json; sourceTree = "<group>"; };
 		EC7279B32DF9B289005D9E28 /* DaVinciBaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciBaseTests.swift; sourceTree = "<group>"; };
 		EC92B3732D9FF67E00E4246D /* DeviceAuthenticationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticationCollector.swift; sourceTree = "<group>"; };
-		BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyTextCollector.swift; sourceTree = "<group>"; };
-		BB4928022F0900000000BB01 /* ReadOnlyTextCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyTextCollectorTests.swift; sourceTree = "<group>"; };
 		EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberCollector.swift; sourceTree = "<group>"; };
 		EC92B3A22DA52DA200E4246D /* DeviceAuthenticatorCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticatorCollectorTests.swift; sourceTree = "<group>"; };
 		EC92B3A42DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationCollectorTests.swift; sourceTree = "<group>"; };
@@ -298,9 +300,9 @@
 		A51D4CE02C62C4BF00FE09E0 /* collector */ = {
 			isa = PBXGroup;
 			children = (
+				A53B6EDD2F9FA25600B279CE /* BooleanCollector.swift */,
 				ECF053232D9C4273004C9AAE /* Device.swift */,
 				EC92B3732D9FF67E00E4246D /* DeviceAuthenticationCollector.swift */,
-				BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */,
 				ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */,
 				A51D4CD02C585B4500FE09E0 /* FieldCollector.swift */,
 				A51D4CD22C585D7C00FE09E0 /* FlowCollector.swift */,
@@ -314,7 +316,8 @@
 				EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */,
 				AA1A00012F0000000000AA01 /* PollingCollector.swift */,
 				AA1A00052F0000000000AA01 /* QRCodeCollector.swift */,
-				A53B6EDD2F9FA25600B279CE /* BooleanCollector.swift */,
+				BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */,
+				A5245B002FABCD1200000001 /* RichContent.swift */,
 				A5E9AEB52D2F243C000533ED /* SingleSelectCollector.swift */,
 				A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */,
 				A51D4CD62C585E2D00FE09E0 /* SubmitCollector.swift */,
@@ -483,6 +486,7 @@
 				A51D4CD92C585E5700FE09E0 /* TextCollector.swift in Sources */,
 				3A57CB622C44D68C001EC9A0 /* User.swift in Sources */,
 				A53B6EDE2F9FA25600B279CE /* BooleanCollector.swift in Sources */,
+				A5245B012FABCD1200000001 /* RichContent.swift in Sources */,
 				A5E9AEB42D2F2256000533ED /* LabelCollector.swift in Sources */,
 				A5E9AEBA2D2F2731000533ED /* ValidatedCollector.swift in Sources */,
 				3A203D7F2BDB136C0020C995 /* DaVinci.swift in Sources */,

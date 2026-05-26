@@ -86,64 +86,10 @@ struct BooleanCollectorView: View {
     @ViewBuilder
     private var labelContent: some View {
         if let richContent = field.richContent {
-            richTextView(richContent: richContent)
+            Text(RichTextBuilder.build(from: richContent))
         } else {
             Text(field.required ? "\(field.label)*" : field.label)
         }
-    }
-    
-    // MARK: - Rich Content Rendering
-    
-    private func richTextView(richContent: RichContent) -> some View {
-        let attributedString = buildAttributedString(from: richContent)
-        return Text(attributedString)
-    }
-    
-    private func buildAttributedString(from richContent: RichContent) -> AttributedString {
-        let template = richContent.content
-        var result = AttributedString()
-        
-        // Split the template on {{...}} patterns and build attributed string segments
-        var remaining = template[template.startIndex...]
-        
-        while let openRange = remaining.range(of: "{{") {
-            // Add text before the placeholder
-            let prefix = String(remaining[remaining.startIndex..<openRange.lowerBound])
-            result.append(AttributedString(prefix))
-            
-            let afterOpen = openRange.upperBound
-            guard let closeRange = remaining[afterOpen...].range(of: "}}") else {
-                // No closing braces found, append the rest as-is
-                result.append(AttributedString(String(remaining[openRange.lowerBound...])))
-                remaining = remaining[remaining.endIndex...]
-                break
-            }
-            
-            let placeholderKey = String(remaining[afterOpen..<closeRange.lowerBound])
-            
-            if let replacement = richContent.replacements[placeholderKey] {
-                if replacement.type == "link", let href = replacement.href, let url = URL(string: href) {
-                    var linkText = AttributedString(replacement.value)
-                    linkText.link = url
-                    linkText.foregroundColor = Color.themeButtonBackground
-                    result.append(linkText)
-                } else {
-                    result.append(AttributedString(replacement.value))
-                }
-            } else {
-                // Unknown placeholder, keep original
-                result.append(AttributedString("{{\(placeholderKey)}}"))
-            }
-            
-            remaining = remaining[closeRange.upperBound...]
-        }
-        
-        // Append any remaining text after the last placeholder
-        if !remaining.isEmpty {
-            result.append(AttributedString(String(remaining)))
-        }
-        
-        return result
     }
     
     // MARK: - Helpers
