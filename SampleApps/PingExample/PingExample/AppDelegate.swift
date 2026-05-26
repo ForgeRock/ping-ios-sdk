@@ -127,7 +127,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
             }
         }
 
-        // Register raw APNS token with PingOneMFA, initializing the SDK if needed.
+        // Register raw APNS token with PingOneMFA
         Task {
             do {
                 try await ensurePingOneMFAInitialized()
