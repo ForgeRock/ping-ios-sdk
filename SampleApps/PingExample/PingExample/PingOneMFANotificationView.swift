@@ -16,14 +16,14 @@ import PingOneMFA
 /// ViewModel backing `PingOneMFANotificationView`. Holds the notification value and async call state.
 @MainActor
 final class PingOneMFANotificationViewModel: ObservableObject {
-    let notification: PingOneMFA.PushNotification
+    let notification: PushNotification
 
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
     /// Set to `true` after a successful approve or deny so the view can dismiss.
     @Published var shouldDismiss: Bool = false
 
-    init(notification: PingOneMFA.PushNotification) {
+    init(notification: PushNotification) {
         self.notification = notification
     }
 
@@ -73,7 +73,7 @@ struct PingOneMFANotificationView: View {
     /// Text entry state for the ENTER_MANUALLY path.
     @State private var enteredText: String = ""
 
-    init(notification: PingOneMFA.PushNotification) {
+    init(notification: PushNotification) {
         _viewModel = StateObject(wrappedValue: PingOneMFANotificationViewModel(notification: notification))
     }
 
@@ -110,7 +110,7 @@ struct PingOneMFANotificationView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         .padding()
-        .onChange(of: viewModel.shouldDismiss) { _, shouldDismiss in
+        .onChange(of: viewModel.shouldDismiss) { shouldDismiss in
             if shouldDismiss {
                 dismiss()
             }
