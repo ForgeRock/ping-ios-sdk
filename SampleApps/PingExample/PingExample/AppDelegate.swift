@@ -74,6 +74,14 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
 
     // MARK: - Helper Methods
 
+    /// Ensures PingOneMFA SDK is initialized.
+    /// - Throws: Error if initialization fails.
+    private func ensurePingOneMFAInitialized() async throws {
+        if !ConfigurationManager.shared.isPingOneMFAInitialized {
+            try await ConfigurationManager.shared.initializePingOneMFAClient()
+        }
+    }
+
     /// Ensures PushClient is initialized and returns it
     /// - Returns: Initialized PushClient instance
     /// - Throws: Error if initialization fails
@@ -119,18 +127,16 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
             }
         }
 
-        // Register raw APNS token with PingOneMFA (only when already initialized).
-        // Do not initialize on demand here — the token will be re-registered when the
-        // user first interacts with the PingOneMFA section (consistent with locked decision #7).
-        if ConfigurationManager.shared.isPingOneMFAInitialized {
-            nonisolated(unsafe) let tokenCopy = deviceToken
-            Task {
-                do {
-                    try await PingOneMFA.register(pushToken: tokenCopy)
-                    print("PingOneMFA device token registered successfully")
-                } catch {
-                    print("Failed to register PingOneMFA device token: \(error.localizedDescription)")
-                }
+        // Register raw APNS token with PingOneMFA, initializing the SDK if needed.
+        Task {
+            do {
+                try await ensurePingOneMFAInitialized()
+                try await PingOneMFA.register(pushToken: deviceToken)
+                print("PingOneMFA device token registered successfully")
+            } catch let error as NSError where error.domain == "AppDelegate" {
+                print("Failed to register PingOneMFA device token: PingOneMFA not yet initialized. Will retry when client is ready.")
+            } catch {
+                print("Failed to register PingOneMFA device token: \(error.localizedDescription)")
             }
         }
     }
@@ -160,9 +166,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         if pingOneMFACategoryIdentifiers.contains(categoryIdentifier) {
             Task {
                 do {
-                    if !ConfigurationManager.shared.isPingOneMFAInitialized {
-                        try await ConfigurationManager.shared.initializePingOneMFAClient()
-                    }
+                    try await ensurePingOneMFAInitialized()
                     let pingOneMFANotification: MFAPushNotification = try await PingOneMFA.collectPush(userInfo: userInfoCopy)
                     print("Processed PingOneMFA foreground push notification")
                     NotificationCenter.default.post(
@@ -213,9 +217,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         if pingOneMFACategoryIdentifiers.contains(categoryIdentifier) {
             Task {
                 do {
-                    if !ConfigurationManager.shared.isPingOneMFAInitialized {
-                        try await ConfigurationManager.shared.initializePingOneMFAClient()
-                    }
+                    try await ensurePingOneMFAInitialized()
                     if let pingOneMFANotification: MFAPushNotification = try await PingOneMFA.processNotificationAction(
                         identifier: actionIdentifier,
                         authenticationMethod: "user",
