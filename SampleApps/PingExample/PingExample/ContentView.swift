@@ -106,7 +106,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case journeyToken = "Journey Token"
     case davinciToken = "DaVinci Token"
     case oidcToken = "OIDC Token"
-    case pingOneMFAScanner = "PingOne MFA Scanner"
+    case pingOneMFAScanner = "QR Code Registration"
     case pingOneMFAAccounts = "PingOne MFA Accounts"
     case pingOneMFAOtp = "PingOne MFA OTP"
     case pingOneMFAPayload = "PingOne MFA Payload"
@@ -164,7 +164,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .journeyToken: return "Journey Access Token"
         case .davinciToken: return "DaVinci Access Token"
         case .oidcToken: return "OIDC (Web) Access Token"
-        case .pingOneMFAScanner: return "PingOne MFA Scanner"
+        case .pingOneMFAScanner: return "QR Code Registration"
         case .pingOneMFAAccounts: return "MFA Accounts"
         case .pingOneMFAOtp: return "One-Time Passcode"
         case .pingOneMFAPayload: return "Mobile Payload"
@@ -195,8 +195,8 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .oidcToken: return "View OIDC token"
         case .pingOneMFAScanner: return "Scan QR code to pair with PingOne MFA"
         case .pingOneMFAAccounts: return "View paired MFA accounts"
-        case .pingOneMFAOtp: return "OTP for your paired account"
-        case .pingOneMFAPayload: return "Generate mobile payload for authentication"
+        case .pingOneMFAOtp: return "OTP for your paired accounts"
+        case .pingOneMFAPayload: return "Generate mobile payload for authentication and registration"
         }
     }
 
