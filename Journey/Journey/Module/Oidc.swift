@@ -46,21 +46,20 @@ public class OidcModule {
             // No-op when the key is absent.
             if let uriString = journeyFlow.sharedContext.get(key: SharedContext.Keys.journeyVerificationUriCompleteKey) as? String,
                !uriString.isEmpty {
-                // Align with Android: always attempt the POST; fall back to success.session if journeyFlow.session() is nil.
-                let resolvedSession = await success.session.value.isEmpty ? (journeyFlow.session() ?? success.session) : success.session
-                if let ssoToken = resolvedSession as? SSOToken,
-                   let url = URL(string: uriString),
+                // The session value may be empty due to NoSession or re-run existing Journey
+                let existingSession: Session = !success.session.value.isEmpty ? success.session : (await journeyFlow.session() ?? success.session)
+                if let url = URL(string: uriString),
                    let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
                    let userCode = components.queryItems?.first(where: { $0.name == JourneyConstants.userCode })?.value,
                    !userCode.isEmpty {
                     let approvalConfig: JourneyConfig? = journeyFlow.config as? JourneyConfig
                     let response = try await journeyFlow.config.httpClient.request { request in
                         request.url = uriString
-                        request.setHeader(name: approvalConfig?.cookie ?? JourneyConstants.cookie, value: ssoToken.value)
+                        request.setHeader(name: approvalConfig?.cookie ?? JourneyConstants.cookie, value: existingSession.value)
                         request.form(parameters: [
                             JourneyConstants.userCode: userCode,
                             JourneyConstants.decision: JourneyConstants.decisionAllow,
-                            JourneyConstants.csrf: ssoToken.value
+                            JourneyConstants.csrf: existingSession.value
                         ])
                     }
                     guard response.status.isSuccess() else {

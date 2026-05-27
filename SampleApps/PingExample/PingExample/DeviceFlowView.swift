@@ -91,6 +91,8 @@ final class DeviceFlowViewModel: ObservableObject {
     }
 
     func reset() {
+        // cancel() signals cancellation; production code should await the task value before
+        // treating the flow as fully stopped to avoid two flows running concurrently.
         streamTask?.cancel()
         streamTask = nil
         isLoading = false

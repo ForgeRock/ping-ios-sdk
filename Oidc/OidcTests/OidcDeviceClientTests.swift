@@ -315,6 +315,63 @@ class OidcDeviceClientTests: XCTestCase {
         XCTAssertTrue(statuses.contains("polling"), "Stream should have yielded .polling after slow_down")
     }
 
+    // MARK: - Test 2b: slow_down compounds, authorization_pending resets to baseInterval
+
+    /// Test: consecutive `slow_down` responses compound `interval` per RFC 8628 §3.5
+    /// (+5 each), and a subsequent `authorization_pending` resets `interval` back to
+    /// the server-provided `baseInterval`.
+    /// Uses interval=0 fixture so the test can drive multiple polls without long sleeps.
+    func testSlowDownCompoundsAndAuthorizationPendingResets() async throws {
+        MockURLProtocol.startInterceptingRequests()
+        defer { MockURLProtocol.stopInterceptingRequests() }
+
+        nonisolated(unsafe) var tokenCallCount = 0
+
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
+            case MockAPIEndpoint.deviceAuthorization.url.path:
+                return (mockHTTPResponse(url: MockAPIEndpoint.deviceAuthorization.url, statusCode: 200),
+                        MockResponse.deviceAuthorizationResponseFastInterval)
+            case MockAPIEndpoint.token.url.path:
+                tokenCallCount += 1
+                switch tokenCallCount {
+                case 1, 2:
+                    return (mockHTTPResponse(url: MockAPIEndpoint.token.url, statusCode: 400),
+                            MockResponse.slowDown)
+                default:
+                    return (mockHTTPResponse(url: MockAPIEndpoint.token.url, statusCode: 400),
+                            MockResponse.authorizationPending)
+                }
+            default:
+                return (mockHTTPResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500), Data())
+            }
+        }
+
+        let config = makeConfig()
+        let client = OidcDeviceClient(config: config)
+        let stream = try await client.deviceAuthorization()
+
+        var pollIntervals: [Int] = []
+
+        outerLoop: for try await status in stream {
+            switch status {
+            case .polling(_, let interval, _):
+                pollIntervals.append(interval)
+                // After we observe the post-reset polling, exit before sleeping for it.
+                if pollIntervals.count >= 3 { break outerLoop }
+            case .started: continue
+            case .success, .expired, .accessDenied, .failure:
+                XCTFail("Unexpected terminal status: \(status)")
+                break outerLoop
+            }
+        }
+
+        XCTAssertEqual(pollIntervals.count, 3, "Expected three .polling yields (two slow_down + one authorization_pending)")
+        XCTAssertEqual(pollIntervals[0], 5, "First slow_down: 0 + 5 = 5")
+        XCTAssertEqual(pollIntervals[1], 10, "Second slow_down compounds: 5 + 5 = 10")
+        XCTAssertEqual(pollIntervals[2], 0, "authorization_pending resets to baseInterval (0 in this fixture)")
+    }
+
     // MARK: - Test 3: access_denied finishes stream
 
     /// Test: access_denied response yields .accessDenied and stream finishes without throwing.

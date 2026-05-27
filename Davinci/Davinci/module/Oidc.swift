@@ -46,7 +46,7 @@ public class OidcModule {
             if let uriString = daVinciFlow.sharedContext.get(key: SharedContext.Keys.daVinciVerificationUriCompleteKey) as? String,
                let url = URL(string: uriString),
                let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-               let userCode = components.queryItems?.first(where: { $0.name == "user_code" })?.value,
+               let userCode = components.queryItems?.first(where: { $0.name == OidcClient.Constants.userCodeSnake })?.value,
                !userCode.isEmpty {
                 // Move key from sharedContext (workflow-scoped) into flowContext (this invocation only)
                 // so success can detect the device-flow path, and a subsequent start() is unaffected.

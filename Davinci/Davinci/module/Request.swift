@@ -54,19 +54,14 @@ extension OidcClientConfig {
         }
 
         // Strip "/as/device_authorization" to obtain the tenant-scoped base URL.
-        let baseUrl = deviceAuthEndpoint.hasSuffix(Constants.asDeviceAuthorizationPath)
-            ? String(deviceAuthEndpoint.dropLast(Constants.asDeviceAuthorizationPath.count))
+        let baseUrl = deviceAuthEndpoint.hasSuffix(OidcClient.Constants.asDeviceAuthorizationPath)
+            ? String(deviceAuthEndpoint.dropLast(OidcClient.Constants.asDeviceAuthorizationPath.count))
             : deviceAuthEndpoint
 
         request.url = "\(baseUrl)/applications/\(clientId)/deviceFlow"
-        request.setParameter(name: Constants.userCodeCamel, value: userCode)
+        request.setParameter(name: OidcClient.Constants.userCodeCamel, value: userCode)
 
         return request
-    }
-
-    private enum Constants {
-        static let asDeviceAuthorizationPath = "/as/device_authorization"
-        static let userCodeCamel = "userCode"
     }
 }
 

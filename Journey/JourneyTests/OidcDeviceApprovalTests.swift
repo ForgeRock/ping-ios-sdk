@@ -78,28 +78,31 @@ final class OidcDeviceApprovalTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(result.session.value, makeSSOToken().value)
     }
 
-    // MARK: - No-op when session is not SSOToken
+    // MARK: - Non-SSOToken session still POSTs (server-side rejection, not silent local success)
 
-    func testNoOpWhenSessionIsNotSSOToken() async throws {
+    /// Aligns with Android: when `verificationUriComplete` is set, the approval POST is always
+    /// attempted using the session's `value` regardless of concrete session type. A bad/empty
+    /// token surfaces as a server-side error rather than a silent local no-op.
+    func testNonSSOTokenSessionStillPostsApproval() async throws {
         let journey = makeJourney()
+        let verificationUri = "https://openam.example.com/activate?user_code=ABCD-1234"
         journey.sharedContext.set(
             key: SharedContext.Keys.journeyVerificationUriCompleteKey,
-            value: "https://openam.example.com/activate?user_code=ABCD-1234"
+            value: verificationUri
         )
 
-        var deviceUserRequestMade = false
+        var approvalRequestMade = false
         MockURLProtocol.requestHandler = { request in
-            if request.url?.path.contains("device/user") == true {
-                deviceUserRequestMade = true
+            if request.url?.absoluteString == verificationUri {
+                approvalRequestMade = true
             }
             return (HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, Data())
         }
 
-        // MockSession is not an SSOToken — the module's guard should short-circuit
         let nonSsoSession = MockSession(value: "non-sso")
         _ = try await driveSuccessHandlers(journey: journey, session: nonSsoSession)
 
-        XCTAssertFalse(deviceUserRequestMade, "No device/user POST should be made when session is not SSOToken")
+        XCTAssertTrue(approvalRequestMade, "Approval POST should be attempted even when session is not an SSOToken")
     }
 
     // MARK: - AM POST with correct parameters
@@ -257,7 +260,9 @@ final class OidcDeviceApprovalTests: XCTestCase, @unchecked Sendable {
             _ = try await driveSuccessHandlers(journey: journey, session: ssoToken)
             XCTFail("Expected driveSuccessHandlers to throw on network failure")
         } catch {
-            XCTAssertTrue(error is URLError, "Expected a URLError, got \(error)")
+            // The httpClient maps URLError to NetworkError; either is acceptable evidence the failure propagated.
+            let propagated = (error is URLError) || (error is NetworkError)
+            XCTAssertTrue(propagated, "Expected URLError or NetworkError, got \(error)")
         }
     }
 
