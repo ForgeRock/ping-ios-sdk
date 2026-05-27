@@ -46,27 +46,28 @@ public class OidcModule {
             // No-op when the key is absent.
             if let uriString = journeyFlow.sharedContext.get(key: SharedContext.Keys.journeyVerificationUriCompleteKey) as? String,
                !uriString.isEmpty {
-                let existingSsoToken = await !success.session.value.isEmpty ? success.session : journeyFlow.session()
-                if let ssoToken = existingSsoToken as? SSOToken,
+                // Align with Android: always attempt the POST; fall back to success.session if journeyFlow.session() is nil.
+                let resolvedSession = await success.session.value.isEmpty ? (journeyFlow.session() ?? success.session) : success.session
+                if let ssoToken = resolvedSession as? SSOToken,
                    let url = URL(string: uriString),
                    let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
                    let userCode = components.queryItems?.first(where: { $0.name == JourneyConstants.userCode })?.value,
                    !userCode.isEmpty {
                     let approvalConfig: JourneyConfig? = journeyFlow.config as? JourneyConfig
-                    do {
-                        let response = try await journeyFlow.config.httpClient.request { request in
-                            request.url = uriString
-                            request.setHeader(name: approvalConfig?.cookie ?? JourneyConstants.cookie, value: ssoToken.value)
-                            request.form(parameters: [
-                                JourneyConstants.userCode: userCode,
-                                JourneyConstants.decision: JourneyConstants.decisionAllow,
-                                JourneyConstants.csrf: ssoToken.value
-                            ])
-                        }
-                        journeyFlow.config.logger.i("Oidc: device approval response status: \(response.status)")
-                    } catch {
-                        journeyFlow.config.logger.e("Oidc: failed to submit approval to AM device endpoint", error: error)
+                    let response = try await journeyFlow.config.httpClient.request { request in
+                        request.url = uriString
+                        request.setHeader(name: approvalConfig?.cookie ?? JourneyConstants.cookie, value: ssoToken.value)
+                        request.form(parameters: [
+                            JourneyConstants.userCode: userCode,
+                            JourneyConstants.decision: JourneyConstants.decisionAllow,
+                            JourneyConstants.csrf: ssoToken.value
+                        ])
                     }
+                    guard response.status.isSuccess() else {
+                        journeyFlow.config.logger.w("Oidc: device approval POST returned non-2xx status: \(response.status)", error: nil)
+                        throw OidcError.apiError(code: response.status, message: response.bodyAsString())
+                    }
+                    journeyFlow.config.logger.i("Oidc: device approval response status: \(response.status)")
                 }
             }
 

@@ -285,7 +285,9 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
             throw BrowserError.externalUserAgentFailure
         }
         var presentingVC = root
-        while let presented = presentingVC.presentedViewController {
+        while let presented = presentingVC.presentedViewController,
+              !presented.isBeingDismissed,
+              !(presented is UIAlertController) {
             presentingVC = presented
         }
         

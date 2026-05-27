@@ -48,9 +48,12 @@ public class OidcModule {
                let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
                let userCode = components.queryItems?.first(where: { $0.name == "user_code" })?.value,
                !userCode.isEmpty {
+                // Move key from sharedContext (workflow-scoped) into flowContext (this invocation only)
+                // so success can detect the device-flow path, and a subsequent start() is unaffected.
                 _ = daVinciFlow.sharedContext.removeValue(forKey: SharedContext.Keys.daVinciVerificationUriCompleteKey)
+                context.flowContext.set(key: SharedContext.Keys.daVinciVerificationUriCompleteKey, value: uriString)
                 config.logger.d( "Oidc: device code completion flow detected, skipping authorization request")
-                return config.populateDeviceFlowVerificationRequest(request: request, userCode: userCode)
+                return try config.populateDeviceFlowVerificationRequest(request: request, userCode: userCode)
             }
             
             
@@ -66,8 +69,9 @@ public class OidcModule {
         setup.success { @Sendable context, success in
             
             // Device-code completion flow: token exchange already handled externally, skip.
-            if let uriString = daVinciFlow.sharedContext.get(key: SharedContext.Keys.daVinciVerificationUriCompleteKey) as? String {
-               return SuccessNode(input: success.input, session: success.session)
+            // The key was moved into flowContext by start; sharedContext key was already consumed there.
+            if context.flowContext.get(key: SharedContext.Keys.daVinciVerificationUriCompleteKey) != nil {
+                return SuccessNode(input: success.input, session: success.session)
             }
             
             let cloneConfig: OidcClientConfig = config.clone()

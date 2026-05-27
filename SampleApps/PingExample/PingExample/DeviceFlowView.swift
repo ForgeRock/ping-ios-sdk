@@ -39,6 +39,8 @@ final class DeviceFlowViewModel: ObservableObject {
     func start() {
         guard let client = ConfigurationManager.shared.deviceClient else { return }
         isLoading = true
+        // cancel() signals cancellation; the in-flight poll exits on the next Task.sleep check.
+        // Production code should await the task before starting a new one to prevent two flows running concurrently.
         streamTask?.cancel()
 
         streamTask = Task {

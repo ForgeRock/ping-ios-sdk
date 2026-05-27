@@ -20,6 +20,10 @@ import PingLogger
 /// `.started` with the `userCode` and `verificationUri` to display, then
 /// `.polling` on each poll, and finally `.success`, `.accessDenied`, or
 /// `.expired` when the flow resolves.
+///
+/// - Important: `OidcClientConfig` is marked `@unchecked Sendable` and contains mutable
+///   `var` fields. Do not mutate the config after passing it to this initializer — the
+///   polling loop captures the config and reads it from a background thread.
 public class OidcDeviceClient: @unchecked Sendable {
 
     enum Constants {
@@ -106,10 +110,12 @@ public class OidcDeviceClient: @unchecked Sendable {
         let capturedLogger = logger
 
         return AsyncThrowingStream { continuation in
-            let task = Task.detached {
+            // Cancellation is handled below via continuation.onTermination.
+            let task = Task {
                 continuation.yield(.started(deviceAuthResponse))
 
-                var interval = deviceAuthResponse.interval
+                let baseInterval = deviceAuthResponse.interval
+                var interval = baseInterval
                 var pollCount = 0
                 var consecutiveTimeouts = 0
 
@@ -148,7 +154,9 @@ public class OidcDeviceClient: @unchecked Sendable {
 
                             switch errorCode {
                             case Constants.authorizationPending:
+                                // Network recovered — restore interval to the server-provided base (RFC 8628 §3.5).
                                 consecutiveTimeouts = 0
+                                interval = baseInterval
                                 pollCount += 1
                                 continuation.yield(.polling(
                                     pollCount: pollCount,
@@ -200,7 +208,7 @@ public class OidcDeviceClient: @unchecked Sendable {
                         // Network/timeout error — apply exponential backoff and continue
                         consecutiveTimeouts += 1
                         let backoffMultiplier = 1 << min(consecutiveTimeouts, 3)
-                        interval = min(max(interval * backoffMultiplier, 5), 60)
+                        interval = min(max(baseInterval * backoffMultiplier, 5), 60)
                         pollCount += 1
                         capturedLogger.w("Device flow poll encountered a network error. Backing off to \(interval)s.", error: urlError)
                         continuation.yield(.polling(
@@ -216,7 +224,7 @@ public class OidcDeviceClient: @unchecked Sendable {
                         }
                         consecutiveTimeouts += 1
                         let backoffMultiplier = 1 << min(consecutiveTimeouts, 3)
-                        interval = min(max(interval * backoffMultiplier, 5), 60)
+                        interval = min(max(baseInterval * backoffMultiplier, 5), 60)
                         pollCount += 1
                         capturedLogger.w("Device flow poll encountered an error. Backing off to \(interval)s.", error: error)
                         continuation.yield(.polling(
@@ -240,19 +248,17 @@ public class OidcDeviceClient: @unchecked Sendable {
     ///
     /// - Parameter verificationUriComplete: The verification URI (including `user_code`)
     ///   returned in the `DeviceAuthorizationResponse`.
-    /// - Throws: `BrowserError.externalUserAgentCancelled` if the user closed the browser
-    ///   before completing the flow, or any other error surfaced by `BrowserLauncher`.
-    ///   No-ops (returns without throwing) if `verificationUriComplete` is not a valid URL
-    ///   or `config.redirectUri` has no scheme.
+    /// - Throws: `OidcError.unknown` if `verificationUriComplete` is not a valid URL or
+    ///   `config.redirectUri` has no scheme; `BrowserError.externalUserAgentCancelled` if
+    ///   the user closed the browser before completing the flow, or any other error surfaced
+    ///   by `BrowserLauncher`.
     public func authorize(verificationUriComplete: String) async throws {
         guard let url = URL(string: verificationUriComplete) else {
-            logger.w("authorize: invalid verificationUriComplete URL", error: nil)
-            return
+            throw OidcError.unknown(message: "authorize: invalid verificationUriComplete URL: \(verificationUriComplete)")
         }
 
         guard let callbackURLScheme = redirectURIScheme() else {
-            logger.w("authorize: no redirectUri scheme configured", error: nil)
-            return
+            throw OidcError.unknown(message: "authorize: no redirectUri scheme configured")
         }
 
         _ = try await BrowserLauncher.currentBrowser.launch(

@@ -15,6 +15,10 @@ import PingLogger
 import PingStorage
 
 /// Configuration class for OIDC client.
+///
+/// - Important: This class is `@unchecked Sendable` and contains mutable `var` fields.
+///   Configure all properties before passing the instance to any client or workflow — do
+///   not mutate it afterwards, as it may be read concurrently from background threads.
 public class OidcClientConfig: @unchecked Sendable {
     /// OpenID configuration.
     public var openId: OpenIdConfiguration?

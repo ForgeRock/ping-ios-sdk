@@ -591,10 +591,8 @@ class OidcDeviceClientTests: XCTestCase {
 
         XCTAssertTrue(statuses.contains("started"), "Stream should have yielded .started")
         XCTAssertTrue(statuses.contains("polling"), "Stream should have yielded .polling after URLError backoff")
-        // After first URLError, consecutiveTimeouts=1, backoffMultiplier=2, interval=min(0*2,60)=0; but interval
-        // cannot go below the original value — verify it is at least 0 (not negative) and the stream continued
-        XCTAssertNotNil(pollingIntervalAfterError, "Should have captured the backoff polling interval")
-        XCTAssertGreaterThanOrEqual(pollingIntervalAfterError ?? -1, 0, "Backoff interval should be non-negative")
+        // baseInterval=0, consecutiveTimeouts=1, backoffMultiplier=2: min(max(0*2,5),60) = 5
+        XCTAssertEqual(pollingIntervalAfterError, 5, "Backoff interval after first URLError should be 5s (min floor)")
     }
 }
 

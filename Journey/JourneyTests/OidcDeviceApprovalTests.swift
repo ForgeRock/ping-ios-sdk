@@ -239,9 +239,9 @@ final class OidcDeviceApprovalTests: XCTestCase, @unchecked Sendable {
         XCTAssertFalse(deviceUserRequestMade, "No POST should be made when user_code value is empty")
     }
 
-    // MARK: - Network failure does not convert SuccessNode to FailureNode
+    // MARK: - Network failure propagates as a throw (caller sees FailureNode)
 
-    func testNetworkFailureDoesNotFailSuccessNode() async throws {
+    func testNetworkFailurePropagates() async throws {
         let journey = makeJourney()
         journey.sharedContext.set(
             key: SharedContext.Keys.journeyVerificationUriCompleteKey,
@@ -253,10 +253,39 @@ final class OidcDeviceApprovalTests: XCTestCase, @unchecked Sendable {
         }
 
         let ssoToken = makeSSOToken()
-        let result = try await driveSuccessHandlers(journey: journey, session: ssoToken)
+        do {
+            _ = try await driveSuccessHandlers(journey: journey, session: ssoToken)
+            XCTFail("Expected driveSuccessHandlers to throw on network failure")
+        } catch {
+            XCTAssertTrue(error is URLError, "Expected a URLError, got \(error)")
+        }
+    }
 
-        // Even when the network call throws, the module must absorb the error and return SuccessNode.
-        XCTAssertEqual(result.session.value, ssoToken.value,
-                       "SuccessNode session should be unchanged after a network failure in device approval")
+    // MARK: - Non-2xx approval response propagates as a throw (caller sees FailureNode)
+
+    func testNon2xxApprovalResponsePropagates() async throws {
+        let journey = makeJourney()
+        journey.sharedContext.set(
+            key: SharedContext.Keys.journeyVerificationUriCompleteKey,
+            value: "https://openam.example.com/activate?user_code=EFGH-5678"
+        )
+
+        MockURLProtocol.requestHandler = { request in
+            return (HTTPURLResponse(url: request.url!, statusCode: 403, httpVersion: nil, headerFields: nil)!, Data())
+        }
+
+        let ssoToken = makeSSOToken()
+        do {
+            _ = try await driveSuccessHandlers(journey: journey, session: ssoToken)
+            XCTFail("Expected driveSuccessHandlers to throw on non-2xx approval response")
+        } catch let error as OidcError {
+            if case .apiError(let code, _) = error {
+                XCTAssertEqual(code, 403)
+            } else {
+                XCTFail("Expected OidcError.apiError, got \(error)")
+            }
+        } catch {
+            XCTFail("Expected OidcError, got \(error)")
+        }
     }
 }

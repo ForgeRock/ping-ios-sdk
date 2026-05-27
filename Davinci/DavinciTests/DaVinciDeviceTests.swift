@@ -37,12 +37,12 @@ final class PopulateDeviceFlowVerificationRequestTests: XCTestCase {
 
     // MARK: - Standard PingOne endpoint strips /as/device_authorization suffix
 
-    func testStripsAsDeviceAuthorizationSuffix() {
+    func testStripsAsDeviceAuthorizationSuffix() throws {
         let endpoint = "https://auth.pingone.ca/tenant123/as/device_authorization"
         let config = makeConfig(deviceAuthEndpoint: endpoint)
         let request = URLSessionHttpRequest()
 
-        let populated = config.populateDeviceFlowVerificationRequest(request: request, userCode: "ABCD-1234")
+        let populated = try config.populateDeviceFlowVerificationRequest(request: request, userCode: "ABCD-1234")
 
         XCTAssertEqual(populated.url,
                        "https://auth.pingone.ca/tenant123/applications/my-client/deviceFlow?userCode=ABCD-1234",
@@ -51,12 +51,12 @@ final class PopulateDeviceFlowVerificationRequestTests: XCTestCase {
 
     // MARK: - Custom-domain endpoint without the standard suffix uses endpoint as base
 
-    func testFallbackBaseWhenSuffixAbsent() {
+    func testFallbackBaseWhenSuffixAbsent() throws {
         let endpoint = "https://custom.example.com/device_authorization"
         let config = makeConfig(deviceAuthEndpoint: endpoint)
         let request = URLSessionHttpRequest()
 
-        let populated = config.populateDeviceFlowVerificationRequest(request: request, userCode: "WXYZ-5678")
+        let populated = try config.populateDeviceFlowVerificationRequest(request: request, userCode: "WXYZ-5678")
 
         XCTAssertEqual(populated.url,
                        "https://custom.example.com/device_authorization/applications/my-client/deviceFlow?userCode=WXYZ-5678",
@@ -65,12 +65,12 @@ final class PopulateDeviceFlowVerificationRequestTests: XCTestCase {
 
     // MARK: - clientId is correctly embedded in URL path
 
-    func testClientIdIsEmbeddedInPath() {
+    func testClientIdIsEmbeddedInPath() throws {
         let endpoint = "https://auth.pingone.eu/tenant-abc/as/device_authorization"
         let config = makeConfig(deviceAuthEndpoint: endpoint, clientId: "special-client-id")
         let request = URLSessionHttpRequest()
 
-        let populated = config.populateDeviceFlowVerificationRequest(request: request, userCode: "TEST-0000")
+        let populated = try config.populateDeviceFlowVerificationRequest(request: request, userCode: "TEST-0000")
 
         XCTAssertTrue(populated.url?.contains("/applications/special-client-id/deviceFlow") == true,
                       "clientId must appear in the applications path segment")
@@ -78,12 +78,12 @@ final class PopulateDeviceFlowVerificationRequestTests: XCTestCase {
 
     // MARK: - userCode is sent as camelCase query param
 
-    func testUserCodeSentAsCamelCase() {
+    func testUserCodeSentAsCamelCase() throws {
         let endpoint = "https://auth.pingone.ca/tenant123/as/device_authorization"
         let config = makeConfig(deviceAuthEndpoint: endpoint)
         let request = URLSessionHttpRequest()
 
-        let populated = config.populateDeviceFlowVerificationRequest(request: request, userCode: "MY-CODE")
+        let populated = try config.populateDeviceFlowVerificationRequest(request: request, userCode: "MY-CODE")
 
         let url = populated.url ?? ""
         XCTAssertTrue(url.contains("userCode=MY-CODE"),
@@ -92,16 +92,34 @@ final class PopulateDeviceFlowVerificationRequestTests: XCTestCase {
                        "snake_case user_code must NOT appear in the URL, got: \(url)")
     }
 
-    // MARK: - Empty deviceAuthorizationEndpoint produces a well-formed (if empty-base) URL
+    // MARK: - Missing deviceAuthorizationEndpoint throws
 
-    func testEmptyEndpointProducesApplicationsPath() {
+    func testEmptyEndpointThrows() {
         let config = makeConfig(deviceAuthEndpoint: "", clientId: "c1")
         let request = URLSessionHttpRequest()
 
-        let populated = config.populateDeviceFlowVerificationRequest(request: request, userCode: "XX")
+        XCTAssertThrowsError(try config.populateDeviceFlowVerificationRequest(request: request, userCode: "XX")) { error in
+            guard case OidcError.unknown = error else {
+                XCTFail("Expected OidcError.unknown, got \(error)")
+                return
+            }
+        }
+    }
 
-        XCTAssertTrue(populated.url?.contains("/applications/c1/deviceFlow") == true,
-                      "Even with an empty endpoint the applications path should be appended")
+    // MARK: - Nil deviceAuthorizationEndpoint throws
+
+    func testNilEndpointThrows() {
+        let config = OidcClientConfig()
+        config.clientId = "c1"
+        // openId is nil — no endpoint available
+        let request = URLSessionHttpRequest()
+
+        XCTAssertThrowsError(try config.populateDeviceFlowVerificationRequest(request: request, userCode: "XX")) { error in
+            guard case OidcError.unknown = error else {
+                XCTFail("Expected OidcError.unknown, got \(error)")
+                return
+            }
+        }
     }
 }
 

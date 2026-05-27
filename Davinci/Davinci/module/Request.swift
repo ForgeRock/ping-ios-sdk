@@ -33,6 +33,9 @@ extension OidcClientConfig {
     /// `/applications/{clientId}/deviceFlow`. The user code is sent as a `userCode` query parameter
     /// (PingOne format).
     ///
+    /// PingOne format paths look like `/{tenantId}/as/device_authorization`, whereas
+    /// custom-domain paths look like `/as/device_authorization`.
+    ///
     /// **Example**
     /// - Endpoint: `https://auth.pingone.ca/{tenantId}/as/device_authorization`
     /// - Result:   `https://auth.pingone.ca/{tenantId}/applications/{clientId}/deviceFlow?userCode={userCode}`
@@ -41,19 +44,19 @@ extension OidcClientConfig {
     ///   - request: The request to populate.
     ///   - userCode: The user code obtained from the device authorization response that needs to be verified.
     /// - Returns: The populated `Request` ready for execution.
+    /// - Throws: `OidcError.unknown` if the device authorization endpoint is not available.
     internal func populateDeviceFlowVerificationRequest(
         request: Request,
         userCode: String
-    ) -> Request {
-        let deviceAuthEndpoint = openId?.deviceAuthorizationEndpoint ?? ""
+    ) throws -> Request {
+        guard let deviceAuthEndpoint = openId?.deviceAuthorizationEndpoint, !deviceAuthEndpoint.isEmpty else {
+            throw OidcError.unknown(message: "Device authorization endpoint not available")
+        }
 
         // Strip "/as/device_authorization" to obtain the tenant-scoped base URL.
-        let baseUrl: String
-        if deviceAuthEndpoint.hasSuffix(Constants.asDeviceAuthorizationPath) {
-            baseUrl = String(deviceAuthEndpoint.dropLast(Constants.asDeviceAuthorizationPath.count))
-        } else {
-            baseUrl = deviceAuthEndpoint
-        }
+        let baseUrl = deviceAuthEndpoint.hasSuffix(Constants.asDeviceAuthorizationPath)
+            ? String(deviceAuthEndpoint.dropLast(Constants.asDeviceAuthorizationPath.count))
+            : deviceAuthEndpoint
 
         request.url = "\(baseUrl)/applications/\(clientId)/deviceFlow"
         request.setParameter(name: Constants.userCodeCamel, value: userCode)
