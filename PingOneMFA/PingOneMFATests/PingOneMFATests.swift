@@ -63,16 +63,16 @@ final class PingOneMFATests: XCTestCase {
         XCTAssertEqual(MockPingOneMFA.lastGeo, .northAmerica)
     }
 
-    func test07_MockRegisterHappyPath() async throws {
+    func test07_MockRegisterPushTokenHappyPath() async throws {
         // Given
         MockPingOneMFA.shouldThrowError = false
         let token = Data([0x01, 0x02, 0x03])
 
         // When
-        try await MockPingOneMFA.register(pushToken: token)
+        try await MockPingOneMFA.registerPushToken(token)
 
         // Then
-        XCTAssertTrue(MockPingOneMFA.registerCalled)
+        XCTAssertTrue(MockPingOneMFA.registerPushTokenCalled)
     }
 
     func test08_MockPairHappyPath() async throws {
@@ -86,7 +86,7 @@ final class PingOneMFATests: XCTestCase {
         XCTAssertTrue(MockPingOneMFA.pairCalled)
     }
 
-    func test09_MockGetAccountsHappyPath() async throws {
+    func test09_MockGetDeviceInfoHappyPath() async throws {
         // Given
         let expectedAccount = PingOneMfaAccount(
             region: "NorthAmerica",
@@ -97,37 +97,37 @@ final class PingOneMFATests: XCTestCase {
         MockPingOneMFA.accountsReturnValue = [expectedAccount]
 
         // When
-        let accounts = try await MockPingOneMFA.getAccounts()
+        let accounts = try await MockPingOneMFA.getDeviceInfo()
 
         // Then
-        XCTAssertTrue(MockPingOneMFA.getAccountsCalled)
+        XCTAssertTrue(MockPingOneMFA.getDeviceInfoCalled)
         XCTAssertEqual(accounts.count, 1)
         XCTAssertEqual(accounts[0], expectedAccount)
     }
 
-    func test10_MockCollectOtpHappyPath() async throws {
+    func test10_MockGetOneTimePasscodeHappyPath() async throws {
         // Given
         let expectedOtp = OtpCodeInfo(code: "654321", secondsRemaining: 25)
         MockPingOneMFA.otpReturnValue = expectedOtp
 
         // When
-        let otpInfo = try await MockPingOneMFA.collectOtp()
+        let otpInfo = try await MockPingOneMFA.getOneTimePasscode()
 
         // Then
-        XCTAssertTrue(MockPingOneMFA.collectOtpCalled)
+        XCTAssertTrue(MockPingOneMFA.getOneTimePasscodeCalled)
         XCTAssertEqual(otpInfo.code, "654321")
         XCTAssertEqual(otpInfo.secondsRemaining, 25)
     }
 
-    func test11_MockCollectMobilePayloadHappyPath() async throws {
+    func test11_MockGetMobilePayloadHappyPath() async throws {
         // Given
         MockPingOneMFA.mobilePayloadReturnValue = "test-payload-value"
 
         // When
-        let payload = try await MockPingOneMFA.collectMobilePayload()
+        let payload = try await MockPingOneMFA.getMobilePayload()
 
         // Then
-        XCTAssertTrue(MockPingOneMFA.collectMobilePayloadCalled)
+        XCTAssertTrue(MockPingOneMFA.getMobilePayloadCalled)
         XCTAssertEqual(payload, "test-payload-value")
     }
 
@@ -149,14 +149,14 @@ final class PingOneMFATests: XCTestCase {
         }
     }
 
-    func test13_MockThrowsErrorOnGetAccounts() async {
+    func test13_MockThrowsErrorOnGetDeviceInfo() async {
         // Given
         MockPingOneMFA.shouldThrowError = true
         MockPingOneMFA.errorMessage = "Get accounts failed"
 
         // When / Then
         do {
-            _ = try await MockPingOneMFA.getAccounts()
+            _ = try await MockPingOneMFA.getDeviceInfo()
             XCTFail("Should have thrown an error")
         } catch let error as PingOneMFAError {
             XCTAssertEqual(error.message, "Get accounts failed")
@@ -205,21 +205,21 @@ final class PingOneMFATests: XCTestCase {
 
     // MARK: - collectPush Error-Path Test
 
-    /// collectPush error-path: mock throws PingOneMFAError when shouldThrowError == true.
+    /// processPushNotification error-path: mock throws PingOneMFAError when shouldThrowError == true.
     /// Happy-path cannot be tested via mock because NotificationObject (PingOneSDK) has no
     /// accessible initialiser, preventing construction of a PushNotification stub value.
-    func test18_MockCollectPushErrorPath() async {
+    func test18_MockProcessPushNotificationErrorPath() async {
         // Given
         MockPingOneMFA.shouldThrowError = true
         MockPingOneMFA.errorMessage = "Collect push failed"
 
         // When / Then
         do {
-            _ = try await MockPingOneMFA.collectPush(userInfo: [:])
+            _ = try await MockPingOneMFA.processPushNotification(userInfo: [:])
             XCTFail("Should have thrown an error")
         } catch let error as PingOneMFAError {
             XCTAssertEqual(error.message, "Collect push failed")
-            XCTAssertTrue(MockPingOneMFA.collectPushCalled)
+            XCTAssertTrue(MockPingOneMFA.processPushNotificationCalled)
         } catch {
             XCTFail("Wrong error type: \(error)")
         }

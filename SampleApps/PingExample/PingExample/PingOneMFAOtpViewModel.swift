@@ -65,7 +65,7 @@ class PingOneMFAOtpViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            let info = try await PingOneMFA.collectOtp()
+            let info = try await PingOneMFA.getOneTimePasscode()
             otpInfo = info
             // Clamp to 1 second minimum to avoid immediate re-fire.
             countdown = max(1, info.secondsRemaining)

@@ -69,7 +69,7 @@ public class PingOneMFA {
     /// - Parameter pushToken: The raw APNS device token `Data` received in
     ///   `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)`.
     /// - Throws: `PingOneMFAError` if registration fails.
-    public nonisolated static func register(pushToken: Data) async throws {
+    public nonisolated static func registerPushToken(_ pushToken: Data) async throws {
         #if DEBUG
         let tokenType = PingOne.APNSDeviceTokenType.sandbox
         #else
@@ -108,7 +108,7 @@ public class PingOneMFA {
     ///
     /// - Returns: An array of `PingOneMfaAccount` values parsed from the upstream `deviceInfo` payload.
     /// - Throws: `PingOneMFAError` if the underlying SDK call returns errors.
-    public nonisolated static func getAccounts() async throws -> [PingOneMfaAccount] {
+    public nonisolated static func getDeviceInfo() async throws -> [PingOneMfaAccount] {
         return try await withCheckedThrowingContinuation { continuation in
             PingOne.getInfo(completion: { deviceInfo, errors in
                 if let errors = errors, !errors.isEmpty {
@@ -128,7 +128,7 @@ public class PingOneMFA {
     ///
     /// - Returns: An `OtpCodeInfo` containing the current passcode and seconds remaining.
     /// - Throws: `PingOneMFAError` if the SDK call fails or returns no passcode info.
-    public nonisolated static func collectOtp() async throws -> OtpCodeInfo {
+    public nonisolated static func getOneTimePasscode() async throws -> OtpCodeInfo {
         return try await withCheckedThrowingContinuation { continuation in
             PingOne.getOneTimePasscode { passcodeInfo, error in
                 if let error = error {
@@ -177,7 +177,7 @@ public class PingOneMFA {
     /// - Returns: A `PushNotification` holding the upstream `NotificationObject` plus
     ///   the parsed title and message.
     /// - Throws: `PingOneMFAError` if the SDK call fails or returns no notification object.
-    public nonisolated static func collectPush(userInfo: [AnyHashable: Any]) async throws -> PushNotification {
+    public nonisolated static func processPushNotification(userInfo: [AnyHashable: Any]) async throws -> PushNotification {
         let (title, message) = parseAPNSAlert(from: userInfo)
 
         return try await withCheckedThrowingContinuation { continuation in
@@ -243,7 +243,7 @@ public class PingOneMFA {
     ///
     /// - Returns: The mobile payload string.
     /// - Throws: `PingOneMFAError` if payload generation fails or returns no payload.
-    public nonisolated static func collectMobilePayload() async throws -> String {
+    public nonisolated static func getMobilePayload() async throws -> String {
         return try await withCheckedThrowingContinuation { continuation in
             PingOne.generateMobilePayload(completionHandler: { payload, error in
                 if let error = error {

@@ -46,7 +46,7 @@ class PingOneMFAPayloadViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            payload = try await PingOneMFA.collectMobilePayload()
+            payload = try await PingOneMFA.getMobilePayload()
         } catch {
             errorMessage = "Failed to collect mobile payload: \(error.localizedDescription)"
         }

@@ -128,7 +128,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         Task {
             do {
                 try await ensurePingOneMFAInitialized()
-                try await PingOneMFA.register(pushToken: deviceToken)
+                try await PingOneMFA.registerPushToken(deviceToken)
                 print("PingOneMFA device token registered successfully")
             } catch let error as NSError where error.domain == "AppDelegate" {
                 print("Failed to register PingOneMFA device token: PingOneMFA not yet initialized. Will retry when client is ready.")
@@ -164,7 +164,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
             Task {
                 do {
                     try await ensurePingOneMFAInitialized()
-                    let pingOneMFANotification: MFAPushNotification = try await PingOneMFA.collectPush(userInfo: userInfoCopy)
+                    let pingOneMFANotification: MFAPushNotification = try await PingOneMFA.processPushNotification(userInfo: userInfoCopy)
                     print("Processed PingOneMFA foreground push notification")
                     NotificationCenter.default.post(
                         name: NSNotification.Name("ShowPingOneMFANotification"),
