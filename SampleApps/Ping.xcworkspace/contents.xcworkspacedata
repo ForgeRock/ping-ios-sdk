@@ -7,7 +7,4 @@
    <FileRef
       location = "group:PingExample/PingExample.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:../PingOneMFA/PingOneMFA.xcodeproj">
-   </FileRef>
 </Workspace>
