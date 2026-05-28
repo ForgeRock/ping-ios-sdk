@@ -20,11 +20,3 @@ public enum PingOneMFAGeo: Sendable, Equatable {
     case singapore
 }
 
-/// Class to provide PingOneMFA SDK configuration attributes.
-public class PingOneMFAConfig: @unchecked Sendable {
-    /// The geographic region for the PingOneMFA SDK.
-    public var geo: PingOneMFAGeo?
-
-    /// Initializes a new instance of `PingOneMFAConfig`.
-    public init() {}
-}

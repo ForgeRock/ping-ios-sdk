@@ -311,8 +311,7 @@ class ConfigurationManager: ObservableObject {
     /// Initialize the PingOne MFA SDK
     public func initializePingOneMFAClient() async throws {
         let didInitialize = try await initActor.initializePingOneMFA {
-            await PingOneMFA.config { $0.geo = .northAmerica }
-            try await PingOneMFA.initialize()
+            try await PingOneMFA.initialize(geo: .northAmerica)
         }
         if didInitialize {
             isPingOneMFAInitialized = true

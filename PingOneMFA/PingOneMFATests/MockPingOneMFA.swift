@@ -22,8 +22,7 @@ class MockPingOneMFA {
     nonisolated(unsafe) static var collectOtpCalled = false
     nonisolated(unsafe) static var collectPushCalled = false
     nonisolated(unsafe) static var collectMobilePayloadCalled = false
-    nonisolated(unsafe) static var configCalled = false
-    nonisolated(unsafe) static var lastConfig: PingOneMFAConfig?
+    nonisolated(unsafe) static var lastGeo: PingOneMFAGeo?
 
     // Return values for happy-path tests
     nonisolated(unsafe) static var accountsReturnValue: [PingOneMfaAccount] = []
@@ -58,8 +57,7 @@ class MockPingOneMFA {
         collectOtpCalled = false
         collectPushCalled = false
         collectMobilePayloadCalled = false
-        configCalled = false
-        lastConfig = nil
+        lastGeo = nil
         accountsReturnValue = []
         otpReturnValue = OtpCodeInfo(code: "123456", secondsRemaining: 30)
         mobilePayloadReturnValue = "mockMobilePayload"
@@ -72,17 +70,10 @@ class MockPingOneMFA {
         lastActionAuthenticationMethod = nil
     }
 
-    @PingOneMFAActor
-    static func config(_ closure: (PingOneMFAConfig) -> Void) async {
-        configCalled = true
-        let config = PingOneMFAConfig()
-        closure(config)
-        lastConfig = config
-    }
-
-    static func initialize() async throws {
+    static func initialize(geo: PingOneMFAGeo) async throws {
         initializeCalled = true
         initializeCallCount += 1
+        lastGeo = geo
         if shouldThrowError {
             throw PingOneMFAError(errorMessage)
         }

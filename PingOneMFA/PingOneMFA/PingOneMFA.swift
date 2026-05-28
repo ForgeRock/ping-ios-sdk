@@ -20,35 +20,21 @@ public actor PingOneMFAActor {
 /// The `PingOneMFA` class provides methods to initialize the SDK and interact with the PingOne MFA service.
 @PingOneMFAActor
 public class PingOneMFA {
-    internal private(set) static var pingOneMFAConfig: PingOneMFAConfig?
     internal private(set) static var isInitialized: Bool = false
 
-    /// Configures the PingOneMFA SDK with the provided configuration.
-    /// This method should be called before calling `initialize()`.
-    ///
-    /// - Parameter block: A closure that configures the `PingOneMFAConfig`.
-    public static func config(_ block: (PingOneMFAConfig) -> Void) {
-        let pingOneMFAConfig = PingOneMFAConfig()
-        block(pingOneMFAConfig)
-        self.pingOneMFAConfig = pingOneMFAConfig
-    }
-
-    /// Initializes the PingOneMFA SDK with the provided configuration.
+    /// Initializes the PingOneMFA SDK with the provided geographic region.
     /// This method should be called before using any other methods in the PingOneMFA SDK.
     /// This method is idempotent — if already initialized, it returns immediately.
     ///
-    /// - Throws: `PingOneMFAError` if initialization fails or the SDK has not been configured.
-    public nonisolated static func initialize() async throws {
+    /// - Parameter geo: The geographic region for the PingOneMFA SDK.
+    /// - Throws: `PingOneMFAError` if initialization fails.
+    public nonisolated static func initialize(geo: PingOneMFAGeo) async throws {
         if await isInitialized {
             return
         }
 
-        guard let config = await pingOneMFAConfig, let mfaGeo = config.geo else {
-            throw PingOneMFAError("PingOneMFA SDK not configured. Call config() first.")
-        }
-
         let pingOneGeo: PingOneGeo
-        switch mfaGeo {
+        switch geo {
         case .northAmerica:
             pingOneGeo = .NorthAmerica
         case .europe:
@@ -284,6 +270,5 @@ public class PingOneMFA {
     /// Resets the SDK to uninitialized state (useful for testing)
     internal static func reset() {
         isInitialized = false
-        pingOneMFAConfig = nil
     }
 }

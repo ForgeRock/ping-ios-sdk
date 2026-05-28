@@ -28,47 +28,6 @@ final class PingOneMFATests: XCTestCase {
         try await super.tearDown()
     }
 
-    // MARK: - Configuration Tests
-
-    func test01_InitializeThrowsErrorIfNotConfigured() async {
-        do {
-            try await PingOneMFA.initialize()
-            XCTFail("Should have thrown an error")
-        } catch let error as PingOneMFAError {
-            XCTAssertEqual(error.message, "PingOneMFA SDK not configured. Call config() first.")
-        } catch {
-            XCTFail("Wrong error type: \(error)")
-        }
-    }
-
-    func test02_ConfigSetsAllPingOneMFAConfigPropertiesCorrectly() async {
-        // When
-        await PingOneMFA.config {
-            $0.geo = .northAmerica
-        }
-
-        // Then
-        let config = await PingOneMFA.pingOneMFAConfig
-        guard let config = config else {
-            XCTFail("PingOneMFA config should not be nil")
-            return
-        }
-        XCTAssertEqual(config.geo, .northAmerica)
-    }
-
-    func test03_ConfigWithAllGeoValues() async {
-        // Test each geo value can be set
-        let geoValues: [PingOneMFAGeo] = [.northAmerica, .europe, .australia, .canada, .singapore]
-
-        for geo in geoValues {
-            await PingOneMFA.config {
-                $0.geo = geo
-            }
-            let config = await PingOneMFA.pingOneMFAConfig
-            XCTAssertEqual(config?.geo, geo, "Failed for geo: \(geo)")
-        }
-    }
-
     // MARK: - Initialization Tests
 
     /// Mirrors ProtectTests.test04: calls initialize() twice via mock and asserts
@@ -78,29 +37,16 @@ final class PingOneMFATests: XCTestCase {
         MockPingOneMFA.shouldThrowError = false
 
         // When — first initialization
-        try await MockPingOneMFA.initialize()
+        try await MockPingOneMFA.initialize(geo: .northAmerica)
         XCTAssertTrue(MockPingOneMFA.initializeCalled)
         XCTAssertEqual(MockPingOneMFA.initializeCallCount, 1)
 
         // When — second initialization (idempotency: should not throw)
-        try await MockPingOneMFA.initialize()
+        try await MockPingOneMFA.initialize(geo: .northAmerica)
 
         // Then — still marked as called, call count incremented
         XCTAssertTrue(MockPingOneMFA.initializeCalled)
         XCTAssertEqual(MockPingOneMFA.initializeCallCount, 2)
-    }
-
-    func test05_ConfigWithEmptyConfiguration() async {
-        // When
-        await PingOneMFA.config { _ in }
-
-        // Then
-        let config = await PingOneMFA.pingOneMFAConfig
-        guard let config = config else {
-            XCTFail("PingOneMFA config should not be nil after calling config()")
-            return
-        }
-        XCTAssertNil(config.geo)
     }
 
     // MARK: - Mock-Based Happy-Path Tests
@@ -110,10 +56,11 @@ final class PingOneMFATests: XCTestCase {
         MockPingOneMFA.shouldThrowError = false
 
         // When
-        try await MockPingOneMFA.initialize()
+        try await MockPingOneMFA.initialize(geo: .northAmerica)
 
         // Then
         XCTAssertTrue(MockPingOneMFA.initializeCalled)
+        XCTAssertEqual(MockPingOneMFA.lastGeo, .northAmerica)
     }
 
     func test07_MockRegisterHappyPath() async throws {
@@ -193,7 +140,7 @@ final class PingOneMFATests: XCTestCase {
 
         // When / Then
         do {
-            try await MockPingOneMFA.initialize()
+            try await MockPingOneMFA.initialize(geo: .northAmerica)
             XCTFail("Should have thrown an error")
         } catch let error as PingOneMFAError {
             XCTAssertEqual(error.message, "Init failed")
@@ -220,21 +167,6 @@ final class PingOneMFATests: XCTestCase {
 
     // MARK: - Thread Safety Tests
 
-    func test14_ConcurrentConfigurationCalls() async {
-        await withTaskGroup(of: Void.self) { group in
-            for index in 0..<5 {
-                group.addTask {
-                    await PingOneMFA.config {
-                        $0.geo = index % 2 == 0 ? .northAmerica : .europe
-                    }
-                }
-            }
-        }
-
-        let config = await PingOneMFA.pingOneMFAConfig
-        XCTAssertNotNil(config)
-    }
-
     /// Mirrors ProtectTests.test12: fires 5 concurrent initialize() calls via mock,
     /// asserts mock was called (idempotency under concurrency).
     func test15_ConcurrentInitializationCalls() async throws {
@@ -247,7 +179,7 @@ final class PingOneMFATests: XCTestCase {
             for _ in 0..<5 {
                 group.addTask {
                     do {
-                        try await MockPingOneMFA.initialize()
+                        try await MockPingOneMFA.initialize(geo: .northAmerica)
                     } catch {
                         XCTFail("Mock initialization should not fail: \(error)")
                     }
@@ -263,39 +195,12 @@ final class PingOneMFATests: XCTestCase {
     // MARK: - Edge Cases
 
     func test16_ResetFunctionality() async {
-        // Given
-        await PingOneMFA.config {
-            $0.geo = .northAmerica
-        }
-
         // When
         await PingOneMFA.reset()
 
         // Then
         let isInitialized = await PingOneMFA.isInitialized
-        let config = await PingOneMFA.pingOneMFAConfig
         XCTAssertFalse(isInitialized)
-        XCTAssertNil(config)
-    }
-
-    func test17_MultipleConfigurationCalls() async {
-        // First configuration
-        await PingOneMFA.config {
-            $0.geo = .northAmerica
-        }
-
-        // Second configuration should override
-        await PingOneMFA.config {
-            $0.geo = .europe
-        }
-
-        let config = await PingOneMFA.pingOneMFAConfig
-        guard let config = config else {
-            XCTFail("Config should not be nil")
-            return
-        }
-
-        XCTAssertEqual(config.geo, .europe)
     }
 
     // MARK: - collectPush Error-Path Test
