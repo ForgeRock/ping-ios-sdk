@@ -41,7 +41,9 @@ public extension OidcWebClient {
         config.timeout = 30
         
         config.module(OidcModule.config)
+        #if canImport(UIKit)
         config.module(WebModule.config)
+        #endif
         // Apply custom configuration
         block(config)
         

@@ -8,12 +8,12 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
-
 import PingOrchestrate
 import PingBrowser
 import Foundation
 import PingNetwork
 
+#if canImport(UIKit)
 /// A module that integrates OIDC capabilities into the DaVinci workflow.
 public class WebModule {
     
@@ -121,3 +121,4 @@ extension WebModule {
         return data
     }
 }
+#endif

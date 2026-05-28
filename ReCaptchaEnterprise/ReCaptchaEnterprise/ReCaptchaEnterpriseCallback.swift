@@ -8,7 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
-
+#if canImport(RecaptchaEnterprise)
 import Foundation
 import PingJourneyPlugin
 import PingLogger
@@ -221,6 +221,7 @@ public class ReCaptchaEnterpriseCallback: AbstractCallback, @unchecked Sendable 
 
 // MARK: - ReCaptchaEnterpriseConfig
 
+
 /// Configuration object for customizing reCAPTCHA Enterprise execution.
 ///
 /// This class allows fine-grained control over reCAPTCHA behavior
@@ -246,3 +247,4 @@ public final class ReCaptchaEnterpriseConfig: @unchecked Sendable {
     /// Initializes a new instance of `ReCaptchaEnterpriseConfig`
     public init() {}
 }
+#endif
