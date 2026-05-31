@@ -4,7 +4,7 @@
 
 ## Overview
 
-The `PingOneMFA` module wraps the PingOne MFA native SDK (`PingOneSDK`) behind a clean, async/await Swift API. It is the adapter layer between your application and the PingOne MFA platform. All PingOne SDK callbacks are bridged to `async throws` functions — callers never need to work with raw callback closures.
+The `PingOneMFA` module wraps the PingOne MFA native SDK [PingOneSDK](https://github.com/pingidentity/pingone-mobile-sdk-ios) behind a clean, async/await Swift API. It is the adapter layer between your application and the PingOne MFA platform. All PingOne SDK callbacks are bridged to `async throws` functions — callers never need to work with raw callback closures.
 
 ---
 
