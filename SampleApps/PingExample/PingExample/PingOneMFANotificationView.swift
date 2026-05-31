@@ -20,8 +20,7 @@ final class PingOneMFANotificationViewModel: ObservableObject {
 
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
-    /// Set to `true` after a successful approve or deny so the view can dismiss.
-    @Published var shouldDismiss: Bool = false
+    @Published var showSuccessAlert: Bool = false
 
     init(notification: PushNotification) {
         self.notification = notification
@@ -34,7 +33,7 @@ final class PingOneMFANotificationViewModel: ObservableObject {
             errorMessage = nil
             do {
                 try await notification.approveNotification(authMethod: "user", numberChallenge: numberChallenge)
-                shouldDismiss = true
+                showSuccessAlert = true
             } catch {
                 errorMessage = error.localizedDescription
             }
@@ -49,7 +48,7 @@ final class PingOneMFANotificationViewModel: ObservableObject {
             errorMessage = nil
             do {
                 try await notification.denyNotification()
-                shouldDismiss = true
+                showSuccessAlert = true
             } catch {
                 errorMessage = error.localizedDescription
             }
@@ -94,16 +93,12 @@ struct PingOneMFANotificationView: View {
                 }
             }
 
-            // Error message (if any)
-            if let error = viewModel.errorMessage {
-                Text(error)
-                    .font(.system(size: 13))
-                    .foregroundColor(.red)
-                    .multilineTextAlignment(.center)
+            // Buttons or loading indicator
+            if viewModel.isLoading {
+                loadingIndicator
+            } else {
+                actionButtons
             }
-
-            // Plain Approve / Deny buttons (always shown)
-            actionButtons
 
             Spacer()
         }
@@ -112,10 +107,18 @@ struct PingOneMFANotificationView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         .padding()
-        .onChange(of: viewModel.shouldDismiss) { shouldDismiss in
-            if shouldDismiss {
-                dismiss()
-            }
+        .alert("Approved", isPresented: $viewModel.showSuccessAlert) {
+            Button("OK") { dismiss() }
+        } message: {
+            Text("Authentication approved successfully")
+        }
+        .alert("Error", isPresented: Binding(
+            get: { viewModel.errorMessage != nil },
+            set: { if !$0 { viewModel.errorMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(viewModel.errorMessage ?? "")
         }
     }
 
@@ -197,7 +200,6 @@ struct PingOneMFANotificationView: View {
                                         .stroke(Color.themeButtonBackground, lineWidth: 2)
                                 )
                         }
-                        .disabled(viewModel.isLoading)
                     }
                 }
             }
@@ -235,8 +237,16 @@ struct PingOneMFANotificationView: View {
                 .foregroundColor(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            .disabled(enteredText.isEmpty || Int(enteredText) == nil || viewModel.isLoading)
+            .disabled(enteredText.isEmpty || Int(enteredText) == nil)
         }
+    }
+
+    private var loadingIndicator: some View {
+        ProgressView()
+            .progressViewStyle(CircularProgressViewStyle(tint: .red))
+            .scaleEffect(1.5)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
     }
 
     /// Approve (green) and Deny (red) action buttons — always shown.
@@ -257,7 +267,6 @@ struct PingOneMFANotificationView: View {
                 .foregroundColor(.white)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            .disabled(viewModel.isLoading)
 
             // Approve button (only shown when no number-matching UI is active)
             if viewModel.notification.pushType == .default {
@@ -275,7 +284,6 @@ struct PingOneMFANotificationView: View {
                     .foregroundColor(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
-                .disabled(viewModel.isLoading)
             }
         }
     }

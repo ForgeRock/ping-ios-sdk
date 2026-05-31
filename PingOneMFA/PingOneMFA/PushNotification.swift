@@ -40,7 +40,7 @@ public struct PushNotification: @unchecked Sendable, Identifiable {
                 numberMatchingPickedValue: numberMatchingPickedValue
             ) { _, error in
                 if let error = error {
-                    continuation.resume(throwing: PingOneMFAError("approve failed: \(error.localizedDescription)"))
+                    continuation.resume(throwing: PingOneMFAError(error))
                 } else {
                     continuation.resume(returning: ())
                 }
@@ -55,7 +55,7 @@ public struct PushNotification: @unchecked Sendable, Identifiable {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             notificationObject.deny(reason: .none) { error in
                 if let error = error {
-                    continuation.resume(throwing: PingOneMFAError("deny failed: \(error.localizedDescription)"))
+                    continuation.resume(throwing: PingOneMFAError(error))
                 } else {
                     continuation.resume(returning: ())
                 }

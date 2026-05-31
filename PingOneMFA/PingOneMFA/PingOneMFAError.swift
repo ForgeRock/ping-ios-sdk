@@ -14,13 +14,17 @@ import Foundation
 public struct PingOneMFAError: Error, LocalizedError, Sendable {
     public let message: String
 
-    /// A localized description of the error.
-    public var errorDescription: String? {
-        return message
+    public var errorDescription: String? { message }
+
+    init(_ error: Error) {
+        let nsError = error as NSError
+        let userInfo = nsError.userInfo
+            .map { "\($0.key)=\($0.value)" }
+            .joined(separator: ", ")
+        self.message = "Code=\(nsError.code) \"\(nsError.localizedDescription)\" UserInfo={\(userInfo)}"
     }
 
-    /// Initializes a new instance of `PingOneMFAError` with a given message.
-    public init(_ message: String) {
+    init(_ message: String = "Unknown error") {
         self.message = message
     }
 }

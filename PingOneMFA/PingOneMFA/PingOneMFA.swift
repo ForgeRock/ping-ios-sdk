@@ -52,7 +52,7 @@ public class PingOneMFA {
                 Task { @PingOneMFAActor in
                     if let error = error {
                         self.isInitialized = false
-                        continuation.resume(throwing: PingOneMFAError("PingOneSDK initialization failed: \(error.localizedDescription)"))
+                        continuation.resume(throwing: PingOneMFAError(error))
                     } else {
                         self.isInitialized = true
                         continuation.resume()
@@ -78,9 +78,8 @@ public class PingOneMFA {
 
         return try await withCheckedThrowingContinuation { continuation in
             PingOne.setDeviceToken(token: pushToken, type: tokenType) { errors in
-                if let errors = errors, !errors.isEmpty {
-                    let message = errors.map { $0.localizedDescription }.joined(separator: "; ")
-                    continuation.resume(throwing: PingOneMFAError("Device token registration failed: \(message)"))
+                if let errors = errors, let first = errors.first {
+                    continuation.resume(throwing: PingOneMFAError(first))
                 } else {
                     continuation.resume()
                 }
@@ -96,7 +95,7 @@ public class PingOneMFA {
         return try await withCheckedThrowingContinuation { continuation in
             PingOne.pair(pairingKey) { _, error in
                 if let error = error {
-                    continuation.resume(throwing: PingOneMFAError("Pairing failed: \(error.localizedDescription)"))
+                    continuation.resume(throwing: PingOneMFAError(error))
                 } else {
                     continuation.resume()
                 }
@@ -111,9 +110,8 @@ public class PingOneMFA {
     public nonisolated static func getDeviceInfo() async throws -> [PingOneMfaAccount] {
         return try await withCheckedThrowingContinuation { continuation in
             PingOne.getInfo(completion: { deviceInfo, errors in
-                if let errors = errors, !errors.isEmpty {
-                    let message = errors.map { $0.localizedDescription }.joined(separator: "; ")
-                    continuation.resume(throwing: PingOneMFAError("Get accounts failed: \(message)"))
+                if let errors = errors, let first = errors.first {
+                    continuation.resume(throwing: PingOneMFAError(first))
                 } else {
                     continuation.resume(returning: AccountParser.parse(deviceInfo))
                 }
@@ -132,7 +130,7 @@ public class PingOneMFA {
         return try await withCheckedThrowingContinuation { continuation in
             PingOne.getOneTimePasscode { passcodeInfo, error in
                 if let error = error {
-                    continuation.resume(throwing: PingOneMFAError("Collect OTP failed: \(error.localizedDescription)"))
+                    continuation.resume(throwing: PingOneMFAError(error))
                 } else if let passcodeInfo = passcodeInfo {
                     let now = Date().timeIntervalSince1970
                     let secondsRemaining = Int(passcodeInfo.validUntil - now)
@@ -141,7 +139,7 @@ public class PingOneMFA {
                         secondsRemaining: secondsRemaining
                     ))
                 } else {
-                    continuation.resume(throwing: PingOneMFAError("Collect OTP returned no passcode info"))
+                    continuation.resume(throwing: PingOneMFAError())
                 }
             }
         }
@@ -163,7 +161,7 @@ public class PingOneMFA {
         return try await withCheckedThrowingContinuation { continuation in
             PingOne.processRemoteNotification(userInfo) { notificationObject, error in
                 if let error = error {
-                    continuation.resume(throwing: PingOneMFAError("Collect push failed: \(error.localizedDescription)"))
+                    continuation.resume(throwing: PingOneMFAError(error))
                 } else if let notificationObject = notificationObject {
                     continuation.resume(returning: PushNotification(
                         notificationObject: notificationObject,
@@ -171,7 +169,7 @@ public class PingOneMFA {
                         message: message
                     ))
                 } else {
-                    continuation.resume(throwing: PingOneMFAError("Collect push returned no notification object"))
+                    continuation.resume(throwing: PingOneMFAError())
                 }
             }
         }
@@ -204,7 +202,7 @@ public class PingOneMFA {
                 forRemoteNotification: userInfo
             ) { notificationObject, error in
                 if let error = error {
-                    continuation.resume(throwing: PingOneMFAError("Process notification action failed: \(error.localizedDescription)"))
+                    continuation.resume(throwing: PingOneMFAError(error))
                 } else if let notificationObject = notificationObject {
                     continuation.resume(returning: PushNotification(
                         notificationObject: notificationObject,
@@ -227,11 +225,11 @@ public class PingOneMFA {
         return try await withCheckedThrowingContinuation { continuation in
             PingOne.generateMobilePayload(completionHandler: { payload, error in
                 if let error = error {
-                    continuation.resume(throwing: PingOneMFAError("Collect mobile payload failed: \(error.localizedDescription)"))
+                    continuation.resume(throwing: PingOneMFAError(error))
                 } else if let payload = payload {
                     continuation.resume(returning: payload)
                 } else {
-                    continuation.resume(throwing: PingOneMFAError("Collect mobile payload returned no payload"))
+                    continuation.resume(throwing: PingOneMFAError())
                 }
             })
         }
