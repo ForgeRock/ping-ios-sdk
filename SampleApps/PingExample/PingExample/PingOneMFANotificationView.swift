@@ -213,31 +213,33 @@ struct PingOneMFANotificationView: View {
                 .font(.system(size: 15))
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
-
+            
             TextField("Number", text: $enteredText)
                 .keyboardType(.numberPad)
                 .textFieldStyle(.roundedBorder)
                 .font(.system(size: 20, design: .monospaced))
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 160)
-
-            Button {
-                if let number = Int(enteredText) {
-                    viewModel.approve(numberChallenge: number)
+            
+            if !viewModel.isLoading {
+                Button {
+                    if let number = Int(enteredText) {
+                        viewModel.approve(numberChallenge: number)
+                    }
+                } label: {
+                    HStack {
+                        Image(systemName: "checkmark.circle.fill")
+                        Text("Confirm Number")
+                            .fontWeight(.semibold)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(enteredText.isEmpty || Int(enteredText) == nil ? Color.gray : Color.green)
+                    .foregroundColor(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
-            } label: {
-                HStack {
-                    Image(systemName: "checkmark.circle.fill")
-                    Text("Confirm Number")
-                        .fontWeight(.semibold)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(enteredText.isEmpty || Int(enteredText) == nil ? Color.gray : Color.green)
-                .foregroundColor(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .disabled(enteredText.isEmpty || Int(enteredText) == nil)
             }
-            .disabled(enteredText.isEmpty || Int(enteredText) == nil)
         }
     }
 
