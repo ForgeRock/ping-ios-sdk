@@ -158,6 +158,20 @@ let journey = Journey.createJourney { config in
 
 The PAR endpoint is discovered automatically from the OpenID configuration. If the server does not advertise a `pushed_authorization_request_endpoint`, the SDK falls back to the standard authorization flow.
 
+### Device Authorization Grant — approving device (RFC 8628)
+
+When this device is acting as the *approving* device for an [RFC 8628](https://datatracker.ietf.org/doc/html/rfc8628) device-flow request initiated elsewhere (e.g., a smart TV), pass the `verificationUriComplete` URL into `start(_:configure:)`. After the user authenticates through the Journey flow, the `OidcModule` extracts the `user_code` from the URL and POSTs it (with `decision=allow` and the SSO token as cookie) to that URL, approving the requesting device.
+
+```swift
+let node = await journey.start("Login") { options in
+    options.verificationUriComplete = URL(string: verificationUriCompleteString)
+}
+```
+
+`verificationUriComplete` is the URL returned in the `verification_uri_complete` field of the requesting device's `DeviceAuthorizationResponse` — typically scanned from a QR code or pasted by the user. Approval happens transparently in `OidcModule.success` after Journey authentication completes; the requesting device then receives its access token via its own polling loop.
+
+When `verificationUriComplete` is not set, the `OidcModule` proceeds with normal user-delegate setup and no approval POST is made. The cookie name used for the approval POST is taken from `JourneyConfig.cookie`.
+
 ### Navigating the Authentication Flow
 
 The `start()` method initiates the authentication journey and returns a `Node` instance,

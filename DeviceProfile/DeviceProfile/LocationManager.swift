@@ -249,26 +249,52 @@ public class LocationManager: NSObject, ObservableObject, @unchecked Sendable {
         }
         
         // Handle different authorization states
-        switch await authorizationStatus {
-        case .authorizedAlways, .authorizedWhenInUse:
-            // Already authorized, fetch location
+        let currentStatus = await authorizationStatus
+        let isAuthorized: Bool
+        #if canImport(UIKit)
+        isAuthorized = (currentStatus == .authorizedAlways || currentStatus == .authorizedWhenInUse)
+        #else
+        isAuthorized = (currentStatus == .authorizedAlways)
+        #endif
+        if isAuthorized {
             return try await fetchLocationWithAuthorization()
-            
+        }
+
+        // The isAuthorized guard above already handles .authorizedAlways (and .authorizedWhenInUse
+        // on UIKit), so the switch only needs to cover the remaining non-authorised states:
+        // .notDetermined, .denied, .restricted, and @unknown default.
+        // .authorizedAlways is listed below only to satisfy compiler exhaustiveness — it is
+        // unreachable at runtime because the guard above always short-circuits first.
+        switch currentStatus {
         case .notDetermined:
             // Need to request authorization first
             let status = try await requestAuthorizationIfNeeded()
-            if status == .authorizedAlways || status == .authorizedWhenInUse {
+            let statusAuthorized: Bool
+            #if canImport(UIKit)
+            statusAuthorized = (status == .authorizedAlways || status == .authorizedWhenInUse)
+            #else
+            statusAuthorized = (status == .authorizedAlways)
+            #endif
+            if statusAuthorized {
                 return try await fetchLocationWithAuthorization()
             } else {
                 throw authorizationErrorForStatus(status)
             }
-            
+
+        case .authorizedAlways: // unreachable — handled by isAuthorized guard above
+            return try await fetchLocationWithAuthorization()
+
+        #if canImport(UIKit)
+        case .authorizedWhenInUse:
+            return try await fetchLocationWithAuthorization()
+        #endif
+
         case .denied:
             throw LocationError.authorizationDenied
-            
+
         case .restricted:
             throw LocationError.authorizationRestricted
-            
+
         @unknown default:
             throw LocationError.authorizationDenied
         }

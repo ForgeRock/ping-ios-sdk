@@ -30,10 +30,10 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
     ///   - value: The value of the property.
     public override func initValue(name: String, value: Any) {
         if name == FidoConstants.FIELD_DATA, let data = value as? [String: Any] {
-            logger?.d("Processing FIDO authentication data")
+            logger.d("Processing FIDO authentication data")
             supportsJsonResponse = data[FidoConstants.FIELD_SUPPORTS_JSON_RESPONSE] as? Bool ?? false
             publicKeyCredentialRequestOptions = transform(data)
-            logger?.d("FIDO authentication callback initialized successfully")
+            logger.d("FIDO authentication callback initialized successfully")
         }
     }
     
@@ -43,14 +43,15 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
     /// - Throws: An error if the authentication process fails.
     @MainActor
     public func authenticate(window: ASPresentationAnchor) async -> Result<[String: Any], Error> {
-        logger?.d("Starting FIDO authentication (async Result)")
+        logger.d("Starting FIDO authentication (async Result)")
         
         do {
             // 1. Wrap the closure-based fido.authenticate in a continuation
             //    This still throws internally within the 'do' block if the continuation resumes with an error.
             let response: [String: Any] = try await withUnsafeThrowingContinuation { continuation in
-                // Assuming 'fido' instance is accessible
-                fido.authenticate(options: publicKeyCredentialRequestOptions, window: window) { [continuation] result in
+                // Pass the workflow logger so the underlying ASAuthorization ceremony
+                // emits log messages through the same logger as the surrounding flow.
+                fido.authenticate(options: publicKeyCredentialRequestOptions, window: window, logger: logger) { [continuation] result in
                     Task {
                         await MainActor.run {
                             nonisolated(unsafe) let sendableResult = result
@@ -61,7 +62,7 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
             }
             
             // 2. Handle the successful response data extraction
-            self.logger?.d("FIDO authentication successful, processing response...")
+            self.logger.d("FIDO authentication successful, processing response...")
             
             guard let signatureData = response[FidoConstants.FIELD_SIGNATURE] as? Data,
                   let clientData = response[FidoConstants.FIELD_CLIENT_DATA_JSON] as? Data,
@@ -70,7 +71,7 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
                   let userHandleData = response[FidoConstants.FIELD_USER_HANDLE] as? Data else {
                 
                 let error = FidoError.invalidResponse // Define your error type
-                self.logger?.e(error.localizedDescription, error: error)
+                self.logger.e(error.localizedDescription, error: error)
                 self.handleError(error: error) // Keep existing error handling side-effect
                 return .failure(error) // Return failure
             }
@@ -98,13 +99,13 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
                 } else {
                     // Handle potential JSON serialization error if needed
                     callbackValue = ""
-                    logger?.w("Failed to serialize FIDO JSON response", error: nil)
+                    logger.w("Failed to serialize FIDO JSON response", error: nil)
                 }
             } else {
                 callbackValue = legacyData
             }
             
-            self.logger?.d("Setting authentication callback value")
+            self.logger.d("Setting authentication callback value")
             self.valueCallback(value: callbackValue) // Perform side effect
             
             // 4. Return success with the original response dictionary
@@ -112,7 +113,7 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
             
         } catch {
             // 5. Handle any error caught from the continuation
-            self.logger?.e("FIDO authentication failed", error: error)
+            self.logger.e("FIDO authentication failed", error: error)
             self.handleError(error: error) // Keep existing error handling side-effect
             return .failure(error) // Return failure
         }
@@ -125,7 +126,7 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
     /// - Parameter input: The input dictionary containing FIDO authentication options.
     /// - Returns: A transformed dictionary suitable for FIDO authentication.
     func transform(_ input: [String: Any]) -> [String: Any] {
-        logger?.d("Transforming FIDO authentication request options")
+        logger.d("Transforming FIDO authentication request options")
         var output: [String: Any] = [:]
         
         if let challenge = input[FidoConstants.FIELD_CHALLENGE] as? String {

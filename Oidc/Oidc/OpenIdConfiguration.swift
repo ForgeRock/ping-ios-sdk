@@ -27,7 +27,9 @@ public struct OpenIdConfiguration: Codable, Sendable {
     public let pingEndsessionEndpoint: String?
     /// The URL of the pushed authorization request endpoint (PAR, RFC 9126).
     public let pushedAuthorizationRequestEndpoint: String?
-    
+    /// The URL of the device authorization endpoint (RFC 8628).
+    public var deviceAuthorizationEndpoint: String?
+
     /// Initializes a new `OpenIdConfiguration` instance.
     /// - Parameters:
     ///   - authorizationEndpoint: The URL of the authorization endpoint.
@@ -37,6 +39,7 @@ public struct OpenIdConfiguration: Codable, Sendable {
     ///   - revocationEndpoint: The URL of the revocation endpoint.
     ///   - pingEndsessionEndpoint: The URL of the Ping end IDP session endpoint.
     ///   - pushedAuthorizationRequestEndpoint: The URL of the PAR endpoint.
+    ///   - deviceAuthorizationEndpoint: The URL of the device authorization endpoint (RFC 8628).
     public init(
         authorizationEndpoint: String,
         tokenEndpoint: String,
@@ -44,7 +47,8 @@ public struct OpenIdConfiguration: Codable, Sendable {
         endSessionEndpoint: String,
         revocationEndpoint: String,
         pingEndsessionEndpoint: String? = nil,
-        pushedAuthorizationRequestEndpoint: String? = nil
+        pushedAuthorizationRequestEndpoint: String? = nil,
+        deviceAuthorizationEndpoint: String? = nil
     ) {
         self.authorizationEndpoint = authorizationEndpoint
         self.tokenEndpoint = tokenEndpoint
@@ -53,8 +57,9 @@ public struct OpenIdConfiguration: Codable, Sendable {
         self.revocationEndpoint = revocationEndpoint
         self.pingEndsessionEndpoint = pingEndsessionEndpoint
         self.pushedAuthorizationRequestEndpoint = pushedAuthorizationRequestEndpoint
+        self.deviceAuthorizationEndpoint = deviceAuthorizationEndpoint
     }
-    
+
     // Define CodingKeys enum to map serialized names to property names
     private enum CodingKeys: String, CodingKey {
         case authorizationEndpoint = "authorization_endpoint"
@@ -64,5 +69,6 @@ public struct OpenIdConfiguration: Codable, Sendable {
         case revocationEndpoint = "revocation_endpoint"
         case pingEndsessionEndpoint = "ping_end_idp_session_endpoint"
         case pushedAuthorizationRequestEndpoint = "pushed_authorization_request_endpoint"
+        case deviceAuthorizationEndpoint = "device_authorization_endpoint"
     }
 }

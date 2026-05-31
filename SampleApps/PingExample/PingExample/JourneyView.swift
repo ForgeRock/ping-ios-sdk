@@ -22,9 +22,16 @@ import PingCommons
 
 struct JourneyView: View {
     /// The view model that manages the Journey flow logic.
-    @StateObject private var journeyViewModel = JourneyViewModel()
+    @StateObject private var journeyViewModel: JourneyViewModel
     /// A binding to the navigation stack path.
     @Binding var path: [MenuItem]
+
+    init(path: Binding<[MenuItem]>, verificationUriComplete: URL? = nil) {
+        self._path = path
+        self._journeyViewModel = StateObject(
+            wrappedValue: JourneyViewModel(verificationUriComplete: verificationUriComplete)
+        )
+    }
     
     var body: some View {
         ZStack {

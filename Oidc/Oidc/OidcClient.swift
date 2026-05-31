@@ -498,4 +498,7 @@ public extension OidcClient.Constants {
     static let state = "state"
     static let piflow = "pi.flow"
     static let query = "query"
+    static let userCodeSnake = "user_code"
+    static let userCodeCamel = "userCode"
+    static let asDeviceAuthorizationPath = "/as/device_authorization"
 }

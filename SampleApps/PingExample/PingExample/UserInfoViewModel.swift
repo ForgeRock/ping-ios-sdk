@@ -19,14 +19,16 @@ enum AuthTab: String, CaseIterable, Identifiable {
     case journey = "Journey"
     case davinci = "DaVinci"
     case oidc = "OIDC (Web)"
-    
+    case device = "Device Flow"
+
     var id: String { rawValue }
-    
+
     var icon: String {
         switch self {
         case .journey: return "map.fill"
         case .davinci: return "key.fill"
         case .oidc: return "lock.shield.fill"
+        case .device: return "tv"
         }
     }
 }
@@ -46,7 +48,8 @@ class UserInfoViewModel: ObservableObject {
     @Published var results: [AuthTab: UserInfoResult] = [
         .journey: UserInfoResult(),
         .davinci: UserInfoResult(),
-        .oidc: UserInfoResult()
+        .oidc: UserInfoResult(),
+        .device: UserInfoResult()
     ]
     
     init() {
@@ -61,7 +64,8 @@ class UserInfoViewModel: ObservableObject {
             group.addTask { await (.journey, self.fetchUserInfo(for: .journey)) }
             group.addTask { await (.davinci, self.fetchUserInfo(for: .davinci)) }
             group.addTask { await (.oidc, self.fetchUserInfo(for: .oidc)) }
-            
+            group.addTask { await (.device, self.fetchUserInfo(for: .device)) }
+
             for await (tab, result) in group {
                 results[tab] = result
             }
@@ -77,8 +81,10 @@ class UserInfoViewModel: ObservableObject {
             user = await ConfigurationManager.shared.davinciUser
         case .oidc:
             user = await ConfigurationManager.shared.oidcUser
+        case .device:
+            user = await ConfigurationManager.shared.deviceUser
         }
-        
+
         guard let user = user else {
             return UserInfoResult(info: "", error: "No session, please start \(tab.rawValue) flow to authenticate.", isLoading: false)
         }

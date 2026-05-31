@@ -2,13 +2,14 @@
 //  IdpValidationUtils.swift
 //  ExternalIdP
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
 
 /// Utility class for common IdP validation operations
@@ -35,6 +36,7 @@ public struct IdpValidationUtils {
         }
     }
 }
+#endif
 
 /// Centralized error messages for IdP operations
 public struct IdpErrorMessages {

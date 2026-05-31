@@ -8,6 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
+#if canImport(PingOneSignals)
 import Foundation
 import PingJourneyPlugin
 
@@ -52,3 +53,4 @@ public class PingOneProtectEvaluationCallback: AbstractProtectCallback, @uncheck
         }
     }
 }
+#endif

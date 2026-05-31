@@ -66,4 +66,74 @@ struct MockResponse {
     }
     """.data(using: .utf8)!
     }
+
+    static var deviceAuthorizationResponse: Data {
+        """
+    {
+      "device_code" : "GmRhmhcxhwAzkoEqiMEg_DnyEysNkuNhszIySk9eS",
+      "user_code" : "WDJB-MJHT",
+      "verification_uri" : "https://auth.test-one-pingone.com/activate",
+      "verification_uri_complete" : "https://auth.test-one-pingone.com/activate?user_code=WDJB-MJHT",
+      "expires_in" : 1800,
+      "interval" : 5
+    }
+    """.data(using: .utf8)!
+    }
+
+    static var deviceAuthorizationResponseNoInterval: Data {
+        """
+    {
+      "device_code" : "GmRhmhcxhwAzkoEqiMEg_DnyEysNkuNhszIySk9eS",
+      "user_code" : "WDJB-MJHT",
+      "verification_uri" : "https://auth.test-one-pingone.com/activate",
+      "verification_uri_complete" : "https://auth.test-one-pingone.com/activate?user_code=WDJB-MJHT",
+      "expires_in" : 1800
+    }
+    """.data(using: .utf8)!
+    }
+
+    static var authorizationPending: Data {
+        """
+    {
+      "error" : "authorization_pending"
+    }
+    """.data(using: .utf8)!
+    }
+
+    static var slowDown: Data {
+        """
+    {
+      "error" : "slow_down"
+    }
+    """.data(using: .utf8)!
+    }
+
+    static var accessDenied: Data {
+        """
+    {
+      "error" : "access_denied"
+    }
+    """.data(using: .utf8)!
+    }
+
+    static var expiredToken: Data {
+        """
+    {
+      "error" : "expired_token"
+    }
+    """.data(using: .utf8)!
+    }
+
+    static var deviceAuthorizationResponseFastInterval: Data {
+        """
+    {
+      "device_code" : "GmRhmhcxhwAzkoEqiMEg_DnyEysNkuNhszIySk9eS",
+      "user_code" : "WDJB-MJHT",
+      "verification_uri" : "https://auth.test-one-pingone.com/activate",
+      "verification_uri_complete" : "https://auth.test-one-pingone.com/activate?user_code=WDJB-MJHT",
+      "expires_in" : 1800,
+      "interval" : 0
+    }
+    """.data(using: .utf8)!
+    }
 }

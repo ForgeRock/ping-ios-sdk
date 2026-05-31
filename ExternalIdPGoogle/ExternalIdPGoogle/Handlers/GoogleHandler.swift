@@ -9,10 +9,11 @@
 //
 
 import Foundation
-import UIKit
 import PingExternalIdP
-internal import GoogleSignIn
 
+#if canImport(UIKit)
+import UIKit
+internal import GoogleSignIn
 /// A handler class for managing Google Identity Provider (IdP) authorization.
 @MainActor
 @objc public final class GoogleHandler: NSObject, @preconcurrency IdpHandler, Sendable {
@@ -37,5 +38,4 @@ internal import GoogleSignIn
         return try await GoogleHandlerUtils.authorize(idpClient: idpClient)
     }
 }
-
-
+#endif

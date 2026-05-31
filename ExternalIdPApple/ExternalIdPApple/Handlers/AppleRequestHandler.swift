@@ -13,6 +13,7 @@ import PingNetwork
 import AuthenticationServices
 import PingExternalIdP
 
+#if canImport(UIKit)
 ///IdpHandler for Apple
 @MainActor
 @objc class AppleRequestHandler: NSObject, IdpRequestHandler {
@@ -74,3 +75,4 @@ import PingExternalIdP
         throw IdpExceptions.illegalStateException(message: IdpErrorMessages.appleSignInFailed)
     }
 }
+#endif

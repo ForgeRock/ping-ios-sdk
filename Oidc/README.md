@@ -151,6 +151,61 @@ let oidcLogin = OidcWebClient.createOidcWebClient { config in
 - The server's OpenID configuration (discovery document) must include a `pushed_authorization_request_endpoint`.
 - If `par` is enabled but the discovery document does not include the PAR endpoint, the SDK falls back to the standard authorization flow automatically.
 
+## Device Authorization Grant (RFC 8628)
+
+`PingOidc` supports the [OAuth 2.0 Device Authorization Grant (RFC 8628)](https://datatracker.ietf.org/doc/html/rfc8628) for input-constrained devices (smart TVs, CLI tools) that can't directly open a browser. Use `OidcDeviceClient` to start a device flow, display the user code and verification URL, and poll for the access token.
+
+```swift
+let deviceClient = OidcDeviceClient.createOidcDeviceClient { config in
+    config.clientId = "ClientID"
+    config.scopes = ["openid", "profile", "email"]
+    config.redirectUri = "org.forgerock.demo://oauth2redirect"
+    config.discoveryEndpoint = "https://auth.example.com/.well-known/openid-configuration"
+}
+
+// Start the flow — returns an AsyncThrowingStream<DeviceFlowStatus, Error>
+let stream = try await deviceClient.deviceAuthorization()
+
+for try await status in stream {
+    switch status {
+    case .started(let response):
+        // Display response.userCode and response.verificationUri (or response.verificationUriComplete)
+        // to the user — for example as a QR code linking to verificationUriComplete.
+        print("Visit \(response.verificationUri) and enter \(response.userCode)")
+    case .polling(let pollCount, let pollInterval, let nextPollAt):
+        // Optional: update UI with polling progress
+        break
+    case .success(let user):
+        // Token has been saved to storage. `user` is an OidcUser ready to call .token() on.
+        let token = await user.token()
+    case .accessDenied:
+        // The user denied the request.
+        break
+    case .expired:
+        // The user code expired before the user authorized.
+        break
+    case .failure(let error):
+        // Terminal error not covered by the RFC 8628 error codes.
+        break
+    }
+}
+
+// Optionally open the verification URL in SFSafariViewController on this device:
+try await deviceClient.authorize(verificationUriComplete: response.verificationUriComplete ?? response.verificationUri)
+
+// Retrieve the existing user (returns nil if no token has been saved):
+let user = await deviceClient.user()
+
+// Revoke the stored token:
+await deviceClient.revoke()
+```
+
+**Requirements:**
+- The server's OpenID configuration (discovery document) must include a `device_authorization_endpoint`.
+- If the endpoint is missing, `deviceAuthorization()` throws `OidcError.unknown`.
+
+The polling loop honors the server-supplied `interval` and increases it by 5 seconds on every `slow_down` response per RFC 8628. Network errors (`URLError`) trigger an exponential backoff (capped at 60 seconds) and the stream continues; the stream only finishes on `.success`, `.accessDenied`, `.expired`, or a non-recoverable error.
+
 ## Custom Agent
 
 You can also provide a custom agent to launch the authorization request.

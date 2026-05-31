@@ -8,6 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
+#if canImport(PingOneSignals)
 import Foundation
 import PingJourneyPlugin
 
@@ -109,3 +110,4 @@ extension JourneyConstants {
     public static let deviceAttributesToIgnore = "deviceAttributesToIgnore"
     public static let pauseBehavioralData = "pauseBehavioralData"
 }
+#endif

@@ -2,15 +2,17 @@
 //  PlatformCollector.swift
 //  DeviceProfile
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import Foundation
-import UIKit
 import PingTamperDetector
+#if canImport(UIKit)
+import UIKit
+#endif
 
 // MARK: - PlatformCollector
 
@@ -72,15 +74,23 @@ public struct PlatformInfo: Codable, Sendable {
     
     /// Initializes platform information by collecting system details
     init() async {
+        #if canImport(UIKit)
         self.platform = await UIDevice.current.systemName
         self.version = await UIDevice.current.systemVersion
         self.device = await UIDevice.current.model
         self.deviceName = await UIDevice.current.name
+        #else
+        self.platform = "macOS"
+        let v = ProcessInfo.processInfo.operatingSystemVersion
+        self.version = "\(v.majorVersion).\(v.minorVersion).\(v.patchVersion)"
+        self.device = "Mac"
+        self.deviceName = Host.current().localizedName ?? "Mac"
+        #endif
         self.model = Self.getDeviceModel()
         self.brand = "Apple"
         self.locale = Locale.current.language.languageCode?.identifier
         self.timeZone = TimeZone.current.identifier
-        
+
         self.jailBreakScore = await TamperDetector().analyze()
     }
     

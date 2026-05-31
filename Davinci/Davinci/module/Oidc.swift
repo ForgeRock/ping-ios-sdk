@@ -13,6 +13,7 @@ import Foundation
 import PingOidc
 import PingOrchestrate
 import PingNetwork
+import PingLogger
 
 /// A module that integrates OIDC capabilities into the DaVinci workflow.
 public class OidcModule {
@@ -40,6 +41,22 @@ public class OidcModule {
         
         // Starts the module.
         setup.start { @Sendable context, request in
+            
+            // Check for Device Flow
+            if let uriString = daVinciFlow.sharedContext.get(key: SharedContext.Keys.daVinciVerificationUriCompleteKey) as? String,
+               let url = URL(string: uriString),
+               let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+               let userCode = components.queryItems?.first(where: { $0.name == OidcClient.Constants.userCodeSnake })?.value,
+               !userCode.isEmpty {
+                // Move key from sharedContext (workflow-scoped) into flowContext (this invocation only)
+                // so success can detect the device-flow path, and a subsequent start() is unaffected.
+                _ = daVinciFlow.sharedContext.removeValue(forKey: SharedContext.Keys.daVinciVerificationUriCompleteKey)
+                context.flowContext.set(key: SharedContext.Keys.daVinciVerificationUriCompleteKey, value: uriString)
+                config.logger.d( "Oidc: device code completion flow detected, skipping authorization request")
+                return try config.populateDeviceFlowVerificationRequest(request: request, userCode: userCode)
+            }
+            
+            
             // When user starts the flow again, revoke previous token if exists
             await daVinciFlow.daVinciUser()?.revoke()
             
@@ -50,6 +67,13 @@ public class OidcModule {
         
         // Handles success of the module.
         setup.success { @Sendable context, success in
+            
+            // Device-code completion flow: token exchange already handled externally, skip.
+            // The key was moved into flowContext by start; sharedContext key was already consumed there.
+            if context.flowContext.get(key: SharedContext.Keys.daVinciVerificationUriCompleteKey) != nil {
+                return SuccessNode(input: success.input, session: success.session)
+            }
+            
             let cloneConfig: OidcClientConfig = config.clone()
             
             let flowPkce = context.flowContext.get(key: SharedContext.Keys.pkceKey) as? Pkce
@@ -87,4 +111,8 @@ extension SharedContext.Keys {
     
     /// The key used to store the OIDC client configuration in the shared context.
     public static let oidcClientConfigKey = "com.pingidentity.davinci.OidcClientConfig"
+    
+    /// The shared context key under which the `verificationUriComplete` URL string is stored
+    /// for the DaVinci device authorization flow.
+    public static let daVinciVerificationUriCompleteKey = "com.pingidentity.davinci.VerificationUriComplete"
 }

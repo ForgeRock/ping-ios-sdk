@@ -10,6 +10,9 @@
 
 import AuthenticationServices
 import PingExternalIdP
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// Represents the result of a Sign In With Apple request.
 struct SignInWithAppleResult: Sendable {
@@ -55,6 +58,55 @@ struct SignInWithAppleResult: Sendable {
     }
 }
 
+struct AppleSignInResponse: Codable {
+    var code: String?
+    var id_token: String?
+    var state: String?
+    var user: AppleSignInUser
+
+    init(_ appleIDCredential: ASAuthorizationAppleIDCredential) {
+        if let code = appleIDCredential.authorizationCode {
+            self.code = String(data: code, encoding: .utf8)
+        } else {
+            self.code = nil
+        }
+        if let id_token = appleIDCredential.identityToken {
+            self.id_token = String(data: id_token, encoding: .utf8)
+        } else {
+            self.id_token = nil
+        }
+        self.state = appleIDCredential.state
+        self.user = AppleSignInUser(nameComponents: appleIDCredential.fullName, email: appleIDCredential.email)
+    }
+}
+
+struct AppleSignInUser: Codable {
+    var name: FullName?
+    var email: String
+
+    init(nameComponents: PersonNameComponents?, email: String?) {
+        if let nameComponents = nameComponents {
+            self.name = FullName(nameComponents)
+        } else {
+            self.name = nil
+        }
+        self.email = email ?? ""
+    }
+}
+
+struct FullName: Codable {
+    var firstName: String?
+    var lastName: String?
+}
+
+extension FullName {
+    init(_ nameComponents: PersonNameComponents) {
+        firstName = nameComponents.givenName
+        lastName = nameComponents.familyName
+    }
+}
+
+#if canImport(UIKit)
 /// Helper class to handle Sign In With Apple requests.
 @MainActor
 final class SignInWithAppleHelper: NSObject {
@@ -165,54 +217,6 @@ private extension SignInWithAppleHelper {
     }
 }
 
-struct AppleSignInResponse: Codable {
-    var code: String?
-    var id_token: String?
-    var state: String?
-    var user: AppleSignInUser
-    
-    init(_ appleIDCredential: ASAuthorizationAppleIDCredential) {
-        if let code = appleIDCredential.authorizationCode {
-            self.code = String(data: code, encoding: .utf8)
-        } else {
-            self.code = nil
-        }
-        if let id_token = appleIDCredential.identityToken {
-            self.id_token = String(data: id_token, encoding: .utf8)
-        } else {
-            self.id_token = nil
-        }
-        self.state = appleIDCredential.state
-        self.user = AppleSignInUser(nameComponents: appleIDCredential.fullName, email: appleIDCredential.email)
-    }
-}
-
-struct AppleSignInUser: Codable {
-    var name: FullName?
-    var email: String
-    
-    init(nameComponents: PersonNameComponents?, email: String?) {
-        if let nameComponents = nameComponents {
-            self.name = FullName(nameComponents)
-        } else {
-            self.name = nil
-        }
-        self.email = email ?? ""
-    }
-}
-
-struct FullName: Codable {
-    var firstName: String?
-    var lastName: String?
-}
-
-extension FullName {
-    init(_ nameComponents: PersonNameComponents) {
-        firstName = nameComponents.givenName
-        lastName = nameComponents.familyName
-    }
-}
-
 //MARK: ASAuthorizationControllerDelegate
 extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
@@ -239,8 +243,10 @@ extension SignInWithAppleHelper: ASAuthorizationControllerDelegate {
         return
     }
 }
+#endif
 
 //MARK: ASAuthorizationControllerPresentationContextProviding
+#if canImport(UIKit)
 @MainActor
 extension UIViewController: @retroactive ASAuthorizationControllerPresentationContextProviding {
     public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
@@ -272,3 +278,4 @@ extension UIViewController: @retroactive ASAuthorizationControllerPresentationCo
             """)
     }
 }
+#endif
