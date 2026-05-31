@@ -22,7 +22,7 @@ class MockPingOneMFA {
     nonisolated(unsafe) static var getOneTimePasscodeCalled = false
     nonisolated(unsafe) static var processPushNotificationCalled = false
     nonisolated(unsafe) static var getMobilePayloadCalled = false
-    nonisolated(unsafe) static var lastGeo: PingOneMFAGeo?
+    nonisolated(unsafe) static var lastGeo: Geo?
 
     // Return values for happy-path tests
     nonisolated(unsafe) static var accountsReturnValue: [PingOneMfaAccount] = []
@@ -70,7 +70,7 @@ class MockPingOneMFA {
         lastActionAuthenticationMethod = nil
     }
 
-    static func initialize(geo: PingOneMFAGeo) async throws {
+    static func initialize(geo: Geo) async throws {
         initializeCalled = true
         initializeCallCount += 1
         lastGeo = geo

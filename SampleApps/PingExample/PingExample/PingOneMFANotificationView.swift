@@ -33,7 +33,7 @@ final class PingOneMFANotificationViewModel: ObservableObject {
             isLoading = true
             errorMessage = nil
             do {
-                try await notification.approve(authMethod: "user", numberChallenge: numberChallenge)
+                try await notification.approveNotification(authMethod: "user", numberChallenge: numberChallenge)
                 shouldDismiss = true
             } catch {
                 errorMessage = error.localizedDescription
@@ -48,7 +48,7 @@ final class PingOneMFANotificationViewModel: ObservableObject {
             isLoading = true
             errorMessage = nil
             do {
-                try await notification.deny()
+                try await notification.denyNotification()
                 shouldDismiss = true
             } catch {
                 errorMessage = error.localizedDescription
@@ -62,10 +62,10 @@ final class PingOneMFANotificationViewModel: ObservableObject {
 
 /// A modal sheet that presents a PingOneMFA push notification and lets the user approve or deny it.
 ///
-/// Supports three layouts based on `notification.numberMatchingType`:
-/// - `"SELECT_NUMBER"`: displays tappable number buttons from `notification.numberMatchingOptions`.
-/// - `"ENTER_MANUALLY"` (or any other non-empty type): displays a `.numberPad` text field.
-/// - `""` (empty): displays plain Approve / Deny buttons with no number-matching UI.
+/// Supports three layouts based on `notification.pushType`:
+/// - `.challenge` with non-empty `getNumbersChallenge`: displays tappable number buttons.
+/// - `.challenge` with empty `getNumbersChallenge`: displays a `.numberPad` text field.
+/// - `.default`: displays plain Approve / Deny buttons with no number-matching UI.
 struct PingOneMFANotificationView: View {
     @StateObject private var viewModel: PingOneMFANotificationViewModel
     @Environment(\.dismiss) private var dismiss
@@ -86,10 +86,12 @@ struct PingOneMFANotificationView: View {
             notificationContent
 
             // Number-matching UI (conditional)
-            if viewModel.notification.numberMatchingType == "SELECT_NUMBER" {
-                selectNumberSection
-            } else if !viewModel.notification.numberMatchingType.isEmpty {
-                enterManuallySection
+            if viewModel.notification.pushType == .challenge {
+                if !viewModel.notification.getNumbersChallenge.isEmpty {
+                    selectNumberSection
+                } else {
+                    enterManuallySection
+                }
             }
 
             // Error message (if any)
@@ -174,7 +176,7 @@ struct PingOneMFANotificationView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
 
-            let options = viewModel.notification.numberMatchingOptions
+            let options = viewModel.notification.getNumbersChallenge
             if options.isEmpty {
                 Text("No options available")
                     .font(.system(size: 14))
@@ -258,7 +260,7 @@ struct PingOneMFANotificationView: View {
             .disabled(viewModel.isLoading)
 
             // Approve button (only shown when no number-matching UI is active)
-            if viewModel.notification.numberMatchingType.isEmpty {
+            if viewModel.notification.pushType == .default {
                 Button {
                     viewModel.approve()
                 } label: {

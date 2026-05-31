@@ -10,60 +10,45 @@
 
 import Foundation
 
-/// Internal parser that converts the `deviceInfo` dictionary returned by `PingOne.getInfo(completion:)`
-/// into a flat array of `PingOneMfaAccount` values.
-///
-/// The upstream payload has the shape:
-/// ```
-/// {
-///   "NorthAmerica": {
-///     "users": [
-///       {
-///         "id": "c845dcd4-...",
-///         "device":      { "id": "05280532-..." },
-///         "environment": { "id": "803ca4d4-..." }
-///       }
-///     ],
-///     "deviceRequirementsEvaluation": { "status": "PASSED", ... },
-///     "shouldRollback": 0
-///   }
-/// }
-/// ```
-/// The parser iterates the top-level keys as region names, walks `users[]`, and
-/// flatMaps into `[PingOneMfaAccount]`.
-/// Missing or malformed keys are silently skipped — the parser is best-effort and never throws.
 internal struct AccountParser {
 
-    /// Parses a `deviceInfo` dictionary (from `PingOne.getInfo(completion:)`) into
-    /// a flat list of `PingOneMfaAccount` values.
-    ///
-    /// - Parameter deviceInfo: The raw dictionary returned by `PingOne.getInfo`. May be `nil`.
-    /// - Returns: An array of parsed accounts (empty if `deviceInfo` is `nil`, empty, or malformed).
     internal static func parse(_ deviceInfo: [String: Any]?) -> [PingOneMfaAccount] {
-        guard let deviceInfo = deviceInfo else { return [] }
+        guard let deviceInfo,
+              let data = try? JSONSerialization.data(withJSONObject: deviceInfo),
+              let decoded = try? JSONDecoder().decode([String: RegionDto].self, from: data)
+        else { return [] }
 
-        return deviceInfo.flatMap { (regionName, regionValue) -> [PingOneMfaAccount] in
-            guard let regionDict = regionValue as? [String: Any],
-                  let users = regionDict["users"] as? [[String: Any]] else {
-                return []
-            }
-            return users.compactMap { userDict -> PingOneMfaAccount? in
-                guard
-                    let id = userDict["id"] as? String,
-                    let deviceDict = userDict["device"] as? [String: Any],
-                    let deviceId = deviceDict["id"] as? String,
-                    let environmentDict = userDict["environment"] as? [String: Any],
-                    let environmentId = environmentDict["id"] as? String
-                else {
-                    return nil
-                }
-                return PingOneMfaAccount(
-                    region: regionName,
-                    id: id,
-                    deviceId: deviceId,
-                    environmentId: environmentId
+        return decoded.flatMap { region, regionDto in
+            regionDto.users.map { user in
+                PingOneMfaAccount(
+                    region: region,
+                    id: user.id ?? "",
+                    deviceId: user.device?.id ?? "",
+                    environmentId: user.environment?.id ?? "",
+                    name: user.name?.given ?? "",
+                    family: user.name?.family ?? ""
                 )
             }
         }
     }
+}
+
+private struct RegionDto: Decodable {
+    var users: [UserDto] = []
+}
+
+private struct UserDto: Decodable {
+    var id: String?
+    var environment: IdContainer?
+    var device: IdContainer?
+    var name: NameDto?
+}
+
+private struct IdContainer: Decodable {
+    var id: String?
+}
+
+private struct NameDto: Decodable {
+    var given: String?
+    var family: String?
 }

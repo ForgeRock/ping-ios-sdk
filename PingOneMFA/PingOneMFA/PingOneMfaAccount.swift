@@ -10,22 +10,23 @@
 
 import Foundation
 
-/// A value type representing a registered MFA account.
+/// Represents a PingOne MFA account.
 public struct PingOneMfaAccount: Sendable, Equatable {
-    /// The geographic region of the account (top-level key in the deviceInfo response).
     public let region: String
-    /// The user identifier.
     public let id: String
-    /// The device identifier (`device.id` in the response).
     public let deviceId: String
-    /// The environment identifier (`environment.id` in the response).
     public let environmentId: String
+    public var name: String
+    public var family: String
+
 
     /// Initializes a new instance of `PingOneMfaAccount`.
-    public init(region: String, id: String, deviceId: String, environmentId: String) {
+    public init(region: String, id: String, deviceId: String, environmentId: String, name: String, family: String) {
         self.region = region
         self.id = id
         self.deviceId = deviceId
         self.environmentId = environmentId
+        self.name = name
+        self.family = family
     }
 }

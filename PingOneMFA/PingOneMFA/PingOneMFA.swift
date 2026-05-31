@@ -28,7 +28,7 @@ public class PingOneMFA {
     ///
     /// - Parameter geo: The geographic region for the PingOneMFA SDK.
     /// - Throws: `PingOneMFAError` if initialization fails.
-    public nonisolated static func initialize(geo: PingOneMFAGeo) async throws {
+    public nonisolated static func initialize(geo: Geo) async throws {
         if await isInitialized {
             return
         }
@@ -69,7 +69,7 @@ public class PingOneMFA {
     /// - Parameter pushToken: The raw APNS device token `Data` received in
     ///   `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)`.
     /// - Throws: `PingOneMFAError` if registration fails.
-    public nonisolated static func registerPushToken(_ pushToken: Data) async throws {
+    public nonisolated static func setDeviceToken(_ pushToken: Data) async throws {
         #if DEBUG
         let tokenType = PingOne.APNSDeviceTokenType.sandbox
         #else
@@ -147,26 +147,6 @@ public class PingOneMFA {
         }
     }
 
-    /// Parses the `title` and `message` from an APNS `userInfo` payload.
-    ///
-    /// Handles both the dict-alert form (`aps.alert` is `[String: Any]`) and the
-    /// string-alert form (`aps.alert` is `String`).
-    ///
-    /// - Parameter userInfo: The raw APNS `userInfo` dictionary.
-    /// - Returns: A tuple of `(title: String?, message: String?)`.
-    private nonisolated static func parseAPNSAlert(from userInfo: [AnyHashable: Any]) -> (title: String?, message: String?) {
-        guard let aps = userInfo["aps"] as? [String: Any] else {
-            return (title: nil, message: nil)
-        }
-        if let alert = aps["alert"] as? [String: Any] {
-            return (title: alert["title"] as? String, message: alert["body"] as? String)
-        } else if let alertString = aps["alert"] as? String {
-            return (title: nil, message: alertString)
-        } else {
-            return (title: nil, message: nil)
-        }
-    }
-
     /// Processes an incoming APNS push notification for MFA authentication.
     ///
     /// Extracts the `title` and `message` from `userInfo["aps"]["alert"]` (handling
@@ -177,7 +157,7 @@ public class PingOneMFA {
     /// - Returns: A `PushNotification` holding the upstream `NotificationObject` plus
     ///   the parsed title and message.
     /// - Throws: `PingOneMFAError` if the SDK call fails or returns no notification object.
-    public nonisolated static func processPushNotification(userInfo: [AnyHashable: Any]) async throws -> PushNotification {
+    public nonisolated static func processRemoteNotification(userInfo: [AnyHashable: Any]) async throws -> PushNotification {
         let (title, message) = parseAPNSAlert(from: userInfo)
 
         return try await withCheckedThrowingContinuation { continuation in
@@ -210,7 +190,7 @@ public class PingOneMFA {
     /// - Returns: A `PushNotification` when the SDK requires the app to present approve/deny UI,
     ///   or `nil` when the SDK handled the action internally.
     /// - Throws: `PingOneMFAError` if the SDK reports an error.
-    public nonisolated static func processNotificationAction(
+    public nonisolated static func processRemoteNotificationAction(
         identifier: String,
         authenticationMethod: String?,
         userInfo: [AnyHashable: Any]
@@ -243,7 +223,7 @@ public class PingOneMFA {
     ///
     /// - Returns: The mobile payload string.
     /// - Throws: `PingOneMFAError` if payload generation fails or returns no payload.
-    public nonisolated static func getMobilePayload() async throws -> String {
+    public nonisolated static func generateMobilePayload() async throws -> String {
         return try await withCheckedThrowingContinuation { continuation in
             PingOne.generateMobilePayload(completionHandler: { payload, error in
                 if let error = error {
@@ -271,4 +251,25 @@ public class PingOneMFA {
     internal static func reset() {
         isInitialized = false
     }
+
+     /// Parses the `title` and `message` from an APNS `userInfo` payload.
+    ///
+    /// Handles both the dict-alert form (`aps.alert` is `[String: Any]`) and the
+    /// string-alert form (`aps.alert` is `String`).
+    ///
+    /// - Parameter userInfo: The raw APNS `userInfo` dictionary.
+    /// - Returns: A tuple of `(title: String?, message: String?)`.
+    private nonisolated static func parseAPNSAlert(from userInfo: [AnyHashable: Any]) -> (title: String?, message: String?) {
+        guard let aps = userInfo["aps"] as? [String: Any] else {
+            return (title: nil, message: nil)
+        }
+        if let alert = aps["alert"] as? [String: Any] {
+            return (title: alert["title"] as? String, message: alert["body"] as? String)
+        } else if let alertString = aps["alert"] as? String {
+            return (title: nil, message: alertString)
+        } else {
+            return (title: nil, message: nil)
+        }
+    }
+
 }

@@ -175,7 +175,7 @@ final class AccountParserTests: XCTestCase {
         XCTAssertEqual(accounts.count, 0)
     }
 
-    func testParseMissingRequiredUserFields() {
+    func testParseMissingDeviceFieldYieldsEmptyDeviceId() {
         // Given — user dict is missing the "device" field
         let deviceInfo: [String: Any] = [
             "NorthAmerica": [
@@ -192,11 +192,14 @@ final class AccountParserTests: XCTestCase {
         // When
         let accounts = AccountParser.parse(deviceInfo)
 
-        // Then — user with missing device is silently skipped
-        XCTAssertEqual(accounts.count, 0)
+        // Then — user is still returned with empty deviceId
+        XCTAssertEqual(accounts.count, 1)
+        XCTAssertEqual(accounts[0].id, "user-1")
+        XCTAssertEqual(accounts[0].deviceId, "")
+        XCTAssertEqual(accounts[0].environmentId, "env-1")
     }
 
-    func testParseMissingEnvironmentId() {
+    func testParseMissingEnvironmentIdYieldsEmptyEnvironmentId() {
         // Given — environment dict exists but has no "id" key
         let deviceInfo: [String: Any] = [
             "NorthAmerica": [
@@ -213,24 +216,25 @@ final class AccountParserTests: XCTestCase {
         // When
         let accounts = AccountParser.parse(deviceInfo)
 
-        // Then — silently skipped
-        XCTAssertEqual(accounts.count, 0)
+        // Then — user is returned with empty environmentId
+        XCTAssertEqual(accounts.count, 1)
+        XCTAssertEqual(accounts[0].environmentId, "")
     }
 
-    func testParseMixedValidAndInvalidUsers() {
-        // Given — one valid user, one missing required device field
+    func testParseMixedUsersAllIncluded() {
+        // Given — one full user, one missing device field
         let deviceInfo: [String: Any] = [
             "NorthAmerica": [
                 "users": [
                     [
-                        "id": "valid-user",
+                        "id": "full-user",
                         "device": ["id": "valid-device"],
                         "environment": ["id": "valid-env"]
                     ],
                     [
-                        "id": "invalid-user",
-                        // "device" missing
-                        "environment": ["id": "invalid-env"]
+                        "id": "partial-user",
+                        // "device" missing — falls back to ""
+                        "environment": ["id": "partial-env"]
                     ]
                 ]
             ]
@@ -239,8 +243,10 @@ final class AccountParserTests: XCTestCase {
         // When
         let accounts = AccountParser.parse(deviceInfo)
 
-        // Then — only the valid user is returned
-        XCTAssertEqual(accounts.count, 1)
-        XCTAssertEqual(accounts[0].id, "valid-user")
+        // Then — both users are returned; partial user has empty deviceId
+        XCTAssertEqual(accounts.count, 2)
+        let partial = accounts.first { $0.id == "partial-user" }
+        XCTAssertNotNil(partial)
+        XCTAssertEqual(partial?.deviceId, "")
     }
 }
