@@ -12,9 +12,16 @@ import Foundation
 
 /// A value type representing a one-time passcode with its validity window.
 public struct OtpCodeInfo: Sendable, Equatable {
+    /// The current OTP code string to display to the user.
     public let code: String
+    /// The number of seconds remaining before this code expires.
     public let secondsRemaining: Int
 
+    /// Creates an `OtpCodeInfo` with the given code and remaining validity.
+    ///
+    /// - Parameters:
+    ///   - code: The current OTP code string.
+    ///   - secondsRemaining: Seconds until the code expires.
     public init(code: String, secondsRemaining: Int) {
         self.code = code
         self.secondsRemaining = secondsRemaining

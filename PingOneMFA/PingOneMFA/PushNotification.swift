@@ -13,11 +13,14 @@ internal import PingOneSDK
 
 public typealias MFAPushNotification = PushNotification
 
-/// Simple model for a push notification.
+/// A push notification received from PingOne MFA representing an authentication request.
 public struct PushNotification: @unchecked Sendable, Identifiable {
+    /// A unique identifier for this notification instance.
     public let id: String = UUID().uuidString
     internal let notificationObject: NotificationObject
+    /// The notification title, if provided by the server.
     public let title: String?
+    /// The notification body message, if provided by the server.
     public let message: String?
 
     internal init(notificationObject: NotificationObject, title: String?, message: String?) {
@@ -63,6 +66,7 @@ public struct PushNotification: @unchecked Sendable, Identifiable {
         }
     }
 
+    /// `true` when this notification represents a cancellation of an in-progress authentication.
     public var isCancelAuthentication: Bool {
         return notificationObject.notificationType == .authCanceled
     }
@@ -74,6 +78,11 @@ public struct PushNotification: @unchecked Sendable, Identifiable {
     }
 
     /// The interaction model required by this notification.
+    ///
+    /// Use this to determine the UI flow:
+    /// - `.dry` — no user interaction needed; the authentication completes silently.
+    /// - `.challenge` — present the number-matching challenge from `getNumbersChallenge`.
+    /// - `.default` — standard approve/deny prompt.
     public var pushType: PushType {
         if notificationObject.notificationType == .done {
             return .dry

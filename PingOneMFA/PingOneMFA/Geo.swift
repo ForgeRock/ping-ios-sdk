@@ -11,12 +11,19 @@
 import Foundation
 
 /// Geographic region selector for the PingOneMFA SDK.
-/// Maps 1:1 to `PingOneSDK.PingOneGeo` without leaking the upstream module.
+///
+/// Specifies the PingOne cloud region to connect to. Maps 1:1 to `PingOneSDK.PingOneGeo`
+/// without leaking the upstream module.
 public enum Geo: Sendable, Equatable {
+    /// The North America region.
     case northAmerica
+    /// The Europe region.
     case europe
+    /// The Australia region.
     case australia
+    /// The Canada region.
     case canada
+    /// The Singapore region.
     case singapore
 }
 
