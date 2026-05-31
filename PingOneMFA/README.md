@@ -17,6 +17,15 @@ The `PingOneMFA` module wraps the PingOne MFA native SDK (`PingOneSDK`) behind a
 
 ---
 
+## Getting Started
+
+### Prerequisites
+
+- iOS 15 or higher
+- A PingOne environment with push notifications and/or MFA configured. For documentation on setting up PingOne MFA, see [PingOne MFA documentation](https://docs.pingidentity.com/pingone/strong_authentication_mfa/p1_strong_authentication_configure_mobile_applications.html).
+
+---
+
 ## Architecture Overview
 
 ```
