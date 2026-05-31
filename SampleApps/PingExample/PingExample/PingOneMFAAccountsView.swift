@@ -137,20 +137,18 @@ private struct PingOneMFAAccountCardView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(account.id)
+                    Text("\(account.name) \(account.family)")
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.primary)
 
-                    Text("Env: \(account.environmentId)")
+                    Text("Region: \(account.region)")
                         .font(.system(size: 12))
                         .foregroundColor(.secondary)
 
-                    Text(account.region)
+                    Text("ID: \(account.id)")
                         .font(.system(size: 11))
                         .foregroundColor(.secondary)
                 }
-
-                Spacer()
             }
             .padding(16)
         }
