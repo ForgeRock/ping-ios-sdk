@@ -21,6 +21,7 @@ final class PingOneMFANotificationViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
     @Published var showSuccessAlert: Bool = false
+    @Published var isDenied: Bool = false
 
     init(notification: PushNotification) {
         self.notification = notification
@@ -48,6 +49,7 @@ final class PingOneMFANotificationViewModel: ObservableObject {
             errorMessage = nil
             do {
                 try await notification.denyNotification()
+                isDenied = true
                 showSuccessAlert = true
             } catch {
                 errorMessage = error.localizedDescription
@@ -112,10 +114,10 @@ struct PingOneMFANotificationView: View {
                 dismiss()
             }
         }
-        .alert("Approved", isPresented: $viewModel.showSuccessAlert) {
+        .alert(viewModel.isDenied ? "Denied" : "Approved", isPresented: $viewModel.showSuccessAlert) {
             Button("OK") { dismiss() }
         } message: {
-            Text("Authentication approved successfully")
+            Text(viewModel.isDenied ? "Authentication denied successfully" : "Authentication approved successfully")
         }
         .alert("Error", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
