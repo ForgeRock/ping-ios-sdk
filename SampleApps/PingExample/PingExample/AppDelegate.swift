@@ -128,8 +128,12 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         Task {
             do {
                 try await ensurePingOneMFAInitialized()
-                try await PingOneMFA.setDeviceToken(deviceToken)
-                print("PingOneMFA device token registered successfully")
+                if let errors = await PingOneMFA.setDeviceToken(deviceToken), !errors.isEmpty {
+                    let descriptions = errors.map { $0.localizedDescription }.joined(separator: "; ")
+                    print("Failed to register PingOneMFA device token: \(descriptions)")
+                } else {
+                    print("PingOneMFA device token registered successfully")
+                }
             } catch let error as NSError where error.domain == "AppDelegate" {
                 print("Failed to register PingOneMFA device token: PingOneMFA not yet initialized. Will retry when client is ready.")
             } catch {

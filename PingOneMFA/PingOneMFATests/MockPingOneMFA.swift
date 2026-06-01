@@ -79,11 +79,12 @@ class MockPingOneMFA {
         }
     }
 
-    static func registerPushToken(_ pushToken: Data) async throws {
+    static func setDeviceToken(_ pushToken: Data) async -> [PingOneMFAError]? {
         registerPushTokenCalled = true
         if shouldThrowError {
-            throw PingOneMFAError(errorMessage)
+            return [PingOneMFAError(errorMessage)]
         }
+        return nil
     }
 
     static func pair(pairingKey: String) async throws {
@@ -93,12 +94,12 @@ class MockPingOneMFA {
         }
     }
 
-    static func getDeviceInfo() async throws -> [PingOneMfaAccount] {
+    static func getDeviceInfo() async -> (accounts: [PingOneMfaAccount], errors: [PingOneMFAError]?) {
         getDeviceInfoCalled = true
         if shouldThrowError {
-            throw PingOneMFAError(errorMessage)
+            return (accountsReturnValue, [PingOneMFAError(errorMessage)])
         }
-        return accountsReturnValue
+        return (accountsReturnValue, nil)
     }
 
     static func getOneTimePasscode() async throws -> OtpCodeInfo {

@@ -68,21 +68,18 @@ public class PingOneMFA {
     ///
     /// - Parameter pushToken: The raw APNS device token `Data` received in
     ///   `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)`.
-    /// - Throws: `PingOneMFAError` if registration fails.
-    public nonisolated static func setDeviceToken(_ pushToken: Data) async throws {
+    /// - Returns: `nil` if registration succeeded, otherwise an array of
+    ///   `PingOneMFAError` values reported by the upstream SDK.
+    public nonisolated static func setDeviceToken(_ pushToken: Data) async -> [PingOneMFAError]? {
         #if DEBUG
         let tokenType = PingOne.APNSDeviceTokenType.sandbox
         #else
         let tokenType = PingOne.APNSDeviceTokenType.production
         #endif
 
-        return try await withCheckedThrowingContinuation { continuation in
+        return await withCheckedContinuation { continuation in
             PingOne.setDeviceToken(token: pushToken, type: tokenType) { errors in
-                if let errors = errors, let first = errors.first {
-                    continuation.resume(throwing: PingOneMFAError(first))
-                } else {
-                    continuation.resume()
-                }
+                continuation.resume(returning: errors?.map { PingOneMFAError($0) })
             }
         }
     }
@@ -103,18 +100,21 @@ public class PingOneMFA {
         }
     }
 
-    /// Returns all registered MFA accounts for this device.
+    /// Returns all registered MFA accounts for this device, along with any non-fatal
+    /// errors reported by the upstream SDK.
     ///
-    /// - Returns: An array of `PingOneMfaAccount` values parsed from the upstream `deviceInfo` payload.
-    /// - Throws: `PingOneMFAError` if the underlying SDK call returns errors.
-    public nonisolated static func getDeviceInfo() async throws -> [PingOneMfaAccount] {
-        return try await withCheckedThrowingContinuation { continuation in
+    /// The upstream `PingOne.getInfo` may return both partial `deviceInfo` data and a
+    /// list of errors; callers receive both so they can decide how to surface failures.
+    ///
+    /// - Returns: A tuple `(accounts, errors)` where `accounts` is the parsed
+    ///   `PingOneMfaAccount` array and `errors` is `nil` if the SDK reported no errors,
+    ///   otherwise an array of `PingOneMFAError` values.
+    public nonisolated static func getDeviceInfo() async -> (accounts: [PingOneMfaAccount], errors: [PingOneMFAError]?) {
+        return await withCheckedContinuation { continuation in
             PingOne.getInfo(completion: { deviceInfo, errors in
-                if let errors = errors, let first = errors.first {
-                    continuation.resume(throwing: PingOneMFAError(first))
-                } else {
-                    continuation.resume(returning: AccountParser.parse(deviceInfo))
-                }
+                let accounts = AccountParser.parse(deviceInfo)
+                let mappedErrors = errors?.map { PingOneMFAError($0) }
+                continuation.resume(returning: (accounts, mappedErrors))
             })
         }
     }

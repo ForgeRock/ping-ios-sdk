@@ -63,16 +63,17 @@ final class PingOneMFATests: XCTestCase {
         XCTAssertEqual(MockPingOneMFA.lastGeo, .northAmerica)
     }
 
-    func test07_MockRegisterPushTokenHappyPath() async throws {
+    func test07_MockSetDeviceTokenHappyPath() async {
         // Given
         MockPingOneMFA.shouldThrowError = false
         let token = Data([0x01, 0x02, 0x03])
 
         // When
-        try await MockPingOneMFA.registerPushToken(token)
+        let errors = await MockPingOneMFA.setDeviceToken(token)
 
         // Then
         XCTAssertTrue(MockPingOneMFA.registerPushTokenCalled)
+        XCTAssertNil(errors)
     }
 
     func test08_MockPairHappyPath() async throws {
@@ -99,12 +100,13 @@ final class PingOneMFATests: XCTestCase {
         MockPingOneMFA.accountsReturnValue = [expectedAccount]
 
         // When
-        let accounts = try await MockPingOneMFA.getDeviceInfo()
+        let result = await MockPingOneMFA.getDeviceInfo()
 
         // Then
         XCTAssertTrue(MockPingOneMFA.getDeviceInfoCalled)
-        XCTAssertEqual(accounts.count, 1)
-        XCTAssertEqual(accounts[0], expectedAccount)
+        XCTAssertEqual(result.accounts.count, 1)
+        XCTAssertEqual(result.accounts[0], expectedAccount)
+        XCTAssertNil(result.errors)
     }
 
     func test10_MockGetOneTimePasscodeHappyPath() async throws {
@@ -151,20 +153,18 @@ final class PingOneMFATests: XCTestCase {
         }
     }
 
-    func test13_MockThrowsErrorOnGetDeviceInfo() async {
+    func test13_MockReturnsErrorsOnGetDeviceInfo() async {
         // Given
         MockPingOneMFA.shouldThrowError = true
         MockPingOneMFA.errorMessage = "Get accounts failed"
 
-        // When / Then
-        do {
-            _ = try await MockPingOneMFA.getDeviceInfo()
-            XCTFail("Should have thrown an error")
-        } catch let error as PingOneMFAError {
-            XCTAssertEqual(error.message, "Get accounts failed")
-        } catch {
-            XCTFail("Wrong error type: \(error)")
-        }
+        // When
+        let result = await MockPingOneMFA.getDeviceInfo()
+
+        // Then
+        XCTAssertTrue(MockPingOneMFA.getDeviceInfoCalled)
+        XCTAssertNotNil(result.errors)
+        XCTAssertEqual(result.errors?.first?.message, "Get accounts failed")
     }
 
     // MARK: - Thread Safety Tests
