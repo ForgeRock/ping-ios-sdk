@@ -149,13 +149,15 @@ class PollingCollectorIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
         } else { XCTFail("Expected .timedOut, got \(statuses[1])") }
         XCTAssertEqual(0, pollingCollector.retriesAllowed)
 
-        // SDKS-5095: iOS SDK returns FailureNode here instead of ErrorNode (Android parity fix pending)
+        // SDKS-5095: iOS SDK returns FailureNode instead of ErrorNode (Android parity fix pending).
+        // Assert the current actual type so regressions are caught until the fix lands.
 //        guard let timedOutError = await node.next() as? ErrorNode else {
 //            XCTFail("Expected ErrorNode, got FailureNode")
 //            return
 //        }
 //        XCTAssertEqual("timedOut", timedOutError.message.trimmingCharacters(in: .whitespacesAndNewlines))
-        _ = await node.next()
+        let timeoutResult = await node.next()
+        XCTAssertTrue(timeoutResult is FailureNode, "SDKS-5095: expected FailureNode until iOS/Android parity is fixed")
     }
 
     /// User clicks "Finish" after one poll cycle, bypassing remaining retries.
@@ -273,13 +275,15 @@ class PollingCollectorIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
             XCTAssertEqual("timedOut", pollingCollector.value)
         } else { XCTFail("Expected .timedOut, got \(statuses[3])") }
 
-        // SDKS-5095: iOS SDK returns FailureNode here instead of ErrorNode (Android parity fix pending)
+        // SDKS-5095: iOS SDK returns FailureNode instead of ErrorNode (Android parity fix pending).
+        // Assert the current actual type so regressions are caught until the fix lands.
 //        guard let timedOutError = await node.next() as? ErrorNode else {
 //            XCTFail("Expected ErrorNode, got FailureNode")
 //            return
 //        }
 //        XCTAssertEqual("timedOut", timedOutError.message.trimmingCharacters(in: .whitespacesAndNewlines))
-        _ = await node.next()
+        let timeoutResult = await node.next()
+        XCTAssertTrue(timeoutResult is FailureNode, "SDKS-5095: expected FailureNode until iOS/Android parity is fixed")
     }
 
     /// OOB approval is simulated by GETting the magic link (from the LabelCollector) on a
@@ -417,13 +421,15 @@ class PollingCollectorIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
             XCTAssertEqual("timedOut", pollingCollector.value)
         } else { XCTFail("Expected .timedOut as last status, got \(lastStatus)") }
 
-        // SDKS-5095: iOS SDK returns FailureNode here instead of ErrorNode (Android parity fix pending)
+        // SDKS-5095: iOS SDK returns FailureNode instead of ErrorNode (Android parity fix pending).
+        // Assert the current actual type so regressions are caught until the fix lands.
 //        guard let timedOutError = await node.next() as? ErrorNode else {
 //            XCTFail("Expected ErrorNode, got FailureNode")
 //            return
 //        }
 //        XCTAssertEqual("timedOut", timedOutError.message.trimmingCharacters(in: .whitespacesAndNewlines))
-        _ = await node.next()
+        let timeoutResult = await node.next()
+        XCTAssertTrue(timeoutResult is FailureNode, "SDKS-5095: expected FailureNode until iOS/Android parity is fixed")
     }
 
     /// Simulates scanning the QR code by decoding the URL from the imageData and GETting it
