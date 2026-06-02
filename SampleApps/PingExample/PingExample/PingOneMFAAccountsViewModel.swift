@@ -42,10 +42,14 @@ class PingOneMFAAccountsViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
 
-        let result = await PingOneMFA.getDeviceInfo()
-        accounts = result.accounts
-        if let errors = result.errors, !errors.isEmpty {
-            errorMessage = "Failed to load accounts: " + errors.map { $0.localizedDescription }.joined(separator: "; ")
+        do {
+            let result = try await PingOneMFA.getDeviceInfo()
+            accounts = result.accounts
+            if let errors = result.errors, !errors.isEmpty {
+                errorMessage = "Failed to load accounts: " + errors.map { $0.localizedDescription }.joined(separator: "; ")
+            }
+        } catch {
+            errorMessage = "Failed to load accounts: \(error.localizedDescription)"
         }
 
         isLoading = false
