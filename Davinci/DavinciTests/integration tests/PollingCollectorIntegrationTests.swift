@@ -23,7 +23,7 @@ class PollingCollectorIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
     private var daVinci: DaVinci!
 
     override func setUp() async throws {
-        self.configFileName = "Config"
+        self.configFileName = "ConfigNew"
         try await super.setUp()
 
         // Clear all shared cookies before each test. The polling flows never produce a
@@ -37,11 +37,11 @@ class PollingCollectorIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
         daVinci = DaVinci.createDaVinci { config in
             config.logger = LogManager.standard
             config.module(PingDavinci.OidcModule.config) { oidcValue in
-                oidcValue.clientId = "a6859a12-5e6e-4f64-96bb-cc8577706bee"
-                oidcValue.scopes = Set(["openid", "email", "address", "phone", "profile"])
-                oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
+                oidcValue.clientId = self.config.clientId
+                oidcValue.scopes = Set(self.config.scopes)
+                oidcValue.redirectUri = self.config.redirectUri
                 oidcValue.acrValues = "fae6bc3d08a5c4f5b8ff95175b117278"
-                oidcValue.discoveryEndpoint = "https://auth.pingone.ca/300c4f2a-39d4-4ba9-a18a-f6de246006f4/as/.well-known/openid-configuration"
+                oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
             }
         }
 
