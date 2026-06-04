@@ -77,6 +77,7 @@
 		EC727A2E2E019243005D9E28 /* PingJourney.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A242E019243005D9E28 /* PingJourney.framework */; };
 		EC727A5D2E019254005D9E28 /* Journey.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727A5B2E019254005D9E28 /* Journey.swift */; };
 		EC727A602E019258005D9E28 /* JourneyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC727A5E2E019258005D9E28 /* JourneyTests.swift */; };
+		SDKS50660002000000000002 /* JourneyJsonConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50660002000000000001 /* JourneyJsonConfigTests.swift */; };
 		EC727A652E0192FA005D9E28 /* Journey.h in Headers */ = {isa = PBXBuildFile; fileRef = EC727A642E0192FA005D9E28 /* Journey.h */; };
 		EC727A662E0192FA005D9E28 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = EC727A632E0192FA005D9E28 /* PrivacyInfo.xcprivacy */; };
 		EC727A922E02DCA9005D9E28 /* PingOidc.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC727A912E02DCA9005D9E28 /* PingOidc.framework */; };
@@ -209,6 +210,7 @@
 		EC727A2D2E019243005D9E28 /* JourneyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JourneyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC727A5B2E019254005D9E28 /* Journey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Journey.swift; sourceTree = "<group>"; };
 		EC727A5E2E019258005D9E28 /* JourneyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyTests.swift; sourceTree = "<group>"; };
+		SDKS50660002000000000001 /* JourneyJsonConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyJsonConfigTests.swift; sourceTree = "<group>"; };
 		EC727A632E0192FA005D9E28 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		EC727A642E0192FA005D9E28 /* Journey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Journey.h; sourceTree = "<group>"; };
 		EC727A912E02DCA9005D9E28 /* PingOidc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOidc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -356,6 +358,7 @@
 				EC2326A32E0D670D00634A50 /* JourneyContinueNodeTests.swift */,
 				ECEFDC242ED4AF3C00B56E87 /* MetadataCallbackSpecializationTests.swift */,
 				EC727A5E2E019258005D9E28 /* JourneyTests.swift */,
+				SDKS50660002000000000001 /* JourneyJsonConfigTests.swift */,
 				EC2326A52E0D744A00634A50 /* JourneyUserTests.swift */,
 				AA4785051F0000000000AA05 /* OidcDeviceApprovalTests.swift */,
 				A5CFC86A2E42920A00CBFC3B /* Callbacks */,
@@ -618,6 +621,7 @@
 				A5CFC8A42E43A35300CBFC3B /* ValidatedUsernameCallbackTests.swift in Sources */,
 				EC2326A22E0D65A800634A50 /* PasswordCallbackTests.swift in Sources */,
 				EC727A602E019258005D9E28 /* JourneyTests.swift in Sources */,
+				SDKS50660002000000000002 /* JourneyJsonConfigTests.swift in Sources */,
 				A5CFC89E2E43A0E600CBFC3B /* TextInputCallbackTests.swift in Sources */,
 				A50585152E3D05FC004813B5 /* ConfirmationCallbackTests.swift in Sources */,
 				A5CFC87E2E439D3800CBFC3B /* StringAttributeInputCallbackTests.swift in Sources */,

@@ -16,6 +16,7 @@ struct ConfigurationListView: View {
     @State private var showEditor = false
     @State private var configToDelete: Configuration?
     @State private var showDeleteConfirmation = false
+    @State private var previewingJsonConfig: Configuration?
     
     var body: some View {
         ScrollView {
@@ -31,6 +32,9 @@ struct ConfigurationListView: View {
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("Configurations")
+        .sheet(item: $previewingJsonConfig) { config in
+            JsonConfigPreviewView(config: config)
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink {
@@ -119,7 +123,14 @@ struct ConfigurationListView: View {
             }
             .buttonStyle(PlainButtonStyle())
             
-            if config.isDefault {
+            if config.isJsonBased {
+                Button {
+                    previewingJsonConfig = config
+                } label: {
+                    configRowContent(config: config, host: host)
+                }
+                .buttonStyle(PlainButtonStyle())
+            } else if config.isDefault {
                 configRowContent(config: config, host: host)
             } else {
                 NavigationLink {
@@ -133,12 +144,14 @@ struct ConfigurationListView: View {
         .padding(16)
         .contentShape(Rectangle())
         .contextMenu {
-            Button {
-                duplicateConfiguration(config)
-            } label: {
-                Label("Duplicate", systemImage: "doc.on.doc")
+            if !config.isJsonBased {
+                Button {
+                    duplicateConfiguration(config)
+                } label: {
+                    Label("Duplicate", systemImage: "doc.on.doc")
+                }
             }
-            if !config.isDefault {
+            if !config.isDefault && !config.isJsonBased {
                 Button(role: .destructive) {
                     configToDelete = config
                     showDeleteConfirmation = true
@@ -165,9 +178,22 @@ struct ConfigurationListView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             
             VStack(alignment: .leading, spacing: 2) {
-                Text(config.name)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.primary)
+                HStack(spacing: 6) {
+                    Text(config.name)
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.primary)
+                    if config.isJsonBased {
+                        Text("JSON")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundColor(.themeButtonBackground)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .background(
+                                Capsule()
+                                    .strokeBorder(Color.themeButtonBackground, lineWidth: 1)
+                            )
+                    }
+                }
                 Text(host)
                     .font(.system(size: 13))
                     .foregroundColor(.secondary)
@@ -175,9 +201,9 @@ struct ConfigurationListView: View {
                     .font(.system(size: 13))
                     .foregroundColor(.secondary)
             }
-            
+
             Spacer()
-            
+
             if !config.isDefault {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 13, weight: .semibold))

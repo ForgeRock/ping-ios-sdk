@@ -194,6 +194,46 @@ public extension Journey {
         return await signOff()
     }
     
+    /// Creates a Journey instance from a JSON dictionary.
+    ///
+    /// This factory parses and validates a platform-neutral JSON configuration and
+    /// delegates to `createJourney(block:)` with the extracted values. Unknown fields
+    /// are silently ignored for forward compatibility.
+    ///
+    /// - Parameter json: A `[String: Any]` dictionary conforming to the unified SDK
+    ///   configuration schema (see design doc for field reference).
+    /// - Returns: `.success(Journey)` on valid input, `.failure(JsonConfigError)` if a
+    ///   required field is absent or a field has the wrong type.
+    static func createJourney(json: [String: Any]) -> Result<Journey, Error> {
+        do {
+            let p = JsonConfigParser(json)
+            let serverUrl: String = try p.required(JsonConfigKey.serverUrl, field: JsonConfigKey.serverUrl)
+            let realm      = try p.optional(JsonConfigKey.realm,      field: JsonConfigKey.realm,      default: JourneyConstants.realm)
+            let cookieName = try p.optional(JsonConfigKey.cookieName, field: JsonConfigKey.cookieName, default: JourneyConstants.cookie)
+            let timeout    = try p.timeoutSeconds()
+            let logger     = try p.logLevel()
+            let oidcDict: [String: Any] = try p.required(JsonConfigKey.oidc, field: JsonConfigKey.oidc)
+
+            let oidcConfig = OidcClientConfig()
+            oidcConfig.logger = logger
+            try oidcConfig.apply(json: oidcDict)
+
+            let journey = Journey.createJourney { journeyConfig in
+                journeyConfig.serverUrl = serverUrl
+                journeyConfig.realm = realm
+                journeyConfig.cookie = cookieName
+                journeyConfig.timeout = timeout
+                journeyConfig.logger = logger
+                journeyConfig.module(OidcModule.config) { moduleOidcConfig in
+                    moduleOidcConfig.update(with: oidcConfig)
+                }
+            }
+            return .success(journey)
+        } catch {
+            return .failure(error)
+        }
+    }
+
     /// Sends a request using the configured HTTP client and wraps the response.
     ///
     /// - Parameter request: The request to send.

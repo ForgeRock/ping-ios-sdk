@@ -2,7 +2,7 @@
 //  StandardLogger.swift
 //  PingLogger
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -74,4 +74,25 @@ extension LogManager {
     public static var standard: Logger { return StandardLogger() }
     /// Static logger of `WarningLogger` type
     public static var warning: Logger { return WarningLogger() }
+
+    /// Returns a `Logger` for the given log-level string from the unified JSON configuration.
+    ///
+    /// | Value          | Logger          |
+    /// |----------------|-----------------|
+    /// | `"NONE"` / nil | `NoneLogger`    |
+    /// | `"ERROR"`      | `WarningLogger` |
+    /// | `"WARN"`       | `WarningLogger` |
+    /// | `"INFO"`       | `StandardLogger`|
+    /// | `"DEBUG"`      | `StandardLogger`|
+    /// | unknown        | `NoneLogger`    |
+    public static func logger(forLevel level: String) -> Logger {
+        switch level.uppercased() {
+        case "ERROR", "WARN":
+            return warning
+        case "INFO", "DEBUG":
+            return standard
+        default:
+            return none
+        }
+    }
 }
