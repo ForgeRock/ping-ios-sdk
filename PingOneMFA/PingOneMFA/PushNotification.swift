@@ -74,11 +74,13 @@ public struct PushNotification: @unchecked Sendable, Identifiable {
     /// The list of number options presented to the user when `pushType` is `.challenge`.
     /// Returns an empty array when number matching is not enabled.
     public var getNumbersChallenge: [Int] {
-        @inline(never)
-        func read() -> [Int] {
-            return notificationObject.numberMatchingOptions
-        }
-        return read()
+        return Self.readNumbersChallenge(from: notificationObject)
+    }
+
+    @inline(never)
+    @_optimize(none)
+    private static func readNumbersChallenge(from object: NotificationObject) -> [Int] {
+        return object.numberMatchingOptions
     }
 
     /// The interaction model required by this notification.

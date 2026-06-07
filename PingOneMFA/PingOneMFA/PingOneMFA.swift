@@ -254,6 +254,7 @@ public class PingOneMFA {
     ///
     /// - Returns: The `Set<UNNotificationCategory>` provided by the binary PingOneSDK.
     @inline(never)
+    @_optimize(none)
     public nonisolated static func getNotificationCategories() -> Set<UNNotificationCategory> {
         return PingOne.getUNNotificationCategories() as Set<UNNotificationCategory>
     }
