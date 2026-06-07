@@ -253,6 +253,7 @@ public class PingOneMFA {
     /// `UNUserNotificationCenter` so that actionable banner notifications can be delivered.
     ///
     /// - Returns: The `Set<UNNotificationCategory>` provided by the binary PingOneSDK.
+    @inline(never)
     public nonisolated static func getNotificationCategories() -> Set<UNNotificationCategory> {
         return PingOne.getUNNotificationCategories() as Set<UNNotificationCategory>
     }
