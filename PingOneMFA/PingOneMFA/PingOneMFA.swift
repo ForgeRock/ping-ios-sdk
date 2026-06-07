@@ -9,7 +9,7 @@
 
 import Foundation
 import UserNotifications
-internal import PingOneSDK
+public import PingOneSDK
 
 /// Actor to manage PingOneMFA SDK state with thread safety
 @globalActor
@@ -253,8 +253,6 @@ public class PingOneMFA {
     /// `UNUserNotificationCenter` so that actionable banner notifications can be delivered.
     ///
     /// - Returns: The `Set<UNNotificationCategory>` provided by the binary PingOneSDK.
-    @inline(never)
-    @_optimize(none)
     public nonisolated static func getNotificationCategories() -> Set<UNNotificationCategory> {
         return PingOne.getUNNotificationCategories() as Set<UNNotificationCategory>
     }

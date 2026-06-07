@@ -9,7 +9,7 @@
 //
 
 import Foundation
-internal import PingOneSDK
+public import PingOneSDK
 
 public typealias MFAPushNotification = PushNotification
 
@@ -74,13 +74,7 @@ public struct PushNotification: @unchecked Sendable, Identifiable {
     /// The list of number options presented to the user when `pushType` is `.challenge`.
     /// Returns an empty array when number matching is not enabled.
     public var getNumbersChallenge: [Int] {
-        return Self.readNumbersChallenge(from: notificationObject)
-    }
-
-    @inline(never)
-    @_optimize(none)
-    private static func readNumbersChallenge(from object: NotificationObject) -> [Int] {
-        return object.numberMatchingOptions
+        return notificationObject.numberMatchingOptions
     }
 
     /// The interaction model required by this notification.
