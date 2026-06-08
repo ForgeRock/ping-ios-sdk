@@ -9,7 +9,7 @@
 
 import Foundation
 import UserNotifications
-public import PingOneSDK
+import PingOneSDK
 
 /// Actor to manage PingOneMFA SDK state with thread safety
 @globalActor

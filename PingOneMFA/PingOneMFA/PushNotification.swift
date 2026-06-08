@@ -9,7 +9,7 @@
 //
 
 import Foundation
-public import PingOneSDK
+import PingOneSDK
 
 public typealias MFAPushNotification = PushNotification
 
