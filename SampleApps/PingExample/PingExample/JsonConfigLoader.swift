@@ -14,8 +14,9 @@ import PingOidc
 
 enum JsonConfigLoader {
     /// Loads all bundled unified SDK configuration JSON files from the Configs/ folder in Bundle.main.
-    /// Each file is emitted as its natural type (Journey or DaVinci) AND as an OIDC (Web) entry,
-    /// since the unified JSON schema is compatible with all three SDK types.
+    /// Each file is emitted as its natural type (Journey or DaVinci). Files that also contain an
+    /// `oidc` sub-dict additionally emit OidcWeb and Device entries; Journey-only files (no `oidc`)
+    /// emit only the Journey entry.
     static func load() -> [Configuration] {
         guard let urls = Bundle.main.urls(forResourcesWithExtension: "json", subdirectory: "Configs") else {
             return []
@@ -34,35 +35,55 @@ enum JsonConfigLoader {
             LogManager.logger.w("JsonConfigLoader: '\(filename)' is not valid JSON", error: nil)
             return []
         }
-        guard let oidc = json[JsonConfigKey.oidc] as? [String: Any] else {
+        let name = nameFromFilename(filename)
+        let journeyDict = json[JsonConfigKey.journey] as? [String: Any]
+        let oidc = json[JsonConfigKey.oidc] as? [String: Any]
+        let naturalType: ConfigType = journeyDict != nil ? .journey : .davinci
+
+        // For Journey configs, serverUrl is required inside the journey sub-dict
+        if naturalType == .journey {
+            guard journeyDict?[JsonConfigKey.serverUrl] as? String != nil else {
+                LogManager.logger.w("JsonConfigLoader: '\(filename)' missing required 'journey.serverUrl'", error: nil)
+                return []
+            }
+        }
+
+        // For non-Journey configs, oidc is required
+        if naturalType != .journey && oidc == nil {
             LogManager.logger.w("JsonConfigLoader: '\(filename)' missing required 'oidc' object", error: nil)
             return []
         }
-        guard let clientId = oidc[JsonConfigKey.clientId] as? String else {
-            LogManager.logger.w("JsonConfigLoader: '\(filename)' missing required 'oidc.clientId'", error: nil)
-            return []
-        }
-        guard let discoveryEndpoint = oidc[JsonConfigKey.discoveryEndpoint] as? String else {
-            LogManager.logger.w("JsonConfigLoader: '\(filename)' missing required 'oidc.discoveryEndpoint'", error: nil)
-            return []
-        }
-        guard let rawScopes = oidc[JsonConfigKey.scopes] as? [String] else {
-            LogManager.logger.w("JsonConfigLoader: '\(filename)' missing required 'oidc.scopes'", error: nil)
-            return []
-        }
-        guard let redirectUri = oidc[JsonConfigKey.redirectUri] as? String else {
-            LogManager.logger.w("JsonConfigLoader: '\(filename)' missing required 'oidc.redirectUri'", error: nil)
-            return []
+
+        // Validate oidc fields when present
+        if let oidc {
+            guard oidc[JsonConfigKey.clientId] as? String != nil else {
+                LogManager.logger.w("JsonConfigLoader: '\(filename)' missing required 'oidc.clientId'", error: nil)
+                return []
+            }
+            guard oidc[JsonConfigKey.discoveryEndpoint] as? String != nil else {
+                LogManager.logger.w("JsonConfigLoader: '\(filename)' missing required 'oidc.discoveryEndpoint'", error: nil)
+                return []
+            }
+            guard oidc[JsonConfigKey.scopes] as? [String] != nil else {
+                LogManager.logger.w("JsonConfigLoader: '\(filename)' missing required 'oidc.scopes'", error: nil)
+                return []
+            }
+            guard oidc[JsonConfigKey.redirectUri] as? String != nil else {
+                LogManager.logger.w("JsonConfigLoader: '\(filename)' missing required 'oidc.redirectUri'", error: nil)
+                return []
+            }
         }
 
-        let name = nameFromFilename(filename)
-        let naturalType: ConfigType = json[JsonConfigKey.serverUrl] != nil ? .journey : .davinci
-        let serverUrl = json[JsonConfigKey.serverUrl] as? String
-        let realm = json[JsonConfigKey.realm] as? String
-        let cookieName = json[JsonConfigKey.cookieName] as? String
-        let signOutUri = oidc[JsonConfigKey.signOutRedirectUri] as? String
-        let acrValues = oidc[JsonConfigKey.acrValues] as? String
-        let environment = deriveEnvironment(from: discoveryEndpoint)
+        let clientId = oidc?[JsonConfigKey.clientId] as? String ?? ""
+        let discoveryEndpoint = oidc?[JsonConfigKey.discoveryEndpoint] as? String ?? ""
+        let rawScopes = oidc?[JsonConfigKey.scopes] as? [String] ?? []
+        let redirectUri = oidc?[JsonConfigKey.redirectUri] as? String ?? ""
+        let serverUrl = journeyDict?[JsonConfigKey.serverUrl] as? String
+        let realm = journeyDict?[JsonConfigKey.realm] as? String
+        let cookieName = journeyDict?[JsonConfigKey.cookieName] as? String
+        let signOutUri = oidc?[JsonConfigKey.signOutRedirectUri] as? String
+        let acrValues = oidc?[JsonConfigKey.acrValues] as? String
+        let environment = discoveryEndpoint.isEmpty ? "" : deriveEnvironment(from: discoveryEndpoint)
 
         let base = Configuration(
             name: name,
@@ -79,6 +100,11 @@ enum JsonConfigLoader {
             acrValues: acrValues,
             jsonFileName: filename
         )
+
+        // Only emit OidcWeb and Device entries when oidc is present
+        guard let oidc else {
+            return [base]
+        }
 
         var oidcWeb = base
         oidcWeb.type = .oidcWeb

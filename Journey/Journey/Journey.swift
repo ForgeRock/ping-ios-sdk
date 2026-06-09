@@ -207,16 +207,22 @@ public extension Journey {
     static func createJourney(json: [String: Any]) -> Result<Journey, Error> {
         do {
             let p = JsonConfigParser(json)
-            let serverUrl: String = try p.required(JsonConfigKey.serverUrl, field: JsonConfigKey.serverUrl)
-            let realm      = try p.optional(JsonConfigKey.realm,      field: JsonConfigKey.realm,      default: JourneyConstants.realm)
-            let cookieName = try p.optional(JsonConfigKey.cookieName, field: JsonConfigKey.cookieName, default: JourneyConstants.cookie)
+            let journeyDict: [String: Any] = try p.required(JsonConfigKey.journey, field: JsonConfigKey.journey)
+            let jp = JsonConfigParser(journeyDict)
+            let serverUrl: String = try jp.required(JsonConfigKey.serverUrl, field: "\(JsonConfigKey.journey).\(JsonConfigKey.serverUrl)")
+            let realm      = try jp.optional(JsonConfigKey.realm,      field: "\(JsonConfigKey.journey).\(JsonConfigKey.realm)",      default: JourneyConstants.realm)
+            let cookieName = try jp.optional(JsonConfigKey.cookieName, field: "\(JsonConfigKey.journey).\(JsonConfigKey.cookieName)", default: JourneyConstants.cookie)
             let timeout    = try p.timeoutSeconds()
             let logger     = try p.logLevel()
-            let oidcDict: [String: Any] = try p.required(JsonConfigKey.oidc, field: JsonConfigKey.oidc)
+            let oidcDict: [String: Any]? = try p.optionalValue(JsonConfigKey.oidc, field: JsonConfigKey.oidc)
 
-            let oidcConfig = OidcClientConfig()
-            oidcConfig.logger = logger
-            try oidcConfig.apply(json: oidcDict)
+            let oidcConfig: OidcClientConfig? = try {
+                guard let oidcDict else { return nil }
+                let config = OidcClientConfig()
+                config.logger = logger
+                try config.apply(json: oidcDict)
+                return config
+            }()
 
             let journey = Journey.createJourney { journeyConfig in
                 journeyConfig.serverUrl = serverUrl
@@ -224,8 +230,10 @@ public extension Journey {
                 journeyConfig.cookie = cookieName
                 journeyConfig.timeout = timeout
                 journeyConfig.logger = logger
-                journeyConfig.module(OidcModule.config) { moduleOidcConfig in
-                    moduleOidcConfig.update(with: oidcConfig)
+                if let oidcConfig {
+                    journeyConfig.module(OidcModule.config) { moduleOidcConfig in
+                        moduleOidcConfig.update(with: oidcConfig)
+                    }
                 }
             }
             return .success(journey)

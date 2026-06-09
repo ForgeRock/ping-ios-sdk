@@ -306,11 +306,13 @@ class ConfigurationManager: ObservableObject {
     /// Use this when loading configuration from a remote source, a shared file, or a CI environment.
     ///
     ///     let json: [String: Any] = [
-    ///         "serverUrl": "https://example.com/am",
-    ///         "realm": "alpha",
+    ///         "journey": [
+    ///             "serverUrl": "https://example.com/am",
+    ///             "realm": "alpha"
+    ///         ],
     ///         "timeout": 30000,
     ///         "log": "DEBUG",
-    ///         "oidc": [
+    ///         "oidc": [                          // optional for Journey
     ///             "clientId": "my-client",
     ///             "discoveryEndpoint": "https://example.com/.well-known/openid-configuration",
     ///             "scopes": ["openid", "profile", "email"],

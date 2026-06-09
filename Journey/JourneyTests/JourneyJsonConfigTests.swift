@@ -15,11 +15,23 @@ import XCTest
 
 final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
 
-    // MARK: - Minimal valid JSON
+    // MARK: - Minimal valid JSON (Journey-only, no OIDC)
 
     private var minimalJson: [String: Any] {
         [
-            "serverUrl": "https://example.com/am",
+            "journey": [
+                "serverUrl": "https://example.com/am"
+            ] as [String: Any]
+        ]
+    }
+
+    // MARK: - Minimal valid JSON with OIDC
+
+    private var minimalJsonWithOidc: [String: Any] {
+        [
+            "journey": [
+                "serverUrl": "https://example.com/am"
+            ] as [String: Any],
             "oidc": [
                 "clientId": "my-client",
                 "discoveryEndpoint": "https://example.com/.well-known/openid-configuration",
@@ -31,8 +43,11 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
 
     private var fullJson: [String: Any] {
         [
-            "serverUrl": "https://example.com/am",
-            "realm": "alpha",
+            "journey": [
+                "serverUrl": "https://example.com/am",
+                "realm": "alpha",
+                "cookieName": "iPlanetDirectoryPro"
+            ] as [String: Any],
             "timeout": 30000,
             "log": "DEBUG",
             "oidc": [
@@ -77,7 +92,7 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
     }
 
     func testCreateJourney_unknownFieldsSilentlyIgnored() {
-        var json = minimalJson
+        var json = minimalJsonWithOidc
         json["unknownTopLevel"] = "ignored"
         var oidc = json["oidc"] as! [String: Any]
         oidc["unknownOidc"] = 42
@@ -92,32 +107,42 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
         }
     }
 
-    // MARK: - serverUrl
+    // MARK: - journey sub-dict
+
+    func testCreateJourney_failure_missingJourneyDict() {
+        let result = Journey.createJourney(json: [:])
+        guard case .failure(let error) = result,
+              case .missingRequiredField(let field) = error as? JsonConfigError else {
+            XCTFail("Expected missingRequiredField(journey), got: \(result)")
+            return
+        }
+        XCTAssertEqual(field, "journey")
+    }
 
     func testCreateJourney_failure_missingServerUrl() {
         var json = minimalJson
-        json.removeValue(forKey: "serverUrl")
+        json["journey"] = [String: Any]()
 
         let result = Journey.createJourney(json: json)
         guard case .failure(let error) = result,
               case .missingRequiredField(let field) = error as? JsonConfigError else {
-            XCTFail("Expected missingRequiredField(serverUrl), got: \(result)")
+            XCTFail("Expected missingRequiredField(journey.serverUrl), got: \(result)")
             return
         }
-        XCTAssertEqual(field, "serverUrl")
+        XCTAssertEqual(field, "journey.serverUrl")
     }
 
     func testCreateJourney_failure_serverUrlWrongType() {
         var json = minimalJson
-        json["serverUrl"] = 12345
+        json["journey"] = ["serverUrl": 12345]
 
         let result = Journey.createJourney(json: json)
         guard case .failure(let error) = result,
               case .invalidType(let field, _) = error as? JsonConfigError else {
-            XCTFail("Expected invalidType(serverUrl), got: \(result)")
+            XCTFail("Expected invalidType(journey.serverUrl), got: \(result)")
             return
         }
-        XCTAssertEqual(field, "serverUrl")
+        XCTAssertEqual(field, "journey.serverUrl")
     }
 
     // MARK: - realm
@@ -134,15 +159,15 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
 
     func testCreateJourney_failure_realmWrongType() {
         var json = minimalJson
-        json["realm"] = 999
+        json["journey"] = ["serverUrl": "https://example.com/am", "realm": 999]
 
         let result = Journey.createJourney(json: json)
         guard case .failure(let error) = result,
               case .invalidType(let field, _) = error as? JsonConfigError else {
-            XCTFail("Expected invalidType(realm), got: \(result)")
+            XCTFail("Expected invalidType(journey.realm), got: \(result)")
             return
         }
-        XCTAssertEqual(field, "realm")
+        XCTAssertEqual(field, "journey.realm")
     }
 
     // MARK: - cookieName
@@ -159,7 +184,7 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
 
     func testCreateJourney_cookieNameCustom() {
         var json = minimalJson
-        json["cookieName"] = "myCustomCookie"
+        json["journey"] = ["serverUrl": "https://example.com/am", "cookieName": "myCustomCookie"]
 
         let result = Journey.createJourney(json: json)
         guard case .success(let journey) = result else {
@@ -172,15 +197,15 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
 
     func testCreateJourney_failure_cookieNameWrongType() {
         var json = minimalJson
-        json["cookieName"] = 123
+        json["journey"] = ["serverUrl": "https://example.com/am", "cookieName": 123]
 
         let result = Journey.createJourney(json: json)
         guard case .failure(let error) = result,
               case .invalidType(let field, _) = error as? JsonConfigError else {
-            XCTFail("Expected invalidType(cookieName), got: \(result)")
+            XCTFail("Expected invalidType(journey.cookieName), got: \(result)")
             return
         }
-        XCTAssertEqual(field, "cookieName")
+        XCTAssertEqual(field, "journey.cookieName")
     }
 
     // MARK: - timeout
@@ -289,23 +314,20 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(field, "log")
     }
 
-    // MARK: - oidc (required)
+    // MARK: - oidc (optional)
 
-    func testCreateJourney_failure_missingOidc() {
-        var json = minimalJson
-        json.removeValue(forKey: "oidc")
-
-        let result = Journey.createJourney(json: json)
-        guard case .failure(let error) = result,
-              case .missingRequiredField(let field) = error as? JsonConfigError else {
-            XCTFail("Expected missingRequiredField(oidc), got: \(result)")
-            return
+    func testCreateJourney_success_withoutOidc() {
+        let result = Journey.createJourney(json: minimalJson)
+        switch result {
+        case .success:
+            break
+        case .failure(let error):
+            XCTFail("Expected success without oidc, got: \(error)")
         }
-        XCTAssertEqual(field, "oidc")
     }
 
     func testCreateJourney_failure_oidcWrongType() {
-        var json = minimalJson
+        var json = minimalJsonWithOidc
         json["oidc"] = "not-an-object"
 
         let result = Journey.createJourney(json: json)
@@ -320,7 +342,7 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
     // MARK: - oidc required fields
 
     func testCreateJourney_failure_missingClientId() {
-        var json = minimalJson
+        var json = minimalJsonWithOidc
         var oidc = json["oidc"] as! [String: Any]
         oidc.removeValue(forKey: "clientId")
         json["oidc"] = oidc
@@ -335,7 +357,7 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
     }
 
     func testCreateJourney_failure_missingDiscoveryEndpoint() {
-        var json = minimalJson
+        var json = minimalJsonWithOidc
         var oidc = json["oidc"] as! [String: Any]
         oidc.removeValue(forKey: "discoveryEndpoint")
         json["oidc"] = oidc
@@ -350,7 +372,7 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
     }
 
     func testCreateJourney_failure_missingScopes() {
-        var json = minimalJson
+        var json = minimalJsonWithOidc
         var oidc = json["oidc"] as! [String: Any]
         oidc.removeValue(forKey: "scopes")
         json["oidc"] = oidc
@@ -365,7 +387,7 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
     }
 
     func testCreateJourney_failure_missingRedirectUri() {
-        var json = minimalJson
+        var json = minimalJsonWithOidc
         var oidc = json["oidc"] as! [String: Any]
         oidc.removeValue(forKey: "redirectUri")
         json["oidc"] = oidc
@@ -380,7 +402,7 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
     }
 
     func testCreateJourney_failure_scopesNotStringArray() {
-        var json = minimalJson
+        var json = minimalJsonWithOidc
         var oidc = json["oidc"] as! [String: Any]
         oidc["scopes"] = [1, 2, 3]
         json["oidc"] = oidc
@@ -395,7 +417,7 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
     }
 
     func testCreateJourney_failure_additionalParametersNonStringValue() {
-        var json = minimalJson
+        var json = minimalJsonWithOidc
         var oidc = json["oidc"] as! [String: Any]
         oidc["additionalParameters"] = ["key": 123]
         json["oidc"] = oidc
@@ -423,7 +445,7 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
     // MARK: - par
 
     func testCreateJourney_par_true_accepted() {
-        var json = minimalJson
+        var json = minimalJsonWithOidc
         var oidc = json["oidc"] as! [String: Any]
         oidc["par"] = true
         json["oidc"] = oidc
@@ -438,7 +460,7 @@ final class JourneyJsonConfigTests: XCTestCase, @unchecked Sendable {
     }
 
     func testCreateJourney_failure_par_wrongType() {
-        var json = minimalJson
+        var json = minimalJsonWithOidc
         var oidc = json["oidc"] as! [String: Any]
         oidc["par"] = "yes"
         json["oidc"] = oidc

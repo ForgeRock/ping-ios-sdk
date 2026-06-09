@@ -15,8 +15,11 @@ import PingLogger
 public enum JsonConfigKey {
     // MARK: - Top-level
     public static let oidc = "oidc"
+    public static let journey = "journey"
     public static let log = "log"
     public static let timeout = "timeout"
+
+    // MARK: - journey sub-dict
     public static let serverUrl = "serverUrl"
     public static let realm = "realm"
     public static let cookieName = "cookieName"
