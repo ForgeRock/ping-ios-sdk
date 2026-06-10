@@ -129,16 +129,17 @@ final class OidcWebClientJsonConfigTests: XCTestCase, @unchecked Sendable {
         XCTAssertTrue(client.config.logger is WarningLogger)
     }
 
-    func testCreateOidcWebClient_failure_logWrongType() {
+    func testCreateOidcWebClient_logWrongType_softFault_succeeds() {
         var json = minimalJson
         json["log"] = 1
 
         let result = OidcWebClient.createOidcWebClient(json: json)
-        guard case .failure(let error) = result,
-              case .invalidType(let field, _) = error as? JsonConfigError else {
-            XCTFail("Expected invalidType(log), got: \(result)"); return
+        switch result {
+        case .success:
+            break
+        case .failure(let error):
+            XCTFail("Expected success when log has wrong type (soft fault), got: \(error)")
         }
-        XCTAssertEqual(field, "log")
     }
 
     // MARK: - oidc (required)

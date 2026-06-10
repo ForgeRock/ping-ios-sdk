@@ -65,12 +65,10 @@ public extension OidcWebClient {
         do {
             let p = JsonConfigParser(json)
             let timeout = try p.timeoutSeconds()
-            let logger  = try p.logLevel()
+            let logger  = p.logLevel()
             let oidcDict: [String: Any] = try p.required(JsonConfigKey.oidc, field: JsonConfigKey.oidc)
 
-            let oidcConfig = OidcClientConfig()
-            oidcConfig.logger = logger
-            try oidcConfig.apply(json: oidcDict)
+            let oidcConfig = try OidcClientConfig.from(oidcJson: oidcDict, logger: logger)
 
             let client = OidcWebClient.createOidcWebClient { webConfig in
                 webConfig.timeout = timeout

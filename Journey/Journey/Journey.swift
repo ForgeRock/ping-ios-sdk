@@ -213,16 +213,12 @@ public extension Journey {
             let realm      = try jp.optional(JsonConfigKey.realm,      field: "\(JsonConfigKey.journey).\(JsonConfigKey.realm)",      default: JourneyConstants.realm)
             let cookieName = try jp.optional(JsonConfigKey.cookieName, field: "\(JsonConfigKey.journey).\(JsonConfigKey.cookieName)", default: JourneyConstants.cookie)
             let timeout    = try p.timeoutSeconds()
-            let logger     = try p.logLevel()
+            let logger     = p.logLevel()
             let oidcDict: [String: Any]? = try p.optionalValue(JsonConfigKey.oidc, field: JsonConfigKey.oidc)
 
-            let oidcConfig: OidcClientConfig? = try {
-                guard let oidcDict else { return nil }
-                let config = OidcClientConfig()
-                config.logger = logger
-                try config.apply(json: oidcDict)
-                return config
-            }()
+            let oidcConfig: OidcClientConfig? = try oidcDict.map {
+                try OidcClientConfig.from(oidcJson: $0, logger: logger)
+            }
 
             let journey = Journey.createJourney { journeyConfig in
                 journeyConfig.serverUrl = serverUrl

@@ -155,17 +155,17 @@ final class DaVinciJsonConfigTests: XCTestCase, @unchecked Sendable {
         XCTAssertTrue(daVinci.config.logger is StandardLogger)
     }
 
-    func testCreateDaVinci_failure_logWrongType() {
+    func testCreateDaVinci_logWrongType_softFault_succeeds() {
         var json = minimalJson
         json["log"] = 1
 
         let result = DaVinci.createDaVinci(json: json)
-        guard case .failure(let error) = result,
-              case .invalidType(let field, _) = error as? JsonConfigError else {
-            XCTFail("Expected invalidType(log), got: \(result)")
-            return
+        switch result {
+        case .success:
+            break
+        case .failure(let error):
+            XCTFail("Expected success when log has wrong type (soft fault), got: \(error)")
         }
-        XCTAssertEqual(field, "log")
     }
 
     // MARK: - oidc (required)

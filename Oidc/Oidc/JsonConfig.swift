@@ -114,12 +114,12 @@ public struct JsonConfigParser {
         return value
     }
 
-    /// Parses `"log"` as a log-level string and returns the matching `Logger`. Defaults to `LogManager.none` when absent.
-    public func logLevel() throws -> Logger {
+    /// Parses `"log"` as a log-level string and returns the matching `Logger`. Defaults to `LogManager.logger` when absent.
+    /// A present but wrong-type value is silently ignored (falls back to `LogManager.none`) rather than throwing,
+    /// because log level is advisory and should never block SDK initialisation.
+    public func logLevel() -> Logger {
         guard let raw = json[JsonConfigKey.log] else { return LogManager.logger }
-        guard let level = raw as? String else {
-            throw JsonConfigError.invalidType(field: JsonConfigKey.log, expected: "string")
-        }
+        guard let level = raw as? String else { return LogManager.none }
         return LogManager.logger(forLevel: level)
     }
 

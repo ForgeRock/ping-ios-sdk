@@ -72,12 +72,10 @@ public class OidcDeviceClient: @unchecked Sendable {
     public static func createOidcDeviceClient(json: [String: Any]) -> Result<OidcDeviceClient, Error> {
         do {
             let p = JsonConfigParser(json)
-            let logger = try p.logLevel()
+            let logger = p.logLevel()
             let oidcDict: [String: Any] = try p.required(JsonConfigKey.oidc, field: JsonConfigKey.oidc)
 
-            let oidcConfig = OidcClientConfig()
-            oidcConfig.logger = logger
-            try oidcConfig.apply(json: oidcDict)
+            let oidcConfig = try OidcClientConfig.from(oidcJson: oidcDict, logger: logger)
 
             return .success(OidcDeviceClient(config: oidcConfig))
         } catch {
