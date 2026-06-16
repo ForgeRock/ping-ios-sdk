@@ -136,9 +136,12 @@ do {
 
 ```swift
 do {
-    let accounts = try await PingOneMFA.getDeviceInfo()
-    for account in accounts {
+    let deviceInfo = try await PingOneMFA.getDeviceInfo()
+    for account in deviceInfo.accounts {
         print("\(account.name) \(account.family) | region: \(account.region)")
+    }
+    if let errors = deviceInfo.errors, !errors.isEmpty {
+        print("Retrieved accounts with diagnostics: \(errors)")
     }
 } catch {
     print("Failed to retrieve accounts: \(error.localizedDescription)")
@@ -279,12 +282,19 @@ See the [PingExample README](../SampleApps/PingExample/README.md) for build inst
 | `initialize(geo:)` | `async throws` | Configure the PingOne SDK for the selected service region. Idempotent after first success. |
 | `setDeviceToken(_:)` | `async throws` | Register or refresh the APNS push token with PingOne. |
 | `pair(pairingKey:)` | `async throws` | Pair a new MFA account. |
-| `getDeviceInfo()` | `async throws -> [PingOneMfaAccount]` | Return all paired accounts. |
+| `getDeviceInfo()` | `async throws -> PingOneMFADeviceInfo` | Return all paired accounts and any non-fatal diagnostic errors. |
 | `getOneTimePasscode()` | `async throws -> OtpCodeInfo` | Return the current TOTP code and its remaining validity window. |
 | `processRemoteNotification(userInfo:)` | `async throws -> PushNotification` | Convert an APNS `userInfo` payload to a typed `PushNotification`. |
 | `processRemoteNotificationAction(identifier:authenticationMethod:userInfo:)` | `async throws -> PushNotification?` | Handle a notification banner action; returns `nil` when the SDK handled it internally. |
 | `generateMobilePayload()` | `async throws -> String` | Generate a mobile payload for server-side authentication. |
 | `getNotificationCategories()` | `Set<UNNotificationCategory>` | Return notification categories to register with `UNUserNotificationCenter`. |
+
+### `PingOneMFADeviceInfo`
+
+| Field | Type | Description |
+|---|---|---|
+| `accounts` | `[PingOneMfaAccount]` | Parsed paired accounts found on this device |
+| `errors` | `[PingOneMFAError]?` | Non-fatal diagnostic errors returned by the upstream SDK while account data was still available |
 
 ### `PingOneMfaAccount`
 

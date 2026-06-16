@@ -10,6 +10,24 @@
 
 import Foundation
 
+/// Result returned by `PingOneMFA.getDeviceInfo()`.
+public struct PingOneMFADeviceInfo: Sendable {
+    /// Registered PingOne MFA accounts found on this device.
+    public let accounts: [PingOneMfaAccount]
+    /// Non-fatal diagnostic errors returned by the upstream SDK, if any.
+    public let errors: [PingOneMFAError]?
+
+    /// Creates a `PingOneMFADeviceInfo` result.
+    ///
+    /// - Parameters:
+    ///   - accounts: Registered PingOne MFA accounts found on this device.
+    ///   - errors: Non-fatal diagnostic errors returned by the upstream SDK.
+    public init(accounts: [PingOneMfaAccount], errors: [PingOneMFAError]? = nil) {
+        self.accounts = accounts
+        self.errors = errors
+    }
+}
+
 /// Represents a registered PingOne MFA account on this device.
 public struct PingOneMfaAccount: Sendable, Equatable {
     /// The cloud region where this account is registered (e.g. `"NA"`, `"EU"`).

@@ -93,12 +93,12 @@ class MockPingOneMFA {
         }
     }
 
-    static func getDeviceInfo() async throws -> (accounts: [PingOneMfaAccount], errors: [PingOneMFAError]?) {
+    static func getDeviceInfo() async throws -> PingOneMFADeviceInfo {
         getDeviceInfoCalled = true
         if shouldThrowError {
             throw PingOneMFAError(errorMessage)
         }
-        return (accountsReturnValue, nil)
+        return PingOneMFADeviceInfo(accounts: accountsReturnValue)
     }
 
     static func getOneTimePasscode() async throws -> OtpCodeInfo {

@@ -135,19 +135,19 @@ public class PingOneMFA {
     /// Returns all registered MFA accounts for this device, along with any non-fatal
     /// diagnostic errors reported by the upstream SDK.
     ///
-    /// - Returns: A tuple `(accounts, errors)` where `accounts` is the parsed
-    ///   `PingOneMfaAccount` array and `errors` is `nil` if the SDK reported no errors,
-    ///   otherwise an array of `PingOneMFAError` values carrying diagnostic detail.
+    /// - Returns: A `PingOneMFADeviceInfo` value containing parsed
+    ///   `PingOneMfaAccount` values and any non-fatal diagnostic errors reported by
+    ///   the upstream SDK.
     /// - Throws: `PingOneMFAError` when the SDK returns no data and at least one real error,
     ///   or when the SDK returns neither data nor errors.
-    public nonisolated static func getDeviceInfo() async throws -> (accounts: [PingOneMfaAccount], errors: [PingOneMFAError]?) {
+    public nonisolated static func getDeviceInfo() async throws -> PingOneMFADeviceInfo {
         return try await withCheckedThrowingContinuation { continuation in
             PingOne.getInfo(completion: { deviceInfo, errors in
                 if let deviceInfo, !deviceInfo.isEmpty {
                     // Data available — return it along with any diagnostic errors from the SDK.
                     let accounts = AccountParser.parse(deviceInfo)
                     let mappedErrors = errors?.map { PingOneMFAError($0) }
-                    continuation.resume(returning: (accounts, mappedErrors))
+                    continuation.resume(returning: PingOneMFADeviceInfo(accounts: accounts, errors: mappedErrors))
                 } else if let errors, !errors.isEmpty {
                     // No data and at least one real error — treat as failure.
                     continuation.resume(throwing: PingOneMFAError(errors: errors))

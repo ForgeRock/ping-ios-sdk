@@ -321,6 +321,23 @@ final class PingOneMFATests: XCTestCase {
         XCTAssertNotEqual(a, c)
     }
 
+    func test20b_DeviceInfoResultExposesAccountsAndErrors() {
+        let account = PingOneMfaAccount(
+            region: "NorthAmerica",
+            id: "user-1",
+            deviceId: "device-1",
+            environmentId: "env-1",
+            name: "Test",
+            family: "User"
+        )
+        let diagnosticError = PingOneMFAError("diagnostic")
+
+        let result = PingOneMFADeviceInfo(accounts: [account], errors: [diagnosticError])
+
+        XCTAssertEqual(result.accounts, [account])
+        XCTAssertEqual(result.errors?.first?.message, "diagnostic")
+    }
+
     // MARK: - getNotificationCategories Mock Test
 
     /// test21: verifies that MockPingOneMFA.getNotificationCategories() sets the
