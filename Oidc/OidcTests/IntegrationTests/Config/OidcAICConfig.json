@@ -1,0 +1,7 @@
+{
+    "clientId": "iosClient",
+    "discoveryEndpoint": "https://openam-sdks.forgeblocks.com/am/oauth2/alpha/.well-known/openid-configuration",
+    "scopes": "openid email address",
+    "redirectUri": "frauth://com.forgerock.ios.frexample",
+    "acrValues": ""
+}

@@ -64,6 +64,9 @@
 		A5CFC8A02E43A1DA00CBFC3B /* TextOutputCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5CFC89F2E43A1CB00CBFC3B /* TextOutputCallbackTests.swift */; };
 		A5CFC8A22E43A2B300CBFC3B /* ValidatedPasswordCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5CFC8A12E43A2AF00CBFC3B /* ValidatedPasswordCallbackTests.swift */; };
 		A5CFC8A42E43A35300CBFC3B /* ValidatedUsernameCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5CFC8A32E43A34E00CBFC3B /* ValidatedUsernameCallbackTests.swift */; };
+		AA4785041F0000000000AA04 /* OidcDeviceApprovalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4785051F0000000000AA05 /* OidcDeviceApprovalTests.swift */; };
+		AAAAAAAA00000001FAA0E2E0 /* JourneyPARE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAA00000000FAA0E2E0 /* JourneyPARE2ETest.swift */; };
+		AAAAAAAA00000003FAA0E2E0 /* RecordingHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAA00000002FAA0E2E0 /* RecordingHttpClient.swift */; };
 		EC23269E2E0D5E4E00634A50 /* CallbackRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23269D2E0D5E4700634A50 /* CallbackRegistryTests.swift */; };
 		EC2326A02E0D62ED00634A50 /* NameCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23269F2E0D62E600634A50 /* NameCallbackTests.swift */; };
 		EC2326A22E0D65A800634A50 /* PasswordCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2326A12E0D65A300634A50 /* PasswordCallbackTests.swift */; };
@@ -99,7 +102,6 @@
 		ECD562AC2E0C494200F0B5A9 /* MockResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD562A92E0C494200F0B5A9 /* MockResponse.swift */; };
 		ECEFDC282ED4B0AC00B56E87 /* MetadataCallbackSpecializationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEFDC242ED4AF3C00B56E87 /* MetadataCallbackSpecializationTests.swift */; };
 		ECEFDC292ED4B10E00B56E87 /* MetadataCallbackInjectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECEFDC262ED4AF8500B56E87 /* MetadataCallbackInjectionTests.swift */; };
-		AA4785041F0000000000AA04 /* OidcDeviceApprovalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4785051F0000000000AA05 /* OidcDeviceApprovalTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -197,6 +199,9 @@
 		A5CFC89F2E43A1CB00CBFC3B /* TextOutputCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextOutputCallbackTests.swift; sourceTree = "<group>"; };
 		A5CFC8A12E43A2AF00CBFC3B /* ValidatedPasswordCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedPasswordCallbackTests.swift; sourceTree = "<group>"; };
 		A5CFC8A32E43A34E00CBFC3B /* ValidatedUsernameCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedUsernameCallbackTests.swift; sourceTree = "<group>"; };
+		AA4785051F0000000000AA05 /* OidcDeviceApprovalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcDeviceApprovalTests.swift; sourceTree = "<group>"; };
+		AAAAAAAA00000000FAA0E2E0 /* JourneyPARE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyPARE2ETest.swift; sourceTree = "<group>"; };
+		AAAAAAAA00000002FAA0E2E0 /* RecordingHttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordingHttpClient.swift; path = ../Network/NetworkTests/RecordingHttpClient.swift; sourceTree = SOURCE_ROOT; };
 		EC23269D2E0D5E4700634A50 /* CallbackRegistryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackRegistryTests.swift; sourceTree = "<group>"; };
 		EC23269F2E0D62E600634A50 /* NameCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameCallbackTests.swift; sourceTree = "<group>"; };
 		EC2326A12E0D65A300634A50 /* PasswordCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordCallbackTests.swift; sourceTree = "<group>"; };
@@ -230,7 +235,6 @@
 		ECD562AA2E0C494200F0B5A9 /* MockAPIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIEndpoint.swift; sourceTree = "<group>"; };
 		ECEFDC242ED4AF3C00B56E87 /* MetadataCallbackSpecializationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCallbackSpecializationTests.swift; sourceTree = "<group>"; };
 		ECEFDC262ED4AF8500B56E87 /* MetadataCallbackInjectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCallbackInjectionTests.swift; sourceTree = "<group>"; };
-		AA4785051F0000000000AA05 /* OidcDeviceApprovalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcDeviceApprovalTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -267,11 +271,13 @@
 				95DA7BEC2E4E7DCC00168E1A /* HiddenValueCallbackE2ETest.swift */,
 				95DA7BED2E4E7DCC00168E1A /* JourneyE2EBaseTest.swift */,
 				95DA7BEE2E4E7DCC00168E1A /* JourneyE2ETests.swift */,
+				AAAAAAAA00000000FAA0E2E0 /* JourneyPARE2ETest.swift */,
 				95DA7BEF2E4E7DCC00168E1A /* KbaCreateCallbackE2ETest.swift */,
 				95DA7BF02E4E7DCC00168E1A /* MetadataCallbackE2ETest.swift */,
 				95DA7BF12E4E7DCC00168E1A /* NamePasswordCallbackE2ETest.swift */,
 				95DA7BF22E4E7DCC00168E1A /* NumberAttributeInputCallbackE2ETest.swift */,
 				95DA7BF32E4E7DCC00168E1A /* PollingWaitCallbackE2ETest.swift */,
+				AAAAAAAA00000002FAA0E2E0 /* RecordingHttpClient.swift */,
 				95DA7BF42E4E7DCC00168E1A /* StringAttributeInputCallbackE2ETest.swift */,
 				95DA7BF52E4E7DCC00168E1A /* SuspendedTextCallbackE2ETest.swift */,
 				95DA7BF62E4E7DCC00168E1A /* TermsAndConditionsCallbackE2ETest.swift */,
@@ -599,6 +605,8 @@
 				95DA7C022E4E7DCC00168E1A /* KbaCreateCallbackE2ETest.swift in Sources */,
 				95DA7C032E4E7DCC00168E1A /* NamePasswordCallbackE2ETest.swift in Sources */,
 				95DA7C042E4E7DCC00168E1A /* JourneyE2ETests.swift in Sources */,
+				AAAAAAAA00000001FAA0E2E0 /* JourneyPARE2ETest.swift in Sources */,
+				AAAAAAAA00000003FAA0E2E0 /* RecordingHttpClient.swift in Sources */,
 				95DA7C052E4E7DCC00168E1A /* ConfirmationCallbackE2ETest.swift in Sources */,
 				95DA7C062E4E7DCC00168E1A /* BooleanAttributeInputCallbackE2ETest.swift in Sources */,
 				95DA7C072E4E7DCC00168E1A /* NumberAttributeInputCallbackE2ETest.swift in Sources */,
@@ -803,7 +811,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = "2.0.0";
+				MARKETING_VERSION = 2.0.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Journey;
@@ -839,7 +847,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = "2.0.0";
+				MARKETING_VERSION = 2.0.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.Journey;
@@ -862,7 +870,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = "2.0.0";
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.JourneyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -880,7 +888,7 @@
 				DEVELOPMENT_TEAM = 9QSE66762D;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = "2.0.0";
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.JourneyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
