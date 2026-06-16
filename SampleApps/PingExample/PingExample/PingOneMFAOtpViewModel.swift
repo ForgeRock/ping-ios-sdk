@@ -67,9 +67,12 @@ class PingOneMFAOtpViewModel: ObservableObject {
         do {
             let info = try await PingOneMFA.getOneTimePasscode()
             otpInfo = info
-            // Clamp to 1 second minimum to avoid immediate re-fire.
-            countdown = max(1, info.secondsRemaining)
+            countdown = info.secondsRemaining
             isLoading = false
+
+            guard countdown > 0 else {
+                return
+            }
 
             // Start 1-Hz countdown timer for live display.
             startCountdownTimer()

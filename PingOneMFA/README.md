@@ -159,7 +159,7 @@ do {
 }
 ```
 
-`OtpCodeInfo.secondsRemaining` is a snapshot computed at call time. Re-call `getOneTimePasscode()` when it reaches zero to receive the next code.
+`OtpCodeInfo.secondsRemaining` is a non-negative snapshot computed at call time. Re-call `getOneTimePasscode()` when it reaches zero to receive the next code.
 
 ### Mobile Payload
 
@@ -312,7 +312,7 @@ See the [PingExample README](../SampleApps/PingExample/README.md) for build inst
 | Field | Type | Description |
 |---|---|---|
 | `code` | `String` | Current TOTP passcode |
-| `secondsRemaining` | `Int` | Seconds until the code expires (snapshot at call time) |
+| `secondsRemaining` | `Int` | Non-negative seconds until the code expires (0 if already expired, snapshot at call time) |
 
 ### `PushNotification`
 

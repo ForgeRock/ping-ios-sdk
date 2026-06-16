@@ -14,14 +14,14 @@ import Foundation
 public struct OtpCodeInfo: Sendable, Equatable {
     /// The current OTP code string to display to the user.
     public let code: String
-    /// The number of seconds remaining before this code expires.
+    /// The number of seconds remaining before this code expires, or zero if already expired.
     public let secondsRemaining: Int
 
     /// Creates an `OtpCodeInfo` with the given code and remaining validity.
     ///
     /// - Parameters:
     ///   - code: The current OTP code string.
-    ///   - secondsRemaining: Seconds until the code expires.
+    ///   - secondsRemaining: Seconds until the code expires, or zero if already expired.
     public init(code: String, secondsRemaining: Int) {
         self.code = code
         self.secondsRemaining = secondsRemaining

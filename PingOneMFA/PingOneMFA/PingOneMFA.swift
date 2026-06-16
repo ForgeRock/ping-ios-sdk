@@ -161,8 +161,8 @@ public class PingOneMFA {
 
     /// Returns the current one-time passcode and its remaining validity window.
     ///
-    /// `secondsRemaining` is computed as `Int(validUntil - now)` where `validUntil`
-    /// is the epoch-seconds timestamp returned by the upstream SDK.
+    /// `secondsRemaining` is computed from the upstream SDK's `validUntil`
+    /// epoch-seconds timestamp and clamped to zero when the passcode is expired.
     ///
     /// - Returns: An `OtpCodeInfo` containing the current passcode and seconds remaining.
     /// - Throws: `PingOneMFAError` if the SDK call fails or returns no passcode info.
@@ -173,7 +173,7 @@ public class PingOneMFA {
                     continuation.resume(throwing: PingOneMFAError(error))
                 } else if let passcodeInfo = passcodeInfo {
                     let now = Date().timeIntervalSince1970
-                    let secondsRemaining = Int(passcodeInfo.validUntil - now)
+                    let secondsRemaining = max(0, Int(passcodeInfo.validUntil - now))
                     continuation.resume(returning: OtpCodeInfo(
                         code: passcodeInfo.passcode,
                         secondsRemaining: secondsRemaining

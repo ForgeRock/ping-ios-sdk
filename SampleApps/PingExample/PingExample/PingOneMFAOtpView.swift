@@ -88,7 +88,7 @@ struct PingOneMFAOtpView: View {
                     .tracking(8)
 
                 // Live countdown
-                Text("Refreshes in \(viewModel.countdown)s")
+                Text(viewModel.countdown > 0 ? "Refreshes in \(viewModel.countdown)s" : "Expired")
                     .font(.system(size: 15, weight: .medium))
                     .foregroundColor(.secondary)
             } else if !viewModel.isLoading {

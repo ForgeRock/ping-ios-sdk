@@ -39,9 +39,9 @@ public struct PingOneMfaAccount: Sendable, Equatable {
     /// The PingOne environment this account belongs to.
     public let environmentId: String
     /// The display name of the account.
-    public var name: String
+    public let name: String
     /// The account family / application name shown to the user.
-    public var family: String
+    public let family: String
 
     /// Creates a `PingOneMfaAccount` with all required fields.
     ///
