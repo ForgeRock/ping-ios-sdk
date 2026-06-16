@@ -340,12 +340,10 @@ class ConfigurationManager: ObservableObject {
 
     /// Initialize the PingOne MFA SDK
     public func initializePingOneMFAClient() async throws {
-        let didInitialize = try await initActor.initializePingOneMFA {
-            try await PingOneMFA.initialize(geo: .northAmerica)
-        }
-        if didInitialize {
-            isPingOneMFAInitialized = true
-        }
+        guard !isPingOneMFAInitialized else { return }
+
+        try await PingOneMFA.initialize(geo: .northAmerica)
+        isPingOneMFAInitialized = true
     }
 }
 
@@ -354,10 +352,8 @@ class ConfigurationManager: ObservableObject {
 private actor ClientInitializationActor {
     private var isOathInitializing = false
     private var isPushInitializing = false
-    private var isPingOneMFAInitializing = false
     private var oathInitialized = false
     private var pushInitialized = false
-    private var pingOneMFAInitialized = false
 
     func initializeOath(factory: @Sendable () async throws -> OathClient) async throws -> OathClient? {
         guard !oathInitialized && !isOathInitializing else { return nil }
@@ -379,17 +375,6 @@ private actor ClientInitializationActor {
         let client = try await factory()
         pushInitialized = true
         return client
-    }
-
-    func initializePingOneMFA(factory: @Sendable () async throws -> Void) async throws -> Bool {
-        guard !pingOneMFAInitialized && !isPingOneMFAInitializing else { return false }
-
-        isPingOneMFAInitializing = true
-        defer { isPingOneMFAInitializing = false }
-
-        try await factory()
-        pingOneMFAInitialized = true
-        return true
     }
 }
 

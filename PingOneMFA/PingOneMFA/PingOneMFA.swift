@@ -21,6 +21,7 @@ public actor PingOneMFAActor {
 @PingOneMFAActor
 public class PingOneMFA {
     internal private(set) static var isInitialized: Bool = false
+    private static var initializationTask: Task<Void, any Error>?
 
     /// Initializes the PingOneMFA SDK with the provided geographic region.
     /// This method should be called before using any other methods in the PingOneMFA SDK.
@@ -29,36 +30,63 @@ public class PingOneMFA {
     /// - Parameter geo: The geographic region for the PingOneMFA SDK.
     /// - Throws: `PingOneMFAError` if initialization fails.
     public nonisolated static func initialize(geo: Geo) async throws {
-        if await isInitialized {
+        try await initializeIfNeeded {
+            try await configure(geo: geo)
+        }
+    }
+
+    internal static func initializeIfNeeded(_ operation: @escaping @Sendable () async throws -> Void) async throws {
+        if isInitialized {
             return
         }
 
-        let pingOneGeo: PingOneGeo
-        switch geo {
-        case .northAmerica:
-            pingOneGeo = .NorthAmerica
-        case .europe:
-            pingOneGeo = .Europe
-        case .australia:
-            pingOneGeo = .Australia
-        case .canada:
-            pingOneGeo = .Canada
-        case .singapore:
-            pingOneGeo = .Singapore
+        if let initializationTask {
+            try await initializationTask.value
+            return
         }
 
-        return try await withCheckedThrowingContinuation { continuation in
+        let task = Task { @PingOneMFAActor in
+            do {
+                try await operation()
+                try Task.checkCancellation()
+                isInitialized = true
+            } catch {
+                isInitialized = false
+                throw error
+            }
+        }
+        initializationTask = task
+        defer { initializationTask = nil }
+
+        try await task.value
+    }
+
+    private nonisolated static func configure(geo: Geo) async throws {
+        let pingOneGeo = pingOneGeo(for: geo)
+
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
             PingOne.configure(geo: pingOneGeo) { error in
-                Task { @PingOneMFAActor in
-                    if let error = error {
-                        self.isInitialized = false
-                        continuation.resume(throwing: PingOneMFAError(error))
-                    } else {
-                        self.isInitialized = true
-                        continuation.resume()
-                    }
+                if let error = error {
+                    continuation.resume(throwing: PingOneMFAError(error))
+                } else {
+                    continuation.resume()
                 }
             }
+        }
+    }
+
+    private nonisolated static func pingOneGeo(for geo: Geo) -> PingOneGeo {
+        switch geo {
+        case .northAmerica:
+            return .NorthAmerica
+        case .europe:
+            return .Europe
+        case .australia:
+            return .Australia
+        case .canada:
+            return .Canada
+        case .singapore:
+            return .Singapore
         }
     }
 
@@ -260,6 +288,8 @@ public class PingOneMFA {
     /// Resets the SDK to uninitialized state (useful for testing)
     internal static func reset() {
         isInitialized = false
+        initializationTask?.cancel()
+        initializationTask = nil
     }
 
      /// Parses the `title` and `message` from an APNS `userInfo` payload.

@@ -49,6 +49,35 @@ final class PingOneMFATests: XCTestCase {
         XCTAssertEqual(MockPingOneMFA.initializeCallCount, 2)
     }
 
+    func test05_ConcurrentInitializeCallsShareSingleConfigure() async throws {
+        let probe = ConfigureProbe()
+
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for _ in 0..<2 {
+                group.addTask {
+                    try await PingOneMFA.initializeIfNeeded {
+                        try await probe.configure()
+                    }
+                }
+            }
+
+            _ = await waitForConfigureCallCount(minimum: 1, probe: probe)
+
+            for _ in 0..<50 {
+                await Task.yield()
+            }
+
+            let callCount = await probe.callCount
+            XCTAssertEqual(callCount, 1)
+
+            await probe.completeAll()
+            try await group.waitForAll()
+        }
+
+        let isInitialized = await PingOneMFA.isInitialized
+        XCTAssertTrue(isInitialized)
+    }
+
     // MARK: - Mock-Based Happy-Path Tests
 
     func test06_MockInitializeHappyPath() async throws {
@@ -361,6 +390,43 @@ final class PingOneMFATests: XCTestCase {
             XCTAssertEqual(MockPingOneMFA.lastActionIdentifier, "notification.deny")
         } catch {
             XCTFail("Wrong error type: \(error)")
+        }
+    }
+
+    private func waitForConfigureCallCount(minimum: Int, probe: ConfigureProbe) async -> Int {
+        var latestCount = await probe.callCount
+        var attempts = 0
+
+        while latestCount < minimum && attempts < 100 {
+            try? await Task.sleep(nanoseconds: 10_000_000)
+            latestCount = await probe.callCount
+            attempts += 1
+        }
+
+        return latestCount
+    }
+}
+
+private actor ConfigureProbe {
+    private(set) var callCount = 0
+    private var continuations: [CheckedContinuation<Void, any Error>] = []
+
+    func configure() async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
+            callCount += 1
+            continuations.append(continuation)
+        }
+    }
+
+    func completeAll(error: Error? = nil) {
+        let pendingContinuations = continuations
+        continuations.removeAll()
+        pendingContinuations.forEach { continuation in
+            if let error {
+                continuation.resume(throwing: error)
+            } else {
+                continuation.resume()
+            }
         }
     }
 }
