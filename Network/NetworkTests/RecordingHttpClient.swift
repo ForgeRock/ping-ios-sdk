@@ -37,8 +37,8 @@ struct RecordedRequest: Sendable {
         for pair in str.split(separator: "&") {
             let kv = pair.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
             guard kv.count == 2 else { continue }
-            let k = String(kv[0]).removingPercentEncoding ?? String(kv[0])
-            let v = String(kv[1]).removingPercentEncoding ?? String(kv[1])
+            let k = String(kv[0]).replacingOccurrences(of: "+", with: " ").removingPercentEncoding ?? String(kv[0])
+            let v = String(kv[1]).replacingOccurrences(of: "+", with: " ").removingPercentEncoding ?? String(kv[1])
             out[k] = v
         }
         return out
@@ -95,6 +95,8 @@ final class RecordingHttpClient: HttpClientProtocol, @unchecked Sendable {
     }
 
     func request(request: HttpRequest) async throws -> HttpResponse {
+        // Snapshot is pre-interceptor: any headers/mutations added by requestInterceptors
+        // inside URLSessionHttpClient will not appear in the recorded request.
         record(request)
         return try await inner.request(request: request)
     }

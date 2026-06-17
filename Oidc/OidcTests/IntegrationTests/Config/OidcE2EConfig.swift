@@ -19,6 +19,8 @@ struct OidcE2EConfig {
     /// Optional: e.g. "pi.flow" for PingOne DaVinci flows; empty for AIC.
     let responseMode: String
 
+    // NOTE: intentionally scoped to OidcTests. If another test target needs this,
+    // pass `bundle` as a parameter or copy and adjust the Bundle reference.
     init(_ fileName: String) throws {
         guard let path = Bundle(for: OidcWebClientE2ETests.self)
                 .path(forResource: fileName, ofType: "json")

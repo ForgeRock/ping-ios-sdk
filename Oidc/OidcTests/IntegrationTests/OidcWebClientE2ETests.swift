@@ -52,7 +52,7 @@ final class OidcWebClientE2ETests: XCTestCase {
     func testOidcWebClientAICWithoutPAR() async throws {
         let web = makeWebClient(config: aicConfig, additionalParameters: ["foo": "bar"], par: false)
 
-        _ = try? await web.authorize()
+        do { _ = try await web.authorize() } catch { /* token exchange fails with fake code — expected */ }
 
         let parCalls = recorder.all(matchingPathSuffix: "/par")
         XCTAssertTrue(parCalls.isEmpty, "Expected no PAR call when par=false; got \(parCalls.count)")
@@ -71,7 +71,7 @@ final class OidcWebClientE2ETests: XCTestCase {
     func testOidcWebClientAICWithPAR() async throws {
         let web = makeWebClient(config: aicConfig, additionalParameters: ["foo": "bar"], par: true)
 
-        _ = try? await web.authorize()
+        do { _ = try await web.authorize() } catch { /* token exchange fails with fake code — expected */ }
 
         let parCalls = recorder.all(matchingPathSuffix: "/par")
         XCTAssertEqual(parCalls.count, 1, "Expected exactly one PAR request")
@@ -102,7 +102,7 @@ final class OidcWebClientE2ETests: XCTestCase {
     func testOidcWebClientPingOneWithoutPAR() async throws {
         let web = makeWebClient(config: pingOneConfig, additionalParameters: ["foo": "bar"], par: false)
 
-        _ = try? await web.authorize()
+        do { _ = try await web.authorize() } catch { /* token exchange fails with fake code — expected */ }
 
         let parCalls = recorder.all(matchingPathSuffix: "/par")
         XCTAssertTrue(parCalls.isEmpty, "Expected no PAR call when par=false; got \(parCalls.count)")
@@ -123,7 +123,7 @@ final class OidcWebClientE2ETests: XCTestCase {
     func testOidcWebClientPingOneWithPAR() async throws {
         let web = makeWebClient(config: pingOneConfig, additionalParameters: ["foo": "bar"], par: true)
 
-        _ = try? await web.authorize()
+        do { _ = try await web.authorize() } catch { /* token exchange fails with fake code — expected */ }
 
         let parCalls = recorder.all(matchingPathSuffix: "/par")
         XCTAssertEqual(parCalls.count, 1, "Expected exactly one PAR request")
