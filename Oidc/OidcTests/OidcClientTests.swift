@@ -318,6 +318,32 @@ final class OidcClientTests: XCTestCase {
         XCTAssertTrue(revokeCalled, "The /revoke endpoint was not called.")
     }
     
+    // TestRailCase — SDKS-5172 recovery path: corrupted token triggers delete + re-auth
+    func testTokenRecoveryOnDecryptionFailure() async throws {
+        // Arrange: storage that throws EncryptorError.failedToDecrypt on the first get()
+        let throwingStorage = ThrowingMockStorage<Token>()
+        await throwingStorage.throwingMock.set(throwOnGet: true)
+        oidcClientConfig.storage = throwingStorage
+
+        // MockURLProtocol is already configured in setUp() to return valid discovery + token
+        // responses, so re-authentication will succeed after the corrupted token is cleared.
+
+        // Act
+        let result = await oidcClient.token()
+
+        // Assert: re-authentication succeeded
+        switch result {
+        case .success(let token):
+            XCTAssertEqual(token.accessToken, "Dummy AccessToken")
+        case .failure(let error):
+            XCTFail("Expected success after recovery but got failure: \(error)")
+        }
+
+        // Assert: the corrupted token was deleted before re-authenticating
+        let deleted = await throwingStorage.throwingMock.deleteWasCalled
+        XCTAssertTrue(deleted, "delete() should have been called to clear the corrupted token")
+    }
+
     private func makeClient(config: HttpClientConfig = HttpClientConfig()) -> URLSessionHttpClient {
         let sessionConfig = URLSessionConfiguration.ephemeral
         sessionConfig.protocolClasses = [MockURLProtocol.self]

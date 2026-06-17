@@ -11,8 +11,9 @@
 
 import Foundation
 import PingLogger
-import PingOrchestrate
 import PingNetwork
+import PingOrchestrate
+import PingStorage
 
 /// Class representing an OpenID Connect client.
 /// - Property pkce: PKCE  object used for the Authorization call.
@@ -115,23 +116,29 @@ public class OidcClient {
         
         config.logger.i("Getting access token")
         do {
-            if let cached = try await config.storage.get() {
-                if !cached.isExpired(threshold: config.refreshThreshold) {
-                    config.logger.i("Token is not expired. Returning cached token.")
-                    return .success(cached)
-                }
-                config.logger.i("Token is expired. Attempting to refresh.")
-                if let cachedefreshToken = cached.refreshToken {
-                    do {
-                        let refreshedToken = try await refreshToken(cachedefreshToken)
-                        return .success(refreshedToken)
-                    } catch {
-                        config.logger.e("Failed to refresh token. Revoking token and re-authenticating.", error: error)
-                        await revoke(cached)
+            do {
+                if let cached = try await config.storage.get() {
+                    if !cached.isExpired(threshold: config.refreshThreshold) {
+                        config.logger.i("Token is not expired. Returning cached token.")
+                        return .success(cached)
+                    }
+                    config.logger.i("Token is expired. Attempting to refresh.")
+                    if let cachedefreshToken = cached.refreshToken {
+                        do {
+                            let refreshedToken = try await refreshToken(cachedefreshToken)
+                            return .success(refreshedToken)
+                        } catch {
+                            config.logger.e("Failed to refresh token. Revoking token and re-authenticating.", error: error)
+                            await revoke(cached)
+                        }
                     }
                 }
+            } catch let error as EncryptorError {
+                config.logger.w("Cached token is unreadable (device migration detected). Clearing corrupted token and re-authenticating.", error: error)
+                try? await config.storage.delete()
+                // fall through to re-authenticate below
             }
-            
+
             // Authenticate the user
             guard let agent = config.agent else {
                 return .failure(OidcError.authorizeError(message: "Agent not configured"))
@@ -191,7 +198,13 @@ public class OidcClient {
     private func revoke(_ token: Token? = nil) async {
         var accessToken = token
         if accessToken == nil {
-            accessToken = try? await config.storage.get()
+            do {
+                accessToken = try await config.storage.get()
+            } catch {
+                config.logger.w("Failed to read token for revocation. Clearing storage.", error: error)
+                try? await config.storage.delete()
+                return
+            }
         }
         if let token = accessToken {
             do {

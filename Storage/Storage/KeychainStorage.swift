@@ -30,18 +30,32 @@ public actor Keychain<T: Codable & Sendable>: Storage {
     /// - Parameter item: The item to save.
     public func save(item: T) async throws {
         let data = try JSONEncoder().encode(item)
-        var query = [
+
+        // Delete using primary key only (class + account + service) — no accessibility filter
+        // so ANY pre-existing item is removed regardless of its stored accessibility class.
+        // This prevents errSecDuplicateItem when upgrading from an older SDK version that
+        // stored items with the default kSecAttrAccessibleWhenUnlocked accessibility.
+        let deleteQuery = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: account,
+            kSecAttrService as String: service
+        ] as [String: Any]
+        SecItemDelete(deleteQuery as CFDictionary)
+
+        // Add the fresh item with device-only accessibility to prevent iCloud/iTunes backup
+        // migration. kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly is chosen over
+        // kSecAttrAccessibleWhenUnlockedThisDeviceOnly to allow background token refresh
+        // (Background App Refresh, silent push) after first device unlock, matching the
+        // accessibility used by SecuredKey for SE-backed keys.
+        var addQuery = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: account,
             kSecAttrService as String: service,
-            kSecValueData as String: data
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
         ] as [String: Any]
-        
-        query[kSecValueData  as String] = try await encryptor.encrypt(data: data)
-        
-        SecItemDelete(query as CFDictionary) // Remove any existing item
-        let status = SecItemAdd(query as CFDictionary, nil)
-        
+        addQuery[kSecValueData as String] = try await encryptor.encrypt(data: data)
+
+        let status = SecItemAdd(addQuery as CFDictionary, nil)
         guard status == errSecSuccess else {
             throw KeychainError.unableToSave
         }
