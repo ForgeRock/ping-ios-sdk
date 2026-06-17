@@ -31,6 +31,12 @@ public actor Keychain<T: Codable & Sendable>: Storage {
     public func save(item: T) async throws {
         let data = try JSONEncoder().encode(item)
 
+        // Encrypt BEFORE deleting the existing item. If encryption fails (e.g. the Secure
+        // Enclave key is transiently unavailable under device lock or memory pressure), this
+        // throws here and the previously stored token is left untouched — never leaving the
+        // keychain slot empty.
+        let encrypted = try await encryptor.encrypt(data: data)
+
         // Delete using primary key only (class + account + service) — no accessibility filter
         // so ANY pre-existing item is removed regardless of its stored accessibility class.
         // This prevents errSecDuplicateItem when upgrading from an older SDK version that
@@ -47,13 +53,13 @@ public actor Keychain<T: Codable & Sendable>: Storage {
         // kSecAttrAccessibleWhenUnlockedThisDeviceOnly to allow background token refresh
         // (Background App Refresh, silent push) after first device unlock, matching the
         // accessibility used by SecuredKey for SE-backed keys.
-        var addQuery = [
+        let addQuery = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: account,
             kSecAttrService as String: service,
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
+            kSecValueData as String: encrypted
         ] as [String: Any]
-        addQuery[kSecValueData as String] = try await encryptor.encrypt(data: data)
 
         let status = SecItemAdd(addQuery as CFDictionary, nil)
         guard status == errSecSuccess else {

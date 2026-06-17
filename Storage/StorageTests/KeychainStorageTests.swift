@@ -121,4 +121,39 @@ final class KeychainStorageTests: XCTestCase {
         let accessible = attrs?[kSecAttrAccessible as String] as? String
         XCTAssertEqual(accessible, kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly as String)
     }
+
+    // SDKS-5172 — verify the existing token survives a failed save() (encryption error).
+    // save() must encrypt BEFORE deleting the previous item, so a transient encrypt failure
+    // never leaves the keychain slot empty (data-loss regression guard).
+    func testExistingTokenSurvivesFailedSave() async throws {
+        // First, store a good token using a non-throwing encryptor.
+        let goodStorage = KeychainStorage<TestItem>(account: account)
+        let original = TestItem(id: 1, name: "Original")
+        try await goodStorage.save(item: original)
+
+        // Now attempt to save a new token through an encryptor that always fails.
+        let failingStorage = KeychainStorage<TestItem>(account: account, encryptor: FailingEncryptor())
+        do {
+            try await failingStorage.save(item: TestItem(id: 2, name: "New"))
+            XCTFail("save() should throw when encryption fails")
+        } catch {
+            // Expected — encryption failed.
+        }
+
+        // The original token must still be retrievable (it was never deleted).
+        let retrieved = try await goodStorage.get()
+        XCTAssertEqual(retrieved, original, "Existing token must survive a failed save()")
+    }
+}
+
+/// An `Encryptor` that always throws on encrypt — used to verify save() does not destroy the
+/// existing keychain item when encryption fails.
+private struct FailingEncryptor: Encryptor {
+    func encrypt(data: Data) async throws -> Data {
+        throw EncryptorError.failedToEncrypt
+    }
+
+    func decrypt(data: Data) async throws -> Data {
+        throw EncryptorError.failedToDecrypt
+    }
 }

@@ -36,13 +36,27 @@ public class MockStorage<T: Codable& Sendable>: StorageDelegate<T>, @unchecked S
 
 // MARK: - ThrowingMock
 
-/// A configurable actor-based Storage that can simulate decryption failures.
-/// Used to test recovery paths where a cached token is unreadable (e.g. after device migration).
+/// A simple error used to simulate a transient (non-`EncryptorError`) storage failure.
+public enum TransientStorageError: Error, Sendable {
+    case interactionNotAllowed
+}
+
+/// A configurable actor-based Storage that can simulate decryption and delete failures.
+/// Used to test recovery paths where a cached token is unreadable (e.g. after device migration)
+/// and the negative paths where the failure is transient or `delete()` itself fails.
 public actor ThrowingMock<T: Codable & Sendable>: Storage {
     private var data: T?
 
-    /// When `true`, `get()` throws `EncryptorError.failedToDecrypt` to simulate a corrupted token.
+    /// When `true`, `get()` throws `getError` to simulate a failure reading the cached token.
     public var throwOnGet: Bool = false
+
+    /// The error thrown by `get()` when `throwOnGet` is `true`. Defaults to a decryption failure,
+    /// matching the Secure Enclave key-mismatch scenario after device migration.
+    public var getError: Error = EncryptorError.failedToDecrypt
+
+    /// When `true`, `delete()` throws `KeychainError.unableToDelete` to simulate a keychain that
+    /// cannot clear the corrupted item (e.g. errSecInteractionNotAllowed while the device is locked).
+    public var throwOnDelete: Bool = false
 
     /// Set to `true` when `delete()` is called; allows test assertions on cleanup behaviour.
     public var deleteWasCalled: Bool = false
@@ -53,13 +67,16 @@ public actor ThrowingMock<T: Codable & Sendable>: Storage {
 
     public func get() async throws -> T? {
         if throwOnGet {
-            throw EncryptorError.failedToDecrypt
+            throw getError
         }
         return data
     }
 
     public func delete() async throws {
         deleteWasCalled = true
+        if throwOnDelete {
+            throw KeychainError.unableToDelete
+        }
         throwOnGet = false
         data = nil
     }
@@ -67,6 +84,16 @@ public actor ThrowingMock<T: Codable & Sendable>: Storage {
     /// Convenience setter so tests can configure `throwOnGet` from outside the actor.
     public func set(throwOnGet value: Bool) {
         throwOnGet = value
+    }
+
+    /// Convenience setter so tests can configure `throwOnDelete` from outside the actor.
+    public func set(throwOnDelete value: Bool) {
+        throwOnDelete = value
+    }
+
+    /// Convenience setter so tests can configure the error thrown by `get()`.
+    public func set(getError value: Error) {
+        getError = value
     }
 }
 
