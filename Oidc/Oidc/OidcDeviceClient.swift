@@ -37,7 +37,7 @@ public class OidcDeviceClient: @unchecked Sendable {
     }
 
     private let config: OidcClientConfig
-    private let logger: Logger
+    let logger: Logger
 
     /// Initializes a new `OidcDeviceClient`.
     /// - Parameter config: The OIDC client configuration to use.
@@ -53,6 +53,34 @@ public class OidcDeviceClient: @unchecked Sendable {
         let config = OidcClientConfig()
         block(config)
         return OidcDeviceClient(config: config)
+    }
+
+    /// Creates an `OidcDeviceClient` from a unified JSON configuration dictionary.
+    ///
+    /// Parses and validates the platform-neutral schema and delegates to
+    /// `createOidcDeviceClient(block:)` with the extracted values. Unknown fields are
+    /// silently ignored for forward compatibility.
+    ///
+    /// Endpoint overrides (e.g. `deviceAuthorizationEndpoint`) are expressed as an
+    /// `openId` sub-object inside `oidc` and applied after OIDC discovery completes,
+    /// mirroring the `openIdOverride` closure on `OidcClientConfig`.
+    ///
+    /// - Parameter json: A `[String: Any]` dictionary conforming to the unified SDK
+    ///   configuration schema.
+    /// - Returns: `.success(OidcDeviceClient)` on valid input, `.failure(JsonConfigError)`
+    ///   if a required field is absent or a field has the wrong type.
+    public static func createOidcDeviceClient(json: [String: Any]) -> Result<OidcDeviceClient, Error> {
+        do {
+            let p = JsonConfigParser(json)
+            let logger = p.logLevel()
+            let oidcDict: [String: Any] = try p.required(JsonConfigKey.oidc, field: JsonConfigKey.oidc)
+
+            let oidcConfig = try OidcClientConfig.from(oidcJson: oidcDict, logger: logger)
+
+            return .success(OidcDeviceClient(config: oidcConfig))
+        } catch {
+            return .failure(error)
+        }
     }
 
     // MARK: - Device Authorization

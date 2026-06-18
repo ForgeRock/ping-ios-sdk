@@ -92,3 +92,7 @@ AGENTS.md
 # Merge / Finder leftovers
 *.orig
 **/* copy.xcodeproj/
+/SourcePackages
+
+# Local JSON configs — not committed, discovered at runtime via folder reference
+SampleApps/PingExample/PingExample/Configs/

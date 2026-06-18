@@ -50,6 +50,9 @@
 		SDKS4785A003 /* OidcDeviceClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS4785F003 /* OidcDeviceClientTests.swift */; };
 		SDKS4785A004 /* OidcDeviceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS4785F004 /* OidcDeviceClient.swift */; };
 		SDKS4785A005 /* OidcDeviceClientAdditionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS4785F005 /* OidcDeviceClientAdditionalTests.swift */; };
+		SDKS50660004000000000002 /* JsonConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50660004000000000001 /* JsonConfig.swift */; };
+		SDKS50660007000000000002 /* OidcWebClientJsonConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50660007000000000001 /* OidcWebClientJsonConfigTests.swift */; };
+		SDKS50660008000000000002 /* OidcDeviceClientJsonConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50660008000000000001 /* OidcDeviceClientJsonConfigTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -121,6 +124,9 @@
 		SDKS4785F003 /* OidcDeviceClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcDeviceClientTests.swift; sourceTree = "<group>"; };
 		SDKS4785F004 /* OidcDeviceClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcDeviceClient.swift; sourceTree = "<group>"; };
 		SDKS4785F005 /* OidcDeviceClientAdditionalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcDeviceClientAdditionalTests.swift; sourceTree = "<group>"; };
+		SDKS50660004000000000001 /* JsonConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonConfig.swift; sourceTree = "<group>"; };
+		SDKS50660007000000000001 /* OidcWebClientJsonConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcWebClientJsonConfigTests.swift; sourceTree = "<group>"; };
+		SDKS50660008000000000001 /* OidcDeviceClientJsonConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcDeviceClientJsonConfigTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,6 +192,7 @@
 				A50966B72C4C34CB00A4E5B5 /* AuthCode.swift */,
 				SDKS4785F001 /* DeviceAuthorizationResponse.swift */,
 				SDKS4785F002 /* DeviceFlowStatus.swift */,
+				SDKS50660004000000000001 /* JsonConfig.swift */,
 				SDKS4785F004 /* OidcDeviceClient.swift */,
 				3AB1CA3C2BD961A2003FCE3C /* OidcClient.swift */,
 				3AB1CA342BD884E4003FCE3C /* OidcClientConfig.swift */,
@@ -211,7 +218,9 @@
 				77E2E5250895DD43A8388F8A /* OidcAdditionalTests.swift */,
 				SDKS4785F003 /* OidcDeviceClientTests.swift */,
 				SDKS4785F005 /* OidcDeviceClientAdditionalTests.swift */,
+				SDKS50660008000000000001 /* OidcDeviceClientJsonConfigTests.swift */,
 				EC23D5142E2E7A1100C43D42 /* OidcWebClientTests.swift */,
+				SDKS50660007000000000001 /* OidcWebClientJsonConfigTests.swift */,
 				A50966DA2C4DDFAE00A4E5B5 /* PkceTests.swift */,
 				A50966D42C4DD79000A4E5B5 /* TokenTests.swift */,
 			);
@@ -396,6 +405,7 @@
 				A50966B62C4C342800A4E5B5 /* OidcError.swift in Sources */,
 				3AB1CA2D2BD7727B003FCE3C /* Token.swift in Sources */,
 				3AB1CA352BD884E4003FCE3C /* OidcClientConfig.swift in Sources */,
+				SDKS50660004000000000002 /* JsonConfig.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,6 +419,7 @@
 				CCCCCCCC00000001FAA0E2E0 /* OidcWebClientE2ETests.swift in Sources */,
 				CCCCCCCC00000003FAA0E2E0 /* RecordingHttpClient.swift in Sources */,
 				EEEEEEEE00000001FAA0E2E0 /* OidcE2EConfig.swift in Sources */,
+				SDKS50660007000000000002 /* OidcWebClientJsonConfigTests.swift in Sources */,
 				A50966EF2C4FF75400A4E5B5 /* MockStorage.swift in Sources */,
 				A50966DF2C4DF3CD00A4E5B5 /* OidcClientConfigTests.swift in Sources */,
 				A50966E12C4F1D9D00A4E5B5 /* MockURLProtocol.swift in Sources */,
@@ -419,6 +430,7 @@
 				CE68EBE71BABE65295E0CFCA /* OidcAdditionalTests.swift in Sources */,
 				SDKS4785A003 /* OidcDeviceClientTests.swift in Sources */,
 				SDKS4785A005 /* OidcDeviceClientAdditionalTests.swift in Sources */,
+				SDKS50660008000000000002 /* OidcDeviceClientJsonConfigTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

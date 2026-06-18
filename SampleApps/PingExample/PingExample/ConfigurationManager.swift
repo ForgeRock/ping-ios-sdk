@@ -88,10 +88,26 @@ class ConfigurationManager: ObservableObject {
         if let c = deviceConfig { sels[.device] = c }
         self.selections = sels
 
-        self.journey = journeyConfig.map { ConfigurationManager.buildJourney($0) }
-        self.davinci = davinciConfig.map { ConfigurationManager.buildDaVinci($0) }
-        self.oidcLogin = oidcWebConfig.map { ConfigurationManager.buildOidcWebClient($0) }
-        self.deviceClient = deviceConfig.map { ConfigurationManager.buildDeviceClient($0) }
+        self.journey = journeyConfig.map { config in
+            ConfigurationManager.resolveJson(for: config)
+                .flatMap { ConfigurationManager.buildJourney(fromJSON: $0) }
+                ?? ConfigurationManager.buildJourney(config)
+        }
+        self.davinci = davinciConfig.map { config in
+            ConfigurationManager.resolveJson(for: config)
+                .flatMap { ConfigurationManager.buildDaVinci(fromJSON: $0) }
+                ?? ConfigurationManager.buildDaVinci(config)
+        }
+        self.oidcLogin = oidcWebConfig.map { config in
+            ConfigurationManager.resolveJson(for: config)
+                .flatMap { ConfigurationManager.buildOidcWebClient(fromJSON: $0) }
+                ?? ConfigurationManager.buildOidcWebClient(config)
+        }
+        self.deviceClient = deviceConfig.map { config in
+            ConfigurationManager.resolveJson(for: config)
+                .flatMap { ConfigurationManager.buildDeviceClient(fromJSON: $0) }
+                ?? ConfigurationManager.buildDeviceClient(config)
+        }
     }
     
     // MARK: - Configuration Selection
@@ -118,15 +134,20 @@ class ConfigurationManager: ObservableObject {
     }
     
     private func rebuildInstance(for config: Configuration) {
+        let json = ConfigurationManager.resolveJson(for: config)
         switch config.type {
         case .journey:
-            journey = ConfigurationManager.buildJourney(config)
+            journey = json.flatMap { ConfigurationManager.buildJourney(fromJSON: $0) }
+                ?? ConfigurationManager.buildJourney(config)
         case .davinci:
-            davinci = ConfigurationManager.buildDaVinci(config)
+            davinci = json.flatMap { ConfigurationManager.buildDaVinci(fromJSON: $0) }
+                ?? ConfigurationManager.buildDaVinci(config)
         case .oidcWeb:
-            oidcLogin = ConfigurationManager.buildOidcWebClient(config)
+            oidcLogin = json.flatMap { ConfigurationManager.buildOidcWebClient(fromJSON: $0) }
+                ?? ConfigurationManager.buildOidcWebClient(config)
         case .device:
-            deviceClient = ConfigurationManager.buildDeviceClient(config)
+            deviceClient = json.flatMap { ConfigurationManager.buildDeviceClient(fromJSON: $0) }
+                ?? ConfigurationManager.buildDeviceClient(config)
         }
     }
     
@@ -156,7 +177,7 @@ class ConfigurationManager: ObservableObject {
     
     /// Delete a configuration by name and persist.
     public func deleteConfiguration(_ config: Configuration) {
-        configurations.removeAll { $0.name == config.name }
+        configurations.removeAll { $0.name == config.name && $0.type == config.type }
         saveUserConfigurations()
         // If the deleted config was selected, fall back to the first of its type (or clear)
         if selections[config.type]?.name == config.name {
@@ -277,21 +298,120 @@ class ConfigurationManager: ObservableObject {
         }
     }
 
+    // MARK: - JSON Factory Helpers (Unified SDK Configuration)
+
+    /// Creates a Journey from a unified JSON configuration dictionary.
+    ///
+    /// Example JSON mirrors the cross-platform schema defined in the Unified SDK Configuration spec.
+    /// Use this when loading configuration from a remote source, a shared file, or a CI environment.
+    ///
+    ///     let json: [String: Any] = [
+    ///         "journey": [
+    ///             "serverUrl": "https://example.com/am",
+    ///             "realm": "alpha"
+    ///         ],
+    ///         "timeout": 30000,
+    ///         "log": "DEBUG",
+    ///         "oidc": [                          // optional for Journey
+    ///             "clientId": "my-client",
+    ///             "discoveryEndpoint": "https://example.com/.well-known/openid-configuration",
+    ///             "scopes": ["openid", "profile", "email"],
+    ///             "redirectUri": "myapp://callback"
+    ///         ]
+    ///     ]
+    ///     let result = ConfigurationManager.buildJourney(fromJSON: json)
+    static func buildJourney(fromJSON json: [String: Any]) -> Journey? {
+        switch Journey.createJourney(json: json) {
+        case .success(let journey):
+            return journey
+        case .failure(let error):
+            LogManager.logger.e("Failed to create Journey from JSON: \(error.localizedDescription)", error: error)
+            return nil
+        }
+    }
+
+    /// Creates a DaVinci from a unified JSON configuration dictionary.
+    ///
+    /// Example JSON mirrors the cross-platform schema defined in the Unified SDK Configuration spec.
+    ///
+    ///     let json: [String: Any] = [
+    ///         "timeout": 15000,
+    ///         "oidc": [
+    ///             "clientId": "my-client",
+    ///             "discoveryEndpoint": "https://example.com/.well-known/openid-configuration",
+    ///             "scopes": ["openid", "profile", "email"],
+    ///             "redirectUri": "myapp://callback"
+    ///         ]
+    ///     ]
+    ///     let result = ConfigurationManager.buildDaVinci(fromJSON: json)
+    static func buildDaVinci(fromJSON json: [String: Any]) -> DaVinci? {
+        switch DaVinci.createDaVinci(json: json) {
+        case .success(let daVinci):
+            return daVinci
+        case .failure(let error):
+            LogManager.logger.e("Failed to create DaVinci from JSON: \(error.localizedDescription)", error: error)
+            return nil
+        }
+    }
+
+    /// Creates an OidcWebClient from a unified JSON configuration dictionary.
+    static func buildOidcWebClient(fromJSON json: [String: Any]) -> OidcWebClient? {
+        switch OidcWebClient.createOidcWebClient(json: json) {
+        case .success(let client):
+            return client
+        case .failure(let error):
+            LogManager.logger.e("Failed to create OidcWebClient from JSON: \(error.localizedDescription)", error: error)
+            return nil
+        }
+    }
+
+    /// Creates an OidcDeviceClient from a unified JSON configuration dictionary.
+    static func buildDeviceClient(fromJSON json: [String: Any]) -> OidcDeviceClient? {
+        switch OidcDeviceClient.createOidcDeviceClient(json: json) {
+        case .success(let client):
+            return client
+        case .failure(let error):
+            LogManager.logger.e("Failed to create OidcDeviceClient from JSON: \(error.localizedDescription)", error: error)
+            return nil
+        }
+    }
+
     // MARK: - Persistence Helpers
     
-    /// Loads all configurations: defaults plus user-added configs from UserDefaults.
+    /// Loads all configurations: defaults, bundled JSON files, then user-added configs from UserDefaults.
     private static func loadConfigurations() -> [Configuration] {
         var configs = defaultConfigurations
+        configs.append(contentsOf: JsonConfigLoader.load())
         if let data = UserDefaults.standard.data(forKey: userConfigsKey),
            let userConfigs = try? JSONDecoder().decode([Configuration].self, from: data) {
             configs.append(contentsOf: userConfigs)
         }
         return configs
     }
+
+    /// Returns the parsed JSON dictionary for a JSON-backed config, or nil for non-JSON configs.
+    private static func resolveJson(for config: Configuration) -> [String: Any]? {
+        guard let filename = config.jsonFileName else { return nil }
+        return loadBundledJson(filename)
+    }
+
+    private static var jsonCache: [String: [String: Any]] = [:]
+
+    /// Loads a bundled JSON file by filename and returns its parsed dictionary.
+    private static func loadBundledJson(_ filename: String) -> [String: Any]? {
+        if let cached = jsonCache[filename] { return cached }
+        let name = URL(fileURLWithPath: filename).deletingPathExtension().lastPathComponent
+        guard let url = Bundle.main.url(forResource: name, withExtension: "json", subdirectory: "Configs"),
+              let data = try? Data(contentsOf: url),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
+        else { return nil }
+        jsonCache[filename] = json
+        return json
+    }
     
-    /// Persists user-added configurations (non-defaults) to UserDefaults.
+    /// Persists user-added configurations (non-defaults, non-JSON) to UserDefaults.
     private func saveUserConfigurations() {
-        let userConfigs = configurations.filter { !$0.isDefault }
+        let userConfigs = configurations.filter { !$0.isDefault && !$0.isJsonBased }
         if let data = try? JSONEncoder().encode(userConfigs) {
             UserDefaults.standard.set(data, forKey: ConfigurationManager.userConfigsKey)
         }
