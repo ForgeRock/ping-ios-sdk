@@ -36,6 +36,10 @@ public struct PingOneMFAError: Error, LocalizedError, Sendable {
     public var errorDescription: String? { message }
 
     init(_ error: Error) {
+        if let existing = error as? PingOneMFAError {
+            self = existing
+            return
+        }
         let nsError = error as NSError
         let userInfoString = nsError.userInfo
             .map { "\($0.key)=\($0.value)" }
@@ -56,7 +60,7 @@ public struct PingOneMFAError: Error, LocalizedError, Sendable {
     /// Creates an error aggregating multiple native SDK errors.
     /// - Parameter errors: The array of native `NSError` values returned by the upstream SDK.
     init(errors: [Error]) {
-        let internal_ = errors.map { e -> PingOneMFAInternalError in
+        let mapped = errors.map { e -> PingOneMFAInternalError in
             let ns = e as NSError
             return PingOneMFAInternalError(
                 code: ns.code,
@@ -64,7 +68,8 @@ public struct PingOneMFAError: Error, LocalizedError, Sendable {
                 userInfo: ns.userInfo.compactMapValues { "\($0)" }
             )
         }
-        self.message = internal_.first?.message ?? "Unknown error"
-        self.internalErrorsList = internal_
+        let joined = mapped.map(\.message).joined(separator: "; ")
+        self.message = joined.isEmpty ? "Unknown error" : joined
+        self.internalErrorsList = mapped
     }
 }
