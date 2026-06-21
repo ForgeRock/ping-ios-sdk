@@ -303,7 +303,7 @@ public class PingOneMFA {
     ///
     /// - Parameter userInfo: The raw APNS `userInfo` dictionary.
     /// - Returns: A tuple of `(title: String?, message: String?)`.
-    private nonisolated static func parseAPNSAlert(from userInfo: [AnyHashable: Any]) -> (title: String?, message: String?) {
+    nonisolated static func parseAPNSAlert(from userInfo: [AnyHashable: Any]) -> (title: String?, message: String?) {
         guard let aps = userInfo["aps"] as? [String: Any] else {
             return (title: nil, message: nil)
         }

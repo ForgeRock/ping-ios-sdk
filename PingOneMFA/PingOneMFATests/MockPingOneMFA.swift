@@ -12,6 +12,7 @@ import UserNotifications
 @testable import PingOneMFA
 
 class MockPingOneMFA {
+    private static let lock = NSLock()
     nonisolated(unsafe) static var shouldThrowError = false
     nonisolated(unsafe) static var errorMessage = "Operation failed"
     nonisolated(unsafe) static var initializeCalled = false
@@ -20,29 +21,29 @@ class MockPingOneMFA {
     nonisolated(unsafe) static var pairCalled = false
     nonisolated(unsafe) static var getDeviceInfoCalled = false
     nonisolated(unsafe) static var getOneTimePasscodeCalled = false
-    nonisolated(unsafe) static var processPushNotificationCalled = false
-    nonisolated(unsafe) static var getMobilePayloadCalled = false
+    nonisolated(unsafe) static var processRemoteNotificationCalled = false
+    nonisolated(unsafe) static var generateMobilePayloadCalled = false
     nonisolated(unsafe) static var lastGeo: Geo?
 
     // Return values for happy-path tests
     nonisolated(unsafe) static var accountsReturnValue: [PingOneMfaAccount] = []
     nonisolated(unsafe) static var otpReturnValue = OtpCodeInfo(code: "123456", secondsRemaining: 30)
     nonisolated(unsafe) static var mobilePayloadReturnValue = "mockMobilePayload"
-    // collectPush cannot return a real PushNotification in tests because NotificationObject
-    // (from PingOneSDK) has no accessible initializer. The mock therefore only supports
-    // the error-path for collectPush.
-    nonisolated(unsafe) static var collectPushReturnValue: PushNotification? = nil
+    // processRemoteNotification cannot return a real PushNotification in tests because
+    // NotificationObject (from PingOneSDK) has no accessible initializer. The mock therefore
+    // only supports the error-path for processRemoteNotification.
+    nonisolated(unsafe) static var processRemoteNotificationReturnValue: PushNotification? = nil
 
     // getNotificationCategories tracking state
     nonisolated(unsafe) static var getNotificationCategoriesCalled = false
     nonisolated(unsafe) static var notificationCategoriesReturnValue: Set<UNNotificationCategory> = []
 
-    // processNotificationAction tracking state
-    nonisolated(unsafe) static var processNotificationActionCalled = false
-    // processNotificationAction cannot return a real PushNotification in tests because
+    // processRemoteNotificationAction tracking state
+    nonisolated(unsafe) static var processRemoteNotificationActionCalled = false
+    // processRemoteNotificationAction cannot return a real PushNotification in tests because
     // NotificationObject (from PingOneSDK) has no accessible initialiser. The mock therefore
-    // only supports the nil-return and error paths for processNotificationAction.
-    nonisolated(unsafe) static var processNotificationActionReturnValue: PushNotification? = nil
+    // only supports the nil-return and error paths for processRemoteNotificationAction.
+    nonisolated(unsafe) static var processRemoteNotificationActionReturnValue: PushNotification? = nil
     nonisolated(unsafe) static var lastActionIdentifier: String? = nil
     nonisolated(unsafe) static var lastActionAuthenticationMethod: String? = nil
 
@@ -55,25 +56,27 @@ class MockPingOneMFA {
         pairCalled = false
         getDeviceInfoCalled = false
         getOneTimePasscodeCalled = false
-        processPushNotificationCalled = false
-        getMobilePayloadCalled = false
+        processRemoteNotificationCalled = false
+        generateMobilePayloadCalled = false
         lastGeo = nil
         accountsReturnValue = []
         otpReturnValue = OtpCodeInfo(code: "123456", secondsRemaining: 30)
         mobilePayloadReturnValue = "mockMobilePayload"
-        collectPushReturnValue = nil
+        processRemoteNotificationReturnValue = nil
         getNotificationCategoriesCalled = false
         notificationCategoriesReturnValue = []
-        processNotificationActionCalled = false
-        processNotificationActionReturnValue = nil
+        processRemoteNotificationActionCalled = false
+        processRemoteNotificationActionReturnValue = nil
         lastActionIdentifier = nil
         lastActionAuthenticationMethod = nil
     }
 
     static func initialize(geo: Geo) async throws {
-        initializeCalled = true
-        initializeCallCount += 1
-        lastGeo = geo
+        lock.withLock {
+            initializeCalled = true
+            initializeCallCount += 1
+            lastGeo = geo
+        }
         if shouldThrowError {
             throw PingOneMFAError(errorMessage)
         }
@@ -109,21 +112,21 @@ class MockPingOneMFA {
         return otpReturnValue
     }
 
-    static func processPushNotification(userInfo: [AnyHashable: Any]) async throws -> PushNotification {
-        processPushNotificationCalled = true
+    static func processRemoteNotification(userInfo: [AnyHashable: Any]) async throws -> PushNotification {
+        processRemoteNotificationCalled = true
         if shouldThrowError {
             throw PingOneMFAError(errorMessage)
         }
         // NotificationObject (from PingOneSDK) cannot be instantiated in tests;
         // unwrap the pre-configured return value or throw if not configured.
-        guard let value = collectPushReturnValue else {
-            throw PingOneMFAError("processPushNotification: no return value configured")
+        guard let value = processRemoteNotificationReturnValue else {
+            throw PingOneMFAError("processRemoteNotification: no return value configured")
         }
         return value
     }
 
-    static func getMobilePayload() async throws -> String {
-        getMobilePayloadCalled = true
+    static func generateMobilePayload() async throws -> String {
+        generateMobilePayloadCalled = true
         if shouldThrowError {
             throw PingOneMFAError(errorMessage)
         }
@@ -135,17 +138,17 @@ class MockPingOneMFA {
         return notificationCategoriesReturnValue
     }
 
-    static func processNotificationAction(
+    static func processRemoteNotificationAction(
         identifier: String,
         authenticationMethod: String?,
         userInfo: [AnyHashable: Any]
     ) async throws -> PushNotification? {
-        processNotificationActionCalled = true
+        processRemoteNotificationActionCalled = true
         lastActionIdentifier = identifier
         lastActionAuthenticationMethod = authenticationMethod
         if shouldThrowError {
             throw PingOneMFAError(errorMessage)
         }
-        return processNotificationActionReturnValue
+        return processRemoteNotificationActionReturnValue
     }
 }

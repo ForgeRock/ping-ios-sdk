@@ -174,10 +174,10 @@ final class PingOneMFATests: XCTestCase {
         MockPingOneMFA.mobilePayloadReturnValue = "test-payload-value"
 
         // When
-        let payload = try await MockPingOneMFA.getMobilePayload()
+        let payload = try await MockPingOneMFA.generateMobilePayload()
 
         // Then
-        XCTAssertTrue(MockPingOneMFA.getMobilePayloadCalled)
+        XCTAssertTrue(MockPingOneMFA.generateMobilePayloadCalled)
         XCTAssertEqual(payload, "test-payload-value")
     }
 
@@ -256,21 +256,21 @@ final class PingOneMFATests: XCTestCase {
 
     // MARK: - collectPush Error-Path Test
 
-    /// processPushNotification error-path: mock throws PingOneMFAError when shouldThrowError == true.
+    /// processRemoteNotification error-path: mock throws PingOneMFAError when shouldThrowError == true.
     /// Happy-path cannot be tested via mock because NotificationObject (PingOneSDK) has no
     /// accessible initialiser, preventing construction of a PushNotification stub value.
-    func test18_MockProcessPushNotificationErrorPath() async {
+    func test18_MockProcessRemoteNotificationErrorPath() async {
         // Given
         MockPingOneMFA.shouldThrowError = true
         MockPingOneMFA.errorMessage = "Collect push failed"
 
         // When / Then
         do {
-            _ = try await MockPingOneMFA.processPushNotification(userInfo: [:])
+            _ = try await MockPingOneMFA.processRemoteNotification(userInfo: [:])
             XCTFail("Should have thrown an error")
         } catch let error as PingOneMFAError {
             XCTAssertEqual(error.message, "Collect push failed")
-            XCTAssertTrue(MockPingOneMFA.processPushNotificationCalled)
+            XCTAssertTrue(MockPingOneMFA.processRemoteNotificationCalled)
         } catch {
             XCTFail("Wrong error type: \(error)")
         }
@@ -361,41 +361,41 @@ final class PingOneMFATests: XCTestCase {
         XCTAssertTrue(returned.contains(where: { $0.identifier == "test.category" }))
     }
 
-    // MARK: - processNotificationAction Mock Tests
+    // MARK: - processRemoteNotificationAction Mock Tests
 
-    /// test22: verifies that MockPingOneMFA.processNotificationAction returns nil when the
+    /// test22: verifies that MockPingOneMFA.processRemoteNotificationAction returns nil when the
     /// SDK handles the action internally (no PushNotification needed).
     /// Happy-path (non-nil return) cannot be tested because NotificationObject (PingOneSDK)
     /// has no accessible initialiser, preventing construction of a PushNotification stub value.
-    func test22_MockProcessNotificationActionReturnsNilWhenSDKHandlesInternally() async throws {
+    func test22_MockProcessRemoteNotificationActionReturnsNilWhenSDKHandlesInternally() async throws {
         // Given
         MockPingOneMFA.shouldThrowError = false
-        MockPingOneMFA.processNotificationActionReturnValue = nil
+        MockPingOneMFA.processRemoteNotificationActionReturnValue = nil
 
         // When
-        let result = try await MockPingOneMFA.processNotificationAction(
+        let result = try await MockPingOneMFA.processRemoteNotificationAction(
             identifier: "notification.confirm",
             authenticationMethod: "user",
             userInfo: [:]
         )
 
         // Then
-        XCTAssertTrue(MockPingOneMFA.processNotificationActionCalled)
+        XCTAssertTrue(MockPingOneMFA.processRemoteNotificationActionCalled)
         XCTAssertNil(result)
         XCTAssertEqual(MockPingOneMFA.lastActionIdentifier, "notification.confirm")
         XCTAssertEqual(MockPingOneMFA.lastActionAuthenticationMethod, "user")
     }
 
-    /// test23: verifies that MockPingOneMFA.processNotificationAction throws a PingOneMFAError
+    /// test23: verifies that MockPingOneMFA.processRemoteNotificationAction throws a PingOneMFAError
     /// when shouldThrowError is set, exercising the error path.
-    func test23_MockProcessNotificationActionErrorPath() async {
+    func test23_MockProcessRemoteNotificationActionErrorPath() async {
         // Given
         MockPingOneMFA.shouldThrowError = true
         MockPingOneMFA.errorMessage = "Process notification action failed"
 
         // When / Then
         do {
-            _ = try await MockPingOneMFA.processNotificationAction(
+            _ = try await MockPingOneMFA.processRemoteNotificationAction(
                 identifier: "notification.deny",
                 authenticationMethod: "user",
                 userInfo: [:]
@@ -403,11 +403,69 @@ final class PingOneMFATests: XCTestCase {
             XCTFail("Should have thrown an error")
         } catch let error as PingOneMFAError {
             XCTAssertEqual(error.message, "Process notification action failed")
-            XCTAssertTrue(MockPingOneMFA.processNotificationActionCalled)
+            XCTAssertTrue(MockPingOneMFA.processRemoteNotificationActionCalled)
             XCTAssertEqual(MockPingOneMFA.lastActionIdentifier, "notification.deny")
         } catch {
             XCTFail("Wrong error type: \(error)")
         }
+    }
+
+    // MARK: - parseAPNSAlert Tests
+
+    func test24_ParseAPNSAlert_DictAlert_ReturnsTitleAndBody() {
+        let userInfo: [AnyHashable: Any] = [
+            "aps": ["alert": ["title": "Auth Request", "body": "Approve login?"]]
+        ]
+        let (title, message) = PingOneMFA.parseAPNSAlert(from: userInfo)
+        XCTAssertEqual(title, "Auth Request")
+        XCTAssertEqual(message, "Approve login?")
+    }
+
+    func test25_ParseAPNSAlert_StringAlert_ReturnsNilTitleAndStringMessage() {
+        let userInfo: [AnyHashable: Any] = [
+            "aps": ["alert": "You have a new login request"]
+        ]
+        let (title, message) = PingOneMFA.parseAPNSAlert(from: userInfo)
+        XCTAssertNil(title)
+        XCTAssertEqual(message, "You have a new login request")
+    }
+
+    func test26_ParseAPNSAlert_MissingAlert_ReturnsBothNil() {
+        let userInfo: [AnyHashable: Any] = ["aps": [:]]
+        let (title, message) = PingOneMFA.parseAPNSAlert(from: userInfo)
+        XCTAssertNil(title)
+        XCTAssertNil(message)
+    }
+
+    func test27_ParseAPNSAlert_MissingAps_ReturnsBothNil() {
+        let userInfo: [AnyHashable: Any] = ["custom": "value"]
+        let (title, message) = PingOneMFA.parseAPNSAlert(from: userInfo)
+        XCTAssertNil(title)
+        XCTAssertNil(message)
+    }
+
+    func test28_ParseAPNSAlert_DictAlertMissingBody_ReturnsNilMessage() {
+        let userInfo: [AnyHashable: Any] = [
+            "aps": ["alert": ["title": "Auth Request"]]
+        ]
+        let (title, message) = PingOneMFA.parseAPNSAlert(from: userInfo)
+        XCTAssertEqual(title, "Auth Request")
+        XCTAssertNil(message)
+    }
+
+    func test29_ParseAPNSAlert_DictAlertMissingTitle_ReturnsNilTitle() {
+        let userInfo: [AnyHashable: Any] = [
+            "aps": ["alert": ["body": "Approve login?"]]
+        ]
+        let (title, message) = PingOneMFA.parseAPNSAlert(from: userInfo)
+        XCTAssertNil(title)
+        XCTAssertEqual(message, "Approve login?")
+    }
+
+    func test30_ParseAPNSAlert_EmptyUserInfo_ReturnsBothNil() {
+        let (title, message) = PingOneMFA.parseAPNSAlert(from: [:])
+        XCTAssertNil(title)
+        XCTAssertNil(message)
     }
 
     private func waitForConfigureCallCount(minimum: Int, probe: ConfigureProbe) async -> Int {
