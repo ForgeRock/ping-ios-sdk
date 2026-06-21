@@ -14,6 +14,10 @@ internal struct AccountParser {
 
     internal static func parse(_ deviceInfo: [String: Any]?) throws -> [PingOneMfaAccount] {
         guard let deviceInfo, !deviceInfo.isEmpty else { return [] }
+        
+        guard JSONSerialization.isValidJSONObject(deviceInfo) else {
+            throw PingOneMFAError("Failed to serialize device info: contains a value that is not JSON-serializable")
+        }
 
         let data: Data
         do {

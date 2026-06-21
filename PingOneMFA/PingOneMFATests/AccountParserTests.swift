@@ -254,9 +254,9 @@ final class AccountParserTests: XCTestCase {
     // MARK: - Non-serializable value
 
     func testParseNonJSONSerializableValueThrows() {
-        // Given — NSDate is not JSON-serializable; would previously silently return []
+        // Given — Data/NSData is not JSON-serializable; would previously silently return []
         let deviceInfo: [String: Any] = [
-            "NorthAmerica": NSDate()
+            "NorthAmerica": Data([1, 2, 3])
         ]
 
         // When / Then — throws PingOneMFAError instead of silently returning []
