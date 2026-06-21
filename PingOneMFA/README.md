@@ -13,6 +13,7 @@ The `PingOneMFA` module wraps the PingOne MFA native SDK [PingOneSDK](https://gi
 - **Device Pairing** — pair new MFA accounts by scanning a QR code or entering a pairing key
 - **OTP** — retrieve the current one-time passcode and its remaining validity window
 - **Push Notifications (foreground)** — approve or deny incoming authentication requests while the app is active
+- **Push Notifications (banner actions)** — handle Approve/Deny taps on system notification banners via `processRemoteNotificationAction`; register the required categories with `getNotificationCategories`
 - **Mobile Payload** — generate a cryptographic mobile payload for server-side authentication flows
 
 ---
@@ -21,7 +22,7 @@ The `PingOneMFA` module wraps the PingOne MFA native SDK [PingOneSDK](https://gi
 
 ### Prerequisites
 
-- iOS 15 or higher
+- iOS 16 or higher
 - A PingOne environment with push notifications and/or MFA configured. For documentation on setting up PingOne MFA, see [PingOne MFA documentation](https://docs.pingidentity.com/pingone/strong_authentication_mfa/p1_strong_authentication_configure_mobile_applications.html).
 
 ---
@@ -91,13 +92,14 @@ Supported regions:
 
 ### 2. Register the APNS Push Token
 
-Call `setDeviceToken()` each time the system delivers a new push token — typically from `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)`:
+Call `setDeviceToken()` each time the system delivers a new push token — typically from `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)`. `initialize(geo:)` must have completed successfully before this call; `setDeviceToken` passes the token directly to the native PingOne SDK without re-initializing.
 
 ```swift
 func application(_ application: UIApplication,
                  didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
     Task {
         do {
+            try await ensurePingOneMFAInitialized()
             try await PingOneMFA.setDeviceToken(deviceToken)
         } catch {
             print("Token registration failed: \(error.localizedDescription)")
@@ -252,7 +254,10 @@ All `async` functions throw `PingOneMFAError` on failure. The native `PingOneSDK
 do {
     try await PingOneMFA.pair(pairingKey: pairingKey)
 } catch let error as PingOneMFAError {
-    print(error.localizedDescription)
+    print(error.message)
+    error.internalErrorsList?.forEach { e in
+        print("code=\(e.code) message=\(e.message)")
+    }
 } catch {
     print(error.localizedDescription)
 }
@@ -300,7 +305,7 @@ See the [PingExample README](../SampleApps/PingExample/README.md) for build inst
 
 | Field | Type | Description |
 |---|---|---|
-| `region` | `String` | Region key from the PingOne response (e.g. `"NA"`, `"EU"`) |
+| `region` | `String` | Region key from the PingOne response (e.g. `"NorthAmerica"`, `"Europe"`) |
 | `id` | `String` | PingOne user ID |
 | `deviceId` | `String` | Device ID within PingOne |
 | `environmentId` | `String` | PingOne environment ID |
@@ -318,6 +323,7 @@ See the [PingExample README](../SampleApps/PingExample/README.md) for build inst
 
 | Method / Field | Type | Description |
 |---|---|---|
+| `id` | `String` | Unique identifier (UUID) for this notification instance |
 | `approveNotification(authMethod:numberChallenge:)` | `async throws` | Approve the push authentication request |
 | `denyNotification()` | `async throws` | Deny the push authentication request |
 | `getNumbersChallenge` | `[Int]` | Options for a number-matching CHALLENGE push; empty array when free-form digit entry is expected |
@@ -336,7 +342,22 @@ See the [PingExample README](../SampleApps/PingExample/README.md) for build inst
 
 ### `PingOneMFAError`
 
-Thrown by all `async` functions on failure. The native `PingOneSDKError` is not exposed — all error information is available through the standard `localizedDescription` property.
+Thrown by all `async` functions on failure. The native `PingOneSDKError` is not exposed.
+
+| Field | Type | Description |
+|---|---|---|
+| `message` | `String` | Human-readable error message; also surfaced via `localizedDescription` |
+| `internalErrorsList` | `[PingOneMFAInternalError]?` | Structured list of individual SDK errors; `nil` when the failure did not originate from the native SDK |
+
+### `PingOneMFAInternalError`
+
+Individual error entry within `PingOneMFAError.internalErrorsList`.
+
+| Field | Type | Description |
+|---|---|---|
+| `code` | `Int` | Numeric error code returned by the PingOne MFA native SDK |
+| `message` | `String` | Human-readable error message returned by the native SDK |
+| `userInfo` | `[String: String]` | Additional diagnostic key/value pairs returned by the server; may be empty |
 
 ---
 
