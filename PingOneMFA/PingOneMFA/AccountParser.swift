@@ -12,14 +12,25 @@ import Foundation
 
 internal struct AccountParser {
 
-    internal static func parse(_ deviceInfo: [String: Any]?) -> [PingOneMfaAccount] {
-        guard let deviceInfo,
-              let data = try? JSONSerialization.data(withJSONObject: deviceInfo),
-              let decoded = try? JSONDecoder().decode([String: RegionDto].self, from: data)
-        else { return [] }
+    internal static func parse(_ deviceInfo: [String: Any]?) throws -> [PingOneMfaAccount] {
+        guard let deviceInfo, !deviceInfo.isEmpty else { return [] }
+
+        let data: Data
+        do {
+            data = try JSONSerialization.data(withJSONObject: deviceInfo)
+        } catch {
+            throw PingOneMFAError("Failed to serialize device info: \(error.localizedDescription)")
+        }
+
+        let decoded: [String: RegionDto]
+        do {
+            decoded = try JSONDecoder().decode([String: RegionDto].self, from: data)
+        } catch {
+            throw PingOneMFAError("Failed to decode device info: \(error.localizedDescription)")
+        }
 
         return decoded.flatMap { region, regionDto in
-            regionDto.users.map { user in
+            (regionDto.users ?? []).map { user in
                 PingOneMfaAccount(
                     region: region,
                     id: user.id ?? "",
@@ -34,7 +45,7 @@ internal struct AccountParser {
 }
 
 private struct RegionDto: Decodable {
-    var users: [UserDto] = []
+    var users: [UserDto]?
 }
 
 private struct UserDto: Decodable {

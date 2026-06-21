@@ -18,7 +18,7 @@ final class AccountParserTests: XCTestCase {
 
     // MARK: - Well-formed payload tests
 
-    func testParseSingleRegionSingleUser() {
+    func testParseSingleRegionSingleUser() throws {
         // Given — real payload shape from PingOne.getInfo
         let deviceInfo: [String: Any] = [
             "NorthAmerica": [
@@ -38,7 +38,7 @@ final class AccountParserTests: XCTestCase {
         ]
 
         // When
-        let accounts = AccountParser.parse(deviceInfo)
+        let accounts = try AccountParser.parse(deviceInfo)
 
         // Then
         XCTAssertEqual(accounts.count, 1)
@@ -48,7 +48,7 @@ final class AccountParserTests: XCTestCase {
         XCTAssertEqual(accounts[0].environmentId, "803ca4d4-cd92-4cb8-9dd1-6fe68de0a5f0")
     }
 
-    func testParseMultipleRegionsMultipleUsers() {
+    func testParseMultipleRegionsMultipleUsers() throws {
         // Given
         let deviceInfo: [String: Any] = [
             "NorthAmerica": [
@@ -77,7 +77,7 @@ final class AccountParserTests: XCTestCase {
         ]
 
         // When
-        let accounts = AccountParser.parse(deviceInfo)
+        let accounts = try AccountParser.parse(deviceInfo)
 
         // Then
         XCTAssertEqual(accounts.count, 3)
@@ -90,7 +90,7 @@ final class AccountParserTests: XCTestCase {
         XCTAssertEqual(euAccounts[0].id, "user-eu-1")
     }
 
-    func testParseRegionWithEmptyUsersArray() {
+    func testParseRegionWithEmptyUsersArray() throws {
         // Given — region exists but users array is empty
         let deviceInfo: [String: Any] = [
             "Australia": [
@@ -99,13 +99,13 @@ final class AccountParserTests: XCTestCase {
         ]
 
         // When
-        let accounts = AccountParser.parse(deviceInfo)
+        let accounts = try AccountParser.parse(deviceInfo)
 
         // Then
         XCTAssertEqual(accounts.count, 0)
     }
 
-    func testParseRegionWithExtraKeysIgnored() {
+    func testParseRegionWithExtraKeysIgnored() throws {
         // Given — non-"users" keys such as deviceRequirementsEvaluation and shouldRollback are ignored
         let deviceInfo: [String: Any] = [
             "NorthAmerica": [
@@ -122,7 +122,7 @@ final class AccountParserTests: XCTestCase {
         ]
 
         // When
-        let accounts = AccountParser.parse(deviceInfo)
+        let accounts = try AccountParser.parse(deviceInfo)
 
         // Then — extra keys do not affect parsing
         XCTAssertEqual(accounts.count, 1)
@@ -131,37 +131,38 @@ final class AccountParserTests: XCTestCase {
 
     // MARK: - Edge cases
 
-    func testParseNilDeviceInfo() {
+    func testParseNilDeviceInfo() throws {
         // When
-        let accounts = AccountParser.parse(nil)
+        let accounts = try AccountParser.parse(nil)
 
         // Then
         XCTAssertEqual(accounts.count, 0)
     }
 
-    func testParseEmptyDictionary() {
+    func testParseEmptyDictionary() throws {
         // When
-        let accounts = AccountParser.parse([:])
+        let accounts = try AccountParser.parse([:])
 
         // Then
         XCTAssertEqual(accounts.count, 0)
     }
 
-    func testParseRegionValueNotADictionary() {
-        // Given — region value is a String instead of [String: Any]
+    func testParseRegionValueNotADictionary() throws {
+        // Given — region value is a String, which is JSON-serializable but not decodable as RegionDto
         let deviceInfo: [String: Any] = [
             "NorthAmerica": "not-a-dict"
         ]
 
-        // When
-        let accounts = AccountParser.parse(deviceInfo)
-
-        // Then — silently skipped
-        XCTAssertEqual(accounts.count, 0)
+        // When / Then — throws because the top-level JSON structure is invalid for [String: RegionDto]
+        XCTAssertThrowsError(try AccountParser.parse(deviceInfo)) { error in
+            let pingError = error as? PingOneMFAError
+            XCTAssertNotNil(pingError)
+            XCTAssertTrue(pingError?.message.hasPrefix("Failed to decode device info:") == true)
+        }
     }
 
-    func testParseMissingUsersKeyInRegion() {
-        // Given — region dict has no "users" key
+    func testParseMissingUsersKeyInRegion() throws {
+        // Given — region dict has no "users" key; users is optional so this returns zero accounts
         let deviceInfo: [String: Any] = [
             "NorthAmerica": [
                 "deviceRequirementsEvaluation": ["status": "PASSED"]
@@ -169,13 +170,13 @@ final class AccountParserTests: XCTestCase {
         ]
 
         // When
-        let accounts = AccountParser.parse(deviceInfo)
+        let accounts = try AccountParser.parse(deviceInfo)
 
-        // Then — silently skipped
+        // Then — no accounts, but no error
         XCTAssertEqual(accounts.count, 0)
     }
 
-    func testParseMissingDeviceFieldYieldsEmptyDeviceId() {
+    func testParseMissingDeviceFieldYieldsEmptyDeviceId() throws {
         // Given — user dict is missing the "device" field
         let deviceInfo: [String: Any] = [
             "NorthAmerica": [
@@ -190,7 +191,7 @@ final class AccountParserTests: XCTestCase {
         ]
 
         // When
-        let accounts = AccountParser.parse(deviceInfo)
+        let accounts = try AccountParser.parse(deviceInfo)
 
         // Then — user is still returned with empty deviceId
         XCTAssertEqual(accounts.count, 1)
@@ -199,7 +200,7 @@ final class AccountParserTests: XCTestCase {
         XCTAssertEqual(accounts[0].environmentId, "env-1")
     }
 
-    func testParseMissingEnvironmentIdYieldsEmptyEnvironmentId() {
+    func testParseMissingEnvironmentIdYieldsEmptyEnvironmentId() throws {
         // Given — environment dict exists but has no "id" key
         let deviceInfo: [String: Any] = [
             "NorthAmerica": [
@@ -214,14 +215,14 @@ final class AccountParserTests: XCTestCase {
         ]
 
         // When
-        let accounts = AccountParser.parse(deviceInfo)
+        let accounts = try AccountParser.parse(deviceInfo)
 
         // Then — user is returned with empty environmentId
         XCTAssertEqual(accounts.count, 1)
         XCTAssertEqual(accounts[0].environmentId, "")
     }
 
-    func testParseMixedUsersAllIncluded() {
+    func testParseMixedUsersAllIncluded() throws {
         // Given — one full user, one missing device field
         let deviceInfo: [String: Any] = [
             "NorthAmerica": [
@@ -241,12 +242,28 @@ final class AccountParserTests: XCTestCase {
         ]
 
         // When
-        let accounts = AccountParser.parse(deviceInfo)
+        let accounts = try AccountParser.parse(deviceInfo)
 
         // Then — both users are returned; partial user has empty deviceId
         XCTAssertEqual(accounts.count, 2)
         let partial = accounts.first { $0.id == "partial-user" }
         XCTAssertNotNil(partial)
         XCTAssertEqual(partial?.deviceId, "")
+    }
+
+    // MARK: - Non-serializable value
+
+    func testParseNonJSONSerializableValueThrows() {
+        // Given — NSDate is not JSON-serializable; would previously silently return []
+        let deviceInfo: [String: Any] = [
+            "NorthAmerica": NSDate()
+        ]
+
+        // When / Then — throws PingOneMFAError instead of silently returning []
+        XCTAssertThrowsError(try AccountParser.parse(deviceInfo)) { error in
+            let pingError = error as? PingOneMFAError
+            XCTAssertNotNil(pingError)
+            XCTAssertTrue(pingError?.message.hasPrefix("Failed to serialize device info:") == true)
+        }
     }
 }

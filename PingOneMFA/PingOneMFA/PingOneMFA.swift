@@ -145,9 +145,13 @@ public class PingOneMFA {
             PingOne.getInfo(completion: { deviceInfo, errors in
                 if let deviceInfo, !deviceInfo.isEmpty {
                     // Data available — return it along with any diagnostic errors from the SDK.
-                    let accounts = AccountParser.parse(deviceInfo)
-                    let mappedErrors = errors?.map { PingOneMFAError($0) }
-                    continuation.resume(returning: PingOneMFADeviceInfo(accounts: accounts, errors: mappedErrors))
+                    do {
+                        let accounts = try AccountParser.parse(deviceInfo)
+                        let mappedErrors = errors?.map { PingOneMFAError($0) }
+                        continuation.resume(returning: PingOneMFADeviceInfo(accounts: accounts, errors: mappedErrors))
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
                 } else if let errors, !errors.isEmpty {
                     // No data and at least one real error — treat as failure.
                     continuation.resume(throwing: PingOneMFAError(errors: errors))
