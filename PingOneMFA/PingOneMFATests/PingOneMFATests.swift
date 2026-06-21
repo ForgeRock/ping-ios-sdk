@@ -30,23 +30,20 @@ final class PingOneMFATests: XCTestCase {
 
     // MARK: - Initialization Tests
 
-    /// Mirrors ProtectTests.test04: calls initialize() twice via mock and asserts
-    /// initializeCalled == true after both calls (idempotency guard exercised at mock layer).
     func test04_InitDoesNotReinitializeIfAlreadyInitialized() async throws {
-        // Given
-        MockPingOneMFA.shouldThrowError = false
+        let counter = CallCounter()
 
-        // When — first initialization
-        try await MockPingOneMFA.initialize(geo: .northAmerica)
-        XCTAssertTrue(MockPingOneMFA.initializeCalled)
-        XCTAssertEqual(MockPingOneMFA.initializeCallCount, 1)
+        // First call — configure runs once
+        try await PingOneMFA.initializeIfNeeded {
+            await counter.increment()
+        }
+        await XCTAssertEqualAsync(await counter.value, 1)
 
-        // When — second initialization (idempotency: should not throw)
-        try await MockPingOneMFA.initialize(geo: .northAmerica)
-
-        // Then — still marked as called, call count incremented
-        XCTAssertTrue(MockPingOneMFA.initializeCalled)
-        XCTAssertEqual(MockPingOneMFA.initializeCallCount, 2)
+        // Second call — isInitialized is true, configure must be skipped
+        try await PingOneMFA.initializeIfNeeded {
+            await counter.increment()
+        }
+        await XCTAssertEqualAsync(await counter.value, 1)
     }
 
     func test05_ConcurrentInitializeCallsShareSingleConfigure() async throws {
@@ -141,7 +138,7 @@ final class PingOneMFATests: XCTestCase {
             deviceId: "device-id-1",
             environmentId: "env-id-1",
             name: "Test User",
-            family: "User",
+            family: "User"
         )
         MockPingOneMFA.accountsReturnValue = [expectedAccount]
 
@@ -480,6 +477,26 @@ final class PingOneMFATests: XCTestCase {
 
         return latestCount
     }
+}
+
+private func XCTAssertEqualAsync<T: Equatable>(
+    _ expression1: @autoclosure () async throws -> T,
+    _ expression2: @autoclosure () async throws -> T,
+    file: StaticString = #filePath,
+    line: UInt = #line
+) async {
+    do {
+        let lhs = try await expression1()
+        let rhs = try await expression2()
+        XCTAssertEqual(lhs, rhs, file: file, line: line)
+    } catch {
+        XCTFail("Unexpected error: \(error)", file: file, line: line)
+    }
+}
+
+private actor CallCounter {
+    private(set) var value = 0
+    func increment() { value += 1 }
 }
 
 private actor ConfigureProbe {
