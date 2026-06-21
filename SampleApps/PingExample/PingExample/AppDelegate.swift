@@ -36,21 +36,9 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
 
         // Register PingOneMFA notification categories so the system can deliver
         // actionable banner notifications (approve / deny actions).
-        Task {
-            do {
-                try await ensurePingOneMFAInitialized()
-                let pingOneMFACategories = PingOneMFA.getNotificationCategories()
-                pingOneMFACategoryIdentifiers = Set(pingOneMFACategories.map { $0.identifier })
-
-                // Merge with any categories already registered
-                let notificationCenter = UNUserNotificationCenter.current()
-                let existingCategories = await notificationCenter.notificationCategories()
-                let mergedCategories = existingCategories.union(pingOneMFACategories)
-                notificationCenter.setNotificationCategories(mergedCategories)
-            } catch {
-                print("Failed to register PingOneMFA notification categories: \(error.localizedDescription)")
-            }
-        }
+        let pingOneMFACategories = PingOneMFA.getNotificationCategories()
+        pingOneMFACategoryIdentifiers = Set(pingOneMFACategories.map { $0.identifier })
+        UNUserNotificationCenter.current().setNotificationCategories(pingOneMFACategories)
 
         return true
     }
@@ -130,8 +118,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
                 try await ensurePingOneMFAInitialized()
                 try await PingOneMFA.setDeviceToken(deviceToken)
                 print("PingOneMFA device token registered successfully")
-            } catch let error as NSError where error.domain == "AppDelegate" {
-                print("Failed to register PingOneMFA device token: PingOneMFA not yet initialized. Will retry when client is ready.")
             } catch {
                 print("Failed to register PingOneMFA device token: \(error.localizedDescription)")
             }
@@ -159,9 +145,17 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
 
         nonisolated(unsafe) let userInfoCopy = userInfo
 
+        // Call immediately so the system knows how to present the banner.
+        completionHandler([.banner, .sound, .badge])
+
+        // Process in background — hold an assertion so the system doesn't suspend
+        // before the async work completes.
+        let bgTask = UIApplication.shared.beginBackgroundTask(withName: "willPresent-processing")
+
         // Route to PingOneMFA if the category matches one registered by PingOneMFA.
         if pingOneMFACategoryIdentifiers.contains(categoryIdentifier) {
             Task {
+                defer { UIApplication.shared.endBackgroundTask(bgTask) }
                 do {
                     try await ensurePingOneMFAInitialized()
                     let pingOneMFANotification: MFAPushNotification = try await PingOneMFA.processRemoteNotification(userInfo: userInfoCopy)
@@ -178,6 +172,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         } else {
             // Process the notification through PushClient (existing PingPush flow)
             Task {
+                defer { UIApplication.shared.endBackgroundTask(bgTask) }
                 do {
                     let client = try await getInitializedPushClient()
 
@@ -192,9 +187,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
                 }
             }
         }
-
-        // Show notification even when app is in foreground
-        completionHandler([.banner, .sound, .badge])
     }
 
     func userNotificationCenter(
@@ -210,9 +202,15 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         nonisolated(unsafe) let userInfoCopy = userInfo
         let actionIdentifier = response.actionIdentifier
 
+        let bgTask = UIApplication.shared.beginBackgroundTask(withName: "didReceive-processing")
+
         // Route to PingOneMFA if the category matches one registered by PingOneMFA.
         if pingOneMFACategoryIdentifiers.contains(categoryIdentifier) {
             Task {
+                defer {
+                    completionHandler()
+                    UIApplication.shared.endBackgroundTask(bgTask)
+                }
                 do {
                     try await ensurePingOneMFAInitialized()
                     if let pingOneMFANotification: MFAPushNotification = try await PingOneMFA.processRemoteNotificationAction(
@@ -236,6 +234,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         } else {
             // Process the notification through PushClient (existing PingPush flow)
             Task {
+                defer {
+                    completionHandler()
+                    UIApplication.shared.endBackgroundTask(bgTask)
+                }
                 do {
                     let client = try await getInitializedPushClient()
 
@@ -256,7 +258,5 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
                 }
             }
         }
-
-        completionHandler()
     }
 }
