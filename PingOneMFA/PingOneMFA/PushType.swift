@@ -11,7 +11,7 @@
 import Foundation
 
 /// Describes the interaction model required by a PingOne MFA push notification.
-public enum PushType {
+public enum PushType: Sendable {
     /// A standard authentication request. The user approves or denies with a single tap.
     case `default`
 
