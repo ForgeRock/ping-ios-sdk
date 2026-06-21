@@ -283,6 +283,72 @@ let oidcLogin = OidcWebClient.createOidcWebClient { config in
 }
 ```
 
+## JSON Configuration
+
+Both `OidcWebClient` and `OidcDeviceClient` can be initialised from a platform-neutral dictionary, enabling config-file-driven setup.
+
+### OidcWebClient
+
+```swift
+let json: [String: Any] = [
+    "timeout": 30000,          // milliseconds — optional, default 15 s
+    "log": "DEBUG",            // optional
+    "oidc": [
+        "clientId": "your-client-id",
+        "discoveryEndpoint": "https://auth.example.com/.well-known/openid-configuration",
+        "redirectUri": "myapp://callback",
+        "scopes": ["openid", "profile", "email"],
+        // --- optional ---
+        "par": true,
+        "acrValues": "policy-id",
+        "signOutRedirectUri": "myapp://logout"
+    ] as [String: Any]
+]
+
+switch OidcWebClient.createOidcWebClient(json: json) {
+case .success(let client):
+    let result = try await client.authorize()
+case .failure(let error):
+    print("Configuration error: \(error.localizedDescription)")
+}
+```
+
+### OidcDeviceClient
+
+```swift
+let json: [String: Any] = [
+    "log": "WARN",             // optional
+    "oidc": [
+        "clientId": "your-client-id",
+        "discoveryEndpoint": "https://auth.example.com/.well-known/openid-configuration",
+        "redirectUri": "myapp://callback",
+        "scopes": ["openid"],
+        // override the device authorization endpoint if not in discovery
+        "openId": [
+            "deviceAuthorizationEndpoint": "https://auth.example.com/device/code"
+        ] as [String: Any]
+    ] as [String: Any]
+]
+
+switch OidcDeviceClient.createOidcDeviceClient(json: json) {
+case .success(let client):
+    let stream = try await client.deviceAuthorization()
+case .failure(let error):
+    print("Configuration error: \(error.localizedDescription)")
+}
+```
+
+> **Note:** The top-level `timeout` key is not applied to `OidcDeviceClient` — the device flow HTTP client uses the framework default. Configure the device authorization endpoint via the `openId` override block if it is not advertised in the OIDC discovery document.
+
+### Error handling
+
+On invalid input both factories return `.failure(JsonConfigError)`:
+
+| Error | Cause |
+|-------|-------|
+| `missingRequiredField(String)` | A required field is absent |
+| `invalidType(field:expected:)` | A field has the wrong type |
+
 ## License
 
 This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.

@@ -548,6 +548,46 @@ Callbacks below will be supported by other modules:
 | SelectIdpCallback                | External Identity provider selection.                                          |
 | IdpCallback                      | External Identity provider authentication.                                     |
 
+## JSON Configuration
+
+`Journey.createJourney(json:)` initialises a `Journey` instance from a platform-neutral dictionary. The `oidc` block is **optional** — Journey can run without OIDC token exchange.
+
+```swift
+let json: [String: Any] = [
+    "journey": [                   // required
+        "serverUrl": "https://example.am.com/am",
+        "realm": "alpha",          // optional, default "root"
+        "cookieName": "iPlanetDirectoryPro"  // optional
+    ] as [String: Any],
+    "timeout": 30000,              // milliseconds — optional, default 15 s
+    "log": "DEBUG",                // optional
+    "oidc": [                      // optional — include to enable OIDC token exchange
+        "clientId": "your-client-id",
+        "discoveryEndpoint": "https://example.am.com/am/oauth2/alpha/.well-known/openid-configuration",
+        "redirectUri": "myapp://callback",
+        "scopes": ["openid", "profile"],
+        "par": true,               // optional
+        "acrValues": "policy-id"   // optional
+    ] as [String: Any]
+]
+
+switch Journey.createJourney(json: json) {
+case .success(let journey):
+    let node = await journey.start("LoginTree")
+case .failure(let error):
+    print("Configuration error: \(error.localizedDescription)")
+}
+```
+
+### Error handling
+
+On invalid input `createJourney(json:)` returns `.failure(JsonConfigError)`:
+
+| Error | Cause |
+|-------|-------|
+| `missingRequiredField(String)` | A required field is absent (e.g. `"journey"`, `"journey.serverUrl"`) |
+| `invalidType(field:expected:)` | A field has the wrong type |
+
 ## License
 
 This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.

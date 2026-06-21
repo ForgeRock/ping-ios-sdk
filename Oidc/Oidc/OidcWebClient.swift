@@ -9,6 +9,7 @@
 //
 
 
+import Foundation
 import PingOrchestrate
 import PingLogger
 import PingBrowser
@@ -50,6 +51,38 @@ public extension OidcWebClient {
         return OidcWebClient(config: config)
     }
     
+    /// Creates an OidcWebClient instance from a JSON dictionary.
+    ///
+    /// This factory parses and validates a platform-neutral JSON configuration and
+    /// delegates to `createOidcWebClient(block:)` with the extracted values. Unknown
+    /// fields are silently ignored for forward compatibility.
+    ///
+    /// - Parameter json: A `[String: Any]` dictionary conforming to the unified SDK
+    ///   configuration schema (see design doc for field reference).
+    /// - Returns: `.success(OidcWebClient)` on valid input, `.failure(JsonConfigError)` if a
+    ///   required field is absent or a field has the wrong type.
+    static func createOidcWebClient(json: [String: Any]) -> Result<OidcWebClient, Error> {
+        do {
+            let p = JsonConfigParser(json)
+            let timeout = try p.timeoutSeconds()
+            let logger  = p.logLevel()
+            let oidcDict: [String: Any] = try p.required(JsonConfigKey.oidc, field: JsonConfigKey.oidc)
+
+            let oidcConfig = try OidcClientConfig.from(oidcJson: oidcDict, logger: logger)
+
+            let client = OidcWebClient.createOidcWebClient { webConfig in
+                webConfig.timeout = timeout
+                webConfig.logger = logger
+                webConfig.module(OidcModule.config) { moduleOidcConfig in
+                    moduleOidcConfig.update(with: oidcConfig)
+                }
+            }
+            return .success(client)
+        } catch {
+            return .failure(error)
+        }
+    }
+
     /// This method initializes the OIDC client and starts the login process.
     /// - Parameter configure: A closure to configure the OIDC options.
     /// - Returns: A Result containing the User or an OidcError.

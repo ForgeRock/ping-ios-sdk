@@ -9,18 +9,20 @@
 /* Begin PBXBuildFile section */
 		25554859C34DBAACE79ABA36 /* DaVinciPARTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD0544A9787573F4A02A278 /* DaVinciPARTests.swift */; };
 		3A203D7F2BDB136C0020C995 /* DaVinci.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A203D7E2BDB136C0020C995 /* DaVinci.swift */; };
-		AA4785011F0000000000AA01 /* DaVinci+Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4785001F0000000000AA01 /* DaVinci+Device.swift */; };
 		3A203D972BDB2CD70020C995 /* Oidc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A203D962BDB2CD70020C995 /* Oidc.swift */; };
 		3A203D9B2BDE155D0020C995 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A203D9A2BDE155D0020C995 /* Transform.swift */; };
 		3A292C822BF58462006977EF /* Agent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A292C812BF58462006977EF /* Agent.swift */; };
 		3A5441AA2BCDF20700385131 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5441A12BCDF20700385131 /* PingDavinci.framework */; };
 		3A5441AF2BCDF20700385131 /* DaVinciTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5441AE2BCDF20700385131 /* DaVinciTests.swift */; };
+		SDKS50660003000000000002 /* DaVinciJsonConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50660003000000000001 /* DaVinciJsonConfigTests.swift */; };
 		AA4785031F0000000000AA01 /* DaVinciDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4785021F0000000000AA01 /* DaVinciDeviceTests.swift */; };
 		25554859C34DBAACE79ABA36 /* DaVinciPARTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD0544A9787573F4A02A278 /* DaVinciPARTests.swift */; };
 		3A5441B02BCDF20700385131 /* Davinci.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A5441A42BCDF20700385131 /* Davinci.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A57CB622C44D68C001EC9A0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A57CB612C44D688001EC9A0 /* User.swift */; };
 		3AC13E352C3FFF1000DEF23A /* Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E322C3FFF1000DEF23A /* Form.swift */; };
 		3AC13E362C3FFF1000DEF23A /* Connector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E312C3FFF1000DEF23A /* Connector.swift */; };
+		8FE3EB1B92044038A76D2CB3 /* PollingCollectorIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA130AA38471485588EED6A1 /* PollingCollectorIntegrationTests.swift */; };
+		9570C4BE2FD0C6D500EAF897 /* ConfigNew.json in Resources */ = {isa = PBXBuildFile; fileRef = 9570C4BD2FD0C6D500EAF897 /* ConfigNew.json */; };
 		959249A72D405A1C00A6DA9C /* FormFieldValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959249A62D405A1C00A6DA9C /* FormFieldValidationTests.swift */; };
 		959249A92D405A4600A6DA9C /* FormFieldsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959249A82D405A4600A6DA9C /* FormFieldsTests.swift */; };
 		95C256792DF22BFB004266AB /* MFADeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C256782DF22BFB004266AB /* MFADeviceTests.swift */; };
@@ -65,8 +67,13 @@
 		AA1A00042F0000000000AA01 /* PollingCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1A00032F0000000000AA01 /* PollingCollectorTests.swift */; };
 		AA1A00062F0000000000AA01 /* QRCodeCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1A00052F0000000000AA01 /* QRCodeCollector.swift */; };
 		AA1A00082F0000000000AA01 /* QRCodeCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1A00072F0000000000AA01 /* QRCodeCollectorTests.swift */; };
+		AA4785011F0000000000AA01 /* DaVinci+Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4785001F0000000000AA01 /* DaVinci+Device.swift */; };
+		AA4785031F0000000000AA01 /* DaVinciDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4785021F0000000000AA01 /* DaVinciDeviceTests.swift */; };
 		BB4928012F0900000000BB01 /* ReadOnlyTextCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */; };
 		BB4928032F0900000000BB01 /* ReadOnlyTextCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928022F0900000000BB01 /* ReadOnlyTextCollectorTests.swift */; };
+		BBBBBBBB00000001FAA0E2E0 /* DaVinciPARE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBBBBBB00000000FAA0E2E0 /* DaVinciPARE2ETest.swift */; };
+		BBBBBBBB00000003FAA0E2E0 /* RecordingHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBBBBBB00000002FAA0E2E0 /* RecordingHttpClient.swift */; };
+		DA0000022F0000000000DA01 /* DeviceAuthorizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000012F0000000000DA01 /* DeviceAuthorizationTests.swift */; };
 		EC5C81C92ECF7A1700C91570 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */; };
 		EC5C81CA2ECF7A1700C91570 /* PingDavinciPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC5C81FC2ED0CAA100C91570 /* Collectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81FB2ED0CAA100C91570 /* Collectors.swift */; };
@@ -110,7 +117,6 @@
 /* Begin PBXFileReference section */
 		2AD0544A9787573F4A02A278 /* DaVinciPARTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciPARTests.swift; sourceTree = "<group>"; };
 		3A203D7E2BDB136C0020C995 /* DaVinci.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinci.swift; sourceTree = "<group>"; };
-		AA4785001F0000000000AA01 /* DaVinci+Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DaVinci+Device.swift"; sourceTree = "<group>"; };
 		3A203D962BDB2CD70020C995 /* Oidc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Oidc.swift; sourceTree = "<group>"; };
 		3A203D9A2BDE155D0020C995 /* Transform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
 		3A292C812BF58462006977EF /* Agent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Agent.swift; sourceTree = "<group>"; };
@@ -118,11 +124,13 @@
 		3A5441A42BCDF20700385131 /* Davinci.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Davinci.h; sourceTree = "<group>"; };
 		3A5441A92BCDF20700385131 /* DavinciTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DavinciTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A5441AE2BCDF20700385131 /* DaVinciTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciTests.swift; sourceTree = "<group>"; };
+		SDKS50660003000000000001 /* DaVinciJsonConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciJsonConfigTests.swift; sourceTree = "<group>"; };
 		AA4785021F0000000000AA01 /* DaVinciDeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciDeviceTests.swift; sourceTree = "<group>"; };
 		2AD0544A9787573F4A02A278 /* DaVinciPARTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciPARTests.swift; sourceTree = "<group>"; };
 		3A57CB612C44D688001EC9A0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		3AC13E312C3FFF1000DEF23A /* Connector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connector.swift; sourceTree = "<group>"; };
 		3AC13E322C3FFF1000DEF23A /* Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form.swift; sourceTree = "<group>"; };
+		9570C4BD2FD0C6D500EAF897 /* ConfigNew.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ConfigNew.json; sourceTree = "<group>"; };
 		959249A62D405A1C00A6DA9C /* FormFieldValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFieldValidationTests.swift; sourceTree = "<group>"; };
 		959249A82D405A4600A6DA9C /* FormFieldsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFieldsTests.swift; sourceTree = "<group>"; };
 		95C256782DF22BFB004266AB /* MFADeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MFADeviceTests.swift; sourceTree = "<group>"; };
@@ -167,8 +175,13 @@
 		AA1A00032F0000000000AA01 /* PollingCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingCollectorTests.swift; sourceTree = "<group>"; };
 		AA1A00052F0000000000AA01 /* QRCodeCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeCollector.swift; sourceTree = "<group>"; };
 		AA1A00072F0000000000AA01 /* QRCodeCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeCollectorTests.swift; sourceTree = "<group>"; };
+		AA4785001F0000000000AA01 /* DaVinci+Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DaVinci+Device.swift"; sourceTree = "<group>"; };
+		AA4785021F0000000000AA01 /* DaVinciDeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciDeviceTests.swift; sourceTree = "<group>"; };
 		BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyTextCollector.swift; sourceTree = "<group>"; };
 		BB4928022F0900000000BB01 /* ReadOnlyTextCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyTextCollectorTests.swift; sourceTree = "<group>"; };
+		BBBBBBBB00000000FAA0E2E0 /* DaVinciPARE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciPARE2ETest.swift; sourceTree = "<group>"; };
+		BBBBBBBB00000002FAA0E2E0 /* RecordingHttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordingHttpClient.swift; path = ../Network/NetworkTests/RecordingHttpClient.swift; sourceTree = SOURCE_ROOT; };
+		DA0000012F0000000000DA01 /* DeviceAuthorizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthorizationTests.swift; sourceTree = "<group>"; };
 		EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinciPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81FB2ED0CAA100C91570 /* Collectors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collectors.swift; sourceTree = "<group>"; };
 		EC7279AD2DF98CD6005D9E28 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
@@ -182,6 +195,7 @@
 		ECE2B8702DB7C35400E2C51E /* PhoneNumberCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberCollectorTests.swift; sourceTree = "<group>"; };
 		ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationCollector.swift; sourceTree = "<group>"; };
 		ECF053232D9C4273004C9AAE /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		FA130AA38471485588EED6A1 /* PollingCollectorIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingCollectorIntegrationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -261,6 +275,7 @@
 				A51D4CF12C65729A00FE09E0 /* DaVinciErrorTests.swift */,
 				EC7279B32DF9B289005D9E28 /* DaVinciBaseTests.swift */,
 				3A5441AE2BCDF20700385131 /* DaVinciTests.swift */,
+				SDKS50660003000000000001 /* DaVinciJsonConfigTests.swift */,
 				2AD0544A9787573F4A02A278 /* DaVinciPARTests.swift */,
 				AA4785021F0000000000AA01 /* DaVinciDeviceTests.swift */,
 				EC92B3A22DA52DA200E4246D /* DeviceAuthenticatorCollectorTests.swift */,
@@ -298,9 +313,13 @@
 			isa = PBXGroup;
 			children = (
 				A51D4CF72C65978300FE09E0 /* DaVinciIntegrationTests.swift */,
+				BBBBBBBB00000000FAA0E2E0 /* DaVinciPARE2ETest.swift */,
+				DA0000012F0000000000DA01 /* DeviceAuthorizationTests.swift */,
 				959249A62D405A1C00A6DA9C /* FormFieldValidationTests.swift */,
 				959249A82D405A4600A6DA9C /* FormFieldsTests.swift */,
 				95C256782DF22BFB004266AB /* MFADeviceTests.swift */,
+				FA130AA38471485588EED6A1 /* PollingCollectorIntegrationTests.swift */,
+				BBBBBBBB00000002FAA0E2E0 /* RecordingHttpClient.swift */,
 			);
 			path = "integration tests";
 			sourceTree = "<group>";
@@ -350,6 +369,7 @@
 		EC7279AC2DF98B76005D9E28 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
+				9570C4BD2FD0C6D500EAF897 /* ConfigNew.json */,
 				EC7279AF2DF99766005D9E28 /* Config.json */,
 				EC7279AD2DF98CD6005D9E28 /* Config.swift */,
 			);
@@ -458,6 +478,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9570C4BE2FD0C6D500EAF897 /* ConfigNew.json in Resources */,
 				EC7279B02DF9976E005D9E28 /* Config.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -513,6 +534,8 @@
 				EC92B3A52DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift in Sources */,
 				A5EFAA082D3F30E600F771FE /* LabelCollectorTests.swift in Sources */,
 				959249A92D405A4600A6DA9C /* FormFieldsTests.swift in Sources */,
+				8FE3EB1B92044038A76D2CB3 /* PollingCollectorIntegrationTests.swift in Sources */,
+				DA0000022F0000000000DA01 /* DeviceAuthorizationTests.swift in Sources */,
 				A5EFAA142D3F51CC00F771FE /* TextCollectorTests.swift in Sources */,
 				A5EFAA122D3F518B00F771FE /* SubmitCollectorTests.swift in Sources */,
 				A51D4CF62C65743100FE09E0 /* MockAPIEndpoint.swift in Sources */,
@@ -529,7 +552,10 @@
 				A5EFAA0A2D3F325B00F771FE /* MultiSelectCollectorTests.swift in Sources */,
 				A51D4CF42C6572E600FE09E0 /* MockURLProtocol.swift in Sources */,
 				A51D4CF82C65978300FE09E0 /* DaVinciIntegrationTests.swift in Sources */,
+				BBBBBBBB00000001FAA0E2E0 /* DaVinciPARE2ETest.swift in Sources */,
+				BBBBBBBB00000003FAA0E2E0 /* RecordingHttpClient.swift in Sources */,
 				3A5441AF2BCDF20700385131 /* DaVinciTests.swift in Sources */,
+				SDKS50660003000000000002 /* DaVinciJsonConfigTests.swift in Sources */,
 				25554859C34DBAACE79ABA36 /* DaVinciPARTests.swift in Sources */,
 				AA4785031F0000000000AA01 /* DaVinciDeviceTests.swift in Sources */,
 				A51D4CF22C65729A00FE09E0 /* DaVinciErrorTests.swift in Sources */,

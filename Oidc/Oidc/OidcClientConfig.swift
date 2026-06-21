@@ -20,8 +20,19 @@ import PingStorage
 ///   Configure all properties before passing the instance to any client or workflow — do
 ///   not mutate it afterwards, as it may be read concurrently from background threads.
 public class OidcClientConfig: @unchecked Sendable {
+    nonisolated(unsafe) private static let endpointSetters: [(String, (inout OpenIdConfiguration, String) -> Void)] = [
+        (JsonConfigKey.authorizationEndpoint,              { $0.authorizationEndpoint = $1 }),
+        (JsonConfigKey.tokenEndpoint,                      { $0.tokenEndpoint = $1 }),
+        (JsonConfigKey.userinfoEndpoint,                   { $0.userinfoEndpoint = $1 }),
+        (JsonConfigKey.endSessionEndpoint,                 { $0.endSessionEndpoint = $1 }),
+        (JsonConfigKey.revocationEndpoint,                 { $0.revocationEndpoint = $1 }),
+        (JsonConfigKey.pushedAuthorizationRequestEndpoint, { $0.pushedAuthorizationRequestEndpoint = $1 }),
+        (JsonConfigKey.deviceAuthorizationEndpoint,        { $0.deviceAuthorizationEndpoint = $1 }),
+        (JsonConfigKey.pingEndsessionEndpoint,             { $0.pingEndsessionEndpoint = $1 }),
+    ]
+
     /// OpenID configuration.
-    public var openId: OpenIdConfiguration?
+    public private(set) var openId: OpenIdConfiguration?
     /// Token refresh threshold in seconds.
     public var refreshThreshold: Int64 = 0
     /// Agent delegate for handling OIDC operations.
@@ -83,6 +94,12 @@ public class OidcClientConfig: @unchecked Sendable {
         self.agent = AgentDelegate<T>(agent: agent, agentConfig: agent.config()(), oidcClientConfig: self)
     }
     
+    /// Injects a pre-built `OpenIdConfiguration`, skipping network discovery.
+    /// Intended for unit tests only — use `openIdOverride` for production endpoint patching.
+    func setOpenId(_ openId: OpenIdConfiguration?) {
+        self.openId = openId
+    }
+
     /// Initializes the lazy properties to their default values.
     public func oidcInitialize() async throws {
         if httpClient == nil {
@@ -123,6 +140,15 @@ public class OidcClientConfig: @unchecked Sendable {
         return configuration
     }
     
+    /// Creates an `OidcClientConfig` from an `oidc` sub-dictionary and a pre-resolved logger.
+    /// Used by all `createXxx(json:)` factories to avoid repeating the same construction sequence.
+    public static func from(oidcJson: [String: Any], logger: Logger) throws -> OidcClientConfig {
+        let config = OidcClientConfig()
+        config.logger = logger
+        try config.apply(json: oidcJson)
+        return config
+    }
+
     /// Clones the current configuration.
     /// - Returns: A new instance of OidcClientConfig with the same properties.
     public func clone() -> OidcClientConfig {
@@ -132,8 +158,14 @@ public class OidcClientConfig: @unchecked Sendable {
     }
     
     /// Merges another configuration into this one.
+    ///
+    /// - Important: This method is intended for **module wiring only** — it is called by the
+    ///   `createXxx(json:)` and `createXxx(block:)` factories to propagate a parsed config into
+    ///   a workflow module. Do **not** call this on an `OidcClientConfig` that has already been
+    ///   passed to a running workflow or client: it replaces every field including `storage` and
+    ///   `openId`, which can cause in-flight token reads to hit an unexpected (empty) keychain slot.
     /// - Parameter other: The other configuration to merge.
-    func update(with other: OidcClientConfig) {
+    public func update(with other: OidcClientConfig) {
         self.openId = other.openId
         self.refreshThreshold = other.refreshThreshold
         self.agent = other.agent
@@ -155,4 +187,103 @@ public class OidcClientConfig: @unchecked Sendable {
         self.httpClient = other.httpClient
         self.openIdOverride = other.openIdOverride
     }
+    
+    /// Applies a unified JSON configuration dictionary to this instance.
+    ///
+    /// Validates all required fields and writes every recognised field directly to `self`.
+    /// Unknown fields (including `signOutRedirectUri`) are silently ignored for forward compatibility.
+    ///
+    /// - Important: If the JSON contains an `openId` sub-object, this method **merges** the
+    ///   JSON-derived endpoint overrides with any existing `openIdOverride`. The existing closure
+    ///   runs first, then the JSON-derived overrides are applied on top, so the JSON values win
+    ///   for any endpoint key they cover. If the JSON contains no `openId` key, `openIdOverride`
+    ///   is left unchanged.
+    ///
+    /// - Parameter json: The `oidc` sub-dictionary from the unified SDK configuration schema.
+    /// - Throws: `JsonConfigError` if a required field is absent or a field has the wrong type.
+    public func apply(json: [String: Any]) throws {
+        let p = JsonConfigParser(json)
+        let f: (String) -> String = { "\(JsonConfigKey.oidc).\($0)" }
+        let fOpenId: (String) -> String = { "\(JsonConfigKey.oidc).\(JsonConfigKey.openId).\($0)" }
+
+        // --- Required fields ---
+        let clientId: String          = try p.required(JsonConfigKey.clientId,          field: f(JsonConfigKey.clientId))
+        let discoveryEndpoint: String = try p.required(JsonConfigKey.discoveryEndpoint, field: f(JsonConfigKey.discoveryEndpoint))
+        let redirectUri: String       = try p.required(JsonConfigKey.redirectUri,       field: f(JsonConfigKey.redirectUri))
+
+        let rawScopes: [Any] = try p.required(JsonConfigKey.scopes, field: f(JsonConfigKey.scopes))
+        var parsedScopes = Set<String>()
+        for element in rawScopes {
+            guard let scope = element as? String else {
+                throw JsonConfigError.invalidType(field: f(JsonConfigKey.scopes), expected: "array of strings")
+            }
+            parsedScopes.insert(scope)
+        }
+
+        // --- Optional fields ---
+        let refreshThresholdInt: Int = try p.optional(JsonConfigKey.refreshThreshold, field: f(JsonConfigKey.refreshThreshold), default: 0)
+        let parsedPar: Bool          = try p.optional(JsonConfigKey.par,              field: f(JsonConfigKey.par),              default: false)
+
+        let loginHint:  String? = try p.optionalValue(JsonConfigKey.loginHint,  field: f(JsonConfigKey.loginHint))
+        let state:      String? = try p.optionalValue(JsonConfigKey.state,      field: f(JsonConfigKey.state))
+        let nonce:      String? = try p.optionalValue(JsonConfigKey.nonce,      field: f(JsonConfigKey.nonce))
+        let display:    String? = try p.optionalValue(JsonConfigKey.display,    field: f(JsonConfigKey.display))
+        let prompt:     String? = try p.optionalValue(JsonConfigKey.prompt,     field: f(JsonConfigKey.prompt))
+        let uiLocales:  String? = try p.optionalValue(JsonConfigKey.uiLocales,  field: f(JsonConfigKey.uiLocales))
+        let acrValues:  String? = try p.optionalValue(JsonConfigKey.acrValues,  field: f(JsonConfigKey.acrValues))
+
+        // --- additionalParameters ---
+        var parsedAdditional = [String: String]()
+        if let rawDict: [String: Any] = try p.optionalValue(JsonConfigKey.additionalParameters, field: f(JsonConfigKey.additionalParameters)) {
+            for (key, value) in rawDict {
+                guard let stringValue = value as? String else {
+                    throw JsonConfigError.invalidType(field: f("\(JsonConfigKey.additionalParameters).\(key)"), expected: "string")
+                }
+                parsedAdditional[key] = stringValue
+            }
+        }
+
+        // --- openId endpoint overrides (optional) ---
+        // Maps to `openIdOverride` — applied after discovery completes (see oidcInitialize).
+        // To add a new endpoint: add one entry to `endpointSetters`; no other change required.
+        var parsedOpenIdOverrides = [String: String]()
+        if let openIdDict: [String: Any] = try p.optionalValue(JsonConfigKey.openId, field: f(JsonConfigKey.openId)) {
+            for (key, _) in OidcClientConfig.endpointSetters {
+                if let raw = openIdDict[key] {
+                    guard let value = raw as? String else {
+                        throw JsonConfigError.invalidType(field: fOpenId(key), expected: "string")
+                    }
+                    parsedOpenIdOverrides[key] = value
+                }
+            }
+        }
+
+        // All validation passed — apply to self
+        self.clientId = clientId
+        self.discoveryEndpoint = discoveryEndpoint
+        self.scopes = parsedScopes
+        self.redirectUri = redirectUri
+        self.refreshThreshold = Int64(refreshThresholdInt)
+        self.par = parsedPar
+        self.loginHint = loginHint
+        self.state = state
+        self.nonce = nonce
+        self.display = display
+        self.prompt = prompt
+        self.uiLocales = uiLocales
+        self.acrValues = acrValues
+        self.additionalParameters = parsedAdditional
+
+        if !parsedOpenIdOverrides.isEmpty {
+            let overrides = parsedOpenIdOverrides
+            let existing = self.openIdOverride
+            self.openIdOverride = { openId in
+                existing?(&openId)
+                for (key, setter) in OidcClientConfig.endpointSetters {
+                    if let v = overrides[key] { setter(&openId, v) }
+                }
+            }
+        }
+    }
+
 }
