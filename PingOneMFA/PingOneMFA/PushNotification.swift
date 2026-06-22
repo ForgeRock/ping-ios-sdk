@@ -45,7 +45,7 @@ public struct PushNotification: Sendable, Identifiable {
         self.isCancelAuthentication = notificationObject.notificationType == .authCanceled
         self.numberMatchingOptions = notificationObject.numberMatchingOptions
         if notificationObject.notificationType == .done {
-            self.pushType = .dry
+            self.pushType = .silent
         } else if !notificationObject.numberMatchingType.isEmpty {
             self.pushType = .challenge
         } else {

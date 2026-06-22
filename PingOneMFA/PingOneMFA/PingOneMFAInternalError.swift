@@ -16,7 +16,7 @@ import Foundation
 /// ``PingOneMFAError/internalErrorsList``.
 ///
 /// - SeeAlso: ``PingOneMFAError``
-public struct PingOneMFAInternalError: Sendable {
+public struct PingOneMFAInternalError: Sendable, Equatable {
     /// Numeric error code returned by the PingOne MFA native SDK.
     public let code: Int
     /// Human-readable error message returned by the native SDK.
