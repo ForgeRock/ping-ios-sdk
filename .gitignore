@@ -95,4 +95,5 @@ AGENTS.md
 /SourcePackages
 
 # Local JSON configs — not committed, discovered at runtime via folder reference
-SampleApps/PingExample/PingExample/Configs/
+SampleApps/PingExample/PingExample/Configs/*
+!SampleApps/PingExample/PingExample/Configs/.gitkeep
