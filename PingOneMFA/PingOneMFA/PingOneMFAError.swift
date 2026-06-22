@@ -44,7 +44,7 @@ public struct PingOneMFAError: Error, LocalizedError, Sendable {
         let userInfoString = nsError.userInfo
             .map { "\($0.key)=\($0.value)" }
             .joined(separator: ", ")
-        self.message = "Code=\(nsError.code) \"localizedDescription\" UserInfo={\(userInfoString)}"
+        self.message = "Code=\(nsError.code) \(nsError.localizedDescription)"
         self.internalErrorsList = [PingOneMFAInternalError(
             code: nsError.code,
             message: nsError.localizedDescription,
