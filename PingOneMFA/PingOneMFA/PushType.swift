@@ -15,9 +15,9 @@ public enum PushType: Sendable {
     /// A standard authentication request. The user approves or denies with a single tap.
     case `default`
 
-    /// A silent test push sent by the server to verify the device's push registration.
+    /// A  test push sent by the server to verify the device's push registration.
     /// No user action is required.
-    case silent
+    case dry
 
     /// A number-matching challenge. Use `getNumbersChallenge` to retrieve the options;
     /// an empty array means free-form digit entry is expected.

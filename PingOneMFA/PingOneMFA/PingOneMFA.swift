@@ -197,9 +197,9 @@ public class PingOneMFA {
     /// - Parameter userInfo: The raw `userInfo` dictionary from
     ///   `application(_:didReceiveRemoteNotification:fetchCompletionHandler:)`.
     /// - Returns: A `PushNotification` holding the upstream `NotificationObject` plus
-    ///   the parsed title and message.
+    ///   the parsed title and message. in case of verification push during pairing it will return nil since the SDK handles it internally and no UI is needed.
     /// - Throws: `PingOneMFAError` if the SDK call fails or returns no notification object.
-    public nonisolated static func processRemoteNotification(userInfo: [AnyHashable: Any]) async throws -> PushNotification {
+    public nonisolated static func processRemoteNotification(userInfo: [AnyHashable: Any]) async throws -> PushNotification? {
         let (title, message) = parseAPNSAlert(from: userInfo)
 
         return try await withCheckedThrowingContinuation { continuation in
@@ -213,7 +213,7 @@ public class PingOneMFA {
                         message: message
                     ))
                 } else {
-                    continuation.resume(throwing: PingOneMFAError())
+                    continuation.resume(returning: nil)
                 }
             }
         }

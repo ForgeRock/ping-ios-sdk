@@ -139,7 +139,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         withCompletionHandler completionHandler: @escaping @Sendable (UNNotificationPresentationOptions) -> Void
     ) {
         let userInfo = notification.request.content.userInfo
-        let categoryIdentifier = notification.request.content.categoryIdentifier
         print("Received push notification in foreground")
         print("Raw notification userInfo: \(userInfo)")
 
@@ -152,27 +151,23 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         // before the async work completes.
         let bgTask = UIApplication.shared.beginBackgroundTask(withName: "willPresent-processing")
 
-        // Route to PingOneMFA if the category matches one registered by PingOneMFA.
-        if pingOneMFACategoryIdentifiers.contains(categoryIdentifier) {
-            Task {
-                defer { UIApplication.shared.endBackgroundTask(bgTask) }
-                do {
-                    try await ensurePingOneMFAInitialized()
-                    let pingOneMFANotification: MFAPushNotification = try await PingOneMFA.processRemoteNotification(userInfo: userInfoCopy)
+        Task {
+            defer { UIApplication.shared.endBackgroundTask(bgTask) }
+            do {
+                try await ensurePingOneMFAInitialized()
+                let pingOneMFANotification: MFAPushNotification? = try await PingOneMFA.processRemoteNotification(userInfo: userInfoCopy)
+                if let pingOneMFANotification = pingOneMFANotification {
                     print("Processed PingOneMFA foreground push notification")
-                    NotificationCenter.default.post(
-                        name: NSNotification.Name("ShowPingOneMFANotification"),
-                        object: nil,
-                        userInfo: ["notification": pingOneMFANotification]
-                    )
-                } catch {
-                    print("Failed to process PingOneMFA foreground push notification: \(error.localizedDescription)")
+                    if pingOneMFANotification.pushType != .dry {
+                        NotificationCenter.default.post(
+                            name: NSNotification.Name("ShowPingOneMFANotification"),
+                            object: nil,
+                            userInfo: ["notification": pingOneMFANotification]
+                        )
+                    }
                 }
-            }
-        } else {
-            // Process the notification through PushClient (existing PingPush flow)
-            Task {
-                defer { UIApplication.shared.endBackgroundTask(bgTask) }
+            } catch {
+                print("Failed to process PingOneMFA foreground push notification: \(error.localizedDescription)")
                 do {
                     let client = try await getInitializedPushClient()
 

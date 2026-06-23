@@ -30,8 +30,8 @@ class MockPingOneMFA {
     nonisolated(unsafe) static var otpReturnValue = OtpCodeInfo(code: "123456", secondsRemaining: 30)
     nonisolated(unsafe) static var mobilePayloadReturnValue = "mockMobilePayload"
     // processRemoteNotification cannot return a real PushNotification in tests because
-    // NotificationObject (from PingOneSDK) has no accessible initializer. The mock therefore
-    // only supports the error-path for processRemoteNotification.
+    // NotificationObject (from PingOneSDK) has no accessible initializer. The mock supports
+    // the nil-return path (SDK handles internally) and the error path.
     nonisolated(unsafe) static var processRemoteNotificationReturnValue: PushNotification? = nil
 
     // getNotificationCategories tracking state
@@ -112,17 +112,12 @@ class MockPingOneMFA {
         return otpReturnValue
     }
 
-    static func processRemoteNotification(userInfo: [AnyHashable: Any]) async throws -> PushNotification {
+    static func processRemoteNotification(userInfo: [AnyHashable: Any]) async throws -> PushNotification? {
         processRemoteNotificationCalled = true
         if shouldThrowError {
             throw PingOneMFAError(errorMessage)
         }
-        // NotificationObject (from PingOneSDK) cannot be instantiated in tests;
-        // unwrap the pre-configured return value or throw if not configured.
-        guard let value = processRemoteNotificationReturnValue else {
-            throw PingOneMFAError("processRemoteNotification: no return value configured")
-        }
-        return value
+        return processRemoteNotificationReturnValue
     }
 
     static func generateMobilePayload() async throws -> String {

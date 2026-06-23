@@ -26,7 +26,7 @@ public struct PushNotification: Sendable, Identifiable {
     /// The interaction model required by this notification.
     ///
     /// Use this to determine the UI flow:
-    /// - `.dry` — no user interaction needed; the authentication completes silently.
+    /// - `.silent` — no user interaction needed; the authentication completes silently.
     /// - `.challenge` — present the number-matching challenge from `getNumbersChallenge`.
     /// - `.default` — standard approve/deny prompt.
     public let pushType: PushType
@@ -45,7 +45,7 @@ public struct PushNotification: Sendable, Identifiable {
         self.isCancelAuthentication = notificationObject.notificationType == .authCanceled
         self.numberMatchingOptions = notificationObject.numberMatchingOptions
         if notificationObject.notificationType == .done {
-            self.pushType = .silent
+            self.pushType = .dry
         } else if !notificationObject.numberMatchingType.isEmpty {
             self.pushType = .challenge
         } else {

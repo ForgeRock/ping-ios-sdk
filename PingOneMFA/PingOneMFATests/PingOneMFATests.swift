@@ -251,12 +251,26 @@ final class PingOneMFATests: XCTestCase {
         XCTAssertFalse(isInitialized)
     }
 
-    // MARK: - collectPush Error-Path Test
+    // MARK: - processRemoteNotification Tests
 
-    /// processRemoteNotification error-path: mock throws PingOneMFAError when shouldThrowError == true.
-    /// Happy-path cannot be tested via mock because NotificationObject (PingOneSDK) has no
-    /// accessible initialiser, preventing construction of a PushNotification stub value.
-    func test18_MockProcessRemoteNotificationErrorPath() async {
+    /// test18: SDK handles the notification internally — no PushNotification returned.
+    func test18_MockProcessRemoteNotificationReturnsNilWhenSDKHandlesInternally() async throws {
+        // Given
+        MockPingOneMFA.shouldThrowError = false
+        MockPingOneMFA.processRemoteNotificationReturnValue = nil
+
+        // When
+        let result = try await MockPingOneMFA.processRemoteNotification(userInfo: [:])
+
+        // Then
+        XCTAssertTrue(MockPingOneMFA.processRemoteNotificationCalled)
+        XCTAssertNil(result)
+    }
+
+    /// test18b: error-path — mock throws PingOneMFAError when shouldThrowError == true.
+    /// Happy-path (non-nil PushNotification) cannot be tested because NotificationObject
+    /// (PingOneSDK) has no accessible initialiser.
+    func test18b_MockProcessRemoteNotificationErrorPath() async {
         // Given
         MockPingOneMFA.shouldThrowError = true
         MockPingOneMFA.errorMessage = "Collect push failed"
