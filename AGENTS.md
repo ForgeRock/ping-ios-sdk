@@ -111,7 +111,7 @@ These lightweight protocol layers (`Collector`, `ContinueNode`, `Submittable`, `
 ### Dependency Hierarchy
 
 ```
-PingLogger, PingStorage          ← foundation (no deps)
+PingLogger, PingStorage ← foundation (no deps)
 PingNetwork ← PingLogger
 PingCommons ← PingLogger
 PingBrowser ← PingLogger
@@ -129,6 +129,7 @@ PingBinding ← PingCommons, PingDeviceId, PingJourneyPlugin
 PingOath ← PingTamperDetector
 PingPush ← PingNetwork, PingTamperDetector
 PingAuthMigration ← PingOath, PingPush
+PingDeviceClient ← PingCommons
 ```
 
 ### Storage Layer
