@@ -103,6 +103,9 @@ extension DaVinci {
             await CollectorFactory.shared.register(type: Constants.READ_ONLY_TEXT, closure: { json in
                 return ReadOnlyTextCollector(with: json)
             })
+            await CollectorFactory.shared.register(type: Constants.IMAGE, closure: { json in
+                return ImageCollector(with: json)
+            })
             if let c: NSObject.Type = NSClassFromString("PingProtect.ProtectCollector") as? NSObject.Type {
                 c.perform(Selector(("registerCollector")))
             }

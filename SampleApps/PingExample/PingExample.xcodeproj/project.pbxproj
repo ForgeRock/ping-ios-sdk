@@ -186,6 +186,7 @@
 		FAE66EFD02A8526178953F13 /* AuthMigrationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BE27407BC6A20DE66B3B585 /* AuthMigrationViewModel.swift */; };
 		SDKS42450002000000000001 /* RichTextBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS42450002000000000000 /* RichTextBuilder.swift */; };
 		SDKS50660006000000000001 /* Configs in Resources */ = {isa = PBXBuildFile; fileRef = A50FE2672FCE78D20010DC0D /* Configs */; };
+		SDKS51430001000000000001 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS51430001000000000000 /* ImageView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -785,6 +786,7 @@
 		ECA540BC2D6DD7D6002B35D4 /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = SDKROOT; };
 		ECA7D60A2F91466A000FB45F /* PollingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingView.swift; sourceTree = "<group>"; };
 		ECA7D60B2F91466A000FB45F /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
+		SDKS51430001000000000000 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		ECB7C5D02D562FAC0006F1C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		ECBF06A32D5391610066A3BD /* SocialButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialButtonView.swift; sourceTree = "<group>"; };
 		ECC52B0C2E81AF5B00C468C7 /* ScenePhaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenePhaseManager.swift; sourceTree = "<group>"; };
@@ -1222,6 +1224,7 @@
 				A53B6E5A2F9A659B00B279CE /* ReadOnlyTextView.swift */,
 				ECA7D60A2F91466A000FB45F /* PollingView.swift */,
 				ECA7D60B2F91466A000FB45F /* QRCodeView.swift */,
+				SDKS51430001000000000000 /* ImageView.swift */,
 				EC5598012E96799200A07329 /* FidoAuthenticationCollectorView.swift */,
 				EC5598022E96799200A07329 /* FidoRegistrationCollectorView.swift */,
 				A55177312FA502D100E575CF /* BooleanCollectorView.swift */,
@@ -2084,6 +2087,7 @@
 				EC92B3932DA0422700E4246D /* DeviceCardView.swift in Sources */,
 				ECA7D60C2F91466A000FB45F /* PollingView.swift in Sources */,
 				ECA7D60D2F91466A000FB45F /* QRCodeView.swift in Sources */,
+				SDKS51430001000000000001 /* ImageView.swift in Sources */,
 				ECF7EB882E464F31002A5E8E /* SelectIdpCallbackView.swift in Sources */,
 				ECE2B8812DB7DBEC00E2C51E /* PhoneNumberView.swift in Sources */,
 				A5768D182E29AE87000290EE /* BooleanAttributeInputCallbackView.swift in Sources */,

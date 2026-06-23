@@ -71,6 +71,8 @@
 		AA4785031F0000000000AA01 /* DaVinciDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4785021F0000000000AA01 /* DaVinciDeviceTests.swift */; };
 		BB4928012F0900000000BB01 /* ReadOnlyTextCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */; };
 		BB4928032F0900000000BB01 /* ReadOnlyTextCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928022F0900000000BB01 /* ReadOnlyTextCollectorTests.swift */; };
+		CC5143012F0000000000CC01 /* ImageCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5143002F0000000000CC01 /* ImageCollector.swift */; };
+		CC5143032F0000000000CC01 /* ImageCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5143022F0000000000CC01 /* ImageCollectorTests.swift */; };
 		BBBBBBBB00000001FAA0E2E0 /* DaVinciPARE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBBBBBB00000000FAA0E2E0 /* DaVinciPARE2ETest.swift */; };
 		BBBBBBBB00000003FAA0E2E0 /* RecordingHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBBBBBB00000002FAA0E2E0 /* RecordingHttpClient.swift */; };
 		DA0000022F0000000000DA01 /* DeviceAuthorizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000012F0000000000DA01 /* DeviceAuthorizationTests.swift */; };
@@ -179,6 +181,8 @@
 		AA4785021F0000000000AA01 /* DaVinciDeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciDeviceTests.swift; sourceTree = "<group>"; };
 		BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyTextCollector.swift; sourceTree = "<group>"; };
 		BB4928022F0900000000BB01 /* ReadOnlyTextCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyTextCollectorTests.swift; sourceTree = "<group>"; };
+		CC5143002F0000000000CC01 /* ImageCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollector.swift; sourceTree = "<group>"; };
+		CC5143022F0000000000CC01 /* ImageCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectorTests.swift; sourceTree = "<group>"; };
 		BBBBBBBB00000000FAA0E2E0 /* DaVinciPARE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciPARE2ETest.swift; sourceTree = "<group>"; };
 		BBBBBBBB00000002FAA0E2E0 /* RecordingHttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordingHttpClient.swift; path = ../Network/NetworkTests/RecordingHttpClient.swift; sourceTree = SOURCE_ROOT; };
 		DA0000012F0000000000DA01 /* DeviceAuthorizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthorizationTests.swift; sourceTree = "<group>"; };
@@ -290,6 +294,7 @@
 				ECE2B8702DB7C35400E2C51E /* PhoneNumberCollectorTests.swift */,
 				AA1A00032F0000000000AA01 /* PollingCollectorTests.swift */,
 				AA1A00072F0000000000AA01 /* QRCodeCollectorTests.swift */,
+				CC5143022F0000000000CC01 /* ImageCollectorTests.swift */,
 				A53B6EDF2F9FA2D900B279CE /* BooleanCollectorTests.swift */,
 				A5EFAA0F2D3F50A500F771FE /* SingleSelectCollectorTests.swift */,
 				A5EFAA112D3F518800F771FE /* SubmitCollectorTests.swift */,
@@ -335,6 +340,7 @@
 				A51D4CD22C585D7C00FE09E0 /* FlowCollector.swift */,
 				3AC13E322C3FFF1000DEF23A /* Form.swift */,
 				EC5C81FB2ED0CAA100C91570 /* Collectors.swift */,
+				CC5143002F0000000000CC01 /* ImageCollector.swift */,
 				A5E9AEB32D2F2252000533ED /* LabelCollector.swift */,
 				A5E9AEBD2D2F2DAC000533ED /* MultiSelectCollector.swift */,
 				A5E9AEBB2D2F2B23000533ED /* Option.swift */,
@@ -522,6 +528,7 @@
 				AA4785011F0000000000AA01 /* DaVinci+Device.swift in Sources */,
 				AA1A00022F0000000000AA01 /* PollingCollector.swift in Sources */,
 				AA1A00062F0000000000AA01 /* QRCodeCollector.swift in Sources */,
+				CC5143012F0000000000CC01 /* ImageCollector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -565,6 +572,7 @@
 				ECE2B8712DB7C36800E2C51E /* PhoneNumberCollectorTests.swift in Sources */,
 				AA1A00042F0000000000AA01 /* PollingCollectorTests.swift in Sources */,
 				AA1A00082F0000000000AA01 /* QRCodeCollectorTests.swift in Sources */,
+				CC5143032F0000000000CC01 /* ImageCollectorTests.swift in Sources */,
 				BB4928032F0900000000BB01 /* ReadOnlyTextCollectorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
