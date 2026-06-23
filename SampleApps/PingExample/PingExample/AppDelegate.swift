@@ -167,6 +167,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
                     }
                 }
             } catch {
+                // PingOne SDK throws when the notification isn't a PingOne MFA push — fall through to PushClient.
                 print("Failed to process PingOneMFA foreground push notification: \(error.localizedDescription)")
                 do {
                     let client = try await getInitializedPushClient()
