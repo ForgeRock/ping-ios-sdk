@@ -67,6 +67,7 @@
 		AA4785041F0000000000AA04 /* OidcDeviceApprovalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4785051F0000000000AA05 /* OidcDeviceApprovalTests.swift */; };
 		AAAAAAAA00000001FAA0E2E0 /* JourneyPARE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAA00000000FAA0E2E0 /* JourneyPARE2ETest.swift */; };
 		AAAAAAAA00000003FAA0E2E0 /* RecordingHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAA00000002FAA0E2E0 /* RecordingHttpClient.swift */; };
+		SDKS50680001000000000002 /* JourneyJsonConfigE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50680001000000000001 /* JourneyJsonConfigE2ETest.swift */; };
 		EC23269E2E0D5E4E00634A50 /* CallbackRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23269D2E0D5E4700634A50 /* CallbackRegistryTests.swift */; };
 		EC2326A02E0D62ED00634A50 /* NameCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23269F2E0D62E600634A50 /* NameCallbackTests.swift */; };
 		EC2326A22E0D65A800634A50 /* PasswordCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2326A12E0D65A300634A50 /* PasswordCallbackTests.swift */; };
@@ -202,6 +203,7 @@
 		A5CFC8A32E43A34E00CBFC3B /* ValidatedUsernameCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedUsernameCallbackTests.swift; sourceTree = "<group>"; };
 		AA4785051F0000000000AA05 /* OidcDeviceApprovalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcDeviceApprovalTests.swift; sourceTree = "<group>"; };
 		AAAAAAAA00000000FAA0E2E0 /* JourneyPARE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyPARE2ETest.swift; sourceTree = "<group>"; };
+		SDKS50680001000000000001 /* JourneyJsonConfigE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyJsonConfigE2ETest.swift; sourceTree = "<group>"; };
 		AAAAAAAA00000002FAA0E2E0 /* RecordingHttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordingHttpClient.swift; path = ../Network/NetworkTests/RecordingHttpClient.swift; sourceTree = SOURCE_ROOT; };
 		EC23269D2E0D5E4700634A50 /* CallbackRegistryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackRegistryTests.swift; sourceTree = "<group>"; };
 		EC23269F2E0D62E600634A50 /* NameCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameCallbackTests.swift; sourceTree = "<group>"; };
@@ -274,6 +276,7 @@
 				95DA7BED2E4E7DCC00168E1A /* JourneyE2EBaseTest.swift */,
 				95DA7BEE2E4E7DCC00168E1A /* JourneyE2ETests.swift */,
 				AAAAAAAA00000000FAA0E2E0 /* JourneyPARE2ETest.swift */,
+				SDKS50680001000000000001 /* JourneyJsonConfigE2ETest.swift */,
 				95DA7BEF2E4E7DCC00168E1A /* KbaCreateCallbackE2ETest.swift */,
 				95DA7BF02E4E7DCC00168E1A /* MetadataCallbackE2ETest.swift */,
 				95DA7BF12E4E7DCC00168E1A /* NamePasswordCallbackE2ETest.swift */,
@@ -610,6 +613,7 @@
 				95DA7C042E4E7DCC00168E1A /* JourneyE2ETests.swift in Sources */,
 				AAAAAAAA00000001FAA0E2E0 /* JourneyPARE2ETest.swift in Sources */,
 				AAAAAAAA00000003FAA0E2E0 /* RecordingHttpClient.swift in Sources */,
+				SDKS50680001000000000002 /* JourneyJsonConfigE2ETest.swift in Sources */,
 				95DA7C052E4E7DCC00168E1A /* ConfirmationCallbackE2ETest.swift in Sources */,
 				95DA7C062E4E7DCC00168E1A /* BooleanAttributeInputCallbackE2ETest.swift in Sources */,
 				95DA7C072E4E7DCC00168E1A /* NumberAttributeInputCallbackE2ETest.swift in Sources */,

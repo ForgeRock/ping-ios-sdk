@@ -14,9 +14,6 @@
 		3A292C822BF58462006977EF /* Agent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A292C812BF58462006977EF /* Agent.swift */; };
 		3A5441AA2BCDF20700385131 /* PingDavinci.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5441A12BCDF20700385131 /* PingDavinci.framework */; };
 		3A5441AF2BCDF20700385131 /* DaVinciTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5441AE2BCDF20700385131 /* DaVinciTests.swift */; };
-		SDKS50660003000000000002 /* DaVinciJsonConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50660003000000000001 /* DaVinciJsonConfigTests.swift */; };
-		AA4785031F0000000000AA01 /* DaVinciDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4785021F0000000000AA01 /* DaVinciDeviceTests.swift */; };
-		25554859C34DBAACE79ABA36 /* DaVinciPARTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD0544A9787573F4A02A278 /* DaVinciPARTests.swift */; };
 		3A5441B02BCDF20700385131 /* Davinci.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A5441A42BCDF20700385131 /* Davinci.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A57CB622C44D68C001EC9A0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A57CB612C44D688001EC9A0 /* User.swift */; };
 		3AC13E352C3FFF1000DEF23A /* Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E322C3FFF1000DEF23A /* Form.swift */; };
@@ -87,6 +84,9 @@
 		ECE2B8712DB7C36800E2C51E /* PhoneNumberCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE2B8702DB7C35400E2C51E /* PhoneNumberCollectorTests.swift */; };
 		ECF053222D9C31A3004C9AAE /* DeviceRegistrationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */; };
 		ECF053242D9C4275004C9AAE /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF053232D9C4273004C9AAE /* Device.swift */; };
+		SDKS50660003000000000002 /* DaVinciJsonConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50660003000000000001 /* DaVinciJsonConfigTests.swift */; };
+		SDKS50680002000000000002 /* DaVinciJsonConfigE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50680002000000000001 /* DaVinciJsonConfigE2ETest.swift */; };
+		SDKS50680004000000000002 /* DeviceClientJsonConfigE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50680004000000000001 /* DeviceClientJsonConfigE2ETest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -124,9 +124,6 @@
 		3A5441A42BCDF20700385131 /* Davinci.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Davinci.h; sourceTree = "<group>"; };
 		3A5441A92BCDF20700385131 /* DavinciTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DavinciTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A5441AE2BCDF20700385131 /* DaVinciTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciTests.swift; sourceTree = "<group>"; };
-		SDKS50660003000000000001 /* DaVinciJsonConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciJsonConfigTests.swift; sourceTree = "<group>"; };
-		AA4785021F0000000000AA01 /* DaVinciDeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciDeviceTests.swift; sourceTree = "<group>"; };
-		2AD0544A9787573F4A02A278 /* DaVinciPARTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciPARTests.swift; sourceTree = "<group>"; };
 		3A57CB612C44D688001EC9A0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		3AC13E312C3FFF1000DEF23A /* Connector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connector.swift; sourceTree = "<group>"; };
 		3AC13E322C3FFF1000DEF23A /* Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form.swift; sourceTree = "<group>"; };
@@ -196,6 +193,9 @@
 		ECF053212D9C319C004C9AAE /* DeviceRegistrationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRegistrationCollector.swift; sourceTree = "<group>"; };
 		ECF053232D9C4273004C9AAE /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		FA130AA38471485588EED6A1 /* PollingCollectorIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingCollectorIntegrationTests.swift; sourceTree = "<group>"; };
+		SDKS50660003000000000001 /* DaVinciJsonConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciJsonConfigTests.swift; sourceTree = "<group>"; };
+		SDKS50680002000000000001 /* DaVinciJsonConfigE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciJsonConfigE2ETest.swift; sourceTree = "<group>"; };
+		SDKS50680004000000000001 /* DeviceClientJsonConfigE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceClientJsonConfigE2ETest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -314,6 +314,8 @@
 			children = (
 				A51D4CF72C65978300FE09E0 /* DaVinciIntegrationTests.swift */,
 				BBBBBBBB00000000FAA0E2E0 /* DaVinciPARE2ETest.swift */,
+				SDKS50680002000000000001 /* DaVinciJsonConfigE2ETest.swift */,
+				SDKS50680004000000000001 /* DeviceClientJsonConfigE2ETest.swift */,
 				DA0000012F0000000000DA01 /* DeviceAuthorizationTests.swift */,
 				959249A62D405A1C00A6DA9C /* FormFieldValidationTests.swift */,
 				959249A82D405A4600A6DA9C /* FormFieldsTests.swift */,
@@ -553,6 +555,8 @@
 				A51D4CF42C6572E600FE09E0 /* MockURLProtocol.swift in Sources */,
 				A51D4CF82C65978300FE09E0 /* DaVinciIntegrationTests.swift in Sources */,
 				BBBBBBBB00000001FAA0E2E0 /* DaVinciPARE2ETest.swift in Sources */,
+				SDKS50680002000000000002 /* DaVinciJsonConfigE2ETest.swift in Sources */,
+				SDKS50680004000000000002 /* DeviceClientJsonConfigE2ETest.swift in Sources */,
 				BBBBBBBB00000003FAA0E2E0 /* RecordingHttpClient.swift in Sources */,
 				3A5441AF2BCDF20700385131 /* DaVinciTests.swift in Sources */,
 				SDKS50660003000000000002 /* DaVinciJsonConfigTests.swift in Sources */,
