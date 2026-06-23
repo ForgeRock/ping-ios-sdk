@@ -181,11 +181,12 @@ When your app is in the foreground, process the incoming notification and presen
 ```swift
 // In application(_:didReceiveRemoteNotification:fetchCompletionHandler:):
 do {
-    let push = try await PingOneMFA.processRemoteNotification(userInfo: userInfo)
-    switch push.pushType {
-    case .default:   showApproveDenyUI(push)
-    case .challenge: showNumberChallengeUI(push)
-    case .dry:       break // test push — no user action required
+    if let push = try await PingOneMFA.processRemoteNotification(userInfo: userInfo) {
+        switch push.pushType {
+            case .default:   showApproveDenyUI(push)
+            case .challenge: showNumberChallengeUI(push)
+            case .dry:       break // test push — no user action required
+        }
     }
 } catch {
     print("Push processing failed: \(error.localizedDescription)")
@@ -289,7 +290,7 @@ See the [PingExample README](../SampleApps/PingExample/README.md) for build inst
 | `pair(pairingKey:)` | `async throws` | Pair a new MFA account. |
 | `getDeviceInfo()` | `async throws -> PingOneMFADeviceInfo` | Return all paired accounts and any non-fatal diagnostic errors. |
 | `getOneTimePasscode()` | `async throws -> OtpCodeInfo` | Return the current TOTP code and its remaining validity window. |
-| `processRemoteNotification(userInfo:)` | `async throws -> PushNotification` | Convert an APNS `userInfo` payload to a typed `PushNotification`. |
+| `processRemoteNotification(userInfo:)` | `async throws -> PushNotification?` | Convert an APNS `userInfo` payload to a typed `PushNotification`. |
 | `processRemoteNotificationAction(identifier:authenticationMethod:userInfo:)` | `async throws -> PushNotification?` | Handle a notification banner action; returns `nil` when the SDK handled it internally. |
 | `generateMobilePayload()` | `async throws -> String` | Generate a mobile payload for server-side authentication. |
 | `getNotificationCategories()` | `Set<UNNotificationCategory>` | Return notification categories to register with `UNUserNotificationCenter`. |

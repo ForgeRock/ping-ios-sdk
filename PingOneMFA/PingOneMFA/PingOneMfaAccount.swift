@@ -30,7 +30,7 @@ public struct PingOneMFADeviceInfo: Sendable {
 
 /// Represents a registered PingOne MFA account on this device.
 public struct PingOneMfaAccount: Sendable, Equatable {
-    /// The cloud region where this account is registered (e.g. `"NA"`, `"EU"`).
+    /// The cloud region where this account is registered (e.g. `"NorthAmerica"`, `"Europe"`).
     public let region: String
     /// The unique identifier for this account.
     public let id: String
