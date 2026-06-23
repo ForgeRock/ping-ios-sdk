@@ -59,6 +59,13 @@ struct ImageView: View {
                     .foregroundColor(.secondary)
             }
 
+            if !collector.description.isEmpty {
+                Text(collector.description)
+                    .font(.subheadline)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
+
             if let hyperlinkUrl = collector.hyperlinkUrl,
                !hyperlinkUrl.isEmpty,
                let linkURL = URL(string: hyperlinkUrl) {
@@ -69,6 +76,10 @@ struct ImageView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 8)
+        .padding(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color.secondary.opacity(0.4), lineWidth: 1)
+        )
     }
 }
