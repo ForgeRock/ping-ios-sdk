@@ -221,10 +221,10 @@ final class OidcWebClientJsonConfigE2ETests: XCTestCase {
 
         let authorizeURL = try XCTUnwrap(browser.launchedURL,
                                          "Browser was not launched — discovery may have failed")
-        XCTAssertTrue(
-            authorizeURL.host?.contains("openam-sdks.forgeblocks.com") == true,
-            "Authorize URL must use the AIC server returned by discovery, got: \(authorizeURL)"
-        )
+        let expectedHost = URL(string: aicConfig.discoveryEndpoint)?.host
+        XCTAssertNotNil(expectedHost, "Could not derive host from discoveryEndpoint")
+        XCTAssertEqual(authorizeURL.host, expectedHost,
+                       "Authorize URL must use the AIC server returned by discovery, got: \(authorizeURL)")
         let query = authorizeURL.absoluteString
         XCTAssertTrue(query.contains("client_id=\(aicConfig.clientId)"))
         XCTAssertTrue(query.contains("response_type=code"))
