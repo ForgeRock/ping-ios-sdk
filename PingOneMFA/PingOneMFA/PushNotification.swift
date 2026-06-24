@@ -26,7 +26,7 @@ public struct PushNotification: Sendable, Identifiable {
     /// The interaction model required by this notification.
     ///
     /// Use this to determine the UI flow:
-    /// - `.silent` — no user interaction needed; the authentication completes silently.
+    /// - `.dry` — no user interaction needed; the authentication completes silently.
     /// - `.challenge` — present the number-matching challenge from `getNumbersChallenge`.
     /// - `.default` — standard approve/deny prompt.
     public let pushType: PushType

@@ -197,8 +197,8 @@ public class PingOneMFA {
     /// - Parameter userInfo: The raw `userInfo` dictionary from
     ///   `application(_:didReceiveRemoteNotification:fetchCompletionHandler:)`.
     /// - Returns: A `PushNotification` when the SDK yields a notification object;
-    ///   `nil` when the SDK handles the notification internally and no UI is needed.
-    /// - Throws: `PingOneMFAError` if the underlying SDK call reports an error.
+    ///   `nil` when the SDK handles the notification internally (e.g. a test push during pairing) and no UI is needed.
+    /// - Throws: `PingOneMFAError` if the underlying SDK call reports an error, including when the push is not a PingOne MFA push.
     public nonisolated static func processRemoteNotification(userInfo: [AnyHashable: Any]) async throws -> PushNotification? {
         let (title, message) = parseAPNSAlert(from: userInfo)
 
