@@ -129,7 +129,7 @@ PingBinding ← PingCommons, PingDeviceId, PingJourneyPlugin
 PingOath ← PingTamperDetector
 PingPush ← PingNetwork, PingTamperDetector
 PingAuthMigration ← PingOath, PingPush
-PingDeviceClient ← PingCommons
+PingDeviceClient ← PingCommons, PingNetwork
 ```
 
 ### Storage Layer
