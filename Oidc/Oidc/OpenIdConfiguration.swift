@@ -14,19 +14,19 @@ import Foundation
 /// Struct representing the OpenID Connect configuration.
 public struct OpenIdConfiguration: Codable, Sendable {
     /// The URL of the authorization endpoint.
-    public let authorizationEndpoint: String
+    public var authorizationEndpoint: String
     /// The URL of the token endpoint.
-    public let tokenEndpoint: String
+    public var tokenEndpoint: String
     /// The URL of the userinfo endpoint.
-    public let userinfoEndpoint: String
+    public var userinfoEndpoint: String
     /// The URL of the end session endpoint.
-    public let endSessionEndpoint: String
+    public var endSessionEndpoint: String
     /// The URL of the revocation endpoint.
-    public let revocationEndpoint: String
+    public var revocationEndpoint: String
     /// The URL of the end session endpoint.
-    public let pingEndsessionEndpoint: String?
+    public var pingEndsessionEndpoint: String?
     /// The URL of the pushed authorization request endpoint (PAR, RFC 9126).
-    public let pushedAuthorizationRequestEndpoint: String?
+    public var pushedAuthorizationRequestEndpoint: String?
     /// The URL of the device authorization endpoint (RFC 8628).
     public var deviceAuthorizationEndpoint: String?
 

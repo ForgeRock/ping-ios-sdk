@@ -403,6 +403,48 @@ await user?.logout()
 
 ```
 
+## JSON Configuration
+
+`DaVinci.createDaVinci(json:)` initialises a `DaVinci` instance from a platform-neutral dictionary, enabling config-file-driven setup without writing Swift initialisation code.
+
+```swift
+let json: [String: Any] = [
+    "timeout": 30000,          // milliseconds — optional, default 15 s
+    "log": "DEBUG",            // optional — NONE | ERROR | WARN | INFO | DEBUG
+    "oidc": [
+        "clientId": "your-client-id",
+        "discoveryEndpoint": "https://auth.example.com/.well-known/openid-configuration",
+        "redirectUri": "myapp://callback",
+        "scopes": ["openid", "profile", "email"],
+        // --- optional ---
+        "acrValues": "policy-id",
+        "par": true,
+        "refreshThreshold": 60,
+        "signOutRedirectUri": "myapp://logout",
+        "additionalParameters": ["custom_key": "custom_value"],
+        "openId": [            // endpoint overrides, applied after discovery
+            "tokenEndpoint": "https://auth.example.com/token"
+        ]
+    ] as [String: Any]
+]
+
+switch DaVinci.createDaVinci(json: json) {
+case .success(let daVinci):
+    // use daVinci
+case .failure(let error):
+    print("Configuration error: \(error.localizedDescription)")
+}
+```
+
+### Error handling
+
+On invalid input `createDaVinci(json:)` returns `.failure(JsonConfigError)`:
+
+| Error | Cause |
+|-------|-------|
+| `missingRequiredField(String)` | A required field is absent |
+| `invalidType(field:expected:)` | A field has the wrong type |
+
 ## License
 
 This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.

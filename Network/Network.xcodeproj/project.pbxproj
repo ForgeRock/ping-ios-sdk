@@ -34,6 +34,7 @@
 		1B90AAB22ED6AAAA0011F5AF /* InterceptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B90AAB02ED6AAAA0011F5AF /* InterceptorTests.swift */; };
 		1B90AAB42ED6AAAB0011F5AF /* ErrorHandlingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B90AAB32ED6AAAB0011F5AF /* ErrorHandlingTests.swift */; };
 		1B90AB002ED6B7D40011F5AF /* NetworkConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B90AAFF2ED6B7D40011F5AF /* NetworkConstants.swift */; };
+		DDDDDDDD00000001FAA0E2E0 /* RecordingHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDDDDDDD00000000FAA0E2E0 /* RecordingHttpClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +90,7 @@
 		1B90AAB02ED6AAAA0011F5AF /* InterceptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterceptorTests.swift; sourceTree = "<group>"; };
 		1B90AAB32ED6AAAB0011F5AF /* ErrorHandlingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorHandlingTests.swift; sourceTree = "<group>"; };
 		1B90AAFF2ED6B7D40011F5AF /* NetworkConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConstants.swift; sourceTree = "<group>"; };
+		DDDDDDDD00000000FAA0E2E0 /* RecordingHttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingHttpClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +158,7 @@
 			children = (
 				1B7A9BF42EE1597100989A55 /* HttpClientFactoryTests.swift */,
 				1B90AA5B2ED666360011F5AF /* HttpResponseTests.swift */,
+				DDDDDDDD00000000FAA0E2E0 /* RecordingHttpClient.swift */,
 				1B90AA7F2ED67B0A0011F5AF /* URLSessionHttpRequestTests.swift */,
 				1B90AA802ED67B0A0011F5AF /* URLSessionHttpResponseTests.swift */,
 				1B90AA812ED67B0A0011F5AF /* URLSessionHttpClientTests.swift */,
@@ -346,6 +349,7 @@
 				1B90AA762ED67B0A0011F5AF /* URLSessionHttpClientTests.swift in Sources */,
 				1B90AAB22ED6AAAA0011F5AF /* InterceptorTests.swift in Sources */,
 				1B90AAB42ED6AAAB0011F5AF /* ErrorHandlingTests.swift in Sources */,
+				DDDDDDDD00000001FAA0E2E0 /* RecordingHttpClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
