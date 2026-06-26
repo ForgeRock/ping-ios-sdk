@@ -125,9 +125,12 @@ public enum PushError: Error, LocalizedError, Sendable {
     case registrationFailed(String)
     
     // MARK: - Network Errors
-    
+
     /// A network operation failed.
     case networkFailure(String, Error?)
+
+    /// The selected number was incorrect in a Push Number Challenge.
+    case pushNumberChallengeError(String)
     
     // MARK: - LocalizedError Conformance
     
@@ -198,6 +201,9 @@ public enum PushError: Error, LocalizedError, Sendable {
                 return "Network failure: \(message) - \(underlyingError.localizedDescription)"
             }
             return "Network failure: \(message)"
+
+        case .pushNumberChallengeError(let message):
+            return message
         }
     }
 }
