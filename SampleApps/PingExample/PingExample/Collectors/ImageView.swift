@@ -23,7 +23,7 @@ struct ImageView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            if let imageURL = URL(string: collector.imageUrl) {
+            if !collector.imageUrl.isEmpty, let imageURL = URL(string: collector.imageUrl) {
                 AsyncImage(url: imageURL) { phase in
                     switch phase {
                     case .success(let image):
@@ -68,7 +68,9 @@ struct ImageView: View {
 
             if let hyperlinkUrl = collector.hyperlinkUrl,
                !hyperlinkUrl.isEmpty,
-               let linkURL = URL(string: hyperlinkUrl) {
+               let linkURL = URL(string: hyperlinkUrl),
+               let scheme = linkURL.scheme?.lowercased(),
+               scheme == "http" || scheme == "https" {
                 Link(hyperlinkUrl, destination: linkURL)
                     .font(.caption)
                     .multilineTextAlignment(.center)

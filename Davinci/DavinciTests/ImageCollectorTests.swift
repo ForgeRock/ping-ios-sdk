@@ -9,9 +9,20 @@
 //
 
 import XCTest
+import PingDavinciPlugin
 @testable import PingDavinci
 
 class ImageCollectorTests: XCTestCase {
+
+    override func setUp() async throws {
+        try await super.setUp()
+        await CollectorFactory.shared.reset()
+    }
+
+    override func tearDown() async throws {
+        await CollectorFactory.shared.reset()
+        try await super.tearDown()
+    }
 
     // MARK: - Helpers
 
@@ -82,6 +93,20 @@ class ImageCollectorTests: XCTestCase {
     func testPayloadReturnsNil() {
         let collector = ImageCollector(with: buildFullJson())
         XCTAssertNil(collector.payload())
+    }
+
+    // MARK: - CollectorFactory registration
+
+    func testCollectorFactoryProducesImageCollector() async {
+        let davinci = DaVinci.createDaVinci()
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        let jsonArray: [[String: Any]] = [
+            ["type": "IMAGE", "key": "img", "imageUrl": "https://example.com/img.png", "description": ""]
+        ]
+        let collectors = await CollectorFactory.shared.collector(daVinci: davinci, from: jsonArray)
+        XCTAssertEqual(collectors.count, 1)
+        XCTAssertTrue(collectors.first is ImageCollector, "Expected ImageCollector for type IMAGE")
     }
 
     // MARK: - initialize

@@ -93,7 +93,6 @@ AGENTS.md
 *.orig
 **/* copy.xcodeproj/
 /SourcePackages
-/.polaris
 /TestResults.xcresult
 
 # Local JSON configs — not committed, discovered at runtime via folder reference
