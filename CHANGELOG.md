@@ -1,10 +1,12 @@
 ## [Unreleased]
 #### Fixed
 - Fixed permanent authentication failure after iCloud device migration caused by Secure Enclave key mismatch [SDKS-5172]
+- Fixed `PingFido` platform WebAuthn registration ignoring `displayName`; the display name configured on the WebAuthn Registration Node is now shown to the user during passkey creation instead of falling back to the username [TRIAGE-35655]
 
 #### Added
 - Added `RichContent` and `RichContentReplacement` types and `richContent` property on `LabelCollector` to support template-based rich text with embedded links [SDKS-4245]
 - Routed FIDO ceremony logs through the workflow logger by adding a `logger:` parameter to `Fido.register` and `Fido.authenticate`. The DaVinci collectors and Journey callbacks pass the workflow's configured logger so FIDO ceremony state transitions and errors emit through the same logger as the surrounding flow [SDKS-4924]
+- Added a `preferImmediatelyAvailableCredentials` option to FIDO authentication, restricting the ceremony to locally-available credentials (no QR / nearby-device fallback), matching the legacy `FRWebAuthnManager` behavior. Exposed on `Fido.authenticate`, `FidoAuthenticationCollector.authenticate` (DaVinci), and `FidoAuthenticationCallback.authenticate` (Journey); defaults to `false` to preserve existing behavior [SDKS-5212]
 
 ## [2.0.0]
 #### Added
