@@ -91,7 +91,7 @@ struct ContinueNodeView: View {
                 case let readOnlyTextCollector as ReadOnlyTextCollector:
                     ReadOnlyTextView(field: readOnlyTextCollector)
                 case let imageCollector as ImageCollector:
-                    ImageView(collector: imageCollector)
+                    ImageView(collector: imageCollector).id(imageCollector.id)
                 default:
                     EmptyView()
                 }

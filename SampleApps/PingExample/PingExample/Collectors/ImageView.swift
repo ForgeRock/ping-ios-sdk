@@ -21,6 +21,18 @@ import PingDavinci
 struct ImageView: View {
     let collector: ImageCollector
 
+    @ViewBuilder
+    private var imagePlaceholder: some View {
+        Image(systemName: "photo")
+            .resizable()
+            .scaledToFit()
+            .frame(width: 120, height: 120)
+            .foregroundColor(.secondary)
+        Text("Image unavailable")
+            .font(.caption)
+            .foregroundColor(.secondary)
+    }
+
     var body: some View {
         VStack(spacing: 12) {
             if !collector.imageUrl.isEmpty, let imageURL = URL(string: collector.imageUrl) {
@@ -33,14 +45,7 @@ struct ImageView: View {
                             .frame(maxWidth: 240, maxHeight: 240)
                             .accessibilityLabel(collector.description.isEmpty ? "Image" : collector.description)
                     case .failure:
-                        Image(systemName: "photo")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 120, height: 120)
-                            .foregroundColor(.secondary)
-                        Text("Image unavailable")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                        imagePlaceholder
                     case .empty:
                         ProgressView()
                             .frame(width: 120, height: 120)
@@ -49,14 +54,7 @@ struct ImageView: View {
                     }
                 }
             } else {
-                Image(systemName: "photo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 120, height: 120)
-                    .foregroundColor(.secondary)
-                Text("Image unavailable")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                imagePlaceholder
             }
 
             if !collector.description.isEmpty {
@@ -71,7 +69,7 @@ struct ImageView: View {
                let linkURL = URL(string: hyperlinkUrl),
                let scheme = linkURL.scheme?.lowercased(),
                scheme == "http" || scheme == "https" {
-                Link(hyperlinkUrl, destination: linkURL)
+                Link(collector.description.isEmpty ? "Open link" : collector.description, destination: linkURL)
                     .font(.caption)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
