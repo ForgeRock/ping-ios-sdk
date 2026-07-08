@@ -528,7 +528,7 @@ final class PingAMPushResponderTests: XCTestCase {
         }
     }
 
-    func testSendAuthenticationWrongNumberThrowsNumberChallengeRejected() async {
+    func testSendAuthenticationWrongNumberThrowsPushNumberChallengeError() async {
         let amMessage = "Number challenge predicate not met."
         let amBody = #"{"message":"\#(amMessage)"}"#
         URLProtocolMock.requestHandler = { request in
@@ -590,7 +590,37 @@ final class PingAMPushResponderTests: XCTestCase {
         }
     }
 
-    func testSendAuthenticationWrongNumberOnDenyDoesNotThrowNumberChallengeRejected() async {
+    func testSendAuthenticationNon400OnApprovedChallengeThrowsNetworkFailure() async {
+        URLProtocolMock.requestHandler = { request in
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 500,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+            return (response, nil)
+        }
+
+        let mockResponder = PingAMPushResponder(httpClient: makeMockHttpClient(), logger: nil)
+        let credential = makeCredential()
+        let notification = makeNotification(pushType: .challenge)
+
+        do {
+            _ = try await mockResponder.sendAuthenticationResponse(
+                credential: credential,
+                notification: notification,
+                approve: true,
+                numbersChallengeResponse: "42"
+            )
+            XCTFail("Expected networkFailure error")
+        } catch PushError.networkFailure(let message, _) {
+            XCTAssertTrue(message.contains("500"))
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+
+    func testSendAuthenticationWrongNumberOnDenyDoesNotThrowPushNumberChallengeError() async {
         let amBody = "Number challenge predicate not met."
         URLProtocolMock.requestHandler = { request in
             let response = HTTPURLResponse(
@@ -621,7 +651,7 @@ final class PingAMPushResponderTests: XCTestCase {
         }
     }
 
-    func testSendAuthenticationWrongNumberOnDefaultTypeDoesNotThrowNumberChallengeRejected() async {
+    func testSendAuthenticationWrongNumberOnDefaultTypeDoesNotThrowPushNumberChallengeError() async {
         let amBody = "Number challenge predicate not met."
         URLProtocolMock.requestHandler = { request in
             let response = HTTPURLResponse(

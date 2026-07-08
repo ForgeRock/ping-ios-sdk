@@ -129,7 +129,7 @@ public enum PushError: Error, LocalizedError, Sendable {
     /// A network operation failed.
     case networkFailure(String, Error?)
 
-    /// The selected number was incorrect in a Push Number Challenge.
+    /// A Push Number Challenge response was rejected by the server (HTTP 400).
     case pushNumberChallengeError(String)
     
     // MARK: - LocalizedError Conformance
@@ -203,7 +203,7 @@ public enum PushError: Error, LocalizedError, Sendable {
             return "Network failure: \(message)"
 
         case .pushNumberChallengeError(let message):
-            return message
+            return "Push Number Challenge failed: \(message)"
         }
     }
 }
