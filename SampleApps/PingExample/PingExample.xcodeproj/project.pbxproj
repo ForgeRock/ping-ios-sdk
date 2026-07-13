@@ -135,6 +135,7 @@
 		SDKS50660005000000000002 /* JsonConfigLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50660005000000000001 /* JsonConfigLoader.swift */; };
 		EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */; };
 		EC0CB5CA2E27AE4C00A82D6C /* JourneyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */; };
+		SDKS51560002000000000002 /* BackchannelAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS51560002000000000001 /* BackchannelAuthView.swift */; };
 		EC0CB5CB2E27AE4C00A82D6C /* JourneyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */; };
 		EC14474B2EA664C300882AF2 /* PingFido.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC1447482EA6647C00882AF2 /* PingFido.framework */; };
 		EC14474C2EA664C300882AF2 /* PingFido.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC1447482EA6647C00882AF2 /* PingFido.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -757,6 +758,7 @@
 		EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
 		EC0CB5A52E27AD3D00A82D6C /* Journey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Journey.xcodeproj; path = ../../Journey/Journey.xcodeproj; sourceTree = SOURCE_ROOT; };
 		EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyView.swift; sourceTree = "<group>"; };
+		SDKS51560002000000000001 /* BackchannelAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackchannelAuthView.swift; sourceTree = "<group>"; };
 		EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyViewModel.swift; sourceTree = "<group>"; };
 		EC14473D2EA65CCE00882AF2 /* PingFido.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingFido.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC1447402EA6647C00882AF2 /* Fido.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Fido.xcodeproj; path = ../../Fido/Fido.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -973,6 +975,7 @@
 				ABCD12340001000100010002 /* TabPicker.swift */,
 				ABCD12340002000200020002 /* EmptyStateView.swift */,
 				EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */,
+				SDKS51560002000000000001 /* BackchannelAuthView.swift */,
 				EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */,
 				A5E9AED52D30393B000533ED /* LoggerView.swift */,
 				A588D0052BF6A0E500F9052A /* LoggerViewModel.swift */,
@@ -2034,6 +2037,7 @@
 				A53B6E5B2F9A659B00B279CE /* ReadOnlyTextView.swift in Sources */,
 				A5A31CEC2E0A5B4F00ABBEF7 /* ProtectView.swift in Sources */,
 				EC0CB5CA2E27AE4C00A82D6C /* JourneyView.swift in Sources */,
+				SDKS51560002000000000002 /* BackchannelAuthView.swift in Sources */,
 				EC0CB5CB2E27AE4C00A82D6C /* JourneyViewModel.swift in Sources */,
 				A5768D022E283F85000290EE /* PasswordCallbackView.swift in Sources */,
 				EC5597EF2E93EB1700A07329 /* FidoRegistrationCallbackView.swift in Sources */,
