@@ -21,6 +21,7 @@ public enum JourneyConstants {
     public static let authIndexValue = "authIndexValue"
     public static let service = "service"
     public static let suspendedId = "suspendedId"
+    public static let transaction = "transaction"
 
     public static let forceAuthParam = "ForceAuth"
     public static let noSessionParam = "noSession"

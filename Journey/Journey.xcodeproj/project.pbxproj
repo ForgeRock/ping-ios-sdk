@@ -65,6 +65,7 @@
 		A5CFC8A22E43A2B300CBFC3B /* ValidatedPasswordCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5CFC8A12E43A2AF00CBFC3B /* ValidatedPasswordCallbackTests.swift */; };
 		A5CFC8A42E43A35300CBFC3B /* ValidatedUsernameCallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5CFC8A32E43A34E00CBFC3B /* ValidatedUsernameCallbackTests.swift */; };
 		AA4785041F0000000000AA04 /* OidcDeviceApprovalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4785051F0000000000AA05 /* OidcDeviceApprovalTests.swift */; };
+		SDKS51560001000000000002 /* JourneyBackchannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS51560001000000000001 /* JourneyBackchannelTests.swift */; };
 		AAAAAAAA00000001FAA0E2E0 /* JourneyPARE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAA00000000FAA0E2E0 /* JourneyPARE2ETest.swift */; };
 		AAAAAAAA00000003FAA0E2E0 /* RecordingHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAA00000002FAA0E2E0 /* RecordingHttpClient.swift */; };
 		SDKS50680001000000000002 /* JourneyJsonConfigE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50680001000000000001 /* JourneyJsonConfigE2ETest.swift */; };
@@ -202,6 +203,7 @@
 		A5CFC8A12E43A2AF00CBFC3B /* ValidatedPasswordCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedPasswordCallbackTests.swift; sourceTree = "<group>"; };
 		A5CFC8A32E43A34E00CBFC3B /* ValidatedUsernameCallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatedUsernameCallbackTests.swift; sourceTree = "<group>"; };
 		AA4785051F0000000000AA05 /* OidcDeviceApprovalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcDeviceApprovalTests.swift; sourceTree = "<group>"; };
+		SDKS51560001000000000001 /* JourneyBackchannelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyBackchannelTests.swift; sourceTree = "<group>"; };
 		AAAAAAAA00000000FAA0E2E0 /* JourneyPARE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyPARE2ETest.swift; sourceTree = "<group>"; };
 		SDKS50680001000000000001 /* JourneyJsonConfigE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyJsonConfigE2ETest.swift; sourceTree = "<group>"; };
 		AAAAAAAA00000002FAA0E2E0 /* RecordingHttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordingHttpClient.swift; path = ../Network/NetworkTests/RecordingHttpClient.swift; sourceTree = SOURCE_ROOT; };
@@ -370,6 +372,7 @@
 				SDKS50660002000000000001 /* JourneyJsonConfigTests.swift */,
 				EC2326A52E0D744A00634A50 /* JourneyUserTests.swift */,
 				AA4785051F0000000000AA05 /* OidcDeviceApprovalTests.swift */,
+				SDKS51560001000000000001 /* JourneyBackchannelTests.swift */,
 				A5CFC86A2E42920A00CBFC3B /* Callbacks */,
 				ECD562AD2E0C494B00F0B5A9 /* Mock */,
 			);
@@ -652,6 +655,7 @@
 				A5CFC8742E4392D900CBFC3B /* ConsentMappingCallbackTests.swift in Sources */,
 				ECEFDC292ED4B10E00B56E87 /* MetadataCallbackInjectionTests.swift in Sources */,
 				AA4785041F0000000000AA04 /* OidcDeviceApprovalTests.swift in Sources */,
+				SDKS51560001000000000002 /* JourneyBackchannelTests.swift in Sources */,
 				ECD562AB2E0C494200F0B5A9 /* MockAPIEndpoint.swift in Sources */,
 				A5CFC87C2E439A9B00CBFC3B /* PollingWaitCallbackTests.swift in Sources */,
 				EC2326A42E0D671700634A50 /* JourneyContinueNodeTests.swift in Sources */,

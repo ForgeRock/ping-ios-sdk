@@ -6,6 +6,7 @@
 - Added `PushError.pushNumberChallengeError` to surface a distinct failure for Push Number Challenge responses rejected by the server [SDKS-5115]
 - Added `RichContent` and `RichContentReplacement` types and `richContent` property on `LabelCollector` to support template-based rich text with embedded links [SDKS-4245]
 - Routed FIDO ceremony logs through the workflow logger by adding a `logger:` parameter to `Fido.register` and `Fido.authenticate`. The DaVinci collectors and Journey callbacks pass the workflow's configured logger so FIDO ceremony state transitions and errors emit through the same logger as the surrounding flow [SDKS-4924]
+- Added AM/AIC backchannel authentication support to the `PingJourney` module via `Journey.start(backchannelUri:configure:)` [SDKS-5156]
 
 ## [2.0.0]
 #### Added
