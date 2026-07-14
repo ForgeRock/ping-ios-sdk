@@ -188,14 +188,6 @@ class JourneyViewModel: ObservableObject {
         }
     }
 
-    func getSavedBackchannelUri() -> String {
-        UserDefaults.standard.string(forKey: "backchannelRedirectUri") ?? ""
-    }
-
-    func saveBackchannelUri(_ uri: String) {
-        UserDefaults.standard.set(uri, forKey: "backchannelRedirectUri")
-    }
-
     /// Starts the Journey orchestration process with a specific journey name.
     /// - Parameter journeyName: The name of the journey to start
     public func startJourney(with journeyName: String) async {

@@ -137,6 +137,26 @@ final class JourneyBackchannelTests: XCTestCase, @unchecked Sendable {
         XCTAssertTrue(MockURLProtocol.requestHistory.isEmpty, "No network request should have been made")
     }
 
+    func testInvalidUri_emptyAuthIndexType() async throws {
+        let journey = makeJourney()
+        let uri = backchannelRedirectUri(authIndexType: "", authIndexValue: UUID().uuidString)
+
+        let node = await journey.start(backchannelUri: uri)
+
+        XCTAssertTrue(node is FailureNode, "Expected FailureNode but got \(type(of: node))")
+        XCTAssertTrue(MockURLProtocol.requestHistory.isEmpty, "No network request should have been made")
+    }
+
+    func testInvalidUri_emptyAuthIndexValue() async throws {
+        let journey = makeJourney()
+        let uri = backchannelRedirectUri(authIndexType: JourneyConstants.transaction, authIndexValue: "")
+
+        let node = await journey.start(backchannelUri: uri)
+
+        XCTAssertTrue(node is FailureNode, "Expected FailureNode but got \(type(of: node))")
+        XCTAssertTrue(MockURLProtocol.requestHistory.isEmpty, "No network request should have been made")
+    }
+
     func testInvalidUri_noQueryItems() async throws {
         let journey = makeJourney()
         let uri = URL(string: "https://openam-sdks.forgeblocks.com/am/UI/Login")!

@@ -101,7 +101,6 @@ struct BackchannelUriInputView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(Color.gray, lineWidth: 1)
                     )
-                    .onAppear() { redirectUri = journeyViewModel.getSavedBackchannelUri() }
 
                 if let error = journeyViewModel.errorMessage {
                     HStack(spacing: 8) {
@@ -119,7 +118,6 @@ struct BackchannelUriInputView: View {
 
                 NextButton(title: "Start Backchannel Auth") {
                     Task {
-                        journeyViewModel.saveBackchannelUri(redirectUri)
                         await journeyViewModel.startBackchannel(with: redirectUri)
                     }
                 }
