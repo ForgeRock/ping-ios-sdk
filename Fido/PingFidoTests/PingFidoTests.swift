@@ -158,7 +158,9 @@ class PingFidoTests: XCTestCase {
 
         XCTAssertNotNil(capturedRequest, "Platform registration request was not created")
         XCTAssertEqual(capturedRequest?.displayName, displayName)
-        XCTAssertEqual(capturedRequest?.name, userName)
+        // When displayName is present, createPlatformRequest passes it as the `name` argument
+        // to createCredentialRegistrationRequest — this is the value shown in the system sheet.
+        XCTAssertEqual(capturedRequest?.name, displayName)
     }
 
     @MainActor func testAuthenticatePreferImmediatelyAvailableCredentialsExcludesSecurityKeyRequest() {
