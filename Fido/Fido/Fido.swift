@@ -313,7 +313,13 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     private func createPlatformRequest(from options: PublicKeyCredentialCreationOptions, challenge: Data, userID: Data) -> ASAuthorizationRequest {
         let relyingParty = options.rp.id ?? ""
         let provider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier: relyingParty)
-        let request: ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest = provider.createCredentialRegistrationRequest(challenge: challenge, name: options.user.name, userID: userID)
+        let name: String
+        if options.user.displayName.isEmpty {
+            name = options.user.name
+        } else {
+            name = options.user.displayName
+        }
+        let request: ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest = provider.createCredentialRegistrationRequest(challenge: challenge, name: name, userID: userID)
         request.displayName = options.user.displayName
 
         // Map excludeCredentials to ASAuthorizationPlatformPublicKeyCredentialDescriptor
