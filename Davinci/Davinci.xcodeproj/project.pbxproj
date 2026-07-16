@@ -68,6 +68,8 @@
 		AA4785031F0000000000AA01 /* DaVinciDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4785021F0000000000AA01 /* DaVinciDeviceTests.swift */; };
 		BB4928012F0900000000BB01 /* ReadOnlyTextCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */; };
 		BB4928032F0900000000BB01 /* ReadOnlyTextCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928022F0900000000BB01 /* ReadOnlyTextCollectorTests.swift */; };
+		BB4928052F0900000000BB01 /* MetadataCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928042F0900000000BB01 /* MetadataCollector.swift */; };
+		BB4928072F0900000000BB01 /* MetadataCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928062F0900000000BB01 /* MetadataCollectorTests.swift */; };
 		BBBBBBBB00000001FAA0E2E0 /* DaVinciPARE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBBBBBB00000000FAA0E2E0 /* DaVinciPARE2ETest.swift */; };
 		BBBBBBBB00000003FAA0E2E0 /* RecordingHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBBBBBB00000002FAA0E2E0 /* RecordingHttpClient.swift */; };
 		DA0000022F0000000000DA01 /* DeviceAuthorizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000012F0000000000DA01 /* DeviceAuthorizationTests.swift */; };
@@ -176,6 +178,8 @@
 		AA4785021F0000000000AA01 /* DaVinciDeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciDeviceTests.swift; sourceTree = "<group>"; };
 		BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyTextCollector.swift; sourceTree = "<group>"; };
 		BB4928022F0900000000BB01 /* ReadOnlyTextCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyTextCollectorTests.swift; sourceTree = "<group>"; };
+		BB4928042F0900000000BB01 /* MetadataCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCollector.swift; sourceTree = "<group>"; };
+		BB4928062F0900000000BB01 /* MetadataCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCollectorTests.swift; sourceTree = "<group>"; };
 		BBBBBBBB00000000FAA0E2E0 /* DaVinciPARE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciPARE2ETest.swift; sourceTree = "<group>"; };
 		BBBBBBBB00000002FAA0E2E0 /* RecordingHttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordingHttpClient.swift; path = ../Network/NetworkTests/RecordingHttpClient.swift; sourceTree = SOURCE_ROOT; };
 		DA0000012F0000000000DA01 /* DeviceAuthorizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthorizationTests.swift; sourceTree = "<group>"; };
@@ -280,6 +284,7 @@
 				AA4785021F0000000000AA01 /* DaVinciDeviceTests.swift */,
 				EC92B3A22DA52DA200E4246D /* DeviceAuthenticatorCollectorTests.swift */,
 				BB4928022F0900000000BB01 /* ReadOnlyTextCollectorTests.swift */,
+				BB4928062F0900000000BB01 /* MetadataCollectorTests.swift */,
 				EC92B3A42DA52DC900E4246D /* DeviceRegistrationCollectorTests.swift */,
 				A51D4CED2C656EE100FE09E0 /* FieldCollectorTests.swift */,
 				A5EFAA052D3F303900F771FE /* FlowCollectorTests.swift */,
@@ -346,6 +351,7 @@
 				AA1A00012F0000000000AA01 /* PollingCollector.swift */,
 				AA1A00052F0000000000AA01 /* QRCodeCollector.swift */,
 				BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */,
+				BB4928042F0900000000BB01 /* MetadataCollector.swift */,
 				A5245B002FABCD1200000001 /* RichContent.swift */,
 				A5E9AEB52D2F243C000533ED /* SingleSelectCollector.swift */,
 				A5E9AEB12D2F1F91000533ED /* SingleValueCollector.swift */,
@@ -495,6 +501,7 @@
 				A5A61E032D4A92BF00767C2D /* ErrorNode.swift in Sources */,
 				A51D4CD12C585B4500FE09E0 /* FieldCollector.swift in Sources */,
 				BB4928012F0900000000BB01 /* ReadOnlyTextCollector.swift in Sources */,
+				BB4928052F0900000000BB01 /* MetadataCollector.swift in Sources */,
 				EC92B3782DA0132100E4246D /* PhoneNumberCollector.swift in Sources */,
 				A5E9AEC02D2F44CD000533ED /* PasswordPolicy.swift in Sources */,
 				A51D4CDF2C599BFF00FE09E0 /* Request.swift in Sources */,
@@ -570,6 +577,7 @@
 				AA1A00042F0000000000AA01 /* PollingCollectorTests.swift in Sources */,
 				AA1A00082F0000000000AA01 /* QRCodeCollectorTests.swift in Sources */,
 				BB4928032F0900000000BB01 /* ReadOnlyTextCollectorTests.swift in Sources */,
+			BB4928072F0900000000BB01 /* MetadataCollectorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

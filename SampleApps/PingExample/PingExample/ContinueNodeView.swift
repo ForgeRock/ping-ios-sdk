@@ -90,13 +90,15 @@ struct ContinueNodeView: View {
                     BooleanCollectorView(field: booleanCollector, onNodeUpdated: onNodeUpdated)
                 case let readOnlyTextCollector as ReadOnlyTextCollector:
                     ReadOnlyTextView(field: readOnlyTextCollector)
+                case let metadataCollector as MetadataCollector:
+                    MetadataView(field: metadataCollector, onNext: onNext)
                 default:
                     EmptyView()
                 }
             }
 
             // Fallback Next Button
-            if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector || $0 is DeviceRegistrationCollector || $0 is DeviceAuthenticationCollector || $0 is FidoRegistrationCollector || $0 is FidoAuthenticationCollector || $0 is PollingCollector }) {
+            if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector || $0 is DeviceRegistrationCollector || $0 is DeviceAuthenticationCollector || $0 is FidoRegistrationCollector || $0 is FidoAuthenticationCollector || $0 is PollingCollector || $0 is MetadataCollector }) {
                 Button(action: { onNext(false) }) {
                     Text("Next")
                         .frame(maxWidth: .infinity)
