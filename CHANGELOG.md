@@ -1,13 +1,31 @@
-## [Unreleased]
+## [2.1.0]
+#### Added
+- Added OAuth 2.0 Device Authorization Grant (RFC 8628) support [SDKS-4785]
+- Added Pushed Authorization Request (PAR) support for OIDC [SDKS-4235]
+- Added unified JSON configuration support [SDKS-5066]
+- Added `PollingCollector` for DaVinci flows [SDKS-4682]
+- Added `QrCodeCollector` for DaVinci flows [SDKS-4680]
+- Added `SingleCheckboxCollector` for DaVinci forms [SDKS-4920]
+- Added `ReadOnlyTextCollector` for DaVinci forms [SDKS-4928]
+- Added `RichContent` and `RichContentReplacement` types with rich text and embedded link support to `LabelCollector` [SDKS-4245]
+- Added phone number extension support in `PhoneNumberCollector` [SDKS-4668]
+- Added `PushError.pushNumberChallengeError` to surface a distinct failure for Push Number Challenge responses [SDKS-5115]
+- Added `preferImmediatelyAvailableCredentials` option to FIDO authentication to restrict the ceremony to locally-available credentials only [SDKS-5212]
+- Added `AuthMigration` module for migrating existing sessions from the legacy ForgeRock SDK [SDKS-4773]
+- Added Page Node description, header, and footer support [SDKS-4762]
+
 #### Fixed
 - Fixed permanent authentication failure after iCloud device migration caused by Secure Enclave key mismatch [SDKS-5172]
-- Fixed `PingFido` platform WebAuthn registration ignoring `displayName`; the display name configured on the WebAuthn Registration Node is now shown to the user during passkey creation instead of falling back to the username [TRIAGE-35655]
-
-#### Added
-- Added `PushError.pushNumberChallengeError` to surface a distinct failure for Push Number Challenge responses rejected by the server [SDKS-5115]
-- Added `RichContent` and `RichContentReplacement` types and `richContent` property on `LabelCollector` to support template-based rich text with embedded links [SDKS-4245]
-- Routed FIDO ceremony logs through the workflow logger by adding a `logger:` parameter to `Fido.register` and `Fido.authenticate`. The DaVinci collectors and Journey callbacks pass the workflow's configured logger so FIDO ceremony state transitions and errors emit through the same logger as the surrounding flow [SDKS-4924]
-- Added a `preferImmediatelyAvailableCredentials` option to FIDO authentication, restricting the ceremony to locally-available credentials (no QR / nearby-device fallback), matching the legacy `FRWebAuthnManager` behavior. Exposed on `Fido.authenticate`, `FidoAuthenticationCollector.authenticate` (DaVinci), and `FidoAuthenticationCallback.authenticate` (Journey); defaults to `false` to preserve existing behavior [SDKS-5212]
+- Fixed `PingFido` WebAuthn registration ignoring the configured `displayName` during passkey creation [SDKS-5211]
+- Fixed `PasswordCollector` not handling nested password policies [SDKS-4695]
+- Fixed PIN verification during device binding registration [SDKS-5015]
+- Fixed `Protect` collector being triggered multiple times within a flow [SDKS-4769]
+- Fixed browser close and reset logic [SDKS-4717]
+- Fixed Device Binding authenticators incorrectly reporting as supported on simulator [SDKS-4836]
+- Fixed `DeviceBindingConfig` device name defaulting to the user-assigned name instead of the device model [SDKS-4850]
+- Fixed `DefaultDeviceIdentifier` to reuse the legacy device identifier when available [SDKS-4630]
+- Fixed Swift build failures — platform bump and `canImport` guards [SDKS-4916]
+- Fixed FIDO ceremony logs not routing through the workflow logger [SDKS-4924]
 
 ## [2.0.0]
 #### Added
