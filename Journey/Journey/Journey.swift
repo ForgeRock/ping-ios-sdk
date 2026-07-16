@@ -194,19 +194,28 @@ public extension Journey {
     /// `authIndexType=transaction` and `authIndexValue=<uuid>` as query parameters;
     /// this method extracts those values and drives a standard Journey authenticate call.
     ///
-    /// The `redirectUri` host and path are ignored — the authenticate endpoint is always
-    /// constructed from `JourneyConfig.serverUrl` and `JourneyConfig.realm`.
+    /// The `redirectUri` path is ignored — the authenticate endpoint is always constructed
+    /// from `JourneyConfig.serverUrl` and `JourneyConfig.realm`. The `redirectUri` host is
+    /// validated against `JourneyConfig.serverUrl`'s host so a URI forwarded from an
+    /// unexpected origin is rejected before its query parameters are trusted.
     ///
     /// - Parameters:
     ///   - backchannelUri: The `redirectUri` received from the gateway.
     ///   - configure: Optional closure to set `Options` (e.g. `noSession`).
     /// - Returns: The first `Node` returned by the Journey, or a `FailureNode` if the
-    ///   URI is missing required parameters or `JourneyConfig` is absent.
+    ///   URI's host doesn't match `JourneyConfig.serverUrl`, the URI is missing required
+    ///   parameters, or `JourneyConfig` is absent.
     func start(backchannelUri: URL, configure: @Sendable (inout Options) -> Void = { _ in }) async -> Node {
         var options = Options()
         configure(&options)
         guard let journeyConfig = self.config as? JourneyConfig else {
             return FailureNode(cause: ApiError.error(400, [:], "JourneyConfig missing"))
+        }
+
+        guard let serverHost = journeyConfig.serverUrl.flatMap({ URL(string: $0)?.host }),
+              backchannelUri.host == serverHost
+        else {
+            return FailureNode(cause: ApiError.error(400, [:], "backchannelUri host does not match JourneyConfig.serverUrl"))
         }
 
         self.sharedContext.set(key: JourneyConstants.forceAuth, value: options.forceAuth)

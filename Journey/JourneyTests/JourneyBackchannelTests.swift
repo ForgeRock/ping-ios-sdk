@@ -167,6 +167,16 @@ final class JourneyBackchannelTests: XCTestCase, @unchecked Sendable {
         XCTAssertTrue(MockURLProtocol.requestHistory.isEmpty, "No network request should have been made")
     }
 
+    func testInvalidUri_hostMismatch() async throws {
+        let journey = makeJourney()
+        let uri = URL(string: "https://attacker.example.com/am/UI/Login?authIndexType=\(JourneyConstants.transaction)&authIndexValue=\(UUID().uuidString)")!
+
+        let node = await journey.start(backchannelUri: uri)
+
+        XCTAssertTrue(node is FailureNode, "Expected FailureNode but got \(type(of: node))")
+        XCTAssertTrue(MockURLProtocol.requestHistory.isEmpty, "No network request should have been made")
+    }
+
     // MARK: - Task 3.2 — Cases 6-9
 
     func testJourneyConfigAbsent() async throws {
