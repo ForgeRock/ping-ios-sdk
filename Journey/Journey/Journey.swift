@@ -212,14 +212,12 @@ public extension Journey {
             return FailureNode(cause: ApiError.error(400, [:], "JourneyConfig missing"))
         }
 
+        // Hostnames are case-insensitive (RFC 3986 §3.2.2), so compare both sides lowercased.
         guard let serverHost = journeyConfig.serverUrl.flatMap({ URL(string: $0)?.host }),
-              backchannelUri.host == serverHost
+              backchannelUri.host?.lowercased() == serverHost.lowercased()
         else {
             return FailureNode(cause: ApiError.error(400, [:], "backchannelUri host does not match JourneyConfig.serverUrl"))
         }
-
-        self.sharedContext.set(key: JourneyConstants.forceAuth, value: options.forceAuth)
-        self.sharedContext.set(key: JourneyConstants.noSession, value: options.noSession)
 
         guard let components = URLComponents(url: backchannelUri, resolvingAgainstBaseURL: false),
               let authIndexType = components.queryItems?.first(where: { $0.name == JourneyConstants.authIndexType })?.value,
@@ -229,6 +227,9 @@ public extension Journey {
         else {
             return FailureNode(cause: ApiError.error(400, [:], "Invalid URI or missing authIndexType/authIndexValue"))
         }
+
+        self.sharedContext.set(key: JourneyConstants.forceAuth, value: options.forceAuth)
+        self.sharedContext.set(key: JourneyConstants.noSession, value: options.noSession)
 
         let request = config.httpClient.request()
         request.populateRequest(authIndexValue: authIndexValue, authIndexType: authIndexType, journeyConfig: journeyConfig, options: options)

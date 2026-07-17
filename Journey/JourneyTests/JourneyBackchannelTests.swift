@@ -177,6 +177,24 @@ final class JourneyBackchannelTests: XCTestCase, @unchecked Sendable {
         XCTAssertTrue(MockURLProtocol.requestHistory.isEmpty, "No network request should have been made")
     }
 
+    func testHostMatchIsCaseInsensitive() async throws {
+        let journey = makeJourney()
+        // Same host as JourneyConfig.serverUrl but upper-cased — hostnames are case-insensitive.
+        let uri = URL(string: "https://OPENAM-SDKS.FORGEBLOCKS.COM/am/UI/Login?authIndexType=\(JourneyConstants.transaction)&authIndexValue=\(UUID().uuidString)")!
+
+        MockURLProtocol.requestHandler = { request in
+            try self.jsonResponse(statusCode: 200, url: request.url!, body: [
+                "authId": "test-auth-id",
+                "callbacks": []
+            ])
+        }
+
+        let node = await journey.start(backchannelUri: uri)
+
+        XCTAssertTrue(node is JourneyContinueNode, "Expected JourneyContinueNode but got \(type(of: node))")
+        XCTAssertFalse(MockURLProtocol.requestHistory.isEmpty, "An authenticate request should have been made")
+    }
+
     // MARK: - Task 3.2 — Cases 6-9
 
     func testJourneyConfigAbsent() async throws {
