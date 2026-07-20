@@ -74,6 +74,9 @@ class MockFido: Fido, @unchecked Sendable {
     /// Captures the `logger` parameter passed to the most recent call to `register` or
     /// `authenticate`, so tests can assert callers propagate the workflow logger.
     var capturedLogger: Logger?
+    /// Captures the `preferImmediatelyAvailableCredentials` flag passed to the most recent
+    /// call to `authenticate`, so tests can assert callers forward it.
+    var capturedPreferImmediatelyAvailableCredentials: Bool?
 
     override func register(options: [String : Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String : Any], Error>) -> Void) {
         capturedLogger = logger
@@ -82,8 +85,9 @@ class MockFido: Fido, @unchecked Sendable {
         }
     }
 
-    override func authenticate(options: [String : Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String : Any], Error>) -> Void) {
+    override func authenticate(options: [String : Any], window: ASPresentationAnchor, preferImmediatelyAvailableCredentials: Bool = false, logger: Logger? = nil, completion: @escaping (Result<[String : Any], Error>) -> Void) {
         capturedLogger = logger
+        capturedPreferImmediatelyAvailableCredentials = preferImmediatelyAvailableCredentials
         if let result = authenticationResult {
             completion(result)
         }
