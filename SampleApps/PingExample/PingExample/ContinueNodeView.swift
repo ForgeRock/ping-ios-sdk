@@ -2,7 +2,7 @@
 //  ContinueNodeView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -71,19 +71,32 @@ struct ContinueNodeView: View {
                     DeviceAuthenticationView(field: deviceAuthenticationCollector, onNext: onNext)
                 case let phoneNumberCollector as PhoneNumberCollector:
                     PhoneNumberView(field: phoneNumberCollector, onNodeUpdated: onNodeUpdated)
+                case let pollingCollector as PollingCollector:
+                    // Use ObjectIdentifier (object identity) to force SwiftUI to recreate
+                    // PollingCollectorView — and restart its .task — whenever a new
+                    // PollingCollector instance is produced. This happens both on each normal
+                    // polling cycle (Transform creates a fresh collector after every next() call)
+                    // and after a rewindStateToLastRenderedUI event.
+                    PollingView(collector: pollingCollector, onNext: onNext).id(ObjectIdentifier(pollingCollector))
+                case let qrCodeCollector as QRCodeCollector:
+                    QRCodeView(collector: qrCodeCollector).id(qrCodeCollector.id)
                 case let protectCollector as ProtectCollector:
                     ProtectView(field: protectCollector, onNodeUpdated: onNodeUpdated).id(protectCollector.hash)
                 case let fidoRegistrationCollector as FidoRegistrationCollector:
                     FidoRegistrationCollectorView(collector: fidoRegistrationCollector, onNext: { onNext(true) })
                 case let fidoAuthenticationCollector as FidoAuthenticationCollector:
                     FidoAuthenticationCollectorView(collector: fidoAuthenticationCollector, onNext: { onNext(true) })
+                case let booleanCollector as BooleanCollector:
+                    BooleanCollectorView(field: booleanCollector, onNodeUpdated: onNodeUpdated)
+                case let readOnlyTextCollector as ReadOnlyTextCollector:
+                    ReadOnlyTextView(field: readOnlyTextCollector)
                 default:
                     EmptyView()
                 }
             }
 
             // Fallback Next Button
-            if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector || $0 is DeviceRegistrationCollector || $0 is DeviceAuthenticationCollector || $0 is FidoRegistrationCollector || $0 is FidoAuthenticationCollector }) {
+            if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector || $0 is DeviceRegistrationCollector || $0 is DeviceAuthenticationCollector || $0 is FidoRegistrationCollector || $0 is FidoAuthenticationCollector || $0 is PollingCollector }) {
                 Button(action: { onNext(false) }) {
                     Text("Next")
                         .frame(maxWidth: .infinity)

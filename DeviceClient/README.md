@@ -1,61 +1,49 @@
-# PingDeviceClient - iOS SDK
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
 
-Comprehensive device management SDK for Ping AIC with Result-based API for robust error handling.
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
 
-## Overview
+# PingDeviceClient
 
 PingDeviceClient module simplifies device management operations for Ping AIC. It provides a clean, type-safe, Result-based API for managing authentication devices including OATH, Push, Bound, Profile, and WebAuthn devices.
 
+## Getting Started
 
-## Features
+### Prerequisites
 
-### Supported Device Types
+- Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
 
-| Device Type | Operations | Description |
-|-------------|------------|-------------|
-| **Oath** | Read, Update, Delete | TOTP/HOTP authenticator devices |
-| **Push** | Read, Update, Delete | Push notification devices |
-| **Bound** | Read, Update, Delete | Device binding for 2FA |
-| **Profile** | Read, Update, Delete | Device profiling data |
-| **WebAuthn** | Read, Update, Delete | FIDO2/WebAuthn credentials |
+### Installation
 
-### Core Capabilities
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
 
-- ✅ Fetch all devices for a user by type
-- ✅ Update device properties (name)
-- ✅ Delete devices
-- ✅ Complex metadata handling
-- ✅ Location data support
-- ✅ Async/await throughout
-- ✅ Result-based error handling
-- ✅ Automatic session management with caching
-- ✅ Thread-safe operations
-
-## Installation
-
-### Swift Package Manager
+#### Swift Package Manager
 
 Add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk", from: "1.3.0")
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
 ]
 ```
 
-### CocoaPods
+#### CocoaPods
 
 ```ruby
-pod 'PingDeviceClient', '~> 1.3.0'
+pod 'PingDeviceClient', '~> <version>'
 ```
 
-## Quick Start
-
-### 1. Import the SDK
+### Import the Module
 
 ```swift
 import PingDeviceClient
 ```
+
+## Usage
 
 ### 2. Configure and Initialize
 
@@ -195,6 +183,8 @@ let result2 = await deviceClient.push.get()  // Makes 1 call: devices only
 ```
 
 ## Usage
+
+### 1. Import the SDK
 
 ### Fetching Devices (Result API)
 
@@ -452,5 +442,9 @@ error.errorDescription      // Main error message
 error.failureReason        // Why the error occurred
 error.recoverySuggestion   // How to fix it
 ```
+
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
 © Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

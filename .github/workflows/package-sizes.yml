@@ -1,0 +1,102 @@
+name: Package Sizes Report
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  ios-package-sizes-report:
+    runs-on: macos-26-xlarge
+
+    steps:
+      - name: Checkout current ref
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+
+      - name: Set up Xcode
+        run: xcodebuild -version
+
+      - name: Make report script executable
+        run: chmod +x ./package-sizes-report.sh
+
+      - name: Compute metadata
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -n "${GITHUB_HEAD_REF:-}" ]]; then
+            REF="${GITHUB_HEAD_REF}"
+            KIND="branch"
+          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            REF="${GITHUB_REF_NAME}"
+            KIND="tag"
+          else
+            REF="${GITHUB_REF_NAME}"
+            KIND="branch"
+          fi
+
+          SLUG="$(printf '%s' "${REF}" | tr '[:upper:]' '[:lower:]' | sed -E 's#[^a-z0-9._-]+#-#g')"
+
+          REPORT_FILE="ios-package-size-report-${KIND}-${SLUG}.md"
+          ARTIFACT_NAME="ios-package-size-report-${KIND}-${SLUG}"
+
+          echo "ref=${REF}" >> "$GITHUB_OUTPUT"
+          echo "kind=${KIND}" >> "$GITHUB_OUTPUT"
+          echo "slug=${SLUG}" >> "$GITHUB_OUTPUT"
+          echo "report_file=${REPORT_FILE}" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=${ARTIFACT_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Generate Markdown report
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./package-sizes-report.sh markdown > "${{ steps.meta.outputs.report_file }}"
+
+      - name: Validate generated report
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          REPORT_FILE="${{ steps.meta.outputs.report_file }}"
+
+          test -f "$REPORT_FILE"
+          test -s "$REPORT_FILE"
+
+          echo "Generated report:"
+          ls -l "$REPORT_FILE"
+          echo "----- report preview (first 80 lines) -----"
+          sed -n '1,80p' "$REPORT_FILE"
+          echo "----- end preview -----"
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.artifact_name }}
+          path: ${{ steps.meta.outputs.report_file }}
+          if-no-files-found: error
+
+      - name: Publish report in job summary
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          REPORT_FILE="${{ steps.meta.outputs.report_file }}"
+
+          test -f "$REPORT_FILE"
+          test -s "$REPORT_FILE"
+
+          {
+            echo "# iOS package size report"
+            echo
+            echo "- Ref: \`${{ steps.meta.outputs.ref }}\`"
+            echo "- Ref type: \`${{ steps.meta.outputs.kind }}\`"
+            echo "- Artifact: \`${{ steps.meta.outputs.artifact_name }}\`"
+            echo "- File: \`${{ steps.meta.outputs.report_file }}\`"
+            echo
+            cat "$REPORT_FILE"
+          } >> "$GITHUB_STEP_SUMMARY"

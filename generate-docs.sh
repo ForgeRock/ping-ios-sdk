@@ -37,7 +37,6 @@ MODULES=(
   Oath
   Push
   Binding
-  PingAuthMigration
 )
 
 get_scheme_override() {

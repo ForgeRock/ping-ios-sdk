@@ -31,7 +31,9 @@ public class NodeTransformModule {
                 let message = json[Constants.message] as? String ?? ""
                 
                 // Filter out client-side "timeout" related unrecoverable failures
-                if json[Constants.code] as? Int == Constants.code_1999 || json[Constants.code] as? String == Constants.requestTimedOut {
+                if json[Constants.code] as? Int == Constants.code_1999 ||
+                    json[Constants.code] as? String == Constants.requestTimedOut ||
+                    json[Constants.code] as? String == Constants.pollingValueTimedOut {
                     return FailureNode(cause: ApiError.error(status, json, body))
                 }
                 
@@ -80,6 +82,27 @@ public class NodeTransformModule {
         // If authorizeResponse is present, return success
         if let _ = json[Constants.authorizeResponse] as? [String: Any] {
             return SuccessNode(input: json, session: SessionResponse(json: json))
+        }
+        
+        // Handle rewindStateToLastRenderedUI and rewindStateToSpecificRenderedUI:
+        // Re-create a fresh Connector from the stored node's input. This intentionally resets
+        // all collector state (including PollingCollector.retriesAllowed) back to its initial
+        // JSON values, giving the user a clean retry. The new ObjectIdentifier on each fresh
+        // collector lets the SwiftUI layer detect the change and restart any running .task.
+        if let eventName = json[Constants.eventName] as? String,
+           (eventName == Constants.rewindStateToLastRenderedUI || eventName == Constants.rewindStateToSpecificRenderedUI) {
+            if let storedNode = context.flowContext.get(key: SharedContext.Keys.continueNode) as? ContinueNode {
+                let storedInput = storedNode.input
+                var freshCollectors: Collectors = []
+                if storedInput[Constants.form] != nil {
+                    await freshCollectors.append(contentsOf: Form.parse(daVinci: davinci, json: storedInput))
+                }
+                let freshConnector = Connector(context: context, davinci: davinci, input: storedInput, collectors: freshCollectors)
+                await CollectorFactory.shared.inject(continueNode: freshConnector)
+                return freshConnector
+            }
+            return FailureNode(cause: NSError(domain: "com.pingidentity.davinci", code: -1,
+                                              userInfo: [NSLocalizedDescriptionKey: "Rewind state to last rendered UI failed."]))
         }
         
         var collectors: Collectors = []

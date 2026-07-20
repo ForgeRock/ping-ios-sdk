@@ -31,6 +31,11 @@ jobs:
     name: Generate API Docs
     uses: ./.github/workflows/docs.yaml
 
+   # Calculate package sizes
+  package-sizes:
+    name: Package Sizes
+    uses: ./.github/workflows/package-sizes.yml
+
   # Build BrowserStack test artifacts
   browserstack-prepare-artifacts:
     name: Prepare device farm artifacts

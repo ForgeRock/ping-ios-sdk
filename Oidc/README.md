@@ -1,9 +1,10 @@
-<p align="center">
-  <a href="https://github.com/ForgeRock/ping-ios-sdk">
-    <img src="https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg" alt="Logo">
-  </a>
-  <hr/>
-</p>
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
+
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
+
+# PingOidc
 
 `PingOidc` module provides a generic OIDC client that can be used with PingOne and ForgeRock platforms.
 
@@ -11,9 +12,39 @@ The `PingOidc` module follows the [OIDC](https://openid.net/specs/openid-connect
 provides a simple and easy-to-use API to interact with the OIDC server. It allows you to authenticate, retrieve the
 access token, revoke the token, and sign out from the OIDC server.
 
-## Integrating the SDK into your project
+## Getting Started
 
-Use Cocoapods or Swift Package Manager
+### Prerequisites
+
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingOidc` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingOidc', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingOidc
+```
 
 ## Oidc Client Configuration
 
@@ -98,6 +129,83 @@ config.display = "test"
 let ping = OidcClient(config: config)
 ```
 
+## Pushed Authorization Requests (PAR)
+
+`PingOidc` supports [Pushed Authorization Requests (RFC 9126)](https://datatracker.ietf.org/doc/html/rfc9126). When PAR is enabled, authorization parameters are sent to the server via a POST request to the `pushed_authorization_request_endpoint` before the authorization redirect. The server returns a `request_uri` which is then used in the authorization URL instead of the full set of parameters.
+
+To enable PAR, set the `par` property to `true` in the OIDC configuration:
+
+```swift
+let oidcLogin = OidcWebClient.createOidcWebClient { config in
+    config.module(PingOidc.OidcModule.config) { oidcValue in
+        oidcValue.clientId = "ClientID"
+        oidcValue.scopes = ["openid", "email", "address", "profile", "phone"]
+        oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
+        oidcValue.discoveryEndpoint = "https://example.com/.well-known/openid-configuration"
+        oidcValue.par = true // Enable Pushed Authorization Requests
+    }
+}
+```
+
+**Requirements:**
+- The server's OpenID configuration (discovery document) must include a `pushed_authorization_request_endpoint`.
+- If `par` is enabled but the discovery document does not include the PAR endpoint, the SDK falls back to the standard authorization flow automatically.
+
+## Device Authorization Grant (RFC 8628)
+
+`PingOidc` supports the [OAuth 2.0 Device Authorization Grant (RFC 8628)](https://datatracker.ietf.org/doc/html/rfc8628) for input-constrained devices (smart TVs, CLI tools) that can't directly open a browser. Use `OidcDeviceClient` to start a device flow, display the user code and verification URL, and poll for the access token.
+
+```swift
+let deviceClient = OidcDeviceClient.createOidcDeviceClient { config in
+    config.clientId = "ClientID"
+    config.scopes = ["openid", "profile", "email"]
+    config.redirectUri = "org.forgerock.demo://oauth2redirect"
+    config.discoveryEndpoint = "https://auth.example.com/.well-known/openid-configuration"
+}
+
+// Start the flow — returns an AsyncThrowingStream<DeviceFlowStatus, Error>
+let stream = try await deviceClient.deviceAuthorization()
+
+for try await status in stream {
+    switch status {
+    case .started(let response):
+        // Display response.userCode and response.verificationUri (or response.verificationUriComplete)
+        // to the user — for example as a QR code linking to verificationUriComplete.
+        print("Visit \(response.verificationUri) and enter \(response.userCode)")
+    case .polling(let pollCount, let pollInterval, let nextPollAt):
+        // Optional: update UI with polling progress
+        break
+    case .success(let user):
+        // Token has been saved to storage. `user` is an OidcUser ready to call .token() on.
+        let token = await user.token()
+    case .accessDenied:
+        // The user denied the request.
+        break
+    case .expired:
+        // The user code expired before the user authorized.
+        break
+    case .failure(let error):
+        // Terminal error not covered by the RFC 8628 error codes.
+        break
+    }
+}
+
+// Optionally open the verification URL in SFSafariViewController on this device:
+try await deviceClient.authorize(verificationUriComplete: response.verificationUriComplete ?? response.verificationUri)
+
+// Retrieve the existing user (returns nil if no token has been saved):
+let user = await deviceClient.user()
+
+// Revoke the stored token:
+await deviceClient.revoke()
+```
+
+**Requirements:**
+- The server's OpenID configuration (discovery document) must include a `device_authorization_endpoint`.
+- If the endpoint is missing, `deviceAuthorization()` throws `OidcError.unknown`.
+
+The polling loop honors the server-supplied `interval` and increases it by 5 seconds on every `slow_down` response per RFC 8628. Network errors (`URLError`) trigger an exponential backoff (capped at 60 seconds) and the stream continues; the stream only finishes on `.success`, `.accessDenied`, `.expired`, or a non-recoverable error.
+
 ## Custom Agent
 
 You can also provide a custom agent to launch the authorization request.
@@ -174,5 +282,75 @@ let oidcLogin = OidcWebClient.createOidcWebClient { config in
     // configuration
 }
 ```
+
+## JSON Configuration
+
+Both `OidcWebClient` and `OidcDeviceClient` can be initialised from a platform-neutral dictionary, enabling config-file-driven setup.
+
+### OidcWebClient
+
+```swift
+let json: [String: Any] = [
+    "timeout": 30000,          // milliseconds — optional, default 15 s
+    "log": "DEBUG",            // optional
+    "oidc": [
+        "clientId": "your-client-id",
+        "discoveryEndpoint": "https://auth.example.com/.well-known/openid-configuration",
+        "redirectUri": "myapp://callback",
+        "scopes": ["openid", "profile", "email"],
+        // --- optional ---
+        "par": true,
+        "acrValues": "policy-id",
+        "signOutRedirectUri": "myapp://logout"
+    ] as [String: Any]
+]
+
+switch OidcWebClient.createOidcWebClient(json: json) {
+case .success(let client):
+    let result = try await client.authorize()
+case .failure(let error):
+    print("Configuration error: \(error.localizedDescription)")
+}
+```
+
+### OidcDeviceClient
+
+```swift
+let json: [String: Any] = [
+    "log": "WARN",             // optional
+    "oidc": [
+        "clientId": "your-client-id",
+        "discoveryEndpoint": "https://auth.example.com/.well-known/openid-configuration",
+        "redirectUri": "myapp://callback",
+        "scopes": ["openid"],
+        // override the device authorization endpoint if not in discovery
+        "openId": [
+            "deviceAuthorizationEndpoint": "https://auth.example.com/device/code"
+        ] as [String: Any]
+    ] as [String: Any]
+]
+
+switch OidcDeviceClient.createOidcDeviceClient(json: json) {
+case .success(let client):
+    let stream = try await client.deviceAuthorization()
+case .failure(let error):
+    print("Configuration error: \(error.localizedDescription)")
+}
+```
+
+> **Note:** The top-level `timeout` key is not applied to `OidcDeviceClient` — the device flow HTTP client uses the framework default. Configure the device authorization endpoint via the `openId` override block if it is not advertised in the OIDC discovery document.
+
+### Error handling
+
+On invalid input both factories return `.failure(JsonConfigError)`:
+
+| Error | Cause |
+|-------|-------|
+| `missingRequiredField(String)` | A required field is absent |
+| `invalidType(field:expected:)` | A field has the wrong type |
+
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
 © Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

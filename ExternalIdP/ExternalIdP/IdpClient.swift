@@ -9,7 +9,9 @@
 //
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// Represents the IdpClient struct. The IdpClient struct represents the client configuration for the IDP.
 /// - property clientId: The client ID.
@@ -26,6 +28,7 @@ public struct IdpClient: Sendable {
     public var continueUrl: String? = nil
 }
 
+#if canImport(UIKit)
 extension IdpClient {
     @MainActor
     public static func getTopViewController() -> UIViewController? {
@@ -47,3 +50,4 @@ extension IdpClient {
         return topController
     }
 }
+#endif

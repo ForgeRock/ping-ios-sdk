@@ -29,7 +29,8 @@ class AccessTokenViewModel: ObservableObject {
     @Published var results: [AuthTab: AccessTokenResult] = [
         .journey: AccessTokenResult(),
         .davinci: AccessTokenResult(),
-        .oidc: AccessTokenResult()
+        .oidc: AccessTokenResult(),
+        .device: AccessTokenResult()
     ]
     
     init() {
@@ -44,7 +45,8 @@ class AccessTokenViewModel: ObservableObject {
             group.addTask { await (.journey, self.fetchToken(for: .journey)) }
             group.addTask { await (.davinci, self.fetchToken(for: .davinci)) }
             group.addTask { await (.oidc, self.fetchToken(for: .oidc)) }
-            
+            group.addTask { await (.device, self.fetchToken(for: .device)) }
+
             for await (tab, result) in group {
                 results[tab] = result
             }
@@ -60,6 +62,8 @@ class AccessTokenViewModel: ObservableObject {
             user = await ConfigurationManager.shared.davinciUser
         case .oidc:
             user = await ConfigurationManager.shared.oidcUser
+        case .device:
+            user = await ConfigurationManager.shared.deviceUser
         }
         
         guard let user = user else {
@@ -120,6 +124,8 @@ class AccessTokenViewModel: ObservableObject {
             return await ConfigurationManager.shared.davinciUser
         case .oidc:
             return await ConfigurationManager.shared.oidcUser
+        case .device:
+            return await ConfigurationManager.shared.deviceUser
         }
     }
 }

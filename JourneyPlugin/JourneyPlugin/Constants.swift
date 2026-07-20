@@ -144,4 +144,10 @@ public enum JourneyConstants {
     public static let description = "description"
     public static let submitButtonText = "submitButtonText"
     public static let pageFooter = "pageFooter"
+
+    /// RFC 8628 Device Authorization Grant approval constants
+    public static let userCode = "user_code"
+    public static let decision = "decision"
+    public static let decisionAllow = "allow"
+    public static let csrf = "csrf"
 }

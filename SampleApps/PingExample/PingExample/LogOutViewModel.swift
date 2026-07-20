@@ -49,6 +49,9 @@ class LogOutViewModel: ObservableObject {
            case .success = await ConfigurationManager.shared.oidcUser?.token() {
             sessions.append(SessionInfo(tab: .oidc, title: "OIDC (Web)", description: "Authenticated via OpenID Connect"))
         }
+        if await ConfigurationManager.shared.deviceUser != nil {
+            sessions.append(SessionInfo(tab: .device, title: "Device Flow", description: "Authenticated via RFC 8628 Device Flow"))
+        }
         
         activeSessions = sessions
         isLoading = false
@@ -63,15 +66,18 @@ class LogOutViewModel: ObservableObject {
             await ConfigurationManager.shared.davinciUser?.logout()
         case .oidc:
             await ConfigurationManager.shared.oidcUser?.logout()
+        case .device:
+            await ConfigurationManager.shared.deviceClient?.revoke()
         }
         activeSessions.removeAll { $0.tab == session.tab }
     }
-    
-    /// Logs out all active sessions across Journey, DaVinci, and OIDC.
+
+    /// Logs out all active sessions across Journey, DaVinci, OIDC, and Device Flow.
     func logoutAll() async {
         await ConfigurationManager.shared.journeyUser?.logout()
         await ConfigurationManager.shared.davinciUser?.logout()
         await ConfigurationManager.shared.oidcUser?.logout()
+        await ConfigurationManager.shared.deviceClient?.revoke()
         activeSessions.removeAll()
     }
 }

@@ -272,6 +272,62 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         }
     }
     
+    func testDaVinciPollingTimedOutCodeReturnsFailureNode() async throws {
+        MockURLProtocol.requestHandler = { request in
+            switch request.url!.path {
+            case MockAPIEndpoint.discovery.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfigurationResponse)
+            case MockAPIEndpoint.authorization.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.authorization.url, statusCode: 400, httpVersion: nil, headerFields: MockResponse.headers)!, """
+                {
+                    "interactionId": "1703d481-fd7a-403f-a53e-060223f2b739",
+                    "companyId": "02fb4743-189a-4bc7-9d6c-a919edfe6447",
+                    "connectionId": "8209285e0d2f3fc76bfd23fd10d45e6f",
+                    "connectorId": "pingOneFormsConnector",
+                    "id": "czys1qteu6",
+                    "capabilityName": "customForm",
+                    "code": "timedOut",
+                    "httpResponseCode": 400,
+                    "message": "timedOut",
+                    "isResponseCompatibleWithMobileAndWebSdks": true
+                }
+                """.data(using: .utf8)!)
+            default:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+            }
+        }
+        
+        let daVinci = DaVinci.createDaVinci { config in
+            config.httpClient = MockURLProtocol.makeClient()
+            
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
+                oidcValue.clientId = self.config.clientId
+                oidcValue.scopes = Set(self.config.scopes)
+                oidcValue.redirectUri = self.config.redirectUri
+                oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
+                oidcValue.storage = MemoryStorage()
+                oidcValue.logger = LogManager.standard
+            }
+            
+            config.module(CookieModule.config) { cookieValue in
+                cookieValue.cookieStorage = MemoryStorage()
+                cookieValue.persist = ["ST"]
+            }
+        }
+        
+        let node = await daVinci.start()
+        XCTAssertTrue(node is FailureNode, "Expected FailureNode for code=timedOut, got \(type(of: node))")
+        guard let failureNode = node as? FailureNode,
+              let apiError = failureNode.cause as? ApiError else {
+            XCTFail("Expected FailureNode with ApiError")
+            return
+        }
+        switch apiError {
+        case .error(let code, let json, _):
+            XCTAssertEqual(code, 400)
+            XCTAssertEqual(json["code"] as? String, "timedOut")
+        }
+    }
     
     func testDaVinciAuthorizeEndpointFailedBetween400To499() async throws {
         MockURLProtocol.requestHandler = { request in

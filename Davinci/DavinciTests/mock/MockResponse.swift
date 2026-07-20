@@ -2,7 +2,7 @@
 //  MockResponse.swift
 //  DavinciTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -23,6 +23,44 @@ struct MockResponse {
             "userinfo_endpoint" : "https://auth.test-one-pingone.com/userinfo",
             "end_session_endpoint" : "https://auth.test-one-pingone.com/signoff",
             "revocation_endpoint" : "https://auth.test-one-pingone.com/revoke"
+        }
+        """.data(using: .utf8)!
+    }
+    
+    // Return the OpenID configuration response with device_authorization_endpoint as Data
+    static var openIdConfigurationWithDeviceEndpointResponse: Data {
+        return """
+        {
+            "authorization_endpoint" : "http://auth.test-one-pingone.com/authorize",
+            "token_endpoint" : "https://auth.test-one-pingone.com/token",
+            "userinfo_endpoint" : "https://auth.test-one-pingone.com/userinfo",
+            "end_session_endpoint" : "https://auth.test-one-pingone.com/signoff",
+            "revocation_endpoint" : "https://auth.test-one-pingone.com/revoke",
+            "device_authorization_endpoint" : "https://auth.test-one-pingone.com/as/device_authorization"
+        }
+        """.data(using: .utf8)!
+    }
+
+    // Return the OpenID configuration response with PAR endpoint as Data
+    static var openIdConfigurationWithPARResponse: Data {
+        return """
+        {
+            "authorization_endpoint" : "http://auth.test-one-pingone.com/authorize",
+            "token_endpoint" : "https://auth.test-one-pingone.com/token",
+            "userinfo_endpoint" : "https://auth.test-one-pingone.com/userinfo",
+            "end_session_endpoint" : "https://auth.test-one-pingone.com/signoff",
+            "revocation_endpoint" : "https://auth.test-one-pingone.com/revoke",
+            "pushed_authorization_request_endpoint" : "https://auth.test-one-pingone.com/par"
+        }
+        """.data(using: .utf8)!
+    }
+    
+    // Return a successful PAR response as Data
+    static var parResponse: Data {
+        return """
+        {
+            "request_uri" : "urn:ietf:params:oauth:request_uri:test-request-uri",
+            "expires_in" : 60
         }
         """.data(using: .utf8)!
     }
@@ -314,7 +352,52 @@ struct MockResponse {
                   "type": "PASSWORD",
                   "key": "password",
                   "label": "Password",
-                  "required": true
+                  "required": true,
+                  "passwordPolicy": {
+                    "_links": {
+                      "environment": {
+                        "href": "http://10.76.235.122:4140/directory-api/environments/02fb4743-189a-4bc7-9d6c-a919edfe6447"
+                      },
+                      "self": {
+                        "href": "http://10.76.235.122:4140/directory-api/environments/02fb4743-189a-4bc7-9d6c-a919edfe6447/passwordPolicies/39cad7af-3c2f-4672-9c3f-c47e5169e582"
+                      }
+                    },
+                    "id": "39cad7af-3c2f-4672-9c3f-c47e5169e582",
+                    "environment": {
+                      "id": "02fb4743-189a-4bc7-9d6c-a919edfe6447"
+                    },
+                    "name": "Standard",
+                    "description": "A standard policy that incorporates industry best practices",
+                    "excludesProfileData": true,
+                    "notSimilarToCurrent": true,
+                    "excludesCommonlyUsed": true,
+                    "maxAgeDays": 182,
+                    "minAgeDays": 1,
+                    "maxRepeatedCharacters": 2,
+                    "minUniqueCharacters": 5,
+                    "history": {
+                      "count": 6,
+                      "retentionDays": 365
+                    },
+                    "lockout": {
+                      "failureCount": 5,
+                      "durationSeconds": 900
+                    },
+                    "length": {
+                      "min": 8,
+                      "max": 255
+                    },
+                    "minCharacters": {
+                      "~!@#$%^&*()-_=+[]{}|;:,.<>/?": 1,
+                      "0123456789": 1,
+                      "ABCDEFGHIJKLMNOPQRSTUVWXYZ": 1,
+                      "abcdefghijklmnopqrstuvwxyz": 1
+                    },
+                    "populationCount": 1,
+                    "createdAt": "2024-01-03T19:50:39.586Z",
+                    "updatedAt": "2024-01-03T19:50:39.586Z",
+                    "default": true
+                  }
                 },
                 {
                   "type": "SUBMIT_BUTTON",
@@ -438,51 +521,6 @@ struct MockResponse {
           "region": "CA",
           "themeId": "activeTheme",
           "formId": "f0cf83ab-f8f4-4f4a-9260-8f7d27061fa7",
-          "passwordPolicy": {
-            "_links": {
-              "environment": {
-                "href": "http://10.76.235.122:4140/directory-api/environments/02fb4743-189a-4bc7-9d6c-a919edfe6447"
-              },
-              "self": {
-                "href": "http://10.76.235.122:4140/directory-api/environments/02fb4743-189a-4bc7-9d6c-a919edfe6447/passwordPolicies/39cad7af-3c2f-4672-9c3f-c47e5169e582"
-              }
-            },
-            "id": "39cad7af-3c2f-4672-9c3f-c47e5169e582",
-            "environment": {
-              "id": "02fb4743-189a-4bc7-9d6c-a919edfe6447"
-            },
-            "name": "Standard",
-            "description": "A standard policy that incorporates industry best practices",
-            "excludesProfileData": true,
-            "notSimilarToCurrent": true,
-            "excludesCommonlyUsed": true,
-            "maxAgeDays": 182,
-            "minAgeDays": 1,
-            "maxRepeatedCharacters": 2,
-            "minUniqueCharacters": 5,
-            "history": {
-              "count": 6,
-              "retentionDays": 365
-            },
-            "lockout": {
-              "failureCount": 5,
-              "durationSeconds": 900
-            },
-            "length": {
-              "min": 8,
-              "max": 255
-            },
-            "minCharacters": {
-              "~!@#$%^&*()-_=+[]{}|;:,.<>/?": 1,
-              "0123456789": 1,
-              "ABCDEFGHIJKLMNOPQRSTUVWXYZ": 1,
-              "abcdefghijklmnopqrstuvwxyz": 1
-            },
-            "populationCount": 1,
-            "createdAt": "2024-01-03T19:50:39.586Z",
-            "updatedAt": "2024-01-03T19:50:39.586Z",
-            "default": true
-          },
           "isResponseCompatibleWithMobileAndWebSdks": true,
           "fieldTypes": [
             "LABEL",
@@ -506,6 +544,28 @@ struct MockResponse {
           }
         }
     """.data(using: .utf8)!
+    }
+    
+    static var rewindStateToLastRenderedUIResponse: Data {
+        return """
+        {
+            "eventName": "rewindStateToLastRenderedUI",
+            "success": true,
+            "id": "fxopi4maps",
+            "interactionId": "172e9100-9e72-456a-b850-ea3d698f06bb"
+        }
+        """.data(using: .utf8)!
+    }
+    
+    static var rewindStateToSpecificRenderedUIResponse: Data {
+        return """
+        {
+            "eventName": "rewindStateToSpecificRenderedUI",
+            "success": true,
+            "id": "fxopi4maps",
+            "interactionId": "172e9100-9e72-456a-b850-ea3d698f06bb"
+        }
+        """.data(using: .utf8)!
     }
     
 }

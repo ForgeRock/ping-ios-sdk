@@ -8,6 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
+#if canImport(FBSDKLoginKit)
 import Foundation
 internal import FBSDKLoginKit
 internal import FBSDKCoreKit
@@ -56,3 +57,4 @@ class FacebookHandlerUtils {
         }
     }
 }
+#endif

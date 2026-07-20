@@ -1,0 +1,8 @@
+{
+    "clientId": "c12743f9-08e8-4420-a624-71bbb08e9fe1",
+    "discoveryEndpoint": "https://auth.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/as/.well-known/openid-configuration",
+    "scopes": "openid email address phone profile",
+    "redirectUri": "org.forgerock.demo://oauth2redirect",
+    "acrValues": "2e29038dcf23d232916c5e42ba37fe82",
+    "responseMode": "pi.flow"
+}

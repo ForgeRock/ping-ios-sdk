@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingDeviceClient'
-  s.version          = '2.0.0'
+  s.version          = '2.1.0'
   s.summary          = 'PingDeviceClient module for the Ping iOS SDK'
   s.description      = <<-DESC
   DeviceClient module simplifies device management operations for Ping AIC. It provides a clean, type-safe API for managing authentication devices including OATH, Push, Bound, Profile, and WebAuthn devices.
@@ -33,7 +33,7 @@ Pod::Spec.new do |s|
     'PingDeviceClient' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingCommons', '~> 2.0.0'
-  s.ios.dependency 'PingNetwork', '~> 2.0.0'
+  s.ios.dependency 'PingCommons', '~> 2.1.0'
+  s.ios.dependency 'PingNetwork', '~> 2.1.0'
   
 end

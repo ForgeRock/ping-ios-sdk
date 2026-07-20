@@ -1,41 +1,61 @@
-<p align="center">
-  <a href="https://github.com/ForgeRock/ping-android-sdk">
-    <img src="https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg" alt="Logo">
-  </a>
-  <hr/>
-</p>
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
 
-# PingProtect Module: Advanced Security Integration
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
 
-> **Note:** The module name differs depending on the dependency manager. Use **`PingProtect`** for Swift Package Manager (SPM), and **`PingOneProtect`** for CocoaPods.
+# PingProtect
 
-## Overview
+> [!NOTE]
+> **This module is a wrapper for the standalone PingOne Protect SDK. Its purpose is to facilitate integration between your application and PingOne services, typically as part of a DaVinci flow or an Advanced Identity Cloud/PingAM journey. The Protect service is invoked server-side as a step within the orchestration layer, not directly from the client application. This architecture means that the business logic for triggering PingOne Protect resides on the server, allowing you to update this logic without requiring a new client application release.**
+>
+> **Alternatively, for scenarios where you need to call the service independently outside of an orchestrated flow, Protect offers a standalone [PingOne Protect SDK](https://developer.pingidentity.com/pingone-api/native-sdks/pingone-risk-sdks/risk_evaluation_sdk_ios.html). This option allows for direct application integration with the specific PingOne service using purpose-built REST APIs.**
 
-The `PingProtect` module is a powerful component of the Ping Identity iOS SDK, designed to seamlessly integrate Ping
-Identity's Protect service into your mobile applications. It provides comprehensive tools for real-time behavioral data
-collection, sophisticated risk analysis, and adaptive authentication strategies. By leveraging this module, developers
-can significantly enhance application security, detect and mitigate fraudulent activities, and create a more secure and
-user-friendly authentication experience.
+## Getting Started
 
-## Integrating the SDK into your project
+### Prerequisites
 
-### Add dependency to your project
+- PingOne DaVinci or Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
 
-To integrate the PingProtect module into your iOS project, add the following dependency to your
-`Podfile` or `Package.swift` file. 
-> **Note:** The module name differs depending on the dependency manager. Use **`PingProtect`** for SPM, and **`PingOneProtect`** for CocoaPods.
+### Installation
 
-```ruby
-pod 'PingOneProtect', '<version>'
-```
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
 
-or for Swift Package Manager:
+> [!NOTE]
+> The module name differs depending on the dependency manager. Use **`PingProtect`** for Swift Package Manager (SPM), and **`PingOneProtect`** for CocoaPods.
+
+#### Swift Package Manager
 
 ```swift
 .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
 ```
 
-Replace `<version>` with the latest version of the PingProtect SDK.
+Then add the `PingProtect` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingOneProtect', '~> <version>'
+```
+
+Replace `<version>` with the latest version of the SDK.
+
+### Import the Module
+
+```swift
+import PingProtect
+```
+
+## Overview
+
+The `PingProtect` module is a powerful component of the Ping Orchestration SDK for iOS, designed to seamlessly integrate Ping
+Identity's Protect service into your mobile applications. It provides comprehensive tools for real-time behavioral data
+collection, sophisticated risk analysis, and adaptive authentication strategies. By leveraging this module, developers
+can significantly enhance application security, detect and mitigate fraudulent activities, and create a more secure and
+user-friendly authentication experience.
 
 ## Usage
 
@@ -262,5 +282,9 @@ await Protect.resumeBehavioralData() // Resume data collection.
 
 These methods allow for granular control over data collection, enabling you to pause collection during sensitive
 operations or when required by user privacy preferences.
+
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
 © Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

@@ -11,8 +11,9 @@
 
 import Foundation
 import PingLogger
-import PingOrchestrate
 import PingNetwork
+import PingOrchestrate
+import PingStorage
 
 /// Class representing an OpenID Connect client.
 /// - Property pkce: PKCE  object used for the Authorization call.
@@ -28,15 +29,49 @@ public class OidcClient {
         self.logger = config.logger
     }
     
-    /// OidcClient generateAuthorizeUrl.
+    /// Generates an OIDC authorization URL synchronously.
+    ///
+    /// - Warning: This synchronous variant does **not** support Pushed
+    ///   Authorization Requests (PAR, RFC 9126). Even when
+    ///   `OidcClientConfig.par` is set to `true`, this method will fall back
+    ///   to the standard authorization flow and emit all parameters in the
+    ///   URL query string. To use PAR, call the `async` overload
+    ///   `generateAuthorizeUrl(customParams:) async throws -> URL` instead.
+    ///
     /// - Parameter customParams: Custom parameters to include in the authorization request.
+    /// - Returns: The fully-built authorization URL.
+    /// - Throws: `OidcError.networkError` if the HTTP client or URL cannot be resolved.
     public func generateAuthorizeUrl(customParams: [String: String]? = nil) throws -> URL {
         guard let httpClient = config.httpClient else {
             throw OidcError.networkError(message: "HTTP client not found")
         }
         var request = httpClient.request()
-        self.pkce = Pkce.generate()
-        request = config.populateRequest(request: request, pkce: pkce!, responseMode: OidcClient.Constants.query)
+        let generatedPkce = Pkce.generate()
+        self.pkce = generatedPkce
+        request = config.populateStandardAuthorizeRequest(request: request, pkce: generatedPkce, responseMode: OidcClient.Constants.query)
+        if let customParams = customParams {
+            for parameter in customParams {
+                request.setParameter(name: parameter.key, value: parameter.value)
+            }
+        }
+        guard let urlString = request.url, let url = URL(string: urlString), let redirectURI = URL(string: config.redirectUri), let _ = redirectURI.scheme else {
+            throw OidcError.networkError(message: "URL not found")
+        }
+        
+        return url
+    }
+    
+    /// OidcClient generateAuthorizeUrl with PAR support.
+    /// When PAR is enabled in the configuration, authorization parameters are pushed to the server before generating the URL.
+    /// - Parameter customParams: Custom parameters to include in the authorization request.
+    public func generateAuthorizeUrl(customParams: [String: String]? = nil) async throws -> URL {
+        guard let httpClient = config.httpClient else {
+            throw OidcError.networkError(message: "HTTP client not found")
+        }
+        var request = httpClient.request()
+        let generatedPkce = Pkce.generate()
+        self.pkce = generatedPkce
+        request = try await config.populateRequest(request: request, pkce: generatedPkce, responseMode: OidcClient.Constants.query)
         if let customParams = customParams {
             for parameter in customParams {
                 request.setParameter(name: parameter.key, value: parameter.value)
@@ -81,23 +116,44 @@ public class OidcClient {
         
         config.logger.i("Getting access token")
         do {
-            if let cached = try await config.storage.get() {
-                if !cached.isExpired(threshold: config.refreshThreshold) {
-                    config.logger.i("Token is not expired. Returning cached token.")
-                    return .success(cached)
-                }
-                config.logger.i("Token is expired. Attempting to refresh.")
-                if let cachedefreshToken = cached.refreshToken {
-                    do {
-                        let refreshedToken = try await refreshToken(cachedefreshToken)
-                        return .success(refreshedToken)
-                    } catch {
-                        config.logger.e("Failed to refresh token. Revoking token and re-authenticating.", error: error)
-                        await revoke(cached)
+            do {
+                if let cached = try await config.storage.get() {
+                    if !cached.isExpired(threshold: config.refreshThreshold) {
+                        config.logger.i("Token is not expired. Returning cached token.")
+                        return .success(cached)
+                    }
+                    config.logger.i("Token is expired. Attempting to refresh.")
+                    if let cachedefreshToken = cached.refreshToken {
+                        do {
+                            let refreshedToken = try await refreshToken(cachedefreshToken)
+                            return .success(refreshedToken)
+                        } catch {
+                            config.logger.e("Failed to refresh token. Revoking token and re-authenticating.", error: error)
+                            await revoke(cached)
+                        }
                     }
                 }
+            } catch let error where error is EncryptorError || error is DecodingError {
+                // The cached bytes are unreadable — either the Secure Enclave key did not
+                // migrate with an iCloud/Quick Start device transfer (EncryptorError), or the
+                // stored payload is corrupt / from an incompatible version (DecodingError).
+                // Clear the unreadable token and fall through to re-authenticate. Other errors
+                // (e.g. errSecInteractionNotAllowed while the device is locked) are transient
+                // and must NOT delete a potentially valid token — they propagate to the outer
+                // catch unchanged.
+                config.logger.w("Cached token is unreadable (device migration or corrupt payload). Clearing corrupted token and re-authenticating.", error: error)
+                do {
+                    try await config.storage.delete()
+                } catch {
+                    // If we cannot clear the corrupted token, re-authenticating would persist a
+                    // new token over (or alongside) the unreadable one and the next token() call
+                    // would loop on the same failure. Surface a real error instead of looping.
+                    config.logger.e("Failed to clear unreadable token. Aborting to avoid a silent retry loop.", error: error)
+                    return .failure(OidcError.authorizeError(cause: error))
+                }
+                // fall through to re-authenticate below
             }
-            
+
             // Authenticate the user
             guard let agent = config.agent else {
                 return .failure(OidcError.authorizeError(message: "Agent not configured"))
@@ -157,7 +213,21 @@ public class OidcClient {
     private func revoke(_ token: Token? = nil) async {
         var accessToken = token
         if accessToken == nil {
-            accessToken = try? await config.storage.get()
+            do {
+                accessToken = try await config.storage.get()
+            } catch where error is EncryptorError || error is DecodingError {
+                // The stored token is permanently unreadable (Secure Enclave key did not migrate,
+                // or the payload is corrupt). There is nothing to revoke on the server, so just
+                // clear the dead entry.
+                config.logger.w("Stored token is unreadable. Clearing corrupted token.", error: error)
+                try? await config.storage.delete()
+                return
+            } catch {
+                // Transient failure (e.g. errSecInteractionNotAllowed while the device is locked).
+                // The token may well be valid — do NOT delete it. Skip this revoke attempt.
+                config.logger.w("Failed to read token for revocation. Leaving stored token intact.", error: error)
+                return
+            }
         }
         if let token = accessToken {
             do {
@@ -306,60 +376,150 @@ public class OidcClient {
         public static let code_verifier = "code_verifier"
         public static let code = "code"
         public static let id_token_hint = "id_token_hint"
+        public static let request_uri = "request_uri"
     }
 }
 
 extension OidcClientConfig {
-    internal func populateRequest(
+    /// Builds OIDC authorization request parameters using the provided configuration.
+    /// This function populates all required and optional OAuth2/OIDC parameters for an authorization request.
+    /// - Parameters:
+    ///   - pkce: PKCE parameters for enhanced security.
+    ///   - extraParameters: Additional parameters specific to this authorization request.
+    ///   - onParam: Callback function to handle each parameter (name, value) pair.
+    public func buildAuthorizeParams(
+        pkce: Pkce,
+        extraParameters: [String: String] = [:],
+        onParam: (String, String) -> Void
+    ) {
+        onParam(OidcClient.Constants.client_id, clientId)
+        onParam(OidcClient.Constants.response_type, OidcClient.Constants.code)
+        onParam(OidcClient.Constants.scope, scopes.joined(separator: " "))
+        onParam(OidcClient.Constants.redirect_uri, redirectUri)
+        onParam(OidcClient.Constants.code_challenge, pkce.codeChallenge)
+        onParam(OidcClient.Constants.code_challenge_method, pkce.codeChallengeMethod)
+        
+        if let acr = acrValues {
+            onParam(OidcClient.Constants.acr_values, acr)
+        }
+        
+        if let display = display {
+            onParam(OidcClient.Constants.display, display)
+        }
+        
+        for (key, value) in additionalParameters {
+            onParam(key, value)
+        }
+        
+        if let loginHint = loginHint {
+            onParam(OidcClient.Constants.login_hint, loginHint)
+        }
+        
+        // Always emit `state`. Prefer the integrator-supplied value on
+        // `OidcClientConfig.state`; otherwise fall back to the PKCE-generated
+        // state so the parameter is present for CSRF protection on
+        // redirect-based flows and remains available to server-side policies.
+        onParam(OidcClient.Constants.state, self.state ?? pkce.state)
+        
+        if let nonce = nonce {
+            onParam(OidcClient.Constants.nonce, nonce)
+        }
+        
+        if let prompt = prompt {
+            onParam(OidcClient.Constants.prompt, prompt)
+        }
+        
+        if let uiLocales = uiLocales {
+            onParam(OidcClient.Constants.ui_locales, uiLocales)
+        }
+        
+        for (key, value) in extraParameters {
+            onParam(key, value)
+        }
+    }
+    
+    /// Builds a standard (non-PAR) OIDC authorization request by emitting all
+    /// parameters onto the request URL's query string. Shared by the sync
+    /// `OidcClient.generateAuthorizeUrl` and by the async `populateRequest`
+    /// fallback path when PAR is not enabled or unavailable.
+    internal func populateStandardAuthorizeRequest(
         request: Request,
         pkce: Pkce,
-        responseMode: String = OidcClient.Constants.piflow
+        responseMode: String
     ) -> Request {
         request.url = openId?.authorizationEndpoint ?? ""
         if !responseMode.isEmpty {
             request.setParameter(name: OidcClient.Constants.response_mode, value: responseMode)
         }
-        request.setParameter(name: OidcClient.Constants.client_id, value: clientId)
-        request.setParameter(name: OidcClient.Constants.response_type, value: OidcClient.Constants.code)
-        request.setParameter(name: OidcClient.Constants.scope, value: scopes.joined(separator: " "))
-        request.setParameter(name: OidcClient.Constants.redirect_uri, value: redirectUri)
-        request.setParameter(name: OidcClient.Constants.code_challenge, value: pkce.codeChallenge)
-        request.setParameter(name: OidcClient.Constants.code_challenge_method, value: pkce.codeChallengeMethod)
-        
-        if let acr = acrValues {
-            request.setParameter(name: OidcClient.Constants.acr_values, value: acr)
-        }
-        
-        if let display = display {
-            request.setParameter(name: OidcClient.Constants.display, value: display)
-        }
-        
-        for (key, value) in additionalParameters {
+        buildAuthorizeParams(pkce: pkce) { key, value in
             request.setParameter(name: key, value: value)
         }
-        
-        if let loginHint = loginHint {
-            request.setParameter(name: OidcClient.Constants.login_hint, value: loginHint)
+        return request
+    }
+    
+    /// Populates an OIDC authorization request handling both standard and PAR (RFC 9126) flows.
+    ///
+    /// **Standard Flow:** Builds authorization URL with all parameters in the query string.
+    /// **PAR Flow:** POSTs parameters to the PAR endpoint, then uses the returned `request_uri` in the authorization request.
+    ///
+    /// - Parameters:
+    ///   - request: The request to populate.
+    ///   - pkce: PKCE parameters for enhanced security.
+    ///   - responseMode: The response mode to use.
+    /// - Returns: The populated request ready for execution.
+    public func populateRequest(
+        request: Request,
+        pkce: Pkce,
+        responseMode: String = OidcClient.Constants.piflow
+    ) async throws -> Request {
+        if par, let parEndpoint = openId?.pushedAuthorizationRequestEndpoint {
+            // PAR flow: POST all params to PAR endpoint
+            var formParams: [String: String] = [:]
+            if !responseMode.isEmpty {
+                formParams[OidcClient.Constants.response_mode] = responseMode
+            }
+            buildAuthorizeParams(pkce: pkce) { key, value in
+                formParams[key] = value
+            }
+            
+            guard let httpClient else {
+                throw OidcError.networkError(message: "HTTP client not found")
+            }
+            
+            let immutableParams = formParams
+            let response = try await httpClient.request { req in
+                req.url = parEndpoint
+                req.form(parameters: immutableParams)
+            }
+            guard response.status.isSuccess() else {
+                throw OidcError.apiError(code: response.status, message: "Failed to create PAR request: \(response.bodyAsString())")
+            }
+            
+            guard let responseBody = response.body else {
+                throw OidcError.authorizeError(message: "PAR response body is empty")
+            }
+            let json = try JSONSerialization.jsonObject(with: responseBody) as? [String: Any] ?? [:]
+            guard let requestUri = json[OidcClient.Constants.request_uri] as? String else {
+                throw OidcError.authorizeError(message: "PAR response missing required 'request_uri' field")
+            }
+            
+            // Build authorize URL with only request_uri and client_id
+            request.url = openId?.authorizationEndpoint ?? ""
+            if !responseMode.isEmpty {
+                request.setParameter(name: OidcClient.Constants.response_mode, value: responseMode)
+            }
+            request.setParameter(name: OidcClient.Constants.request_uri, value: requestUri)
+            request.setParameter(name: OidcClient.Constants.client_id, value: clientId)
+        } else {
+            // Standard flow: all params on the authorization URL
+            _ = populateStandardAuthorizeRequest(request: request, pkce: pkce, responseMode: responseMode)
         }
-        
-        if let nonce = nonce {
-            request.setParameter(name: OidcClient.Constants.nonce, value: nonce)
-        }
-        
-        if let prompt = prompt {
-            request.setParameter(name: OidcClient.Constants.prompt, value: prompt)
-        }
-        
-        if let uiLocales = uiLocales {
-            request.setParameter(name: OidcClient.Constants.ui_locales, value: uiLocales)
-        }
-        
         return request
     }
 }
 
 
-extension OidcClient.Constants {
+public extension OidcClient.Constants {
     static let response_mode = "response_mode"
     static let response_type = "response_type"
     static let scope = "scope"
@@ -371,6 +531,10 @@ extension OidcClient.Constants {
     static let prompt = "prompt"
     static let ui_locales = "ui_locales"
     static let login_hint = "login_hint"
+    static let state = "state"
     static let piflow = "pi.flow"
     static let query = "query"
+    static let userCodeSnake = "user_code"
+    static let userCodeCamel = "userCode"
+    static let asDeviceAuthorizationPath = "/as/device_authorization"
 }

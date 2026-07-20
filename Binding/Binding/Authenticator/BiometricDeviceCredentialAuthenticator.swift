@@ -10,10 +10,37 @@
 
 import Foundation
 import LocalAuthentication
+import PingJourneyPlugin
+import PingOrchestrate
 
 /// An authenticator that uses biometrics (Face ID or Touch ID) with a fallback to device credentials (passcode/PIN).
-/// This class extends `DefaultDeviceAuthenticator` and provides specific implementations
-/// for key generation, authentication, and support checks for this combined authentication type.
+///
+/// This authenticator supports the `BIOMETRIC_ALLOW_FALLBACK` policy, allowing authentication
+/// via either biometrics (Face ID / Touch ID) or device passcode.
+///
+/// ## Security Model
+///
+/// Unlike `BiometricOnlyAuthenticator` which uses `.biometryCurrentSet` to have the Secure Enclave
+/// hardware-invalidate keys when biometric enrollment changes, this class uses a dynamic
+/// access control policy:
+/// - **Biometrics enrolled**: `.biometryAny OR .devicePasscode` — allows both authentication methods.
+/// - **No biometrics enrolled**: `.devicePasscode` only — avoids Secure Enclave key creation failure
+///   on devices that have a passcode set but no Face ID / Touch ID registered.
+///
+/// Because `.biometryAny` does not invalidate keys on biometric enrollment changes at the
+/// hardware level, this class compensates with a software-level check using
+/// `LAContext.evaluatedPolicyDomainState`. The biometric domain state is captured at bind time
+/// and stored in the `UserKey`. During signing, the stored state is compared against the current
+/// state — if they differ (e.g., a fingerprint was added or removed), the keys are deleted and
+/// re-binding is required by throwing `.deviceNotRegistered`.
+///
+/// ## Backward Compatibility
+///
+/// For `UserKey` instances created before this change (i.e., without a stored `biometricDomainState`),
+/// the enrollment check is skipped and signing proceeds normally. This ensures existing bindings
+/// are not broken on SDK update. Only keys created after the update will enforce the biometric
+/// domain state check.
+///
 public class BiometricDeviceCredentialAuthenticator: DefaultDeviceAuthenticator {
     
     private let config: BiometricAuthenticatorConfig
@@ -32,13 +59,24 @@ public class BiometricDeviceCredentialAuthenticator: DefaultDeviceAuthenticator 
     
     /// Generates a new cryptographic key pair for biometric and device credential authentication.
     /// The key is stored in the Secure Enclave (if available) and associated with a unique key tag.
-    /// - Throws: `CryptoKeyError` if key generation fails.
+    ///
+    /// Access control flags are dynamically selected based on biometric availability:
+    /// - When biometrics are enrolled: `.biometryAny OR .devicePasscode` — allows both methods.
+    /// - When only passcode is set: `.devicePasscode` only — avoids Secure Enclave rejecting
+    ///   key creation when biometry flags are present but no biometrics are enrolled.
+    ///
+    /// - Throws: `DeviceBindingError.unknown` if access control creation fails, or a `CryptoKey` error if key generation fails.
     /// - Returns: A `KeyPair` containing the newly generated public and private keys.
     public override func register() async throws -> KeyPair {
         let cryptoKey = CryptoKey(keyTag: config.keyTag)
+        let laContext = LAContext()
+        let biometricsAvailable = laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
+        let flags: SecAccessControlCreateFlags = biometricsAvailable
+            ? [.biometryAny, .or, .devicePasscode, .privateKeyUsage]
+            : [.devicePasscode, .privateKeyUsage]
         guard let accessControl = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
                                                             kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
-                                                            [.biometryCurrentSet, .or, .devicePasscode, .privateKeyUsage],
+                                                            flags,
                                                             nil) else {
             throw DeviceBindingError.unknown
         }
@@ -98,6 +136,29 @@ public class BiometricDeviceCredentialAuthenticator: DefaultDeviceAuthenticator 
                 try CryptoKey(keyTag: userKey.keyTag).deleteKeyPair()
             }
         }
+    }
+    
+    /// Returns the current biometric domain state from LAContext.
+    /// Used to detect biometric enrollment changes between bind and sign operations.
+    /// - Returns: The evaluated policy domain state data, or `nil` if biometrics are not enrolled.
+    public func biometricDomainState() -> Data? {
+        let context = LAContext()
+        _ = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
+        return context.evaluatedPolicyDomainState
+    }
+    
+    /// Override sign to validate biometric enrollment has not changed since binding.
+    /// If biometrics were enrolled at bind time and the enrollment has since changed,
+    /// the keys are deleted and `.deviceNotRegistered` is thrown to trigger re-binding.
+    public override func sign(params: UserKeySigningParameters, journey: Journey?) throws -> String {
+        if let storedState = params.userKey.biometricDomainState {
+            let currentState = biometricDomainState()
+            if currentState != storedState {
+                try? CryptoKey(keyTag: params.userKey.keyTag).deleteKeyPair()
+                throw DeviceBindingError.deviceNotRegistered
+            }
+        }
+        return try super.sign(params: params, journey: journey)
     }
     
     /// Retrieves the private key from the Keychain using its unique key tag.

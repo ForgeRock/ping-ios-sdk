@@ -41,9 +41,9 @@ public enum DeviceBindingAuthenticationType: String, Codable, Sendable {
     func getAuthType(pinCollector: PinCollector? = nil) -> DeviceAuthenticator {
         switch self {
         case .biometricOnly:
-            return BiometricOnlyAuthenticator()
+            return BiometricOnlyAuthenticator(config: BiometricAuthenticatorConfig())
         case .biometricAllowFallback:
-            return BiometricDeviceCredentialAuthenticator()
+            return BiometricDeviceCredentialAuthenticator(config: BiometricAuthenticatorConfig())
         case .applicationPin:
             fatalError("Application PIN is not supported on this platform.")
         case .none:

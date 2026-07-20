@@ -1,10 +1,10 @@
-![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
-
-# Ping SDK – Network Module
-
 [![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
 [![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
+
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
+
+# PingNetwork
 
 ## Overview
 
@@ -12,43 +12,38 @@ PingNetwork provides a protocol-based HTTP client abstraction for the Ping iOS S
 
 The module is built on Apple's native URLSession framework, ensuring zero external dependencies while providing excellent performance and seamless integration with iOS.
 
-## Key Features
+## Getting Started
 
-- **Protocol-Based Design**: Flexible abstractions enable easy testing and custom implementations
-- **Swift Concurrency**: Native async/await support for all network operations
-- **Request/Response Interceptors**: Add cross-cutting concerns like authentication, logging, and error handling
-- **Standard Headers**: Automatically injects platform identification headers (`x-requested-with`, `x-requested-platform`)
-- **Builder Pattern**: Fluent API for constructing HTTP requests
-- **Type-Safe Methods**: Enum-based HTTP methods (GET, POST, PUT, DELETE, etc.)
-- **Cookie Management**: Built-in cookie handling via URLSession
-- **Redirect Prevention**: Automatic prevention of HTTP redirects for security
-- **Thread-Safe**: Full `Sendable` conformance for Swift 6+ concurrency
-- **Zero Dependencies**: Uses only native iOS frameworks
+### Prerequisites
 
-## Integrating the SDK into your project
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
 
-Use Cocoapods or Swift Package Manager
+### Installation
 
-### Swift Package Manager
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
+#### Swift Package Manager
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "1.0.0")
-],
-targets: [
-    .target(
-        name: "YourTarget",
-        dependencies: [
-            .product(name: "PingNetwork", package: "ping-ios-sdk")
-        ]
-    )
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
 ]
 ```
 
-### CocoaPods
+Then add the `PingNetwork` product to your target's dependencies.
+
+#### CocoaPods
 
 ```ruby
 pod 'PingNetwork'
+```
+
+### Import the Module
+
+```swift
+import PingNetwork
 ```
 
 ## How to Use the SDK
@@ -58,8 +53,6 @@ pod 'PingNetwork'
 Make a simple GET request:
 
 ```swift
-import PingNetwork
-
 let client = HttpClient.createClient()
 
 let response = try await client.request { request in request in
@@ -713,15 +706,8 @@ NetworkConstants.contentTypeJSON      // "application/json"
 HttpMethod.post                       // .post
 ```
 
-## Platform Requirements
-
-- **iOS**: 16.0+
-- **Swift**: 6.0+
-- **Xcode**: 15+
-
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
-
-© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
+© Copyright 2025-2026 Ping Identity Corporation. All rights reserved.

@@ -2,7 +2,7 @@
 //  UserKey.swift
 //  PingBinding
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -25,6 +25,9 @@ public struct UserKey: Codable, Identifiable, Sendable {
     public let authType: DeviceBindingAuthenticationType
     /// The creation date.
     public let createdAt: Date
+    /// The biometric domain state captured at bind time. Used to detect biometric enrollment
+    /// changes between bind and sign operations for `.biometricAllowFallback` authenticators.
+    public let biometricDomainState: Data?
     
     /// Initializes a new `UserKey`.
     /// - Parameters:
@@ -33,12 +36,14 @@ public struct UserKey: Codable, Identifiable, Sendable {
     ///   - username: The username.
     ///   - kid: The key ID.
     ///   - authType: The authentication type.
-    public init(keyTag: String, userId: String, username: String, kid: String, authType: DeviceBindingAuthenticationType) {
+    ///   - biometricDomainState: The biometric domain state at bind time.
+    public init(keyTag: String, userId: String, username: String, kid: String, authType: DeviceBindingAuthenticationType, biometricDomainState: Data? = nil) {
         self.keyTag = keyTag
         self.userId = userId
         self.username = username
         self.kid = kid
         self.authType = authType
         self.createdAt = Date()
+        self.biometricDomainState = biometricDomainState
     }
 }

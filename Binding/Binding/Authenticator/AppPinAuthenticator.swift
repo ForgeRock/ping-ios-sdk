@@ -88,9 +88,20 @@ public class AppPinAuthenticator: DefaultDeviceAuthenticator {
             
             var item: CFTypeRef?
             let status = SecItemCopyMatching(query as CFDictionary, &item)
-            
+
             if status == errSecSuccess, let keyItem = item {
-                return .success(keyItem as! SecKey)
+                // SecItemCopyMatching only returns a key reference — the .applicationPassword
+                // ACL is evaluated lazily when the key is used. Force that evaluation here by
+                // performing a throwaway signature with the user-supplied PIN context, so a
+                // wrong PIN fails immediately instead of appearing to succeed.
+                let key = keyItem as! SecKey
+                var sigError: Unmanaged<CFError>?
+                let probe = Data("verify".utf8) as CFData
+                if SecKeyCreateSignature(key, .ecdsaSignatureMessageX962SHA256, probe, &sigError) != nil {
+                    return .success(key)
+                }
+                config.logger?.w("PIN verification failed for key \(keyTag). Retrying...",
+                                 error: sigError?.takeRetainedValue() as? Error)
             } else {
                 config.logger?.w("Failed to retrieve key with tag \(keyTag). Retrying...", error: nil)
             }

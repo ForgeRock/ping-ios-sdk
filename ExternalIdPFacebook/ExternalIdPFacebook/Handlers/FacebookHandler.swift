@@ -8,6 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
+#if canImport(FBSDKLoginKit)
 import Foundation
 internal import FBSDKLoginKit
 internal import FBSDKCoreKit
@@ -90,3 +91,4 @@ import PingExternalIdP
         return try await FacebookHandlerUtils.authorize(idpClient: idpClient, configuration: self.configuration, manager: self.manager)
     }
 }
+#endif

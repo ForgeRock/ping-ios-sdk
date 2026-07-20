@@ -528,6 +528,160 @@ final class PingAMPushResponderTests: XCTestCase {
         }
     }
 
+    func testSendAuthenticationWrongNumberThrowsPushNumberChallengeError() async {
+        let amMessage = "Number challenge predicate not met."
+        let amBody = #"{"message":"\#(amMessage)"}"#
+        URLProtocolMock.requestHandler = { request in
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 400,
+                httpVersion: nil,
+                headerFields: ["Content-Type": "application/json"]
+            )!
+            return (response, Data(amBody.utf8))
+        }
+
+        let mockResponder = PingAMPushResponder(httpClient: makeMockHttpClient(), logger: nil)
+        let credential = makeCredential()
+        let notification = makeNotification(pushType: .challenge)
+
+        do {
+            _ = try await mockResponder.sendAuthenticationResponse(
+                credential: credential,
+                notification: notification,
+                approve: true,
+                numbersChallengeResponse: "42"
+            )
+            XCTFail("Expected pushNumberChallengeError error")
+        } catch PushError.pushNumberChallengeError(let message) {
+            XCTAssertEqual(message, amMessage)
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+
+    func testSendAuthenticationWrongNumberNoJsonMessageUsesDefault() async {
+        URLProtocolMock.requestHandler = { request in
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 400,
+                httpVersion: nil,
+                headerFields: ["Content-Type": "application/json"]
+            )!
+            return (response, Data("not json".utf8))
+        }
+
+        let mockResponder = PingAMPushResponder(httpClient: makeMockHttpClient(), logger: nil)
+        let credential = makeCredential()
+        let notification = makeNotification(pushType: .challenge)
+
+        do {
+            _ = try await mockResponder.sendAuthenticationResponse(
+                credential: credential,
+                notification: notification,
+                approve: true,
+                numbersChallengeResponse: "42"
+            )
+            XCTFail("Expected pushNumberChallengeError error")
+        } catch PushError.pushNumberChallengeError(let message) {
+            XCTAssertEqual(message, "Number challenge failed.")
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+
+    func testSendAuthenticationNon400OnApprovedChallengeThrowsNetworkFailure() async {
+        URLProtocolMock.requestHandler = { request in
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 500,
+                httpVersion: nil,
+                headerFields: nil
+            )!
+            return (response, nil)
+        }
+
+        let mockResponder = PingAMPushResponder(httpClient: makeMockHttpClient(), logger: nil)
+        let credential = makeCredential()
+        let notification = makeNotification(pushType: .challenge)
+
+        do {
+            _ = try await mockResponder.sendAuthenticationResponse(
+                credential: credential,
+                notification: notification,
+                approve: true,
+                numbersChallengeResponse: "42"
+            )
+            XCTFail("Expected networkFailure error")
+        } catch PushError.networkFailure(let message, _) {
+            XCTAssertTrue(message.contains("500"))
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+
+    func testSendAuthenticationWrongNumberOnDenyDoesNotThrowPushNumberChallengeError() async {
+        let amBody = "Number challenge predicate not met."
+        URLProtocolMock.requestHandler = { request in
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 400,
+                httpVersion: nil,
+                headerFields: ["Content-Type": "application/json"]
+            )!
+            return (response, Data(amBody.utf8))
+        }
+
+        let mockResponder = PingAMPushResponder(httpClient: makeMockHttpClient(), logger: nil)
+        let credential = makeCredential()
+        let notification = makeNotification(pushType: .challenge)
+
+        do {
+            _ = try await mockResponder.sendAuthenticationResponse(
+                credential: credential,
+                notification: notification,
+                approve: false,
+                numbersChallengeResponse: nil
+            )
+            XCTFail("Expected networkFailure error")
+        } catch PushError.networkFailure(let message, _) {
+            XCTAssertTrue(message.contains("400"))
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+
+    func testSendAuthenticationWrongNumberOnDefaultTypeDoesNotThrowPushNumberChallengeError() async {
+        let amBody = "Number challenge predicate not met."
+        URLProtocolMock.requestHandler = { request in
+            let response = HTTPURLResponse(
+                url: request.url!,
+                statusCode: 400,
+                httpVersion: nil,
+                headerFields: ["Content-Type": "application/json"]
+            )!
+            return (response, Data(amBody.utf8))
+        }
+
+        let mockResponder = PingAMPushResponder(httpClient: makeMockHttpClient(), logger: nil)
+        let credential = makeCredential()
+        let notification = makeNotification(pushType: .default)
+
+        do {
+            _ = try await mockResponder.sendAuthenticationResponse(
+                credential: credential,
+                notification: notification,
+                approve: true,
+                numbersChallengeResponse: nil
+            )
+            XCTFail("Expected networkFailure error")
+        } catch PushError.networkFailure(let message, _) {
+            XCTAssertTrue(message.contains("400"))
+        } catch {
+            XCTFail("Unexpected error type: \(error)")
+        }
+    }
+
     func testUpdateDeviceTokenSuccess() async throws {
         let expectation = expectation(description: "Update request handled")
         URLProtocolMock.requestHandler = { request in
@@ -725,7 +879,8 @@ final class PingAMPushResponderTests: XCTestCase {
 
     private func makeNotification(
         challenge: String? = TestValues.base64Challenge,
-        loadBalancer: String? = TestValues.cookie
+        loadBalancer: String? = TestValues.cookie,
+        pushType: PushType = .default
     ) -> PushNotification {
         PushNotification(
             id: TestValues.notificationId,
@@ -738,7 +893,7 @@ final class PingAMPushResponderTests: XCTestCase {
             numbersChallenge: nil,
             loadBalancer: loadBalancer,
             contextInfo: nil,
-            pushType: .default,
+            pushType: pushType,
             createdAt: Date(),
             sentAt: nil,
             respondedAt: nil,

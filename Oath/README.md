@@ -1,38 +1,25 @@
-[![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)](https://github.com/ForgeRock/ping-ios-sdk)
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
 
-# Ping SDK - MFA OATH Module
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
 
-[![Swift Version](https://img.shields.io/badge/Swift-5.7+-orange.svg)](https://swift.org)
-[![iOS Version](https://img.shields.io/badge/iOS-13.0+-blue.svg)](https://developer.apple.com/ios/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+# PingOath
 
 PingOath is a comprehensive iOS SDK module that provides One-Time Password (OTP) authentication functionality, including support for both TOTP (Time-based One-Time Password) and HOTP (HMAC-based One-Time Password) authentication mechanisms following RFC 4226 and RFC 6238 standards.
-
-## Features
-
-- OATH credential management (add, retrieve, delete)
-- TOTP and HOTP support
-- Multiple hashing algorithms (SHA1, SHA256, SHA512)
-- Customizable digit lengths (6-8 digits)
-- Customizable periods for TOTP
-- URI parsing and formatting
-- Secure iOS Keychain storage for credentials
-- Policy-based credential locking and validation
-
-### Standard Compliance
-- Full RFC 4226 (HOTP) and RFC 6238 (TOTP) compliance
-- Configurable code length (6-8 digits) and time periods
-- Base32 secret key encoding/decoding
 
 ## Getting Started
 
 ### Prerequisites
 
-- **iOS**: 13.0+
-- **Swift**: 5.7+
-- **Xcode**: 15.0+
+- Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
 
 ### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
 
 #### Swift Package Manager
 
@@ -40,19 +27,21 @@ Add PingOath to your `Package.swift` file:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/pingidentity/ping-ios-sdk", from: "1.0.0")
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk", from: "<version>")
 ]
 ```
 
-Or add it through Xcode:
-1. File → Add Package Dependencies
-2. Enter the repository URL
-3. Select PingOath module
+Then add the `PingOath` product to your target's dependencies.
 
 #### CocoaPods
 
 ```ruby
-pod 'PingOath'
+pod 'PingOath', '~> <version>'
+```
+### Import the Module
+
+```swift
+import PingOath
 ```
 
 ## Usage
@@ -63,8 +52,6 @@ Before using the OATH MFA functionality, you need to initialize the `OathClient`
 
 #### Basic Initialization
 ```swift
-import PingOath
-
 // Create an OATH client
 let client = try await OathClient.createClient { config in
     config.logger = LogManager.logger
@@ -234,5 +221,6 @@ do {
 
 ## License
 
-© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
 This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
+
+© Copyright 2025-2026 Ping Identity Corporation. All rights reserved.

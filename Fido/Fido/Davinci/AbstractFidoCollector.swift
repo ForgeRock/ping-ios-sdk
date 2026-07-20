@@ -2,7 +2,7 @@
 //  AbstractFidoCollector.swift
 //  Fido
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -54,8 +54,8 @@ public class AbstractFidoCollector: AnyFieldCollector, DaVinciAware, Submittable
     public var davinci: DaVinci?
     
     /// The logger for recording Fido related events.
-    public var logger: Logger? {
-        return davinci?.config.logger
+    public var logger: Logger {
+        return davinci?.config.logger ?? LogManager.logger
     }
     
     /// Private storage for the Fido instance
@@ -100,31 +100,31 @@ public class AbstractFidoCollector: AnyFieldCollector, DaVinciAware, Submittable
     /// - Parameter error: The error to handle and transform.
     /// - Returns: A transformed `FidoError` that is more human-readable and spec-compliant.
     public func handleError(error: Error) -> FidoError {
-        logger?.e("Handling FIDO error: \(error.localizedDescription)", error: error)
+        logger.e("Handling FIDO error: \(error.localizedDescription)", error: error)
         
         // Check if it's a FidoError first
         if let fidoError = error as? FidoError {
             switch fidoError {
             case .timeout:
-                logger?.d("FIDO operation timed out")
+                logger.d("FIDO operation timed out")
                 return .timeout
             case .unsupportedAction(let message):
-                logger?.d("FIDO ERROR NOT SUPPORTED: \(message)")
+                logger.d("FIDO ERROR NOT SUPPORTED: \(message)")
                 return .unsupportedAction(message)
             case .invalidResponse:
-                logger?.d("FIDO invalid response")
+                logger.d("FIDO invalid response")
                 return .invalidResponse
             case .invalidChallenge:
-                logger?.d("FIDO invalid challenge")
+                logger.d("FIDO invalid challenge")
                 return .invalidChallenge
             case .invalidWindow:
-                logger?.d("FIDO invalid window")
+                logger.d("FIDO invalid window")
                 return .invalidWindow
             case .invalidAction:
-                logger?.d("FIDO invalid action")
+                logger.d("FIDO invalid action")
                 return .invalidAction
             case .missingParameters(let message):
-                logger?.d("FIDO missing parameters: \(message)")
+                logger.d("FIDO missing parameters: \(message)")
                 return .missingParameters(message)
             }
         }
@@ -135,23 +135,23 @@ public class AbstractFidoCollector: AnyFieldCollector, DaVinciAware, Submittable
         case ASAuthorizationError.errorDomain:
             switch nsError.code {
             case ASAuthorizationError.canceled.rawValue:
-                logger?.d("Credential operation cancelled")
+                logger.d("Credential operation cancelled")
                 return .unsupportedAction(FidoConstants.ERROR_NOT_ALLOWED_MESSAGE)
             case ASAuthorizationError.invalidResponse.rawValue:
-                logger?.d("DOM exception occurred: InvalidStateError")
+                logger.d("DOM exception occurred: InvalidStateError")
                 return .invalidResponse
             case ASAuthorizationError.notHandled.rawValue:
-                logger?.d("DOM exception occurred: NotSupportedError")
+                logger.d("DOM exception occurred: NotSupportedError")
                 return .unsupportedAction("Operation not supported")
             case ASAuthorizationError.unknown.rawValue:
-                logger?.d("Unknown error occurred")
+                logger.d("Unknown error occurred")
                 return .unsupportedAction("Unknown error: \(error.localizedDescription)")
             default:
-                logger?.d("Unknown authorization error occurred")
+                logger.d("Unknown authorization error occurred")
                 return .unsupportedAction("Unknown error: \(error.localizedDescription)")
             }
         default:
-            logger?.d("Unknown error occurred")
+            logger.d("Unknown error occurred")
             return .unsupportedAction("Unknown error: \(error.localizedDescription)")
         }
     }

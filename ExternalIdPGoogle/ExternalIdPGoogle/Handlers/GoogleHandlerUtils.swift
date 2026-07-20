@@ -9,10 +9,11 @@
 //
 
 import Foundation
-import UIKit
 import PingExternalIdP
-internal import GoogleSignIn
 
+#if canImport(UIKit)
+import UIKit
+internal import GoogleSignIn
 /// Utility class for handling Google Sign-In operations.
 @MainActor
 class GoogleHandlerUtils {
@@ -52,3 +53,4 @@ class GoogleAuthenticationManager {
         }
     }
 }
+#endif
