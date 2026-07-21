@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'PingDavinciPlugin'
-  s.version          = '2.0.0'
+  s.version          = '2.1.0'
   s.summary          = 'Davinci Plugin for PingDavinci SDK'
   s.description      = <<-DESC
     The PingDavinciPlugin provides plugin functionality for the PingDavinci SDK.
@@ -24,5 +24,5 @@ Pod::Spec.new do |s|
     'DavinciPlugin' => [base_dir + '/*.xcprivacy']
   }
   
-  s.dependency 'PingOrchestrate', '~> 2.0.0'
+  s.dependency 'PingOrchestrate', '~> 2.1.0'
 end

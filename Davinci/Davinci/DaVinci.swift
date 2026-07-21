@@ -15,6 +15,7 @@ import PingOidc
 import PingDavinciPlugin
 import PingCommons
 import PingNetwork
+import PingLogger
 
 public typealias DaVinci = Workflow
 public typealias DaVinciConfig = WorkflowConfig
@@ -88,6 +89,20 @@ extension DaVinci {
             await CollectorFactory.shared.register(type: Constants.PHONE_NUMBER, closure: { json in
                 return PhoneNumberCollector(with: json)
             })
+            await CollectorFactory.shared.register(type: Constants.POLLING, closure: { json in
+                return PollingCollector(with: json)
+            })
+            await CollectorFactory.shared.register(type: Constants.QR_CODE, closure: { json in
+                return QRCodeCollector(with: json)
+            })
+            // Registers a Collector for Constants.BOOLEAN `inputType`. It can have different `type`s
+            // This is similar to Constants.ACTION, Constants.SINGLE_SELECT, Constants.MULTI_SELECT etc.
+            await CollectorFactory.shared.register(type: Constants.BOOLEAN, closure: { json in
+                return BooleanCollector(with: json)
+            })
+            await CollectorFactory.shared.register(type: Constants.READ_ONLY_TEXT, closure: { json in
+                return ReadOnlyTextCollector(with: json)
+            })
             if let c: NSObject.Type = NSClassFromString("PingProtect.ProtectCollector") as? NSObject.Type {
                 c.perform(Selector(("registerCollector")))
             }
@@ -106,5 +121,38 @@ extension DaVinci {
         block(config)
         
         return DaVinci(config: config)
+    }
+
+    /// Creates a DaVinci instance from a JSON dictionary.
+    ///
+    /// This factory parses and validates a platform-neutral JSON configuration and
+    /// delegates to `createDaVinci(block:)` with the extracted values. Unknown fields
+    /// (including `serverUrl`, `realm`, and `cookie`, which are Journey-specific) are
+    /// silently ignored for forward compatibility.
+    ///
+    /// - Parameter json: A `[String: Any]` dictionary conforming to the unified SDK
+    ///   configuration schema (see design doc for field reference).
+    /// - Returns: `.success(DaVinci)` on valid input, `.failure(JsonConfigError)` if a
+    ///   required field is absent or a field has the wrong type.
+    public static func createDaVinci(json: [String: Any]) -> Result<DaVinci, Error> {
+        do {
+            let p = JsonConfigParser(json)
+            let timeout = try p.timeoutSeconds()
+            let logger  = p.logLevel()
+            let oidcDict: [String: Any] = try p.required(JsonConfigKey.oidc, field: JsonConfigKey.oidc)
+
+            let oidcConfig = try OidcClientConfig.from(oidcJson: oidcDict, logger: logger)
+
+            let daVinci = DaVinci.createDaVinci { daVinciConfig in
+                daVinciConfig.timeout = timeout
+                daVinciConfig.logger = logger
+                daVinciConfig.module(OidcModule.config) { moduleOidcConfig in
+                    moduleOidcConfig.update(with: oidcConfig)
+                }
+            }
+            return .success(daVinci)
+        } catch {
+            return .failure(error)
+        }
     }
 }

@@ -32,6 +32,13 @@ class Config: NSObject {
     var redirectUri: String
     var acrValues: String
     var configPlistFileName: String?
+
+    // Device Authorization Grant (RFC 8628) — requesting-device OIDC client
+    var deviceClientId: String = ""
+
+    // Device Authorization Grant — shared test credentials
+    var deviceUsername: String = ""
+    var devicePassword: String = ""
     
     var configJSON: [String: Any]?
     
@@ -109,6 +116,12 @@ class Config: NSObject {
                       .filter { !$0.isEmpty }
                     self.redirectUri = redirectUri
                     self.acrValues = acrValues
+
+                    // Device Authorization Grant fields are optional — tests that don't
+                    // exercise device flow simply read empty strings from the config.
+                    self.deviceClientId = config["deviceClientId"] as? String ?? ""
+                    self.deviceUsername = config["deviceUsername"] as? String ?? ""
+                    self.devicePassword = config["devicePassword"] as? String ?? ""
                 }
                 else {
                     throw ConfigError.invalidConfiguration("\(configFileName) is invalid or missing some value")

@@ -2,7 +2,7 @@
 //  PhoneNumberView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -69,12 +69,14 @@ struct PhoneNumberView: View {
     
     @EnvironmentObject var validationViewModel: ValidationViewModel
     @State var text: String = ""
+    @State private var extensionText: String = ""
     @State private var isValid: Bool = true
     @State private var expanded: Bool = false
     @State private var selectedCountry: Country?
     
     var body: some View {
-        HStack {
+        VStack(alignment: .leading) {
+            HStack {
             Menu {
                 ForEach(listOfCountries) { country in
                     Button(action: {
@@ -111,13 +113,12 @@ struct PhoneNumberView: View {
                         return (codeNumber == nil) ? "Select an option" : "+" + codeNumber!
                     }())
                         .foregroundColor((selectedCountry?.countryCodeNumber ?? "").isEmpty ? .gray : .primary)
-                    Spacer()
                     Image(systemName: "chevron.down")
                         .rotationEffect(Angle(degrees: expanded ? 180 : 0))
                         .foregroundStyle(Color.themeButtonBackground)
                 }
                 .padding()
-                .frame(maxWidth: .infinity)
+                .frame(width: 100)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(isValid ? Color.gray : Color.red, lineWidth: 1)
@@ -127,6 +128,7 @@ struct PhoneNumberView: View {
                 field.required ? "\(field.label)*" : field.label,
                 text: $text
             )
+            .keyboardType(.phonePad)
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
             .padding()
@@ -136,12 +138,33 @@ struct PhoneNumberView: View {
             )
             .onAppear(perform: {
                 text = field.phoneNumber
+                extensionText = field.extension
             })
             .onChange(of: text) { newValue in
                 field.phoneNumber = newValue
                 isValid = field.validate().isEmpty
                 onNodeUpdated()
             }
+            if field.showExtension {
+                TextField(
+                    field.extensionLabel.isEmpty ? "Ext." : field.extensionLabel,
+                    text: $extensionText
+                )
+                .keyboardType(.phonePad)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+                .padding()
+                .frame(width: 80)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.gray, lineWidth: 1)
+                )
+                .onChange(of: extensionText) { newValue in
+                    field.extension = newValue
+                    onNodeUpdated()
+                }
+            }
+        }
             if !isValid {
                 ErrorMessageView(errors: field.validate().map { $0.errorMessage }.sorted())
             }

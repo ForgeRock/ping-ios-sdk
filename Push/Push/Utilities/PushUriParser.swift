@@ -183,7 +183,7 @@ public enum PushUriParser {
     /// - Throws: `PushError.invalidUri` if the URL is malformed.
     private static func extractServerEndpoint(_ url: String) throws -> String {
         let urlComponents: URLComponents?
-        if #available(iOS 17.0, *) {
+        if #available(iOS 17.0, macOS 14.0, *) {
             urlComponents = URLComponents(string: url, encodingInvalidCharacters: true)
         } else {
             urlComponents = URLComponents(string: url)

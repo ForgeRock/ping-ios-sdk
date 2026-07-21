@@ -1,21 +1,48 @@
-<p align="center">
-  <a href="https://github.com/ForgeRock/ping-android-sdk">
-    <img src="https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg" alt="Logo">
-  </a>
-  <hr/>
-</p>
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
 
-# Ping Browser
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
 
-## Overview
+# PingBrowser
 
 Ping Browser is a library that allows you to instantiate and use an in-app browser for performing OIDC flows. 
-This library act as a plugin to the `External_idp` library,
+This library act as a plugin to the `ExternalIdp` module,
 and it provides the necessary configuration to launch the browser to authenticate with the External IDP.
 
-## Add dependency to your project
+## Getting Started
 
-You can add the dependency using Cocoapods or Swift Package manager
+### Prerequisites
+
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingBrowser` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingBrowser', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingBrowser
+```
 
 ## Usage
 
@@ -44,4 +71,9 @@ The `BrowserLauncher` supports the following types of `BrowserType` (Not fully i
 4. `ephemeralAuthSession`
 
 At the current time only `authSession` and `ephemeralAuthSession` are implemented. Both types rely on the `ASWebAuthenticationSession` in-app browser type.
-© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved
+
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
+
+© Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved.

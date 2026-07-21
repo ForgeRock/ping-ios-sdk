@@ -1,11 +1,47 @@
-<p align="center">
-  <a href="https://github.com/ForgeRock/ping-ios-sdk">
-    <img src="https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg" alt="Logo">
-  </a>
-  <hr/>
-</p>
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
+
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
 
 # PingDavinci
+
+DaVinci is a flexible iOS module for Authentication and Authorization, utilizing the PingOne DaVinci orchestration engine.
+
+## Getting Started
+
+### Prerequisites
+
+- PingOne DaVinci
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingDavinci` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingDavinci', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingDavinci
+```
 
 ## Overview
 
@@ -32,10 +68,6 @@ sequenceDiagram
 
 You can find more information about PingOne
 DaVinci [here](https://docs.pingidentity.com/davinci/davinci_introduction.html).
-
-## Integrating the SDK into your project
-
-Use Cocoapods or Swift Package Manager
 
 ## Usage
 
@@ -73,6 +105,38 @@ let daVinci = DaVinci.createDaVinci { config in
 }
 ```
 
+### Pushed Authorization Requests (PAR)
+
+DaVinci supports [Pushed Authorization Requests (RFC 9126)](https://datatracker.ietf.org/doc/html/rfc9126). When enabled, authorization parameters are sent to the server via a secure back-channel POST before the authorization redirect, improving security by keeping sensitive parameters out of the URL.
+
+```swift
+let daVinci = DaVinci.createDaVinci { config in
+    config.module(OidcModule.config) { oidcValue in
+        oidcValue.clientId = "test"
+        oidcValue.discoveryEndpoint = "https://auth.example.com/.well-known/openid-configuration"
+        oidcValue.scopes = ["openid", "email", "address"]
+        oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
+        oidcValue.par = true // Enable Pushed Authorization Requests
+    }
+}
+```
+
+The PAR endpoint is discovered automatically from the OpenID configuration. If the server does not advertise a `pushed_authorization_request_endpoint`, the SDK falls back to the standard authorization flow.
+
+
+### Device Authorization Grant — approving device (RFC 8628)
+
+When this device is acting as the *approving* device for an [RFC 8628](https://datatracker.ietf.org/doc/html/rfc8628) device-flow request initiated elsewhere (e.g., a smart TV), pass the `verificationUriComplete` URL into `start(_:)`. The DaVinci `OidcModule` extracts the `user_code` query parameter and routes the start request to the device-flow verification endpoint, approving the requesting device after the user authenticates.
+
+```swift
+let node = await daVinci.start { options in
+    options.verificationUriComplete = URL(string: verificationUriCompleteString)
+}
+```
+
+`verificationUriComplete` is the URL returned in the `verification_uri_complete` field of the requesting device's `DeviceAuthorizationResponse` — typically scanned from a QR code or pasted by the user. The flow then proceeds normally (the user authenticates via the DaVinci flow); on success, the requesting device receives its access token via its own polling loop.
+
+The supplied URL is consumed after the first `start()` — a subsequent plain `start()` reverts to the standard authorization flow. Pass `nil` to clear any previously stored value.
 
 ### Navigate the authentication Flow
 
@@ -96,7 +160,7 @@ case is SuccessNode: do {}
 | SuccessNode| Successful authentication. Use ```node.session``` to retrieve the session.                                      |
 
 ### Provide input
-For a `ContinueNode`, you can access the list of collectors using `node.collectors` and and provide input to the desired `Collector`. Currently, the available collectors include `TextCollector`, `PasswordCollector`, `SubmitCollector`, `FlowCollector`, `LabelCollector`, `MultiSelectCollector`, and `SingleSelectCollector`. Additional collectors, such as `Fido` and `IdpCollector`, will be added in the future.
+For a `ContinueNode`, you can access the list of collectors using `node.collectors` and and provide input to the desired `Collector`. Currently, the available collectors include `TextCollector`, `PasswordCollector`, `SubmitCollector`, `FlowCollector`, `LabelCollector`, `MultiSelectCollector`, `SingleSelectCollector`, and `ReadOnlyTextCollector`. Additional collectors, such as `Fido` and `IdpCollector`, will be added in the future.
 
 To access the collectors, you can use the following code:
 ```swift
@@ -165,6 +229,7 @@ flowCollector.type == "FLOW_LINK" // Check if the type is "FLOW_LINK". Note that
 
 ```swift
 labelCollector.content //To access the Content
+labelCollector.richContent //To access the optional RichContent (template text with link replacements)
 ```
 
 #### MultiSelectCollector (COMBOBOX, CHECKBOX)
@@ -189,6 +254,19 @@ singleSelectCollector.required //To access the required attribute
 singleSelectCollector.options //To access the options attribute
 
 singleSelectCollector.value = "option1" //To set the value
+```
+
+#### ReadOnlyTextCollector (READ_ONLY_TEXT)
+
+```swift
+readOnlyTextCollector.key //To access the key attribute
+readOnlyTextCollector.type //To access the type attribute
+readOnlyTextCollector.content //To access the agreement text content
+readOnlyTextCollector.title //To access the title
+readOnlyTextCollector.titleEnabled //Whether to display the title
+readOnlyTextCollector.enabled //Whether this collector is enabled
+readOnlyTextCollector.agreementId //The unique ID of the agreement definition
+readOnlyTextCollector.useDynamicAgreement //Whether the agreement content is loaded dynamically
 ```
 
 ### Collector Validation
@@ -324,5 +402,51 @@ _ = await user?.userinfo(cache: false)
 await user?.logout()
 
 ```
+
+## JSON Configuration
+
+`DaVinci.createDaVinci(json:)` initialises a `DaVinci` instance from a platform-neutral dictionary, enabling config-file-driven setup without writing Swift initialisation code.
+
+```swift
+let json: [String: Any] = [
+    "timeout": 30000,          // milliseconds — optional, default 15 s
+    "log": "DEBUG",            // optional — NONE | ERROR | WARN | INFO | DEBUG
+    "oidc": [
+        "clientId": "your-client-id",
+        "discoveryEndpoint": "https://auth.example.com/.well-known/openid-configuration",
+        "redirectUri": "myapp://callback",
+        "scopes": ["openid", "profile", "email"],
+        // --- optional ---
+        "acrValues": "policy-id",
+        "par": true,
+        "refreshThreshold": 60,
+        "signOutRedirectUri": "myapp://logout",
+        "additionalParameters": ["custom_key": "custom_value"],
+        "openId": [            // endpoint overrides, applied after discovery
+            "tokenEndpoint": "https://auth.example.com/token"
+        ]
+    ] as [String: Any]
+]
+
+switch DaVinci.createDaVinci(json: json) {
+case .success(let daVinci):
+    // use daVinci
+case .failure(let error):
+    print("Configuration error: \(error.localizedDescription)")
+}
+```
+
+### Error handling
+
+On invalid input `createDaVinci(json:)` returns `.failure(JsonConfigError)`:
+
+| Error | Cause |
+|-------|-------|
+| `missingRequiredField(String)` | A required field is absent |
+| `invalidType(field:expected:)` | A field has the wrong type |
+
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
 © Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

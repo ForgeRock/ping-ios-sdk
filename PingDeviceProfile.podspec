@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingDeviceProfile'
-  s.version          = '2.0.0'
+  s.version          = '2.1.0'
   s.summary          = 'PingDeviceProfile SDK for iOS'
   s.description      = <<-DESC
   The PingDeviceProfile module for the Ping iOS SDK is a library designed to provide a structured framework for collecting device information in iOS applications.
@@ -33,7 +33,7 @@ Pod::Spec.new do |s|
     'DeviceProfile' => [base_dir + '/*.xcprivacy']
   }
 
-  s.ios.dependency 'PingDeviceId', '~> 2.0.0'
-  s.ios.dependency 'PingJourneyPlugin', '~> 2.0.0'
-  s.ios.dependency 'PingTamperDetector', '~> 2.0.0'
+  s.ios.dependency 'PingDeviceId', '~> 2.1.0'
+  s.ios.dependency 'PingJourneyPlugin', '~> 2.1.0'
+  s.ios.dependency 'PingTamperDetector', '~> 2.1.0'
 end

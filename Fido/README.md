@@ -1,13 +1,53 @@
+[![Swift Version](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![iOS Version](https://img.shields.io/badge/iOS-16.0+-blue.svg)](https://developer.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](../LICENSE)
+
+![Ping Identity](https://www.pingidentity.com/content/dam/picr/nav/Ping-Logo-2.svg)
 
 # PingFido
 
-This module provides FIDO functionality for the Ping Identity iOS SDK, utilizing native iOS APIs (`AuthenticationServices`) to support Passkeys and locally stored keys.
+This module provides FIDO functionality for the Ping Orchestration SDK for iOS, utilizing native iOS APIs (`AuthenticationServices`) to support Passkeys and locally stored keys.
 
-## Concept
+## Getting Started
+
+### Prerequisites
+
+- PingOne DaVinci or Ping Advanced Identity Cloud / PingAM [Supported Versions](https://support.pingidentity.com/s/article/Ping-Identity-EOL-Tracker)
+- iOS 16.0+
+- Swift 6.0+
+- Xcode 15+
+
+### Installation
+
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+
+#### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
+]
+```
+
+Then add the `PingFido` product to your target's dependencies.
+
+#### CocoaPods
+
+```ruby
+pod 'PingFido', '~> <version>'
+```
+
+### Import the Module
+
+```swift
+import PingFido
+```
+
+## Overview
 
 The FIDO module serves as a bridge between Ping Identity's authentication flows (DaVinci and Journey) and Apple's native FIDO capabilities through the `AuthenticationServices` framework. The `Fido` class acts as a proxy, abstracting the complexity of the underlying credential management system while providing a clean, consistent API for authentication operations.
 
-## Structure
+### Structure
 
 The module is organized into the following structure:
 
@@ -26,28 +66,6 @@ The module is organized into the following structure:
     - `FidoAuthenticationCallback.swift`: Handles FIDO authentication.
     - `CallbackInitializer.swift`: Registers the FIDO callbacks with the Journey framework.
 
-## Installation
-
-### Swift Package Manager
-
-Add the following to your `Package.swift` file:
-
-```swift
-dependencies: [
-    .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "2.0.0")
-]
-```
-
-### CocoaPods
-
-Add the following to your `Podfile`:
-
-```ruby
-pod 'PingFido', '~> 2.0.0'
-```
-
-Then run `pod install`.
-
 ## Usage
 
 ### DaVinci Integration
@@ -62,8 +80,6 @@ To use the FIDO module with DaVinci, you will need to handle the JSON payload fr
 **Example:**
 
 ```swift
-import PingFido
-
 func handleDaVinciFido(json: [String: Any]) {
     do {
         let collector = try AbstractFidoCollector.getCollector(with: json)
@@ -110,8 +126,6 @@ To use the FIDO module with Journey, you need to register the FIDO callbacks and
 **1. Register Callbacks:**
 
 ```swift
-import PingFido
-
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     CallbackInitializer.registerCallbacks()
     return true
@@ -140,5 +154,9 @@ func handleJourneyNode(node: Node) {
     }
 }
 ```
+
+## License
+
+This software may be modified and distributed under the terms of the MIT license. See the LICENSE file for details.
 
 © Copyright 2025-2026 Ping Identity Corporation. All Rights Reserved

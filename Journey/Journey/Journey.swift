@@ -24,11 +24,22 @@ public typealias Journey = Workflow
 ///
 /// - forceAuth: Forces authentication even if a valid session exists.
 /// - noSession: Allows the journey to complete without creating a session.
+/// - verificationUriComplete: The `verificationUriComplete` URL from an RFC 8628 device
+///   authorization response. Set this when the current device is acting as the approving device.
+///   `OidcModule` reads this value from the workflow's shared context and uses it to extract
+///   the `user_code` and POST approval to the verification URL after a successful
+///   Journey authentication.
 public struct Options: Sendable {
     /// Whether to force authentication even when a valid session exists.
     public var forceAuth: Bool = false
     /// Whether to allow completion without generating a session.
     public var noSession: Bool = false
+    /// The `verificationUriComplete` URL from an RFC 8628 device authorization response.
+    ///
+    /// When set, `OidcModule` extracts the `user_code` query parameter from this URL and
+    /// POSTs it (with `decision=allow` and the SSO token as cookie) to the verification URL
+    /// after the user authenticates, thereby approving the requesting device.
+    public var verificationUriComplete: URL? = nil
 }
 
 /// Configuration for Journey workflows.
@@ -137,7 +148,12 @@ public extension Journey {
         
         self.sharedContext.set(key: JourneyConstants.forceAuth, value: options.forceAuth)
         self.sharedContext.set(key: JourneyConstants.noSession, value: options.noSession)
-        
+        if let uri = options.verificationUriComplete {
+            self.sharedContext.set(key: SharedContext.Keys.journeyVerificationUriCompleteKey, value: uri.absoluteString)
+        } else {
+            _ = self.sharedContext.removeValue(forKey: SharedContext.Keys.journeyVerificationUriCompleteKey)
+        }
+
         let request = config.httpClient.request()
         request.populateRequest(authIndexValue: journeyName, journeyConfig: journeyConfig, options: options)
         
@@ -178,6 +194,50 @@ public extension Journey {
         return await signOff()
     }
     
+    /// Creates a Journey instance from a JSON dictionary.
+    ///
+    /// This factory parses and validates a platform-neutral JSON configuration and
+    /// delegates to `createJourney(block:)` with the extracted values. Unknown fields
+    /// are silently ignored for forward compatibility.
+    ///
+    /// - Parameter json: A `[String: Any]` dictionary conforming to the unified SDK
+    ///   configuration schema (see design doc for field reference).
+    /// - Returns: `.success(Journey)` on valid input, `.failure(JsonConfigError)` if a
+    ///   required field is absent or a field has the wrong type.
+    static func createJourney(json: [String: Any]) -> Result<Journey, Error> {
+        do {
+            let p = JsonConfigParser(json)
+            let journeyDict: [String: Any] = try p.required(JsonConfigKey.journey, field: JsonConfigKey.journey)
+            let jp = JsonConfigParser(journeyDict)
+            let serverUrl: String = try jp.required(JsonConfigKey.serverUrl, field: "\(JsonConfigKey.journey).\(JsonConfigKey.serverUrl)")
+            let realm      = try jp.optional(JsonConfigKey.realm,      field: "\(JsonConfigKey.journey).\(JsonConfigKey.realm)",      default: JourneyConstants.realm)
+            let cookieName = try jp.optional(JsonConfigKey.cookieName, field: "\(JsonConfigKey.journey).\(JsonConfigKey.cookieName)", default: JourneyConstants.cookie)
+            let timeout    = try p.timeoutSeconds()
+            let logger     = p.logLevel()
+            let oidcDict: [String: Any]? = try p.optionalValue(JsonConfigKey.oidc, field: JsonConfigKey.oidc)
+
+            let oidcConfig: OidcClientConfig? = try oidcDict.map {
+                try OidcClientConfig.from(oidcJson: $0, logger: logger)
+            }
+
+            let journey = Journey.createJourney { journeyConfig in
+                journeyConfig.serverUrl = serverUrl
+                journeyConfig.realm = realm
+                journeyConfig.cookie = cookieName
+                journeyConfig.timeout = timeout
+                journeyConfig.logger = logger
+                if let oidcConfig {
+                    journeyConfig.module(OidcModule.config) { moduleOidcConfig in
+                        moduleOidcConfig.update(with: oidcConfig)
+                    }
+                }
+            }
+            return .success(journey)
+        } catch {
+            return .failure(error)
+        }
+    }
+
     /// Sends a request using the configured HTTP client and wraps the response.
     ///
     /// - Parameter request: The request to send.

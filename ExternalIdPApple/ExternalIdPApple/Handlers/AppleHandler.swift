@@ -12,6 +12,7 @@ import Foundation
 import AuthenticationServices
 import PingExternalIdP
 
+#if canImport(UIKit)
 ///IdpHandler for Apple
 @MainActor
 @objc public final class AppleHandler: NSObject, @preconcurrency IdpHandler, Sendable {
@@ -50,3 +51,4 @@ import PingExternalIdP
 extension AppleHandler {
     public static let acceptsJSON = "acceptsJSON"
 }
+#endif

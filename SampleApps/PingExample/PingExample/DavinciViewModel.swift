@@ -90,25 +90,40 @@ class DavinciViewModel: ObservableObject {
     @Published public var state: DavinciState = DavinciState()
     /// Published property to track whether the view is currently loading.
     @Published public var isLoading: Bool = false
-    
+
+    /// Optional verification URI for the RFC 8628 device authorization grant.
+    /// When set, DaVinci.start extracts the user_code from the URL.
+    public var verificationUriComplete: URL?
+
     /// Initializes the view model and starts the DaVinci orchestration process.
-    init() {
+    /// - Parameter verificationUriComplete: Optional verification URI for the RFC 8628
+    ///   device authorization grant. When provided, the user_code is extracted and
+    ///   forwarded to DaVinci so the requesting device is approved on success.
+    init(verificationUriComplete: URL? = nil) {
+        self.verificationUriComplete = verificationUriComplete
         Task {
             await startDavinci()
         }
     }
-    
+
     /// Starts the DaVinci orchestration process.
     /// - Sets the initial node and updates the `data` property with the starting node.
     public func startDavinci() async {
-        
+
         await MainActor.run {
             isLoading = true
         }
-        
+
         // Starts the DaVinci orchestration process and retrieves the first node.
         guard let davinci = davinci else { return }
-        let next = await davinci.start()
+        let next: Node
+        if let uri = verificationUriComplete {
+            next = await davinci.start { options in
+                options.verificationUriComplete = uri
+            }
+        } else {
+            next = await davinci.start()
+        }
         await MainActor.run {
             self.state = DavinciState(node: next)
             isLoading = false

@@ -2,7 +2,7 @@
 //  MockAPIEndpoint.swift
 //  DavinciTests
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -21,6 +21,8 @@ enum MockAPIEndpoint {
     case revocation
     case discovery
     case customHTMLTemplate
+    case par
+    case deviceFlow
     
     var url: URL {
         switch self {
@@ -38,6 +40,11 @@ enum MockAPIEndpoint {
             return URL(string: "\(MockAPIEndpoint.baseURL)/.well-known/openid-configuration")!
         case .customHTMLTemplate:
             return URL(string: "\(MockAPIEndpoint.baseURL)/customHTMLTemplate")!
+        case .par:
+            return URL(string: "\(MockAPIEndpoint.baseURL)/par")!
+        case .deviceFlow:
+            // Matches /applications/{clientId}/deviceFlow — clientId "test" used in DaVinciDeviceTests
+            return URL(string: "\(MockAPIEndpoint.baseURL)/applications/test/deviceFlow")!
         }
     }
 }

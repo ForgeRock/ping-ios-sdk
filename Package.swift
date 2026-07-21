@@ -5,8 +5,7 @@ let package = Package(
     name: "Ping-SDK-iOS",
     platforms: [
         .iOS(.v16),
-        // Added macOS minimum to satisfy transitive dependency (GoogleSignIn) which requires macOS 10.15+
-        .macOS(.v10_15)
+        .macOS(.v13),
     ],
     products: [
         // MARK: - Foundation
@@ -73,7 +72,7 @@ let package = Package(
             name: "PingStorage",
             dependencies: [],
             path: "Storage/Storage",
-            exclude: ["Storage.h"],
+            exclude: ["Storage.h", "CACHING_GUIDE.md"],
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
         
@@ -223,7 +222,7 @@ let package = Package(
             name: "PingExternalIdPGoogle",
             dependencies: [
                 "PingExternalIdP",
-                .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
+                .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS", condition: .when(platforms: [.iOS]))
             ],
             path: "ExternalIdPGoogle/ExternalIdPGoogle",
             exclude: ["ExternalIdPGoogle.h"],
@@ -233,7 +232,7 @@ let package = Package(
             name: "PingExternalIdPFacebook",
             dependencies: [
                 "PingExternalIdP",
-                .product(name: "FacebookLogin", package: "facebook-ios-sdk")
+                .product(name: "FacebookLogin", package: "facebook-ios-sdk", condition: .when(platforms: [.iOS]))
             ],
             path: "ExternalIdPFacebook/ExternalIdPFacebook",
             exclude: ["ExternalIdPFacebook.h"],
@@ -246,7 +245,7 @@ let package = Package(
             dependencies: [
                 "PingDavinciPlugin",
                 "PingJourneyPlugin",
-                .product(name: "PingOneSignals", package: "pingone-signals-sdk-ios")
+                .product(name: "PingOneSignals", package: "pingone-signals-sdk-ios", condition: .when(platforms: [.iOS]))
             ],
             path: "Protect/Protect",
             exclude: ["Protect.h"],
@@ -257,7 +256,7 @@ let package = Package(
             dependencies: [
                 "PingCommons",
                 "PingJourneyPlugin",
-                .product(name: "RecaptchaEnterprise", package: "recaptcha-enterprise-mobile-sdk")
+                .product(name: "RecaptchaEnterprise", package: "recaptcha-enterprise-mobile-sdk", condition: .when(platforms: [.iOS]))
             ],
             path: "ReCaptchaEnterprise/ReCaptchaEnterprise",
             exclude: ["ReCaptchaEnterprise.h"],
@@ -266,6 +265,7 @@ let package = Package(
         .target(
             name: "PingFido",
             dependencies: [
+                "PingLogger",
                 "PingCommons",
                 "PingDavinciPlugin",
                 "PingJourneyPlugin"

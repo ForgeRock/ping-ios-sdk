@@ -25,6 +25,14 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
     let testScopes = ["openid", "email", "address"]
     let testRedirectUri = "http://localhost:8080"
     let testDiscoveryEndpoint = "http://localhost/.well-known/openid-configuration"
+
+    /// Creates an `HTTPURLResponse` or throws, replacing force-unwrap (`!`) in mock handlers.
+    private func mockResponse(url: URL, statusCode: Int, headers: [String: String]? = nil) throws -> HTTPURLResponse {
+        guard let response = HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: headers) else {
+            throw URLError(.badServerResponse)
+        }
+        return response
+    }
     
     override func setUp() {
         self.configFileName = "Config"
@@ -42,24 +50,24 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         MockURLProtocol.startInterceptingRequests()
         _ = CollectorFactory.shared
         
-        MockURLProtocol.requestHandler = { request in
+        MockURLProtocol.requestHandler = { [self] request in
             switch request.url!.path {
             case MockAPIEndpoint.discovery.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfigurationResponse)
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), MockResponse.openIdConfigurationResponse)
             case MockAPIEndpoint.token.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.token.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.tokenResponse)
+                return (try mockResponse(url: MockAPIEndpoint.token.url, statusCode: 200, headers: MockResponse.headers), MockResponse.tokenResponse)
             case MockAPIEndpoint.userinfo.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.userinfo.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.userinfoResponse)
+                return (try mockResponse(url: MockAPIEndpoint.userinfo.url, statusCode: 200, headers: MockResponse.headers), MockResponse.userinfoResponse)
             case MockAPIEndpoint.revocation.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.revocation.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, Data())
+                return (try mockResponse(url: MockAPIEndpoint.revocation.url, statusCode: 200, headers: MockResponse.headers), Data())
             case MockAPIEndpoint.endSession.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.endSession.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, Data())
+                return (try mockResponse(url: MockAPIEndpoint.endSession.url, statusCode: 200, headers: MockResponse.headers), Data())
             case MockAPIEndpoint.customHTMLTemplate.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.customHTMLTemplate.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.customHTMLTemplateHeaders)!, MockResponse.customHTMLTemplate)
+                return (try mockResponse(url: MockAPIEndpoint.customHTMLTemplate.url, statusCode: 200, headers: MockResponse.customHTMLTemplateHeaders), MockResponse.customHTMLTemplate)
             case MockAPIEndpoint.authorization.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.authorization.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.authorizeResponseHeaders)!, MockResponse.authorizeResponse)
+                return (try mockResponse(url: MockAPIEndpoint.authorization.url, statusCode: 200, headers: MockResponse.authorizeResponseHeaders), MockResponse.authorizeResponse)
             default:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500), Data())
             }
         }
     }
@@ -323,15 +331,15 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
     }
     
     func testDaVinciCollectorsParsing() async throws {
-        MockURLProtocol.requestHandler = { request in
+        MockURLProtocol.requestHandler = { [self] request in
             switch request.url!.path {
             case MockAPIEndpoint.discovery.url.path:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfigurationResponse)
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), MockResponse.openIdConfigurationResponse)
             case MockAPIEndpoint.authorization.url.path:
                 let headers = MockResponse.authorizeResponseHeaders
-                return (HTTPURLResponse(url: MockAPIEndpoint.authorization.url, statusCode: 200, httpVersion: nil, headerFields: headers)!, MockResponse.responseWithBasicTypes)
+                return (try mockResponse(url: MockAPIEndpoint.authorization.url, statusCode: 200, headers: headers), MockResponse.responseWithBasicTypes)
             default:
-                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500), Data())
             }
         }
         
@@ -459,5 +467,103 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         XCTAssertEqual(collector11.required, true)
         XCTAssertEqual(collector11.options.count, 2)
         XCTAssertEqual(collector11.value, ["default-checkbox"])
+    }
+    
+    func testDaVinciRewindStateToLastRenderedUIReturnsPreviousContinueNode() async throws {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url!.path {
+            case MockAPIEndpoint.discovery.url.path:
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), MockResponse.openIdConfigurationResponse)
+            case MockAPIEndpoint.authorization.url.path:
+                return (try mockResponse(url: MockAPIEndpoint.authorization.url, statusCode: 200, headers: MockResponse.authorizeResponseHeaders), MockResponse.authorizeResponse)
+            case MockAPIEndpoint.customHTMLTemplate.url.path:
+                // `start()` gets its ContinueNode from /authorize; `next()` is the first (and only)
+                // call to this URL and must return the rewind response.
+                return (try mockResponse(url: MockAPIEndpoint.customHTMLTemplate.url, statusCode: 200, headers: MockResponse.customHTMLTemplateHeaders), MockResponse.rewindStateToLastRenderedUIResponse)
+            default:
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500), Data())
+            }
+        }
+        
+        let daVinci = DaVinci.createDaVinci { config in
+            config.httpClient = MockURLProtocol.makeClient()
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
+                oidcValue.clientId = self.testClientId
+                oidcValue.scopes = Set(self.testScopes)
+                oidcValue.redirectUri = self.testRedirectUri
+                oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
+                oidcValue.storage = MemoryStorage()
+                oidcValue.logger = LogManager.standard
+            }
+            config.module(CookieModule.config) { cookieValue in
+                cookieValue.cookieStorage = MemoryStorage()
+                cookieValue.persist = ["ST"]
+            }
+        }
+        
+        let firstNode = await daVinci.start()
+        guard let firstContinue = firstNode as? ContinueNode else {
+            XCTFail("Expected ContinueNode from start(), got \(type(of: firstNode))")
+            return
+        }
+        
+        let rewindNode = await firstContinue.next()
+        guard let rewindContinue = rewindNode as? ContinueNode else {
+            XCTFail("Expected ContinueNode after rewindStateToLastRenderedUI, got \(type(of: rewindNode))")
+            return
+        }
+        // A fresh Connector is created so collectors are reset — it must be a different instance.
+        XCTAssertFalse(firstContinue === rewindContinue, "Rewind must create a fresh ContinueNode instance")
+        // But it must represent the same form (same id).
+        XCTAssertEqual(firstContinue.id, rewindContinue.id)
+    }
+    
+    func testDaVinciRewindStateToSpecificRenderedUIReturnsPreviousContinueNode() async throws {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url!.path {
+            case MockAPIEndpoint.discovery.url.path:
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), MockResponse.openIdConfigurationResponse)
+            case MockAPIEndpoint.authorization.url.path:
+                return (try mockResponse(url: MockAPIEndpoint.authorization.url, statusCode: 200, headers: MockResponse.authorizeResponseHeaders), MockResponse.authorizeResponse)
+            case MockAPIEndpoint.customHTMLTemplate.url.path:
+                // `start()` gets its ContinueNode from /authorize; `next()` is the first (and only)
+                // call to this URL and must return the rewind response.
+                return (try mockResponse(url: MockAPIEndpoint.customHTMLTemplate.url, statusCode: 200, headers: MockResponse.customHTMLTemplateHeaders), MockResponse.rewindStateToSpecificRenderedUIResponse)
+            default:
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500), Data())
+            }
+        }
+        
+        let daVinci = DaVinci.createDaVinci { config in
+            config.httpClient = MockURLProtocol.makeClient()
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
+                oidcValue.clientId = self.testClientId
+                oidcValue.scopes = Set(self.testScopes)
+                oidcValue.redirectUri = self.testRedirectUri
+                oidcValue.discoveryEndpoint = self.testDiscoveryEndpoint
+                oidcValue.storage = MemoryStorage()
+                oidcValue.logger = LogManager.standard
+            }
+            config.module(CookieModule.config) { cookieValue in
+                cookieValue.cookieStorage = MemoryStorage()
+                cookieValue.persist = ["ST"]
+            }
+        }
+        
+        let firstNode = await daVinci.start()
+        guard let firstContinue = firstNode as? ContinueNode else {
+            XCTFail("Expected ContinueNode from start(), got \(type(of: firstNode))")
+            return
+        }
+        
+        let rewindNode = await firstContinue.next()
+        guard let rewindContinue = rewindNode as? ContinueNode else {
+            XCTFail("Expected ContinueNode after rewindStateToSpecificRenderedUI, got \(type(of: rewindNode))")
+            return
+        }
+        // A fresh Connector is created so collectors are reset — it must be a different instance.
+        XCTAssertFalse(firstContinue === rewindContinue, "Rewind must create a fresh ContinueNode instance")
+        // But it must represent the same form (same id).
+        XCTAssertEqual(firstContinue.id, rewindContinue.id)
     }
 }

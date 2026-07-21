@@ -134,10 +134,14 @@ class JourneyViewModel: ObservableObject {
     /// Published property to control whether to show the journey name input screen
     @Published public var showJourneyNameInput: Bool = true
 
+    /// Optional verification URI for the RFC 8628 device authorization grant.
+    /// When set, the user_code is extracted and the requesting device is approved on success.
+    public var verificationUriComplete: URL?
+
     /// Initializes the view model but does NOT automatically start the journey.
     /// The journey will start when the user enters a journey name.
-    init() {
-        // Remove auto-start - let user enter journey name first
+    init(verificationUriComplete: URL? = nil) {
+        self.verificationUriComplete = verificationUriComplete
     }
 
     /// Starts the Journey orchestration process with a specific journey name.
@@ -148,11 +152,13 @@ class JourneyViewModel: ObservableObject {
         await MainActor.run {
             isLoading = true
         }
-        
+
         guard let journey = journey else { return }
+        let uri = verificationUriComplete
         let next = await journey.start(journeyName) { options in
             options.forceAuth = false
             options.noSession = false
+            options.verificationUriComplete = uri
         }
 
         await MainActor.run {

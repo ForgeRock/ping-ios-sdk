@@ -8,6 +8,7 @@
 //  of the MIT license. See the LICENSE file for details.
 //
 
+#if canImport(FBSDKLoginKit)
 import Foundation
 import PingNetwork
 internal import FBSDKLoginKit
@@ -99,3 +100,4 @@ import PingExternalIdP
         return request
     }
 }
+#endif

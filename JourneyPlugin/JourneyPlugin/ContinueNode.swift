@@ -96,10 +96,10 @@ extension ContinueNode {
         
         // Try to find the best match based on user's preferred locales
         let preferredLocales: [Locale]
-        if #available(iOS 26, *) {
+        if #available(iOS 26, macOS 26, *) {
             preferredLocales = Locale.preferredLocales
         } else {
-            // Fallback for iOS 16+
+            // Fallback for iOS 16+ / macOS 13+
             preferredLocales = Locale.preferredLanguages.map { Locale(identifier: $0) }
         }
         

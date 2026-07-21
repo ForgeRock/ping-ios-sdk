@@ -11,9 +11,11 @@
 import Foundation
 import AuthenticationServices
 import PingLogger
+#if canImport(UIKit)
 import SafariServices
 import Combine
 import UIKit
+#endif
 
 // MARK: - Enums
 /// BrowserType enum to specify the type of external user-agent;
@@ -65,6 +67,7 @@ public protocol BrowserLauncherProtocol: Sendable {
 
 // MARK: - BrowserLauncher
 
+#if canImport(UIKit)
 /// BrowserLauncher class to launch external user-agent for web requests
 @MainActor
 public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
@@ -279,10 +282,16 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
         safariVC.modalPresentationStyle = .fullScreen
         
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let presentingVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
+              let root = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
             logger.e("Fail to launch SFSafariViewController; missing presenting ViewController", error: nil)
             state = .idle
             throw BrowserError.externalUserAgentFailure
+        }
+        var presentingVC = root
+        while let presented = presentingVC.presentedViewController,
+              !presented.isBeingDismissed,
+              !(presented is UIAlertController) {
+            presentingVC = presented
         }
         
         // We set state BEFORE presenting to prevent race conditions
@@ -443,3 +452,4 @@ public final class OpenURLMonitor: NSObject {
         return true
     }
 }
+#endif

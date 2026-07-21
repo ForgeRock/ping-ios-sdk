@@ -85,6 +85,9 @@ public actor CollectorFactory {
                     list.append(collector)
                 } else if let closure = collectorCreationClosures[type] {
                     if let collector = closure(item) {
+                        if var c = collector as? DaVinciAware {
+                            c.davinci = daVinci
+                        }
                         list.append(collector)
                     }
                 }

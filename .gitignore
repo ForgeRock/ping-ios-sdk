@@ -81,3 +81,17 @@ SampleApps/PingExample/PingExample/ConfigurationManager_LOCAL_78086.swift
 SampleApps/PingExample/PingExample/ConfigurationManager_REMOTE_78086.swift
 /Android/
 GEMINI.MD
+
+# Local agent / planning artefacts (not shipped with the SDK)
+.claude/
+ai-tasks/
+.github/copilot-instructions.md
+
+# Merge / Finder leftovers
+*.orig
+**/* copy.xcodeproj/
+/SourcePackages
+
+# Local JSON configs — not committed, discovered at runtime via folder reference
+SampleApps/PingExample/PingExample/Configs/*
+!SampleApps/PingExample/PingExample/Configs/.gitkeep
