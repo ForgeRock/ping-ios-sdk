@@ -33,14 +33,15 @@ public class WebModule {
         // Start the browser authorization flow. Returns the authorization code in the response.
         setup.transport { @Sendable context, request in
             let callbackURLScheme = context.flowContext.get(key: SharedContext.Keys.callbackURLSchemeKey) as? String ?? ""
+            let redirectUri = context.flowContext.get(key: SharedContext.Keys.redirectUriKey) as? String
             let oidcLoginConfig = oidcLoginFlow.config as? OidcWebClientConfig
-            
+
             do {
                 guard let urlString = request.url, let url = URL(string: urlString) else {
                     throw OidcError.authorizeError(message: "Browser authorization failed: URL not found")
                 }
                 // Ensure the redirect URI scheme is valid
-                let result = try await BrowserLauncher.currentBrowser.launch(url: url, customParams: nil, browserType: oidcLoginConfig?.browserType ?? .authSession, browserMode: oidcLoginConfig?.browserMode ?? .login, callbackURLScheme: callbackURLScheme, logger: oidcLoginFlow.config.logger)
+                let result = try await BrowserLauncher.currentBrowser.launch(url: url, customParams: nil, browserType: oidcLoginConfig?.browserType ?? .authSession, browserMode: oidcLoginConfig?.browserMode ?? .login, callbackURLScheme: callbackURLScheme, redirectUri: redirectUri, logger: oidcLoginFlow.config.logger)
                 
                 // Extract and verify the auth code response
                 let code = try WebModule.extractCode(from: result)
