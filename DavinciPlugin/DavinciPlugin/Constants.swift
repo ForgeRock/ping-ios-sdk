@@ -133,7 +133,5 @@ public enum Constants {
     // MARK: - SDK Integrator
     public static let METADATA = "METADATA"
     public static let payload = "payload"
-    public static let sdkMetadata = "sdkMetadata"
     public static let action = "action"
-    public static let isClientError = "isClientError"
 }

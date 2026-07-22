@@ -65,7 +65,7 @@ struct MetadataView: View {
                 }
 
                 Button {
-                    field.setError(code: "USER_CANCELLED", message: "User cancelled the operation", isClientError: true)
+                    field.setError(code: "USER_CANCELLED", message: "User cancelled the operation")
                     onNext(true)
                 } label: {
                     Text("Simulate error")

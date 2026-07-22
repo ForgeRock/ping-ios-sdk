@@ -18,7 +18,7 @@ import PingDavinciPlugin
 /// The connector pauses the flow and hands an opaque JSON payload to the SDK
 /// client. The app is expected to invoke on-device work (a third-party SDK,
 /// risk engine, payment SDK, etc.), then call `setResult(_:)` or
-/// `setError(code:message:isClientError:)` before continuing the flow.
+/// `setError(code:message:)` before continuing the flow.
 ///
 /// ### Example server payload
 /// ```json
@@ -83,7 +83,7 @@ public class MetadataCollector: AnyFieldCollector, Submittable, Validator, Close
     ///
     /// The SDK will POST a result of the form:
     /// ```json
-    /// { "error": { "code": "...", "message": "...", "isClientError": true } }
+    /// { "error": { "code": "...", "message": "..." } }
     /// ```
     /// The server-side connector reads this and routes the flow to the
     /// false/error branch.
@@ -91,17 +91,11 @@ public class MetadataCollector: AnyFieldCollector, Submittable, Validator, Close
     /// - Parameters:
     ///   - code: A short error code string (e.g. `"USER_CANCELLED"`).
     ///   - message: A human-readable description of the error.
-    ///   - isClientError: When `true`, tells the connector this originated
-    ///     on the client. Omit to leave the field out of the payload.
-    public func setError(code: String, message: String, isClientError: Bool? = nil) {
-        var error: [String: Any] = [
+    public func setError(code: String, message: String) {
+        self.result = [Constants.error: [
             Constants.code: code,
             Constants.message: message
-        ]
-        if let isClientError = isClientError {
-            error[Constants.isClientError] = isClientError
-        }
-        self.result = [Constants.error: error]
+        ]]
     }
 
     /// Intentionally a no-op.
@@ -132,6 +126,10 @@ public class MetadataCollector: AnyFieldCollector, Submittable, Validator, Close
 
     /// Returns a `.required` validation error when no result has been set,
     /// or an empty array once `setResult(_:)` or `setError(...)` has been called.
+    ///
+    /// - Note: The SDK does not call this automatically. It is the integrating
+    ///   app's responsibility to invoke `validate()` before continuing the flow
+    ///   and handle the `.required` error if no result has been set.
     public func validate() -> [ValidationError] {
         return result == nil ? [.required] : []
     }

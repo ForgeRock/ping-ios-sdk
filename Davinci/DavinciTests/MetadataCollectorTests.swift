@@ -101,13 +101,6 @@ class MetadataCollectorTests: XCTestCase {
         XCTAssertNil(error?["isClientError"])
     }
 
-    func testSetErrorWithIsClientError() {
-        let collector = MetadataCollector(with: buildJson())
-        collector.setError(code: "E1", message: "m", isClientError: true)
-        let error = collector.payload()?["error"] as? [String: Any]
-        XCTAssertEqual(true, error?["isClientError"] as? Bool)
-    }
-
     func testEventTypeIsAction() {
         let collector = MetadataCollector(with: buildJson())
         XCTAssertEqual("action", collector.eventType())

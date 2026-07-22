@@ -577,7 +577,7 @@
 				AA1A00042F0000000000AA01 /* PollingCollectorTests.swift in Sources */,
 				AA1A00082F0000000000AA01 /* QRCodeCollectorTests.swift in Sources */,
 				BB4928032F0900000000BB01 /* ReadOnlyTextCollectorTests.swift in Sources */,
-			BB4928072F0900000000BB01 /* MetadataCollectorTests.swift in Sources */,
+				BB4928072F0900000000BB01 /* MetadataCollectorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
