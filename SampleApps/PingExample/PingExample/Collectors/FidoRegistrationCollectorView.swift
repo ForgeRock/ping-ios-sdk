@@ -2,7 +2,7 @@
 //  FidoRegistrationCollectorView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -51,9 +51,8 @@ struct FidoRegistrationCollectorView: View {
                         // Call onNext only on success
                         onNext()
                     case .failure(let error):
-                        // Handle errors
                         print("FIDO Registration failed: \(error.localizedDescription)")
-                        // Optionally: show an alert to the user here
+                        onNext()
                     }
                 }
             }) {

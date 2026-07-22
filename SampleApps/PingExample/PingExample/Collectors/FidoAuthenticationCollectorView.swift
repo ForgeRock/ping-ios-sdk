@@ -44,6 +44,7 @@ struct FidoAuthenticationCollectorView: View {
                         onNext()
                     case .failure(let error):
                         print("FIDO Authentication failed: \(error.localizedDescription)")
+                        onNext()
                     }
                 }
             }) {
