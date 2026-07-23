@@ -272,7 +272,7 @@ class ConfigurationManager: ObservableObject {
             // Universal Link, completing the redirect on-device on iOS 17.4+/macOS 14.4+
             // requires the app to hold the `webcredentials:<host>` associated-domains
             // entitlement, and the host to serve a matching apple-app-site-association file.
-            // See PingOidc/README.md#redirect-uri-and-browser-type for details, including the
+            // See Oidc/README.md (section "Redirect URI and browser type") for details, including the
             // pre-17.4 fallback (switch to `.sfViewController`/`.nativeBrowserApp`, or register a
             // custom-scheme redirect URI).
             webConfig.logger = LogManager.standard

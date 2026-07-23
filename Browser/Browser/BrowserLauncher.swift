@@ -442,7 +442,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
             // use. Only a `https` scheme is eligible for the OS-brokered `Callback.https`
             // interception; a custom scheme, `http`, or a nil/non-parseable `redirectUri` all take
             // the legacy `callbackURLScheme:` initializer, byte-for-byte unchanged from today.
-            let rawScheme = URL(string: redirectUri ?? "")?.scheme?.lowercased()
+            let rawScheme = URLComponents(string: redirectUri ?? "")?.scheme?.lowercased()
             let httpsComponents = BrowserLauncher.httpsCallbackComponents(from: redirectUri)
 
             // Both branches below construct a plain `ASWebAuthenticationSession` instance —
