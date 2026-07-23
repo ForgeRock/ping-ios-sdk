@@ -136,4 +136,19 @@ struct MockResponse {
     }
     """.data(using: .utf8)!
     }
+
+    /// Fixture with interval=-5 so that a single slow_down (+5) results in interval=0.
+    /// Use this in slow_down tests to avoid any real Task.sleep delay after the bump.
+    static var deviceAuthorizationResponseSlowDownFriendly: Data {
+        """
+    {
+      "device_code" : "GmRhmhcxhwAzkoEqiMEg_DnyEysNkuNhszIySk9eS",
+      "user_code" : "WDJB-MJHT",
+      "verification_uri" : "https://auth.test-one-pingone.com/activate",
+      "verification_uri_complete" : "https://auth.test-one-pingone.com/activate?user_code=WDJB-MJHT",
+      "expires_in" : 1800,
+      "interval" : -5
+    }
+    """.data(using: .utf8)!
+    }
 }

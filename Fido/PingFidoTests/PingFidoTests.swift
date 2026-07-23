@@ -134,6 +134,84 @@ class PingFidoTests: XCTestCase {
         waitForExpectations(timeout: 2, handler: nil)
     }
     
+    @MainActor func testPlatformRegistrationRequestCarriesDisplayName() {
+        // Arrange — build a minimal platform-only creation options dict.
+        // authenticatorAttachment: "platform" forces only the platform (passkey) request path.
+        let displayName = "Jane Doe"
+        let userName   = "janedoe"
+        let options: [String: Any] = [
+            "rp": ["id": "example.com", "name": "Example Corp"],
+            "user": ["id": "testuser", "name": userName, "displayName": displayName],
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "pubKeyCredParams": [["type": "public-key", "alg": -7]],
+            "authenticatorSelection": ["authenticatorAttachment": "platform"]
+        ]
+
+        // Capture the request before performRequests() reaches the system.
+        var capturedRequest: ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest?
+        fido.testRequestCapture = { request in
+            capturedRequest = request as? ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest
+        }
+
+        let window = UIWindow()
+        fido.register(options: options, window: window) { _ in }
+
+        XCTAssertNotNil(capturedRequest, "Platform registration request was not created")
+        XCTAssertEqual(capturedRequest?.displayName, displayName)
+        // When displayName is present, createPlatformRequest passes it as the `name` argument
+        // to createCredentialRegistrationRequest — this is the value shown in the system sheet.
+        XCTAssertEqual(capturedRequest?.name, displayName)
+    }
+
+    @MainActor func testAuthenticatePreferImmediatelyAvailableCredentialsExcludesSecurityKeyRequest() {
+        // With allowCredentials present, the default (false) ceremony builds a platform request
+        // plus a security-key request. Setting preferImmediatelyAvailableCredentials to true must
+        // suppress the security-key request, since a hardware key can never be "immediately available".
+        let options: [String: Any] = [
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "rpId": "example.com",
+            "allowCredentials": [
+                ["type": "public-key", "id": "Y3JlZGVudGlhbElk"]
+            ]
+        ]
+
+        var capturedRequests: [ASAuthorizationRequest] = []
+        fido.testRequestCapture = { request in
+            capturedRequests.append(request)
+        }
+
+        let window = UIWindow()
+        fido.authenticate(options: options, window: window, preferImmediatelyAvailableCredentials: true) { _ in }
+
+        XCTAssertEqual(capturedRequests.count, 1, "Only the platform request should be built when preferring immediately available credentials")
+        XCTAssertTrue(capturedRequests.first is ASAuthorizationPlatformPublicKeyCredentialAssertionRequest)
+        XCTAssertFalse(capturedRequests.contains { $0 is ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest })
+    }
+
+    @MainActor func testAuthenticateDefaultIncludesSecurityKeyRequestWhenAllowCredentialsPresent() {
+        // Existing (default) behavior: allowCredentials present builds both a platform request
+        // and a security-key request. This must be unaffected by the new option's default value.
+        let options: [String: Any] = [
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "rpId": "example.com",
+            "allowCredentials": [
+                ["type": "public-key", "id": "Y3JlZGVudGlhbElk"]
+            ]
+        ]
+
+        var capturedRequests: [ASAuthorizationRequest] = []
+        fido.testRequestCapture = { request in
+            capturedRequests.append(request)
+        }
+
+        let window = UIWindow()
+        fido.authenticate(options: options, window: window) { _ in }
+
+        XCTAssertEqual(capturedRequests.count, 2, "Both platform and security-key requests should be built by default")
+        XCTAssertTrue(capturedRequests.contains { $0 is ASAuthorizationPlatformPublicKeyCredentialAssertionRequest })
+        XCTAssertTrue(capturedRequests.contains { $0 is ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest })
+    }
+
     func testFidoRegistrationCallbackTransform() {
         let callback = FidoRegistrationCallback()
         let input: [String: Any] = [

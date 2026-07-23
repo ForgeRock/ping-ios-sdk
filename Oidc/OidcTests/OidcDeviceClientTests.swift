@@ -246,8 +246,9 @@ class OidcDeviceClientTests: XCTestCase {
     // MARK: - Test 2: slow_down increases interval
 
     /// Test: slow_down response increases interval by 5.
-    /// Uses interval=0 fixture so slow_down bumps to 5 and the test finishes immediately.
-    /// Expected stream: .started, .polling(pollCount:1, pollInterval:5, ...), .success
+    /// Uses interval=-5 fixture so slow_down bumps to 0 — Task.sleep(0) is instant and the
+    /// stream completes without any real wall-clock delay, making the test deterministic on CI.
+    /// Expected stream: .started, .polling(pollCount:1, pollInterval:0, ...), .success
     func testSlowDownIncreasesInterval() async throws {
         MockURLProtocol.startInterceptingRequests()
         defer { MockURLProtocol.stopInterceptingRequests() }
@@ -257,9 +258,9 @@ class OidcDeviceClientTests: XCTestCase {
         MockURLProtocol.requestHandler = { [self] request in
             switch request.url?.path ?? "" {
             case MockAPIEndpoint.deviceAuthorization.url.path:
-                // interval=0 so slow_down bumps to 0+5=5 and no real sleep occurs
+                // interval=-5: slow_down adds 5 → final interval=0 → Task.sleep(0) is instant
                 return (mockHTTPResponse(url: MockAPIEndpoint.deviceAuthorization.url, statusCode: 200),
-                        MockResponse.deviceAuthorizationResponseFastInterval)
+                        MockResponse.deviceAuthorizationResponseSlowDownFriendly)
             case MockAPIEndpoint.token.url.path:
                 tokenCallCount += 1
                 if tokenCallCount == 1 {
@@ -277,14 +278,13 @@ class OidcDeviceClientTests: XCTestCase {
 
         let config = makeConfig()
         let client = OidcDeviceClient(config: config)
-
         let stream = try await client.deviceAuthorization()
 
         var statuses: [String] = []
         var pollingInterval: Int?
         var pollingCount: Int?
 
-        outerLoop: for try await status in stream {
+        for try await status in stream {
             switch status {
             case .started:
                 statuses.append("started")
@@ -292,8 +292,6 @@ class OidcDeviceClientTests: XCTestCase {
                 statuses.append("polling")
                 pollingInterval = interval
                 pollingCount = count
-                // Exit the loop after the first .polling to avoid sleeping for the bumped interval.
-                break outerLoop
             case .success:
                 statuses.append("success")
             case .expired:
@@ -308,11 +306,12 @@ class OidcDeviceClientTests: XCTestCase {
             }
         }
 
-        // Verify the slow_down case increments interval from 0 to 5
-        XCTAssertEqual(pollingInterval, 5, "slow_down should have increased interval from 0 to 5")
+        // -5 + 5 = 0; verifies the increment happened (interval increased by 5 from base)
+        XCTAssertEqual(pollingInterval, 0, "slow_down should have increased interval from -5 to 0")
         XCTAssertEqual(pollingCount, 1, "Poll count should be 1 after first slow_down")
         XCTAssertTrue(statuses.contains("started"), "Stream should have yielded .started")
         XCTAssertTrue(statuses.contains("polling"), "Stream should have yielded .polling after slow_down")
+        XCTAssertEqual(statuses.last, "success", "Stream should complete with .success")
     }
 
     // MARK: - Test 2b: slow_down compounds, authorization_pending resets to baseInterval
@@ -320,7 +319,7 @@ class OidcDeviceClientTests: XCTestCase {
     /// Test: consecutive `slow_down` responses compound `interval` per RFC 8628 §3.5
     /// (+5 each), and a subsequent `authorization_pending` resets `interval` back to
     /// the server-provided `baseInterval`.
-    /// Uses interval=0 fixture so the test can drive multiple polls without long sleeps.
+    /// Uses interval=-5 fixture so all sleep durations stay at 0, keeping the test instant on CI.
     func testSlowDownCompoundsAndAuthorizationPendingResets() async throws {
         MockURLProtocol.startInterceptingRequests()
         defer { MockURLProtocol.stopInterceptingRequests() }
@@ -330,17 +329,22 @@ class OidcDeviceClientTests: XCTestCase {
         MockURLProtocol.requestHandler = { [self] request in
             switch request.url?.path ?? "" {
             case MockAPIEndpoint.deviceAuthorization.url.path:
+                // interval=-5: slow_down 1 → 0, slow_down 2 → 5, authorization_pending resets to -5.
+                // Task.sleep(for: .seconds(n)) clamps n≤0 to immediate so sleeps are instant.
                 return (mockHTTPResponse(url: MockAPIEndpoint.deviceAuthorization.url, statusCode: 200),
-                        MockResponse.deviceAuthorizationResponseFastInterval)
+                        MockResponse.deviceAuthorizationResponseSlowDownFriendly)
             case MockAPIEndpoint.token.url.path:
                 tokenCallCount += 1
                 switch tokenCallCount {
                 case 1, 2:
                     return (mockHTTPResponse(url: MockAPIEndpoint.token.url, statusCode: 400),
                             MockResponse.slowDown)
-                default:
+                case 3:
                     return (mockHTTPResponse(url: MockAPIEndpoint.token.url, statusCode: 400),
                             MockResponse.authorizationPending)
+                default:
+                    return (mockHTTPResponse(url: MockAPIEndpoint.token.url, statusCode: 400),
+                            MockResponse.accessDenied)
                 }
             default:
                 return (mockHTTPResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500), Data())
@@ -353,23 +357,20 @@ class OidcDeviceClientTests: XCTestCase {
 
         var pollIntervals: [Int] = []
 
-        outerLoop: for try await status in stream {
+        for try await status in stream {
             switch status {
             case .polling(_, let interval, _):
                 pollIntervals.append(interval)
-                // After we observe the post-reset polling, exit before sleeping for it.
-                if pollIntervals.count >= 3 { break outerLoop }
-            case .started: continue
-            case .success, .expired, .accessDenied, .failure:
+            case .started, .accessDenied: break
+            case .success, .expired, .failure:
                 XCTFail("Unexpected terminal status: \(status)")
-                break outerLoop
             }
         }
 
         XCTAssertEqual(pollIntervals.count, 3, "Expected three .polling yields (two slow_down + one authorization_pending)")
-        XCTAssertEqual(pollIntervals[0], 5, "First slow_down: 0 + 5 = 5")
-        XCTAssertEqual(pollIntervals[1], 10, "Second slow_down compounds: 5 + 5 = 10")
-        XCTAssertEqual(pollIntervals[2], 0, "authorization_pending resets to baseInterval (0 in this fixture)")
+        XCTAssertEqual(pollIntervals[0], 0, "First slow_down: -5 + 5 = 0")
+        XCTAssertEqual(pollIntervals[1], 5, "Second slow_down compounds: 0 + 5 = 5")
+        XCTAssertEqual(pollIntervals[2], -5, "authorization_pending resets to baseInterval (-5 in this fixture)")
     }
 
     // MARK: - Test 3: access_denied finishes stream
@@ -585,6 +586,7 @@ class OidcDeviceClientTests: XCTestCase {
 
     /// Test: a URLError on the token endpoint causes the stream to back off and continue polling.
     /// Verifies Amendment 4: network errors do not terminate the stream.
+    /// Sleep is bypassed via the testability seam so the backoff interval never causes a real wait.
     /// Expected stream: .started, .polling (with increased interval), .success
     func testURLErrorCausesBackoffAndContinues() async throws {
         MockURLProtocol.startInterceptingRequests()
@@ -600,7 +602,6 @@ class OidcDeviceClientTests: XCTestCase {
             case MockAPIEndpoint.token.url.path:
                 tokenCallCount += 1
                 if tokenCallCount == 1 {
-                    // Simulate a URLError by throwing from the handler
                     throw URLError(.timedOut)
                 } else {
                     return (mockHTTPResponse(url: MockAPIEndpoint.token.url, statusCode: 200),
@@ -627,9 +628,8 @@ class OidcDeviceClientTests: XCTestCase {
             case .polling(let count, let interval, _):
                 statuses.append("polling")
                 if count == 1 {
-                    // Capture the interval after the first URLError-triggered backoff
                     pollingIntervalAfterError = interval
-                    // Exit after capturing backoff — avoids sleeping for the backed-off interval
+                    // Break immediately after capturing the backoff — the next sleep is 5s.
                     break outerLoop
                 }
             case .success:
