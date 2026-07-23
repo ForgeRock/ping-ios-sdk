@@ -18,6 +18,19 @@
 - Added `AuthMigration` module for migrating existing sessions from the legacy ForgeRock SDK [SDKS-4773]
 - Added Page Node description, header, and footer support [SDKS-4762]
 
+#### Fixed
+- Fixed permanent authentication failure after iCloud device migration caused by Secure Enclave key mismatch [SDKS-5172]
+- Fixed `PingFido` WebAuthn registration ignoring the configured `displayName` during passkey creation [SDKS-5211]
+- Fixed `PasswordCollector` not handling nested password policies [SDKS-4695]
+- Fixed PIN verification during device binding registration [SDKS-5015]
+- Fixed `Protect` collector being triggered multiple times within a flow [SDKS-4769]
+- Fixed browser close and reset logic [SDKS-4717]
+- Fixed Device Binding authenticators incorrectly reporting as supported on simulator [SDKS-4836]
+- Fixed `DeviceBindingConfig` device name defaulting to the user-assigned name instead of the device model [SDKS-4850]
+- Fixed `DefaultDeviceIdentifier` to reuse the legacy device identifier when available [SDKS-4630]
+- Fixed Swift build failures — platform bump and `canImport` guards [SDKS-4916]
+- Fixed FIDO ceremony logs not routing through the workflow logger [SDKS-4924]
+
 ## [2.0.0]
 #### Added
 - Added new `PingJourney` module [SDKS-3918]
