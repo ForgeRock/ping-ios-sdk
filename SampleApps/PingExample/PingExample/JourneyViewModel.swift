@@ -176,10 +176,7 @@ class JourneyViewModel: ObservableObject {
             return
         }
 
-        let next = await journey.start(backchannelUri: backchannelUri) { options in
-            options.forceAuth = false
-            options.noSession = false
-        }
+        let next = await journey.start(backchannelUri: backchannelUri)
 
         await MainActor.run {
             self.state = JourneyState(node: next)
