@@ -160,7 +160,9 @@ public struct FidoConstants {
     public static let WEB_AUTHN_OUTCOME = "webAuthnOutcome"
 
     // MARK: - Error Types
-
+    // An unsupported error type.
+    @available(*, deprecated, renamed: "ERROR_NOT_SUPPORTED")
+    public static let ERROR_UNSUPPORTED = "unsupported"
     /// A timeout error type.
     public static let ERROR_TIMEOUT = "TimeoutError"
     /// The error code for a cancelled operation.
