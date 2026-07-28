@@ -2,7 +2,7 @@
 //  Collectors.swift
 //  PingDavinciPlugin
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -46,6 +46,11 @@ extension Collectors {
             case let collector as FlowCollector:
                 if collector.value.isEmpty == false {
                     jsonObject[Constants.actionKey] = collector.id
+                }
+            case let collector as MetadataCollector:
+                if let payload = collector.anyPayload() {
+                    jsonObject[Constants.actionKey] = collector.id
+                    formData[collector.id] = payload
                 }
             default:
                 if let fieldCollector = collector as? (any AnyFieldCollector), let payload = fieldCollector.anyPayload() {

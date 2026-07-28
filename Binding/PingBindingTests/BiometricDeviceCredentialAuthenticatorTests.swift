@@ -9,6 +9,7 @@
 //
 
 import XCTest
+import LocalAuthentication
 @testable import PingBinding
 import PingStorage
 import PingJourneyPlugin
@@ -294,8 +295,13 @@ final class BiometricDeviceCredentialAuthenticatorTests: XCTestCase {
         #if targetEnvironment(simulator)
         XCTAssertFalse(authenticator.isSupported(attestation: .none))
         #else
-        // On a real device with passcode, this should return true
-        XCTAssertTrue(authenticator.isSupported(attestation: .none))
+        var error: NSError?
+        let hasPasscode = LAContext().canEvaluatePolicy(.deviceOwnerAuthentication, error: &error)
+        if hasPasscode {
+            XCTAssertTrue(authenticator.isSupported(attestation: .none))
+        } else {
+            XCTAssertFalse(authenticator.isSupported(attestation: .none))
+        }
         #endif
     }
     

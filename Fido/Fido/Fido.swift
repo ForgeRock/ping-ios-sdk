@@ -38,12 +38,17 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     private var logger: Logger?
     
     func makeAuthorizationController(requests: [ASAuthorizationRequest]) -> ASAuthorizationController {
+        requests.forEach { testRequestCapture?($0) }
         let authorizationController = ASAuthorizationController(authorizationRequests: requests)
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = self
         self.authorizationController = authorizationController
         return authorizationController
     }
+
+    /// Test-only hook. Receives each request before it is handed to `ASAuthorizationController`.
+    /// Set this in tests to inspect request properties without triggering the system UI.
+    var testRequestCapture: ((ASAuthorizationRequest) -> Void)?
     
     /// Registers a new FIDO credential.
     ///
@@ -129,12 +134,22 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     /// - Parameters:
     ///   - options: A dictionary containing the authentication options.
     ///   - window: The window to present the authentication UI in.
+    ///   - preferImmediatelyAvailableCredentials: When `true`, the ceremony is restricted to
+    ///     platform credentials (passkeys) already present on this device: if a matching passkey
+    ///     exists the system presents the modal sign-in sheet, but if none is available no UI
+    ///     appears and the delegate receives `ASAuthorizationError.canceled` instead of the QR /
+    ///     nearby-device fallback. In this mode the ceremony is platform-only — no cross-platform
+    ///     security-key request is issued even when `allowCredentials` is present, since a hardware
+    ///     security key is never immediately available on the local device. When `false` (the
+    ///     default) the full `performRequests()` flow is used, including cross-device sign-in and
+    ///     security keys — preserving the pre-existing behavior. Mirrors the legacy
+    ///     `FRWebAuthnManager.signInWith(preferImmediatelyAvailableCredentials:)` option.
     ///   - logger: Optional logger for ceremony state transitions and errors. Pass the
     ///     workflow logger (e.g. `journey?.config.logger`); when `nil` no log output is
     ///     produced. Scoped to this call only — overwritten by subsequent ceremonies and
     ///     cleared in `cleanup()`.
     ///   - completion: A closure to be called with the authentication result.
-    public func authenticate(options: [String: Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+    public func authenticate(options: [String: Any], window: ASPresentationAnchor, preferImmediatelyAvailableCredentials: Bool = false, logger: Logger? = nil, completion: @escaping (Result<[String: Any], Error>) -> Void) {
         self.logger = logger
         logger?.d("Fido: Starting authentication")
         self.window = window
@@ -157,7 +172,13 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
 
             var requests: [ASAuthorizationRequest] = [assertionRequest]
 
-            if let allowCredentials = authenticationOptions.allowCredentials, !allowCredentials.isEmpty {
+            // A hardware security key is never "immediately available on the local device", so a
+            // security-key assertion request is incompatible with .preferImmediatelyAvailableCredentials:
+            // including it would only be suppressed by the system. When the caller opts into local-only
+            // credentials we therefore run a platform-only ceremony, matching the legacy
+            // `FRWebAuthnManager.signInWith` behavior which never built a security-key request.
+            if !preferImmediatelyAvailableCredentials,
+               let allowCredentials = authenticationOptions.allowCredentials, !allowCredentials.isEmpty {
                 let securityKeyProvider = ASAuthorizationSecurityKeyPublicKeyCredentialProvider(relyingPartyIdentifier: authenticationOptions.rpId ?? "")
                 let securityKeyRequest = securityKeyProvider.createCredentialAssertionRequest(challenge: challengeData)
                 securityKeyRequest.userVerificationPreference = ASAuthorizationPublicKeyCredentialUserVerificationPreference(rawValue: authenticationOptions.userVerification?.rawValue ?? "preferred")
@@ -176,9 +197,17 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
                 startTimeout(milliseconds: timeout)
             }
 
-            logger?.d("Fido: Performing authentication requests (\(requests.count) request(s))")
             let authorizationController = makeAuthorizationController(requests: requests)
-            authorizationController.performRequests()
+            if preferImmediatelyAvailableCredentials {
+                // Restrict to locally-available credentials: presents the sign-in sheet only
+                // when a matching passkey exists, otherwise the delegate receives
+                // ASAuthorizationError.canceled with no UI (no QR / nearby-device fallback).
+                logger?.d("Fido: Performing authentication requests (\(requests.count) request(s)), preferring immediately available credentials")
+                authorizationController.performRequests(options: .preferImmediatelyAvailableCredentials)
+            } else {
+                logger?.d("Fido: Performing authentication requests (\(requests.count) request(s))")
+                authorizationController.performRequests()
+            }
         } catch {
             logger?.e("Fido: Authentication failed", error: error)
             completion(.failure(error))
@@ -284,8 +313,15 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     private func createPlatformRequest(from options: PublicKeyCredentialCreationOptions, challenge: Data, userID: Data) -> ASAuthorizationRequest {
         let relyingParty = options.rp.id ?? ""
         let provider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier: relyingParty)
-        let request: ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest = provider.createCredentialRegistrationRequest(challenge: challenge, name: options.user.name, userID: userID)
-        
+        let name: String
+        if options.user.displayName.isEmpty {
+            name = options.user.name
+        } else {
+            name = options.user.displayName
+        }
+        let request: ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest = provider.createCredentialRegistrationRequest(challenge: challenge, name: name, userID: userID)
+        request.displayName = options.user.displayName
+
         // Map excludeCredentials to ASAuthorizationPlatformPublicKeyCredentialDescriptor
         if let excludeCredentials = options.excludeCredentials {
             if #available(iOS 17.4, macOS 13.5, *) {

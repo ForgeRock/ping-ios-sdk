@@ -69,6 +69,7 @@
 		A525E7B92DD7647200B02C17 /* PingExternalIdPGoogle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B22DD7647200B02C17 /* PingExternalIdPGoogle.framework */; };
 		A525E7BA2DD7647200B02C17 /* PingExternalIdPGoogle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B22DD7647200B02C17 /* PingExternalIdPGoogle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A53B6E5B2F9A659B00B279CE /* ReadOnlyTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53B6E5A2F9A659B00B279CE /* ReadOnlyTextView.swift */; };
+		A53B6E5D2F9A659B00B279CE /* MetadataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53B6E5C2F9A659B00B279CE /* MetadataView.swift */; };
 		A55177322FA502D100E575CF /* BooleanCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55177312FA502D100E575CF /* BooleanCollectorView.swift */; };
 		A5517AB42FB5007B00E575CF /* DeviceFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5517AB32FB5007B00E575CF /* DeviceFlowView.swift */; };
 		A5517AC12FB5007B00E575CF /* ApproveDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5517AC02FB5007B00E575CF /* ApproveDeviceView.swift */; };
@@ -145,6 +146,7 @@
 		SDKS50660005000000000002 /* JsonConfigLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50660005000000000001 /* JsonConfigLoader.swift */; };
 		EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */; };
 		EC0CB5CA2E27AE4C00A82D6C /* JourneyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */; };
+		SDKS51560002000000000002 /* BackchannelAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS51560002000000000001 /* BackchannelAuthView.swift */; };
 		EC0CB5CB2E27AE4C00A82D6C /* JourneyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */; };
 		EC14474B2EA664C300882AF2 /* PingFido.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC1447482EA6647C00882AF2 /* PingFido.framework */; };
 		EC14474C2EA664C300882AF2 /* PingFido.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC1447482EA6647C00882AF2 /* PingFido.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -720,6 +722,7 @@
 		A525E7C62DD7683500B02C17 /* ExternalIdPGoogle.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdPGoogle.xcodeproj; path = ../../ExternalIdPGoogle/ExternalIdPGoogle.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A525E7DC2DD7687800B02C17 /* ExternalIdPApple.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ExternalIdPApple.xcodeproj; path = ../../ExternalIdPApple/ExternalIdPApple.xcodeproj; sourceTree = SOURCE_ROOT; };
 		A53B6E5A2F9A659B00B279CE /* ReadOnlyTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyTextView.swift; sourceTree = "<group>"; };
+		A53B6E5C2F9A659B00B279CE /* MetadataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataView.swift; sourceTree = "<group>"; };
 		A55177312FA502D100E575CF /* BooleanCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanCollectorView.swift; sourceTree = "<group>"; };
 		A5517AB32FB5007B00E575CF /* DeviceFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceFlowView.swift; sourceTree = "<group>"; };
 		A5517AC02FB5007B00E575CF /* ApproveDeviceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApproveDeviceView.swift; sourceTree = "<group>"; };
@@ -791,6 +794,7 @@
 		EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
 		EC0CB5A52E27AD3D00A82D6C /* Journey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Journey.xcodeproj; path = ../../Journey/Journey.xcodeproj; sourceTree = SOURCE_ROOT; };
 		EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyView.swift; sourceTree = "<group>"; };
+		SDKS51560002000000000001 /* BackchannelAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackchannelAuthView.swift; sourceTree = "<group>"; };
 		EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyViewModel.swift; sourceTree = "<group>"; };
 		EC14473D2EA65CCE00882AF2 /* PingFido.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingFido.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC1447402EA6647C00882AF2 /* Fido.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Fido.xcodeproj; path = ../../Fido/Fido.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -1020,6 +1024,7 @@
 				ABCD12340001000100010002 /* TabPicker.swift */,
 				ABCD12340002000200020002 /* EmptyStateView.swift */,
 				EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */,
+				SDKS51560002000000000001 /* BackchannelAuthView.swift */,
 				EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */,
 				A5E9AED52D30393B000533ED /* LoggerView.swift */,
 				A588D0052BF6A0E500F9052A /* LoggerViewModel.swift */,
@@ -1276,6 +1281,7 @@
 			isa = PBXGroup;
 			children = (
 				A53B6E5A2F9A659B00B279CE /* ReadOnlyTextView.swift */,
+				A53B6E5C2F9A659B00B279CE /* MetadataView.swift */,
 				ECA7D60A2F91466A000FB45F /* PollingView.swift */,
 				ECA7D60B2F91466A000FB45F /* QRCodeView.swift */,
 				EC5598012E96799200A07329 /* FidoAuthenticationCollectorView.swift */,
@@ -2106,8 +2112,10 @@
 				A570D5302ECCE49000CBBCCF /* DeviceManagementView.swift in Sources */,
 				A5768D002E283F40000290EE /* NameCallbackView.swift in Sources */,
 				A53B6E5B2F9A659B00B279CE /* ReadOnlyTextView.swift in Sources */,
+				A53B6E5D2F9A659B00B279CE /* MetadataView.swift in Sources */,
 				A5A31CEC2E0A5B4F00ABBEF7 /* ProtectView.swift in Sources */,
 				EC0CB5CA2E27AE4C00A82D6C /* JourneyView.swift in Sources */,
+				SDKS51560002000000000002 /* BackchannelAuthView.swift in Sources */,
 				EC0CB5CB2E27AE4C00A82D6C /* JourneyViewModel.swift in Sources */,
 				A5768D022E283F85000290EE /* PasswordCallbackView.swift in Sources */,
 				EC5597EF2E93EB1700A07329 /* FidoRegistrationCallbackView.swift in Sources */,
@@ -2379,7 +2387,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2416,7 +2424,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2432,7 +2440,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -2448,7 +2456,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -2463,7 +2471,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -2479,7 +2487,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingFido'
-  s.version          = '2.0.0'
+  s.version          = '2.1.0'
   s.summary          = 'PingFido module for the Ping iOS SDK'
   s.description      = <<-DESC
     PingFido module for the Ping iOS SDK
@@ -33,8 +33,8 @@ Pod::Spec.new do |s|
     'Fido' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingLogger', '~> 2.0.0'
-  s.ios.dependency 'PingCommons', '~> 2.0.0'
-  s.ios.dependency 'PingDavinciPlugin', '~> 2.0.0'
-  s.ios.dependency 'PingJourneyPlugin', '~> 2.0.0'
+  s.ios.dependency 'PingLogger', '~> 2.1.0'
+  s.ios.dependency 'PingCommons', '~> 2.1.0'
+  s.ios.dependency 'PingDavinciPlugin', '~> 2.1.0'
+  s.ios.dependency 'PingJourneyPlugin', '~> 2.1.0'
 end

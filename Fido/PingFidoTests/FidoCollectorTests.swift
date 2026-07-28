@@ -3,7 +3,7 @@
 //  FidoCollectorTests.swift
 //  PingFidoTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -123,6 +123,33 @@ class FidoCollectorTests: XCTestCase {
         }
     }
     
+    @MainActor
+    func testFidoAuthenticationCollectorForwardsPreferImmediatelyAvailableCredentials() async {
+        let successResponse: [String: Any] = [
+            FidoConstants.FIELD_RAW_ID: "rawId".data(using: .utf8)!,
+            FidoConstants.FIELD_CLIENT_DATA_JSON: "clientDataJSON".data(using: .utf8)!,
+            FidoConstants.FIELD_AUTHENTICATOR_DATA: "authenticatorData".data(using: .utf8)!,
+            FidoConstants.FIELD_SIGNATURE: "signature".data(using: .utf8)!,
+            FidoConstants.FIELD_USER_HANDLE: "userHandle".data(using: .utf8)!
+        ]
+
+        // Defaults to false, preserving the existing full sign-in behavior (backwards compatible).
+        let defaultMock = MockFido()
+        defaultMock.authenticationResult = .success(successResponse)
+        let defaultCollector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        defaultCollector.fido = defaultMock
+        _ = await defaultCollector.authenticate(window: MockASPresentationAnchor())
+        XCTAssertEqual(defaultMock.capturedPreferImmediatelyAvailableCredentials, false)
+
+        // Explicitly requesting local-only credentials is forwarded to the underlying Fido manager.
+        let preferMock = MockFido()
+        preferMock.authenticationResult = .success(successResponse)
+        let preferCollector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        preferCollector.fido = preferMock
+        _ = await preferCollector.authenticate(window: MockASPresentationAnchor(), preferImmediatelyAvailableCredentials: true)
+        XCTAssertEqual(preferMock.capturedPreferImmediatelyAvailableCredentials, true)
+    }
+
     // MARK: - FidoRegistrationCollector Tests
     
     func testFidoRegistrationCollectorInit() {

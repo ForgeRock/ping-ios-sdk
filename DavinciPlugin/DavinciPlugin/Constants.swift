@@ -129,4 +129,9 @@ public enum Constants {
     public static let enabled = "enabled"
     public static let agreement = "agreement"
     public static let useDynamicAgreement = "useDynamicAgreement"
+
+    // MARK: - SDK Integrator
+    public static let METADATA = "METADATA"
+    public static let payload = "payload"
+    public static let action = "action"
 }

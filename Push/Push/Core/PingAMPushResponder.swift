@@ -184,6 +184,19 @@ public final class PingAMPushResponder: @unchecked Sendable {
             let response = try await httpClient.request(request: request)
             
             guard response.status.isSuccess() else {
+                if response.status == 400
+                    && approve
+                    && notification.pushType == .challenge {
+                    var message = "Number challenge failed."
+                    if let data = response.body,
+                       let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let amMessage = json["message"] as? String, !amMessage.isEmpty {
+                        message = amMessage
+                    }
+                    logger?.e(message, error: nil)
+                    throw PushError.pushNumberChallengeError(message)
+                }
+
                 let bodyDescription = response.body.flatMap { String(data: $0, encoding: .utf8) } ?? "no response body"
                 let message = "Authentication response failed with status code \(response.status): \(bodyDescription)"
                 logger?.e(message, error: nil)

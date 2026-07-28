@@ -172,6 +172,49 @@ let node = await journey.start("Login") { options in
 
 When `verificationUriComplete` is not set, the `OidcModule` proceeds with normal user-delegate setup and no approval POST is made. The cookie name used for the approval POST is taken from `JourneyConfig.cookie`.
 
+### Backchannel Authentication (AM/AIC Transactional Auth)
+
+AM/AIC supports a server-initiated, transactional [backchannel authentication](https://docs.pingidentity.com/pingoneaic/am-authentication/backchannel-authentication.html) flow: a federation gateway calls AM's `/authenticate/backchannel/initialize` endpoint to start a transaction on behalf of the user, and AM responds with a `redirectUri`. The gateway forwards that `redirectUri` to the app, and the app passes it to `journey.start(backchannelUri:configure:)`, which drives the resulting Journey to completion just like any other `start()` call. This flow is distinct from OIDC CIBA and from AM's push-notification MFA — it is AM/AIC's own transactional backchannel mechanism, and only that mechanism is covered here.
+
+```mermaid
+sequenceDiagram
+    participant Gateway as Federation Gateway (backend)
+    participant AM as AM / AIC
+    participant App as Mobile App (Journey SDK)
+
+    Gateway->>AM: POST /authenticate/backchannel/initialize (Journey name, subject, data)
+    AM->>Gateway: { transaction, redirectUri }
+    Gateway->>App: Deliver { transaction, redirectUri } (transport not defined by AM/AIC or the SDK)
+    App->>App: journey.start(backchannelUri: redirectUri)
+    App->>AM: POST /authenticate?authIndexType=transaction&authIndexValue=<uuid>
+    AM->>App: Callback(s) / SuccessNode / ErrorNode
+    Note over Gateway,AM: The gateway may separately poll /authenticate/backchannel/info to check transaction status — the SDK is not involved in that call.
+```
+
+```swift
+// redirectUri is the value the gateway forwarded to the app, e.g.:
+// https://<tenant>/am/UI/Login?realm=%2Falpha&authIndexType=transaction&authIndexValue=<uuid>
+let redirectUri = URL(string: gatewaySuppliedRedirectUri)!
+
+let node = await journey.start(backchannelUri: redirectUri) { options in
+    options.noSession = false
+    options.forceAuth = false
+}
+```
+
+`start(backchannelUri:configure:)` only reads the `authIndexType` and `authIndexValue` query parameters off `redirectUri` — the URI's path and `realm` query parameter (if present) are ignored. The URI's host is validated: it must match `JourneyConfig.serverUrl`'s host (case-insensitively), otherwise `start(backchannelUri:)` returns a `FailureNode(400, ...)` without making any network call. The authenticate request is always sent to `JourneyConfig.serverUrl` + `JourneyConfig.realm`; the SDK never calls the `redirectUri` itself, which typically points at a browser login page rather than an API endpoint. Both `authIndexType` and `authIndexValue` must be present in the URI's query string **and** non-empty, or `start(backchannelUri:)` returns a `FailureNode(400, ...)` without making any network call — the same is true if `JourneyConfig` is missing.
+
+The resulting `Node` is one of the same four types described in "Navigating the Authentication Flow" below: a `ContinueNode` if the Journey needs more input, a `SuccessNode` on completion, a `FailureNode` for the SDK-side validation errors above, or an `ErrorNode` if AM rejects the transaction (for example, an expired, not-found, or already-completed transaction) — `errorNode.message` carries AM's `message` field from the 4xx response.
+
+**AM/AIC configuration.** This document only covers the iOS SDK side; walking through the AM/AIC admin console is out of scope here. At minimum, the server side needs:
+
+- A confidential OAuth 2.0 client for the federation gateway, with the `Client Credentials` grant enabled and the `back_channel_authentication` scope added to the realm's OAuth2 Provider client-registration scope allowlist.
+- A target Journey (e.g. `Login`) for AM to run when the transaction starts.
+
+See [Backchannel authentication](https://docs.pingidentity.com/pingoneaic/am-authentication/backchannel-authentication.html) and [Authenticate endpoint parameters](https://docs.pingidentity.com/pingoneaic/am-authentication/authenticate-endpoint-parameters.html) for the full server-side configuration and the gateway-side REST contract (`/authenticate/backchannel/initialize`, which the gateway calls to obtain the `redirectUri`) — none of which this SDK calls directly.
+
+**Obtaining the `redirectUri`.** In production, the federation gateway is expected to deliver the `{transaction, redirectUri}` payload to the app through whatever channel the gateway integration provides — neither AM/AIC's documentation nor this SDK defines that transport. Today, the `PingExample` sample app only demonstrates this flow with a screen where the `redirectUri` is manually pasted in; there is no deep link, universal link, or push-notification handler wired up in this repository to receive it automatically.
+
 ### Navigating the Authentication Flow
 
 The `start()` method initiates the authentication journey and returns a `Node` instance,

@@ -1,0 +1,90 @@
+# CodeRabbit configuration for ping-ios-sdk
+# https://docs.coderabbit.ai/guides/configure-coderabbit
+---
+language: "en-US"
+
+tone_instructions: >
+  Be concise and direct. Focus on correctness, security, and SDK contract
+  compatibility. Avoid restating what the code already makes clear. Flag
+  issues that would affect public API consumers or break CocoaPods/SPM
+  distribution parity.
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "develop"
+      - "master"
+
+  path_instructions:
+    - path: "**/*.swift"
+      instructions: >
+        This is a Swift 6.0 SDK with strict concurrency enabled. Review for:
+        - Swift 6 concurrency correctness: `Sendable` conformances, actor
+          isolation, `@MainActor` placement, and `nonisolated` usage.
+        - Proper use of `async`/`await` and structured concurrency (avoid
+          bare `Task { }` detachment where a structured alternative works).
+        - External IdP and PingOneSignals symbols must be guarded with
+          `#if canImport(...)` because they are conditionally linked with
+          `.when(platforms: [.iOS])` in Package.swift.
+        - `StorageDelegate` conformances must implement all protocol
+          requirements; check for missing methods.
+        - New public API must be documented with doc-comments (`///`).
+        - Avoid force-unwraps (`!`) and force-casts (`as!`) in non-test code.
+        - Unit tests: assert with `XCTAssertEqual`/`XCTAssertNotNil` etc.,
+          not silent `guard` exits.
+
+    - path: "**/*.podspec"
+      instructions: >
+        Every module has a matching `Ping<Module>.podspec` at the repo root
+        that must stay in sync with `Package.swift`. Verify:
+        - `s.version`, `s.dependency` versions, and source files globs match
+          the SPM target in `Package.swift`.
+        - `s.swift_versions` matches the minimum Swift version in the SPM
+          manifest (`6.0`).
+        - Any new file groups or conditional targets present in SPM are
+          reflected here.
+
+    - path: "Package.swift"
+      instructions: >
+        Review for SPM manifest correctness:
+        - Platform constraints (iOS 16.0+, macOS 13.0+).
+        - `.when(platforms: [.iOS])` on vendor dependencies
+          (PingOneSignals, GoogleSignIn, Facebook, ReCaptchaEnterprise).
+        - New targets must have a corresponding `.podspec` and test target.
+        - `swift-tools-version: 6.0` is required — do not downgrade.
+
+    - path: ".github/workflows/**"
+      instructions: >
+        Review GitHub Actions workflows for:
+        - Hard-coded secrets or credentials (must use `${{ secrets.* }}`).
+
+    - path: "SampleApps/**"
+      instructions: >
+        Sample app code is for demonstration only — it is not part of the
+        public SDK surface. Lower the review bar: flag security issues
+        (hard-coded credentials, real tokens) but do not require production-
+        grade error handling or full test coverage.
+
+    - path: "**/*Tests*/**"
+      instructions: >
+        Test files: ensure every new public API change is covered by at least
+        one unit test. Flag tests that use `sleep` or wall-clock delays
+        instead of proper async/await or expectations. Mock/stub types should
+        not be exported (`internal` or `private` scope).
+
+  finishing_touches:
+    docstrings:
+      enabled: true
+    unit_tests:
+      enabled: false
+
+chat:
+  auto_reply: true

@@ -65,7 +65,7 @@ targets: [
 dependencies: [
     .package(
         url: "https://github.com/ForgeRock/ping-ios-sdk",
-        from: "2.0.0"
+        from: "2.1.0"
     )
 ],
 targets: [
