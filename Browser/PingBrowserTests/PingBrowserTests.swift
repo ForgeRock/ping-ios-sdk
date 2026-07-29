@@ -96,6 +96,22 @@ final class HttpsCallbackComponentsTests: XCTestCase {
     func testNilRedirectUriReturnsNil() {
         XCTAssertNil(BrowserLauncher.httpsCallbackComponents(from: nil))
     }
+
+    // The parsed overload is what `asWebAuthenticationSession` uses, so the string-based
+    // classification above must stay equivalent to feeding it a single pre-parsed value.
+
+    func testParsedOverloadMatchesStringOverload() {
+        for redirectUri in ["https://www.mouser.com/auth/callback", "https://example.com", "myapp://callback", "http://example.com/cb", "https://"] {
+            let fromString = BrowserLauncher.httpsCallbackComponents(from: redirectUri)
+            let fromParsed = BrowserLauncher.httpsCallbackComponents(fromParsed: URLComponents(string: redirectUri))
+            XCTAssertEqual(fromString?.host, fromParsed?.host, "host mismatch for \(redirectUri)")
+            XCTAssertEqual(fromString?.path, fromParsed?.path, "path mismatch for \(redirectUri)")
+        }
+    }
+
+    func testParsedOverloadWithNilComponentsReturnsNil() {
+        XCTAssertNil(BrowserLauncher.httpsCallbackComponents(fromParsed: nil))
+    }
 }
 
 // MARK: - BrowserMode Tests

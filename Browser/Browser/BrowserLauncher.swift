@@ -246,8 +246,21 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     ///   (an empty path is normalized to `"/"`); `nil` for a `nil` input, a non-parseable string,
     ///   a custom scheme, an `http` scheme, or an `https` URL with no host.
     static func httpsCallbackComponents(from redirectUri: String?) -> (host: String, path: String)? {
-        guard let redirectUri = redirectUri,
-              let components = URLComponents(string: redirectUri),
+        guard let redirectUri = redirectUri else { return nil }
+        return httpsCallbackComponents(fromParsed: URLComponents(string: redirectUri))
+    }
+
+    /// Classifies an already-parsed redirect URI for use as an OS-brokered
+    /// `ASWebAuthenticationSession` https callback.
+    ///
+    /// Callers that also need the scheme can parse `URLComponents` once and feed it to both checks,
+    /// avoiding a second parse of the same string (and any risk of two parsers disagreeing).
+    /// - Parameter components: The parsed redirect URI, if it was parseable.
+    /// - Returns: `(host, path)` when `components` describes an `https` URL with a host
+    ///   (an empty path is normalized to `"/"`); `nil` for `nil`, a custom scheme, an `http`
+    ///   scheme, or an `https` URL with no host.
+    static func httpsCallbackComponents(fromParsed components: URLComponents?) -> (host: String, path: String)? {
+        guard let components = components,
               components.scheme?.lowercased() == "https",
               let host = components.host, !host.isEmpty else {
             return nil
@@ -442,8 +455,11 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
             // use. Only a `https` scheme is eligible for the OS-brokered `Callback.https`
             // interception; a custom scheme, `http`, or a nil/non-parseable `redirectUri` all take
             // the legacy `callbackURLScheme:` initializer, byte-for-byte unchanged from today.
-            let rawScheme = URLComponents(string: redirectUri ?? "")?.scheme?.lowercased()
-            let httpsComponents = BrowserLauncher.httpsCallbackComponents(from: redirectUri)
+            // Parse once and derive both the scheme check and the callback components from the same
+            // `URLComponents` value, so the two classifications can never disagree.
+            let redirectComponents = redirectUri.flatMap { URLComponents(string: $0) }
+            let rawScheme = redirectComponents?.scheme?.lowercased()
+            let httpsComponents = BrowserLauncher.httpsCallbackComponents(fromParsed: redirectComponents)
 
             // Both branches below construct a plain `ASWebAuthenticationSession` instance —
             // `Callback.https` is an initializer overload, not a subclass — so `reset()`'s

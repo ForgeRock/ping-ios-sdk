@@ -51,7 +51,10 @@ public class WebModule {
                 // Return the authorization code response
                 return await URLSessionHttpResponse(request: request, body: WebModule.body(code: code), httpURLResponse: HTTPURLResponse())
             } catch {
-                throw OidcError.authorizeError(message: "Browser authorization failed: \(error.localizedDescription)")
+                // Preserve the underlying error (e.g. `BrowserError.httpsCallbackUnsupportedOS`,
+                // `BrowserError.invalidHTTPSRedirectConfiguration`) as `cause` so callers can
+                // inspect it, rather than flattening it into the message only.
+                throw OidcError.authorizeError(cause: error, message: "Browser authorization failed: \(error.localizedDescription)")
             }
         }
         
