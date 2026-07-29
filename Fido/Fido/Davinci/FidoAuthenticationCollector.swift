@@ -129,6 +129,7 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
             ]
             
             logger.d("assertionValue object created successfully")
+            self.errorCode = nil
             self.assertionValue = newAssertionValue // Store the value (side effect)
             
             // 4. Return success with the constructed assertionValue

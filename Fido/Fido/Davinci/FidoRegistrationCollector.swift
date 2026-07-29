@@ -119,6 +119,7 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
             ]
             
             logger.d("attestationValue object created successfully")
+            self.errorCode = nil
             self.attestationValue = newAttestationValue // Store the value (side effect)
             
             // 4. Return success with the constructed attestationValue
