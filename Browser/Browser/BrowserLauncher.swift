@@ -482,6 +482,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
                         self.loginContinuation?.resume(throwing: BrowserError.httpsCallbackUnsupportedOS)
                         self.loginContinuation = nil
                         self.logger.e("https redirect URI requires iOS 17.4+/macOS 14.4+ for .authSession/.ephemeralAuthSession", error: nil)
+                        self.state = .closing
                         self.cleanup()
                         return
                     }
@@ -491,6 +492,7 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
                     self.loginContinuation?.resume(throwing: BrowserError.invalidHTTPSRedirectConfiguration)
                     self.loginContinuation = nil
                     self.logger.e("https redirect URI has no derivable host; cannot construct an OS-brokered callback", error: nil)
+                    self.state = .closing
                     self.cleanup()
                     return
                 }
