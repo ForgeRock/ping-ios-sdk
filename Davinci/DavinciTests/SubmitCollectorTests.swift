@@ -45,4 +45,15 @@ final class SubmitCollectorTests: XCTestCase {
         submitCollector.value = "submit2"
         XCTAssertEqual("submit2", submitCollector.payload())
     }
+
+    func testActionKeyIsNilWhenValueEmpty() {
+        let submitCollector = SubmitCollector(with: ["key": "submitBtn"])
+        XCTAssertNil(submitCollector.actionKey)
+    }
+
+    func testActionKeyIsIdWhenValueSet() {
+        let submitCollector = SubmitCollector(with: ["key": "submitBtn"])
+        submitCollector.value = "submitBtn"
+        XCTAssertEqual("submitBtn", submitCollector.actionKey)
+    }
 }

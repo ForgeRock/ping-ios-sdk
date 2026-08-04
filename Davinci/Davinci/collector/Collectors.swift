@@ -35,10 +35,8 @@ extension Collectors {
         }
         // Second pass: fall back to ActionKeyProvider-based event types (e.g. FIDO errors).
         for collector in self {
-            if let submittable = collector as? Submittable {
-                if collector.payload() != nil {
-                    return submittable.eventType()
-                }
+            if let submittable = collector as? any Submittable, collector.payload() != nil {
+                return submittable.eventType()
             }
         }
         return nil
@@ -55,13 +53,9 @@ extension Collectors {
         var formData: [String: Any] = [:]
         for collector in self {
             switch collector {
-            case let collector as SubmitCollector:
-                if collector.value.isEmpty == false {
-                    jsonObject[Constants.actionKey] = collector.id
-                }
-            case let collector as FlowCollector:
-                if collector.value.isEmpty == false {
-                    jsonObject[Constants.actionKey] = collector.id
+            case let collector as (any ActionKeyProvider) where collector is SubmitCollector || collector is FlowCollector:
+                if let key = collector.actionKey {
+                    jsonObject[Constants.actionKey] = key
                 }
             case let collector as MetadataCollector:
                 if let payload = collector.anyPayload() {

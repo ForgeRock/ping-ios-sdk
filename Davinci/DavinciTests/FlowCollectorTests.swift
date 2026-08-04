@@ -61,4 +61,15 @@ class FlowCollectorTests: XCTestCase {
         flowCollector.value = "value2"
         XCTAssertEqual("value2", flowCollector.payload())
     }
+
+    func testActionKeyIsNilWhenValueEmpty() {
+        let flowCollector = FlowCollector(with: ["key": "flowBtn"])
+        XCTAssertNil(flowCollector.actionKey)
+    }
+
+    func testActionKeyIsIdWhenValueSet() {
+        let flowCollector = FlowCollector(with: ["key": "flowBtn"])
+        flowCollector.value = "flowBtn"
+        XCTAssertEqual("flowBtn", flowCollector.actionKey)
+    }
 }

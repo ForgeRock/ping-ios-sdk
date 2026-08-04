@@ -17,13 +17,15 @@ import PingOrchestrate
 ///
 /// This class is used to handle user interactions that trigger a flow action,
 /// like navigating to a different part of the flow.
-public class FlowCollector: SingleValueCollector, Submittable, Closeable, @unchecked Sendable {
-    
+public class FlowCollector: SingleValueCollector, Submittable, ActionKeyProvider, Closeable, @unchecked Sendable {
+
+    public var actionKey: String? { value.isEmpty ? nil : id }
+
     /// Resets the collector's state by clearing its value.
     public func close() {
         self.value = ""
     }
-    
+
     /// Returns the event type for this collector.
     /// - Returns: A string representing the event type, which is "action".
     public func eventType() -> String {
