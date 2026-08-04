@@ -39,6 +39,8 @@ public class MetadataCollector: AnyFieldCollector, Submittable, ActionKeyProvide
 
     public var id: String { key }
 
+    /// The action key to include in the submission payload.
+    /// Returns the collector's `id` once a result has been set via `setResult(_:)` or `setError(code:message:)`, `nil` otherwise.
     public var actionKey: String? { result != nil ? id : nil }
 
     /// The form field key. Per spec always `"sdkMetadata"`.
