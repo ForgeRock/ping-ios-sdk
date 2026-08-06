@@ -68,12 +68,12 @@
 		AA4785031F0000000000AA01 /* DaVinciDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4785021F0000000000AA01 /* DaVinciDeviceTests.swift */; };
 		BB4928012F0900000000BB01 /* ReadOnlyTextCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */; };
 		BB4928032F0900000000BB01 /* ReadOnlyTextCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928022F0900000000BB01 /* ReadOnlyTextCollectorTests.swift */; };
-		CC5143012F0000000000CC01 /* ImageCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5143002F0000000000CC01 /* ImageCollector.swift */; };
-		CC5143032F0000000000CC01 /* ImageCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5143022F0000000000CC01 /* ImageCollectorTests.swift */; };
 		BB4928052F0900000000BB01 /* MetadataCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928042F0900000000BB01 /* MetadataCollector.swift */; };
 		BB4928072F0900000000BB01 /* MetadataCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4928062F0900000000BB01 /* MetadataCollectorTests.swift */; };
 		BBBBBBBB00000001FAA0E2E0 /* DaVinciPARE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBBBBBB00000000FAA0E2E0 /* DaVinciPARE2ETest.swift */; };
 		BBBBBBBB00000003FAA0E2E0 /* RecordingHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBBBBBB00000002FAA0E2E0 /* RecordingHttpClient.swift */; };
+		CC5143012F0000000000CC01 /* ImageCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5143002F0000000000CC01 /* ImageCollector.swift */; };
+		CC5143032F0000000000CC01 /* ImageCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC5143022F0000000000CC01 /* ImageCollectorTests.swift */; };
 		DA0000022F0000000000DA01 /* DeviceAuthorizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0000012F0000000000DA01 /* DeviceAuthorizationTests.swift */; };
 		EC5C81C92ECF7A1700C91570 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */; };
 		EC5C81CA2ECF7A1700C91570 /* PingDavinciPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -91,6 +91,8 @@
 		SDKS50660003000000000002 /* DaVinciJsonConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50660003000000000001 /* DaVinciJsonConfigTests.swift */; };
 		SDKS50680002000000000002 /* DaVinciJsonConfigE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50680002000000000001 /* DaVinciJsonConfigE2ETest.swift */; };
 		SDKS50680004000000000002 /* DeviceClientJsonConfigE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50680004000000000001 /* DeviceClientJsonConfigE2ETest.swift */; };
+		SDKS52810001000000000002 /* MetadataCollectorE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS52810001000000000001 /* MetadataCollectorE2ETest.swift */; };
+		SDKS52810002000000000002 /* ImageCollectorE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS52810002000000000001 /* ImageCollectorE2ETest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -180,12 +182,12 @@
 		AA4785021F0000000000AA01 /* DaVinciDeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciDeviceTests.swift; sourceTree = "<group>"; };
 		BB4928002F0900000000BB01 /* ReadOnlyTextCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyTextCollector.swift; sourceTree = "<group>"; };
 		BB4928022F0900000000BB01 /* ReadOnlyTextCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadOnlyTextCollectorTests.swift; sourceTree = "<group>"; };
-		CC5143002F0000000000CC01 /* ImageCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollector.swift; sourceTree = "<group>"; };
-		CC5143022F0000000000CC01 /* ImageCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectorTests.swift; sourceTree = "<group>"; };
 		BB4928042F0900000000BB01 /* MetadataCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCollector.swift; sourceTree = "<group>"; };
 		BB4928062F0900000000BB01 /* MetadataCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCollectorTests.swift; sourceTree = "<group>"; };
 		BBBBBBBB00000000FAA0E2E0 /* DaVinciPARE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciPARE2ETest.swift; sourceTree = "<group>"; };
 		BBBBBBBB00000002FAA0E2E0 /* RecordingHttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordingHttpClient.swift; path = ../Network/NetworkTests/RecordingHttpClient.swift; sourceTree = SOURCE_ROOT; };
+		CC5143002F0000000000CC01 /* ImageCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollector.swift; sourceTree = "<group>"; };
+		CC5143022F0000000000CC01 /* ImageCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectorTests.swift; sourceTree = "<group>"; };
 		DA0000012F0000000000DA01 /* DeviceAuthorizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthorizationTests.swift; sourceTree = "<group>"; };
 		EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinciPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81FB2ED0CAA100C91570 /* Collectors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collectors.swift; sourceTree = "<group>"; };
@@ -204,6 +206,8 @@
 		SDKS50660003000000000001 /* DaVinciJsonConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciJsonConfigTests.swift; sourceTree = "<group>"; };
 		SDKS50680002000000000001 /* DaVinciJsonConfigE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciJsonConfigE2ETest.swift; sourceTree = "<group>"; };
 		SDKS50680004000000000001 /* DeviceClientJsonConfigE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceClientJsonConfigE2ETest.swift; sourceTree = "<group>"; };
+		SDKS52810001000000000001 /* MetadataCollectorE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCollectorE2ETest.swift; sourceTree = "<group>"; };
+		SDKS52810002000000000001 /* ImageCollectorE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectorE2ETest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -331,6 +335,8 @@
 				959249A82D405A4600A6DA9C /* FormFieldsTests.swift */,
 				95C256782DF22BFB004266AB /* MFADeviceTests.swift */,
 				FA130AA38471485588EED6A1 /* PollingCollectorIntegrationTests.swift */,
+				SDKS52810001000000000001 /* MetadataCollectorE2ETest.swift */,
+				SDKS52810002000000000001 /* ImageCollectorE2ETest.swift */,
 				BBBBBBBB00000002FAA0E2E0 /* RecordingHttpClient.swift */,
 			);
 			path = "integration tests";
@@ -551,6 +557,8 @@
 				A5EFAA082D3F30E600F771FE /* LabelCollectorTests.swift in Sources */,
 				959249A92D405A4600A6DA9C /* FormFieldsTests.swift in Sources */,
 				8FE3EB1B92044038A76D2CB3 /* PollingCollectorIntegrationTests.swift in Sources */,
+				SDKS52810001000000000002 /* MetadataCollectorE2ETest.swift in Sources */,
+				SDKS52810002000000000002 /* ImageCollectorE2ETest.swift in Sources */,
 				DA0000022F0000000000DA01 /* DeviceAuthorizationTests.swift in Sources */,
 				A5EFAA142D3F51CC00F771FE /* TextCollectorTests.swift in Sources */,
 				A5EFAA122D3F518B00F771FE /* SubmitCollectorTests.swift in Sources */,
