@@ -20,9 +20,11 @@ public struct FidoConstants {
     public static let ACTION_AUTHENTICATE = "AUTHENTICATE"
 
     // MARK: - Event Types
-    
+
     /// Event type for submitting a FIDO response.
     public static let EVENT_TYPE_SUBMIT = "submit"
+    /// Event type for reporting a FIDO error back to the DaVinci server.
+    public static let EVENT_TYPE_ACTION = "action"
 
     // MARK: - JSON Fields
     // Key field
@@ -158,8 +160,8 @@ public struct FidoConstants {
     public static let WEB_AUTHN_OUTCOME = "webAuthnOutcome"
 
     // MARK: - Error Types
-    
     /// An unsupported error type.
+    @available(*, deprecated, renamed: "ERROR_NOT_SUPPORTED")
     public static let ERROR_UNSUPPORTED = "unsupported"
     /// A timeout error type.
     public static let ERROR_TIMEOUT = "TimeoutError"

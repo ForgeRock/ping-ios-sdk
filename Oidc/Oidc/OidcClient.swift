@@ -11,8 +11,9 @@
 
 import Foundation
 import PingLogger
-import PingOrchestrate
 import PingNetwork
+import PingOrchestrate
+import PingStorage
 
 /// Class representing an OpenID Connect client.
 /// - Property pkce: PKCE  object used for the Authorization call.
@@ -115,23 +116,44 @@ public class OidcClient {
         
         config.logger.i("Getting access token")
         do {
-            if let cached = try await config.storage.get() {
-                if !cached.isExpired(threshold: config.refreshThreshold) {
-                    config.logger.i("Token is not expired. Returning cached token.")
-                    return .success(cached)
-                }
-                config.logger.i("Token is expired. Attempting to refresh.")
-                if let cachedefreshToken = cached.refreshToken {
-                    do {
-                        let refreshedToken = try await refreshToken(cachedefreshToken)
-                        return .success(refreshedToken)
-                    } catch {
-                        config.logger.e("Failed to refresh token. Revoking token and re-authenticating.", error: error)
-                        await revoke(cached)
+            do {
+                if let cached = try await config.storage.get() {
+                    if !cached.isExpired(threshold: config.refreshThreshold) {
+                        config.logger.i("Token is not expired. Returning cached token.")
+                        return .success(cached)
+                    }
+                    config.logger.i("Token is expired. Attempting to refresh.")
+                    if let cachedefreshToken = cached.refreshToken {
+                        do {
+                            let refreshedToken = try await refreshToken(cachedefreshToken)
+                            return .success(refreshedToken)
+                        } catch {
+                            config.logger.e("Failed to refresh token. Revoking token and re-authenticating.", error: error)
+                            await revoke(cached)
+                        }
                     }
                 }
+            } catch let error where error is EncryptorError || error is DecodingError {
+                // The cached bytes are unreadable — either the Secure Enclave key did not
+                // migrate with an iCloud/Quick Start device transfer (EncryptorError), or the
+                // stored payload is corrupt / from an incompatible version (DecodingError).
+                // Clear the unreadable token and fall through to re-authenticate. Other errors
+                // (e.g. errSecInteractionNotAllowed while the device is locked) are transient
+                // and must NOT delete a potentially valid token — they propagate to the outer
+                // catch unchanged.
+                config.logger.w("Cached token is unreadable (device migration or corrupt payload). Clearing corrupted token and re-authenticating.", error: error)
+                do {
+                    try await config.storage.delete()
+                } catch {
+                    // If we cannot clear the corrupted token, re-authenticating would persist a
+                    // new token over (or alongside) the unreadable one and the next token() call
+                    // would loop on the same failure. Surface a real error instead of looping.
+                    config.logger.e("Failed to clear unreadable token. Aborting to avoid a silent retry loop.", error: error)
+                    return .failure(OidcError.authorizeError(cause: error))
+                }
+                // fall through to re-authenticate below
             }
-            
+
             // Authenticate the user
             guard let agent = config.agent else {
                 return .failure(OidcError.authorizeError(message: "Agent not configured"))
@@ -191,7 +213,21 @@ public class OidcClient {
     private func revoke(_ token: Token? = nil) async {
         var accessToken = token
         if accessToken == nil {
-            accessToken = try? await config.storage.get()
+            do {
+                accessToken = try await config.storage.get()
+            } catch where error is EncryptorError || error is DecodingError {
+                // The stored token is permanently unreadable (Secure Enclave key did not migrate,
+                // or the payload is corrupt). There is nothing to revoke on the server, so just
+                // clear the dead entry.
+                config.logger.w("Stored token is unreadable. Clearing corrupted token.", error: error)
+                try? await config.storage.delete()
+                return
+            } catch {
+                // Transient failure (e.g. errSecInteractionNotAllowed while the device is locked).
+                // The token may well be valid — do NOT delete it. Skip this revoke attempt.
+                config.logger.w("Failed to read token for revocation. Leaving stored token intact.", error: error)
+                return
+            }
         }
         if let token = accessToken {
             do {

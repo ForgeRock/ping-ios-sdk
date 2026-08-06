@@ -1,16 +1,18 @@
-
 //
 //  FidoCollectorTests.swift
 //  PingFidoTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
 //
 
 import XCTest
+import AuthenticationServices
 @testable import PingFido
+@testable import PingDavinci
+@testable import PingDavinciPlugin
 internal import PingCommons
 
 class FidoCollectorTests: XCTestCase {
@@ -123,6 +125,125 @@ class FidoCollectorTests: XCTestCase {
         }
     }
     
+    // MARK: - Error Propagation Tests
+
+    func testHandleErrorSetsDOMExceptionNameForFidoErrors() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+
+        let cases: [(FidoError, String)] = [
+            (.timeout, FidoConstants.ERROR_TIMEOUT),
+            (.unsupportedAction("msg"), FidoConstants.ERROR_NOT_SUPPORTED),
+            (.invalidResponse, FidoConstants.ERROR_INVALID_STATE),
+            (.invalidChallenge, FidoConstants.ERROR_INVALID_STATE),
+            (.invalidWindow, FidoConstants.ERROR_UNKNOWN),
+            (.invalidAction, FidoConstants.ERROR_NOT_SUPPORTED),
+            (.missingParameters("msg"), FidoConstants.ERROR_NOT_SUPPORTED),
+        ]
+
+        for (fidoError, expectedCode) in cases {
+            collector.errorCode = nil
+            _ = collector.handleError(error: fidoError)
+            XCTAssertEqual(collector.errorCode, expectedCode, "Expected errorCode \(expectedCode) for \(fidoError)")
+        }
+    }
+
+    func testHandleErrorSetsDOMExceptionNameForASAuthorizationErrors() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+
+        let cases: [(Int, String)] = [
+            (ASAuthorizationError.canceled.rawValue, FidoConstants.ERROR_NOT_ALLOWED),
+            (ASAuthorizationError.failed.rawValue, FidoConstants.ERROR_NOT_ALLOWED),
+            (ASAuthorizationError.invalidResponse.rawValue, FidoConstants.ERROR_INVALID_STATE),
+            (ASAuthorizationError.notHandled.rawValue, FidoConstants.ERROR_NOT_SUPPORTED),
+            (ASAuthorizationError.unknown.rawValue, FidoConstants.ERROR_UNKNOWN),
+        ]
+
+        for (code, expectedCode) in cases {
+            collector.errorCode = nil
+            let nsError = NSError(domain: ASAuthorizationError.errorDomain, code: code, userInfo: nil)
+            _ = collector.handleError(error: nsError)
+            XCTAssertEqual(collector.errorCode, expectedCode, "Expected errorCode \(expectedCode) for ASAuthorizationError code \(code)")
+        }
+    }
+
+    func testEventTypeIsSubmitByDefault() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        XCTAssertEqual(collector.eventType(), FidoConstants.EVENT_TYPE_SUBMIT)
+    }
+
+    func testEventTypeIsActionAfterError() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        collector.errorCode = FidoConstants.ERROR_NOT_ALLOWED
+        XCTAssertEqual(collector.eventType(), FidoConstants.EVENT_TYPE_ACTION)
+    }
+
+    func testPayloadIsNonNilAfterError() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        XCTAssertNil(collector.payload())
+
+        collector.errorCode = FidoConstants.ERROR_NOT_ALLOWED
+        let payload = collector.payload()
+        XCTAssertNotNil(payload)
+        XCTAssertTrue(payload?.isEmpty == true, "Error-path payload must be empty dict so formData stays empty")
+    }
+
+    func testActionKeyMatchesErrorCode() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        XCTAssertNil(collector.actionKey)
+
+        collector.errorCode = FidoConstants.ERROR_NOT_ALLOWED
+        XCTAssertEqual(collector.actionKey, FidoConstants.ERROR_NOT_ALLOWED)
+    }
+
+    func testAsJsonContainsActionKeyOnAuthenticationError() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        _ = collector.handleError(error: NSError(domain: ASAuthorizationError.errorDomain, code: ASAuthorizationError.canceled.rawValue, userInfo: nil))
+
+        let collectors: Collectors = [collector]
+        let json = collectors.asJson()
+
+        XCTAssertEqual(json["actionKey"] as? String, FidoConstants.ERROR_NOT_ALLOWED)
+        XCTAssertTrue((json["formData"] as? [String: Any])?.isEmpty == true)
+    }
+
+    func testAsJsonContainsActionKeyOnRegistrationError() {
+        let collector = FidoRegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
+        _ = collector.handleError(error: FidoError.timeout)
+
+        let collectors: Collectors = [collector]
+        let json = collectors.asJson()
+
+        XCTAssertEqual(json["actionKey"] as? String, FidoConstants.ERROR_TIMEOUT)
+        XCTAssertTrue((json["formData"] as? [String: Any])?.isEmpty == true)
+    }
+
+    @MainActor
+    func testFidoAuthenticationCollectorForwardsPreferImmediatelyAvailableCredentials() async {
+        let successResponse: [String: Any] = [
+            FidoConstants.FIELD_RAW_ID: "rawId".data(using: .utf8)!,
+            FidoConstants.FIELD_CLIENT_DATA_JSON: "clientDataJSON".data(using: .utf8)!,
+            FidoConstants.FIELD_AUTHENTICATOR_DATA: "authenticatorData".data(using: .utf8)!,
+            FidoConstants.FIELD_SIGNATURE: "signature".data(using: .utf8)!,
+            FidoConstants.FIELD_USER_HANDLE: "userHandle".data(using: .utf8)!
+        ]
+
+        // Defaults to false, preserving the existing full sign-in behavior (backwards compatible).
+        let defaultMock = MockFido()
+        defaultMock.authenticationResult = .success(successResponse)
+        let defaultCollector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        defaultCollector.fido = defaultMock
+        _ = await defaultCollector.authenticate(window: MockASPresentationAnchor())
+        XCTAssertEqual(defaultMock.capturedPreferImmediatelyAvailableCredentials, false)
+
+        // Explicitly requesting local-only credentials is forwarded to the underlying Fido manager.
+        let preferMock = MockFido()
+        preferMock.authenticationResult = .success(successResponse)
+        let preferCollector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        preferCollector.fido = preferMock
+        _ = await preferCollector.authenticate(window: MockASPresentationAnchor(), preferImmediatelyAvailableCredentials: true)
+        XCTAssertEqual(preferMock.capturedPreferImmediatelyAvailableCredentials, true)
+    }
+
     // MARK: - FidoRegistrationCollector Tests
     
     func testFidoRegistrationCollectorInit() {

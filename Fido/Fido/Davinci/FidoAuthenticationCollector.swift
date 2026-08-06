@@ -22,9 +22,10 @@ import PingCommons
 /// A collector for FIDO authentication within a DaVinci flow.
 public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unchecked Sendable {
     
-    /// Resets the collector's state by clearing the assertion value.
+    /// Resets the collector's state by clearing the assertion value and any recorded error code.
     public func close() {
         self.assertionValue = nil
+        self.errorCode = nil
     }
     
     /// The public key credential request options provided by the server.
@@ -49,8 +50,13 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
     
     /// The payload to be sent to the DaVinci server.
     ///
-    /// - Returns: A dictionary containing the assertion value, or `nil` if authentication has not been completed.
+    /// Returns an empty dictionary when a FIDO error has occurred (non-nil sentinel so
+    /// `Collectors.eventType()` picks up this collector and the `actionKey` error path fires).
+    /// Returns `nil` when no FIDO operation has been completed yet.
     override public func payload() -> [String: Any]? {
+        if errorCode != nil {
+            return [:]
+        }
         guard let assertionValue = assertionValue else {
             logger.d("No assertion value available, returning null payload")
             return nil
@@ -64,20 +70,25 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
     ///
     /// This method uses the `fido.authenticate` method to perform the authentication ceremony.
     /// On success, it constructs and stores the `assertionValue`, then returns it.
-    /// - Parameter window: The `ASPresentationAnchor` to present the FIDO UI.
+    /// - Parameters:
+    ///   - window: The `ASPresentationAnchor` to present the FIDO UI.
+    ///   - preferImmediatelyAvailableCredentials: When `true`, restricts the ceremony to
+    ///     credentials already present on this device — no QR / nearby-device fallback is
+    ///     shown, and the call fails (cancelled) when no local passkey exists. Defaults to
+    ///     `false`, preserving the existing full sign-in behavior.
     /// - Returns: A dictionary representing the `assertionValue`.
     /// - Throws: An error if the authentication process fails or the response is invalid.
     @MainActor
-    public func authenticate(window: ASPresentationAnchor) async -> Result<[String: Any], Error> {
+    public func authenticate(window: ASPresentationAnchor, preferImmediatelyAvailableCredentials: Bool = false) async -> Result<[String: Any], Error> {
         logger.d("Starting FIDO authentication (async Result)")
-        
+
         do {
             // 1. Wrap the closure-based fido.authenticate in a continuation
             //    This still throws internally within the 'do' block if the continuation resumes with an error.
             let response: [String: Any] = try await withUnsafeThrowingContinuation { continuation in
                 // Pass the workflow logger so the underlying ASAuthorization ceremony
                 // emits log messages through the same logger as the surrounding flow.
-                fido.authenticate(options: publicKeyCredentialRequestOptions, window: window, logger: logger) { [continuation] result in
+                fido.authenticate(options: publicKeyCredentialRequestOptions, window: window, preferImmediatelyAvailableCredentials: preferImmediatelyAvailableCredentials, logger: logger) { [continuation] result in
                     Task {
                         await MainActor.run {
                             nonisolated(unsafe) let sendableResult = result
@@ -118,6 +129,7 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
             ]
             
             logger.d("assertionValue object created successfully")
+            self.errorCode = nil
             self.assertionValue = newAssertionValue // Store the value (side effect)
             
             // 4. Return success with the constructed assertionValue

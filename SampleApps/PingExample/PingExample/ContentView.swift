@@ -68,7 +68,7 @@ enum MenuSection: CaseIterable, Identifiable {
     var items: [MenuItem] {
         switch self {
         case .authentication:
-            return [.davinci, .journey, .oidc, .device]
+            return [.davinci, .journey, .backchannel, .oidc, .device]
         case .userManagement:
             return [.token, .user, .deviceManagement, .logout]
         case .mfa:
@@ -83,6 +83,7 @@ enum MenuSection: CaseIterable, Identifiable {
 enum MenuItem: String, CaseIterable, Identifiable {
     case davinci = "DaVinci"
     case journey = "Journey"
+    case backchannel = "Backchannel"
     case oidc = "OIDC (Web)"
     case device = "Device Flow"
     case oathAccounts = "OATH"
@@ -113,6 +114,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         switch self {
         case .davinci: return "key.fill"
         case .journey: return "map.fill"
+        case .backchannel: return "arrow.left.arrow.right.circle.fill"
         case .oidc: return "lock.shield.fill"
         case .device: return "tv"
         case .oathAccounts: return "key.viewfinder"
@@ -143,6 +145,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         switch self {
         case .davinci: return "DaVinci Flow"
         case .journey: return "Journey Flow"
+        case .backchannel: return "Backchannel Auth"
         case .oidc: return "OIDC (Web) Login"
         case .device: return "Device Flow"
         case .oathAccounts: return "OATH"
@@ -173,6 +176,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         switch self {
         case .davinci: return "Test DaVinci authentication"
         case .journey: return "Test Journey authentication"
+        case .backchannel: return "AM/AIC transactional backchannel auth"
         case .oidc: return "OpenID Connect flow"
         case .device: return "RFC 8628 device authorization"
         case .oathAccounts: return "Manage TOTP and HOTP accounts"
@@ -202,7 +206,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     /// The config type required to use this menu item, or nil if none required.
     var requiredConfigType: ConfigType? {
         switch self {
-        case .journey, .journeyToken: return .journey
+        case .journey, .journeyToken, .backchannel: return .journey
         case .davinci, .davinciToken: return .davinci
         case .oidc, .oidcToken: return .oidcWeb
         case .device, .deviceToken: return .device
@@ -260,6 +264,8 @@ struct ContentView: View {
                     DavinciView(path: $path)
                 case .journey:
                     JourneyView(path: $path)
+                case .backchannel:
+                    BackchannelAuthView(path: $path)
                 case .oidc:
                     OidcLoginView(path: $path)
                 case .device:

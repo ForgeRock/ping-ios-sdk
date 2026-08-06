@@ -85,8 +85,6 @@ GEMINI.MD
 # Local agent / planning artefacts (not shipped with the SDK)
 .claude/
 ai-tasks/
-CLAUDE.md
-AGENTS.md
 .github/copilot-instructions.md
 
 # Merge / Finder leftovers
@@ -98,3 +96,4 @@ AGENTS.md
 # Local JSON configs — not committed, discovered at runtime via folder reference
 SampleApps/PingExample/PingExample/Configs/*
 !SampleApps/PingExample/PingExample/Configs/.gitkeep
+.sdk/

@@ -49,11 +49,11 @@ PingBinding has the following dependencies which will be automatically installed
 
 | Dependency | Version | Description |
 |------------|---------|-------------|
-| `PingOrchestrate` | ~> 2.0.0 | Core orchestration framework |
-| `PingJourneyPlugin` | ~> 2.0.0 | Journey-based authentication flow management |
-| `PingCommons` | ~> 2.0.0 | Common utilities including JWT signing |
-| `PingStorage` | ~> 2.0.0 | Secure storage capabilities |
-| `PingLogger` | ~> 2.0.0 | Logging framework |
+| `PingOrchestrate` | ~> 2.1.0 | Core orchestration framework |
+| `PingJourneyPlugin` | ~> 2.1.0 | Journey-based authentication flow management |
+| `PingCommons` | ~> 2.1.0 | Common utilities including JWT signing |
+| `PingStorage` | ~> 2.1.0 | Secure storage capabilities |
+| `PingLogger` | ~> 2.1.0 | Logging framework |
 
 These dependencies provide the foundation for device binding operations, including secure key storage, JWT signing, and authentication flow management.
 

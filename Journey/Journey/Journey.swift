@@ -187,6 +187,55 @@ public extension Journey {
         }
     }
     
+    /// Starts a Journey from an AM backchannel `redirectUri`.
+    ///
+    /// The `redirectUri` is returned by AM's `/authenticate/backchannel/initialize`
+    /// endpoint and forwarded to the app by the federation service (gateway). It encodes
+    /// `authIndexType=transaction` and `authIndexValue=<uuid>` as query parameters;
+    /// this method extracts those values and drives a standard Journey authenticate call.
+    ///
+    /// The `redirectUri` path is ignored — the authenticate endpoint is always constructed
+    /// from `JourneyConfig.serverUrl` and `JourneyConfig.realm`. The `redirectUri` host is
+    /// validated against `JourneyConfig.serverUrl`'s host so a URI forwarded from an
+    /// unexpected origin is rejected before its query parameters are trusted.
+    ///
+    /// - Parameters:
+    ///   - backchannelUri: The `redirectUri` received from the gateway.
+    ///   - configure: Optional closure to set `Options` (e.g. `noSession`).
+    /// - Returns: The first `Node` returned by the Journey, or a `FailureNode` if the
+    ///   URI's host doesn't match `JourneyConfig.serverUrl`, the URI is missing required
+    ///   parameters, or `JourneyConfig` is absent.
+    func start(backchannelUri: URL, configure: @Sendable (inout Options) -> Void = { _ in }) async -> Node {
+        var options = Options()
+        configure(&options)
+        guard let journeyConfig = self.config as? JourneyConfig else {
+            return FailureNode(cause: ApiError.error(400, [:], "JourneyConfig missing"))
+        }
+
+        // Hostnames are case-insensitive (RFC 3986 §3.2.2), so compare both sides lowercased.
+        guard let serverHost = journeyConfig.serverUrl.flatMap({ URL(string: $0)?.host }),
+              backchannelUri.host?.lowercased() == serverHost.lowercased()
+        else {
+            return FailureNode(cause: ApiError.error(400, [:], "backchannelUri host does not match JourneyConfig.serverUrl"))
+        }
+
+        guard let components = URLComponents(url: backchannelUri, resolvingAgainstBaseURL: false),
+              let authIndexType = components.queryItems?.first(where: { $0.name == JourneyConstants.authIndexType })?.value,
+              !authIndexType.isEmpty,
+              let authIndexValue = components.queryItems?.first(where: { $0.name == JourneyConstants.authIndexValue })?.value,
+              !authIndexValue.isEmpty
+        else {
+            return FailureNode(cause: ApiError.error(400, [:], "Invalid URI or missing authIndexType/authIndexValue"))
+        }
+
+        self.sharedContext.set(key: JourneyConstants.forceAuth, value: options.forceAuth)
+        self.sharedContext.set(key: JourneyConstants.noSession, value: options.noSession)
+
+        let request = config.httpClient.request()
+        request.populateRequest(authIndexValue: authIndexValue, authIndexType: authIndexType, journeyConfig: journeyConfig, options: options)
+        return await start(request)
+    }
+
     /// Signs off the Journey session and performs any configured cleanup.
     ///
     /// - Returns: `.success(())` on success or `.failure(Error)` if sign-off fails.

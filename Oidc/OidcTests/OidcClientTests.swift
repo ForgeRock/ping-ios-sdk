@@ -318,6 +318,92 @@ final class OidcClientTests: XCTestCase {
         XCTAssertTrue(revokeCalled, "The /revoke endpoint was not called.")
     }
     
+    // TestRailCase — SDKS-5172 recovery path: corrupted token triggers delete + re-auth
+    func testTokenRecoveryOnDecryptionFailure() async throws {
+        // Arrange: storage that throws EncryptorError.failedToDecrypt on the first get()
+        let throwingStorage = ThrowingMockStorage<Token>()
+        await throwingStorage.throwingMock.set(throwOnGet: true)
+        oidcClientConfig.storage = throwingStorage
+
+        // MockURLProtocol is already configured in setUp() to return valid discovery + token
+        // responses, so re-authentication will succeed after the corrupted token is cleared.
+
+        // Act
+        let result = await oidcClient.token()
+
+        // Assert: re-authentication succeeded
+        switch result {
+        case .success(let token):
+            XCTAssertEqual(token.accessToken, "Dummy AccessToken")
+        case .failure(let error):
+            XCTFail("Expected success after recovery but got failure: \(error)")
+        }
+
+        // Assert: the corrupted token was deleted before re-authenticating
+        let deleted = await throwingStorage.throwingMock.deleteWasCalled
+        XCTAssertTrue(deleted, "delete() should have been called to clear the corrupted token")
+    }
+
+    // TestRailCase — SDKS-5172: if delete() fails during recovery, token() must surface a
+    // failure rather than re-authenticating and looping forever on the same corrupted token.
+    func testTokenRecoveryFailsWhenDeleteFails() async throws {
+        let throwingStorage = ThrowingMockStorage<Token>()
+        await throwingStorage.throwingMock.set(throwOnGet: true)        // EncryptorError on get()
+        await throwingStorage.throwingMock.set(throwOnDelete: true)     // delete() cannot clear it
+        oidcClientConfig.storage = throwingStorage
+
+        let result = await oidcClient.token()
+
+        switch result {
+        case .success:
+            XCTFail("Expected failure when the corrupted token cannot be cleared")
+        case .failure(let error):
+            // Should be the authorizeError wrapping the delete failure, not a silent re-auth.
+            if case .authorizeError = error {
+                // expected
+            } else {
+                XCTFail("Expected .authorizeError but got \(error)")
+            }
+        }
+    }
+
+    // TestRailCase — SDKS-5172: a non-EncryptorError/non-DecodingError from get() is transient
+    // and must NOT trigger recovery (no delete, no re-auth) — it surfaces as a failure with the
+    // stored token left intact.
+    func testTokenDoesNotRecoverOnTransientStorageError() async throws {
+        let throwingStorage = ThrowingMockStorage<Token>()
+        await throwingStorage.throwingMock.set(getError: TransientStorageError.interactionNotAllowed)
+        await throwingStorage.throwingMock.set(throwOnGet: true)
+        oidcClientConfig.storage = throwingStorage
+
+        let result = await oidcClient.token()
+
+        switch result {
+        case .success:
+            XCTFail("Expected failure on a transient storage error")
+        case .failure:
+            break
+        }
+
+        // The transient error must not have deleted the (potentially valid) token.
+        let deleted = await throwingStorage.throwingMock.deleteWasCalled
+        XCTAssertFalse(deleted, "delete() must not be called on a transient storage error")
+    }
+
+    // TestRailCase — SDKS-5172: revoke() with a transient read error must leave the stored token
+    // intact (it may be valid) rather than deleting it.
+    func testRevokeLeavesTokenIntactOnTransientStorageError() async throws {
+        let throwingStorage = ThrowingMockStorage<Token>()
+        await throwingStorage.throwingMock.set(getError: TransientStorageError.interactionNotAllowed)
+        await throwingStorage.throwingMock.set(throwOnGet: true)
+        oidcClientConfig.storage = throwingStorage
+
+        await oidcClient.revoke()
+
+        let deleted = await throwingStorage.throwingMock.deleteWasCalled
+        XCTAssertFalse(deleted, "revoke() must not delete the token on a transient storage error")
+    }
+
     private func makeClient(config: HttpClientConfig = HttpClientConfig()) -> URLSessionHttpClient {
         let sessionConfig = URLSessionConfiguration.ephemeral
         sessionConfig.protocolClasses = [MockURLProtocol.self]
