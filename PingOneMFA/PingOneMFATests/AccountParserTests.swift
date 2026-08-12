@@ -42,10 +42,11 @@ final class AccountParserTests: XCTestCase {
 
         // Then
         XCTAssertEqual(accounts.count, 1)
-        XCTAssertEqual(accounts[0].region, "NorthAmerica")
-        XCTAssertEqual(accounts[0].id, "c845dcd4-9696-45ce-b1b8-8797da941538")
-        XCTAssertEqual(accounts[0].deviceId, "05280532-42b0-4d29-93f2-9f2ed7acefc1")
-        XCTAssertEqual(accounts[0].environmentId, "803ca4d4-cd92-4cb8-9dd1-6fe68de0a5f0")
+        let account = try XCTUnwrap(accounts.first)
+        XCTAssertEqual(account.region, "NorthAmerica")
+        XCTAssertEqual(account.id, "c845dcd4-9696-45ce-b1b8-8797da941538")
+        XCTAssertEqual(account.deviceId, "05280532-42b0-4d29-93f2-9f2ed7acefc1")
+        XCTAssertEqual(account.environmentId, "803ca4d4-cd92-4cb8-9dd1-6fe68de0a5f0")
     }
 
     func testParseMultipleRegionsMultipleUsers() throws {
@@ -87,7 +88,7 @@ final class AccountParserTests: XCTestCase {
 
         let euAccounts = accounts.filter { $0.region == "Europe" }
         XCTAssertEqual(euAccounts.count, 1)
-        XCTAssertEqual(euAccounts[0].id, "user-eu-1")
+        XCTAssertEqual(try XCTUnwrap(euAccounts.first).id, "user-eu-1")
     }
 
     func testParseRegionWithEmptyUsersArray() throws {
@@ -126,7 +127,7 @@ final class AccountParserTests: XCTestCase {
 
         // Then — extra keys do not affect parsing
         XCTAssertEqual(accounts.count, 1)
-        XCTAssertEqual(accounts[0].id, "user-1")
+        XCTAssertEqual(try XCTUnwrap(accounts.first).id, "user-1")
     }
 
     // MARK: - Edge cases
@@ -195,9 +196,10 @@ final class AccountParserTests: XCTestCase {
 
         // Then — user is still returned with empty deviceId
         XCTAssertEqual(accounts.count, 1)
-        XCTAssertEqual(accounts[0].id, "user-1")
-        XCTAssertEqual(accounts[0].deviceId, "")
-        XCTAssertEqual(accounts[0].environmentId, "env-1")
+        let account = try XCTUnwrap(accounts.first)
+        XCTAssertEqual(account.id, "user-1")
+        XCTAssertEqual(account.deviceId, "")
+        XCTAssertEqual(account.environmentId, "env-1")
     }
 
     func testParseMissingEnvironmentIdYieldsEmptyEnvironmentId() throws {
@@ -219,7 +221,7 @@ final class AccountParserTests: XCTestCase {
 
         // Then — user is returned with empty environmentId
         XCTAssertEqual(accounts.count, 1)
-        XCTAssertEqual(accounts[0].environmentId, "")
+        XCTAssertEqual(try XCTUnwrap(accounts.first).environmentId, "")
     }
 
     func testParseMixedUsersAllIncluded() throws {

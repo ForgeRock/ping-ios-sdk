@@ -27,12 +27,14 @@ import Foundation
 /// }
 /// ```
 public struct PingOneMFAError: Error, LocalizedError, Sendable {
+    /// Human-readable description of the failure.
     public let message: String
 
     /// Structured list of individual SDK errors, or `nil` when the failure did not originate
     /// from the native SDK (e.g. an unexpected exception).
     public let internalErrorsList: [PingOneMFAInternalError]?
 
+    /// The error text exposed via `LocalizedError`, equal to ``message``.
     public var errorDescription: String? { message }
 
     init(_ error: Error) {

@@ -207,6 +207,7 @@ struct PingOneMFANotificationView: View {
                                         .stroke(Color.themeButtonBackground, lineWidth: 2)
                                 )
                         }
+                        .disabled(viewModel.isLoading)
                     }
                 }
             }
