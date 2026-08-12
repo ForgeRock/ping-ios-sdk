@@ -157,7 +157,7 @@ jobs:
   # Post /run-ci result back to the PR as a comment and update the reaction
   notify:
     name: Notify /run-ci result
-    if: always() && github.event_name == 'issue_comment' && needs.resolve-context.result != 'skipped'
+    if: always() && github.event_name == 'issue_comment' && needs.resolve-context.result == 'success'
     needs:
       - resolve-context
       - build-and-test
