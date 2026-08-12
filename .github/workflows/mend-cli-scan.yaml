@@ -1,6 +1,13 @@
 name: Run Mend CLS Scan
 on:
   workflow_call:
+    inputs:
+      head_sha:
+        description: Head commit SHA to check out
+        type: string
+      head_repo:
+        description: Head repository to check out
+        type: string
     secrets:
       MEND_EMAIL:
         description: Mend email
@@ -21,8 +28,9 @@ jobs:
       - name: Clone the repository
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
+          ref: ${{ inputs.head_sha || github.event.pull_request.head.sha }}
+          repository: ${{ inputs.head_repo || github.event.pull_request.head.repo.full_name }}
+          persist-credentials: false
           fetch-depth: 0
 
       # Setup Mend CLI
