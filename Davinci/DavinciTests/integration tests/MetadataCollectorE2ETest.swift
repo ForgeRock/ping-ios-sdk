@@ -1,5 +1,5 @@
 //
-//  MetadataCollectorIntegrationTests.swift
+//  MetadataCollectorE2ETest.swift
 //  DavinciTests
 //
 //  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
@@ -24,7 +24,7 @@ import PingDavinciPlugin
 /// field with key "sdkMetadata" and payload {"testkey":"testValue"}.
 /// After the SDK submits its response the flow transitions to an "Automation - Message" form
 /// which echoes the submitted value back to the client, confirming what DaVinci received.
-class MetadataCollectorIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
+class MetadataCollectorE2ETest: DaVinciBaseTests, @unchecked Sendable {
     private var daVinci: DaVinci!
 
     // MARK: - Index constants

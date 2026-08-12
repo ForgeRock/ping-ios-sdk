@@ -1,5 +1,5 @@
 //
-//  ImageCollectorIntegrationTests.swift
+//  ImageCollectorE2ETest.swift
 //  DavinciTests
 //
 //  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
@@ -25,7 +25,7 @@ import XCTest
 ///   index 2 — SubmitCollector (key "submit", label "Continue")
 ///
 /// Tapping Continue loops back to the Select Test Form.
-class ImageCollectorIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
+class ImageCollectorE2ETest: DaVinciBaseTests, @unchecked Sendable {
     private var daVinci: DaVinci!
 
     // MARK: - Index constants
