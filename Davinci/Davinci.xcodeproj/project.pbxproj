@@ -19,7 +19,7 @@
 		3AC13E352C3FFF1000DEF23A /* Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E322C3FFF1000DEF23A /* Form.swift */; };
 		3AC13E362C3FFF1000DEF23A /* Connector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AC13E312C3FFF1000DEF23A /* Connector.swift */; };
 		8FE3EB1B92044038A76D2CB3 /* PollingCollectorIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA130AA38471485588EED6A1 /* PollingCollectorIntegrationTests.swift */; };
-		9570C4BE2FD0C6D500EAF897 /* ConfigNew.json in Resources */ = {isa = PBXBuildFile; fileRef = 9570C4BD2FD0C6D500EAF897 /* ConfigNew.json */; };
+		9570C4BE2FD0C6D500EAF897 /* DaVinci-e2e-config.json in Resources */ = {isa = PBXBuildFile; fileRef = 9570C4BD2FD0C6D500EAF897 /* DaVinci-e2e-config.json */; };
 		959249A72D405A1C00A6DA9C /* FormFieldValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959249A62D405A1C00A6DA9C /* FormFieldValidationTests.swift */; };
 		959249A92D405A4600A6DA9C /* FormFieldsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959249A82D405A4600A6DA9C /* FormFieldsTests.swift */; };
 		95C256792DF22BFB004266AB /* MFADeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C256782DF22BFB004266AB /* MFADeviceTests.swift */; };
@@ -79,7 +79,7 @@
 		EC5C81CA2ECF7A1700C91570 /* PingDavinciPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC5C81FC2ED0CAA100C91570 /* Collectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5C81FB2ED0CAA100C91570 /* Collectors.swift */; };
 		EC7279AE2DF98CDA005D9E28 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7279AD2DF98CD6005D9E28 /* Config.swift */; };
-		EC7279B02DF9976E005D9E28 /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = EC7279AF2DF99766005D9E28 /* Config.json */; };
+
 		EC7279B42DF9B295005D9E28 /* DaVinciBaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC7279B32DF9B289005D9E28 /* DaVinciBaseTests.swift */; };
 		EC92B3742D9FF67F00E4246D /* DeviceAuthenticationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3732D9FF67E00E4246D /* DeviceAuthenticationCollector.swift */; };
 		EC92B3782DA0132100E4246D /* PhoneNumberCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */; };
@@ -133,7 +133,7 @@
 		3A57CB612C44D688001EC9A0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		3AC13E312C3FFF1000DEF23A /* Connector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connector.swift; sourceTree = "<group>"; };
 		3AC13E322C3FFF1000DEF23A /* Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Form.swift; sourceTree = "<group>"; };
-		9570C4BD2FD0C6D500EAF897 /* ConfigNew.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ConfigNew.json; sourceTree = "<group>"; };
+		9570C4BD2FD0C6D500EAF897 /* DaVinci-e2e-config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "DaVinci-e2e-config.json"; sourceTree = "<group>"; };
 		959249A62D405A1C00A6DA9C /* FormFieldValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFieldValidationTests.swift; sourceTree = "<group>"; };
 		959249A82D405A4600A6DA9C /* FormFieldsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFieldsTests.swift; sourceTree = "<group>"; };
 		95C256782DF22BFB004266AB /* MFADeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MFADeviceTests.swift; sourceTree = "<group>"; };
@@ -192,7 +192,7 @@
 		EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinciPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC5C81FB2ED0CAA100C91570 /* Collectors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collectors.swift; sourceTree = "<group>"; };
 		EC7279AD2DF98CD6005D9E28 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
-		EC7279AF2DF99766005D9E28 /* Config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Config.json; sourceTree = "<group>"; };
+
 		EC7279B32DF9B289005D9E28 /* DaVinciBaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaVinciBaseTests.swift; sourceTree = "<group>"; };
 		EC92B3732D9FF67E00E4246D /* DeviceAuthenticationCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceAuthenticationCollector.swift; sourceTree = "<group>"; };
 		EC92B3772DA0132000E4246D /* PhoneNumberCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberCollector.swift; sourceTree = "<group>"; };
@@ -389,8 +389,7 @@
 		EC7279AC2DF98B76005D9E28 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
-				9570C4BD2FD0C6D500EAF897 /* ConfigNew.json */,
-				EC7279AF2DF99766005D9E28 /* Config.json */,
+				9570C4BD2FD0C6D500EAF897 /* DaVinci-e2e-config.json */,
 				EC7279AD2DF98CD6005D9E28 /* Config.swift */,
 			);
 			path = Configuration;
@@ -498,8 +497,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9570C4BE2FD0C6D500EAF897 /* ConfigNew.json in Resources */,
-				EC7279B02DF9976E005D9E28 /* Config.json in Resources */,
+				9570C4BE2FD0C6D500EAF897 /* DaVinci-e2e-config.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

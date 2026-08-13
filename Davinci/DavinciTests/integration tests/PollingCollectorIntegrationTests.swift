@@ -23,7 +23,7 @@ class PollingCollectorIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
     private var daVinci: DaVinci!
 
     override func setUp() async throws {
-        self.configFileName = "ConfigNew"
+        self.configFileName = "DaVinci-e2e-config"
         try await super.setUp()
 
         // Clear all shared cookies before each test. The polling flows never produce a
@@ -40,7 +40,7 @@ class PollingCollectorIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
-                oidcValue.acrValues = "fae6bc3d08a5c4f5b8ff95175b117278"
+                oidcValue.acrValues = self.config.pollingAcrValues
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
             }
         }

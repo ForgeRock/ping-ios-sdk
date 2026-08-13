@@ -19,7 +19,7 @@ class FormFieldValidationTests: DaVinciBaseTests, @unchecked Sendable {
     private var daVinci: DaVinci!
 
     override func setUp() async throws {
-        self.configFileName = "ConfigNew"
+        self.configFileName = "DaVinci-e2e-config"
         try await super.setUp()
 
         daVinci = DaVinci.createDaVinci { config in
@@ -28,7 +28,7 @@ class FormFieldValidationTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
-                oidcValue.acrValues = "b63ac7fb5db6d893efdd5e29d06a7477"
+                oidcValue.acrValues = self.config.formFieldsAcrValues
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
             }
         }

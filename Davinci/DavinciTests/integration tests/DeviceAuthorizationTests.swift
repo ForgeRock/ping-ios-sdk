@@ -30,7 +30,7 @@ class DeviceAuthorizationTests: DaVinciBaseTests, @unchecked Sendable {
     private var approvingDaVinci: DaVinci!
 
     override func setUp() async throws {
-        self.configFileName = "ConfigNew"
+        self.configFileName = "DaVinci-e2e-config"
         try await super.setUp()
 
         client = OidcDeviceClient.createOidcDeviceClient { config in

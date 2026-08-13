@@ -39,6 +39,13 @@ class Config: NSObject {
     // Device Authorization Grant — shared test credentials
     var deviceUsername: String = ""
     var devicePassword: String = ""
+
+    // Feature-specific ACR values — optional; tests fall back to the main acrValues if empty
+    var mfaDeviceAcrValues: String = ""
+    var formFieldsAcrValues: String = ""
+    var pollingAcrValues: String = ""
+    var metadataAcrValues: String = ""
+    var imageAcrValues: String = ""
     
     var configJSON: [String: Any]?
     
@@ -122,6 +129,13 @@ class Config: NSObject {
                     self.deviceClientId = config["deviceClientId"] as? String ?? ""
                     self.deviceUsername = config["deviceUsername"] as? String ?? ""
                     self.devicePassword = config["devicePassword"] as? String ?? ""
+
+                    // Feature-specific ACR values — optional
+                    self.mfaDeviceAcrValues = config["mfaDeviceAcrValues"] as? String ?? ""
+                    self.formFieldsAcrValues = config["formFieldsAcrValues"] as? String ?? ""
+                    self.pollingAcrValues = config["pollingAcrValues"] as? String ?? ""
+                    self.metadataAcrValues = config["metadataAcrValues"] as? String ?? ""
+                    self.imageAcrValues = config["imageAcrValues"] as? String ?? ""
                 }
                 else {
                     throw ConfigError.invalidConfiguration("\(configFileName) is invalid or missing some value")
