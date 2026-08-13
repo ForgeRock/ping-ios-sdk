@@ -26,6 +26,11 @@ public struct SocialButtonView: View {
     
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
+            if socialButtonViewModel.isFacebook {
+                Toggle("Limited Login (OIDC ID token)", isOn: $socialButtonViewModel.facebookLimitedLoginEnabled)
+                    .font(.subheadline)
+                    .frame(width: 300)
+            }
             Button {
                 Task {
                     let result = await socialButtonViewModel.startSocialAuthentication()
@@ -49,10 +54,18 @@ public struct SocialButtonView: View {
 @MainActor
 public class SocialButtonViewModel: ObservableObject {
     @Published public var isComplete: Bool = false
+    @Published public var facebookLimitedLoginEnabled: Bool = false {
+        didSet {
+            idpCollector.facebookLimitedLoginEnabled = facebookLimitedLoginEnabled
+        }
+    }
     public let idpCollector: IdpCollector
-    
+
+    public var isFacebook: Bool { idpCollector.idpType == "FACEBOOK" }
+
     public init(idpCollector: IdpCollector) {
         self.idpCollector = idpCollector
+        self.facebookLimitedLoginEnabled = idpCollector.facebookLimitedLoginEnabled
     }
     
     public func startSocialAuthentication() async -> Result<Bool, IdpExceptions> {

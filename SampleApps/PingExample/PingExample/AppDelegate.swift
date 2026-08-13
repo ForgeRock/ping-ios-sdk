@@ -10,6 +10,7 @@
 
 import UIKit
 import UserNotifications
+import AppTrackingTransparency
 import PingPush
 
 /// AppDelegate to handle push notifications
@@ -27,10 +28,28 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         // Request notification permissions
         requestNotificationPermissions()
 
+        // ATT prompt only appears when the app is active. SwiftUI scene-based apps don't invoke
+        // applicationDidBecomeActive on UIApplicationDelegate, so observe the notification directly.
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+
         // Register for remote notifications
         application.registerForRemoteNotifications()
 
         return true
+    }
+
+    @objc private func handleDidBecomeActive() {
+        guard ATTrackingManager.trackingAuthorizationStatus == .notDetermined else { return }
+        requestTrackingAuthorization()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     private func requestNotificationPermissions() {
@@ -43,6 +62,18 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
                 print("Notification permissions granted")
             } else {
                 print("Notification permissions denied")
+            }
+        }
+    }
+
+    private func requestTrackingAuthorization() {
+        ATTrackingManager.requestTrackingAuthorization { status in
+            switch status {
+            case .authorized:    print("ATT: authorized")
+            case .denied:        print("ATT: denied")
+            case .restricted:    print("ATT: restricted")
+            case .notDetermined: print("ATT: not determined")
+            @unknown default:    print("ATT: unknown status \(status.rawValue)")
             }
         }
     }

@@ -136,6 +136,7 @@ public enum JourneyConstants {
     public static let SIWA = "siwa"
     public static let GOOGLE = "google"
     public static let FACEBOOK = "facebook"
+    public static let FB_LIMITED = "fb-limited"
     public static let providers = "providers"
     public static let acceptsJSON = "acceptsJSON"
     

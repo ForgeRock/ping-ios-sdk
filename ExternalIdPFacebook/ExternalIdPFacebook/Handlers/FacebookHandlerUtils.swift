@@ -1,4 +1,4 @@
-// 
+//
 //  FacebookHandlerUtils.swift
 //  ExternalIdPFacebook
 //
@@ -18,22 +18,23 @@ import PingExternalIdP
 /// Utility class for handling Facebook IDP authorization.
 @MainActor
 class FacebookHandlerUtils {
-    
+
     /// Authorizes the user with Facebook IDP using the provided configuration and manager.
     /// - Parameters:
     ///  - idpClient: The IDP client used for the authorization.
     ///  - configuration: The login configuration containing the necessary parameters for the Facebook login.
     ///  - manager: The login manager used to handle the Facebook login process.
-    ///  - Returns: An `IdpResult` containing the access token and additional parameters.
+    ///  - isLimited: When `true`, returns the OIDC ID token from `AuthenticationToken` (Limited Login); otherwise returns the OAuth2 access token.
+    ///  - Returns: An `IdpResult` containing the token and additional parameters.
     ///  - Throws: An error if the authorization fails, such as missing configuration or user cancellation.
-    static func authorize(idpClient: IdpClient, configuration: LoginConfiguration?, manager: LoginManager?) async throws -> IdpResult {
+    static func authorize(idpClient: IdpClient, configuration: LoginConfiguration?, manager: LoginManager?, isLimited: Bool = false) async throws -> IdpResult {
         let topVC = try IdpValidationUtils.validateTopViewController()
-        
+
         guard let validConfiguration = configuration else {
             throw IdpExceptions.illegalStateException(message: IdpErrorMessages.invalidConfiguration)
         }
-        
-        return try await withCheckedThrowingContinuation {  (continuation: CheckedContinuation<IdpResult, Error>) in
+
+        return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<IdpResult, Error>) in
             guard let manager = manager else {
                 continuation.resume(throwing: IdpExceptions.illegalStateException(message: IdpErrorMessages.facebookManagerMissing))
                 return
@@ -45,12 +46,22 @@ class FacebookHandlerUtils {
                         continuation.resume(throwing: IdpExceptions.idpCanceledException(message: IdpErrorMessages.userCancelled))
                     case .failed(let error):
                         continuation.resume(throwing: IdpExceptions.illegalStateException(message: error.localizedDescription))
-                    case .success(_, _, let token):
-                        guard let accessToken = token?.tokenString else {
-                            continuation.resume(throwing: IdpExceptions.illegalStateException(message: IdpErrorMessages.facebookTokenMissing))
-                            return
+                    // FB SDK 18.x: LoginResult.success no longer carries the token as an associated value;
+                    // AccessToken.current / AuthenticationToken.current are the canonical post-login sources.
+                    case .success:
+                        if isLimited {
+                            guard let idToken = AuthenticationToken.current?.tokenString else {
+                                continuation.resume(throwing: IdpExceptions.illegalStateException(message: IdpErrorMessages.facebookAuthTokenMissing))
+                                return
+                            }
+                            continuation.resume(returning: IdpResult(token: idToken, additionalParameters: nil))
+                        } else {
+                            guard let accessToken = AccessToken.current?.tokenString else {
+                                continuation.resume(throwing: IdpExceptions.illegalStateException(message: IdpErrorMessages.facebookTokenMissing))
+                                return
+                            }
+                            continuation.resume(returning: IdpResult(token: accessToken, additionalParameters: nil))
                         }
-                        continuation.resume(returning: IdpResult(token: accessToken, additionalParameters: nil))
                     }
                 }
             }

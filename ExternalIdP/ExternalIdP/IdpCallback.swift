@@ -219,9 +219,20 @@ public final class IdpCallback: AbstractCallback, JourneyAware, RequestIntercept
                 return nil
             }
             
+        case lowercasedProvider.contains(JourneyConstants.FB_LIMITED):
+            if let c: NSObject.Type = NSClassFromString("PingExternalIdPFacebook.FacebookHandler") as? NSObject.Type {
+                let handler = makeNativeRequestHandler(from: c)
+                (handler as? FacebookLimitedLoginConfigurable)?.facebookLimitedLoginEnabled = true
+                return handler
+            } else {
+                return nil
+            }
+
         case lowercasedProvider.contains(JourneyConstants.FACEBOOK):
             if let c: NSObject.Type = NSClassFromString("PingExternalIdPFacebook.FacebookHandler") as? NSObject.Type {
-                return makeNativeRequestHandler(from: c)
+                let handler = makeNativeRequestHandler(from: c)
+                (handler as? FacebookLimitedLoginConfigurable)?.facebookLimitedLoginEnabled = false
+                return handler
             } else {
                 return nil
             }
