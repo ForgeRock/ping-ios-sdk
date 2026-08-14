@@ -86,7 +86,6 @@ jobs:
       head_sha: ${{ needs.resolve-context.outputs.head_sha }}
       head_repo: ${{ needs.resolve-context.outputs.head_repo }}
     secrets:
-      DAVINCI_E2E_CONFIG: ${{ secrets.DAVINCI_E2E_CONFIG }}
       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
   # Run Mend CLI Scan — skip for fork PRs (Mend credentials unavailable)

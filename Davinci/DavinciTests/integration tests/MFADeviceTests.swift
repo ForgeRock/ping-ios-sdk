@@ -55,8 +55,8 @@ class MFADeviceTests: DaVinciBaseTests, @unchecked Sendable {
         userLname = "User"
         email1 = "\(usernamePrefix!)\(Int(Date().timeIntervalSince1970 * 1000))@example.com"
         email2 = "\(usernamePrefix!)\(Int(Date().timeIntervalSince1970 * 1000))@example.net"
-        phoneNumber1 = "888123456"
-        phoneNumber2 = "888123457"
+        phoneNumber1 = "7783177184"
+        phoneNumber2 = "7783177185"
         
         // Start with a clean session
         await daVinci.daVinciUser()?.logout()
@@ -465,7 +465,7 @@ class MFADeviceTests: DaVinciBaseTests, @unchecked Sendable {
         
         // Select a country code and enter a valid phone number:...
         dropdown.value = "CA"  // Select Canada...
-        phoneNumberCollector.phoneNumber = "7783177184"
+        phoneNumberCollector.phoneNumber = phone
         phoneNumberCollector.countryCode = "CA"
         phoneNumberCollector.extension = "100" // Enter extension
         
