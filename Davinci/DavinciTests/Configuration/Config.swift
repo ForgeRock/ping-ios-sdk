@@ -16,6 +16,7 @@ import Foundation
 public enum ConfigError: Error {
     case emptyConfiguration
     case invalidConfiguration(String)
+    case notConfigured  // required field is null (intentional placeholder)
 }
 
 class Config: NSObject {
@@ -125,12 +126,13 @@ class Config: NSObject {
         }
     }
 
-    // Returns "" for JSON null (placeholder mode); throws for a missing key or wrong type.
+    // Throws .notConfigured for JSON null (placeholder mode); throws .invalidConfiguration
+    // for a missing key or wrong type.
     private static func requiredString(_ key: String, from config: [String: Any]) throws -> String {
         guard let value = config[key] else {
             throw ConfigError.invalidConfiguration("Required field '\(key)' is missing from test configuration")
         }
-        if value is NSNull { return "" }
+        if value is NSNull { throw ConfigError.notConfigured }
         guard let string = value as? String else {
             throw ConfigError.invalidConfiguration("Field '\(key)' must be a string")
         }
