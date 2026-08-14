@@ -64,8 +64,9 @@ class MFADeviceTests: DaVinciBaseTests, @unchecked Sendable {
     }
     
     override func tearDown() async throws {
-        // Ignore failures — if setUp threw, username/daVinci may be in a bad state
-        try? await deleteUser(username: username, password: password)
+        if let username = username, let password = password {
+            try? await deleteUser(username: username, password: password)
+        }
         try await super.tearDown()
     }
     
