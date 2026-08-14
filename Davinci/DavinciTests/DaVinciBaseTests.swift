@@ -29,11 +29,9 @@ class DaVinciBaseTests: XCTestCase, @unchecked Sendable {
     override func setUp() async throws {
         try await super.setUp()
         if self.configFileName.count > 0 {
-            do {
-                self.config = try Config(self.configFileName)
-            }
-            catch {
-                XCTFail("Failed to load test configuration file: \(error)")
+            self.config = try Config(self.configFileName)
+            guard config.discoveryEndpoint.hasPrefix("http") else {
+                throw XCTSkip("Integration test skipped: real DaVinci configuration not available")
             }
         }
     }

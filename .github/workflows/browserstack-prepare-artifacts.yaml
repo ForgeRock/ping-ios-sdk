@@ -36,6 +36,10 @@ on:
         description: 'Apple build provisioning profile'
         required: true
 
+      DAVINCI_E2E_CONFIG:
+        description: 'DaVinci e2e test configuration JSON (overwrites the committed placeholder)'
+        required: true
+
       SLACK_WEBHOOK:
         description: 'Slack Notifier Incoming Webhook URL'
         required: true
@@ -56,6 +60,11 @@ jobs:
           repository: ${{ inputs.head_repo || github.event.pull_request.head.repo.full_name }}
           persist-credentials: false
           fetch-depth: 0
+
+      - name: Inject DaVinci e2e config
+        env:
+          DAVINCI_E2E_CONFIG: ${{ secrets.DAVINCI_E2E_CONFIG }}
+        run: echo "$DAVINCI_E2E_CONFIG" > Davinci/DavinciTests/Configuration/DaVinci-e2e-config.json
 
       # Install the Apple certificate and provisioning profile
       - name: Install the Apple certificate and provisioning profile

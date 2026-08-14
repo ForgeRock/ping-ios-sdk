@@ -86,43 +86,25 @@ class Config: NSObject {
                 let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
                 if let config = jsonResult as? [String: Any] {
                     self.configJSON = config
-                    guard let username = config["username"] as? String,
-                          let userFname = config["userFname"] as? String,
-                          let userLname = config["userLname"] as? String,
-                          let password = config["password"] as? String,
-                          let newPassword = config["newPassword"] as? String,
-                          let verificationCode = config["verificationCode"] as? String
-                    else {
-                        throw ConfigError.invalidConfiguration("Test config data is empty or invalid")
-                    }
-                    
-                    self.username = username
-                    self.userFname = userFname
-                    self.userLname = userLname
-                    self.password = password
-                    self.newPassword = newPassword
-                    self.verificationCode = verificationCode
-                    
+                    self.username = config["username"] as? String ?? ""
+                    self.userFname = config["userFname"] as? String ?? ""
+                    self.userLname = config["userLname"] as? String ?? ""
+                    self.password = config["password"] as? String ?? ""
+                    self.newPassword = config["newPassword"] as? String ?? ""
+                    self.verificationCode = config["verificationCode"] as? String ?? ""
+
                     if let configPlistFileName = config["configPlistFileName"] as? String {
                         self.configPlistFileName = configPlistFileName
                     }
-                                                            
-                    guard let clientId = config["clientId"] as? String,
-                          let discoveryEndpoint = config["discoveryEndpoint"] as? String,
-                          let scopes = config["scopes"] as? String,
-                          let redirectUri = config["redirectUri"] as? String,
-                          let acrValues = config["acrValues"] as? String
-                    else {
-                        throw ConfigError.invalidConfiguration("Test DV config data is empty or invalid")
-                    }
-                    
-                    self.clientId = clientId
-                    self.discoveryEndpoint = discoveryEndpoint
+
+                    self.clientId = config["clientId"] as? String ?? ""
+                    self.discoveryEndpoint = config["discoveryEndpoint"] as? String ?? ""
+                    let scopes = config["scopes"] as? String ?? ""
                     self.scopes = scopes
                       .components(separatedBy: .whitespaces)
                       .filter { !$0.isEmpty }
-                    self.redirectUri = redirectUri
-                    self.acrValues = acrValues
+                    self.redirectUri = config["redirectUri"] as? String ?? ""
+                    self.acrValues = config["acrValues"] as? String ?? ""
 
                     // Device Authorization Grant fields are optional — tests that don't
                     // exercise device flow simply read empty strings from the config.
