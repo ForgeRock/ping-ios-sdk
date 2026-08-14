@@ -34,9 +34,9 @@ class FormFieldsTests: DaVinciBaseTests, @unchecked Sendable {
         static let submitButton = 12
     }
 
-    override func setUp() {
+    override func setUp() async throws {
         self.configFileName = "DaVinci-e2e-config"
-        super.setUp()
+        try await super.setUp()
 
         daVinci = DaVinci.createDaVinci { config in
             config.logger = LogManager.standard

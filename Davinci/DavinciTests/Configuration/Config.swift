@@ -16,7 +16,8 @@ import Foundation
 public enum ConfigError: Error {
     case emptyConfiguration
     case invalidConfiguration(String)
-    case notConfigured  // required field is null (intentional placeholder)
+    /// A required configuration field is JSON `null` — intentional placeholder for local development.
+    case notConfigured
 }
 
 class Config: NSObject {
