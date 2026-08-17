@@ -46,8 +46,9 @@ class FacebookHandlerUtils {
                         continuation.resume(throwing: IdpExceptions.idpCanceledException(message: IdpErrorMessages.userCancelled))
                     case .failed(let error):
                         continuation.resume(throwing: IdpExceptions.illegalStateException(message: error.localizedDescription))
-                    // FB SDK 18.x: LoginResult.success no longer carries the token as an associated value;
-                    // AccessToken.current / AuthenticationToken.current are the canonical post-login sources.
+                    // LoginResult.success only ever carries the OAuth access token (granted/declined
+                    // permissions); it never carries the OIDC ID token needed for Limited Login, so both
+                    // token types are read directly from AccessToken.current / AuthenticationToken.current.
                     case .success:
                         if isLimited {
                             guard let idToken = AuthenticationToken.current?.tokenString else {

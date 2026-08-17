@@ -157,7 +157,7 @@ final class ExternalIdPFacebookTests: XCTestCase {
     
     @MainActor func testFacebookHandlerUtilsLimitedThrowsWithNilConfiguration() async {
         let idpClient = IdpClient(clientId: "test", scopes: ["email"])
-        
+
         do {
             _ = try await FacebookHandlerUtils.authorize(idpClient: idpClient, configuration: nil, manager: nil, isLimited: true)
             XCTFail("Expected error to be thrown with nil configuration in limited mode")
@@ -165,5 +165,23 @@ final class ExternalIdPFacebookTests: XCTestCase {
             XCTAssertNotNil(error)
         }
     }
-    
+
+    // MARK: - IdpCallback fb-limited Provider Matching Tests
+
+    @MainActor func testIdpCallbackMatchesFbLimitedProviderBeforeFacebook() throws {
+        let callback = IdpCallback()
+        callback.initValue(name: "provider", value: "fb-limited")
+        let handler = callback.getDefaultIdpHandler()
+        let configurableHandler = try XCTUnwrap(handler as? FacebookLimitedLoginConfigurable)
+        XCTAssertTrue(configurableHandler.facebookLimitedLoginEnabled)
+    }
+
+    @MainActor func testIdpCallbackMatchesPlainFacebookProviderAsClassic() throws {
+        let callback = IdpCallback()
+        callback.initValue(name: "provider", value: "facebook")
+        let handler = callback.getDefaultIdpHandler()
+        let configurableHandler = try XCTUnwrap(handler as? FacebookLimitedLoginConfigurable)
+        XCTAssertFalse(configurableHandler.facebookLimitedLoginEnabled)
+    }
+
 }

@@ -200,7 +200,10 @@ public final class IdpCallback: AbstractCallback, JourneyAware, RequestIntercept
     /// - Parameters:
     ///  - httpClient: The HTTP client.
     ///  - Returns: The IdpRequestHandler.
-    @MainActor private func getDefaultIdpHandler() -> IdpHandler? {
+    ///
+    /// Internal visibility (instead of `private`) so tests can verify provider-string matching
+    /// (e.g. `fb-limited` vs `facebook`) without exercising the live IdP SDK via `authorize()`.
+    @MainActor func getDefaultIdpHandler() -> IdpHandler? {
         let lowercasedProvider = provider.lowercased()
         
         // We switch on `true` and check boolean conditions in each case.

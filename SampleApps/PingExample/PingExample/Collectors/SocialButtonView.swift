@@ -2,7 +2,7 @@
 //  SocialButtonView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,7 @@
 
 import SwiftUI
 import PingDavinci
+import PingDavinciPlugin
 import PingBrowser
 import PingExternalIdP
 import PingExternalIdPFacebook
@@ -61,7 +62,7 @@ public class SocialButtonViewModel: ObservableObject {
     }
     public let idpCollector: IdpCollector
 
-    public var isFacebook: Bool { idpCollector.idpType == "FACEBOOK" }
+    public var isFacebook: Bool { idpCollector.idpType == Constants.FACEBOOK }
 
     public init(idpCollector: IdpCollector) {
         self.idpCollector = idpCollector
@@ -75,11 +76,11 @@ public class SocialButtonViewModel: ObservableObject {
     public func socialButtonText() -> some View {
         let bgColor: Color
         switch idpCollector.idpType {
-        case "APPLE":
+        case Constants.APPLE:
             bgColor = Color.appleButtonBackground
-        case "GOOGLE":
+        case Constants.GOOGLE:
             bgColor = Color.googleButtonBackground
-        case "FACEBOOK":
+        case Constants.FACEBOOK:
             bgColor = Color.facebookButtonBackground
         default:
             bgColor = Color.themeButtonBackground

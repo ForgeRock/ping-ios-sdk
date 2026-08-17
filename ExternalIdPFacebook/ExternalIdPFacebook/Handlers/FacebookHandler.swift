@@ -35,8 +35,8 @@ import PingExternalIdP
     /// `LoginManager` instance for Facebook SDK
     private var manager: LoginManager
     /// The IdpClient to use for requests. Populated by `authorize(idpClient:)` so `configuration`
-    /// can read `scopes` and `nonce` off it. Internal visibility for regression testing.
-    var idpClient: IdpClient?
+    /// can read `scopes` and `nonce` off it.
+    private var idpClient: IdpClient?
     /// LoginConfiguration computed var
     private var configuration: LoginConfiguration? {
         var scopes: Set<FBSDKCoreKit.Permission> = []

@@ -38,7 +38,10 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
     /// When `true`, the Facebook handler constructed in `getDefaultIdpHandler(httpClient:)`
     /// will use Facebook Limited Login (OIDC ID token). When `false`, it uses classic OAuth2
     /// (access token). Defaults to `false` for backward compatibility. Ignored for non-Facebook IdPs.
-    public var facebookLimitedLoginEnabled: Bool = false
+    ///
+    /// `@MainActor`-isolated so reads inside `getDefaultIdpHandler(httpClient:)` can't race
+    /// with configuration writes from another executor.
+    @MainActor public var facebookLimitedLoginEnabled: Bool = false
 
     ///  The IdP identifier.
     public var idpId: String

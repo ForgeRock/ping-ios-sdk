@@ -48,10 +48,6 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         requestTrackingAuthorization()
     }
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
     private func requestNotificationPermissions() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if let error = error {
