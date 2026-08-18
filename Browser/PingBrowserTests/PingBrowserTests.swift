@@ -50,6 +50,68 @@ final class BrowserErrorTests: XCTestCase {
         let error: Error = BrowserError.externalUserAgentFailure
         XCTAssertNotNil(error)
     }
+
+    func testHttpsCallbackUnsupportedOSHasNonEmptyDescription() {
+        let description = BrowserError.httpsCallbackUnsupportedOS.errorDescription
+        XCTAssertNotNil(description)
+        XCTAssertFalse(description?.isEmpty ?? true)
+    }
+
+    func testInvalidHTTPSRedirectConfigurationHasNonEmptyDescription() {
+        let description = BrowserError.invalidHTTPSRedirectConfiguration.errorDescription
+        XCTAssertNotNil(description)
+        XCTAssertFalse(description?.isEmpty ?? true)
+    }
+}
+
+// MARK: - httpsCallbackComponents Tests
+
+@MainActor
+final class HttpsCallbackComponentsTests: XCTestCase {
+
+    func testHttpsUrlWithPathReturnsHostAndPath() {
+        let result = BrowserLauncher.httpsCallbackComponents(from: "https://www.mouser.com/auth/callback")
+        XCTAssertEqual(result?.host, "www.mouser.com")
+        XCTAssertEqual(result?.path, "/auth/callback")
+    }
+
+    func testHttpsUrlWithNoPathNormalizesToSlash() {
+        let result = BrowserLauncher.httpsCallbackComponents(from: "https://example.com")
+        XCTAssertEqual(result?.host, "example.com")
+        XCTAssertEqual(result?.path, "/")
+    }
+
+    func testCustomSchemeReturnsNil() {
+        XCTAssertNil(BrowserLauncher.httpsCallbackComponents(from: "myapp://callback"))
+    }
+
+    func testHttpSchemeReturnsNil() {
+        XCTAssertNil(BrowserLauncher.httpsCallbackComponents(from: "http://example.com/cb"))
+    }
+
+    func testHttpsWithNoHostReturnsNil() {
+        XCTAssertNil(BrowserLauncher.httpsCallbackComponents(from: "https://"))
+    }
+
+    func testNilRedirectUriReturnsNil() {
+        XCTAssertNil(BrowserLauncher.httpsCallbackComponents(from: nil))
+    }
+
+    // The parsed overload is what `asWebAuthenticationSession` uses, so the string-based
+    // classification above must stay equivalent to feeding it a single pre-parsed value.
+
+    func testParsedOverloadMatchesStringOverload() {
+        for redirectUri in ["https://www.mouser.com/auth/callback", "https://example.com", "myapp://callback", "http://example.com/cb", "https://"] {
+            let fromString = BrowserLauncher.httpsCallbackComponents(from: redirectUri)
+            let fromParsed = BrowserLauncher.httpsCallbackComponents(fromParsed: URLComponents(string: redirectUri))
+            XCTAssertEqual(fromString?.host, fromParsed?.host, "host mismatch for \(redirectUri)")
+            XCTAssertEqual(fromString?.path, fromParsed?.path, "path mismatch for \(redirectUri)")
+        }
+    }
+
+    func testParsedOverloadWithNilComponentsReturnsNil() {
+        XCTAssertNil(BrowserLauncher.httpsCallbackComponents(fromParsed: nil))
+    }
 }
 
 // MARK: - BrowserMode Tests
@@ -319,5 +381,48 @@ class MockBrowserLauncher: BrowserLauncherProtocol {
             return try await handler(url, browserType, callbackURLScheme)
         }
         throw NSError(domain: "MockBrowserLauncher", code: 0, userInfo: nil)
+    }
+}
+
+// MARK: - BrowserLauncherProtocol backward-compat Tests
+
+/// Verifies that a conformer implementing ONLY the legacy 6-arg `launch` (`MockBrowserLauncher`)
+/// still satisfies `BrowserLauncherProtocol`, and that invoking the 7-arg `redirectUri`-aware
+/// overload on it forwards to the 6-arg implementation via the protocol's default implementation.
+@MainActor
+final class BrowserLauncherProtocolBackwardCompatTests: XCTestCase {
+
+    func testSevenArgOverloadForwardsToSixArgViaDefaultImplementation() async throws {
+        let mock = MockBrowserLauncher()
+        var capturedURL: URL?
+        var capturedBrowserType: BrowserType?
+        var capturedCallbackURLScheme: String?
+        let expectedURL = URL(string: "https://auth.example.com")!
+        let expectedReturnURL = URL(string: "myapp://callback?code=abc")!
+
+        mock.launchHandler = { url, browserType, callbackURLScheme in
+            capturedURL = url
+            capturedBrowserType = browserType
+            capturedCallbackURLScheme = callbackURLScheme
+            return expectedReturnURL
+        }
+
+        // `mock` only implements the 6-arg requirement; the 7-arg call below resolves to the
+        // protocol extension's default implementation, which drops `redirectUri` and forwards.
+        let launcher: BrowserLauncherProtocol = mock
+        let result = try await launcher.launch(
+            url: expectedURL,
+            customParams: nil,
+            browserType: .authSession,
+            browserMode: .login,
+            callbackURLScheme: "myapp",
+            redirectUri: "https://host/path",
+            logger: LogManager.logger
+        )
+
+        XCTAssertEqual(result, expectedReturnURL)
+        XCTAssertEqual(capturedURL, expectedURL)
+        XCTAssertEqual(capturedBrowserType, .authSession)
+        XCTAssertEqual(capturedCallbackURLScheme, "myapp")
     }
 }

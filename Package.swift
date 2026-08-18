@@ -48,6 +48,7 @@ let package = Package(
         .library(name: "PingOath", targets: ["PingOath"]),
         .library(name: "PingPush", targets: ["PingPush"]),
         .library(name: "PingAuthMigration", targets: ["PingAuthMigration"]),
+        .library(name: "PingOneMFA", targets: ["PingOneMFA"]),
         
         // MARK: - Utilities
         .library(name: "PingBinding", targets: ["PingBinding"])
@@ -57,7 +58,8 @@ let package = Package(
         .package(url: "https://github.com/pingidentity/pingone-signals-sdk-ios.git", "5.4.0"..<"5.5.0"),
         .package(url: "https://github.com/facebook/facebook-ios-sdk.git", "18.1.0"..<"19.0.0"),
         .package(url: "https://github.com/google/GoogleSignIn-iOS.git", exact: "9.0.0"),
-        .package(url: "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk.git", "18.8.1"..<"18.9.0")
+        .package(url: "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk.git", "18.8.1"..<"18.9.0"),
+        .package(url: "https://github.com/pingidentity/pingone-mobile-sdk-ios.git", exact: "2.3.1")
     ],
     targets: [
         // MARK: - Foundation Targets (No dependencies)
@@ -303,7 +305,16 @@ let package = Package(
             exclude: ["AuthMigration.h"],
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
-        
+        .target(
+            name: "PingOneMFA",
+            dependencies: [
+                .product(name: "PingOneSDK", package: "pingone-mobile-sdk-ios")
+            ],
+            path: "PingOneMFA/PingOneMFA",
+            exclude: ["PingOneMFA.h"],
+            resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+
         // MARK: - Utility Targets
         .target(
             name: "PingBinding",

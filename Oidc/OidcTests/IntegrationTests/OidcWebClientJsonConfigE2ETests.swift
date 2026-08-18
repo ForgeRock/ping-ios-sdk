@@ -281,6 +281,7 @@ final class OidcWebClientJsonConfigE2ETests: XCTestCase {
 /// for tests that only care about the authorize URL shape.
 private final class OidcJsonCapturingBrowser: BrowserLauncherProtocol, @unchecked Sendable {
     var launchedURL: URL?
+    var launchedRedirectUri: String?
     var isInProgress: Bool = false
     private let callbackURL = URL(string: "frauth://com.forgerock.ios.frexample?code=fake-code&state=fake")!
 
@@ -293,6 +294,20 @@ private final class OidcJsonCapturingBrowser: BrowserLauncherProtocol, @unchecke
         logger: PingLogger.Logger
     ) async throws -> URL {
         launchedURL = url
+        return callbackURL
+    }
+
+    func launch(
+        url: URL,
+        customParams: [String: String]?,
+        browserType: BrowserType,
+        browserMode: BrowserMode,
+        callbackURLScheme: String,
+        redirectUri: String?,
+        logger: PingLogger.Logger
+    ) async throws -> URL {
+        launchedURL = url
+        launchedRedirectUri = redirectUri
         return callbackURL
     }
 

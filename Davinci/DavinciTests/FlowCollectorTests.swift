@@ -2,7 +2,7 @@
 //  FlowCollectorTests.swift
 //  DavinciTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -60,5 +60,16 @@ class FlowCollectorTests: XCTestCase {
         
         flowCollector.value = "value2"
         XCTAssertEqual("value2", flowCollector.payload())
+    }
+
+    func testActionKeyIsNilWhenValueEmpty() {
+        let flowCollector = FlowCollector(with: ["key": "flowBtn"])
+        XCTAssertNil(flowCollector.actionKey)
+    }
+
+    func testActionKeyIsIdWhenValueSet() {
+        let flowCollector = FlowCollector(with: ["key": "flowBtn"])
+        flowCollector.value = "some-user-selection"
+        XCTAssertEqual("flowBtn", flowCollector.actionKey)
     }
 }

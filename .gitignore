@@ -91,6 +91,7 @@ ai-tasks/
 *.orig
 **/* copy.xcodeproj/
 /SourcePackages
+/TestResults.xcresult
 
 # Local JSON configs — not committed, discovered at runtime via folder reference
 SampleApps/PingExample/PingExample/Configs/*

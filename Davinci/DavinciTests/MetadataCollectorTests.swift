@@ -121,6 +121,17 @@ class MetadataCollectorTests: XCTestCase {
         XCTAssertNil(collector.payload())
     }
 
+    func testActionKeyIsNilWhenNoResult() {
+        let collector = MetadataCollector(with: buildJson())
+        XCTAssertNil(collector.actionKey)
+    }
+
+    func testActionKeyIsIdWhenResultSet() {
+        let collector = MetadataCollector(with: buildJson())
+        collector.setResult(["ok": true])
+        XCTAssertEqual("sdkMetadata", collector.actionKey)
+    }
+
     // MARK: - Collectors pipeline integration
 
     func testCollectorsAsJsonProducesResumeEnvelope() {

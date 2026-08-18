@@ -2,6 +2,13 @@ name: Build and Test
 
 on:
   workflow_call:
+    inputs:
+      head_sha:
+        description: Head commit SHA to check out
+        type: string
+      head_repo:
+        description: Head repository to check out
+        type: string
     secrets:
       SLACK_WEBHOOK:
         description: 'Slack Notifier Webhook'
@@ -25,8 +32,9 @@ jobs:
       - name: Clone the repository
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
+          ref: ${{ inputs.head_sha || github.event.pull_request.head.sha }}
+          repository: ${{ inputs.head_repo || github.event.pull_request.head.repo.full_name }}
+          persist-credentials: false
           fetch-depth: 0
 
       # Set target Xcode version. For more details and options see:
@@ -139,8 +147,9 @@ jobs:
         run: xcresultparser -o junit TestResults.xcresult > test-report.xml
 
       # Publish the test results
+      # dorny/test-reporter needs checks:write which is unavailable for fork PRs
       - name: Publish test results
-        if: always()
+        if: (success() || failure()) && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         uses: dorny/test-reporter@v1
         with:
           name: Unit tests results
@@ -159,4 +168,4 @@ jobs:
           status: ${{ job.status }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
-        if: always()
+        if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)

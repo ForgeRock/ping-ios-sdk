@@ -90,6 +90,8 @@ struct ContinueNodeView: View {
                     BooleanCollectorView(field: booleanCollector, onNodeUpdated: onNodeUpdated)
                 case let readOnlyTextCollector as ReadOnlyTextCollector:
                     ReadOnlyTextView(field: readOnlyTextCollector)
+                case let imageCollector as ImageCollector:
+                    ImageView(collector: imageCollector).id(imageCollector.id)
                 case let metadataCollector as MetadataCollector:
                     MetadataView(field: metadataCollector, onNext: onNext)
                 default:

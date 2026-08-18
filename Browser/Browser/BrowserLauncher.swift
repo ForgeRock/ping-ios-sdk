@@ -33,6 +33,8 @@ public enum BrowserError: Error, LocalizedError, Sendable {
     case externalUserAgentFailure
     case externalUserAgentAuthenticationInProgress
     case externalUserAgentCancelled
+    case httpsCallbackUnsupportedOS
+    case invalidHTTPSRedirectConfiguration
 
     public var errorDescription: String? {
         switch self {
@@ -42,6 +44,10 @@ public enum BrowserError: Error, LocalizedError, Sendable {
             return "An authentication session is already in progress."
         case .externalUserAgentCancelled:
             return "The authentication was cancelled by the user."
+        case .httpsCallbackUnsupportedOS:
+            return "An https redirect URI requires iOS 17.4+ or macOS 14.4+ to be intercepted by ASWebAuthenticationSession. On earlier OS versions, register a custom-scheme redirect URI with the identity provider as a fallback. (For .sfViewController or .nativeBrowserApp browser types, https Universal Link redirects are already supported on iOS 16.0-17.3 via OpenURLMonitor; this error is specific to .authSession and .ephemeralAuthSession.)"
+        case .invalidHTTPSRedirectConfiguration:
+            return "The https redirect URI does not contain a host and cannot be used to construct an OS-brokered callback."
         }
     }
 }
@@ -61,8 +67,23 @@ public protocol BrowserLauncherProtocol: Sendable {
     var isInProgress: Bool { get }
     func launch(url: URL, customParams: [String: String]?,
                 browserType: BrowserType, browserMode: BrowserMode, callbackURLScheme: String, logger: Logger) async throws -> URL
+    func launch(url: URL, customParams: [String: String]?,
+                browserType: BrowserType, browserMode: BrowserMode, callbackURLScheme: String, redirectUri: String?, logger: Logger) async throws -> URL
     func reset()
     func handleAppActivation()
+}
+
+// MARK: - BrowserLauncherProtocol default implementation
+
+extension BrowserLauncherProtocol {
+    /// Default implementation of the `redirectUri`-aware `launch` overload.
+    ///
+    /// Conformers that only implement the legacy 6-arg `launch` continue to compile and behave
+    /// identically: `redirectUri` is dropped and the call is forwarded to the existing method.
+    public func launch(url: URL, customParams: [String: String]?,
+                        browserType: BrowserType, browserMode: BrowserMode, callbackURLScheme: String, redirectUri: String?, logger: Logger) async throws -> URL {
+        return try await launch(url: url, customParams: customParams, browserType: browserType, browserMode: browserMode, callbackURLScheme: callbackURLScheme, logger: logger)
+    }
 }
 
 // MARK: - BrowserLauncher
@@ -164,23 +185,38 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     ///   - Throws: BrowserError
     public func launch(url: URL, customParams: [String: String]? = nil,
                        browserType: BrowserType = .authSession, browserMode: BrowserMode = .login, callbackURLScheme: String, logger: Logger = LogManager.logger) async throws -> URL {
+        return try await launch(url: url, customParams: customParams, browserType: browserType, browserMode: browserMode, callbackURLScheme: callbackURLScheme, redirectUri: nil, logger: logger)
+    }
+
+    /// Launches external user-agent for web requests
+    /// - Parameters:
+    ///   - url: URL to follow for the external user-agent
+    ///   - customParams: Any custom URL query parameters to be passed as URL parameters in the request
+    ///   - browserType: BrowserType enum to specify the type of external user-agent
+    ///   - browserMode: BrowserMode enum to specify the mode of the browser; login, logout, or custom
+    ///   - callbackURLScheme: The callbackURLScheme to be used for returning to the app. Used in ASWebAuthenticationSession modes
+    ///   - redirectUri: The full redirect URI, used to determine whether an OS-brokered https callback can be used. Used in ASWebAuthenticationSession modes
+    ///   - Returns: URL of the external user-agent
+    ///   - Throws: BrowserError
+    public func launch(url: URL, customParams: [String: String]? = nil,
+                       browserType: BrowserType = .authSession, browserMode: BrowserMode = .login, callbackURLScheme: String, redirectUri: String?, logger: Logger = LogManager.logger) async throws -> URL {
         self.logger = logger
-        
+
         guard case .idle = state else {
             logger.e("Attempted to launch browser while another session is in progress", error: nil)
             throw BrowserError.externalUserAgentAuthenticationInProgress
         }
-        
+
         state = .launching
         self.browserType = browserType
         self.browserMode = browserMode
-        
+
         // Prepare URL
         let finalUrl = appendCustomParams(to: url, params: customParams)
-        
+
         logger.i("Launching browser type: \(browserType) for URL: \(finalUrl.absoluteString)")
-        
-        return try await performLaunch(url: finalUrl, browserType: browserType, callbackURLScheme: callbackURLScheme)
+
+        return try await performLaunch(url: finalUrl, browserType: browserType, callbackURLScheme: callbackURLScheme, redirectUri: redirectUri)
     }
     
     // MARK: - Private Helpers
@@ -200,24 +236,58 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
         
         return urlComponents?.url ?? url
     }
-    
+
+    /// Classifies a redirect URI for use as an OS-brokered `ASWebAuthenticationSession` https callback.
+    ///
+    /// This is pure string/URL classification logic with no OS-availability dependency, so it is
+    /// fully testable headless. It does not reference `ASWebAuthenticationSession.Callback`.
+    /// - Parameter redirectUri: The full redirect URI configured for the OIDC/web flow, if any.
+    /// - Returns: `(host, path)` when `redirectUri` is a parseable `https` URL with a host
+    ///   (an empty path is normalized to `"/"`); `nil` for a `nil` input, a non-parseable string,
+    ///   a custom scheme, an `http` scheme, or an `https` URL with no host.
+    static func httpsCallbackComponents(from redirectUri: String?) -> (host: String, path: String)? {
+        guard let redirectUri = redirectUri else { return nil }
+        return httpsCallbackComponents(fromParsed: URLComponents(string: redirectUri))
+    }
+
+    /// Classifies an already-parsed redirect URI for use as an OS-brokered
+    /// `ASWebAuthenticationSession` https callback.
+    ///
+    /// Callers that also need the scheme can parse `URLComponents` once and feed it to both checks,
+    /// avoiding a second parse of the same string (and any risk of two parsers disagreeing).
+    /// - Parameter components: The parsed redirect URI, if it was parseable.
+    /// - Returns: `(host, path)` when `components` describes an `https` URL with a host
+    ///   (an empty path is normalized to `"/"`); `nil` for `nil`, a custom scheme, an `http`
+    ///   scheme, or an `https` URL with no host.
+    static func httpsCallbackComponents(fromParsed components: URLComponents?) -> (host: String, path: String)? {
+        guard let components = components,
+              components.scheme?.lowercased() == "https",
+              let host = components.host, !host.isEmpty else {
+            return nil
+        }
+
+        let path = components.path.isEmpty ? "/" : components.path
+        return (host: host, path: path)
+    }
+
     /// Performs the launch based on the specified browser type
     /// - Parameters:
     ///  - url: The URL to be opened
     ///  - browserType: The type of browser to be used
     ///  - callbackURLScheme: The callback URL scheme for the app
+    ///  - redirectUri: The full redirect URI, used to determine whether an OS-brokered https callback can be used
     ///  - Returns: The URL after authentication is complete
     ///  - Throws: An error if the launch fails
-    private func performLaunch(url: URL, browserType: BrowserType, callbackURLScheme: String) async throws -> URL {
+    private func performLaunch(url: URL, browserType: BrowserType, callbackURLScheme: String, redirectUri: String?) async throws -> URL {
         switch browserType {
         case .nativeBrowserApp:
             return try await loginWithNativeBrowser(url: url, callbackURLScheme: callbackURLScheme)
         case .sfViewController:
             return try await loginWithSFViewController(url: url, callbackURLScheme: callbackURLScheme)
         case .authSession:
-            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: false)
+            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, redirectUri: redirectUri, prefersEphemeralWebBrowserSession: false)
         case .ephemeralAuthSession:
-            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, prefersEphemeralWebBrowserSession: true)
+            return try await asWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, redirectUri: redirectUri, prefersEphemeralWebBrowserSession: true)
         }
     }
     
@@ -328,10 +398,11 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
     /// - Parameters:
     ///   - url: URL of /authorize including all URL query parameter
     ///   - callbackURLScheme: Callback URL Scheme to return to the app
+    ///   - redirectUri: The full redirect URI, used to determine whether an OS-brokered https callback can be used
     ///   - prefersEphemeralWebBrowserSession: Set to true to use ephemeral web browser session
     /// - Returns: URL after authentication is complete
     /// - Throws: BrowserError if authentication fails
-    private func asWebAuthenticationSession(url: URL, callbackURLScheme: String,
+    private func asWebAuthenticationSession(url: URL, callbackURLScheme: String, redirectUri: String?,
                                             prefersEphemeralWebBrowserSession: Bool) async throws -> URL {
         
         return try await withCheckedThrowingContinuation { [weak self] continuation in
@@ -341,21 +412,27 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
             }
             
             self.loginContinuation = continuation
-            
-            let authSession = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme) { [weak self] (callbackURL, error) in
+
+            // Shared completion handler, reused verbatim by both the legacy
+            // `callbackURLScheme:` initializer and the (future) `Callback.https` initializer.
+            // `@MainActor` because it touches `logger`/`loginContinuation`/`state`/`cleanup()`,
+            // all isolated to this class's actor; `@Sendable` per the codebase convention of
+            // explicitly annotating stored/escaping closures (a MainActor-isolated closure is
+            // safely Sendable since its captured state is protected by actor isolation).
+            let completion: @MainActor @Sendable (URL?, Error?) -> Void = { [weak self] callbackURL, error in
                 guard let self = self else { return }
-                
+
                 self.logger.i("ASWebAuthenticationSession callback received")
-                
+
                 // CRITICAL: Check if continuation is still valid (not nilled by reset())
                 guard let activeContinuation = self.loginContinuation else {
                     self.logger.i("Continuation already consumed or cancelled. Ignoring Session callback.")
                     return
                 }
-                
+
                 self.loginContinuation = nil // Consume it
                 self.state = .closing
-                
+
                 if let error = error {
                     // Check for User Cancel
                     let nsError = error as NSError
@@ -370,15 +447,64 @@ public final class BrowserLauncher: NSObject, BrowserLauncherProtocol {
                 } else {
                     activeContinuation.resume(throwing: BrowserError.externalUserAgentFailure)
                 }
-                
+
                 self.cleanup()
             }
-            
+
+            // Classify the redirect URI to decide which ASWebAuthenticationSession initializer to
+            // use. Only a `https` scheme is eligible for the OS-brokered `Callback.https`
+            // interception; a custom scheme, `http`, or a nil/non-parseable `redirectUri` all take
+            // the legacy `callbackURLScheme:` initializer, byte-for-byte unchanged from today.
+            // Parse once and derive both the scheme check and the callback components from the same
+            // `URLComponents` value, so the two classifications can never disagree.
+            let redirectComponents = redirectUri.flatMap { URLComponents(string: $0) }
+            let rawScheme = redirectComponents?.scheme?.lowercased()
+            let httpsComponents = BrowserLauncher.httpsCallbackComponents(fromParsed: redirectComponents)
+
+            // Both branches below construct a plain `ASWebAuthenticationSession` instance —
+            // `Callback.https` is an initializer overload, not a subclass — so `reset()`'s
+            // `session as? ASWebAuthenticationSession` cast (see `reset()` above) is type-safe
+            // and requires no change regardless of which initializer produced the session.
+            let authSession: ASWebAuthenticationSession
+
+            if rawScheme == "https" {
+                if let (host, path) = httpsComponents {
+                    if #available(iOS 17.4, macOS 14.4, *) {
+                        self.logger.i("https redirect URI detected; using OS-brokered Callback.https")
+                        authSession = ASWebAuthenticationSession(url: url, callback: .https(host: host, path: path), completionHandler: completion)
+                    } else {
+                        // https redirect with a derivable host, but the OS-brokered `Callback.https`
+                        // API requires iOS 17.4+/macOS 14.4+. Fail fast rather than falling back to
+                        // the legacy `callbackURLScheme:"https"` initializer, which cannot intercept
+                        // an https redirect and would silently reproduce the SDKS-5239 hang.
+                        // Mirrors the start()-fail exit below: resume, then nil the continuation,
+                        // then log, then cleanup(). Never assign `.authenticating` or call `start()`.
+                        self.loginContinuation?.resume(throwing: BrowserError.httpsCallbackUnsupportedOS)
+                        self.loginContinuation = nil
+                        self.logger.e("https redirect URI requires iOS 17.4+/macOS 14.4+ for .authSession/.ephemeralAuthSession", error: nil)
+                        self.state = .closing
+                        self.cleanup()
+                        return
+                    }
+                } else {
+                    // https redirect URI with no derivable host: cannot construct an OS-brokered
+                    // callback. Fail fast before presenting any sheet, same discipline as above.
+                    self.loginContinuation?.resume(throwing: BrowserError.invalidHTTPSRedirectConfiguration)
+                    self.loginContinuation = nil
+                    self.logger.e("https redirect URI has no derivable host; cannot construct an OS-brokered callback", error: nil)
+                    self.state = .closing
+                    self.cleanup()
+                    return
+                }
+            } else {
+                authSession = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackURLScheme, completionHandler: completion)
+            }
+
             authSession.presentationContextProvider = self
             authSession.prefersEphemeralWebBrowserSession = prefersEphemeralWebBrowserSession
-            
+
             self.state = .authenticating(session: authSession)
-            
+
             if !authSession.start() {
                 self.logger.e("Failed to start ASWebAuthenticationSession", error: nil)
                 self.state = .closing

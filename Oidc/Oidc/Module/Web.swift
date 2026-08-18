@@ -33,14 +33,15 @@ public class WebModule {
         // Start the browser authorization flow. Returns the authorization code in the response.
         setup.transport { @Sendable context, request in
             let callbackURLScheme = context.flowContext.get(key: SharedContext.Keys.callbackURLSchemeKey) as? String ?? ""
+            let redirectUri = context.flowContext.get(key: SharedContext.Keys.redirectUriKey) as? String
             let oidcLoginConfig = oidcLoginFlow.config as? OidcWebClientConfig
-            
+
             do {
                 guard let urlString = request.url, let url = URL(string: urlString) else {
                     throw OidcError.authorizeError(message: "Browser authorization failed: URL not found")
                 }
                 // Ensure the redirect URI scheme is valid
-                let result = try await BrowserLauncher.currentBrowser.launch(url: url, customParams: nil, browserType: oidcLoginConfig?.browserType ?? .authSession, browserMode: oidcLoginConfig?.browserMode ?? .login, callbackURLScheme: callbackURLScheme, logger: oidcLoginFlow.config.logger)
+                let result = try await BrowserLauncher.currentBrowser.launch(url: url, customParams: nil, browserType: oidcLoginConfig?.browserType ?? .authSession, browserMode: oidcLoginConfig?.browserMode ?? .login, callbackURLScheme: callbackURLScheme, redirectUri: redirectUri, logger: oidcLoginFlow.config.logger)
                 
                 // Extract and verify the auth code response
                 let code = try WebModule.extractCode(from: result)
@@ -50,7 +51,10 @@ public class WebModule {
                 // Return the authorization code response
                 return await URLSessionHttpResponse(request: request, body: WebModule.body(code: code), httpURLResponse: HTTPURLResponse())
             } catch {
-                throw OidcError.authorizeError(message: "Browser authorization failed: \(error.localizedDescription)")
+                // Preserve the underlying error (e.g. `BrowserError.httpsCallbackUnsupportedOS`,
+                // `BrowserError.invalidHTTPSRedirectConfiguration`) as `cause` so callers can
+                // inspect it, rather than flattening it into the message only.
+                throw OidcError.authorizeError(cause: error, message: "Browser authorization failed: \(error.localizedDescription)")
             }
         }
         

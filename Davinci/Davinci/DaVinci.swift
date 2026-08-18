@@ -103,6 +103,9 @@ extension DaVinci {
             await CollectorFactory.shared.register(type: Constants.READ_ONLY_TEXT, closure: { json in
                 return ReadOnlyTextCollector(with: json)
             })
+            await CollectorFactory.shared.register(type: Constants.IMAGE, closure: { json in
+                return ImageCollector(with: json)
+            })
             await CollectorFactory.shared.register(type: Constants.METADATA, closure: { json in
                 return MetadataCollector(with: json)
             })

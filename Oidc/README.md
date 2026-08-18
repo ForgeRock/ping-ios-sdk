@@ -115,6 +115,49 @@ config.storage = CustomStorage<Token>() //Use Custom Storage
 let ping = OidcClient(config: config)
 ```
 
+## Redirect URI and browser type
+
+`redirectUri` can be a custom URL scheme (e.g. `org.forgerock.demo://oauth2redirect`) or an `https` Universal Link (e.g. `https://example.com/callback`). Which `browserType` you use determines how that redirect is delivered back to the app:
+
+- **`.sfViewController` / `.nativeBrowserApp`** — both custom-scheme and `https` redirect URIs work today, on every OS version this SDK supports (iOS 16.0+). These browser types complete the redirect by observing `OpenURLMonitor.shared.urlPublisher`, which requires your app to forward every incoming URL — including Universal Links — to `OpenURLMonitor.shared.handleOpenURL(url)` from `onOpenURL` (SwiftUI) or `application(_:continue:restorationHandler:)` (UIKit). See the sample app's `ContentView.swift`/`onOpenURL` wiring for the reference pattern. Without this forwarding, the redirect never completes for these browser types. For `https` Universal Link redirects, your app must also declare an `applinks:<host>` associated-domain entitlement and serve a matching `applinks` entry in your `apple-app-site-association` file; `OpenURLMonitor` handles delivery once the OS routes the callback, but the OS association is required.
+- **`.authSession` / `.ephemeralAuthSession`** (the default) — custom-scheme redirects are always supported. An `https` redirect is only intercepted by the sealed `ASWebAuthenticationSession` on **iOS 17.4+ / macOS 14.4+**, via the OS-brokered `Callback.https` API — this keeps the authorization code inside the session rather than routing it through `onOpenURL`. **On iOS 16.0–17.3 / macOS 13.0–14.3, an `https` `redirectUri` with `.authSession`/`.ephemeralAuthSession` throws `OidcError.authorizeError` wrapping `BrowserError.httpsCallbackUnsupportedOS`** instead of hanging. If the `https` redirect URI has no derivable host (on any OS version), it throws `OidcError.authorizeError` wrapping `BrowserError.invalidHTTPSRedirectConfiguration` instead. On those OS versions, use `.sfViewController` or `.nativeBrowserApp` (with `applinks` association and `OpenURLMonitor` forwarding) as a fallback.
+
+If you need an `https` redirect URI and must support iOS 16.0-17.3, you have two options:
+
+1. **Switch `browserType`** to `.sfViewController` or `.nativeBrowserApp` — these work on 16.0-17.3 today, provided your app forwards the Universal Link via `OpenURLMonitor.shared.handleOpenURL(url)` as described above:
+   ```swift
+   let oidcLogin = OidcWebClient.createOidcWebClient { config in
+       config.browserType = .sfViewController
+       config.module(PingOidc.OidcModule.config) { oidcValue in
+           oidcValue.redirectUri = "https://example.com/callback"
+           // ...
+       }
+   }
+   ```
+2. **Register a custom-scheme redirect URI** with your identity provider instead of an `https` one, and keep `.authSession`/`.ephemeralAuthSession`.
+
+### `webcredentials` associated-domain requirements (https + `.authSession`/`.ephemeralAuthSession`, iOS 17.4+/macOS 14.4+)
+
+To use an `https` redirect URI with `.authSession`/`.ephemeralAuthSession` on iOS 17.4+/macOS 14.4+, your app must declare a **`webcredentials`** association with the redirect's domain — not `applinks` and not `webauthenticationsession`:
+
+1. Add the entitlement to your app target:
+   ```xml
+   <key>com.apple.developer.associated-domains</key>
+   <array>
+       <string>webcredentials:example.com</string>
+   </array>
+   ```
+2. Serve `https://example.com/.well-known/apple-app-site-association` from the domain, with a `webcredentials` entry listing your app's Team ID + Bundle ID:
+   ```json
+   {
+       "webcredentials": {
+           "apps": ["ABCDE12345.com.example.myapp"]
+       }
+   }
+   ```
+
+See the [`PingBrowser` README](../Browser/README.md#webcredentials-associated-domain-requirements-https--authsessionephemeralauthsession-ios-174macos-144) for the full rationale, including why `.authSession`/`.ephemeralAuthSession` never route through `OpenURLMonitor`.
+
 ## Advanced OIDC Configuration
 
 Configurable attributes can be found under the [OIDC Spec](https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest)

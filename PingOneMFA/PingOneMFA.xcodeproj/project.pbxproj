@@ -1,0 +1,592 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		240C95657B48433E8CD75019 /* MockPingOneMFA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C30C6DF01DC455797CC25F3 /* MockPingOneMFA.swift */; };
+		2EFFFE472FCC36D20094E6C0 /* PushType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFFFE462FCC36D20094E6C0 /* PushType.swift */; };
+		2EFFFE482FCC36D20094E6C0 /* PushType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFFFE462FCC36D20094E6C0 /* PushType.swift */; };
+		4D5B9C4E91C548879F3D0092 /* PingOneMFA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDE1452E7C56416FA24BE3FC /* PingOneMFA.framework */; };
+		5DF12D179015422B8D50E55C /* PushNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 838D8BFF67D246BD98BAE0D6 /* PushNotification.swift */; };
+		6DEF9C94A954460F80C2E875 /* AccountParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264B5E42A00F444282EAE2B2 /* AccountParser.swift */; };
+		727AADB86ABE4022A65ED683 /* PingOneMfaAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F5A4B5E637435BBD9202C8 /* PingOneMfaAccount.swift */; };
+		96FC692C7D39460B8F4F46B9 /* AccountParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED414CD63DEB40468AD3DBFD /* AccountParserTests.swift */; };
+		99987F5A040F43A49A5DF553 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 27D20303A69B4012AE4848A0 /* PrivacyInfo.xcprivacy */; };
+		9CA840E7F2434ED28DFB38DD /* PingOneSDK in Frameworks */ = {isa = PBXBuildFile; productRef = AF2DE0899F084DD0B7D178F2 /* PingOneSDK */; };
+		9CA840E8F2434ED28DFB38DD /* PingOneSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9CA840EAF2434ED28DFB38DD /* PingOneSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A478018F2630425393CEE9B1 /* PingOneMFAErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED305AC71AB43B0876EB3AF /* PingOneMFAErrorTests.swift */; };
+		B34F10903DCA4ABABFDD3BAC /* PingOneMFA.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E0FA1C73976462994E83668 /* PingOneMFA.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C028FF71B2394B16B7CC0FEB /* Geo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F6613AF2BA452FBEB3CC08 /* Geo.swift */; };
+		CBF3C2244A354D3EB152BF1A /* PingOneMFATests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A849F04B2246F998FAF85F /* PingOneMFATests.swift */; };
+		CE135E73D0974DBCAFED0322 /* PingOneMFAError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8E134ED07440F88A2DB536 /* PingOneMFAError.swift */; };
+		D1A2B3C4E5F6A7B8C9D0E1F2 /* PingOneMFAInternalError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* PingOneMFAInternalError.swift */; };
+		E2542F605D60443B9D2B95C7 /* PingOneMFA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0474486D96034FBA9364F1DD /* PingOneMFA.swift */; };
+		F1947554A491497E834731CA /* OtpCodeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82377D219C21476B9282B0B2 /* OtpCodeInfo.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		012ED3B4B619491C98C0AABD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 187599A2DF7049229C0F50D2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3116E2D77AC64ADA8B701AA6;
+			remoteInfo = PingOneMFA;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9CA840E9F2434ED28DFB38DD /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9CA840E8F2434ED28DFB38DD /* PingOneSDK.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0474486D96034FBA9364F1DD /* PingOneMFA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFA.swift; sourceTree = "<group>"; };
+		264B5E42A00F444282EAE2B2 /* AccountParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountParser.swift; sourceTree = "<group>"; };
+		27D20303A69B4012AE4848A0 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		2EFFFE462FCC36D20094E6C0 /* PushType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushType.swift; sourceTree = "<group>"; };
+		4ED305AC71AB43B0876EB3AF /* PingOneMFAErrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAErrorTests.swift; sourceTree = "<group>"; };
+		62F5A4B5E637435BBD9202C8 /* PingOneMfaAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMfaAccount.swift; sourceTree = "<group>"; };
+		82377D219C21476B9282B0B2 /* OtpCodeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtpCodeInfo.swift; sourceTree = "<group>"; };
+		838D8BFF67D246BD98BAE0D6 /* PushNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotification.swift; sourceTree = "<group>"; };
+		8C30C6DF01DC455797CC25F3 /* MockPingOneMFA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPingOneMFA.swift; sourceTree = "<group>"; };
+		8E0FA1C73976462994E83668 /* PingOneMFA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PingOneMFA.h; sourceTree = "<group>"; };
+		92F6613AF2BA452FBEB3CC08 /* Geo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geo.swift; sourceTree = "<group>"; };
+		9CA840EAF2434ED28DFB38DD /* PingOneSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOneSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F6A7B8C9D0E1F2 /* PingOneMFAInternalError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAInternalError.swift; sourceTree = "<group>"; };
+		D4A849F04B2246F998FAF85F /* PingOneMFATests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFATests.swift; sourceTree = "<group>"; };
+		DF8E134ED07440F88A2DB536 /* PingOneMFAError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAError.swift; sourceTree = "<group>"; };
+		ED414CD63DEB40468AD3DBFD /* AccountParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountParserTests.swift; sourceTree = "<group>"; };
+		F748FD268F5344689F9DC02E /* PingOneMFATests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingOneMFATests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDE1452E7C56416FA24BE3FC /* PingOneMFA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingOneMFA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9DAC828D9AF246CFB59EB8B7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D5B9C4E91C548879F3D0092 /* PingOneMFA.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8F3362045DB4AAC8C4AAB6D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9CA840E7F2434ED28DFB38DD /* PingOneSDK in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		052A6060A0F84A1C95038AB3 /* PingOneMFA */ = {
+			isa = PBXGroup;
+			children = (
+				27D20303A69B4012AE4848A0 /* PrivacyInfo.xcprivacy */,
+				8E0FA1C73976462994E83668 /* PingOneMFA.h */,
+				264B5E42A00F444282EAE2B2 /* AccountParser.swift */,
+				82377D219C21476B9282B0B2 /* OtpCodeInfo.swift */,
+				0474486D96034FBA9364F1DD /* PingOneMFA.swift */,
+				92F6613AF2BA452FBEB3CC08 /* Geo.swift */,
+				DF8E134ED07440F88A2DB536 /* PingOneMFAError.swift */,
+				A1B2C3D4E5F6A7B8C9D0E1F2 /* PingOneMFAInternalError.swift */,
+				62F5A4B5E637435BBD9202C8 /* PingOneMfaAccount.swift */,
+				838D8BFF67D246BD98BAE0D6 /* PushNotification.swift */,
+				2EFFFE462FCC36D20094E6C0 /* PushType.swift */,
+			);
+			path = PingOneMFA;
+			sourceTree = "<group>";
+		};
+		0A6FD42B92DA4DA4A8CA0E52 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FDE1452E7C56416FA24BE3FC /* PingOneMFA.framework */,
+				F748FD268F5344689F9DC02E /* PingOneMFATests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2E90D40B2FC8385700E41057 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				9CA840EAF2434ED28DFB38DD /* PingOneSDK.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		4DAC2ED9E36440E8BB727098 /* PingOneMFATests */ = {
+			isa = PBXGroup;
+			children = (
+				8C30C6DF01DC455797CC25F3 /* MockPingOneMFA.swift */,
+				D4A849F04B2246F998FAF85F /* PingOneMFATests.swift */,
+				4ED305AC71AB43B0876EB3AF /* PingOneMFAErrorTests.swift */,
+				ED414CD63DEB40468AD3DBFD /* AccountParserTests.swift */,
+			);
+			path = PingOneMFATests;
+			sourceTree = "<group>";
+		};
+		C73C2817920B43D5A250644D = {
+			isa = PBXGroup;
+			children = (
+				052A6060A0F84A1C95038AB3 /* PingOneMFA */,
+				4DAC2ED9E36440E8BB727098 /* PingOneMFATests */,
+				0A6FD42B92DA4DA4A8CA0E52 /* Products */,
+				2E90D40B2FC8385700E41057 /* Recovered References */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		C3DCFC969DA54E1FA82E3E97 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B34F10903DCA4ABABFDD3BAC /* PingOneMFA.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		14C0CBAE9D4D412388F63F45 /* PingOneMFATests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6927DABC98C64931A63BE0C6 /* Build configuration list for PBXNativeTarget "PingOneMFATests" */;
+			buildPhases = (
+				262B06DECA774550AF4B013E /* Sources */,
+				9DAC828D9AF246CFB59EB8B7 /* Frameworks */,
+				D0E25507B4D3456D80C28FA8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C711120F1A6C4CC5B3E919EC /* PBXTargetDependency */,
+			);
+			name = PingOneMFATests;
+			packageProductDependencies = (
+			);
+			productName = PingOneMFATests;
+			productReference = F748FD268F5344689F9DC02E /* PingOneMFATests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		3116E2D77AC64ADA8B701AA6 /* PingOneMFA */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 68235318B0034BD2A46DE20A /* Build configuration list for PBXNativeTarget "PingOneMFA" */;
+			buildPhases = (
+				C3DCFC969DA54E1FA82E3E97 /* Headers */,
+				D85A13FA4FE54CCE8A1274CB /* Sources */,
+				F8F3362045DB4AAC8C4AAB6D /* Frameworks */,
+				E58F25BE1EE3494B9341C05F /* Resources */,
+				9CA840E9F2434ED28DFB38DD /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PingOneMFA;
+			packageProductDependencies = (
+				AF2DE0899F084DD0B7D178F2 /* PingOneSDK */,
+			);
+			productName = PingOneMFA;
+			productReference = FDE1452E7C56416FA24BE3FC /* PingOneMFA.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		187599A2DF7049229C0F50D2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1610;
+				LastUpgradeCheck = 1610;
+				TargetAttributes = {
+					14C0CBAE9D4D412388F63F45 = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					3116E2D77AC64ADA8B701AA6 = {
+						CreatedOnToolsVersion = 16.1;
+						LastSwiftMigration = 1610;
+					};
+				};
+			};
+			buildConfigurationList = 765DC209A72C492D9DE150BF /* Build configuration list for PBXProject "PingOneMFA" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C73C2817920B43D5A250644D;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5F88B53928734959A448B7F6 /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0A6FD42B92DA4DA4A8CA0E52 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3116E2D77AC64ADA8B701AA6 /* PingOneMFA */,
+				14C0CBAE9D4D412388F63F45 /* PingOneMFATests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D0E25507B4D3456D80C28FA8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E58F25BE1EE3494B9341C05F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				99987F5A040F43A49A5DF553 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		262B06DECA774550AF4B013E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				240C95657B48433E8CD75019 /* MockPingOneMFA.swift in Sources */,
+				CBF3C2244A354D3EB152BF1A /* PingOneMFATests.swift in Sources */,
+				2EFFFE482FCC36D20094E6C0 /* PushType.swift in Sources */,
+				A478018F2630425393CEE9B1 /* PingOneMFAErrorTests.swift in Sources */,
+				96FC692C7D39460B8F4F46B9 /* AccountParserTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85A13FA4FE54CCE8A1274CB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6DEF9C94A954460F80C2E875 /* AccountParser.swift in Sources */,
+				F1947554A491497E834731CA /* OtpCodeInfo.swift in Sources */,
+				E2542F605D60443B9D2B95C7 /* PingOneMFA.swift in Sources */,
+				2EFFFE472FCC36D20094E6C0 /* PushType.swift in Sources */,
+				C028FF71B2394B16B7CC0FEB /* Geo.swift in Sources */,
+				CE135E73D0974DBCAFED0322 /* PingOneMFAError.swift in Sources */,
+				D1A2B3C4E5F6A7B8C9D0E1F2 /* PingOneMFAInternalError.swift in Sources */,
+				727AADB86ABE4022A65ED683 /* PingOneMfaAccount.swift in Sources */,
+				5DF12D179015422B8D50E55C /* PushNotification.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C711120F1A6C4CC5B3E919EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3116E2D77AC64ADA8B701AA6 /* PingOneMFA */;
+			targetProxy = 012ED3B4B619491C98C0AABD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4BB5FEB529B343258D4ADC07 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingOneMFATests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
+			};
+			name = Release;
+		};
+		80B6BBE1F29345AC99781875 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = YZYUGL7S48;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		A32D49EAB3D141789DF2E8B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingOneMFA;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CE84FA32CBA34220AEB125D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingOneMFA;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E5052C1556564979A2979640 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pingidentity.PingOneMFATests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PingTestHost.app/PingTestHost";
+			};
+			name = Debug;
+		};
+		FFBA7AB4A95B4E13BF2DD7F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = YZYUGL7S48;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		68235318B0034BD2A46DE20A /* Build configuration list for PBXNativeTarget "PingOneMFA" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE84FA32CBA34220AEB125D6 /* Debug */,
+				A32D49EAB3D141789DF2E8B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6927DABC98C64931A63BE0C6 /* Build configuration list for PBXNativeTarget "PingOneMFATests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E5052C1556564979A2979640 /* Debug */,
+				4BB5FEB529B343258D4ADC07 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		765DC209A72C492D9DE150BF /* Build configuration list for PBXProject "PingOneMFA" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FFBA7AB4A95B4E13BF2DD7F4 /* Debug */,
+				80B6BBE1F29345AC99781875 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5F88B53928734959A448B7F6 /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pingidentity/pingone-mobile-sdk-ios.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.3.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AF2DE0899F084DD0B7D178F2 /* PingOneSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5F88B53928734959A448B7F6 /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */;
+			productName = PingOneSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 187599A2DF7049229C0F50D2 /* Project object */;
+}

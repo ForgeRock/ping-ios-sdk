@@ -74,6 +74,15 @@
       }
     },
     {
+      "identity" : "pingone-mobile-sdk-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pingidentity/pingone-mobile-sdk-ios.git",
+      "state" : {
+        "revision" : "6023edf096b885a7208efe7d94b230180a7318cc",
+        "version" : "2.3.1"
+      }
+    },
+    {
       "identity": "pingone-signals-sdk-ios",
       "kind": "remoteSourceControl",
       "location": "https://github.com/pingidentity/pingone-signals-sdk-ios.git",
