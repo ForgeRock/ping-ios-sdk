@@ -2,9 +2,11 @@
 #### Added
 - Added `ImageCollector` to support image display in DaVinci forms [SDKS-5143]
 - Added `MetadataCollector` to support the DaVinci SDK Integrator connector's pause/resume model, allowing the app to invoke on-device SDKs and return a result or error before the flow continues [SDKS-5142]
+- Added `trigger` and `isAutomatic` to the DaVinci FIDO collectors [SDKS-4552]
 
 #### Fixed
 - Fixed `OidcWebClient` `.authSession` and `.ephemeralAuthSession` not completing for Universal Link (https) redirect URIs [SDKS-5239]
+- Fixed FIDO registration/authentication not launching automatically when the DaVinci form's `trigger` property is not `BUTTON` [SDKS-4552]
 
 ## [2.1.0]
 #### Added
