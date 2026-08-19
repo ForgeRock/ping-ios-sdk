@@ -87,6 +87,7 @@ jobs:
       head_repo: ${{ needs.resolve-context.outputs.head_repo }}
     secrets:
       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      DAVINCI_E2E_CONFIG: ${{ secrets.DAVINCI_E2E_CONFIG }}
 
   # Run Mend CLI Scan — skip for fork PRs (Mend credentials unavailable)
   mend-cli-scan:
@@ -130,6 +131,7 @@ jobs:
       CERTIFICATES_PASSWORD: ${{ secrets.CERTIFICATES_PASSWORD }}
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       BUILD_PROVISION_PROFILE: ${{ secrets.BUILD_PROVISION_PROFILE_ZIP_BASE64}}
+      DAVINCI_E2E_CONFIG: ${{ secrets.DAVINCI_E2E_CONFIG }}
       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
   # Execute e2e test cases in BrowserStack.

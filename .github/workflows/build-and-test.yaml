@@ -13,6 +13,9 @@ on:
       SLACK_WEBHOOK:
         description: 'Slack Notifier Webhook'
         required: true
+      DAVINCI_E2E_CONFIG:
+        description: 'DaVinci e2e test configuration JSON'
+        required: false
   
 env:
   WORKSPACE: SampleApps/Ping.xcworkspace
@@ -97,6 +100,15 @@ jobs:
             -derivedDataPath ${{ env.DERIVED_DATA_PATH }} \
             -clonedSourcePackagesDirPath SourcePackages \
             COMPILER_INDEX_STORE_ENABLE=NO | xcbeautify
+
+      # Inject DaVinci e2e config (no-op when secret is absent — fork PRs)
+      - name: Inject DaVinci e2e config
+        env:
+          DAVINCI_E2E_CONFIG: ${{ secrets.DAVINCI_E2E_CONFIG }}
+        run: |
+          if [ -n "$DAVINCI_E2E_CONFIG" ]; then
+            echo "$DAVINCI_E2E_CONFIG" > Davinci/DavinciTests/Configuration/DaVinci-e2e-config.json
+          fi
 
       # Run the unit tests without building
       - name: Run unit tests

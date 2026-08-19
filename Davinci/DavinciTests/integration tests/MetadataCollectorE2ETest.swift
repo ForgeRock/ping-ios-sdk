@@ -35,7 +35,7 @@ class MetadataCollectorE2ETest: DaVinciBaseTests, @unchecked Sendable {
     private let submitIndex = 1            // SubmitCollector "Continue" on Automation - Message
 
     override func setUp() async throws {
-        self.configFileName = "ConfigNew"
+        self.configFileName = "DaVinci-e2e-config"
         try await super.setUp()
 
         HTTPCookieStorage.shared.cookies?.forEach { HTTPCookieStorage.shared.deleteCookie($0) }
@@ -46,7 +46,7 @@ class MetadataCollectorE2ETest: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
                 oidcValue.redirectUri = self.config.redirectUri
-                oidcValue.acrValues = "14f7988fc922112d599a14c1016a6ec6"
+                oidcValue.acrValues = self.config.metadataAcrValues
                 oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
             }
         }

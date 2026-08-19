@@ -34,7 +34,15 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
     
     /// Indicates whether the IdP is enabled.
     public var idpEnabled = true
-    
+
+    /// When `true`, the Facebook handler constructed in `getDefaultIdpHandler(httpClient:)`
+    /// will use Facebook Limited Login (OIDC ID token). When `false`, it uses classic OAuth2
+    /// (access token). Defaults to `false` for backward compatibility. Ignored for non-Facebook IdPs.
+    ///
+    /// `@MainActor`-isolated so reads inside `getDefaultIdpHandler(httpClient:)` can't race
+    /// with configuration writes from another executor.
+    @MainActor public var facebookLimitedLoginEnabled: Bool = false
+
     ///  The IdP identifier.
     public var idpId: String
     
@@ -131,7 +139,9 @@ open class IdpCollector: NSObject, Collector, ContinueNodeAware, RequestIntercep
             }
         case Constants.FACEBOOK:
             if let c: NSObject.Type = NSClassFromString("PingExternalIdPFacebook.FacebookRequestHandler") as? NSObject.Type {
-                return makeNativeRequestHandler(from: c, httpClient: httpClient)
+                let handler = makeNativeRequestHandler(from: c, httpClient: httpClient)
+                (handler as? FacebookLimitedLoginConfigurable)?.facebookLimitedLoginEnabled = facebookLimitedLoginEnabled
+                return handler
             } else {
                 return nil
             }

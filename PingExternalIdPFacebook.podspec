@@ -34,6 +34,6 @@ Pod::Spec.new do |s|
   }
 
   s.ios.dependency 'PingExternalIdP', '~> 2.1.0'
-  s.ios.dependency 'FBSDKLoginKit', '~> 16.3.1'
+  s.ios.dependency 'FBSDKLoginKit', '>= 18.1.0', '< 19.0.0'
     
 end

@@ -21,6 +21,45 @@ final class ExternalIdPFacebookTests: XCTestCase {
         IdpCollector.registerCollector()
     }
     
+    // MARK: - IdpCollector Limited Login Flag Tests
+    
+    @MainActor func testIdpCollectorFacebookLimitedLoginEnabledForwardsToHandler() throws {
+        let jsonObject: [String: Any] = [
+            "idpId": "test-id",
+            "idpType": "FACEBOOK",
+            "type": "SOCIAL_LOGIN_BUTTON",
+            "label": "Facebook",
+            "links": [
+                "authenticate": [
+                    "href": "https://example.com"
+                ]
+            ]
+        ]
+        let idpCollector = IdpCollector(with: jsonObject)
+        idpCollector.facebookLimitedLoginEnabled = true
+        let handler = idpCollector.getDefaultIdpHandler(httpClient: HttpClient.createClient())
+        let configurableHandler = try XCTUnwrap(handler as? FacebookLimitedLoginConfigurable)
+        XCTAssertTrue(configurableHandler.facebookLimitedLoginEnabled)
+    }
+    
+    @MainActor func testIdpCollectorFacebookLimitedLoginDefaultsToDisabledOnHandler() throws {
+        let jsonObject: [String: Any] = [
+            "idpId": "test-id",
+            "idpType": "FACEBOOK",
+            "type": "SOCIAL_LOGIN_BUTTON",
+            "label": "Facebook",
+            "links": [
+                "authenticate": [
+                    "href": "https://example.com"
+                ]
+            ]
+        ]
+        let idpCollector = IdpCollector(with: jsonObject)
+        let handler = idpCollector.getDefaultIdpHandler(httpClient: HttpClient.createClient())
+        let configurableHandler = try XCTUnwrap(handler as? FacebookLimitedLoginConfigurable)
+        XCTAssertFalse(configurableHandler.facebookLimitedLoginEnabled)
+    }
+    
     // MARK: - IdpCollector Tests
     
     @MainActor func testidpCollectorParsingFacebook() throws {
@@ -65,6 +104,19 @@ final class ExternalIdPFacebookTests: XCTestCase {
         XCTAssertNotNil(handler)
     }
     
+    @MainActor func testFacebookRequestHandlerLimitedLoginDefaultsToDisabled() {
+        let httpClient = HttpClient.createClient()
+        let handler = FacebookRequestHandler(httpClient: httpClient as! URLSessionHttpClient)
+        XCTAssertFalse(handler.facebookLimitedLoginEnabled)
+    }
+    
+    @MainActor func testFacebookRequestHandlerLimitedLoginCanBeEnabled() {
+        let httpClient = HttpClient.createClient()
+        let handler = FacebookRequestHandler(httpClient: httpClient as! URLSessionHttpClient)
+        handler.facebookLimitedLoginEnabled = true
+        XCTAssertTrue(handler.facebookLimitedLoginEnabled)
+    }
+    
     // MARK: - FacebookHandlerUtils Tests
     
     @MainActor func testFacebookHandlerUtilsAuthorizeThrowsWithNilConfiguration() async {
@@ -90,4 +142,46 @@ final class ExternalIdPFacebookTests: XCTestCase {
         }
     }
     
+    // MARK: - Facebook Limited Login Mode Tests
+    
+    @MainActor func testFacebookHandlerTokenTypeWhenLimitedLoginEnabled() {
+        let handler = FacebookHandler()
+        handler.facebookLimitedLoginEnabled = true
+        XCTAssertEqual(handler.tokenType, IdpConstants.id_token)
+    }
+    
+    @MainActor func testFacebookHandlerTokenTypeWhenLimitedLoginDisabled() {
+        let handler = FacebookHandler()
+        XCTAssertEqual(handler.tokenType, IdpConstants.access_token)
+    }
+    
+    @MainActor func testFacebookHandlerUtilsLimitedThrowsWithNilConfiguration() async {
+        let idpClient = IdpClient(clientId: "test", scopes: ["email"])
+
+        do {
+            _ = try await FacebookHandlerUtils.authorize(idpClient: idpClient, configuration: nil, manager: nil, isLimited: true)
+            XCTFail("Expected error to be thrown with nil configuration in limited mode")
+        } catch {
+            XCTAssertNotNil(error)
+        }
+    }
+
+    // MARK: - IdpCallback fb-limited Provider Matching Tests
+
+    @MainActor func testIdpCallbackMatchesFbLimitedProviderBeforeFacebook() throws {
+        let callback = IdpCallback()
+        callback.initValue(name: "provider", value: "fb-limited")
+        let handler = callback.getDefaultIdpHandler()
+        let configurableHandler = try XCTUnwrap(handler as? FacebookLimitedLoginConfigurable)
+        XCTAssertTrue(configurableHandler.facebookLimitedLoginEnabled)
+    }
+
+    @MainActor func testIdpCallbackMatchesPlainFacebookProviderAsClassic() throws {
+        let callback = IdpCallback()
+        callback.initValue(name: "provider", value: "facebook")
+        let handler = callback.getDefaultIdpHandler()
+        let configurableHandler = try XCTUnwrap(handler as? FacebookLimitedLoginConfigurable)
+        XCTAssertFalse(configurableHandler.facebookLimitedLoginEnabled)
+    }
+
 }

@@ -18,13 +18,13 @@ import XCTest
 ///
 /// Config-level tests validate field parsing, default values, and error cases without making
 /// network calls. Live tests start the RFC 8628 device authorization flow against the real
-/// PingOne tenant (`ConfigNew.json`) to confirm that a JSON-built client behaves identically
+/// PingOne tenant (`DaVinci-e2e-config.json`) to confirm that a JSON-built client behaves identically
 /// to one built with the code-based factory. The flow is cancelled after the first `.started`
 /// emission — no user interaction or approval is required.
 final class DeviceClientJsonConfigE2ETest: DaVinciBaseTests, @unchecked Sendable {
 
     override func setUp() async throws {
-        self.configFileName = "ConfigNew"
+        self.configFileName = "DaVinci-e2e-config"
         try await super.setUp()
         LogManager.logger = NoneLogger()
     }
@@ -36,7 +36,7 @@ final class DeviceClientJsonConfigE2ETest: DaVinciBaseTests, @unchecked Sendable
 
     // MARK: - JSON fixtures
 
-    /// Minimal OIDC dict using the device client id from ConfigNew.
+    /// Minimal OIDC dict using the device client id from DaVinci-e2e-config.
     private var baseOidcDict: [String: Any] {
         [
             "clientId": config.deviceClientId,
@@ -63,7 +63,10 @@ final class DeviceClientJsonConfigE2ETest: DaVinciBaseTests, @unchecked Sendable
                 "refreshThreshold": 60,
                 "openId": [
                     "deviceAuthorizationEndpoint":
-                        "https://auth.pingone.ca/300c4f2a-39d4-4ba9-a18a-f6de246006f4/as/device_authorization"
+                        config.discoveryEndpoint.replacingOccurrences(
+                            of: ".well-known/openid-configuration",
+                            with: "device_authorization"
+                        )
                 ] as [String: Any]
             ] as [String: Any]
         ]

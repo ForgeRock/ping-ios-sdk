@@ -26,6 +26,7 @@
 		ECA53F912D635C53002B35D4 /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECA53F8F2D635C53002B35D4 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECA53F952D635CF8002B35D4 /* ExternalIdPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA53F932D635CF8002B35D4 /* ExternalIdPTests.swift */; };
 		ECB7C5C22D54D9100006F1C8 /* IdpCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */; };
+		A5FBEDF10000000000000002 /* FacebookLimitedLoginConfigurable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5FBEDF10000000000000001 /* FacebookLimitedLoginConfigurable.swift */; };
 		ECB7C69C2D5A2C1F0006F1C8 /* PingExternalIdP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC0815B72D49377500F1AD02 /* PingExternalIdP.framework */; };
 		ECBF06492D50ED7A0066A3BD /* BrowserHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF06482D50ED750066A3BD /* BrowserHandler.swift */; };
 		ECF7EB842E46262D002A5E8E /* IdpValidationUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF7EB832E462626002A5E8E /* IdpValidationUtils.swift */; };
@@ -80,6 +81,7 @@
 		ECA53F932D635CF8002B35D4 /* ExternalIdPTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalIdPTests.swift; sourceTree = "<group>"; };
 		ECA53FD42D63A48A002B35D4 /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdpCollector.swift; sourceTree = "<group>"; };
+		A5FBEDF10000000000000001 /* FacebookLimitedLoginConfigurable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookLimitedLoginConfigurable.swift; sourceTree = "<group>"; };
 		ECB7C6982D5A2C1F0006F1C8 /* PingExternalIdPTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingExternalIdPTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF06442D50EBF60066A3BD /* PingDavinci.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingDavinci.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECBF06482D50ED750066A3BD /* BrowserHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserHandler.swift; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 				EC9F9FC52D5E1E2800E2A31D /* IdpClient.swift */,
 				ECB7C5C12D54D9090006F1C8 /* IdpCollector.swift */,
 				EC8025C72F0D356F0046C961 /* IdpCallback.swift */,
+				A5FBEDF10000000000000001 /* FacebookLimitedLoginConfigurable.swift */,
 				ECF7EB832E462626002A5E8E /* IdpValidationUtils.swift */,
 				EC0815EE2D493DC900F1AD02 /* IdpExceptions.swift */,
 				EC0815EC2D493A1E00F1AD02 /* IdpResult.swift */,
@@ -301,6 +304,7 @@
 			files = (
 				EC9F9FC42D5E1B2100E2A31D /* IdpRequestHandler.swift in Sources */,
 				ECB7C5C22D54D9100006F1C8 /* IdpCollector.swift in Sources */,
+				A5FBEDF10000000000000002 /* FacebookLimitedLoginConfigurable.swift in Sources */,
 				ECF7EB842E46262D002A5E8E /* IdpValidationUtils.swift in Sources */,
 				EC8025CA2F0D35900046C961 /* SelectIdpCallback.swift in Sources */,
 				EC8025C82F0D35750046C961 /* IdpCallback.swift in Sources */,
