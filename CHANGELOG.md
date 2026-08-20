@@ -7,6 +7,7 @@
 
 #### Fixed
 - Fixed `OidcWebClient` `.authSession` and `.ephemeralAuthSession` not completing for Universal Link (https) redirect URIs [SDKS-5239]
+- Fixed `OidcWebClient.authorize()` collapsing `FailureNode.cause` to `.unknown`, losing typed browser-cancellation and unsupported-OS error identity [SDKS-5295]
 
 ## [2.1.0]
 #### Added
