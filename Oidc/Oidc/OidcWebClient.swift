@@ -126,7 +126,7 @@ public extension OidcWebClient {
             if let oidcError = failureNode.cause as? OidcError {
                 return Result<User, OidcError>.failure(oidcError)
             }
-            return Result<User, OidcError>.failure(OidcError.unknown(cause: failureNode.cause, message: failureNode.cause.localizedDescription))
+            return Result<User, OidcError>.failure(OidcError.unknown(cause: failureNode.cause, message: nil))
         case let successNode as SuccessNode:
             guard let user = successNode.session as? User else {
                 // This should never happen, but just in case

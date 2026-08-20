@@ -32,7 +32,12 @@ class OidcWebClientTests: XCTestCase {
             }
         }
     }
-    
+
+    override func tearDown() async throws {
+        await MainActor.run { BrowserLauncher.currentBrowser = BrowserLauncher() }
+        try await super.tearDown()
+    }
+
     func testOidcWeb() throws {
         guard let oidcWeb = self.oidcWebClient else {
             XCTFail("Failed to create Journey instance")
@@ -196,7 +201,6 @@ class OidcWebClientTests: XCTestCase {
         }
 
         BrowserLauncher.currentBrowser = CancellingBrowser()
-        defer { BrowserLauncher.currentBrowser = BrowserLauncher() }
 
         let client = OidcWebClient.createOidcWebClient { config in
             config.httpClient = MockURLProtocol.makeClient()
