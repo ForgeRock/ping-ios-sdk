@@ -32,7 +32,11 @@ public class OidcClientConfig: @unchecked Sendable {
     ]
 
     /// OpenID configuration.
-    public private(set) var openId: OpenIdConfiguration?
+    ///
+    /// Set this to configure the SDK from explicit endpoints and skip OpenID discovery entirely;
+    /// leave `nil` to discover from `discoveryEndpoint`. Must be set before the config is handed
+    /// to a client or workflow (see the class-level `@unchecked Sendable` note).
+    public var openId: OpenIdConfiguration?
     /// Token refresh threshold in seconds.
     public var refreshThreshold: Int64 = 0
     /// Agent delegate for handling OIDC operations.
@@ -70,11 +74,14 @@ public class OidcClientConfig: @unchecked Sendable {
     public var par: Bool = false
     /// HTTP client for making network requests.
     public var httpClient: (any HttpClientProtocol)?
-    /// Called once after OpenID discovery completes, allowing callers to patch any field
-    /// on the discovered `OpenIdConfiguration` before it is used (e.g. override
-    /// `deviceAuthorizationEndpoint` for a non-standard server).
+    /// Called once, after OpenID discovery completes or against a pre-supplied `openId`,
+    /// allowing callers to patch any field on the `OpenIdConfiguration` before it is used
+    /// (e.g. override `deviceAuthorizationEndpoint` for a non-standard server).
     public var openIdOverride: ((inout OpenIdConfiguration) -> Void)?
-    
+    /// Tracks whether `openIdOverride` has already been applied, so that re-entrant
+    /// `oidcInitialize()` calls never run a caller-supplied closure more than once.
+    private var openIdOverrideApplied = false
+
     /// Initializes a new `OidcClientConfig` instance.
     public init() {
         storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE", encryptor: SecuredKeyEncryptor() ?? NoEncryptor(), cacheStrategy: .NO_CACHE)
@@ -94,26 +101,26 @@ public class OidcClientConfig: @unchecked Sendable {
         self.agent = AgentDelegate<T>(agent: agent, agentConfig: agent.config()(), oidcClientConfig: self)
     }
     
-    /// Injects a pre-built `OpenIdConfiguration`, skipping network discovery.
-    /// Intended for unit tests only — use `openIdOverride` for production endpoint patching.
-    func setOpenId(_ openId: OpenIdConfiguration?) {
-        self.openId = openId
-    }
-
     /// Initializes the lazy properties to their default values.
+    ///
+    /// Discovery is performed only when `openId` has not been supplied by the caller, so a
+    /// pre-configured `OpenIdConfiguration` skips the network round-trip entirely. Whichever
+    /// document ends up in `openId` — discovered or pre-supplied — is patched by
+    /// `openIdOverride` exactly once, even though every `OidcClient` entry point re-enters
+    /// this method.
     public func oidcInitialize() async throws {
         if httpClient == nil {
             httpClient = HttpClient.createClient()
         }
-        
-        if openId != nil {
-            return
+
+        if openId == nil {
+            openId = try await discover()
         }
 
-        openId = try await discover()
-        if var discovered = openId {
-            openIdOverride?(&discovered)
-            openId = discovered
+        if var configuration = openId, !openIdOverrideApplied {
+            openIdOverride?(&configuration)
+            openId = configuration
+            openIdOverrideApplied = true
         }
     }
     
@@ -164,6 +171,10 @@ public class OidcClientConfig: @unchecked Sendable {
     ///   a workflow module. Do **not** call this on an `OidcClientConfig` that has already been
     ///   passed to a running workflow or client: it replaces every field including `storage` and
     ///   `openId`, which can cause in-flight token reads to hit an unexpected (empty) keychain slot.
+    ///
+    /// The "`openIdOverride` already applied" flag is carried over as well, so a clone of an
+    /// already-initialised configuration does not re-run the override closure on a document that
+    /// has already been patched.
     /// - Parameter other: The other configuration to merge.
     public func update(with other: OidcClientConfig) {
         self.openId = other.openId
@@ -186,6 +197,7 @@ public class OidcClientConfig: @unchecked Sendable {
         self.par = other.par
         self.httpClient = other.httpClient
         self.openIdOverride = other.openIdOverride
+        self.openIdOverrideApplied = other.openIdOverrideApplied
     }
     
     /// Applies a unified JSON configuration dictionary to this instance.

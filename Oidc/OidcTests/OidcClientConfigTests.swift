@@ -104,6 +104,125 @@ final class OidcClientConfigTests: XCTestCase {
         }
     }
     
+    // MARK: - Pre-supplied openId / openIdOverride
+
+    /// Builds a complete `OpenIdConfiguration` pointing at the mock endpoints.
+    private func makeOpenIdConfiguration() -> OpenIdConfiguration {
+        OpenIdConfiguration(
+            authorizationEndpoint: MockAPIEndpoint.authorization.url.absoluteString,
+            tokenEndpoint: MockAPIEndpoint.token.url.absoluteString,
+            userinfoEndpoint: MockAPIEndpoint.userinfo.url.absoluteString,
+            endSessionEndpoint: MockAPIEndpoint.endSession.url.absoluteString,
+            revocationEndpoint: MockAPIEndpoint.revocation.url.absoluteString
+        )
+    }
+
+    /// A pre-supplied `openId` makes `oidcInitialize()` skip discovery entirely — it succeeds
+    /// with no `discoveryEndpoint` configured and issues no network request.
+    func testOidcInitializeWithPreSuppliedOpenIdSkipsDiscovery() async throws {
+        MockURLProtocol.requestHistory.removeAll()
+        MockURLProtocol.requestHandler = { _ in
+            XCTFail("No request expected when openId is pre-supplied")
+            return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfiguration)
+        }
+
+        oidcClientConfig.discoveryEndpoint = ""
+        let supplied = makeOpenIdConfiguration()
+        oidcClientConfig.openId = supplied
+
+        try await oidcClientConfig.oidcInitialize()
+
+        XCTAssertEqual(oidcClientConfig.openId?.authorizationEndpoint, supplied.authorizationEndpoint)
+        XCTAssertEqual(oidcClientConfig.openId?.tokenEndpoint, supplied.tokenEndpoint)
+        XCTAssertEqual(oidcClientConfig.openId?.userinfoEndpoint, supplied.userinfoEndpoint)
+        XCTAssertEqual(oidcClientConfig.openId?.endSessionEndpoint, supplied.endSessionEndpoint)
+        XCTAssertEqual(oidcClientConfig.openId?.revocationEndpoint, supplied.revocationEndpoint)
+        XCTAssertTrue(MockURLProtocol.requestHistory.isEmpty, "Discovery must not be requested when openId is pre-supplied")
+    }
+
+    /// `openIdOverride` patches a pre-supplied document, and does so exactly once even though
+    /// every `OidcClient` entry point re-enters `oidcInitialize()`.
+    func testOpenIdOverrideAppliedOnceToPreSuppliedOpenId() async throws {
+        MockURLProtocol.requestHistory.removeAll()
+        oidcClientConfig.discoveryEndpoint = ""
+        oidcClientConfig.openId = makeOpenIdConfiguration()
+
+        let counter = CallCounter()
+        oidcClientConfig.openIdOverride = { openId in
+            counter.count += 1
+            openId.deviceAuthorizationEndpoint = MockAPIEndpoint.deviceAuthorization.url.absoluteString
+        }
+
+        try await oidcClientConfig.oidcInitialize()
+        try await oidcClientConfig.oidcInitialize()
+
+        XCTAssertEqual(counter.count, 1, "openIdOverride must be applied exactly once")
+        XCTAssertEqual(oidcClientConfig.openId?.deviceAuthorizationEndpoint, MockAPIEndpoint.deviceAuthorization.url.absoluteString)
+        XCTAssertTrue(MockURLProtocol.requestHistory.isEmpty)
+    }
+
+    /// `openIdOverride` patches a discovered document exactly once across repeated
+    /// `oidcInitialize()` calls, and discovery itself runs only once.
+    func testOpenIdOverrideAppliedOnceToDiscoveredOpenId() async throws {
+        MockURLProtocol.requestHistory.removeAll()
+        MockURLProtocol.requestHandler = { _ in
+            return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfiguration)
+        }
+
+        let counter = CallCounter()
+        oidcClientConfig.openIdOverride = { openId in
+            counter.count += 1
+            openId.deviceAuthorizationEndpoint = MockAPIEndpoint.deviceAuthorization.url.absoluteString
+        }
+
+        try await oidcClientConfig.oidcInitialize()
+        try await oidcClientConfig.oidcInitialize()
+
+        XCTAssertEqual(counter.count, 1, "openIdOverride must be applied exactly once")
+        XCTAssertEqual(oidcClientConfig.openId?.deviceAuthorizationEndpoint, MockAPIEndpoint.deviceAuthorization.url.absoluteString)
+        XCTAssertEqual(MockURLProtocol.requestHistory.count, 1, "Discovery must run only once")
+    }
+
+    /// A clone of an already-initialised configuration carries the "override applied" state, so
+    /// `OidcModule`'s `success` hook cannot re-run a caller's closure on a patched document.
+    func testCloneDoesNotReapplyOpenIdOverride() async throws {
+        MockURLProtocol.requestHistory.removeAll()
+        oidcClientConfig.discoveryEndpoint = ""
+        oidcClientConfig.openId = makeOpenIdConfiguration()
+
+        let counter = CallCounter()
+        oidcClientConfig.openIdOverride = { openId in
+            counter.count += 1
+            openId.tokenEndpoint += "?applied=\(counter.count)"
+        }
+
+        try await oidcClientConfig.oidcInitialize()
+        XCTAssertEqual(counter.count, 1)
+
+        let cloned = oidcClientConfig.clone()
+        try await cloned.oidcInitialize()
+
+        XCTAssertEqual(counter.count, 1, "clone() must not re-run openIdOverride")
+        XCTAssertEqual(cloned.openId?.tokenEndpoint, oidcClientConfig.openId?.tokenEndpoint)
+        XCTAssertEqual(cloned.openId?.tokenEndpoint, "\(MockAPIEndpoint.token.url.absoluteString)?applied=1")
+    }
+
+    /// Regression guard: with `openId` left `nil`, discovery still runs against `discoveryEndpoint`.
+    func testOidcInitializeRunsDiscoveryWhenOpenIdIsNil() async throws {
+        MockURLProtocol.requestHistory.removeAll()
+        MockURLProtocol.requestHandler = { _ in
+            return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfiguration)
+        }
+
+        XCTAssertNil(oidcClientConfig.openId)
+
+        try await oidcClientConfig.oidcInitialize()
+
+        XCTAssertNotNil(oidcClientConfig.openId)
+        XCTAssertEqual(MockURLProtocol.requestHistory.count, 1)
+        XCTAssertEqual(MockURLProtocol.requestHistory.first?.url, MockAPIEndpoint.discovery.url)
+    }
+
     // TestRailCase(22081)
     func testClone() {
         oidcClientConfig.refreshThreshold = 100
@@ -182,6 +301,11 @@ final class OidcClientConfigTests: XCTestCase {
         XCTAssertEqual(otherConfig.httpClient.debugDescription, oidcClientConfig.httpClient.debugDescription)
         XCTAssertEqual(otherConfig.par, oidcClientConfig.par)
     }
+}
+
+/// Reference-typed counter so `openIdOverride` closures can record how often they ran.
+final class CallCounter: @unchecked Sendable {
+    var count = 0
 }
 
 // Mock classes for AgentDelegateProtocol, Agent, HttpClient, etc.
