@@ -5,10 +5,17 @@
 - Added `trigger` and `isAutomatic` to the DaVinci FIDO collectors [SDKS-4552]
 - Added Facebook Limited Login (OIDC ID-token flow) support in `PingExternalIdPFacebook`. Toggle via the new `facebookLimitedLoginEnabled` property on `IdpCollector` (DaVinci) or on `FacebookHandler` / `FacebookRequestHandler` directly; defaults to `false` (classic OAuth2). On the Journey path, provider names containing `fb-limited` automatically opt into Limited Login [SDKS-5160, SDKS-5161, SDKS-5162]
 - Bumped `facebook-ios-sdk` to 18.1.0 [SDKS-5160]
+- `oidc.discoveryEndpoint` in the unified JSON configuration is now required only when no `oidc.openId` sub-object is supplied; an `openId` block without `discoveryEndpoint` replaces the discovery document and requires `tokenEndpoint` [SDKS-5301]
+- Added `OidcError.configurationError` to report a configuration that has neither a usable `discoveryEndpoint` nor a pre-supplied `openId` [SDKS-5301]
 
 #### Fixed
 - Fixed `OidcWebClient` `.authSession` and `.ephemeralAuthSession` not completing for Universal Link (https) redirect URIs [SDKS-5239]
 - Fixed FIDO registration/authentication not launching automatically when the DaVinci form's `trigger` property is not `BUTTON` [SDKS-4552]
+- Restored `OidcClientConfig.openId` as a publicly settable property and made `oidcInitialize()` skip OpenID discovery when it is pre-supplied, restoring the 2.0.0 no-discovery configuration path [SDKS-5301]
+
+#### Changed
+- `OidcError` gained a `configurationError` case — exhaustive `switch` statements over `OidcError` need a new branch [SDKS-5301]
+- A JSON configuration with a blank `oidc.discoveryEndpoint` and no `oidc.openId` sub-object now fails at parse time instead of at first use [SDKS-5301]
 
 ## [2.1.0]
 #### Added
