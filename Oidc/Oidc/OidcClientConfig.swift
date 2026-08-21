@@ -31,6 +31,11 @@ public class OidcClientConfig: @unchecked Sendable {
         (JsonConfigKey.pingEndsessionEndpoint,             { $0.pingEndsessionEndpoint = $1 }),
     ]
 
+    /// Shared by the `OidcError.configurationError` thrown from `discover()` and by its log line, so
+    /// a consumer reads the same actionable text in the log and in the error.
+    static let noOpenIdConfigurationMessage =
+        "No OpenID configuration: set either `discoveryEndpoint` or `openId` on OidcClientConfig."
+
     /// OpenID configuration.
     ///
     /// Set this to configure the SDK from explicit endpoints and skip OpenID discovery entirely;
@@ -108,12 +113,18 @@ public class OidcClientConfig: @unchecked Sendable {
     /// document ends up in `openId` — discovered or pre-supplied — is patched by
     /// `openIdOverride` exactly once, even though every `OidcClient` entry point re-enters
     /// this method.
+    ///
+    /// - Throws: `OidcError.configurationError` when neither `openId` nor a usable
+    ///   `discoveryEndpoint` is configured, or any error surfaced by discovery itself
+    ///   (`OidcError.apiError`, a decoding failure, a transport error). A failure leaves
+    ///   `openId` `nil`, so a subsequent call retries.
     public func oidcInitialize() async throws {
         if httpClient == nil {
             httpClient = HttpClient.createClient()
         }
 
         if openId == nil {
+            // A failed discovery throws, which leaves `openId` nil so a later call can retry.
             openId = try await discover()
         }
 
@@ -125,18 +136,26 @@ public class OidcClientConfig: @unchecked Sendable {
     }
     
     /// Discovers the OpenID configuration from the discovery endpoint.
+    ///
+    /// Only the endpoint URL and static text are logged — never a response body.
     /// - Returns: The discovered OpenID configuration.
-    private func discover() async throws -> OpenIdConfiguration? {
+    /// - Throws: `OidcError.configurationError` when `discoveryEndpoint` is blank or malformed, or
+    ///   when no HTTP client is available; `OidcError.apiError` when the endpoint responds with a
+    ///   non-success status; a `DecodingError` when the response is not a discovery document.
+    private func discover() async throws -> OpenIdConfiguration {
         guard URL(string: discoveryEndpoint) != nil else {
-            logger.e("Invalid Discovery URL", error: nil)
-            return nil
+            let message = OidcClientConfig.noOpenIdConfigurationMessage
+                + " Invalid discoveryEndpoint: \"\(discoveryEndpoint)\""
+            logger.e(message, error: nil)
+            throw OidcError.configurationError(message: message)
         }
-        
+
         guard let httpClient else {
-            logger.e("Invalid Http Client URL", error: nil)
-            return nil
+            let message = "No HTTP client available to fetch the OpenID configuration from \(discoveryEndpoint)"
+            logger.e(message, error: nil)
+            throw OidcError.configurationError(message: message)
         }
-        
+
         let response = try await httpClient.request { request in
             request.url = self.discoveryEndpoint
         }

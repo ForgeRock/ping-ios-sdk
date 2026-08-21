@@ -78,7 +78,7 @@ final class OidcClientTests: XCTestCase {
             switch failure {
             case .apiError(let code, _):
                 XCTAssertEqual(code, 500)
-            case .authorizeError, .networkError, .unknown:
+            case .authorizeError, .networkError, .configurationError, .unknown:
                 XCTFail("Should have failed with .apiError")
             }
         }
@@ -214,7 +214,7 @@ final class OidcClientTests: XCTestCase {
             switch failure {
             case .apiError(let code, _):
                 XCTAssertEqual(code, 400)
-            case .authorizeError, .networkError, .unknown:
+            case .authorizeError, .networkError, .configurationError, .unknown:
                 XCTFail("Should have failed with .apiError(400)")
             }
         }
@@ -242,7 +242,7 @@ final class OidcClientTests: XCTestCase {
             switch failure {
             case .apiError(let code, _):
                 XCTAssertEqual(code, 400)
-            case .authorizeError, .networkError, .unknown:
+            case .authorizeError, .networkError, .configurationError, .unknown:
                 XCTFail("Should have failed with .apiError(400)")
             }
         }
@@ -272,7 +272,7 @@ final class OidcClientTests: XCTestCase {
             switch failure {
             case .apiError(let code, _):
                 XCTAssertEqual(code, 401)
-            case .authorizeError, .networkError, .unknown:
+            case .authorizeError, .networkError, .configurationError, .unknown:
                 XCTFail("Should have failed with .apiError(401)")
             }
         }
@@ -342,6 +342,26 @@ final class OidcClientTests: XCTestCase {
         // Assert: the corrupted token was deleted before re-authenticating
         let deleted = await throwingStorage.throwingMock.deleteWasCalled
         XCTAssertTrue(deleted, "delete() should have been called to clear the corrupted token")
+    }
+
+    // TestRailCase — SDKS-5301: `oidcInitialize()` failures are re-wrapped in `token()`, and the
+    // re-wrap must preserve a typed `OidcError` rather than collapsing it into `.unknown`.
+    func testTokenSurfacesConfigurationErrorFromOidcInitialize() async throws {
+        oidcClientConfig.discoveryEndpoint = ""
+
+        let result = await oidcClient.token()
+
+        switch result {
+        case .success:
+            XCTFail("Expected failure when neither openId nor discoveryEndpoint is configured")
+        case .failure(let error):
+            if case .configurationError(let message) = error {
+                XCTAssertTrue(message.contains("discoveryEndpoint"))
+                XCTAssertTrue(message.contains("openId"))
+            } else {
+                XCTFail("Expected .configurationError but got \(error)")
+            }
+        }
     }
 
     // TestRailCase — SDKS-5172: if delete() fails during recovery, token() must surface a

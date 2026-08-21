@@ -223,6 +223,109 @@ final class OidcClientConfigTests: XCTestCase {
         XCTAssertEqual(MockURLProtocol.requestHistory.first?.url, MockAPIEndpoint.discovery.url)
     }
 
+    // MARK: - Unusable configuration
+
+    /// Neither `openId` nor a usable `discoveryEndpoint`: `oidcInitialize()` fails fast with an
+    /// actionable `configurationError` naming both properties, instead of silently leaving
+    /// `openId` nil for a vague "OpenID configuration not found" four call frames later.
+    func testOidcInitializeWithoutOpenIdOrDiscoveryEndpointThrowsConfigurationError() async throws {
+        MockURLProtocol.requestHistory.removeAll()
+        MockURLProtocol.requestHandler = { _ in
+            XCTFail("No request expected when discoveryEndpoint is blank")
+            return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfiguration)
+        }
+
+        oidcClientConfig.discoveryEndpoint = ""
+
+        do {
+            try await oidcClientConfig.oidcInitialize()
+            XCTFail("Expected oidcInitialize() to throw when neither openId nor discoveryEndpoint is configured")
+        } catch let error as OidcError {
+            if case .configurationError(let message) = error {
+                XCTAssertTrue(message.contains("discoveryEndpoint"), "Message must name discoveryEndpoint: \(message)")
+                XCTAssertTrue(message.contains("openId"), "Message must name openId: \(message)")
+                XCTAssertEqual(error.errorMessage, "Configuration error: \(message)")
+            } else {
+                XCTFail("Expected OidcError.configurationError, got \(error)")
+            }
+        }
+
+        XCTAssertNil(oidcClientConfig.openId, "A failed discovery must leave openId nil so a later call can retry")
+        XCTAssertTrue(MockURLProtocol.requestHistory.isEmpty, "No discovery request must be attempted")
+    }
+
+    /// A `discoveryEndpoint` that cannot be parsed as a URL is reported the same way as a blank one.
+    func testOidcInitializeWithMalformedDiscoveryEndpointThrowsConfigurationError() async throws {
+        MockURLProtocol.requestHistory.removeAll()
+        MockURLProtocol.requestHandler = { _ in
+            XCTFail("No request expected when discoveryEndpoint is malformed")
+            return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfiguration)
+        }
+
+        let malformed = "ht^tp://example.com/.well-known/openid-configuration"
+        XCTAssertNil(URL(string: malformed), "Precondition: the endpoint must not parse as a URL")
+        oidcClientConfig.discoveryEndpoint = malformed
+
+        do {
+            try await oidcClientConfig.oidcInitialize()
+            XCTFail("Expected oidcInitialize() to throw on a malformed discoveryEndpoint")
+        } catch let error as OidcError {
+            if case .configurationError(let message) = error {
+                XCTAssertTrue(message.contains(malformed), "Message must echo the offending endpoint: \(message)")
+            } else {
+                XCTFail("Expected OidcError.configurationError, got \(error)")
+            }
+        }
+
+        XCTAssertNil(oidcClientConfig.openId)
+        XCTAssertTrue(MockURLProtocol.requestHistory.isEmpty)
+    }
+
+    /// A reachable discovery endpoint that answers with an error status is a server failure, not a
+    /// configuration failure — it must stay an `apiError` and not be re-labelled.
+    func testOidcInitializeWithServerErrorThrowsApiError() async throws {
+        MockURLProtocol.requestHandler = { _ in
+            return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.error)
+        }
+
+        do {
+            try await oidcClientConfig.oidcInitialize()
+            XCTFail("Expected oidcInitialize() to throw on a 500 discovery response")
+        } catch let error as OidcError {
+            if case .apiError(let code, _) = error {
+                XCTAssertEqual(code, 500)
+            } else {
+                XCTFail("Expected OidcError.apiError, got \(error)")
+            }
+        }
+
+        XCTAssertNil(oidcClientConfig.openId)
+    }
+
+    /// A failed discovery is not sticky: `openId` stays nil, so the next `oidcInitialize()` retries
+    /// and succeeds once the endpoint recovers.
+    func testOidcInitializeRetriesDiscoveryAfterFailure() async throws {
+        MockURLProtocol.requestHandler = { _ in
+            return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.error)
+        }
+
+        do {
+            try await oidcClientConfig.oidcInitialize()
+            XCTFail("Expected the first oidcInitialize() to throw")
+        } catch {
+            XCTAssertNil(oidcClientConfig.openId)
+        }
+
+        MockURLProtocol.requestHandler = { _ in
+            return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfiguration)
+        }
+
+        try await oidcClientConfig.oidcInitialize()
+
+        XCTAssertNotNil(oidcClientConfig.openId)
+        XCTAssertEqual(oidcClientConfig.openId?.tokenEndpoint, MockAPIEndpoint.token.url.absoluteString)
+    }
+
     // TestRailCase(22081)
     func testClone() {
         oidcClientConfig.refreshThreshold = 100
