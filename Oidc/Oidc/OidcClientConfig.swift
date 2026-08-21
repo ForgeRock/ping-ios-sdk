@@ -205,6 +205,12 @@ public class OidcClientConfig: @unchecked Sendable {
     /// Validates all required fields and writes every recognised field directly to `self`.
     /// Unknown fields (including `signOutRedirectUri`) are silently ignored for forward compatibility.
     ///
+    /// `discoveryEndpoint` is required unless an `openId` sub-object is supplied. When `openId` is
+    /// supplied without `discoveryEndpoint` it replaces the discovery document (no network call) and
+    /// `tokenEndpoint` becomes required. When both are supplied, discovery runs and `openId` patches
+    /// the discovered document. A blank `discoveryEndpoint` counts as absent, since discovery can
+    /// never succeed against it.
+    ///
     /// - Important: If the JSON contains an `openId` sub-object, this method **merges** the
     ///   JSON-derived endpoint overrides with any existing `openIdOverride`. The existing closure
     ///   runs first, then the JSON-derived overrides are applied on top, so the JSON values win
@@ -220,8 +226,18 @@ public class OidcClientConfig: @unchecked Sendable {
 
         // --- Required fields ---
         let clientId: String          = try p.required(JsonConfigKey.clientId,          field: f(JsonConfigKey.clientId))
-        let discoveryEndpoint: String = try p.required(JsonConfigKey.discoveryEndpoint, field: f(JsonConfigKey.discoveryEndpoint))
         let redirectUri: String       = try p.required(JsonConfigKey.redirectUri,       field: f(JsonConfigKey.redirectUri))
+
+        // --- discoveryEndpoint / openId (conditionally required) ---
+        // A blank `discoveryEndpoint` is treated as absent: discovery can never succeed against it,
+        // and bridges that always emit the key would otherwise be locked out of the no-discovery path.
+        let rawDiscoveryEndpoint: String? = try p.optionalValue(JsonConfigKey.discoveryEndpoint, field: f(JsonConfigKey.discoveryEndpoint))
+        let discoveryEndpoint = OidcClientConfig.nonBlank(rawDiscoveryEndpoint)
+        let openIdDict: [String: Any]? = try p.optionalValue(JsonConfigKey.openId, field: f(JsonConfigKey.openId))
+
+        if discoveryEndpoint == nil && openIdDict == nil {
+            throw JsonConfigError.missingRequiredField(f(JsonConfigKey.discoveryEndpoint))
+        }
 
         let rawScopes: [Any] = try p.required(JsonConfigKey.scopes, field: f(JsonConfigKey.scopes))
         var parsedScopes = Set<String>()
@@ -256,10 +272,10 @@ public class OidcClientConfig: @unchecked Sendable {
         }
 
         // --- openId endpoint overrides (optional) ---
-        // Maps to `openIdOverride` — applied after discovery completes (see oidcInitialize).
+        // Maps to `openIdOverride` — applied to the OpenID document exactly once (see oidcInitialize).
         // To add a new endpoint: add one entry to `endpointSetters`; no other change required.
         var parsedOpenIdOverrides = [String: String]()
-        if let openIdDict: [String: Any] = try p.optionalValue(JsonConfigKey.openId, field: f(JsonConfigKey.openId)) {
+        if let openIdDict {
             for (key, _) in OidcClientConfig.endpointSetters {
                 if let raw = openIdDict[key] {
                     guard let value = raw as? String else {
@@ -270,9 +286,31 @@ public class OidcClientConfig: @unchecked Sendable {
             }
         }
 
+        // --- openId as a replacement for the discovery document ---
+        // No `discoveryEndpoint` means the `openId` sub-object *is* the document, so `tokenEndpoint`
+        // becomes required; every other non-optional endpoint defaults to "" and the optional ones
+        // to nil, matching the leniency the rest of the SDK already applies to those fields.
+        var seededOpenId: OpenIdConfiguration?
+        if discoveryEndpoint == nil, openIdDict != nil {
+            guard OidcClientConfig.nonBlank(parsedOpenIdOverrides[JsonConfigKey.tokenEndpoint]) != nil else {
+                throw JsonConfigError.missingRequiredField(fOpenId(JsonConfigKey.tokenEndpoint))
+            }
+            var openId = OpenIdConfiguration(
+                authorizationEndpoint: "",
+                tokenEndpoint: "",
+                userinfoEndpoint: "",
+                endSessionEndpoint: "",
+                revocationEndpoint: ""
+            )
+            for (key, setter) in OidcClientConfig.endpointSetters {
+                if let value = parsedOpenIdOverrides[key] { setter(&openId, value) }
+            }
+            seededOpenId = openId
+        }
+
         // All validation passed — apply to self
         self.clientId = clientId
-        self.discoveryEndpoint = discoveryEndpoint
+        self.discoveryEndpoint = discoveryEndpoint ?? ""
         self.scopes = parsedScopes
         self.redirectUri = redirectUri
         self.refreshThreshold = Int64(refreshThresholdInt)
@@ -286,6 +324,14 @@ public class OidcClientConfig: @unchecked Sendable {
         self.acrValues = acrValues
         self.additionalParameters = parsedAdditional
 
+        // Only set when the `openId` sub-object stands in for the discovery document; a pre-supplied
+        // `openId` (or the document discovery is about to fetch) is left untouched otherwise.
+        if let seededOpenId {
+            self.openId = seededOpenId
+        }
+
+        // Installed in both branches: against a seeded document the overrides are a no-op, which keeps
+        // a single override-installation code path.
         if !parsedOpenIdOverrides.isEmpty {
             let overrides = parsedOpenIdOverrides
             let existing = self.openIdOverride
@@ -298,4 +344,14 @@ public class OidcClientConfig: @unchecked Sendable {
         }
     }
 
+    // MARK: - Private
+
+    /// Returns `value` when it holds at least one non-whitespace character, otherwise `nil`.
+    /// Used by `apply(json:)` to treat blank endpoint strings as absent.
+    private static func nonBlank(_ value: String?) -> String? {
+        guard let value, !value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return nil
+        }
+        return value
+    }
 }
