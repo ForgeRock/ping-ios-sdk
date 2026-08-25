@@ -57,6 +57,7 @@ struct Configuration: Codable, Sendable, Identifiable {
 enum ConfigType: String, Codable, CaseIterable, Sendable {
     case journey = "Journey"
     case davinci = "DaVinci"
+    case pingOneMFADavinci = "PingOne MFA DaVinci"
     case oidcWeb = "OIDC (Web)"
     case device = "Device Flow"
 
@@ -64,6 +65,7 @@ enum ConfigType: String, Codable, CaseIterable, Sendable {
         switch self {
         case .journey: return "map.fill"
         case .davinci: return "key.fill"
+        case .pingOneMFADavinci: return "link.badge.plus"
         case .oidcWeb: return "lock.shield.fill"
         case .device: return "tv"
         }

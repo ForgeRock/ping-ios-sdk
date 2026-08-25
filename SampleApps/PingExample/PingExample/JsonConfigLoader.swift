@@ -13,6 +13,8 @@ import PingLogger
 import PingOidc
 
 enum JsonConfigLoader {
+    private static let pingOneMfaKey = "pingOneMfa"
+
     /// Loads all bundled unified SDK configuration JSON files from the Configs/ folder in Bundle.main.
     /// Each file is emitted as its natural type (Journey or DaVinci). Files that also contain an
     /// `oidc` sub-dict additionally emit OidcWeb and Device entries; Journey-only files (no `oidc`)
@@ -38,7 +40,23 @@ enum JsonConfigLoader {
         let name = nameFromFilename(filename)
         let journeyDict = json[JsonConfigKey.journey] as? [String: Any]
         let oidc = json[JsonConfigKey.oidc] as? [String: Any]
-        let naturalType: ConfigType = journeyDict != nil ? .journey : .davinci
+        let isPingOneMfa = json[pingOneMfaKey] as? Bool == true
+        let naturalType: ConfigType
+        if journeyDict != nil {
+            naturalType = .journey
+        } else if isPingOneMfa {
+            naturalType = .pingOneMFADavinci
+        } else {
+            naturalType = .davinci
+        }
+
+        if isPingOneMfa && journeyDict != nil {
+            LogManager.logger.w(
+                "JsonConfigLoader: '\(filename)' cannot combine 'pingOneMfa' with 'journey'",
+                error: nil
+            )
+            return []
+        }
 
         // For Journey configs, serverUrl is required inside the journey sub-dict
         if naturalType == .journey {
@@ -100,6 +118,10 @@ enum JsonConfigLoader {
             acrValues: acrValues,
             jsonFileName: filename
         )
+
+        if naturalType == .pingOneMFADavinci {
+            return [base]
+        }
 
         // Only emit OidcWeb and Device entries when oidc is present
         guard let oidc else {

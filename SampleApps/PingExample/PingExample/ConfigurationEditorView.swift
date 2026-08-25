@@ -44,10 +44,14 @@ struct ConfigurationEditorView: View {
         self.editingConfig = config
     }
     
+    private var isDaVinciType: Bool {
+        type == .davinci || type == .pingOneMFADavinci
+    }
+
     /// Fields relevant for the current type, in order.
     private var orderedFields: [Field] {
         var fields: [Field] = [.name, .clientId, .scopes, .redirectUri]
-        if type == .davinci {
+        if isDaVinciType {
             fields.append(.signOutUri)
         }
         fields.append(.discoveryEndpoint)
@@ -119,7 +123,7 @@ struct ConfigurationEditorView: View {
                     labeledField("Scopes", text: $scopes, field: .scopes, placeholder: "openid, email, profile")
                     labeledField("Redirect URI *", text: $redirectUri, field: .redirectUri, keyboard: .URL)
                     
-                    if type == .davinci {
+                    if isDaVinciType {
                         labeledField("Sign Out URI", text: $signOutUri, field: .signOutUri, keyboard: .URL)
                     }
                     

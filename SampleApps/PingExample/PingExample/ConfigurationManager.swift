@@ -38,6 +38,7 @@ class ConfigurationManager: ObservableObject {
     private static let selectionKeys: [ConfigType: String] = [
         .journey: "SelectedJourneyConfigName",
         .davinci: "SelectedDaVinciConfigName",
+        .pingOneMFADavinci: "SelectedPingOneMFADaVinciConfigName",
         .oidcWeb: "SelectedOidcWebConfigName",
         .device: "SelectedDeviceConfigName"
     ]
@@ -58,6 +59,7 @@ class ConfigurationManager: ObservableObject {
     
     public var journey: Journey?
     public var davinci: DaVinci?
+    public var pingOneMFADavinci: DaVinci?
     public var oidcLogin: OidcWebClient?
     public var deviceClient: OidcDeviceClient?
 
@@ -80,12 +82,14 @@ class ConfigurationManager: ObservableObject {
         
         let journeyConfig = ConfigurationManager.loadSelection(for: .journey, from: allConfigs)
         let davinciConfig = ConfigurationManager.loadSelection(for: .davinci, from: allConfigs)
+        let pingOneMFAConfig = ConfigurationManager.loadSelection(for: .pingOneMFADavinci, from: allConfigs)
         let oidcWebConfig = ConfigurationManager.loadSelection(for: .oidcWeb, from: allConfigs)
         let deviceConfig = ConfigurationManager.loadSelection(for: .device, from: allConfigs)
 
         var sels = [ConfigType: Configuration]()
         if let c = journeyConfig { sels[.journey] = c }
         if let c = davinciConfig { sels[.davinci] = c }
+        if let c = pingOneMFAConfig { sels[.pingOneMFADavinci] = c }
         if let c = oidcWebConfig { sels[.oidcWeb] = c }
         if let c = deviceConfig { sels[.device] = c }
         self.selections = sels
@@ -96,6 +100,11 @@ class ConfigurationManager: ObservableObject {
                 ?? ConfigurationManager.buildJourney(config)
         }
         self.davinci = davinciConfig.map { config in
+            ConfigurationManager.resolveJson(for: config)
+                .flatMap { ConfigurationManager.buildDaVinci(fromJSON: $0) }
+                ?? ConfigurationManager.buildDaVinci(config)
+        }
+        self.pingOneMFADavinci = pingOneMFAConfig.map { config in
             ConfigurationManager.resolveJson(for: config)
                 .flatMap { ConfigurationManager.buildDaVinci(fromJSON: $0) }
                 ?? ConfigurationManager.buildDaVinci(config)
@@ -144,6 +153,9 @@ class ConfigurationManager: ObservableObject {
         case .davinci:
             davinci = json.flatMap { ConfigurationManager.buildDaVinci(fromJSON: $0) }
                 ?? ConfigurationManager.buildDaVinci(config)
+        case .pingOneMFADavinci:
+            pingOneMFADavinci = json.flatMap { ConfigurationManager.buildDaVinci(fromJSON: $0) }
+                ?? ConfigurationManager.buildDaVinci(config)
         case .oidcWeb:
             oidcLogin = json.flatMap { ConfigurationManager.buildOidcWebClient(fromJSON: $0) }
                 ?? ConfigurationManager.buildOidcWebClient(config)
@@ -168,34 +180,55 @@ class ConfigurationManager: ObservableObject {
     /// Update an existing configuration by name and persist.
     public func updateConfiguration(oldName: String, with config: Configuration) {
         if let index = configurations.firstIndex(where: { $0.name == oldName }) {
+            let oldConfig = configurations[index]
+            let oldType = oldConfig.type
+            let wasOldConfigSelected = selections[oldType]?.name == oldConfig.name
+
             configurations[index] = config
             saveUserConfigurations()
-            // If this was the selected config for its type, re-select to rebuild the SDK instance
-            if selections[config.type]?.name == oldName {
+
+            if oldType == config.type {
+                // Preserve ordinary same-type editing behavior.
+                if wasOldConfigSelected {
+                    select(config)
+                }
+                return
+            }
+
+            // Treat a type change as removing the old configuration and adding the new one.
+            if wasOldConfigSelected {
+                selectFallbackOrClear(for: oldType)
+            }
+            if selections[config.type] == nil {
                 select(config)
             }
         }
     }
-    
+
     /// Delete a configuration by name and persist.
     public func deleteConfiguration(_ config: Configuration) {
         configurations.removeAll { $0.name == config.name && $0.type == config.type }
         saveUserConfigurations()
         // If the deleted config was selected, fall back to the first of its type (or clear)
         if selections[config.type]?.name == config.name {
-            if let fallback = configurations.first(where: { $0.type == config.type }) {
-                select(fallback)
-            } else {
-                selections.removeValue(forKey: config.type)
-                if let key = ConfigurationManager.selectionKeys[config.type] {
-                    UserDefaults.standard.removeObject(forKey: key)
-                }
-                switch config.type {
-                case .journey: journey = nil
-                case .davinci: davinci = nil
-                case .oidcWeb: oidcLogin = nil
-                case .device: deviceClient = nil
-                }
+            selectFallbackOrClear(for: config.type)
+        }
+    }
+
+    private func selectFallbackOrClear(for type: ConfigType) {
+        if let fallback = configurations.first(where: { $0.type == type }) {
+            select(fallback)
+        } else {
+            selections.removeValue(forKey: type)
+            if let key = ConfigurationManager.selectionKeys[type] {
+                UserDefaults.standard.removeObject(forKey: key)
+            }
+            switch type {
+            case .journey: journey = nil
+            case .davinci: davinci = nil
+            case .pingOneMFADavinci: pingOneMFADavinci = nil
+            case .oidcWeb: oidcLogin = nil
+            case .device: deviceClient = nil
             }
         }
     }
