@@ -308,6 +308,7 @@ let package = Package(
         .target(
             name: "PingOneMFA",
             dependencies: [
+                "PingDavinciPlugin",
                 .product(name: "PingOneSDK", package: "pingone-mobile-sdk-ios")
             ],
             path: "PingOneMFA/PingOneMFA",
