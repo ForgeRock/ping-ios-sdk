@@ -62,6 +62,7 @@ jobs:
           # Dump to file for jq
           echo "$response" > result.json
 
+          build_id="${{ inputs.browserstack-build-id }}"
           total_devices=$(jq '.devices | length' result.json)
           summary=""
           failed_total=0
@@ -69,7 +70,15 @@ jobs:
           for (( i=0; i<total_devices; i++ )); do
             device=$(jq -r ".devices[$i].device" result.json)
             os_version=$(jq -r ".devices[$i].os_version" result.json)
+            session_id=$(jq -r ".devices[$i].sessions[0].id" result.json)
             session_status=$(jq -r ".devices[$i].sessions[0].status" result.json)
+            tc_count=$(jq -r ".devices[$i].sessions[0].testcases.count // 0" result.json)
+            tc_passed=$(jq -r ".devices[$i].sessions[0].testcases.status.passed // 0" result.json)
+            tc_failed=$(jq -r ".devices[$i].sessions[0].testcases.status.failed // 0" result.json)
+            tc_skipped=$(jq -r ".devices[$i].sessions[0].testcases.status.skipped // 0" result.json)
+            tc_error=$(jq -r ".devices[$i].sessions[0].testcases.status.error // 0" result.json)
+            tc_timedout=$(jq -r ".devices[$i].sessions[0].testcases.status.timedout // 0" result.json)
+            session_url="https://app-automate.browserstack.com/dashboard/v2/builds/${build_id}/sessions/${session_id}"
 
             if [ "$session_status" = "passed" ]; then
               emoji="✅"
@@ -78,7 +87,33 @@ jobs:
               failed_total=$((failed_total + 1))
             fi
 
-            summary+="📱 $device (iOS $os_version): $emoji $session_status\n"
+            summary+="📱 $device (iOS $os_version): $emoji $session_status — ${tc_passed} passed, ${tc_failed} failed, ${tc_skipped} skipped, ${tc_error} error, ${tc_timedout} timed out (of ${tc_count} total)\n"
+            summary+="   <${session_url}|View this session>\n"
+
+            # On any non-passing session, drill into the per-test-case results so failures are
+            # actionable straight from Slack, instead of requiring a trip into BrowserStack's UI
+            # (which otherwise collapses the whole multi-target run into one opaque "session").
+            if [ "$session_status" != "passed" ] && [ -n "$session_id" ] && [ "$session_id" != "null" ]; then
+              session_response=$(curl -s -u "${{ secrets.BROWSERSTACK_USERNAME }}:${{ secrets.BROWSERSTACK_ACCESS_KEY }}" \
+                "https://api-cloud.browserstack.com/app-automate/xcuitest/v2/builds/${build_id}/sessions/${session_id}")
+              echo "$session_response" > "session_${i}.json"
+
+              failing_tests=$(jq -r '
+                (.testcases.data // [])[]
+                | .class as $class
+                | (.testcases // [])[]
+                | select(.status != "passed")
+                | "     • \($class)/\(.name) (\(.status)) — \(.video // "no video")"
+              ' "session_${i}.json")
+
+              if [ -n "$failing_tests" ]; then
+                failing_count=$(grep -c '' <<< "$failing_tests")
+                summary+="$(head -10 <<< "$failing_tests")\n"
+                if [ "$failing_count" -gt 10 ]; then
+                  summary+="     …and $((failing_count - 10)) more (see session for the full list)\n"
+                fi
+              fi
+            fi
           done
 
           # Escape for JSON and strip quotes
@@ -88,7 +123,7 @@ jobs:
           # Export outputs
           echo "summary=$escaped_summary" >> $GITHUB_OUTPUT
           echo "any_failed=$failed_total" >> $GITHUB_OUTPUT
-          echo "build_url=https://app-automate.browserstack.com/dashboard/v2/builds/${{ inputs.browserstack-build-id }}" >> $GITHUB_OUTPUT
+          echo "build_url=https://app-automate.browserstack.com/dashboard/v2/builds/${build_id}" >> $GITHUB_OUTPUT
         
           
       - name: Send slack notification with test results
