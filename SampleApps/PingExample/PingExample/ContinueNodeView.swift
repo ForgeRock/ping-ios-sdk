@@ -15,13 +15,29 @@ import PingDavinci
 import PingExternalIdP
 import PingProtect
 import PingFido
+import PingOneMFA
 
 struct ContinueNodeView: View {
     var continueNode: ContinueNode
     let onNodeUpdated: () -> Void
     let onStart: () -> Void
     let onNext: (Bool) -> Void
-    
+    let onMobilePairingNext: (() async -> Void)?
+
+    init(
+        continueNode: ContinueNode,
+        onNodeUpdated: @escaping () -> Void,
+        onStart: @escaping () -> Void,
+        onNext: @escaping (Bool) -> Void,
+        onMobilePairingNext: (() async -> Void)? = nil
+    ) {
+        self.continueNode = continueNode
+        self.onNodeUpdated = onNodeUpdated
+        self.onStart = onStart
+        self.onNext = onNext
+        self.onMobilePairingNext = onMobilePairingNext
+    }
+
     @EnvironmentObject var validationViewModel: ValidationViewModel
     
     var body: some View {
@@ -103,13 +119,21 @@ struct ContinueNodeView: View {
                     ImageView(collector: imageCollector).id(imageCollector.id)
                 case let metadataCollector as MetadataCollector:
                     MetadataView(field: metadataCollector, onNext: onNext)
+                case let mobilePairingCollector as MobilePairingCollector:
+                    if let onMobilePairingNext {
+                        MobilePairingCollectorView(
+                            collector: mobilePairingCollector,
+                            onNext: onMobilePairingNext
+                        )
+                        .id(ObjectIdentifier(mobilePairingCollector))
+                    }
                 default:
                     EmptyView()
                 }
             }
 
             // Fallback Next Button
-            if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector || $0 is DeviceRegistrationCollector || $0 is DeviceAuthenticationCollector || $0 is FidoRegistrationCollector || $0 is FidoAuthenticationCollector || $0 is PollingCollector || $0 is MetadataCollector }) {
+            if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector || $0 is DeviceRegistrationCollector || $0 is DeviceAuthenticationCollector || $0 is FidoRegistrationCollector || $0 is FidoAuthenticationCollector || $0 is PollingCollector || $0 is MetadataCollector || $0 is MobilePairingCollector }) {
                 Button(action: { onNext(false) }) {
                     Text("Next")
                         .frame(maxWidth: .infinity)

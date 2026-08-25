@@ -15,7 +15,7 @@ public final class CollectorInitializer: NSObject {
         Task { await registerCollectorsAsync() }
     }
 
-    static func registerCollectorsAsync() async {
+    public static func registerCollectorsAsync() async {
         await CollectorFactory.shared.register(type: MobilePairingConstants.type) { json in
             MobilePairingCollector(with: json)
         }
