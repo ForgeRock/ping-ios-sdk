@@ -36,6 +36,6 @@ Pod::Spec.new do |s|
 
   s.ios.dependency 'PingCommons', '~> 2.1.0'
   s.ios.dependency 'PingJourneyPlugin', '~> 2.1.0'
-  s.ios.dependency 'RecaptchaEnterprise', '~> 18.8.1'
+  s.ios.dependency 'RecaptchaEnterprise', '~> 18.9.1'
 
 end

@@ -1,4 +1,7 @@
 ## [UNRELEASED]
+#### Updated
+- Updated `RecaptchaEnterprise` dependency to 18.9.1 for Xcode 27 / iOS 27 compatibility [SDKS-5306]
+
 #### Added
 - Added `ImageCollector` to support image display in DaVinci forms [SDKS-5143]
 - Added `MetadataCollector` to support the DaVinci SDK Integrator connector's pause/resume model, allowing the app to invoke on-device SDKs and return a result or error before the flow continues [SDKS-5142]
