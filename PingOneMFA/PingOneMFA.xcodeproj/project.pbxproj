@@ -30,6 +30,8 @@
 		A6B73F032B8C4D1E9F0A1234 /* MobilePairingCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B73F042B8C4D1E9F0A1234 /* MobilePairingCollector.swift */; };
 		A6B73F052B8C4D1E9F0A1234 /* MobilePairingCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B73F062B8C4D1E9F0A1234 /* MobilePairingCollectorTests.swift */; };
 		A6B73F072B8C4D1E9F0A1234 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6B73F082B8C4D1E9F0A1234 /* PingDavinciPlugin.framework */; };
+		0A36A764939F47898AD5FAFF /* CollectorInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB7F0AB0CB45088CFB6CF7 /* CollectorInitializer.swift */; };
+		DEE974BCB9F7469FAE7AA911 /* MobilePairingCollectorRegistrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B926CF1EBBC4025908BA06B /* MobilePairingCollectorRegistrationTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +95,8 @@
 		A6B73F042B8C4D1E9F0A1234 /* MobilePairingCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePairingCollector.swift; sourceTree = "<group>"; };
 		A6B73F062B8C4D1E9F0A1234 /* MobilePairingCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePairingCollectorTests.swift; sourceTree = "<group>"; };
 		A6B73F082B8C4D1E9F0A1234 /* PingDavinciPlugin.framework */ = {isa = PBXReferenceProxy; fileType = wrapper.framework; path = PingDavinciPlugin.framework; remoteRef = A6B73F092B8C4D1E9F0A1234 /* PBXContainerItemProxy */; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FCB7F0AB0CB45088CFB6CF7 /* CollectorInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectorInitializer.swift; sourceTree = "<group>"; };
+		3B926CF1EBBC4025908BA06B /* MobilePairingCollectorRegistrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePairingCollectorRegistrationTests.swift; sourceTree = "<group>"; };
 		A6B73F0A2B8C4D1E9F0A1234 /* DavinciPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DavinciPlugin.xcodeproj; path = ../DavinciPlugin/DavinciPlugin.xcodeproj; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -133,6 +137,7 @@
 				2EFFFE462FCC36D20094E6C0 /* PushType.swift */,
 				A6B73F022B8C4D1E9F0A1234 /* MobilePairingClient.swift */,
 				A6B73F042B8C4D1E9F0A1234 /* MobilePairingCollector.swift */,
+				9FCB7F0AB0CB45088CFB6CF7 /* CollectorInitializer.swift */,
 			);
 			path = PingOneMFA;
 			sourceTree = "<group>";
@@ -162,6 +167,7 @@
 				4ED305AC71AB43B0876EB3AF /* PingOneMFAErrorTests.swift */,
 				ED414CD63DEB40468AD3DBFD /* AccountParserTests.swift */,
 				A6B73F062B8C4D1E9F0A1234 /* MobilePairingCollectorTests.swift */,
+				3B926CF1EBBC4025908BA06B /* MobilePairingCollectorRegistrationTests.swift */,
 			);
 			path = PingOneMFATests;
 			sourceTree = "<group>";
@@ -320,6 +326,7 @@
 				A478018F2630425393CEE9B1 /* PingOneMFAErrorTests.swift in Sources */,
 				96FC692C7D39460B8F4F46B9 /* AccountParserTests.swift in Sources */,
 				A6B73F052B8C4D1E9F0A1234 /* MobilePairingCollectorTests.swift in Sources */,
+				DEE974BCB9F7469FAE7AA911 /* MobilePairingCollectorRegistrationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,6 +345,7 @@
 				5DF12D179015422B8D50E55C /* PushNotification.swift in Sources */,
 				A6B73F012B8C4D1E9F0A1234 /* MobilePairingClient.swift in Sources */,
 				A6B73F032B8C4D1E9F0A1234 /* MobilePairingCollector.swift in Sources */,
+				0A36A764939F47898AD5FAFF /* CollectorInitializer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
