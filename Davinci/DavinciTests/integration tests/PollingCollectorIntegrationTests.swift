@@ -401,6 +401,8 @@ class PollingCollectorIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
             XCTFail("QRCodeCollector not found")
             return
         }
+        XCTAssertFalse(qrCodeCollector.content.isEmpty, "content must preserve the server data URI")
+        XCTAssertTrue(qrCodeCollector.content.contains("base64,"), "content must include the Base64 prefix")
         XCTAssertNotNil(qrCodeCollector.imageData, "imageData must decode from a valid base64 data URI")
 
         // Verify PollingCollector is present and configured for challenge-status polling
