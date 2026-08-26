@@ -14,11 +14,81 @@ import PingNetwork
 import PingLogger
 import PingStorage
 
+/// Coordinates concurrent `oidcInitialize()` calls on the same instance so simultaneous
+/// first-use callers share one in-flight initialization instead of independently racing through
+/// discovery and `openIdOverride` application.
+///
+/// - Important: Cancelling any one caller's surrounding task cancels the shared discovery and
+///   `openIdOverride` work for every caller currently waiting on it — there is no way to abandon
+///   only one caller's interest while leaving the operation running for the others. A caller that
+///   happens to share an in-flight operation with another caller can therefore fail with a
+///   cancellation-derived error triggered by a caller other than itself. This trades a rare
+///   cross-caller failure for promptly honouring cancellation in the common case of a single
+///   caller waiting on its own `oidcInitialize()` call.
+private actor OidcInitializationCoordinator {
+    private var inFlightTask: Task<Void, any Error>?
+
+    /// Runs `operation` at most once concurrently: a caller that finds no task in flight starts
+    /// one and awaits it; a caller that finds one already running awaits that same task instead
+    /// of starting a second discovery/override cycle.
+    ///
+    /// Cancelling the calling task cancels the shared `operation` itself (see the class-level
+    /// note), so the next call after a cancellation-induced failure also starts fresh.
+    func run(_ operation: @escaping @Sendable () async throws -> Void) async throws {
+        let task = currentOrNewTask(operation)
+        try await Self.awaitCancellably(task)
+    }
+
+    /// Returns the task currently in flight, or creates one. The created task clears
+    /// `inFlightTask` itself, from inside its own body, as the very last thing it does before
+    /// completing — not as a side effect of whichever caller's own continuation happens to resume
+    /// first. Because that clear runs strictly before the task's own completion, and `task.value`
+    /// cannot resolve for *any* caller until the task has fully completed, every caller — including
+    /// one that arrives only after every existing caller has already seen the result — is
+    /// guaranteed to see `inFlightTask == nil` by the time it could possibly retry, so a retry
+    /// immediately after a failure always starts a genuinely fresh attempt instead of ever
+    /// rejoining a task that has already finished.
+    private func currentOrNewTask(_ operation: @escaping @Sendable () async throws -> Void) -> Task<Void, any Error> {
+        if let inFlightTask {
+            return inFlightTask
+        }
+
+        let task = Task {
+            do {
+                try await operation()
+                self.clearInFlightTask()
+            } catch {
+                self.clearInFlightTask()
+                throw error
+            }
+        }
+        inFlightTask = task
+        return task
+    }
+
+    private func clearInFlightTask() {
+        inFlightTask = nil
+    }
+
+    /// Awaits `task`, cancelling it if the calling context's own task is cancelled. `task.cancel()`
+    /// is a plain, non-isolated call, so it can run directly from `onCancel` without hopping back
+    /// onto this actor.
+    private static func awaitCancellably(_ task: Task<Void, any Error>) async throws {
+        try await withTaskCancellationHandler {
+            try await task.value
+        } onCancel: {
+            task.cancel()
+        }
+    }
+}
+
 /// Configuration class for OIDC client.
 ///
 /// - Important: This class is `@unchecked Sendable` and contains mutable `var` fields.
 ///   Configure all properties before passing the instance to any client or workflow — do
 ///   not mutate it afterwards, as it may be read concurrently from background threads.
+///   `oidcInitialize()` itself is the one exception: concurrent calls to it are coordinated so
+///   they share a single discovery request and a single `openIdOverride` application.
 public class OidcClientConfig: @unchecked Sendable {
     nonisolated(unsafe) private static let endpointSetters: [(String, (inout OpenIdConfiguration, String) -> Void)] = [
         (JsonConfigKey.authorizationEndpoint,              { $0.authorizationEndpoint = $1 }),
@@ -79,12 +149,42 @@ public class OidcClientConfig: @unchecked Sendable {
     public var par: Bool = false
     /// HTTP client for making network requests.
     public var httpClient: (any HttpClientProtocol)?
-    /// Called once, after OpenID discovery completes or against a pre-supplied `openId`,
-    /// allowing callers to patch any field on the `OpenIdConfiguration` before it is used
-    /// (e.g. override `deviceAuthorizationEndpoint` for a non-standard server).
-    public var openIdOverride: ((inout OpenIdConfiguration) -> Void)?
-    /// Tracks whether `openIdOverride` has already been applied, so that re-entrant
-    /// `oidcInitialize()` calls never run a caller-supplied closure more than once.
+    /// Caller-supplied override, set directly via the public `openIdOverride` property below.
+    private var programmaticOpenIdOverride: ((inout OpenIdConfiguration) -> Void)?
+    /// Override synthesized from the most recently applied JSON `openId` sub-object. Replaced
+    /// wholesale by `apply(json:)` whenever the JSON supplies an `openId` object (never nested
+    /// under a prior JSON layer); left untouched when a JSON configuration omits `openId`.
+    private var jsonOpenIdOverride: ((inout OpenIdConfiguration) -> Void)?
+    /// Coordinates concurrent `oidcInitialize()` calls on this instance; see
+    /// `OidcInitializationCoordinator`.
+    private let initializationCoordinator = OidcInitializationCoordinator()
+
+    /// Called once per materialized `OpenIdConfiguration` — after OpenID discovery completes or
+    /// against a pre-supplied/JSON-seeded `openId` — allowing callers to patch any field before
+    /// it is used (e.g. override `deviceAuthorizationEndpoint` for a non-standard server).
+    ///
+    /// Reading this property returns the programmatic override composed with any JSON-derived
+    /// endpoint overrides installed by `apply(json:)`, with the JSON values applied second so
+    /// they win for any endpoint key they cover. Assigning to it sets only the programmatic
+    /// layer; the JSON-derived layer is managed separately by `apply(json:)` and is unaffected
+    /// by reassignment.
+    public var openIdOverride: ((inout OpenIdConfiguration) -> Void)? {
+        get {
+            let programmatic = programmaticOpenIdOverride
+            let json = jsonOpenIdOverride
+            guard programmatic != nil || json != nil else { return nil }
+            return { configuration in
+                programmatic?(&configuration)
+                json?(&configuration)
+            }
+        }
+        set { programmaticOpenIdOverride = newValue }
+    }
+    /// Tracks whether the effective `openIdOverride` has already been applied to the currently
+    /// materialized `openId` document, so that re-entrant `oidcInitialize()` calls never run it
+    /// more than once against the same document. Reset by `apply(json:)` on every successful
+    /// call, since a newly committed configuration is a new OpenID source even when a document
+    /// happens to already be materialized.
     private var openIdOverrideApplied = false
 
     /// Initializes a new `OidcClientConfig` instance.
@@ -110,15 +210,30 @@ public class OidcClientConfig: @unchecked Sendable {
     ///
     /// Discovery is performed only when `openId` has not been supplied by the caller, so a
     /// pre-configured `OpenIdConfiguration` skips the network round-trip entirely. Whichever
-    /// document ends up in `openId` — discovered or pre-supplied — is patched by
-    /// `openIdOverride` exactly once, even though every `OidcClient` entry point re-enters
-    /// this method.
+    /// document ends up in `openId` — discovered or pre-supplied — is patched by the effective
+    /// `openIdOverride` exactly once per materialized document, even though every `OidcClient`
+    /// entry point re-enters this method.
+    ///
+    /// Concurrent calls on the same instance are coordinated: a caller that arrives while another
+    /// is already discovering/applying the override awaits that same in-flight operation instead
+    /// of issuing a second discovery request or reapplying the override a second time. Cancelling
+    /// any one caller's own task cancels that shared operation for every caller currently waiting
+    /// on it — see `OidcInitializationCoordinator`.
     ///
     /// - Throws: `OidcError.configurationError` when neither `openId` nor a usable
     ///   `discoveryEndpoint` is configured, or any error surfaced by discovery itself
-    ///   (`OidcError.apiError`, a decoding failure, a transport error). A failure leaves
-    ///   `openId` `nil`, so a subsequent call retries.
+    ///   (`OidcError.apiError`, a decoding failure, a transport error, `CancellationError` if this
+    ///   or a concurrent caller cancels). A failure leaves `openId` `nil`, so a subsequent call
+    ///   retries.
     public func oidcInitialize() async throws {
+        try await initializationCoordinator.run {
+            try await self.performOidcInitialization()
+        }
+    }
+
+    /// The actual discover-then-override sequence, run at most once concurrently per instance
+    /// via `initializationCoordinator`. See `oidcInitialize()`.
+    private func performOidcInitialization() async throws {
         if httpClient == nil {
             httpClient = HttpClient.createClient()
         }
@@ -191,9 +306,10 @@ public class OidcClientConfig: @unchecked Sendable {
     ///   passed to a running workflow or client: it replaces every field including `storage` and
     ///   `openId`, which can cause in-flight token reads to hit an unexpected (empty) keychain slot.
     ///
-    /// The "`openIdOverride` already applied" flag is carried over as well, so a clone of an
-    /// already-initialised configuration does not re-run the override closure on a document that
-    /// has already been patched.
+    /// The programmatic and JSON-derived override layers, and the "already applied" flag, are
+    /// carried over directly (not through the composed `openIdOverride` property), so a clone of
+    /// an already-initialised configuration preserves both layers and does not re-run the
+    /// effective override closure on a document that has already been patched.
     /// - Parameter other: The other configuration to merge.
     public func update(with other: OidcClientConfig) {
         self.openId = other.openId
@@ -215,7 +331,8 @@ public class OidcClientConfig: @unchecked Sendable {
         self.additionalParameters = other.additionalParameters
         self.par = other.par
         self.httpClient = other.httpClient
-        self.openIdOverride = other.openIdOverride
+        self.programmaticOpenIdOverride = other.programmaticOpenIdOverride
+        self.jsonOpenIdOverride = other.jsonOpenIdOverride
         self.openIdOverrideApplied = other.openIdOverrideApplied
     }
     
@@ -230,11 +347,21 @@ public class OidcClientConfig: @unchecked Sendable {
     /// the discovered document. A blank `discoveryEndpoint` counts as absent, since discovery can
     /// never succeed against it.
     ///
-    /// - Important: If the JSON contains an `openId` sub-object, this method **merges** the
-    ///   JSON-derived endpoint overrides with any existing `openIdOverride`. The existing closure
-    ///   runs first, then the JSON-derived overrides are applied on top, so the JSON values win
-    ///   for any endpoint key they cover. If the JSON contains no `openId` key, `openIdOverride`
-    ///   is left unchanged.
+    /// - Important: A successful call reconfigures the OpenID source and invalidates any
+    ///   previously materialized document, even if this instance was already initialized: the
+    ///   `openId`-only path seeds the new document directly, and the discovery path clears
+    ///   `openId` so the next `oidcInitialize()` rediscovers. The override-applied marker is reset
+    ///   accordingly, so the current effective `openIdOverride` is guaranteed to run once against
+    ///   whichever document is materialized next. A caller that needs a fully programmatic
+    ///   `openId` document to survive a later `apply(json:)` call should set it directly again
+    ///   afterwards rather than relying on it surviving reapplication.
+    ///
+    /// - Important: If the JSON contains an `openId` sub-object, its endpoint values **replace**
+    ///   the JSON-derived layer of `openIdOverride` wholesale (never nested under a prior JSON
+    ///   layer) and are applied on top of any programmatic override set directly via the public
+    ///   `openIdOverride` property, so the JSON values win for any endpoint key they cover. If the
+    ///   JSON contains no `openId` key, the JSON-derived layer — and any programmatic override —
+    ///   are left unchanged.
     ///
     /// - Parameter json: The `oidc` sub-dictionary from the unified SDK configuration schema.
     /// - Throws: `JsonConfigError` if a required field is absent or a field has the wrong type.
@@ -343,21 +470,28 @@ public class OidcClientConfig: @unchecked Sendable {
         self.acrValues = acrValues
         self.additionalParameters = parsedAdditional
 
-        // Only set when the `openId` sub-object stands in for the discovery document; a pre-supplied
-        // `openId` (or the document discovery is about to fetch) is left untouched otherwise.
-        if let seededOpenId {
-            self.openId = seededOpenId
-        }
+        // Every successful `apply(json:)` reconfigures the OpenID source, invalidating any
+        // previously materialized document: an `openId`-only JSON seeds it directly (no
+        // discovery); a JSON with a usable `discoveryEndpoint` — with or without an `openId`
+        // patch — clears it so the next `oidcInitialize()` rediscovers. The applied-marker reset
+        // guarantees the current effective override runs once against whichever document is
+        // materialized next.
+        self.openId = seededOpenId
+        self.openIdOverrideApplied = false
 
-        // Installed in both branches: against a seeded document the overrides are a no-op, which keeps
-        // a single override-installation code path.
-        if !parsedOpenIdOverrides.isEmpty {
-            let overrides = parsedOpenIdOverrides
-            let existing = self.openIdOverride
-            self.openIdOverride = { openId in
-                existing?(&openId)
-                for (key, setter) in OidcClientConfig.endpointSetters {
-                    if let v = overrides[key] { setter(&openId, v) }
+        // Replaces the JSON-derived override layer wholesale (never nests JSON A under JSON B)
+        // when this JSON supplies an `openId` sub-object. A programmatic override set directly
+        // via the public `openIdOverride` property, and any previously installed JSON layer when
+        // this JSON omits `openId`, are left untouched.
+        if openIdDict != nil {
+            if parsedOpenIdOverrides.isEmpty {
+                self.jsonOpenIdOverride = nil
+            } else {
+                let overrides = parsedOpenIdOverrides
+                self.jsonOpenIdOverride = { openId in
+                    for (key, setter) in OidcClientConfig.endpointSetters {
+                        if let v = overrides[key] { setter(&openId, v) }
+                    }
                 }
             }
         }
