@@ -317,4 +317,120 @@ class FidoCollectorTests: XCTestCase {
             XCTAssertEqual(fidoError, .invalidChallenge)
         }
     }
+
+    // MARK: - Trigger Tests
+
+    func testTriggerIsParsedFromJson() {
+        let registrationJson: [String: Any] = [
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]],
+            FidoConstants.FIELD_TRIGGER: "BUTTON"
+        ]
+        let registrationCollector = FidoRegistrationCollector(with: registrationJson)
+        XCTAssertEqual(registrationCollector.trigger, "BUTTON")
+
+        let authenticationJson: [String: Any] = [
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"],
+            FidoConstants.FIELD_TRIGGER: "BUTTON"
+        ]
+        let authenticationCollector = FidoAuthenticationCollector(with: authenticationJson)
+        XCTAssertEqual(authenticationCollector.trigger, "BUTTON")
+    }
+
+    func testTriggerDefaultsToEmptyWhenAbsent() {
+        let registrationCollector = FidoRegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
+        XCTAssertEqual(registrationCollector.trigger, "")
+
+        let authenticationCollector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        XCTAssertEqual(authenticationCollector.trigger, "")
+    }
+
+    func testIsAutomaticIsFalseForButtonTrigger() {
+        let registrationCollector = FidoRegistrationCollector(with: [
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]],
+            FidoConstants.FIELD_TRIGGER: "BUTTON"
+        ])
+        XCTAssertFalse(registrationCollector.isAutomatic)
+
+        let authenticationCollector = FidoAuthenticationCollector(with: [
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"],
+            FidoConstants.FIELD_TRIGGER: "BUTTON"
+        ])
+        XCTAssertFalse(authenticationCollector.isAutomatic)
+    }
+
+    func testIsAutomaticIsFalseWhenTriggerAbsent() {
+        let registrationCollector = FidoRegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
+        XCTAssertFalse(registrationCollector.isAutomatic)
+
+        let authenticationCollector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        XCTAssertFalse(authenticationCollector.isAutomatic)
+    }
+
+    func testIsAutomaticIsTrueForNonButtonTrigger() {
+        for token in ["AUTOMATIC", "AUTOMATICALLY", "Automatic"] {
+            let registrationCollector = FidoRegistrationCollector(with: [
+                FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]],
+                FidoConstants.FIELD_TRIGGER: token
+            ])
+            XCTAssertTrue(registrationCollector.isAutomatic, "Expected isAutomatic to be true for trigger \(token)")
+
+            let authenticationCollector = FidoAuthenticationCollector(with: [
+                FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"],
+                FidoConstants.FIELD_TRIGGER: token
+            ])
+            XCTAssertTrue(authenticationCollector.isAutomatic, "Expected isAutomatic to be true for trigger \(token)")
+        }
+    }
+
+    func testIsAutomaticIsCaseInsensitiveForButton() {
+        for token in ["BUTTON", "button", "Button", "bUtToN"] {
+            let registrationCollector = FidoRegistrationCollector(with: [
+                FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]],
+                FidoConstants.FIELD_TRIGGER: token
+            ])
+            XCTAssertFalse(registrationCollector.isAutomatic, "Expected isAutomatic to be false for trigger \(token)")
+
+            let authenticationCollector = FidoAuthenticationCollector(with: [
+                FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"],
+                FidoConstants.FIELD_TRIGGER: token
+            ])
+            XCTAssertFalse(authenticationCollector.isAutomatic, "Expected isAutomatic to be false for trigger \(token)")
+        }
+    }
+
+    func testTriggerSurvivesGetCollectorFactory() {
+        let registrationJson: [String: Any] = [
+            FidoConstants.FIELD_ACTION: FidoConstants.ACTION_REGISTER,
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]],
+            FidoConstants.FIELD_TRIGGER: "AUTOMATIC"
+        ]
+        let registrationCollector = try? AbstractFidoCollector.getCollector(with: registrationJson)
+        XCTAssertEqual(registrationCollector?.trigger, "AUTOMATIC")
+        XCTAssertEqual(registrationCollector?.isAutomatic, true)
+
+        let authenticationJson: [String: Any] = [
+            FidoConstants.FIELD_ACTION: FidoConstants.ACTION_AUTHENTICATE,
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"],
+            FidoConstants.FIELD_TRIGGER: "BUTTON"
+        ]
+        let authenticationCollector = try? AbstractFidoCollector.getCollector(with: authenticationJson)
+        XCTAssertEqual(authenticationCollector?.trigger, "BUTTON")
+        XCTAssertEqual(authenticationCollector?.isAutomatic, false)
+    }
+
+    func testNonStringTriggerFallsBackToEmpty() {
+        let registrationCollector = FidoRegistrationCollector(with: [
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]],
+            FidoConstants.FIELD_TRIGGER: 42
+        ])
+        XCTAssertEqual(registrationCollector.trigger, "")
+        XCTAssertFalse(registrationCollector.isAutomatic)
+
+        let authenticationCollector = FidoAuthenticationCollector(with: [
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"],
+            FidoConstants.FIELD_TRIGGER: 42
+        ])
+        XCTAssertEqual(authenticationCollector.trigger, "")
+        XCTAssertFalse(authenticationCollector.isAutomatic)
+    }
 }

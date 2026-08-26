@@ -2,7 +2,7 @@
 //  FidoConstants.swift
 //  Fido
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -35,6 +35,9 @@ public struct FidoConstants {
     public static let label = "label"
     // Required field
     public static let required = "required"
+    /// The key for the DaVinci form-field trigger property, which indicates whether the FIDO
+    /// ceremony should be launched by a button press or automatically on render.
+    public static let FIELD_TRIGGER = "trigger"
     /// The key for the main data payload in a callback.
     public static let FIELD_DATA = "data"
     /// The key for the action to be performed (e.g., "REGISTER" or "AUTHENTICATE").
@@ -146,6 +149,12 @@ public struct FidoConstants {
     public static let RESIDENT_KEY_DISCOURAGED = "discouraged"
     /// The default relying party ID for testing.
     public static let DEFAULT_RELYING_PARTY_ID = "credential-manager-test.example.com"
+
+    // MARK: - Trigger Values
+
+    /// The confirmed server value for `trigger` meaning "manual, render a button". Any other
+    /// non-empty value is treated as automatic (see `AbstractFidoCollector.isAutomatic`).
+    public static let TRIGGER_BUTTON = "BUTTON"
 
     // MARK: - Separators
     

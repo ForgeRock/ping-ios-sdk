@@ -21,6 +21,9 @@ public class AbstractFidoCollector: AnyFieldCollector, DaVinciAware, Submittable
     public private(set) var key: String = ""
     public private(set) var label: String = ""
     public private(set) var required: Bool = false
+    /// The raw server-supplied `trigger` value for this DaVinci form field. Empty when the
+    /// server omits the field. See `isAutomatic` for the derived launch semantics.
+    public private(set) var trigger: String = ""
 
     /// DOMException name set when a FIDO operation fails; drives the DaVinci error response.
     public var errorCode: String?
@@ -48,6 +51,20 @@ public class AbstractFidoCollector: AnyFieldCollector, DaVinciAware, Submittable
         type = json[FidoConstants.type] as? String ?? ""
         label = json[FidoConstants.label] as? String ?? ""
         required = json[FidoConstants.required] as? Bool ?? false
+        trigger = json[FidoConstants.FIELD_TRIGGER] as? String ?? ""
+        logger.d("FIDO collector trigger: \(trigger.isEmpty ? "<absent>" : trigger)")
+    }
+
+    /// Whether the FIDO ceremony should be launched automatically on render rather than
+    /// gated behind a button.
+    ///
+    /// `false` when `trigger` is empty or absent, preserving today's button-gated behaviour for
+    /// payloads that predate the `trigger` property. Otherwise `true` when `trigger` does not
+    /// case-insensitively equal `FidoConstants.TRIGGER_BUTTON` — any confirmed or future
+    /// non-`"BUTTON"` token is treated as automatic.
+    public var isAutomatic: Bool {
+        guard !trigger.isEmpty else { return false }
+        return trigger.caseInsensitiveCompare(FidoConstants.TRIGGER_BUTTON) != .orderedSame
     }
     
     /// Validates this collector, returning a list of validation errors if any.

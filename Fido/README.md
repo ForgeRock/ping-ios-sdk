@@ -113,6 +113,64 @@ func handleDaVinciFido(json: [String: Any]) {
 }
 ```
 
+### Trigger behaviour
+
+The DaVinci FIDO2 form field carries a `trigger` property that tells the client whether the FIDO ceremony should be launched by a button press or automatically on render. `AbstractFidoCollector` (and therefore both `FidoRegistrationCollector` and `FidoAuthenticationCollector`) exposes this as:
+
+- `collector.trigger` — the raw server-supplied value, or an empty string when the server omits the field.
+- `collector.isAutomatic` — a derived convenience:
+  - `trigger == "BUTTON"` (case-insensitive) → `false`, render a button.
+  - any other non-empty `trigger` value → `true`, launch the ceremony immediately.
+  - an absent/empty `trigger` → `false`, preserving the existing button-gated default so payloads that predate this property keep behaving as before.
+
+The SDK cannot launch the ceremony itself in automatic mode — `register(window:)` and `authenticate(window:)` require an `ASPresentationAnchor` that only the host app owns. Host apps should launch the ceremony from a `.task`, guarded so it fires at most once per view/collector instance:
+
+```swift
+struct FidoRegistrationCollectorView: View {
+    var collector: FidoRegistrationCollector
+    let onNext: () -> Void
+
+    // Guards against re-launching the ceremony while one is already in flight, or after
+    // the view re-renders. A fresh collector instance (e.g. after the server re-renders the
+    // step) should come with a fresh view — see the `.id(ObjectIdentifier(collector))` note below.
+    @State private var hasLaunched = false
+
+    var body: some View {
+        VStack {
+            if collector.isAutomatic {
+                ProgressView("Waiting for passkey…")
+            } else {
+                Button(collector.label.isEmpty ? "Register with FIDO" : collector.label) {
+                    Task { await performRegistration() }
+                }
+            }
+        }
+        .task {
+            guard collector.isAutomatic, !hasLaunched else { return }
+            hasLaunched = true
+            await performRegistration()
+        }
+    }
+
+    private func performRegistration() async {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first else { return }
+
+        let result = await collector.register(window: window)
+        switch result {
+        case .success:
+            onNext()
+        case .failure:
+            // In automatic mode, avoid silently calling onNext() on failure — surface the
+            // error and let the user choose to retry or continue so the flow doesn't loop.
+            break
+        }
+    }
+}
+```
+
+> If the DaVinci server can re-render the same step with a new collector instance (for example after a cancelled ceremony), attach `.id(ObjectIdentifier(collector))` to the view so SwiftUI restarts the `.task` instead of reusing the previous instance's state.
+
 ### Journey Integration
 
 To use the FIDO module with Journey, you need to register the FIDO callbacks and then handle them when they are received from the server.
