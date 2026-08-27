@@ -25,7 +25,6 @@ struct Form {
         if let form = json[Constants.form] as? [String: Any],
            let components = form[Constants.components] as? [String: Any],
            let fields = components[Constants.fields] as? [[String: any Sendable]] {
-            await registerMobilePairingCollectorIfNeeded(fields: fields)
             collectors = await CollectorFactory.shared.collector(daVinci: daVinci, from: fields)
         }
         
@@ -40,22 +39,5 @@ struct Form {
         }
         
         return collectors
-    }
-
-    private static func registerMobilePairingCollectorIfNeeded(fields: [[String: any Sendable]]) async {
-        guard fields.contains(where: {
-            ($0[Constants.inputType] as? String ?? $0[Constants.type] as? String) == "MOBILE_PAIRING"
-        }),
-              let initializer = NSClassFromString("PingOneMFA.CollectorInitializer") as? NSObject.Type,
-              initializer.responds(to: NSSelectorFromString("registerCollectorsWithCompletion:")) else {
-            return
-        }
-
-        await withCheckedContinuation { continuation in
-            let completion: @convention(block) @Sendable () -> Void = {
-                continuation.resume()
-            }
-            initializer.perform(NSSelectorFromString("registerCollectorsWithCompletion:"), with: completion as AnyObject)
-        }
     }
 }

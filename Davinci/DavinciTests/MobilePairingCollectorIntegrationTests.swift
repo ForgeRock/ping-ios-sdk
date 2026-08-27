@@ -11,59 +11,6 @@ import PingOneMFA
 @testable import PingDavinci
 
 final class MobilePairingCollectorIntegrationTests: XCTestCase {
-    override func setUp() async throws {
-        try await super.setUp()
-        await CollectorFactory.shared.reset()
-    }
-
-    override func tearDown() async throws {
-        await CollectorFactory.shared.reset()
-        try await super.tearDown()
-    }
-
-    func testImmediatelyDiscoversOptionalMobilePairingCollector() async {
-        let daVinci = DaVinci.createDaVinci()
-        let fields: [[String: any Sendable]] = [[
-            "type": "MOBILE_PAIRING",
-            "key": "mobilePairing",
-            "pairingKey": "key"
-        ]]
-        let response: [String: Any] = [
-            Constants.form: [
-                Constants.components: [
-                    Constants.fields: fields
-                ]
-            ]
-        ]
-
-        let collectors = await Form.parse(daVinci: daVinci, json: response)
-
-        XCTAssertEqual(collectors.count, 1)
-        XCTAssertTrue(collectors.first is MobilePairingCollector)
-    }
-
-    func testImmediatelyDiscoversInputTypeMobilePairingCollector() async {
-        let daVinci = DaVinci.createDaVinci()
-        let fields: [[String: any Sendable]] = [[
-            "inputType": "MOBILE_PAIRING",
-            "type": "TEXT",
-            "key": "mobilePairing",
-            "pairingKey": "key"
-        ]]
-        let response: [String: Any] = [
-            Constants.form: [
-                Constants.components: [
-                    Constants.fields: fields
-                ]
-            ]
-        ]
-
-        let collectors = await Form.parse(daVinci: daVinci, json: response)
-
-        XCTAssertEqual(collectors.count, 1)
-        XCTAssertTrue(collectors.first is MobilePairingCollector)
-    }
-
     func testCancelledOutcomeSerializesAsActionFormDataWithoutActionKey() {
         let collector = MobilePairingCollector(with: [
             "type": "MOBILE_PAIRING",
