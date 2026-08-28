@@ -9,6 +9,8 @@
 #### Fixed
 - Fixed `OidcWebClient` `.authSession` and `.ephemeralAuthSession` not completing for Universal Link (https) redirect URIs [SDKS-5239]
 - Fixed FIDO registration/authentication not launching automatically when the DaVinci form's `trigger` property is not `BUTTON` [SDKS-4552]
+- Fixed 5xx AM responses with a parseable error body being misclassified as `FailureNode` instead of `ErrorNode`, diverging from Android [SDKS-5358]
+- Fixed `Journey.start(backchannelUri:)` not rejecting whitespace-only `authIndexType`/`authIndexValue`, diverging from Android [SDKS-5359]
 
 ## [2.1.0]
 #### Added
