@@ -105,44 +105,22 @@ final class JourneyBackchannelE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
         assertFailureNode(node, expectedMessage: "Invalid URI or missing authIndexType/authIndexValue")
     }
 
-    /// - Note: See SDKS-5359
-    ///   This test is rapped in `XCTExpectFailure` so it's a tracked known-issue rather than a
-    ///   silent red build.
-    ///   Once SDKS-5359 is fixed, XCTest will flag this block as an "unexpected success"
-    ///
     func testWhitespaceOnlyAuthIndexType_returnsFailureNode() async throws {
         let redirectUri = try await initializeBackchannelTransaction()
         let uri = redirectUri.withQueryParam("authIndexType", value: " ")
 
         let node = await defaultJourney.start(backchannelUri: uri)
 
-        XCTExpectFailure("""
-            Known gap: Journey.swift's guard checks !isEmpty, not blank-trimming, so a \
-            whitespace-only authIndexType is forwarded to AM instead of being rejected \
-            client-side like the empty-string case.
-            """) {
-            assertFailureNode(node, expectedMessage: "Invalid URI or missing authIndexType/authIndexValue")
-        }
+        assertFailureNode(node, expectedMessage: "Invalid URI or missing authIndexType/authIndexValue")
     }
 
-    /// - Note: See SDKS-5359
-    ///   This test is rapped in `XCTExpectFailure` so it's a tracked known-issue rather than a
-    ///   silent red build.
-    ///   Once SDKS-5359 is fixed, XCTest will flag this block as an "unexpected success"
-    ///
     func testWhitespaceOnlyAuthIndexValue_returnsFailureNode() async throws {
         let redirectUri = try await initializeBackchannelTransaction()
         let uri = redirectUri.withQueryParam("authIndexValue", value: "  ")
 
         let node = await defaultJourney.start(backchannelUri: uri)
 
-        XCTExpectFailure("""
-            Known gap: Journey.swift's guard checks !isEmpty, not blank-trimming, so a \
-            whitespace-only authIndexValue is forwarded to AM instead of being rejected \
-            client-side like the empty-string case.
-            """) {
-            assertFailureNode(node, expectedMessage: "Invalid URI or missing authIndexType/authIndexValue")
-        }
+        assertFailureNode(node, expectedMessage: "Invalid URI or missing authIndexType/authIndexValue")
     }
 
     // MARK: - Malformed / unparseable URI string (TC-07)
@@ -281,11 +259,6 @@ final class JourneyBackchannelE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
 
     /// Reusing an already-`COMPLETED` transaction.
     ///
-    /// - Note: See SDKS-5358
-    ///   This test is wrapped in `XCTExpectFailure` so it's a tracked known-issue rather than a silent red build.
-    ///   Once `Transform.swift` is aligned with Android (SDKS-5358 is resolved), XCTest will flag this block
-    ///   as an "unexpected success" — that's the cue to delete the `XCTExpectFailure` wrapper.
-    ///   .
     func testCompletedTransactionReused_returnsErrorNode() async throws {
         let redirectUri = try await initializeBackchannelTransaction()
 
@@ -303,26 +276,15 @@ final class JourneyBackchannelE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
         }
         let secondResult = await completeBackchannelLogin(from: secondStart)
 
-        XCTExpectFailure("""
-            Known gap: Transform.swift gates ErrorNode to 4xx only, so AM's 500 + parseable \
-            "Unable to approve transaction" body becomes FailureNode instead of ErrorNode here, \
-            diverging from Android's shape-gated classification of the identical response.
-            """) {
-            guard let errorNode = secondResult as? ErrorNode else {
-                XCTFail("Expected ErrorNode when finalizing an already-completed transaction, got \(type(of: secondResult))")
-                return
-            }
-            XCTAssertEqual(errorNode.message, "Unable to approve transaction")
+        guard let errorNode = secondResult as? ErrorNode else {
+            XCTFail("Expected ErrorNode when finalizing an already-completed transaction, got \(type(of: secondResult))")
+            return
         }
+        XCTAssertEqual(errorNode.message, "Unable to approve transaction")
     }
 
     /// `allowRetry: false` denies the transaction after the first failure.
     ///
-    /// - Note: See SDKS-5358
-    ///   This test is wrapped in `XCTExpectFailure` so it's a tracked known-issue rather than a silent red build.
-    ///   Once `Transform.swift` is aligned with Android (SDKS-5358 is resolved), XCTest will flag this block
-    ///   as an "unexpected success" — that's the cue to delete the `XCTExpectFailure` wrapper.
-    ///   .
     func testDeniedTransactionRetried_returnsErrorNode() async throws {
         let redirectUri = try await initializeBackchannelTransaction(allowRetry: false)
 
@@ -339,17 +301,11 @@ final class JourneyBackchannelE2ETest: JourneyE2EBaseTest, @unchecked Sendable {
 
         let secondResult = await completeBackchannelLogin(from: await defaultJourney.start(backchannelUri: redirectUri))
 
-        XCTExpectFailure("""
-            Known gap: Transform.swift gates ErrorNode to 4xx only, so AM's 500 + parseable \
-            "Unable to approve transaction" body becomes FailureNode instead of ErrorNode here, \
-            diverging from Android's shape-gated classification of the identical response.
-            """) {
-            guard let secondError = secondResult as? ErrorNode else {
-                XCTFail("Expected ErrorNode when retrying a denied transaction, got \(type(of: secondResult))")
-                return
-            }
-            XCTAssertEqual(secondError.message, "Unable to approve transaction")
+        guard let secondError = secondResult as? ErrorNode else {
+            XCTFail("Expected ErrorNode when retrying a denied transaction, got \(type(of: secondResult))")
+            return
         }
+        XCTAssertEqual(secondError.message, "Unable to approve transaction")
     }
 
     // MARK: - Helpers
