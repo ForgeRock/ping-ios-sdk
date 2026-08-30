@@ -11,6 +11,7 @@ The `PingOneMFA` module wraps the PingOne MFA native SDK [PingOneSDK](https://gi
 ## Features
 
 - **Device Pairing** — pair new MFA accounts by scanning a QR code or entering a pairing key
+- **DaVinci `MOBILE_PAIRING` Collector** — self-submitting DaVinci collector that pairs the device automatically during a DaVinci flow (auto-registered with the DaVinci engine; no manual wiring required)
 - **OTP** — retrieve the current one-time passcode and its remaining validity window
 - **Push Notifications (foreground)** — approve or deny incoming authentication requests while the app is active
 - **Push Notifications (banner actions)** — handle Approve/Deny taps on system notification banners via `processRemoteNotificationAction`; register the required categories with `getNotificationCategories`
@@ -134,6 +135,35 @@ do {
 }
 ```
 
+### DaVinci Mobile Pairing Collector
+
+When a DaVinci flow presents a `MOBILE_PAIRING` collector, the `PingOneMFA` module pairs the device automatically as part of the flow — no manual wiring required.
+
+**Automatic registration.** When the `PingDavinci` engine initializes, it discovers the `PingOneMFA` module and registers its collectors with the DaVinci `CollectorFactory` — you don't need to call anything. (A `CollectorInitializer.registerCollectors()` hook is also available for hosts that drive the factory manually.)
+
+**How it works.** The server supplies a `pairingKey` in the node JSON. The collector reads that key, claims it by calling the PingOne MFA native SDK, and posts the outcome back to the server in the resume POST. The `id` of the collector (its field `key`) names the form data field, and `eventType()` returns `"action"`, so the final envelope is:
+
+- Success: `formData.mobilePairing = ["status": "CLAIMED"]`
+- Failure: `formData.mobilePairing = ["error": ["code": "<code>", "message": "<message>"]]`, where `<code>` is the numeric native SDK error code as a string (e.g. `"10005"`), or `"INTERNAL_ERROR"` for unexpected failures.
+- Cancel: `formData.mobilePairing = ["error": ["code": "USER_CANCELLED", "message": "…"]]`
+
+The server-side connector treats any presence of `error` as the error branch and independently re-verifies pairing status, so the code is telemetry.
+
+**Driving the collector.** Render a loading UI while `collect()` is in progress, and call `cancel()` if the user abandons the flow:
+
+```swift
+let result = await collector.collect()
+switch result {
+case .success:
+    // Pairing claimed — proceed
+case .failure:
+    // Inspect collector.payload() for the ["error": ["code", "message"]] envelope
+}
+```
+
+`collect()` is re-entrant: concurrent callers share a single pairing task. `cancel()` does not abort an in-flight native pairing — the native SDK has no abort API — it only makes `payload()` report `USER_CANCELLED`, and the in-flight outcome is discarded when it arrives.
+
+**Full sample.** The [PingExample](../SampleApps/PingExample) app renders this collector in `Collectors/MobilePairingCollectorView.swift` and drives a complete pairing flow in `PingOneMFADavinciPairingView.swift`.
 ### Retrieve Paired Accounts
 
 ```swift
@@ -274,6 +304,7 @@ PingOne MFA functionality is demonstrated in the [PingExample](../SampleApps/Pin
 - Paired accounts list
 - OTP display with live countdown
 - Push notification handling for DEFAULT, CHALLENGE, and DRY push types
+- DaVinci pairing via the `MOBILE_PAIRING` collector
 
 See the [PingExample README](../SampleApps/PingExample/README.md) for build instructions.
 
@@ -350,6 +381,20 @@ Thrown by all `async` functions on failure. The native `PingOneSDKError` is not 
 | `message` | `String` | Human-readable error message; also surfaced via `localizedDescription` |
 | `internalErrorsList` | `[PingOneMFAInternalError]?` | Structured list of individual SDK errors; `nil` when the failure did not originate from the native SDK |
 
+### `MobilePairingCollector`
+
+DaVinci `MOBILE_PAIRING` collector. Created by the `CollectorFactory` from the server JSON; rendered and driven by the host app's UI.
+
+| Member | Type | Description |
+|---|---|---|
+| `id` | `String` | The collector's field `key`; names the entry under `formData` in the resume POST |
+| `pairingKey` | `String` | Pairing key supplied by the DaVinci server |
+| `collect()` | `async -> Result<Void, Error>` | Claim the pairing key. Re-entrant: concurrent callers share one pairing task. |
+| `cancel(message:)` | — | Record a user cancellation; `payload()` then reports `USER_CANCELLED`. Does not abort an in-flight pairing. |
+| `payload()` | `[String: Any]?` | `["status": "CLAIMED"]` on success, or `["error": ["code": "…", "message": "…"]]` on failure/cancel |
+| `validate()` | `[ValidationError]` | `[.required]` until an outcome exists, empty afterwards |
+| `close()` | — | Cancel the in-flight pairing task and clear the outcome (invoked by the DaVinci engine on node teardown) |
+
 ### `PingOneMFAInternalError`
 
 Individual error entry within `PingOneMFAError.internalErrorsList`.
@@ -375,6 +420,10 @@ Individual error entry within `PingOneMFAError.internalErrorsList`.
 **`generateMobilePayload()` fails:**
 - Ensure `PingOneMFA.initialize(geo:)` was called and succeeded before this call.
 - Check network connectivity and PingOne service status.
+
+**The `MOBILE_PAIRING` DaVinci collector fails to initialize:**
+- Ensure the PingOne MFA SDK is initialized (`PingOneMFA.initialize(geo:)`) before the pairing flow starts.
+- Verify the DaVinci environment has the PingOne MFA connector configured with mobile pairing enabled.
 
 ---
 
