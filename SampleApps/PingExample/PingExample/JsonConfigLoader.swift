@@ -38,7 +38,7 @@ enum JsonConfigLoader {
         let name = nameFromFilename(filename)
         let journeyDict = json[JsonConfigKey.journey] as? [String: Any]
         let oidc = json[JsonConfigKey.oidc] as? [String: Any]
-        let naturalType: ConfigType = journeyDict == nil ? .davinci : .journey
+        let naturalType: ConfigType = journeyDict != nil ? .journey : .davinci
 
         // For Journey configs, serverUrl is required inside the journey sub-dict
         if naturalType == .journey {

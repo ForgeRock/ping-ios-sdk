@@ -169,54 +169,34 @@ class ConfigurationManager: ObservableObject {
     /// Update an existing configuration by name and persist.
     public func updateConfiguration(oldName: String, with config: Configuration) {
         if let index = configurations.firstIndex(where: { $0.name == oldName }) {
-            let oldConfig = configurations[index]
-            let oldType = oldConfig.type
-            let wasOldConfigSelected = selections[oldType]?.name == oldConfig.name
-
             configurations[index] = config
             saveUserConfigurations()
-
-            if oldType == config.type {
-                // Preserve ordinary same-type editing behavior.
-                if wasOldConfigSelected {
-                    select(config)
-                }
-                return
-            }
-
-            // Treat a type change as removing the old configuration and adding the new one.
-            if wasOldConfigSelected {
-                selectFallbackOrClear(for: oldType)
-            }
-            if selections[config.type] == nil {
+            // If this was the selected config for its type, re-select to rebuild the SDK instance
+            if selections[config.type]?.name == oldName {
                 select(config)
             }
         }
     }
-
+    
     /// Delete a configuration by name and persist.
     public func deleteConfiguration(_ config: Configuration) {
         configurations.removeAll { $0.name == config.name && $0.type == config.type }
         saveUserConfigurations()
         // If the deleted config was selected, fall back to the first of its type (or clear)
         if selections[config.type]?.name == config.name {
-            selectFallbackOrClear(for: config.type)
-        }
-    }
-
-    private func selectFallbackOrClear(for type: ConfigType) {
-        if let fallback = configurations.first(where: { $0.type == type }) {
-            select(fallback)
-        } else {
-            selections.removeValue(forKey: type)
-            if let key = ConfigurationManager.selectionKeys[type] {
-                UserDefaults.standard.removeObject(forKey: key)
-            }
-            switch type {
-            case .journey: journey = nil
-            case .davinci: davinci = nil
-            case .oidcWeb: oidcLogin = nil
-            case .device: deviceClient = nil
+            if let fallback = configurations.first(where: { $0.type == config.type }) {
+                select(fallback)
+            } else {
+                selections.removeValue(forKey: config.type)
+                if let key = ConfigurationManager.selectionKeys[config.type] {
+                    UserDefaults.standard.removeObject(forKey: key)
+                }
+                switch config.type {
+                case .journey: journey = nil
+                case .davinci: davinci = nil
+                case .oidcWeb: oidcLogin = nil
+                case .device: deviceClient = nil
+                }
             }
         }
     }
