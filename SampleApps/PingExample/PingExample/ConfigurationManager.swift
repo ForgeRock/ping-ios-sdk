@@ -65,8 +65,7 @@ class ConfigurationManager: ObservableObject {
     public var oathClient: OathClient?
     public var pushClient: PushClient?
     public var isPingOneMFAInitialized: Bool = false
-    private var pingOneMFAInitialization: PingOneMFAInitialization?
-
+    
     // MFA Services
     public var oathTimerService: OathTimerService?
     
@@ -465,43 +464,12 @@ class ConfigurationManager: ObservableObject {
         }
     }
 
-    /// Initialize the PingOne MFA SDK.
-    /// Concurrent callers await the same initialization task and failures remain retryable.
+    /// Initialize the PingOne MFA SDK
     public func initializePingOneMFAClient() async throws {
         guard !isPingOneMFAInitialized else { return }
 
-        let initialization: PingOneMFAInitialization
-        if let pingOneMFAInitialization {
-            initialization = pingOneMFAInitialization
-        } else {
-            let task = Task {
-                try await PingOneMFA.initialize(geo: .northAmerica)
-            }
-            let newInitialization = PingOneMFAInitialization(task: task)
-            pingOneMFAInitialization = newInitialization
-            initialization = newInitialization
-        }
-
-        do {
-            try await initialization.task.value
-            isPingOneMFAInitialized = true
-            if pingOneMFAInitialization === initialization {
-                pingOneMFAInitialization = nil
-            }
-        } catch {
-            if pingOneMFAInitialization === initialization {
-                pingOneMFAInitialization = nil
-            }
-            throw error
-        }
-    }
-}
-
-private final class PingOneMFAInitialization {
-    let task: Task<Void, Error>
-
-    init(task: Task<Void, Error>) {
-        self.task = task
+        try await PingOneMFA.initialize(geo: .northAmerica)
+        isPingOneMFAInitialized = true
     }
 }
 
