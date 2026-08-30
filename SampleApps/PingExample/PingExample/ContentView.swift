@@ -232,8 +232,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     var requiredConfigType: ConfigType? {
         switch self {
         case .journey, .journeyToken, .backchannel: return .journey
-        case .davinci, .davinciToken: return .davinci
-        case .pingOneMFADavinciPairing: return .pingOneMFADavinci
+        case .davinci, .davinciToken, .pingOneMFADavinciPairing: return .davinci
         case .oidc, .oidcToken: return .oidcWeb
         case .device, .deviceToken: return .device
         default: return nil

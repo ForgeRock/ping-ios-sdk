@@ -13,6 +13,7 @@ struct MobilePairingCollectorView: View {
         case pairing
         case success
         case failure(code: String, message: String)
+        case initializationFailure(message: String)
     }
 
     let collector: MobilePairingCollector
@@ -39,6 +40,16 @@ struct MobilePairingCollectorView: View {
                 actionButton("Continue") {
                     Task { await submit() }
                 }
+            case let .initializationFailure(message):
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 52))
+                    .foregroundStyle(.orange)
+                Text("Unable to initialize PingOne MFA")
+                Text(message)
+                    .multilineTextAlignment(.center)
+                actionButton("Retry") {
+                    startPairingIfNeeded(forceRetry: true)
+                }
             case let .failure(code, message):
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 52))
@@ -55,7 +66,7 @@ struct MobilePairingCollectorView: View {
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .onAppear(perform: startPairingIfNeeded)
+        .onAppear { startPairingIfNeeded() }
         .onDisappear { pairingTask?.cancel() }
     }
 
@@ -75,12 +86,24 @@ struct MobilePairingCollectorView: View {
         .disabled(isSubmitting)
     }
 
-    private func startPairingIfNeeded() {
-        guard pairingTask == nil else { return }
+    private func startPairingIfNeeded(forceRetry: Bool = false) {
+        guard pairingTask == nil || forceRetry else { return }
+        pairingTask?.cancel()
         pairingTask = Task { @MainActor in
+            do {
+                try await ConfigurationManager.shared.initializePingOneMFAClient()
+            } catch is CancellationError {
+                return
+            } catch {
+                guard !Task.isCancelled else { return }
+                pairingTask = nil
+                phase = .initializationFailure(message: error.localizedDescription)
+                return
+            }
+
+            guard !Task.isCancelled else { return }
             let result = await collector.collect()
             guard !Task.isCancelled else { return }
-
             switch result {
             case .success:
                 phase = .success

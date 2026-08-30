@@ -38,7 +38,6 @@ class ConfigurationManager: ObservableObject {
     private static let selectionKeys: [ConfigType: String] = [
         .journey: "SelectedJourneyConfigName",
         .davinci: "SelectedDaVinciConfigName",
-        .pingOneMFADavinci: "SelectedPingOneMFADaVinciConfigName",
         .oidcWeb: "SelectedOidcWebConfigName",
         .device: "SelectedDeviceConfigName"
     ]
@@ -59,7 +58,6 @@ class ConfigurationManager: ObservableObject {
     
     public var journey: Journey?
     public var davinci: DaVinci?
-    public var pingOneMFADavinci: DaVinci?
     public var oidcLogin: OidcWebClient?
     public var deviceClient: OidcDeviceClient?
 
@@ -83,14 +81,12 @@ class ConfigurationManager: ObservableObject {
         
         let journeyConfig = ConfigurationManager.loadSelection(for: .journey, from: allConfigs)
         let davinciConfig = ConfigurationManager.loadSelection(for: .davinci, from: allConfigs)
-        let pingOneMFAConfig = ConfigurationManager.loadSelection(for: .pingOneMFADavinci, from: allConfigs)
         let oidcWebConfig = ConfigurationManager.loadSelection(for: .oidcWeb, from: allConfigs)
         let deviceConfig = ConfigurationManager.loadSelection(for: .device, from: allConfigs)
 
         var sels = [ConfigType: Configuration]()
         if let c = journeyConfig { sels[.journey] = c }
         if let c = davinciConfig { sels[.davinci] = c }
-        if let c = pingOneMFAConfig { sels[.pingOneMFADavinci] = c }
         if let c = oidcWebConfig { sels[.oidcWeb] = c }
         if let c = deviceConfig { sels[.device] = c }
         self.selections = sels
@@ -101,11 +97,6 @@ class ConfigurationManager: ObservableObject {
                 ?? ConfigurationManager.buildJourney(config)
         }
         self.davinci = davinciConfig.map { config in
-            ConfigurationManager.resolveJson(for: config)
-                .flatMap { ConfigurationManager.buildDaVinci(fromJSON: $0) }
-                ?? ConfigurationManager.buildDaVinci(config)
-        }
-        self.pingOneMFADavinci = pingOneMFAConfig.map { config in
             ConfigurationManager.resolveJson(for: config)
                 .flatMap { ConfigurationManager.buildDaVinci(fromJSON: $0) }
                 ?? ConfigurationManager.buildDaVinci(config)
@@ -153,9 +144,6 @@ class ConfigurationManager: ObservableObject {
                 ?? ConfigurationManager.buildJourney(config)
         case .davinci:
             davinci = json.flatMap { ConfigurationManager.buildDaVinci(fromJSON: $0) }
-                ?? ConfigurationManager.buildDaVinci(config)
-        case .pingOneMFADavinci:
-            pingOneMFADavinci = json.flatMap { ConfigurationManager.buildDaVinci(fromJSON: $0) }
                 ?? ConfigurationManager.buildDaVinci(config)
         case .oidcWeb:
             oidcLogin = json.flatMap { ConfigurationManager.buildOidcWebClient(fromJSON: $0) }
@@ -227,7 +215,6 @@ class ConfigurationManager: ObservableObject {
             switch type {
             case .journey: journey = nil
             case .davinci: davinci = nil
-            case .pingOneMFADavinci: pingOneMFADavinci = nil
             case .oidcWeb: oidcLogin = nil
             case .device: deviceClient = nil
             }

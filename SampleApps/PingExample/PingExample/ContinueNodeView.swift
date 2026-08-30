@@ -22,20 +22,17 @@ struct ContinueNodeView: View {
     let onNodeUpdated: () -> Void
     let onStart: () -> Void
     let onNext: (Bool) -> Void
-    let onMobilePairingNext: (() async -> Void)?
 
     init(
         continueNode: ContinueNode,
         onNodeUpdated: @escaping () -> Void,
         onStart: @escaping () -> Void,
-        onNext: @escaping (Bool) -> Void,
-        onMobilePairingNext: (() async -> Void)? = nil
+        onNext: @escaping (Bool) -> Void
     ) {
         self.continueNode = continueNode
         self.onNodeUpdated = onNodeUpdated
         self.onStart = onStart
         self.onNext = onNext
-        self.onMobilePairingNext = onMobilePairingNext
     }
 
     @EnvironmentObject var validationViewModel: ValidationViewModel
@@ -120,13 +117,11 @@ struct ContinueNodeView: View {
                 case let metadataCollector as MetadataCollector:
                     MetadataView(field: metadataCollector, onNext: onNext)
                 case let mobilePairingCollector as MobilePairingCollector:
-                    if let onMobilePairingNext {
-                        MobilePairingCollectorView(
-                            collector: mobilePairingCollector,
-                            onNext: onMobilePairingNext
-                        )
-                        .id(ObjectIdentifier(mobilePairingCollector))
-                    }
+                    MobilePairingCollectorView(
+                        collector: mobilePairingCollector,
+                        onNext: { onNext(false) }
+                    )
+                    .id(ObjectIdentifier(mobilePairingCollector))
                 default:
                     EmptyView()
                 }

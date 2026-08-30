@@ -244,7 +244,6 @@ private extension ConfigType {
         switch self {
         case .journey: return "map.fill"
         case .davinci: return "key.fill"
-        case .pingOneMFADavinci: return "link.badge.plus"
         case .oidcWeb: return "lock.shield.fill"
         case .device: return "tv"
         }
