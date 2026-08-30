@@ -30,8 +30,8 @@ public final class MobilePairingCollector: AnyFieldCollector, Submittable, Close
     private let lock = NSLock()
     private var outcome: [String: Any]?
     private var pairingTask: Task<Void, Error>?
-    private var generation = 0
     private var cancelled = false
+    private var closed = false
 
     public required convenience init(with json: [String: Any]) {
         self.init(with: json, client: PingOneMFAPairingClient())
@@ -47,29 +47,25 @@ public final class MobilePairingCollector: AnyFieldCollector, Submittable, Close
     public func initialize(with value: Any) {}
 
     public func collect() async -> Result<Void, Error> {
-        let work: (task: Task<Void, Error>, generation: Int)? = lock.withLock {
-            guard !cancelled else { return nil }
+        let task: Task<Void, Error>? = lock.withLock {
+            guard !cancelled, !closed else { return nil }
             if let pairingTask {
-                return (pairingTask, generation)
+                return pairingTask
             }
 
-            generation += 1
-            let currentGeneration = generation
-            let client = client
-            let pairingKey = pairingKey
             let task = Task { try await client.pair(pairingKey: pairingKey) }
             pairingTask = task
-            return (task, currentGeneration)
+            return task
         }
 
-        guard let work else { return .failure(CancellationError()) }
+        guard let task else { return .failure(CancellationError()) }
 
         do {
-            try await work.task.value
-            commit([MobilePairingConstants.status: MobilePairingConstants.claimed], generation: work.generation)
+            try await task.value
+            commit([MobilePairingConstants.status: MobilePairingConstants.claimed])
             return .success(())
         } catch {
-            commit(errorPayload(for: error), generation: work.generation)
+            commit(errorPayload(for: error))
             return .failure(error)
         }
     }
@@ -99,17 +95,16 @@ public final class MobilePairingCollector: AnyFieldCollector, Submittable, Close
 
     public func close() {
         lock.withLock {
-            generation += 1
+            closed = true
             pairingTask?.cancel()
             pairingTask = nil
             outcome = nil
-            cancelled = false
         }
     }
 
-    private func commit(_ outcome: [String: Any], generation expectedGeneration: Int) {
+    private func commit(_ outcome: [String: Any]) {
         lock.withLock {
-            guard generation == expectedGeneration, !cancelled else { return }
+            guard !cancelled, !closed else { return }
             self.outcome = outcome
         }
     }

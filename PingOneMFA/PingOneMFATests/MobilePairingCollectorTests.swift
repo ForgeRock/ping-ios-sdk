@@ -203,6 +203,34 @@ final class MobilePairingCollectorTests: XCTestCase {
         XCTAssertEqual(collector.validate(), [.required])
     }
 
+    func testCollectAfterCloseIsTerminalWithoutNativePairing() async {
+        let probe = PairingProbe()
+        let collector = MobilePairingCollector(with: json, client: ProbePairingClient(probe: probe))
+        collector.close()
+
+        let collection = Task { await collector.collect() }
+
+        // Give any (incorrect) native pairing attempt a bounded chance to start.
+        // Returning early keeps a legacy implementation's pending pairing from
+        // hanging this test after the assertion has already failed.
+        var attemptStarted = false
+        for _ in 0..<100 {
+            if await probe.callCount > 0 {
+                attemptStarted = true
+                break
+            }
+            await Task.yield()
+        }
+        XCTAssertFalse(attemptStarted, "collect() after close() must not start a native pairing")
+        guard !attemptStarted else { return }
+
+        guard case .failure = await collection.value else {
+            return XCTFail("Expected collect after close to fail")
+        }
+        XCTAssertNil(collector.payload())
+        XCTAssertEqual(collector.validate(), [.required])
+    }
+
     private func waitForCallCount(_ expected: Int, probe: PairingProbe) async {
         for _ in 0..<100 {
             if await probe.callCount == expected {

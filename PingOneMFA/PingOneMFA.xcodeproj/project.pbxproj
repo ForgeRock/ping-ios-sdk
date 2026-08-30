@@ -7,7 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A36A764939F47898AD5FAFF /* CollectorInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB7F0AB0CB45088CFB6CF7 /* CollectorInitializer.swift */; };
 		240C95657B48433E8CD75019 /* MockPingOneMFA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C30C6DF01DC455797CC25F3 /* MockPingOneMFA.swift */; };
+		2ED409EE30443A75009F9ABD /* PingOneSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 2ED409ED30443A75009F9ABD /* PingOneSDK */; };
+		2ED409F130446065009F9ABD /* PingOneSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 2ED409F030446065009F9ABD /* PingOneSDK */; };
 		2EFFFE472FCC36D20094E6C0 /* PushType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFFFE462FCC36D20094E6C0 /* PushType.swift */; };
 		2EFFFE482FCC36D20094E6C0 /* PushType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFFFE462FCC36D20094E6C0 /* PushType.swift */; };
 		4D5B9C4E91C548879F3D0092 /* PingOneMFA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDE1452E7C56416FA24BE3FC /* PingOneMFA.framework */; };
@@ -16,22 +19,20 @@
 		727AADB86ABE4022A65ED683 /* PingOneMfaAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62F5A4B5E637435BBD9202C8 /* PingOneMfaAccount.swift */; };
 		96FC692C7D39460B8F4F46B9 /* AccountParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED414CD63DEB40468AD3DBFD /* AccountParserTests.swift */; };
 		99987F5A040F43A49A5DF553 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 27D20303A69B4012AE4848A0 /* PrivacyInfo.xcprivacy */; };
-		9CA840E7F2434ED28DFB38DD /* PingOneSDK in Frameworks */ = {isa = PBXBuildFile; productRef = AF2DE0899F084DD0B7D178F2 /* PingOneSDK */; };
 		9CA840E8F2434ED28DFB38DD /* PingOneSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9CA840EAF2434ED28DFB38DD /* PingOneSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A478018F2630425393CEE9B1 /* PingOneMFAErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED305AC71AB43B0876EB3AF /* PingOneMFAErrorTests.swift */; };
+		A6B73F012B8C4D1E9F0A1234 /* MobilePairingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B73F022B8C4D1E9F0A1234 /* MobilePairingClient.swift */; };
+		A6B73F032B8C4D1E9F0A1234 /* MobilePairingCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B73F042B8C4D1E9F0A1234 /* MobilePairingCollector.swift */; };
+		A6B73F052B8C4D1E9F0A1234 /* MobilePairingCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B73F062B8C4D1E9F0A1234 /* MobilePairingCollectorTests.swift */; };
+		A6B73F072B8C4D1E9F0A1234 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6B73F082B8C4D1E9F0A1234 /* PingDavinciPlugin.framework */; };
 		B34F10903DCA4ABABFDD3BAC /* PingOneMFA.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E0FA1C73976462994E83668 /* PingOneMFA.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C028FF71B2394B16B7CC0FEB /* Geo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F6613AF2BA452FBEB3CC08 /* Geo.swift */; };
 		CBF3C2244A354D3EB152BF1A /* PingOneMFATests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A849F04B2246F998FAF85F /* PingOneMFATests.swift */; };
 		CE135E73D0974DBCAFED0322 /* PingOneMFAError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8E134ED07440F88A2DB536 /* PingOneMFAError.swift */; };
 		D1A2B3C4E5F6A7B8C9D0E1F2 /* PingOneMFAInternalError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6A7B8C9D0E1F2 /* PingOneMFAInternalError.swift */; };
+		DEE974BCB9F7469FAE7AA911 /* MobilePairingCollectorRegistrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B926CF1EBBC4025908BA06B /* MobilePairingCollectorRegistrationTests.swift */; };
 		E2542F605D60443B9D2B95C7 /* PingOneMFA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0474486D96034FBA9364F1DD /* PingOneMFA.swift */; };
 		F1947554A491497E834731CA /* OtpCodeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82377D219C21476B9282B0B2 /* OtpCodeInfo.swift */; };
-		A6B73F012B8C4D1E9F0A1234 /* MobilePairingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B73F022B8C4D1E9F0A1234 /* MobilePairingClient.swift */; };
-		A6B73F032B8C4D1E9F0A1234 /* MobilePairingCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B73F042B8C4D1E9F0A1234 /* MobilePairingCollector.swift */; };
-		A6B73F052B8C4D1E9F0A1234 /* MobilePairingCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B73F062B8C4D1E9F0A1234 /* MobilePairingCollectorTests.swift */; };
-		A6B73F072B8C4D1E9F0A1234 /* PingDavinciPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6B73F082B8C4D1E9F0A1234 /* PingDavinciPlugin.framework */; };
-		0A36A764939F47898AD5FAFF /* CollectorInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB7F0AB0CB45088CFB6CF7 /* CollectorInitializer.swift */; };
-		DEE974BCB9F7469FAE7AA911 /* MobilePairingCollectorRegistrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B926CF1EBBC4025908BA06B /* MobilePairingCollectorRegistrationTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,7 @@
 		264B5E42A00F444282EAE2B2 /* AccountParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountParser.swift; sourceTree = "<group>"; };
 		27D20303A69B4012AE4848A0 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2EFFFE462FCC36D20094E6C0 /* PushType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushType.swift; sourceTree = "<group>"; };
+		3B926CF1EBBC4025908BA06B /* MobilePairingCollectorRegistrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePairingCollectorRegistrationTests.swift; sourceTree = "<group>"; };
 		4ED305AC71AB43B0876EB3AF /* PingOneMFAErrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAErrorTests.swift; sourceTree = "<group>"; };
 		62F5A4B5E637435BBD9202C8 /* PingOneMfaAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMfaAccount.swift; sourceTree = "<group>"; };
 		82377D219C21476B9282B0B2 /* OtpCodeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtpCodeInfo.swift; sourceTree = "<group>"; };
@@ -85,19 +87,17 @@
 		8E0FA1C73976462994E83668 /* PingOneMFA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PingOneMFA.h; sourceTree = "<group>"; };
 		92F6613AF2BA452FBEB3CC08 /* Geo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Geo.swift; sourceTree = "<group>"; };
 		9CA840EAF2434ED28DFB38DD /* PingOneSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOneSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FCB7F0AB0CB45088CFB6CF7 /* CollectorInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectorInitializer.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F6A7B8C9D0E1F2 /* PingOneMFAInternalError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAInternalError.swift; sourceTree = "<group>"; };
+		A6B73F022B8C4D1E9F0A1234 /* MobilePairingClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePairingClient.swift; sourceTree = "<group>"; };
+		A6B73F042B8C4D1E9F0A1234 /* MobilePairingCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePairingCollector.swift; sourceTree = "<group>"; };
+		A6B73F062B8C4D1E9F0A1234 /* MobilePairingCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePairingCollectorTests.swift; sourceTree = "<group>"; };
+		A6B73F0A2B8C4D1E9F0A1234 /* DavinciPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DavinciPlugin.xcodeproj; path = ../DavinciPlugin/DavinciPlugin.xcodeproj; sourceTree = SOURCE_ROOT; };
 		D4A849F04B2246F998FAF85F /* PingOneMFATests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFATests.swift; sourceTree = "<group>"; };
 		DF8E134ED07440F88A2DB536 /* PingOneMFAError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAError.swift; sourceTree = "<group>"; };
 		ED414CD63DEB40468AD3DBFD /* AccountParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountParserTests.swift; sourceTree = "<group>"; };
 		F748FD268F5344689F9DC02E /* PingOneMFATests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PingOneMFATests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDE1452E7C56416FA24BE3FC /* PingOneMFA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PingOneMFA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A6B73F022B8C4D1E9F0A1234 /* MobilePairingClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePairingClient.swift; sourceTree = "<group>"; };
-		A6B73F042B8C4D1E9F0A1234 /* MobilePairingCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePairingCollector.swift; sourceTree = "<group>"; };
-		A6B73F062B8C4D1E9F0A1234 /* MobilePairingCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePairingCollectorTests.swift; sourceTree = "<group>"; };
-		A6B73F082B8C4D1E9F0A1234 /* PingDavinciPlugin.framework */ = {isa = PBXReferenceProxy; fileType = wrapper.framework; path = PingDavinciPlugin.framework; remoteRef = A6B73F092B8C4D1E9F0A1234 /* PBXContainerItemProxy */; sourceTree = BUILT_PRODUCTS_DIR; };
-		9FCB7F0AB0CB45088CFB6CF7 /* CollectorInitializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectorInitializer.swift; sourceTree = "<group>"; };
-		3B926CF1EBBC4025908BA06B /* MobilePairingCollectorRegistrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePairingCollectorRegistrationTests.swift; sourceTree = "<group>"; };
-		A6B73F0A2B8C4D1E9F0A1234 /* DavinciPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DavinciPlugin.xcodeproj; path = ../DavinciPlugin/DavinciPlugin.xcodeproj; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,7 +113,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9CA840E7F2434ED28DFB38DD /* PingOneSDK in Frameworks */,
+				2ED409EE30443A75009F9ABD /* PingOneSDK in Frameworks */,
+				2ED409F130446065009F9ABD /* PingOneSDK in Frameworks */,
 				A6B73F072B8C4D1E9F0A1234 /* PingDavinciPlugin.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -172,6 +173,14 @@
 			path = PingOneMFATests;
 			sourceTree = "<group>";
 		};
+		A6B73F0C2B8C4D1E9F0A1234 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A6B73F082B8C4D1E9F0A1234 /* PingDavinciPlugin.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		C73C2817920B43D5A250644D = {
 			isa = PBXGroup;
 			children = (
@@ -182,14 +191,6 @@
 				A6B73F0A2B8C4D1E9F0A1234 /* DavinciPlugin.xcodeproj */,
 				A6B73F0C2B8C4D1E9F0A1234 /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		A6B73F0C2B8C4D1E9F0A1234 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A6B73F082B8C4D1E9F0A1234 /* PingDavinciPlugin.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -243,7 +244,8 @@
 			);
 			name = PingOneMFA;
 			packageProductDependencies = (
-				AF2DE0899F084DD0B7D178F2 /* PingOneSDK */,
+				2ED409ED30443A75009F9ABD /* PingOneSDK */,
+				2ED409F030446065009F9ABD /* PingOneSDK */,
 			);
 			productName = PingOneMFA;
 			productReference = FDE1452E7C56416FA24BE3FC /* PingOneMFA.framework */;
@@ -278,17 +280,17 @@
 			mainGroup = C73C2817920B43D5A250644D;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				5F88B53928734959A448B7F6 /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */,
+				2ED409EF30446065009F9ABD /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */,
 			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0A6FD42B92DA4DA4A8CA0E52 /* Products */;
+			projectDirPath = "";
 			projectReferences = (
 				{
 					ProductGroup = A6B73F0C2B8C4D1E9F0A1234 /* Products */;
 					ProjectRef = A6B73F0A2B8C4D1E9F0A1234 /* DavinciPlugin.xcodeproj */;
 				},
 			);
-			preferredProjectObjectVersion = 77;
-			productRefGroup = 0A6FD42B92DA4DA4A8CA0E52 /* Products */;
-			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				3116E2D77AC64ADA8B701AA6 /* PingOneMFA */,
@@ -296,6 +298,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		A6B73F082B8C4D1E9F0A1234 /* PingDavinciPlugin.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PingDavinciPlugin.framework;
+			remoteRef = A6B73F092B8C4D1E9F0A1234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		D0E25507B4D3456D80C28FA8 /* Resources */ = {
@@ -352,15 +364,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		C711120F1A6C4CC5B3E919EC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3116E2D77AC64ADA8B701AA6 /* PingOneMFA */;
-			targetProxy = 012ED3B4B619491C98C0AABD /* PBXContainerItemProxy */;
-		};
 		A6B73F0D2B8C4D1E9F0A1234 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = PingDavinciPlugin;
 			targetProxy = A6B73F0B2B8C4D1E9F0A1234 /* PBXContainerItemProxy */;
+		};
+		C711120F1A6C4CC5B3E919EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3116E2D77AC64ADA8B701AA6 /* PingOneMFA */;
+			targetProxy = 012ED3B4B619491C98C0AABD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -630,7 +642,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		5F88B53928734959A448B7F6 /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */ = {
+		2ED409EF30446065009F9ABD /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pingidentity/pingone-mobile-sdk-ios.git";
 			requirement = {
@@ -641,9 +653,13 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		AF2DE0899F084DD0B7D178F2 /* PingOneSDK */ = {
+		2ED409ED30443A75009F9ABD /* PingOneSDK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5F88B53928734959A448B7F6 /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */;
+			productName = PingOneSDK;
+		};
+		2ED409F030446065009F9ABD /* PingOneSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2ED409EF30446065009F9ABD /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */;
 			productName = PingOneSDK;
 		};
 /* End XCSwiftPackageProductDependency section */
