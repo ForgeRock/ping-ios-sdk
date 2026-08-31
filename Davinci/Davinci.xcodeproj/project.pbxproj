@@ -93,6 +93,7 @@
 		SDKS50680004000000000002 /* DeviceClientJsonConfigE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50680004000000000001 /* DeviceClientJsonConfigE2ETest.swift */; };
 		SDKS52810001000000000002 /* MetadataCollectorE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS52810001000000000001 /* MetadataCollectorE2ETest.swift */; };
 		SDKS52810002000000000002 /* ImageCollectorE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS52810002000000000001 /* ImageCollectorE2ETest.swift */; };
+		SDKS52810003000000000002 /* QRCodeCollectorE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS52810003000000000001 /* QRCodeCollectorE2ETest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -208,6 +209,7 @@
 		SDKS50680004000000000001 /* DeviceClientJsonConfigE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceClientJsonConfigE2ETest.swift; sourceTree = "<group>"; };
 		SDKS52810001000000000001 /* MetadataCollectorE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCollectorE2ETest.swift; sourceTree = "<group>"; };
 		SDKS52810002000000000001 /* ImageCollectorE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectorE2ETest.swift; sourceTree = "<group>"; };
+		SDKS52810003000000000001 /* QRCodeCollectorE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeCollectorE2ETest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -337,6 +339,7 @@
 				FA130AA38471485588EED6A1 /* PollingCollectorIntegrationTests.swift */,
 				SDKS52810001000000000001 /* MetadataCollectorE2ETest.swift */,
 				SDKS52810002000000000001 /* ImageCollectorE2ETest.swift */,
+				SDKS52810003000000000001 /* QRCodeCollectorE2ETest.swift */,
 				BBBBBBBB00000002FAA0E2E0 /* RecordingHttpClient.swift */,
 			);
 			path = "integration tests";
@@ -557,6 +560,7 @@
 				8FE3EB1B92044038A76D2CB3 /* PollingCollectorIntegrationTests.swift in Sources */,
 				SDKS52810001000000000002 /* MetadataCollectorE2ETest.swift in Sources */,
 				SDKS52810002000000000002 /* ImageCollectorE2ETest.swift in Sources */,
+				SDKS52810003000000000002 /* QRCodeCollectorE2ETest.swift in Sources */,
 				DA0000022F0000000000DA01 /* DeviceAuthorizationTests.swift in Sources */,
 				A5EFAA142D3F51CC00F771FE /* TextCollectorTests.swift in Sources */,
 				A5EFAA122D3F518B00F771FE /* SubmitCollectorTests.swift in Sources */,
