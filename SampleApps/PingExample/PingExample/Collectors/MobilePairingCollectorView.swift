@@ -67,7 +67,10 @@ struct MobilePairingCollectorView: View {
         .frame(maxWidth: .infinity)
         .padding()
         .onAppear { startPairingIfNeeded() }
-        .onDisappear { pairingTask?.cancel() }
+        .onDisappear {
+            pairingTask?.cancel()
+            pairingTask = nil
+        }
     }
 
     @ViewBuilder
