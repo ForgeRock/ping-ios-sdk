@@ -1,3 +1,7 @@
+## [Unreleased]
+#### Updated
+- Updated `RecaptchaEnterprise` dependency to 18.9.1 for Xcode 27 / iOS 27 compatibility [SDKS-5306]
+
 ## [2.1.0]
 #### Added
 - Added OAuth 2.0 Device Authorization Grant (RFC 8628) support [SDKS-4785]
