@@ -15,5 +15,8 @@
     "cookieName": "5421aeddf91aa20",
     "serverUrl": "https://openam-sdks.forgeblocks.com/am",
     "realm": "alpha",
-    "acrValues" : "79220c5e3a217a3d9b6739585cb160aa"
+    "acrValues" : "79220c5e3a217a3d9b6739585cb160aa",
+
+    "backchannelClientId": "backchannel-test",
+    "backchannelClientSecret": "backchannel-test"
 }

@@ -16,6 +16,9 @@ import PingDavinciPlugin
 /// The server sends the image as a data URI in the `content` field, e.g.:
 /// `"data:image/png;base64,iVBORw0KGgo..."`
 ///
+/// The `content` property exposes the complete data URI received from the server,
+/// including its MIME type and Base64 prefix.
+///
 /// The `imageData` property exposes the decoded `Data` after stripping the data URI prefix,
 /// allowing the UI layer to render it as a `UIImage` or `SwiftUI.Image`.
 ///
@@ -34,6 +37,11 @@ public class QRCodeCollector: Collector, @unchecked Sendable {
     /// The key identifying this collector within the form.
     public private(set) var key: String = ""
 
+    /// The complete QR code data URI as received from the server, or an empty string if absent.
+    ///
+    /// This preserves the MIME type and Base64 prefix
+    public private(set) var content: String = ""
+
     /// The decoded QR code image bytes, or `nil` if the `content` field was absent or invalid.
     ///
     /// Use `UIImage(data:)` or `Image(uiImage:)` in the UI layer to render this as an image.
@@ -47,11 +55,12 @@ public class QRCodeCollector: Collector, @unchecked Sendable {
 
     public required init(with json: [String: Any]) {
         key = json[Constants.key] as? String ?? ""
+        content = json[Constants.content] as? String ?? ""
         fallbackText = json[Constants.fallbackText] as? String ?? ""
         // The server sends the image as a data URI: "data:image/png;base64,<data>"
         // Strip everything up to and including "base64," before decoding, matching Android.
-        if let content = json[Constants.content] as? String {
-            let base64 = content.components(separatedBy: Constants.base64Separator).last ?? ""
+        if let rawContent = json[Constants.content] as? String {
+            let base64 = rawContent.components(separatedBy: Constants.base64Separator).last ?? ""
             imageData = Data(base64Encoded: base64, options: .ignoreUnknownCharacters)
         }
     }

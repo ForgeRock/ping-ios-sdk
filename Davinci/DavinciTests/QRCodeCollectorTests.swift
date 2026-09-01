@@ -26,6 +26,7 @@ class QRCodeCollectorTests: XCTestCase {
         let collector = QRCodeCollector(with: json)
 
         XCTAssertEqual(collector.id, "qr-field")
+        XCTAssertEqual(collector.content, "data:image/png;base64,\(base64String)")
         XCTAssertNotNil(collector.imageData)
         XCTAssertEqual(collector.imageData, sampleData)
     }
@@ -36,6 +37,7 @@ class QRCodeCollectorTests: XCTestCase {
         let collector = QRCodeCollector(with: json)
 
         XCTAssertNil(collector.imageData)
+        XCTAssertEqual(collector.content, "")
         XCTAssertEqual(collector.id, "qr-field")
     }
 
@@ -43,6 +45,7 @@ class QRCodeCollectorTests: XCTestCase {
         let collector = QRCodeCollector(with: [:])
 
         XCTAssertEqual(collector.id, "")
+        XCTAssertEqual(collector.content, "")
         XCTAssertNil(collector.imageData)
         XCTAssertEqual(collector.fallbackText, "")
     }
@@ -68,8 +71,10 @@ class QRCodeCollectorTests: XCTestCase {
         let sampleData = "PingOne".data(using: .utf8)!
         let base64 = sampleData.base64EncodedString()
         for mimeType in ["image/png", "image/jpeg", "image/svg+xml"] {
-            let json: [String: Any] = ["content": "data:\(mimeType);base64,\(base64)"]
+            let content = "data:\(mimeType);base64,\(base64)"
+            let json: [String: Any] = ["content": content]
             let collector = QRCodeCollector(with: json)
+            XCTAssertEqual(collector.content, content, "Content changed for MIME type \(mimeType)")
             XCTAssertEqual(collector.imageData, sampleData, "Failed for MIME type \(mimeType)")
         }
     }
@@ -82,6 +87,7 @@ class QRCodeCollectorTests: XCTestCase {
 
         let collector = QRCodeCollector(with: json)
         XCTAssertEqual(collector.id, "qr-field")
+        XCTAssertEqual(collector.content, "")
     }
 
     func testInitializesWithMalformedBase64Content() {
@@ -93,6 +99,7 @@ class QRCodeCollectorTests: XCTestCase {
         let collector = QRCodeCollector(with: json)
 
         XCTAssertEqual(collector.id, "qr-field")
+        XCTAssertEqual(collector.content, "data:image/png;base64,%%%not-valid-base64!!!")
         XCTAssertNil(collector.imageData)
     }
 
@@ -122,11 +129,13 @@ class QRCodeCollectorTests: XCTestCase {
         let sampleData = "Test".data(using: .utf8)!
         let json: [String: Any] = ["content": "data:image/png;base64,\(sampleData.base64EncodedString())"]
         let collector = QRCodeCollector(with: json)
+        let originalContent = collector.content
         let originalData = collector.imageData
 
         collector.initialize(with: "some override value")
 
-        // imageData should not change — this collector is display-only
+        // The collector is display-only and should not change its content or image data.
+        XCTAssertEqual(collector.content, originalContent)
         XCTAssertEqual(collector.imageData, originalData)
     }
 

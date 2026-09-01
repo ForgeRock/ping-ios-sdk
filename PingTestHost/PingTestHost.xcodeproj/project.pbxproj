@@ -46,6 +46,9 @@
 		A54BF46D2BF2E33C00CD24D4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A54BF46C2BF2E33C00CD24D4 /* ViewController.swift */; };
 		A54BF4702BF2E33C00CD24D4 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = A54BF46F2BF2E33C00CD24D4 /* Base */; };
 		A54BF4722BF2E34000CD24D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A54BF4712BF2E34000CD24D4 /* Assets.xcassets */; };
+		A54EE725303E031B00986AE3 /* PingOneSDK in Frameworks */ = {isa = PBXBuildFile; productRef = A54EE724303E031B00986AE3 /* PingOneSDK */; };
+		A54EE728303E066400986AE3 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = A54EE727303E066400986AE3 /* FacebookCore */; };
+		A54EE72A303E066400986AE3 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = A54EE729303E066400986AE3 /* FacebookLogin */; };
 		A55D59322F2A78B600078FBC /* PingDeviceId.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A55D59312F2A78B600078FBC /* PingDeviceId.framework */; };
 		A55D59332F2A78B600078FBC /* PingDeviceId.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A55D59312F2A78B600078FBC /* PingDeviceId.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A55D59352F2A78D400078FBC /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A55D59342F2A78D400078FBC /* PingJourneyPlugin.framework */; };
@@ -65,11 +68,8 @@
 		EC59E3702E7D8BFC00A91E66 /* PingTamperDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E36F2E7D8BFC00A91E66 /* PingTamperDetector.framework */; };
 		EC59E3712E7D8BFC00A91E66 /* PingTamperDetector.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC59E36F2E7D8BFC00A91E66 /* PingTamperDetector.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EC93DEC72EBA08BB0014726E /* PingTestHost.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = EC93DEC62EBA08BB0014726E /* PingTestHost.xctestplan */; };
-		EC9591062DC116EF005633A1 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = EC9591052DC116EF005633A1 /* GoogleSignIn */; };
 		ECB7C6922D5A27840006F1C8 /* PingBrowser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECB7C6912D5A27840006F1C8 /* PingBrowser.framework */; };
 		ECB7C6932D5A27840006F1C8 /* PingBrowser.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = ECB7C6912D5A27840006F1C8 /* PingBrowser.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		ECED512C2DC1111800FA39A7 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = ECED512B2DC1111800FA39A7 /* FacebookCore */; };
-		ECED512E2DC1111800FA39A7 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = ECED512D2DC1111800FA39A7 /* FacebookLogin */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -175,18 +175,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A54EE728303E066400986AE3 /* FacebookCore in Frameworks */,
 				1BB4C92F2F7EFCF200C1667E /* PingAuthMigration.framework in Frameworks */,
 				95DD7DFB2EF5EF7F00ED05D7 /* PingPush.framework in Frameworks */,
-				ECED512E2DC1111800FA39A7 /* FacebookLogin in Frameworks */,
 				EC59E3702E7D8BFC00A91E66 /* PingTamperDetector.framework in Frameworks */,
 				951222A72EAFF02B00421313 /* PingOath.framework in Frameworks */,
+				A54EE725303E031B00986AE3 /* PingOneSDK in Frameworks */,
 				951222B12EAFF00000421313 /* PingOneMFA.framework in Frameworks */,
 				EC2E0D982DE60C55000CC0E2 /* PingExternalIdPGoogle.framework in Frameworks */,
 				ECB7C6922D5A27840006F1C8 /* PingBrowser.framework in Frameworks */,
 				95DD7E682EF9F78000ED05D7 /* PingFido.framework in Frameworks */,
 				EC2E0D8F2DE60C42000CC0E2 /* PingExternalIdPApple.framework in Frameworks */,
 				95E7555F2EA6A80F008DBFD6 /* PingDeviceProfile.framework in Frameworks */,
-				EC9591062DC116EF005633A1 /* GoogleSignIn in Frameworks */,
 				95DD7E6B2EF9F78700ED05D7 /* PingBinding.framework in Frameworks */,
 				A507A2692CEBED9F007F5C16 /* PingLogger.framework in Frameworks */,
 				EC2E0D922DE60C49000CC0E2 /* PingExternalIdP.framework in Frameworks */,
@@ -195,6 +195,7 @@
 				A55D59352F2A78D400078FBC /* PingJourneyPlugin.framework in Frameworks */,
 				EC2E0D952DE60C50000CC0E2 /* PingExternalIdPFacebook.framework in Frameworks */,
 				951222A12EAFEE6E00421313 /* PingProtect.framework in Frameworks */,
+				A54EE72A303E066400986AE3 /* FacebookLogin in Frameworks */,
 				9512229E2EAFEB6400421313 /* PingJourney.framework in Frameworks */,
 				A567428A2EE34EE6009D29B9 /* PingCommons.framework in Frameworks */,
 				95DD7E6E2EF9F7AF00ED05D7 /* PingDeviceClient.framework in Frameworks */,
@@ -203,7 +204,6 @@
 				A507A2672CEBED9F007F5C16 /* PingDavinci.framework in Frameworks */,
 				A5997CEC2F2922CA0037537D /* PingDavinciPlugin.framework in Frameworks */,
 				A507A26F2CEBED9F007F5C16 /* PingStorage.framework in Frameworks */,
-				ECED512C2DC1111800FA39A7 /* FacebookCore in Frameworks */,
 				A507A26D2CEBED9F007F5C16 /* PingOrchestrate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -313,6 +313,11 @@
 			dependencies = (
 			);
 			name = PingTestHost;
+			packageProductDependencies = (
+				A54EE724303E031B00986AE3 /* PingOneSDK */,
+				A54EE727303E066400986AE3 /* FacebookCore */,
+				A54EE729303E066400986AE3 /* FacebookLogin */,
+			);
 			productName = PingTestHost;
 			productReference = A54BF4652BF2E33C00CD24D4 /* PingTestHost.app */;
 			productType = "com.apple.product-type.application";
@@ -342,6 +347,8 @@
 			);
 			mainGroup = A54BF45C2BF2E33C00CD24D4;
 			packageReferences = (
+				A54EE723303E031B00986AE3 /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */,
+				A54EE726303E066400986AE3 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
 			);
 			productRefGroup = A54BF4662BF2E33C00CD24D4 /* Products */;
 			projectDirPath = "";
@@ -617,38 +624,38 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		EC9591042DC116EF005633A1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+		A54EE723303E031B00986AE3 /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			repositoryURL = "https://github.com/pingidentity/pingone-mobile-sdk-ios.git";
 			requirement = {
 				kind = exactVersion;
-				version = "8.1.0-vwg-eap-1.0.0";
+				version = 2.3.1;
 			};
 		};
-		ECED512A2DC1111800FA39A7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
+		A54EE726303E066400986AE3 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
 			requirement = {
-				kind = exactVersion;
-				version = 18.0.0;
+				kind = upToNextMinorVersion;
+				minimumVersion = 18.1.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		EC9591052DC116EF005633A1 /* GoogleSignIn */ = {
+		A54EE724303E031B00986AE3 /* PingOneSDK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = EC9591042DC116EF005633A1 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
-			productName = GoogleSignIn;
+			package = A54EE723303E031B00986AE3 /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */;
+			productName = PingOneSDK;
 		};
-		ECED512B2DC1111800FA39A7 /* FacebookCore */ = {
+		A54EE727303E066400986AE3 /* FacebookCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = ECED512A2DC1111800FA39A7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			package = A54EE726303E066400986AE3 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
 			productName = FacebookCore;
 		};
-		ECED512D2DC1111800FA39A7 /* FacebookLogin */ = {
+		A54EE729303E066400986AE3 /* FacebookLogin */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = ECED512A2DC1111800FA39A7 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			package = A54EE726303E066400986AE3 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
 			productName = FacebookLogin;
 		};
 /* End XCSwiftPackageProductDependency section */

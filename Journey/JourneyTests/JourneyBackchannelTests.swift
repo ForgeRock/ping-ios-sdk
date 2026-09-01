@@ -157,6 +157,26 @@ final class JourneyBackchannelTests: XCTestCase, @unchecked Sendable {
         XCTAssertTrue(MockURLProtocol.requestHistory.isEmpty, "No network request should have been made")
     }
 
+    func testInvalidUri_whitespaceOnlyAuthIndexType() async throws {
+        let journey = makeJourney()
+        let uri = backchannelRedirectUri(authIndexType: "%20", authIndexValue: UUID().uuidString)
+
+        let node = await journey.start(backchannelUri: uri)
+
+        XCTAssertTrue(node is FailureNode, "Expected FailureNode but got \(type(of: node))")
+        XCTAssertTrue(MockURLProtocol.requestHistory.isEmpty, "No network request should have been made")
+    }
+
+    func testInvalidUri_whitespaceOnlyAuthIndexValue() async throws {
+        let journey = makeJourney()
+        let uri = backchannelRedirectUri(authIndexType: JourneyConstants.transaction, authIndexValue: "%20")
+
+        let node = await journey.start(backchannelUri: uri)
+
+        XCTAssertTrue(node is FailureNode, "Expected FailureNode but got \(type(of: node))")
+        XCTAssertTrue(MockURLProtocol.requestHistory.isEmpty, "No network request should have been made")
+    }
+
     func testInvalidUri_noQueryItems() async throws {
         let journey = makeJourney()
         let uri = URL(string: "https://openam-sdks.forgeblocks.com/am/UI/Login")!
@@ -286,5 +306,73 @@ final class JourneyBackchannelTests: XCTestCase, @unchecked Sendable {
         }
 
         XCTAssertEqual(errorNode.message, expectedMessage)
+    }
+
+    func testAM5xxWithParseableBodyReturnsErrorNodeWithAMMessage() async throws {
+        let journey = makeJourney()
+        let uri = backchannelRedirectUri()
+        let expectedMessage = "Unable to approve transaction"
+
+        MockURLProtocol.requestHandler = { request in
+            try self.jsonResponse(statusCode: 500, url: request.url!, body: [
+                "code": 500,
+                "reason": "Internal Server Error",
+                "message": expectedMessage
+            ])
+        }
+
+        let node = await journey.start(backchannelUri: uri)
+
+        guard let errorNode = node as? ErrorNode else {
+            XCTFail("Expected ErrorNode but got \(type(of: node))")
+            return
+        }
+
+        XCTAssertEqual(errorNode.message, expectedMessage)
+        XCTAssertEqual(errorNode.status, 500)
+    }
+
+    func testAM5xxWithUnparseableBodyReturnsFailureNode() async throws {
+        let journey = makeJourney()
+        let uri = backchannelRedirectUri()
+
+        MockURLProtocol.requestHandler = { request in
+            let data = Data("Internal Server Error".utf8)
+            return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: MockResponse.headers)!, data)
+        }
+
+        let node = await journey.start(backchannelUri: uri)
+
+        guard let failureNode = node as? FailureNode else {
+            XCTFail("Expected FailureNode but got \(type(of: node))")
+            return
+        }
+
+        guard let apiError = failureNode.cause as? ApiError,
+              case .error(let status, _, _) = apiError else {
+            XCTFail("Expected ApiError cause but got \(failureNode.cause)")
+            return
+        }
+
+        XCTAssertEqual(status, 500)
+    }
+
+    func testAM5xxWithNonObjectJsonBodyReturnsErrorNodeWithEmptyMessage() async throws {
+        let journey = makeJourney()
+        let uri = backchannelRedirectUri()
+
+        MockURLProtocol.requestHandler = { request in
+            let data = try JSONSerialization.data(withJSONObject: [])
+            return (HTTPURLResponse(url: request.url!, statusCode: 500, httpVersion: nil, headerFields: MockResponse.headers)!, data)
+        }
+
+        let node = await journey.start(backchannelUri: uri)
+
+        guard let errorNode = node as? ErrorNode else {
+            XCTFail("Expected ErrorNode but got \(type(of: node))")
+            return
+        }
+
+        XCTAssertEqual(errorNode.message, "")
     }
 }
