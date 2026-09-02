@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		0A36A764939F47898AD5FAFF /* CollectorInitializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB7F0AB0CB45088CFB6CF7 /* CollectorInitializer.swift */; };
 		240C95657B48433E8CD75019 /* MockPingOneMFA.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C30C6DF01DC455797CC25F3 /* MockPingOneMFA.swift */; };
-		2ED409EE30443A75009F9ABD /* PingOneSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 2ED409ED30443A75009F9ABD /* PingOneSDK */; };
 		2ED409F130446065009F9ABD /* PingOneSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 2ED409F030446065009F9ABD /* PingOneSDK */; };
 		2EFFFE472FCC36D20094E6C0 /* PushType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFFFE462FCC36D20094E6C0 /* PushType.swift */; };
 		2EFFFE482FCC36D20094E6C0 /* PushType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFFFE462FCC36D20094E6C0 /* PushType.swift */; };
@@ -113,7 +112,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2ED409EE30443A75009F9ABD /* PingOneSDK in Frameworks */,
 				2ED409F130446065009F9ABD /* PingOneSDK in Frameworks */,
 				A6B73F072B8C4D1E9F0A1234 /* PingDavinciPlugin.framework in Frameworks */,
 			);
@@ -244,7 +242,6 @@
 			);
 			name = PingOneMFA;
 			packageProductDependencies = (
-				2ED409ED30443A75009F9ABD /* PingOneSDK */,
 				2ED409F030446065009F9ABD /* PingOneSDK */,
 			);
 			productName = PingOneMFA;
@@ -653,10 +650,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2ED409ED30443A75009F9ABD /* PingOneSDK */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PingOneSDK;
-		};
 		2ED409F030446065009F9ABD /* PingOneSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2ED409EF30446065009F9ABD /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */;

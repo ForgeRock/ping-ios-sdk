@@ -192,10 +192,10 @@ public final class MobilePairingCollector: AnyFieldCollector, Submittable, Close
     ///
     /// - Parameter message: A human-readable description of the cancellation reason.
     ///   Defaults to `"User canceled the pairing flow"`.
-    public func cancel(message: String = "User canceled the pairing flow") {
+    public func cancel(message: String? = nil) {
         lock.withLock {
             cancelled = true
-            outcome = errorPayload(code: MobilePairingConstants.userCancelled, message: message)
+            outcome = errorPayload(code: MobilePairingConstants.userCancelled, message: message ?? MobilePairingConstants.cancellationMessage)
         }
     }
 
