@@ -272,15 +272,16 @@ public final class MobilePairingCollector: AnyFieldCollector, Submittable, Close
     /// Maps a pairing failure to a `["code", "message"]` pair for the resume envelope.
     ///
     /// A `PingOneMFAError` yields its first internal error's numeric code as a string
-    /// (e.g. `"10005"`) and its message; any other error yields `"INTERNAL_ERROR"` and
-    /// its localized description. The server-side connector treats any presence of
+    /// (e.g. `"10005"`) and its raw message (without the `Code=` prefix that
+    /// `PingOneMFAError.message` carries); any other error yields `"INTERNAL_ERROR"`
+    /// and its localized description. The server-side connector treats any presence of
     /// `error` as the error branch and independently re-verifies pairing status via
     /// `readPairingKey`, so the code is telemetry.
     private func errorPayload(for error: Error) -> [String: Any] {
         if let mfaError = error as? PingOneMFAError {
             let firstError = mfaError.internalErrorsList?.first
             let code = firstError.map { String($0.code) } ?? MobilePairingConstants.internalError
-            let message = firstNonEmpty(mfaError.message, firstError?.message, MobilePairingConstants.pairingFailed)
+            let message = firstNonEmpty(firstError?.message, mfaError.message, MobilePairingConstants.pairingFailed)
             return errorPayload(code: code, message: message)
         }
 

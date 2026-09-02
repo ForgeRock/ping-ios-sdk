@@ -103,7 +103,7 @@ final class MobilePairingCollectorTests: XCTestCase {
         }
         let error = collector.payload()?["error"] as? [String: Any]
         XCTAssertEqual(error?["code"] as? String, "10005")
-        XCTAssertEqual(error?["message"] as? String, "Code=10005 Invalid pairing key")
+        XCTAssertEqual(error?["message"] as? String, "Invalid pairing key")
     }
 
     func testUnexpectedErrorUsesInternalErrorCode() async {
