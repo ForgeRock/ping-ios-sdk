@@ -24,7 +24,7 @@ final class MobilePairingCollectorIntegrationTests: XCTestCase {
     func testImmediatelyDiscoversOptionalMobilePairingCollector() async {
         let daVinci = DaVinci.createDaVinci()
         let fields: [[String: any Sendable]] = [[
-            "type": "MOBILE_PAIRING",
+            "type": Constants.MOBILE_PAIRING,
             "key": "mobilePairing",
             "pairingKey": "key"
         ]]
@@ -45,7 +45,7 @@ final class MobilePairingCollectorIntegrationTests: XCTestCase {
     func testImmediatelyDiscoversInputTypeMobilePairingCollector() async {
         let daVinci = DaVinci.createDaVinci()
         let fields: [[String: any Sendable]] = [[
-            "inputType": "MOBILE_PAIRING",
+            "inputType": Constants.MOBILE_PAIRING,
             "type": "TEXT",
             "key": "mobilePairing",
             "pairingKey": "key"
@@ -66,7 +66,7 @@ final class MobilePairingCollectorIntegrationTests: XCTestCase {
 
     func testCancelledOutcomeSerializesAsActionFormDataWithoutActionKey() {
         let collector = MobilePairingCollector(with: [
-            "type": "MOBILE_PAIRING",
+            "type": Constants.MOBILE_PAIRING,
             "key": "mobilePairing",
             "pairingKey": "key"
         ])
@@ -86,7 +86,7 @@ final class MobilePairingCollectorIntegrationTests: XCTestCase {
 
     func testUnsetOutcomeIsOmittedFromFormDataAndEventType() {
         let collector = MobilePairingCollector(with: [
-            "type": "MOBILE_PAIRING",
+            "type": Constants.MOBILE_PAIRING,
             "key": "customKey",
             "pairingKey": "key"
         ])

@@ -14,7 +14,7 @@ import PingOrchestrate
 enum MobilePairingConstants {
     /// Collector type key used both in the DaVinci node JSON and as the registration
     /// key in `CollectorFactory`.
-    static let type = "MOBILE_PAIRING"
+    static let type = Constants.MOBILE_PAIRING
     /// Server field carrying the pairing key to claim.
     static let pairingKey = "pairingKey"
     /// Payload key holding the pairing outcome status.

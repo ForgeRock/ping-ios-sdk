@@ -44,7 +44,7 @@ struct Form {
 
     private static func registerMobilePairingCollectorIfNeeded(fields: [[String: any Sendable]]) async {
         guard fields.contains(where: {
-            ($0[Constants.inputType] as? String ?? $0[Constants.type] as? String) == "MOBILE_PAIRING"
+            ($0[Constants.inputType] as? String ?? $0[Constants.type] as? String) == Constants.MOBILE_PAIRING
         }),
               let initializer = NSClassFromString("PingOneMFA.CollectorInitializer") as? NSObject.Type,
               initializer.responds(to: NSSelectorFromString("registerCollectorsWithCompletion:")) else {
