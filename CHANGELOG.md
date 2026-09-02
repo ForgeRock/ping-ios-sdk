@@ -1,4 +1,7 @@
 ## [UNRELEASED]
+#### Updated
+- Updated `RecaptchaEnterprise` dependency to 18.9.1 for Xcode 27 / iOS 27 compatibility [SDKS-5306]
+
 #### Added
 - Added `ImageCollector` to support image display in DaVinci forms [SDKS-5143]
 - Added `MetadataCollector` to support the DaVinci SDK Integrator connector's pause/resume model, allowing the app to invoke on-device SDKs and return a result or error before the flow continues [SDKS-5142]
@@ -7,8 +10,12 @@
 - Bumped `facebook-ios-sdk` to 18.1.0 [SDKS-5160]
 
 #### Fixed
+- Fixed `QRCodeCollector` not preserving the complete QR code data URI in `content` [SDKS-5299]
 - Fixed `OidcWebClient` `.authSession` and `.ephemeralAuthSession` not completing for Universal Link (https) redirect URIs [SDKS-5239]
+- Fixed `OidcWebClient.authorize()` collapsing `FailureNode.cause` to `.unknown`, losing typed browser-cancellation and unsupported-OS error identity [SDKS-5295]
 - Fixed FIDO registration/authentication not launching automatically when the DaVinci form's `trigger` property is not `BUTTON` [SDKS-4552]
+- Fixed 5xx AM responses with a parseable error body being misclassified as `FailureNode` instead of `ErrorNode`, diverging from Android [SDKS-5358]
+- Fixed `Journey.start(backchannelUri:)` not rejecting whitespace-only `authIndexType`/`authIndexValue`, diverging from Android [SDKS-5359]
 
 ## [2.1.0]
 #### Added

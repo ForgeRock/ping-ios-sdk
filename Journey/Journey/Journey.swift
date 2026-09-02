@@ -221,9 +221,9 @@ public extension Journey {
 
         guard let components = URLComponents(url: backchannelUri, resolvingAgainstBaseURL: false),
               let authIndexType = components.queryItems?.first(where: { $0.name == JourneyConstants.authIndexType })?.value,
-              !authIndexType.isEmpty,
+              !authIndexType.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
               let authIndexValue = components.queryItems?.first(where: { $0.name == JourneyConstants.authIndexValue })?.value,
-              !authIndexValue.isEmpty
+              !authIndexValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         else {
             return FailureNode(cause: ApiError.error(400, [:], "Invalid URI or missing authIndexType/authIndexValue"))
         }

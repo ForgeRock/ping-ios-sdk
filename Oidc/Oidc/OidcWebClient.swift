@@ -85,23 +85,15 @@ public extension OidcWebClient {
 
     /// This method initializes the OIDC client and starts the login process.
     /// - Parameter configure: A closure to configure the OIDC options.
-    /// - Returns: A Result containing the User or an OidcError.
+    /// - Returns: A Result containing the User or an OidcError. When the underlying `Node` is a
+    ///   `FailureNode`, the original failure's type is preserved where available (e.g. an
+    ///   `OidcError.authorizeError` wrapping a `BrowserError` is returned unmodified) rather than
+    ///   being collapsed into a string-only `OidcError.unknown`.
     func authorize(configure: @Sendable (inout OidcOptions) -> Void = { _ in }) async throws -> Result<User, OidcError> {
         var options = OidcOptions()
         configure(&options)
         let result = try await startOidcLogin(options: options)
-        switch result {
-        case let failureNode as FailureNode:
-            return Result<User, OidcError>.failure(OidcError.unknown(message: failureNode.cause.localizedDescription))
-        case let successNode as SuccessNode:
-            guard let user = successNode.session as? User else {
-                // This should never happen, but just in case
-                return Result<User, OidcError>.failure(OidcError.unknown(message: "Unexpected result: Failed to get User"))
-            }
-            return Result<User, OidcError>.success(user)
-        default:
-            return Result<User, OidcError>.failure(OidcError.unknown(message: "Unexpected result"))
-        }
+        return OidcWebClient.authorizeResult(from: result)
     }
     
     /// Starts the OIDC login process.
@@ -116,7 +108,36 @@ public extension OidcWebClient {
         
         return await self.start(currentRequest)
     }
-    
+
+    /// Maps the `Node` produced by the workflow into a `Result<User, OidcError>`.
+    ///
+    /// Extracted from `authorize(configure:)` so the mapping can be unit-tested directly without
+    /// driving a full `Workflow`. When `node` is a `FailureNode`, the original failure's type is
+    /// preserved where available: if `failureNode.cause` is already an `OidcError` (as is the
+    /// common case for browser-cancellation/unsupported-OS failures surfaced by `WebModule`'s
+    /// `transport` closure), it is returned unmodified so callers can pattern-match on it (e.g.
+    /// `BrowserError.externalUserAgentCancelled`). Otherwise, the fallback wraps the original
+    /// `cause` in `OidcError.unknown` rather than discarding it into a string-only message.
+    /// - Parameter node: The `Node` returned by the workflow.
+    /// - Returns: A `Result` containing the `User` on success, or an `OidcError` on failure.
+    internal static func authorizeResult(from node: Node) -> Result<User, OidcError> {
+        switch node {
+        case let failureNode as FailureNode:
+            if let oidcError = failureNode.cause as? OidcError {
+                return Result<User, OidcError>.failure(oidcError)
+            }
+            return Result<User, OidcError>.failure(OidcError.unknown(cause: failureNode.cause, message: nil))
+        case let successNode as SuccessNode:
+            guard let user = successNode.session as? User else {
+                // This should never happen, but just in case
+                return Result<User, OidcError>.failure(OidcError.unknown(message: "Unexpected result: Failed to get User"))
+            }
+            return Result<User, OidcError>.success(user)
+        default:
+            return Result<User, OidcError>.failure(OidcError.unknown(message: "Unexpected result"))
+        }
+    }
+
     /// Method to return the OIDC user.
     /// This method checks if the OIDC client is initialized and sets up the necessary configurations.
     /// - Returns: The user if found, otherwise nil.

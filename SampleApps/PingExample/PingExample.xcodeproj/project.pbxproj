@@ -70,6 +70,7 @@
 		A525E7BA2DD7647200B02C17 /* PingExternalIdPGoogle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A525E7B22DD7647200B02C17 /* PingExternalIdPGoogle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A53B6E5B2F9A659B00B279CE /* ReadOnlyTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53B6E5A2F9A659B00B279CE /* ReadOnlyTextView.swift */; };
 		A53B6E5D2F9A659B00B279CE /* MetadataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A53B6E5C2F9A659B00B279CE /* MetadataView.swift */; };
+		A54EE722303E030200986AE3 /* PingOneSDK in Frameworks */ = {isa = PBXBuildFile; productRef = A54EE721303E030200986AE3 /* PingOneSDK */; };
 		A55177322FA502D100E575CF /* BooleanCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A55177312FA502D100E575CF /* BooleanCollectorView.swift */; };
 		A5517AB42FB5007B00E575CF /* DeviceFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5517AB32FB5007B00E575CF /* DeviceFlowView.swift */; };
 		A5517AC12FB5007B00E575CF /* ApproveDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5517AC02FB5007B00E575CF /* ApproveDeviceView.swift */; };
@@ -874,6 +875,7 @@
 				EC5C81F32ED08C2D00C91570 /* PingDavinci.framework in Frameworks */,
 				EC5384B32F23B07300FC28AD /* PingJourneyPlugin.framework in Frameworks */,
 				1B2933CD2E7DF429004D1D38 /* PingOath.framework in Frameworks */,
+				A54EE722303E030200986AE3 /* PingOneSDK in Frameworks */,
 				1B7A9AD02ED5316F00989A55 /* PingNetwork.framework in Frameworks */,
 				A525E7B72DD7647200B02C17 /* PingExternalIdPFacebook.framework in Frameworks */,
 				EC4DD3182EABC06800ECC4E1 /* PingBinding.framework in Frameworks */,
@@ -1429,6 +1431,9 @@
 			dependencies = (
 			);
 			name = PingExample;
+			packageProductDependencies = (
+				A54EE721303E030200986AE3 /* PingOneSDK */,
+			);
 			productName = PingExample;
 			productReference = 3A54412D2BCDF10900385131 /* PingExample.app */;
 			productType = "com.apple.product-type.application";
@@ -1524,6 +1529,7 @@
 			packageReferences = (
 				EC92B38D2DA03E0700E4246D /* XCRemoteSwiftPackageReference "SVGKit" */,
 				A551E96B302DFD120087A732 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+				A54EE720303E030200986AE3 /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */,
 			);
 			productRefGroup = 3A54412E2BCDF10900385131 /* Products */;
 			projectDirPath = "";
@@ -2591,11 +2597,19 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		A54EE720303E030200986AE3 /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pingidentity/pingone-mobile-sdk-ios.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.3.1;
+			};
+		};
 		A551E96B302DFD120087A732 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
 			requirement = {
-				kind = upToNextMajorVersion;
+				kind = upToNextMinorVersion;
 				minimumVersion = 18.1.0;
 			};
 		};
@@ -2603,13 +2617,18 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SVGKit/SVGKit";
 			requirement = {
-				kind = upToNextMajorVersion;
+				kind = upToNextMinorVersion;
 				minimumVersion = 3.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		A54EE721303E030200986AE3 /* PingOneSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A54EE720303E030200986AE3 /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */;
+			productName = PingOneSDK;
+		};
 		A551E96C302DFD120087A732 /* FacebookCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A551E96B302DFD120087A732 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
