@@ -7,6 +7,7 @@
 
 import Foundation
 import PingDavinciPlugin
+import PingLogger
 import PingOrchestrate
 
 /// String constants used by the `MOBILE_PAIRING` collector.
@@ -70,7 +71,7 @@ enum MobilePairingConstants {
 /// late-arriving pairing callback cannot clobber a payload committed by `cancel(message:)`.
 ///
 /// - SeeAlso: `CollectorInitializer`, `MobilePairingClient`
-public final class MobilePairingCollector: AnyFieldCollector, Submittable, Closeable, @unchecked Sendable {
+public final class MobilePairingCollector: AnyFieldCollector, Submittable, Closeable, DaVinciAware, @unchecked Sendable {
     /// The collector type string as sent by the server (`"MOBILE_PAIRING"`).
     public private(set) var type: String
 
@@ -85,6 +86,15 @@ public final class MobilePairingCollector: AnyFieldCollector, Submittable, Close
     /// Unique identifier for this collector. The DaVinci core uses this value as the
     /// field name under `formData` in the resume POST.
     public var id: String { key }
+
+    /// The DaVinci instance, providing access to configuration and logging. Injected by
+    /// the `CollectorFactory` when this collector conforms to `DaVinciAware`.
+    public var davinci: DaVinci?
+
+    /// The logger for recording mobile pairing events.
+    private var logger: Logger {
+        davinci?.config.logger ?? LogManager.logger
+    }
 
     /// The pairing client backing `collect()`.
     private let client: any MobilePairingClient
@@ -170,11 +180,13 @@ public final class MobilePairingCollector: AnyFieldCollector, Submittable, Close
 
         guard let task else { return .failure(CancellationError()) }
 
+        logger.d("MOBILE_PAIRING collector: pairing started")
         do {
             try await task.value
             commit([MobilePairingConstants.status: MobilePairingConstants.claimed])
             return .success(())
         } catch {
+            logger.e("MOBILE_PAIRING collector: pairing failed", error: error)
             commit(errorPayload(for: error))
             return .failure(error)
         }
@@ -197,6 +209,7 @@ public final class MobilePairingCollector: AnyFieldCollector, Submittable, Close
             cancelled = true
             outcome = errorPayload(code: MobilePairingConstants.userCancelled, message: message ?? MobilePairingConstants.cancellationMessage)
         }
+        logger.d("MOBILE_PAIRING collector: pairing cancelled\(message.map { ": \($0)" } ?? "")")
     }
 
     /// Returns the pairing outcome to be posted back to DaVinci under
