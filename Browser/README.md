@@ -63,10 +63,9 @@ The `BrowserLauncher` has the following public methods:
 
 The second overload additionally accepts the full `redirectUri`, which `.authSession`/`.ephemeralAuthSession` use to decide whether an https redirect can be intercepted via the OS-brokered `ASWebAuthenticationSession.Callback.https` API (see below). It has a default implementation on `BrowserLauncherProtocol` that forwards to the first overload with `redirectUri: nil`, so existing conformers keep compiling unchanged.
 
-The `BrowserLauncher` supports the following types of `BrowserMode` (Not fully implemented yet):
-1. `login`
-2. `logout`
-3. `custom`
+The `BrowserLauncher` supports the following types of `BrowserMode`:
+1. `login` / `logout` — present the browser UI and wait for a `callbackURLScheme` match before `launch()` resolves (the behavior described throughout this README).
+2. `custom` — present-only mode: `launch()` resolves as soon as the browser UI is presented, without ever waiting for a callback. See "Present-only mode" below.
 
 The `BrowserLauncher` supports the following types of `BrowserType`:
 1. `authSession` <-- Default
@@ -78,6 +77,30 @@ All four `BrowserType` values are implemented:
 - `authSession` and `ephemeralAuthSession` use `ASWebAuthenticationSession`.
 - `sfViewController` uses `SFSafariViewController` and completes the redirect by observing `OpenURLMonitor.shared.urlPublisher` for a URL whose scheme matches the callback.
 - `nativeBrowserApp` opens the URL via `UIApplication.open` and completes the redirect the same way, through `OpenURLMonitor`.
+
+### Present-only mode (`browserMode: .custom`)
+
+Some use cases need the browser to stay open indefinitely with no return-to-app callback ever expected — for example, a session-handoff / in-app-SSO pattern: the app opens an in-app browser on a URL that redirects to a *second webapp* and sets a session cookie there, and the browser is meant to just stay open showing that page, with no redirect back to the native app. Passing `browserMode: .login` (the default) for this use case would leave `launch()` suspended forever, since it always waits for a `callbackURLScheme` match.
+
+Passing `browserMode: .custom` instead makes `launch()` resolve as soon as the browser UI has been successfully presented, returning the presented URL rather than a callback URL:
+
+```swift
+let presentedUrl = try await BrowserLauncher.currentBrowser.launch(
+    url: handoffUrl,
+    customParams: nil,
+    browserType: .sfViewController,
+    browserMode: .custom,
+    callbackURLScheme: "unused" // required by the method signature, but ignored in this mode
+)
+// `launch()` has already returned — the browser is still on screen, showing `handoffUrl`
+// (and wherever it redirects to next).
+```
+
+Per-`BrowserType` behavior in present-only mode:
+- **`.sfViewController` / `.authSession` / `.ephemeralAuthSession`** — the UI stays presented after `launch()` returns. `isInProgress` stays `true` for as long as it's shown — there is no timeout or auto-dismiss — until the user dismisses it or the caller explicitly calls `reset()`.
+- **`.nativeBrowserApp`** — resolves and returns to `isInProgress == false` immediately, since control has already left your app entirely for Safari; there's no in-app element for `BrowserLauncher` to keep "open."
+
+Note that `ASWebAuthenticationSession` always shows its own OS-provided Cancel/Done chrome and this cannot be hidden, so `.sfViewController` is usually the better fit when the handoff page needs to look chromeless.
 
 ### Redirect URI schemes: custom scheme vs. https (Universal Link)
 
