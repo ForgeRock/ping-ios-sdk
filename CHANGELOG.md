@@ -8,6 +8,7 @@
 - Added `trigger` and `isAutomatic` to the DaVinci FIDO collectors [SDKS-4552]
 - Added Facebook Limited Login (OIDC ID-token flow) support in `PingExternalIdPFacebook`. Toggle via the new `facebookLimitedLoginEnabled` property on `IdpCollector` (DaVinci) or on `FacebookHandler` / `FacebookRequestHandler` directly; defaults to `false` (classic OAuth2). On the Journey path, provider names containing `fb-limited` automatically opt into Limited Login [SDKS-5160, SDKS-5161, SDKS-5162]
 - Bumped `facebook-ios-sdk` to 18.1.0 [SDKS-5160]
+- Added present-only launch mode to `BrowserLauncher` via `browserMode: .custom` — `launch()` resolves as soon as the browser UI is presented, without waiting for a callback, for use cases like session handoff / in-app SSO where no redirect back to the app is ever expected [SDKS-5357]
 
 #### Fixed
 - Fixed `QRCodeCollector` not preserving the complete QR code data URI in `content` [SDKS-5299]
