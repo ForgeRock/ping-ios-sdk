@@ -138,17 +138,21 @@ final class BrowserModeTests: XCTestCase {
 
 // MARK: - Present-only mode Tests
 //
-// `isPresentOnlyMode(_:)` is the only piece of the present-only (`browserMode: .custom`) behavior
-// that's testable headless, mirroring `HttpsCallbackComponentsTests`. Real "presentation success"
-// coverage for `.sfViewController`/`.authSession`/`.ephemeralAuthSession` against the concrete
-// `BrowserLauncher` class would require either a live foreground window/scene plus a real,
-// non-deterministically-dismissable OS sheet, or a dependency-injection seam that doesn't exist
-// today (`state`/`loginContinuation` are `private`, no test-only accessor) — this is a pre-existing
-// gap, not one present-only mode introduces: `BrowserLauncherTests` below already only exercises
-// `reset()`/`handleAppActivation()` on an idle instance for the same reason, and none of the
-// existing `.login`/`.logout` failure branches are unit-tested against the real class either.
-// The present-only branches only add a new success-tail *after* presentation already succeeds —
-// they don't touch any existing failure `guard`, and structurally can't leave a dangling
+// `isPresentOnlyMode(_:)` and `isActiveSessionToken(_:activeToken:)` are the two pieces of the
+// present-only (`browserMode: .custom`) behavior that are testable headless, mirroring
+// `HttpsCallbackComponentsTests`. The latter is the actual decision logic behind the trickiest part
+// of this feature — telling a late `ASWebAuthenticationSession` callback for a stale/replaced
+// session apart from a present-only session's own eventual terminal callback — extracted specifically
+// so it has direct coverage here rather than living only inside an untestable closure. Real
+// "presentation success" coverage for `.sfViewController`/`.authSession`/`.ephemeralAuthSession`
+// against the concrete `BrowserLauncher` class would still require either a live foreground
+// window/scene plus a real, non-deterministically-dismissable OS sheet, or a dependency-injection
+// seam that doesn't exist today (`state`/`loginContinuation` are `private`, no test-only accessor) —
+// this is a pre-existing gap, not one present-only mode introduces: `BrowserLauncherTests` below
+// already only exercises `reset()`/`handleAppActivation()` on an idle instance for the same reason,
+// and none of the existing `.login`/`.logout` failure branches are unit-tested against the real
+// class either. The present-only branches only add a new success-tail *after* presentation already
+// succeeds — they don't touch any existing failure `guard`, and structurally can't leave a dangling
 // continuation for `.sfViewController`/`.nativeBrowserApp` (the continuation is simply never
 // constructed on that path).
 
@@ -165,6 +169,27 @@ final class PresentOnlyModeTests: XCTestCase {
 
     func testLogoutModeIsNotPresentOnly() {
         XCTAssertFalse(BrowserLauncher.isPresentOnlyMode(.logout))
+    }
+}
+
+// MARK: - Session token Tests
+
+@MainActor
+final class SessionTokenTests: XCTestCase {
+
+    func testMatchingTokenIsActive() {
+        let token = UUID()
+        XCTAssertTrue(BrowserLauncher.isActiveSessionToken(token, activeToken: token))
+    }
+
+    func testDifferentTokenIsNotActive() {
+        XCTAssertFalse(BrowserLauncher.isActiveSessionToken(UUID(), activeToken: UUID()))
+    }
+
+    func testNilActiveTokenIsNeverActive() {
+        // Mirrors the state after `cleanup()`: any late callback for a session that has already
+        // fully finished (or was never the active one) must be treated as stale, not active.
+        XCTAssertFalse(BrowserLauncher.isActiveSessionToken(UUID(), activeToken: nil))
     }
 }
 

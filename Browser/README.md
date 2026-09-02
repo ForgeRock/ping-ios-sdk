@@ -97,10 +97,13 @@ let presentedUrl = try await BrowserLauncher.currentBrowser.launch(
 ```
 
 Per-`BrowserType` behavior in present-only mode:
-- **`.sfViewController` / `.authSession` / `.ephemeralAuthSession`** — the UI stays presented after `launch()` returns. `isInProgress` stays `true` for as long as it's shown — there is no timeout or auto-dismiss — until the user dismisses it or the caller explicitly calls `reset()`.
+- **`.sfViewController`** — the UI stays presented after `launch()` returns, and `callbackURLScheme` really is inert: no `OpenURLMonitor` subscription is ever installed for a present-only `.sfViewController` launch, so no incoming URL of any scheme can affect it. `isInProgress` stays `true` for as long as it's shown — there is no timeout or auto-dismiss — until the user dismisses it or the caller explicitly calls `reset()`.
+- **`.authSession` / `.ephemeralAuthSession`** — the UI also stays presented after `launch()` returns, and `isInProgress` stays `true` the same way, **but `callbackURLScheme` (or the `redirectUri`-derived https callback) stays live at the OS level**, unlike `.sfViewController`. If the handed-off page's navigation ever produces a URL matching that scheme/host+path, `ASWebAuthenticationSession` will still intercept it and complete the session on its own, silently dismissing the sheet — there is no way to opt out of this while using `ASWebAuthenticationSession`. For a page that's truly guaranteed never to redirect back, this is usually harmless; if there's any chance it could, either pass a scheme/redirect URI that page's navigation cannot legitimately produce, or prefer `.sfViewController`.
 - **`.nativeBrowserApp`** — resolves and returns to `isInProgress == false` immediately, since control has already left your app entirely for Safari; there's no in-app element for `BrowserLauncher` to keep "open."
 
 Note that `ASWebAuthenticationSession` always shows its own OS-provided Cancel/Done chrome and this cannot be hidden, so `.sfViewController` is usually the better fit when the handoff page needs to look chromeless.
+
+Because `isInProgress` stays `true` for the entire time a present-only `.sfViewController`/`.authSession`/`.ephemeralAuthSession` sheet is shown, any *other* call to `launch()` — for an unrelated purpose, e.g. a background token refresh — will throw `BrowserError.externalUserAgentAuthenticationInProgress` until that sheet is dismissed or `reset()` is called; `BrowserLauncher` only ever drives one browser UI at a time, regardless of mode.
 
 ### Redirect URI schemes: custom scheme vs. https (Universal Link)
 
