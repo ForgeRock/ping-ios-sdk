@@ -53,9 +53,10 @@ struct PingOneMFADavinciPairingView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    /// Renders a flow step. MobilePairing submits finish the flow: the returned node is
-    /// ignored (matching Android) and the screen returns to the main menu. Ordinary
-    /// collectors progress the flow normally.
+    /// Renders a flow step. MobilePairing submits finish the flow: a success or cancel
+    /// result returns the screen to the main menu, while a FailureNode (transport
+    /// failure) or ErrorNode (recoverable 4XX) stays rendered so the user sees why
+    /// the submission failed. Ordinary collectors progress the flow normally.
     @ViewBuilder
     private func pairingStep(_ node: ContinueNode) -> some View {
         VStack(spacing: 16) {
@@ -88,7 +89,9 @@ struct PingOneMFADavinciPairingView: View {
             && node.collectors.contains(where: { $0 is MobilePairingCollector })
 
         await davinciViewModel.next(node: node)
-        if finishesPairing, path.last == .pingOneMFADavinciPairing {
+        let resultingNode = davinciViewModel.state.node
+        let failedResume = resultingNode is FailureNode || resultingNode is ErrorNode
+        if finishesPairing, !failedResume, path.last == .pingOneMFADavinciPairing {
             path.removeLast()
         }
     }
