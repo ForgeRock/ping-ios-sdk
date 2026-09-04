@@ -8,6 +8,9 @@
 - Added `trigger` and `isAutomatic` to the DaVinci FIDO collectors [SDKS-4552]
 - Added Facebook Limited Login (OIDC ID-token flow) support in `PingExternalIdPFacebook`. Toggle via the new `facebookLimitedLoginEnabled` property on `IdpCollector` (DaVinci) or on `FacebookHandler` / `FacebookRequestHandler` directly; defaults to `false` (classic OAuth2). On the Journey path, provider names containing `fb-limited` automatically opt into Limited Login [SDKS-5160, SDKS-5161, SDKS-5162]
 - Bumped `facebook-ios-sdk` to 18.1.0 [SDKS-5160]
+- `oidc.discoveryEndpoint` in the unified JSON configuration is now required only when no `oidc.openId` sub-object is supplied; an `openId` block without `discoveryEndpoint` replaces the discovery document and requires `tokenEndpoint` [SDKS-5301]
+- Added `OidcError.configurationError` to report a configuration that has neither a usable `discoveryEndpoint` nor a pre-supplied `openId` [SDKS-5301]
+- Concurrent `oidcInitialize()` calls on the same `OidcClientConfig` now coalesce into a single initialization instead of independently racing through discovery [SDKS-5301]
 
 #### Fixed
 - Fixed `QRCodeCollector` not preserving the complete QR code data URI in `content` [SDKS-5299]
@@ -16,6 +19,8 @@
 - Fixed FIDO registration/authentication not launching automatically when the DaVinci form's `trigger` property is not `BUTTON` [SDKS-4552]
 - Fixed 5xx AM responses with a parseable error body being misclassified as `FailureNode` instead of `ErrorNode`, diverging from Android [SDKS-5358]
 - Fixed `Journey.start(backchannelUri:)` not rejecting whitespace-only `authIndexType`/`authIndexValue`, diverging from Android [SDKS-5359]
+- Restored `OidcClientConfig.openId` as a publicly settable property and made `oidcInitialize()` skip OpenID discovery when it is pre-supplied, restoring the 2.0.0 no-discovery configuration path [SDKS-5301]
+- Fixed repeated `apply(json:)` calls stacking JSON endpoint overrides under stale ones instead of replacing them, and leaving a previously-discovered `openId` document in place so the new override never applied [SDKS-5301]
 
 ## [2.1.0]
 #### Added

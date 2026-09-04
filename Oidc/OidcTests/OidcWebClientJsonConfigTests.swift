@@ -42,6 +42,33 @@ final class OidcWebClientJsonConfigTests: XCTestCase, @unchecked Sendable {
         ]
     }
 
+    /// A fully-specified `openId` sub-object with no `discoveryEndpoint` — exercises the
+    /// full-replacement skip-discovery branch of `OidcClientConfig.apply(json:)`.
+    private var openIdOnlyJson: [String: Any] {
+        [
+            "oidc": [
+                "clientId": "my-client",
+                "scopes": ["openid"],
+                "redirectUri": "myapp://callback",
+                "openId": [
+                    "authorizationEndpoint": "https://example.com/authorize",
+                    "tokenEndpoint": "https://example.com/token",
+                    "userinfoEndpoint": "https://example.com/userinfo",
+                    "endSessionEndpoint": "https://example.com/endsession",
+                    "revocationEndpoint": "https://example.com/revoke",
+                    "pingEndsessionEndpoint": "https://example.com/ping-endsession",
+                    "pushedAuthorizationRequestEndpoint": "https://example.com/par",
+                    "deviceAuthorizationEndpoint": "https://example.com/device_authorization"
+                ] as [String: Any]
+            ] as [String: Any]
+        ]
+    }
+
+    /// Extracts the `OidcClientConfig` registered on `OidcModule.config` from a built client.
+    private func oidcClientConfig(of client: OidcWebClient) -> OidcClientConfig? {
+        client.config.modules.first(where: { $0.config is OidcClientConfig })?.config as? OidcClientConfig
+    }
+
     // MARK: - Success cases
 
     func testCreateOidcWebClient_success_minimalRequiredFields() {
@@ -194,6 +221,97 @@ final class OidcWebClientJsonConfigTests: XCTestCase, @unchecked Sendable {
             XCTFail("Expected missingRequiredField(oidc.discoveryEndpoint), got: \(result)"); return
         }
         XCTAssertEqual(field, "oidc.discoveryEndpoint")
+    }
+
+    // MARK: - openId-only (skip-discovery)
+
+    func testCreateOidcWebClient_success_openIdOnly_noDiscoveryEndpoint() {
+        let result = OidcWebClient.createOidcWebClient(json: openIdOnlyJson)
+        guard case .success(let client) = result else {
+            XCTFail("Expected success, got: \(result)"); return
+        }
+        guard let oidcClientConfig = oidcClientConfig(of: client) else {
+            XCTFail("Expected an OidcClientConfig module to be registered"); return
+        }
+
+        XCTAssertEqual(oidcClientConfig.discoveryEndpoint, "")
+        XCTAssertEqual(oidcClientConfig.openId?.authorizationEndpoint, "https://example.com/authorize")
+        XCTAssertEqual(oidcClientConfig.openId?.tokenEndpoint, "https://example.com/token")
+        XCTAssertEqual(oidcClientConfig.openId?.userinfoEndpoint, "https://example.com/userinfo")
+        XCTAssertEqual(oidcClientConfig.openId?.endSessionEndpoint, "https://example.com/endsession")
+        XCTAssertEqual(oidcClientConfig.openId?.revocationEndpoint, "https://example.com/revoke")
+        XCTAssertEqual(oidcClientConfig.openId?.pingEndsessionEndpoint, "https://example.com/ping-endsession")
+        XCTAssertEqual(oidcClientConfig.openId?.pushedAuthorizationRequestEndpoint, "https://example.com/par")
+        XCTAssertEqual(oidcClientConfig.openId?.deviceAuthorizationEndpoint, "https://example.com/device_authorization")
+    }
+
+    func testCreateOidcWebClient_success_openIdOnly_lenient_tokenEndpointOnly() {
+        var json = openIdOnlyJson
+        var oidc = json["oidc"] as! [String: Any]
+        oidc["openId"] = ["tokenEndpoint": "https://example.com/token"] as [String: Any]
+        json["oidc"] = oidc
+
+        let result = OidcWebClient.createOidcWebClient(json: json)
+        guard case .success(let client) = result else {
+            XCTFail("Expected success, got: \(result)"); return
+        }
+        guard let oidcClientConfig = oidcClientConfig(of: client) else {
+            XCTFail("Expected an OidcClientConfig module to be registered"); return
+        }
+
+        XCTAssertEqual(oidcClientConfig.discoveryEndpoint, "")
+        XCTAssertEqual(oidcClientConfig.openId?.tokenEndpoint, "https://example.com/token")
+        XCTAssertEqual(oidcClientConfig.openId?.authorizationEndpoint, "", "Non-required endpoints default to an empty string in the no-discovery form")
+        XCTAssertEqual(oidcClientConfig.openId?.userinfoEndpoint, "")
+        XCTAssertEqual(oidcClientConfig.openId?.deviceAuthorizationEndpoint, nil)
+    }
+
+    func testCreateOidcWebClient_failure_openIdOnly_missingRequiredSubfield() {
+        var json = openIdOnlyJson
+        var oidc = json["oidc"] as! [String: Any]
+        var openId = oidc["openId"] as! [String: Any]
+        openId.removeValue(forKey: "tokenEndpoint")
+        oidc["openId"] = openId
+        json["oidc"] = oidc
+
+        let result = OidcWebClient.createOidcWebClient(json: json)
+        guard case .failure(let error) = result,
+              case .missingRequiredField(let field) = error as? JsonConfigError else {
+            XCTFail("Expected missingRequiredField(oidc.openId.tokenEndpoint), got: \(result)"); return
+        }
+        XCTAssertEqual(field, "oidc.openId.tokenEndpoint")
+    }
+
+    func testCreateOidcWebClient_success_discoveryEndpointAndOpenIdOverride_unchanged() {
+        var json = minimalJson
+        var oidc = json["oidc"] as! [String: Any]
+        oidc["openId"] = [
+            "tokenEndpoint": "https://example.com/override/token"
+        ] as [String: Any]
+        json["oidc"] = oidc
+
+        let result = OidcWebClient.createOidcWebClient(json: json)
+        guard case .success(let client) = result else {
+            XCTFail("Expected success, got: \(result)"); return
+        }
+        guard let oidcClientConfig = oidcClientConfig(of: client) else {
+            XCTFail("Expected an OidcClientConfig module to be registered"); return
+        }
+
+        XCTAssertEqual(oidcClientConfig.discoveryEndpoint, "https://example.com/.well-known/openid-configuration")
+        XCTAssertNil(oidcClientConfig.openId, "openId must stay nil until discovery runs — only openIdOverride captures the JSON override")
+
+        var discovered = OpenIdConfiguration(
+            authorizationEndpoint: "https://discovered.example.com/authorize",
+            tokenEndpoint: "https://discovered.example.com/token",
+            userinfoEndpoint: "https://discovered.example.com/userinfo",
+            endSessionEndpoint: "https://discovered.example.com/endsession",
+            revocationEndpoint: "https://discovered.example.com/revoke"
+        )
+        oidcClientConfig.openIdOverride?(&discovered)
+
+        XCTAssertEqual(discovered.tokenEndpoint, "https://example.com/override/token")
+        XCTAssertEqual(discovered.authorizationEndpoint, "https://discovered.example.com/authorize", "Non-overridden fields must remain untouched")
     }
 
     func testCreateOidcWebClient_failure_missingScopes() {

@@ -14,6 +14,48 @@ import PingNetwork
 import PingLogger
 import PingStorage
 
+/// Coalesces concurrent `oidcInitialize()` calls on the same `OidcClientConfig` instance so
+/// simultaneous first-use callers share one in-flight initialization instead of independently
+/// racing through discovery and `openIdOverride` application.
+///
+/// - Important: Awaiting the shared task does not respond to the awaiting task being cancelled —
+///   a cancelled caller rides out the shared discovery to completion instead of tearing it down
+///   for everyone else. This is a deliberate trade-off: it keeps the coordinator free of custom
+///   cancellation machinery and lets cancellation propagate only where the shared work itself
+///   observes it. A caller that needs to abandon an initialization should structure its calling
+///   code (e.g. task wrapping) so it can move on while initialization continues.
+private actor OidcInitializationCoordinator {
+    private var inFlightTask: Task<Void, any Error>?
+
+    /// Runs `operation` at most once concurrently: a caller that finds no task in flight starts
+    /// one and awaits it; a caller that finds one already running awaits that same task instead
+    /// of starting a second discovery/override cycle.
+    ///
+    /// The in-flight task clears itself as its very last step (via `defer`), so a caller retrying
+    /// immediately after a failure always starts a genuinely fresh attempt instead of ever
+    /// rejoining a task that has already finished. Failures are never cached.
+    func run(_ operation: @escaping @Sendable () async throws -> Void) async throws {
+        let task: Task<Void, any Error> = currentOrNewTask(operation)
+        try await task.value
+    }
+
+    private func currentOrNewTask(_ operation: @escaping @Sendable () async throws -> Void) -> Task<Void, any Error> {
+        if let inFlightTask {
+            return inFlightTask
+        }
+        let task = Task {
+            defer { self.clearInFlightTask() }
+            try await operation()
+        }
+        inFlightTask = task
+        return task
+    }
+
+    private func clearInFlightTask() {
+        inFlightTask = nil
+    }
+}
+
 /// Configuration class for OIDC client.
 ///
 /// - Important: This class is `@unchecked Sendable` and contains mutable `var` fields.
@@ -32,7 +74,11 @@ public class OidcClientConfig: @unchecked Sendable {
     ]
 
     /// OpenID configuration.
-    public private(set) var openId: OpenIdConfiguration?
+    ///
+    /// - Important: Setting this directly before calling `oidcInitialize()` (or before the
+    ///   config is handed to a `createXxx` factory) skips network discovery entirely — see the
+    ///   "configure before use" contract documented on this class.
+    public var openId: OpenIdConfiguration?
     /// Token refresh threshold in seconds.
     public var refreshThreshold: Int64 = 0
     /// Agent delegate for handling OIDC operations.
@@ -70,11 +116,44 @@ public class OidcClientConfig: @unchecked Sendable {
     public var par: Bool = false
     /// HTTP client for making network requests.
     public var httpClient: (any HttpClientProtocol)?
+    /// Caller-supplied override, set directly via the public `openIdOverride` property below.
+    private var programmaticOpenIdOverride: ((inout OpenIdConfiguration) -> Void)?
+    /// Override synthesized from the most recently applied JSON `openId` sub-object. Replaced
+    /// wholesale by `apply(json:)` whenever its JSON supplies an `openId` sub-object (never
+    /// nested under a prior JSON layer); left untouched when a JSON configuration omits `openId`.
+    private var jsonOpenIdOverride: ((inout OpenIdConfiguration) -> Void)?
+
     /// Called once after OpenID discovery completes, allowing callers to patch any field
     /// on the discovered `OpenIdConfiguration` before it is used (e.g. override
     /// `deviceAuthorizationEndpoint` for a non-standard server).
-    public var openIdOverride: ((inout OpenIdConfiguration) -> Void)?
-    
+    ///
+    /// Reading this property returns the programmatic override composed with any JSON-derived
+    /// endpoint overrides installed by `apply(json:)`, with the JSON values applied second so
+    /// they win for any endpoint key they cover. Assigning to it sets only the programmatic
+    /// layer — the JSON-derived layer is managed separately by `apply(json:)` and is replaced
+    /// wholesale (never nested) on each call that supplies an `openId` sub-object, so
+    /// reconfiguring via JSON never leaks a stale override for a key the new configuration no
+    /// longer specifies.
+    public var openIdOverride: ((inout OpenIdConfiguration) -> Void)? {
+        get {
+            let programmatic = programmaticOpenIdOverride
+            let json = jsonOpenIdOverride
+            guard programmatic != nil || json != nil else { return nil }
+            return { configuration in
+                programmatic?(&configuration)
+                json?(&configuration)
+            }
+        }
+        set { programmaticOpenIdOverride = newValue }
+    }
+
+    /// Tracks whether the effective `openIdOverride` has already been applied to the currently
+    /// materialized `openId` document, so that re-entrant `oidcInitialize()` calls never run it
+    /// more than once against the same document. Reset by `apply(json:)` on every successful
+    /// call, since a newly committed configuration is a new OpenID source even when a document
+    /// happens to already be materialized.
+    private var openIdOverrideApplied = false
+
     /// Initializes a new `OidcClientConfig` instance.
     public init() {
         storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE", encryptor: SecuredKeyEncryptor() ?? NoEncryptor(), cacheStrategy: .NO_CACHE)
@@ -94,42 +173,69 @@ public class OidcClientConfig: @unchecked Sendable {
         self.agent = AgentDelegate<T>(agent: agent, agentConfig: agent.config()(), oidcClientConfig: self)
     }
     
-    /// Injects a pre-built `OpenIdConfiguration`, skipping network discovery.
-    /// Intended for unit tests only — use `openIdOverride` for production endpoint patching.
-    func setOpenId(_ openId: OpenIdConfiguration?) {
-        self.openId = openId
-    }
+    /// Coordinates concurrent `oidcInitialize()` calls on this instance; see
+    /// `OidcInitializationCoordinator`.
+    private let initializationCoordinator = OidcInitializationCoordinator()
 
     /// Initializes the lazy properties to their default values.
+    ///
+    /// Discovery is performed only when `openId` has not been supplied by the caller, so a
+    /// pre-configured `OpenIdConfiguration` skips the network round-trip entirely.
+    ///
+    /// Concurrent calls on the same instance are coordinated: a caller that arrives while another
+    /// is already discovering/applying the override awaits that same in-flight operation instead
+    /// of issuing a second discovery request or reapplying the override a second time. Awaiting
+    /// the shared operation does not respond to cancellation of the calling task — see
+    /// `OidcInitializationCoordinator`.
+    ///
+    /// - Throws: `OidcError.configurationError` when neither `openId` nor a usable
+    ///   `discoveryEndpoint` is configured, or any error surfaced by discovery itself
+    ///   (`OidcError.apiError`, a decoding failure, a transport error). A failure leaves `openId`
+    ///   `nil`, so a subsequent call retries fresh.
     public func oidcInitialize() async throws {
+        try await initializationCoordinator.run {
+            try await self.performOidcInitialization()
+        }
+    }
+
+    /// The actual discover-then-override sequence, run at most once concurrently per instance
+    /// via `initializationCoordinator`. Single-flight via `initializationCoordinator` — see
+    /// `oidcInitialize()`.
+    private func performOidcInitialization() async throws {
         if httpClient == nil {
             httpClient = HttpClient.createClient()
         }
-        
-        if openId != nil {
-            return
+
+        if openId == nil {
+            // A failed discovery throws, which leaves `openId` nil so a later call can retry.
+            openId = try await discover()
         }
 
-        openId = try await discover()
-        if var discovered = openId {
+        if var discovered = openId, !openIdOverrideApplied {
             openIdOverride?(&discovered)
             openId = discovered
+            openIdOverrideApplied = true
         }
     }
     
     /// Discovers the OpenID configuration from the discovery endpoint.
     /// - Returns: The discovered OpenID configuration.
-    private func discover() async throws -> OpenIdConfiguration? {
+    /// - Throws: `OidcError.configurationError` when `discoveryEndpoint` is blank or malformed,
+    ///   or no HTTP client is available; `OidcError.apiError` when the endpoint responds with a
+    ///   non-success status.
+    private func discover() async throws -> OpenIdConfiguration {
         guard URL(string: discoveryEndpoint) != nil else {
-            logger.e("Invalid Discovery URL", error: nil)
-            return nil
+            let message = "No OpenID configuration: set either `openId` directly, or a valid `discoveryEndpoint` — got \"\(discoveryEndpoint)\"."
+            logger.e(message, error: nil)
+            throw OidcError.configurationError(message: message)
         }
-        
+
         guard let httpClient else {
-            logger.e("Invalid Http Client URL", error: nil)
-            return nil
+            let message = "No HTTP client available to fetch the OpenID configuration from \(discoveryEndpoint)."
+            logger.e(message, error: nil)
+            throw OidcError.configurationError(message: message)
         }
-        
+
         let response = try await httpClient.request { request in
             request.url = self.discoveryEndpoint
         }
@@ -185,7 +291,9 @@ public class OidcClientConfig: @unchecked Sendable {
         self.additionalParameters = other.additionalParameters
         self.par = other.par
         self.httpClient = other.httpClient
-        self.openIdOverride = other.openIdOverride
+        self.programmaticOpenIdOverride = other.programmaticOpenIdOverride
+        self.jsonOpenIdOverride = other.jsonOpenIdOverride
+        self.openIdOverrideApplied = other.openIdOverrideApplied
     }
     
     /// Applies a unified JSON configuration dictionary to this instance.
@@ -193,11 +301,32 @@ public class OidcClientConfig: @unchecked Sendable {
     /// Validates all required fields and writes every recognised field directly to `self`.
     /// Unknown fields (including `signOutRedirectUri`) are silently ignored for forward compatibility.
     ///
-    /// - Important: If the JSON contains an `openId` sub-object, this method **merges** the
-    ///   JSON-derived endpoint overrides with any existing `openIdOverride`. The existing closure
-    ///   runs first, then the JSON-derived overrides are applied on top, so the JSON values win
-    ///   for any endpoint key they cover. If the JSON contains no `openId` key, `openIdOverride`
-    ///   is left unchanged.
+    /// `discoveryEndpoint` and `openId` jointly determine how (or whether) OpenID discovery runs,
+    /// with three possible outcomes:
+    /// - **`discoveryEndpoint` present:** unchanged from prior behavior. Discovery runs normally.
+    ///   If an `openId` sub-object is also present, it is parsed as **partial endpoint overrides**
+    ///   and installed as the JSON-derived layer of `openIdOverride`, applied on top of any
+    ///   programmatic override (set directly via the public `openIdOverride` property) so the
+    ///   JSON values win for any endpoint key they cover. Those overrides are applied to the
+    ///   *discovered* configuration after `discover()` succeeds (see `oidcInitialize()`). If
+    ///   `openId` is absent from this call, the JSON-derived layer is left unchanged.
+    /// - **`discoveryEndpoint` absent, `openId` present:** the `openId` sub-object *is* the OpenID
+    ///   configuration — it is parsed and assigned directly to `self.openId` and no network
+    ///   request is made. `oidc.openId.tokenEndpoint` becomes required; every other non-optional
+    ///   endpoint defaults to `""` and the optional ones to `nil`, matching the leniency the rest
+    ///   of the SDK already applies to those fields — so supply every endpoint your flow actually
+    ///   uses. `self.discoveryEndpoint` remains `""` and `oidcInitialize()` skips discovery, since
+    ///   it short-circuits whenever `openId != nil`.
+    /// - **Both absent:** throws `JsonConfigError.missingRequiredField` for `discoveryEndpoint`.
+    ///
+    /// - Important: A successful call reconfigures the OpenID source and invalidates whatever was
+    ///   materialized before, even if this instance was already initialized: the replacement path
+    ///   seeds the new document directly; the discovery path clears `self.openId` so the next
+    ///   `oidcInitialize()` rediscovers rather than reapplying a new override to a stale,
+    ///   previously-discovered document. The JSON-derived override layer is replaced wholesale on
+    ///   each call that supplies an `openId` sub-object (never nested under a prior JSON layer),
+    ///   including the replacement case, so a key the new configuration no longer specifies never
+    ///   leaks a stale override value from an earlier call.
     ///
     /// - Parameter json: The `oidc` sub-dictionary from the unified SDK configuration schema.
     /// - Throws: `JsonConfigError` if a required field is absent or a field has the wrong type.
@@ -207,9 +336,8 @@ public class OidcClientConfig: @unchecked Sendable {
         let fOpenId: (String) -> String = { "\(JsonConfigKey.oidc).\(JsonConfigKey.openId).\($0)" }
 
         // --- Required fields ---
-        let clientId: String          = try p.required(JsonConfigKey.clientId,          field: f(JsonConfigKey.clientId))
-        let discoveryEndpoint: String = try p.required(JsonConfigKey.discoveryEndpoint, field: f(JsonConfigKey.discoveryEndpoint))
-        let redirectUri: String       = try p.required(JsonConfigKey.redirectUri,       field: f(JsonConfigKey.redirectUri))
+        let clientId: String    = try p.required(JsonConfigKey.clientId,    field: f(JsonConfigKey.clientId))
+        let redirectUri: String = try p.required(JsonConfigKey.redirectUri, field: f(JsonConfigKey.redirectUri))
 
         let rawScopes: [Any] = try p.required(JsonConfigKey.scopes, field: f(JsonConfigKey.scopes))
         var parsedScopes = Set<String>()
@@ -219,6 +347,12 @@ public class OidcClientConfig: @unchecked Sendable {
             }
             parsedScopes.insert(scope)
         }
+
+        // --- discoveryEndpoint / openId (mutually-completing; see doc comment above) ---
+        // Read both, once, up front — the branch below decides whether `openId` is a set of
+        // partial post-discovery overrides or a complete, discovery-skipping replacement.
+        let discoveryEndpoint: String?  = try p.optionalValue(JsonConfigKey.discoveryEndpoint, field: f(JsonConfigKey.discoveryEndpoint))
+        let openIdDict: [String: Any]?  = try p.optionalValue(JsonConfigKey.openId,             field: f(JsonConfigKey.openId))
 
         // --- Optional fields ---
         let refreshThresholdInt: Int = try p.optional(JsonConfigKey.refreshThreshold, field: f(JsonConfigKey.refreshThreshold), default: 0)
@@ -243,11 +377,13 @@ public class OidcClientConfig: @unchecked Sendable {
             }
         }
 
-        // --- openId endpoint overrides (optional) ---
-        // Maps to `openIdOverride` — applied after discovery completes (see oidcInitialize).
-        // To add a new endpoint: add one entry to `endpointSetters`; no other change required.
+        // --- openId: partial post-discovery overrides, or a lenient discovery-skipping replacement ---
+        // Which of the two `openId` means is decided by whether `discoveryEndpoint` is present —
+        // see the doc comment on `apply(json:)` for the full three-way rationale.
         var parsedOpenIdOverrides = [String: String]()
-        if let openIdDict: [String: Any] = try p.optionalValue(JsonConfigKey.openId, field: f(JsonConfigKey.openId)) {
+        var seededOpenId: OpenIdConfiguration?
+        if let openIdDict {
+            // To add a new endpoint: add one entry to `endpointSetters`; no other change required.
             for (key, _) in OidcClientConfig.endpointSetters {
                 if let raw = openIdDict[key] {
                     guard let value = raw as? String else {
@@ -258,9 +394,33 @@ public class OidcClientConfig: @unchecked Sendable {
             }
         }
 
+        if discoveryEndpoint == nil {
+            guard openIdDict != nil else {
+                throw JsonConfigError.missingRequiredField(f(JsonConfigKey.discoveryEndpoint))
+            }
+            // No discoveryEndpoint — the `openId` sub-object *is* the document, so `tokenEndpoint`
+            // becomes required; every other non-optional endpoint defaults to "" and the optional
+            // ones to nil, matching the leniency the rest of the SDK already applies to those
+            // fields.
+            guard OidcClientConfig.nonBlank(parsedOpenIdOverrides[JsonConfigKey.tokenEndpoint]) != nil else {
+                throw JsonConfigError.missingRequiredField(fOpenId(JsonConfigKey.tokenEndpoint))
+            }
+            var openId = OpenIdConfiguration(
+                authorizationEndpoint: "",
+                tokenEndpoint: "",
+                userinfoEndpoint: "",
+                endSessionEndpoint: "",
+                revocationEndpoint: ""
+            )
+            for (key, setter) in OidcClientConfig.endpointSetters {
+                if let value = parsedOpenIdOverrides[key] { setter(&openId, value) }
+            }
+            seededOpenId = openId
+        }
+
         // All validation passed — apply to self
         self.clientId = clientId
-        self.discoveryEndpoint = discoveryEndpoint
+        self.discoveryEndpoint = discoveryEndpoint ?? ""
         self.scopes = parsedScopes
         self.redirectUri = redirectUri
         self.refreshThreshold = Int64(refreshThresholdInt)
@@ -274,16 +434,43 @@ public class OidcClientConfig: @unchecked Sendable {
         self.acrValues = acrValues
         self.additionalParameters = parsedAdditional
 
-        if !parsedOpenIdOverrides.isEmpty {
-            let overrides = parsedOpenIdOverrides
-            let existing = self.openIdOverride
-            self.openIdOverride = { openId in
-                existing?(&openId)
-                for (key, setter) in OidcClientConfig.endpointSetters {
-                    if let v = overrides[key] { setter(&openId, v) }
+        // Every successful call reconfigures the OpenID source, invalidating whatever was
+        // materialized before: a replacement `openId` seeds the new document directly (nil when
+        // this call has no `openId` block — discovery source); the discovery path likewise clears
+        // any stale document so the next `oidcInitialize()` rediscovers instead of reapplying a
+        // (possibly just-replaced) override to it. The applied-marker reset guarantees the
+        // current effective override runs once against whichever document is materialized next.
+        self.openId = seededOpenId
+        self.openIdOverrideApplied = false
+
+        // Replaces the JSON-derived override layer wholesale (never nests a new JSON override
+        // under a stale one) whenever this call supplies an `openId` sub-object — including the
+        // full-replacement case, where any override layer from a prior discovery-based
+        // configuration is cleared since the new document is already complete. When this call's
+        // JSON has no `openId` key at all, the JSON-derived layer (and any programmatic override)
+        // are left unchanged.
+        if openIdDict != nil {
+            if parsedOpenIdOverrides.isEmpty {
+                self.jsonOpenIdOverride = nil
+            } else {
+                let overrides = parsedOpenIdOverrides
+                self.jsonOpenIdOverride = { openId in
+                    for (key, setter) in OidcClientConfig.endpointSetters {
+                        if let v = overrides[key] { setter(&openId, v) }
+                    }
                 }
             }
         }
     }
 
+    // MARK: - Private
+
+    /// Returns `value` when it holds at least one non-whitespace character, otherwise `nil`.
+    /// Used by `apply(json:)` to treat blank endpoint strings as absent.
+    private static func nonBlank(_ value: String?) -> String? {
+        guard let value, !value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return nil
+        }
+        return value
+    }
 }

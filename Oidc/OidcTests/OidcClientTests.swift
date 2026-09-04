@@ -78,7 +78,7 @@ final class OidcClientTests: XCTestCase {
             switch failure {
             case .apiError(let code, _):
                 XCTAssertEqual(code, 500)
-            case .authorizeError, .networkError, .unknown:
+            case .authorizeError, .networkError, .configurationError, .unknown:
                 XCTFail("Should have failed with .apiError")
             }
         }
@@ -214,7 +214,7 @@ final class OidcClientTests: XCTestCase {
             switch failure {
             case .apiError(let code, _):
                 XCTAssertEqual(code, 400)
-            case .authorizeError, .networkError, .unknown:
+            case .authorizeError, .networkError, .configurationError, .unknown:
                 XCTFail("Should have failed with .apiError(400)")
             }
         }
@@ -242,7 +242,7 @@ final class OidcClientTests: XCTestCase {
             switch failure {
             case .apiError(let code, _):
                 XCTAssertEqual(code, 400)
-            case .authorizeError, .networkError, .unknown:
+            case .authorizeError, .networkError, .configurationError, .unknown:
                 XCTFail("Should have failed with .apiError(400)")
             }
         }
@@ -272,7 +272,7 @@ final class OidcClientTests: XCTestCase {
             switch failure {
             case .apiError(let code, _):
                 XCTAssertEqual(code, 401)
-            case .authorizeError, .networkError, .unknown:
+            case .authorizeError, .networkError, .configurationError, .unknown:
                 XCTFail("Should have failed with .apiError(401)")
             }
         }
