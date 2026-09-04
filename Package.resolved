@@ -1,5 +1,5 @@
 {
-  "originHash" : "569db33fa2bc5ee6b5eea0c6fac19c9d737c08f8990441b36b1f5e2e7ed28ede",
+  "originHash" : "40b9e6dfb3780c3e83367d39e264a668f2932fa90ba4486ce3943211e3abcf6f",
   "pins" : [
     {
       "identity" : "app-check",
@@ -96,8 +96,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk.git",
       "state" : {
-        "revision" : "fb634e89a36fd91725ad654d5576d800c061b37d",
-        "version" : "18.8.2"
+        "revision" : "85588690041e63784be7bcb4b631c32565127ba2",
+        "version" : "18.9.1"
       }
     }
   ],
