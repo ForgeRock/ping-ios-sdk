@@ -1,6 +1,7 @@
 ## [UNRELEASED]
 #### Updated
 - Updated `RecaptchaEnterprise` dependency to 18.9.1 for Xcode 27 / iOS 27 compatibility [SDKS-5306]
+- Split the Recognize sample into a dedicated `PingWithRecognize.xcworkspace` (requires the Cloudsmith `keyless` registry); the core `Ping.xcworkspace` no longer references Recognize or Keyless and builds without registry credentials [P1RECMOB-3476]
 
 #### Added
 - Added `ImageCollector` to support image display in DaVinci forms [SDKS-5143]

@@ -62,6 +62,13 @@ It offers a range of APIs for user authentication, user device management, and a
     └── samples                               # Sample applications
         └── PingExample                       # Sample app demonstrating SDK usage
 
+> [!NOTE]
+> The `PingRecognize` module depends on the **Keyless SDK**, distributed through the private
+> Cloudsmith registry (`keyless` scope). It is therefore not built by the default
+> `Ping.xcworkspace`: open `SampleApps/PingWithRecognize.xcworkspace` and build the
+> `PingExampleWithRecognize` scheme to try Recognize in the sample app. See
+> [Recognize/README.md](./Recognize/README.md) for the registry setup.
+
 # Support
 
 If you encounter any issues, be sure to check our **[Troubleshooting](https://docs.pingidentity.com/sdks/latest/sdks/troubleshooting.html)** pages.
