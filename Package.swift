@@ -1,13 +1,43 @@
 // swift-tools-version: 6.0
+import Foundation
 import PackageDescription
 
-let package = Package(
-    name: "Ping-SDK-iOS",
-    platforms: [
-        .iOS(.v16),
-        .macOS(.v13),
-    ],
-    products: [
+// PingRecognize depends on KeylessSDK, which is distributed through a private
+// Swift package registry (Cloudsmith). The dependency is only included when
+// that registry is configured on the machine, so the rest of the SDK and the
+// sample apps keep building for users without registry credentials.
+let hasKeylessRegistry: Bool = {
+    // Detects a configured Keyless registry. xcodebuild sandboxes manifest
+    // evaluation, so reading the user's SwiftPM configuration is unreliable;
+    // a marker file inside the package (readable in every sandbox) plus an
+    // environment variable override cover both Xcode and CLI usage.
+    let markerPath = URL(fileURLWithPath: #file).deletingLastPathComponent()
+        .appendingPathComponent("Recognize/.registry-enabled").path
+    if FileManager.default.fileExists(atPath: markerPath) {
+        return true
+    }
+    if ProcessInfo.processInfo.environment["MANIFEST_DEBUG_FATAL"] == "1" {
+        fatalError("MANIFEST-DEBUG-FATAL")
+    }
+    
+let homeDirectory = ProcessInfo.processInfo.environment["HOME"]
+        .map { URL(fileURLWithPath: $0, isDirectory: true) }
+        ?? FileManager.default.homeDirectoryForCurrentUser
+    let configurationPath = homeDirectory
+        .appendingPathComponent(".swiftpm/configuration/registries.json")
+
+    guard
+        let data = try? Data(contentsOf: configurationPath),
+        let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+        let registries = json["registries"] as? [String: Any]
+    else {
+        return false
+    }
+
+    return registries["keyless"] != nil
+}()
+
+var products: [Product] = [
         // MARK: - Foundation
         .library(name: "PingLogger", targets: ["PingLogger"]),
         .library(name: "PingStorage", targets: ["PingStorage"]),
@@ -52,18 +82,18 @@ let package = Package(
         
         // MARK: - Utilities
         .library(name: "PingBinding", targets: ["PingBinding"]),
-        .library(name: "PingRecognize", targets: ["PingRecognize"]),
-    ],
-    dependencies: [
+]
+
+var dependencies: [Package.Dependency] = [
         // External dependencies
         .package(url: "https://github.com/pingidentity/pingone-signals-sdk-ios.git", "5.4.0"..<"5.5.0"),
         .package(url: "https://github.com/facebook/facebook-ios-sdk.git", "18.1.0"..<"19.0.0"),
         .package(url: "https://github.com/google/GoogleSignIn-iOS.git", exact: "9.0.0"),
         .package(url: "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk.git", "18.9.1"..<"18.10.0"),
-        .package(id: "keyless.mobile-sdk", from: "6.0.0"),
         .package(url: "https://github.com/pingidentity/pingone-mobile-sdk-ios.git", exact: "2.3.1")
-    ],
-    targets: [
+]
+
+var targets: [Target] = [
         // MARK: - Foundation Targets (No dependencies)
         .target(
             name: "PingLogger",
@@ -329,7 +359,18 @@ let package = Package(
             exclude: ["Binding.h"],
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
+    ]
 
+if hasKeylessRegistry {
+    products.append(
+        .library(name: "PingRecognize", targets: ["PingRecognize"])
+    )
+
+    dependencies.append(
+        .package(id: "keyless.mobile-sdk", from: "6.0.0")
+    )
+
+    targets.append(
         .target(
             name: "PingRecognize",
             dependencies: [
@@ -340,7 +381,10 @@ let package = Package(
             exclude: ["Recognize.h"],
             resources: [.copy("PrivacyInfo.xcprivacy")],
             swiftSettings: [.swiftLanguageMode(.v6)]
-        ),
+        )
+    )
+
+    targets.append(
         .testTarget(
             name: "RecognizeTests",
             dependencies: [
@@ -349,6 +393,17 @@ let package = Package(
             ],
             path: "Recognize/RecognizeTests",
             swiftSettings: [.swiftLanguageMode(.v6)]
-        ),
-    ]
+        )
+    )
+}
+
+let package = Package(
+    name: "Ping-SDK-iOS",
+    platforms: [
+        .iOS(.v16),
+        .macOS(.v13),
+    ],
+    products: products,
+    dependencies: dependencies,
+    targets: targets
 )

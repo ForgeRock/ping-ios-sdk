@@ -292,6 +292,104 @@ enum RecognizeState {
 
 ---
 
+## Building the Sample App with Recognize
+
+The repository contains **two workspaces** in `SampleApps/`, sharing the same projects and sources:
+
+| Workspace | What it contains | Registry required |
+|-----------|------------------|-------------------|
+| `Ping.xcworkspace` | `PingExample` + `PingTestHost` (core SDK sample) | **No** |
+| `PingWithRecognize.xcworkspace` | Same `PingExample` project + `Recognize.xcodeproj` | **Yes** |
+
+### Why two workspaces
+
+`PingRecognize` depends on the **KeylessSDK**, distributed through the private **Cloudsmith** registry (`keyless` scope). The Keyless SDK is a Swift package dependency, and any workspace that references it — even indirectly — fails package resolution for developers without Cloudsmith credentials.
+
+The two workspaces keep those worlds separate:
+
+- **Core development** (everything except Recognize): open `Ping.xcworkspace`. It contains no Recognize or keyless references at all, so it resolves and builds without the registry. CI uses this workspace.
+- **Recognize development**: open `PingWithRecognize.xcworkspace` and build the **`PingExampleWithRecognize`** scheme. It links `PingRecognize.framework` from `Recognize.xcodeproj` (the same framework pattern as the other SDK modules) and embeds the Keyless SDK. **Requires the Cloudsmith registry** — if you don't have credentials for the `keyless` scope, this target cannot be built.
+
+Both workspaces reference the *same* projects and sources: there is no code duplication between them. The Recognize views live in the `PingExampleWithRecognize` target of the shared `PingExample` project.
+
+### Conditional SPM consumers
+
+`Package.swift` exports the `PingRecognize` product **only when the Keyless registry is configured** on the machine (detected via a `Recognize/.registry-enabled` marker file or `~/.swiftpm/configuration/registries.json`). This keeps `swift build` / package-resolution working for consumers without Cloudsmith credentials.
+
+> [!IMPORTANT]
+> Xcode evaluates package manifests in a sandbox that caches the result. When switching the registry on or off, Xcode may keep using a stale evaluation; if the sample app reports `Missing package product 'KeylessSDK'` (or the reverse), clear the manifest cache and re-resolve:
+>
+> ```sh
+> rm -f ~/Library/Caches/org.swift.swiftpm/manifests/manifest.db*
+> ```
+
+### KeylessSDK registry setup
+
+The Keyless SDK is distributed as a binary Swift package through a private
+[Cloudsmith](https://cloudsmith.io) registry. To build `PingExampleWithRecognize` (or to resolve the
+`PingRecognize` product via SwiftPM) you need **two things**: the registry mapped to the `keyless` scope,
+and an access token for authentication.
+
+You need an **API key** for the `keyless/partners` Cloudsmith repository — ask the Keyless team for one.
+
+#### 1. Register the registry
+
+Associate the registry URL with the `keyless` scope, globally for your user:
+
+```sh
+swift package-registry set --scope keyless https://swift.cloudsmith.io/keyless/partners/
+```
+
+This writes the mapping to `~/.swiftpm/configuration/registries.json`:
+
+```json
+{
+  "registries" : {
+    "keyless" : {
+      "supportsAvailability" : false,
+      "url" : "https://swift.cloudsmith.io/keyless/partners/"
+    }
+  },
+  "version" : 1
+}
+```
+
+#### 2. Log in with your token
+
+Authenticate against the registry with the API key you received from the Keyless team:
+
+```sh
+swift package-registry login https://swift.cloudsmith.io/keyless/partners/ --token YOUR-API-KEY
+```
+
+The token is stored in your **macOS Keychain** (as an internet password for `swift.cloudsmith.io`) or in
+`~/.netrc` on other platforms — it is **never written to any project file**. Do not commit it anywhere.
+
+You can verify the setup resolves correctly:
+
+```sh
+swift package-registry login https://swift.cloudsmith.io/keyless/partners/ --token YOUR-API-KEY --no-confirm
+# then, from the repository root:
+swift package resolve
+```
+
+> [!NOTE]
+> Xcode uses the same credentials: once `swift package-registry login` has stored the token, Xcode resolves the
+> `keyless` scope automatically — no per-project configuration is needed.
+
+#### 3. (Xcode-only machines) Token without the CLI
+
+If you only use Xcode, `swift package-registry login` is still the recommended path. Alternatively, add the
+credential to `~/.netrc` manually:
+
+```
+machine swift.cloudsmith.io
+login <your-cloudsmith-username>
+password YOUR-API-KEY
+```
+
+---
+
 ## Troubleshooting
 
 | Symptom | Possible Cause | Fix |
@@ -301,6 +399,8 @@ enum RecognizeState {
 | `"operationType" is required` error | Journey node misconfigured | Check the PingOne Recognize node configuration in AIC |
 | Journey returns an error after biometric success | Double submission | `enroll()` / `authenticate()` submit inputs automatically — do **not** call `input()` manually again |
 | Liveness check too strict / too lenient | Server default not suitable | Check the liveness configuration in the AIC node settings |
+| `Missing package product 'KeylessSDK'` or `'PingRecognize'` | Registry not configured, or Xcode using a stale manifest evaluation | Follow the [KeylessSDK registry setup](#keylesssdk-registry-setup) and clear the [manifest cache](#building-the-sample-app-with-recognize) |
+| `PingExample` / `PingTestHost` fails to resolve with a registry error | Workspace contains a keyless reference it shouldn't | Use `Ping.xcworkspace` for core development — it must never reference Recognize or keyless |
 
 ---
 

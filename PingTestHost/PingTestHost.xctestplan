@@ -209,13 +209,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Recognize\/Recognize.xcodeproj",
-        "identifier" : "E61A92DC2C3915B0A2357F23",
-        "name" : "RecognizeTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/PingOneMFA\/PingOneMFA.xcodeproj",
         "identifier" : "14C0CBAE9D4D412388F63F45",
         "name" : "PingOneMFATests"
