@@ -699,8 +699,10 @@ final class CallCounter: @unchecked Sendable {
 
 /// Actor-backed gate used by `GatedDiscoveryHttpClient` so concurrency tests can prove exactly
 /// how many discovery requests were issued before responses become available, without a
-/// `MockURLProtocol` global or a fixed `Task.sleep`.
-private actor RequestGate {
+/// `MockURLProtocol` global or a fixed `Task.sleep`. Not file-private: reused by
+/// `OidcClientTests`'s own gated fake to test cancellation isolation across independent
+/// `OidcClient`s sharing one `OidcClientConfig`.
+actor RequestGate {
     private(set) var requestCount = 0
     private var released = false
     private var waiters: [CheckedContinuation<Void, any Error>] = []
@@ -774,7 +776,8 @@ private final class GatedDiscoveryHttpClient: HttpClientProtocol, @unchecked Sen
     func close() {}
 }
 
-private struct GatedDiscoveryHttpResponse: HttpResponse {
+/// Not file-private: reused by `OidcClientTests`'s own gated fake — see `RequestGate`.
+struct GatedDiscoveryHttpResponse: HttpResponse {
     let request: HttpRequest
     let status: Int
     let body: Data?
