@@ -404,10 +404,14 @@ final class OidcClientConfigTests: XCTestCase {
         XCTAssertNotNil(oidcClientConfig.openId, "A later call must start a fresh discovery and succeed")
     }
 
-    /// Cancelling a lone caller's own task cancels the shared discovery promptly — restoring the
-    /// pre-coordinator behavior for the common single-caller case — rather than leaving it running
-    /// to completion unobserved. See `OidcInitializationCoordinator`.
-    func testOidcInitializeCancellationAbortsLoneInFlightDiscovery() async throws {
+    /// Cancelling a lone caller's own task returns that caller promptly with `CancellationError` —
+    /// the coordinator's contract (see `OidcInitializationCoordinator`) never cancels the shared
+    /// discovery itself, so this only proves prompt *local* cancellation. It deliberately does not
+    /// assert that the discovery is aborted — under this contract it is not; releasing the gate
+    /// afterwards proves the shared discovery kept running and can still complete normally. See
+    /// `testOidcInitializeCancellationOfOneCallerDoesNotAbortSharedOperationForOthers` for the other
+    /// half of the contract, proven with a second, never-cancelled caller.
+    func testOidcInitializeCancellationOfLoneCallerIsPromptWithoutAbortingSharedDiscovery() async throws {
         let config: OidcClientConfig = oidcClientConfig
         let fakeClient = GatedDiscoveryHttpClient()
         config.httpClient = fakeClient
@@ -427,15 +431,22 @@ final class OidcClientConfigTests: XCTestCase {
             threwCancellation = true
         }
 
-        XCTAssertTrue(threwCancellation, "A lone caller's cancellation must abort the in-flight discovery promptly rather than waiting for a response")
-        XCTAssertNil(config.openId, "A cancelled initialization must leave openId nil so a later call can retry")
+        XCTAssertTrue(threwCancellation, "A cancelled caller must observe its own cancellation promptly, rather than waiting for the shared discovery to finish")
+
+        // The shared discovery that this now-gone caller kicked off is never itself cancelled (see
+        // `OidcInitializationCoordinator`): releasing it lets it complete normally, and a subsequent
+        // call succeeds rather than being poisoned by the earlier cancellation.
+        await fakeClient.release()
+        try await config.oidcInitialize()
+
+        XCTAssertNotNil(config.openId, "The shared discovery must be able to complete normally after a caller cancels only its own wait on it")
     }
 
-    /// The chosen coordinator trade-off: cancelling one of several callers sharing an in-flight
-    /// operation cancels it for every caller currently waiting on it, even ones that never asked
-    /// to cancel. This favours prompt cancellation for the common single-caller case over
-    /// isolating concurrent callers from each other's cancellation.
-    func testOidcInitializeCancellationOfOneCallerAbortsSharedOperationForOthers() async throws {
+    /// The coordinator's contract: cancelling one of several callers sharing an in-flight
+    /// operation fails only that caller, promptly — it never cancels the shared operation itself,
+    /// so any other caller currently sharing it is unaffected and still completes normally once
+    /// the operation finishes. See `OidcInitializationCoordinator`.
+    func testOidcInitializeCancellationOfOneCallerDoesNotAbortSharedOperationForOthers() async throws {
         let config: OidcClientConfig = oidcClientConfig
         let fakeClient = GatedDiscoveryHttpClient()
         config.httpClient = fakeClient
@@ -451,11 +462,15 @@ final class OidcClientConfigTests: XCTestCase {
 
         var firstThrew = false
         do { try await firstTask.value } catch { firstThrew = true }
-        var secondThrew = false
-        do { try await secondTask.value } catch { secondThrew = true }
 
         XCTAssertTrue(firstThrew, "The caller that cancelled must observe the failure")
-        XCTAssertTrue(secondThrew, "The caller that never cancelled must also observe the shared operation's cancellation, per the chosen coordinator design")
+
+        // The shared discovery `firstTask` and `secondTask` were both waiting on is never itself
+        // cancelled by `firstTask`'s cancellation: releasing it lets it complete normally.
+        await fakeClient.release()
+        try await secondTask.value
+
+        XCTAssertNotNil(config.openId, "The caller that never cancelled must complete normally, unaffected by the other caller's cancellation")
 
         let finalRequestCount = await fakeClient.requestCount
         XCTAssertEqual(finalRequestCount, 1, "Still only one discovery request should have been issued")

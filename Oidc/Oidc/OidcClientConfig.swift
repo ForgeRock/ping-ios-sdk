@@ -18,13 +18,14 @@ import PingStorage
 /// first-use callers share one in-flight initialization instead of independently racing through
 /// discovery and `openIdOverride` application.
 ///
-/// - Important: Cancelling any one caller's surrounding task cancels the shared discovery and
-///   `openIdOverride` work for every caller currently waiting on it — there is no way to abandon
-///   only one caller's interest while leaving the operation running for the others. A caller that
-///   happens to share an in-flight operation with another caller can therefore fail with a
-///   cancellation-derived error triggered by a caller other than itself. This trades a rare
-///   cross-caller failure for promptly honouring cancellation in the common case of a single
-///   caller waiting on its own `oidcInitialize()` call.
+/// - Important: Cancelling one caller's own surrounding task fails only that caller's
+///   `oidcInitialize()` call — promptly, with `CancellationError` — and never cancels the shared
+///   discovery/`openIdOverride` work itself. Any other caller currently sharing that same
+///   in-flight operation is completely unaffected: it keeps waiting and observes the shared
+///   operation's actual outcome (the discovered configuration, or whatever error the operation
+///   itself threw) once it completes, regardless of what any other caller did. The shared
+///   operation only ever fails on its own terms (e.g. a discovery request that genuinely errors)
+///   — no caller's cancellation can cancel it out from under the callers who are still waiting.
 private actor OidcInitializationCoordinator {
     private var inFlightTask: Task<Void, any Error>?
 
@@ -32,11 +33,15 @@ private actor OidcInitializationCoordinator {
     /// one and awaits it; a caller that finds one already running awaits that same task instead
     /// of starting a second discovery/override cycle.
     ///
-    /// Cancelling the calling task cancels the shared `operation` itself (see the class-level
-    /// note), so the next call after a cancellation-induced failure also starts fresh.
+    /// Cancelling the calling task returns promptly from this call with `CancellationError`
+    /// without cancelling the shared `operation` itself (see the class-level note) — a concurrent
+    /// caller sharing that operation is unaffected. Because the shared task is never cancelled by
+    /// this coordinator, a later call still only sees a fresh, retriable start once the shared
+    /// operation has genuinely failed on its own — never as a side effect of some other caller's
+    /// cancellation.
     func run(_ operation: @escaping @Sendable () async throws -> Void) async throws {
         let task = currentOrNewTask(operation)
-        try await Self.awaitCancellably(task)
+        try await Self.awaitWithoutCancellingShared(task)
     }
 
     /// Returns the task currently in flight, or creates one. The created task clears
@@ -70,14 +75,70 @@ private actor OidcInitializationCoordinator {
         inFlightTask = nil
     }
 
-    /// Awaits `task`, cancelling it if the calling context's own task is cancelled. `task.cancel()`
-    /// is a plain, non-isolated call, so it can run directly from `onCancel` without hopping back
-    /// onto this actor.
-    private static func awaitCancellably(_ task: Task<Void, any Error>) async throws {
+    /// Awaits `task` on behalf of one caller, returning promptly with `CancellationError` if the
+    /// CALLING context is cancelled — without ever cancelling `task` itself. `task` is shared with
+    /// other callers (see `currentOrNewTask`), so it must keep running for them regardless of this
+    /// one caller's own cancellation.
+    ///
+    /// `forwarder` is deliberately **not** a structured child of this function (e.g. via
+    /// `withThrowingTaskGroup`): a task group implicitly awaits every child before its scope can
+    /// return, including one still suspended in `try await task.value` — and cancelling that
+    /// child doesn't make it return early, because `Task.value` is a cancellation checkpoint of
+    /// the task it targets, not of the context awaiting it. Racing with a task group would
+    /// therefore block this function's return on `task` finishing, defeating the whole point.
+    /// Running `forwarder` as a plain, unstructured `Task` avoids that: it is free to keep
+    /// running — forwarding `task`'s eventual result into `join` for whichever other callers
+    /// are still waiting — after this function has already returned for this caller.
+    private static func awaitWithoutCancellingShared(_ task: Task<Void, any Error>) async throws {
+        let join = CancellableJoin()
+
+        let forwarder = Task {
+            do {
+                try await task.value
+                await join.resolve(.success(()))
+            } catch {
+                await join.resolve(.failure(error))
+            }
+        }
+        _ = forwarder
+
         try await withTaskCancellationHandler {
-            try await task.value
+            try await withCheckedThrowingContinuation { continuation in
+                Task { await join.register(continuation) }
+            }
         } onCancel: {
-            task.cancel()
+            Task { await join.resolve(.failure(CancellationError())) }
+        }
+    }
+}
+
+/// One-shot box that lets a shared task's eventual completion and a single caller's own
+/// cancellation race safely to resume that caller's continuation exactly once, regardless of
+/// which happens first — see `OidcInitializationCoordinator.awaitWithoutCancellingShared(_:)`.
+private actor CancellableJoin {
+    private var continuation: CheckedContinuation<Void, any Error>?
+    private var result: Result<Void, any Error>?
+
+    /// Registers the continuation to resume once a result is available. Resumes immediately,
+    /// without storing anything, if `resolve(_:)` already ran before this call arrived.
+    func register(_ continuation: CheckedContinuation<Void, any Error>) {
+        if let result {
+            continuation.resume(with: result)
+        } else {
+            self.continuation = continuation
+        }
+    }
+
+    /// Records `result` as this join's one and only outcome and resumes a continuation already
+    /// registered via `register(_:)`, if any. A second call — from whichever of the shared task's
+    /// completion or the caller's own cancellation loses the race — is a no-op: only the first
+    /// result is ever recorded or delivered.
+    func resolve(_ result: Result<Void, any Error>) {
+        guard self.result == nil else { return }
+        self.result = result
+        if let continuation {
+            self.continuation = nil
+            continuation.resume(with: result)
         }
     }
 }
@@ -88,7 +149,9 @@ private actor OidcInitializationCoordinator {
 ///   Configure all properties before passing the instance to any client or workflow — do
 ///   not mutate it afterwards, as it may be read concurrently from background threads.
 ///   `oidcInitialize()` itself is the one exception: concurrent calls to it are coordinated so
-///   they share a single discovery request and a single `openIdOverride` application.
+///   they share a single discovery request and a single `openIdOverride` application; cancelling
+///   one caller never affects another caller sharing that same operation — see
+///   `OidcInitializationCoordinator`.
 public class OidcClientConfig: @unchecked Sendable {
     nonisolated(unsafe) private static let endpointSetters: [(String, (inout OpenIdConfiguration, String) -> Void)] = [
         (JsonConfigKey.authorizationEndpoint,              { $0.authorizationEndpoint = $1 }),
@@ -217,14 +280,15 @@ public class OidcClientConfig: @unchecked Sendable {
     /// Concurrent calls on the same instance are coordinated: a caller that arrives while another
     /// is already discovering/applying the override awaits that same in-flight operation instead
     /// of issuing a second discovery request or reapplying the override a second time. Cancelling
-    /// any one caller's own task cancels that shared operation for every caller currently waiting
-    /// on it — see `OidcInitializationCoordinator`.
+    /// one caller's own task fails only that caller's call, promptly, with `CancellationError` —
+    /// it never cancels the shared operation, so a concurrent caller that never cancelled still
+    /// completes normally. See `OidcInitializationCoordinator`.
     ///
     /// - Throws: `OidcError.configurationError` when neither `openId` nor a usable
     ///   `discoveryEndpoint` is configured, or any error surfaced by discovery itself
     ///   (`OidcError.apiError`, a decoding failure, a transport error, `CancellationError` if this
-    ///   or a concurrent caller cancels). A failure leaves `openId` `nil`, so a subsequent call
-    ///   retries.
+    ///   call's own surrounding task is cancelled). A failure leaves `openId` `nil`, so a
+    ///   subsequent call retries.
     public func oidcInitialize() async throws {
         try await initializationCoordinator.run {
             try await self.performOidcInitialization()

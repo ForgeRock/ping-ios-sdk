@@ -20,6 +20,7 @@
 #### Changed
 - `OidcError` gained a `configurationError` case — exhaustive `switch` statements over `OidcError` need a new branch [SDKS-5301]
 - A JSON configuration with a blank `oidc.discoveryEndpoint` and no `oidc.openId` sub-object now fails at parse time instead of at first use [SDKS-5301]
+- `OidcClientConfig.oidcInitialize()` cancellation is now isolated per caller: cancelling one caller's own task still returns promptly with `CancellationError`, but no longer cancels the shared discovery/`openIdOverride` operation for any other caller currently sharing it [SDKS-5301]
 
 ## [2.1.0]
 #### Added
