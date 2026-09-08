@@ -426,6 +426,73 @@ final class OidcClientPARTests: XCTestCase {
         XCTAssertTrue(parBody.contains("access_token_hint=super-secret-token"), "additionalParameters should be sent in the PAR POST body")
     }
 
+    /// Regression test for the *other* half of the same bug: before this fix, calling the async
+    /// `generateAuthorizeUrl()` without a prior `oidcInitialize()` call — with `par` left at its
+    /// default `false` — still produced a URL with an empty authorization endpoint
+    /// (`openId?.authorizationEndpoint ?? ""`), since `openId` had never been populated. This is
+    /// not a PAR-specific bug: self-initializing fixes the plain standard-flow path too.
+    func testGenerateAuthorizeUrlStandardFlowSelfInitializesWhenOidcInitializeNotCalledExplicitly() async throws {
+        // par is false by default
+        XCTAssertFalse(oidcClientConfig.par)
+
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
+            case MockAPIEndpoint.discovery.url.path:
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
+            default:
+                return try unexpectedResponse(for: request)
+            }
+        }
+
+        XCTAssertNil(oidcClientConfig.openId, "Precondition: discovery must not have run yet")
+
+        let oidcClient = OidcClient(config: oidcClientConfig)
+        let url = try await oidcClient.generateAuthorizeUrl()
+
+        let urlString = url.absoluteString
+        XCTAssertTrue(urlString.contains(MockAPIEndpoint.authorization.url.absoluteString), "generateAuthorizeUrl should self-initialize so the URL points at the real authorization endpoint, not an empty one")
+        XCTAssertTrue(urlString.contains("client_id=test-client"))
+        XCTAssertTrue(urlString.contains("code_challenge="))
+    }
+
+    /// Lock-in test: the *synchronous* `generateAuthorizeUrl(customParams:) throws -> URL`
+    /// overload never supports PAR, even when `par = true` and discovery has already populated a
+    /// real PAR endpoint — this is documented behavior (see the `- Warning:` on that overload)
+    /// that this fix does not touch and must not accidentally start supporting.
+    func testSyncGenerateAuthorizeUrlIgnoresParEvenWhenEnabled() async throws {
+        oidcClientConfig.par = true
+
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
+            case MockAPIEndpoint.discovery.url.path:
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
+            default:
+                return try unexpectedResponse(for: request)
+            }
+        }
+
+        // Populate discovery (including a real PAR endpoint) so this test proves the sync
+        // overload ignores PAR on principle, not merely because none was configured.
+        try await oidcClientConfig.oidcInitialize()
+        XCTAssertNotNil(oidcClientConfig.openId?.pushedAuthorizationRequestEndpoint, "Precondition: a PAR endpoint must be discovered")
+
+        let oidcClient = OidcClient(config: oidcClientConfig)
+        // Explicitly typed as the non-async signature: an unqualified call here would resolve to
+        // the async overload instead (Swift prefers `async` when calling from an `async` context),
+        // defeating the point of this test.
+        let syncGenerateAuthorizeUrl: ([String: String]?) throws -> URL = oidcClient.generateAuthorizeUrl
+        let url = try syncGenerateAuthorizeUrl(nil)
+
+        let urlString = url.absoluteString
+        XCTAssertTrue(urlString.contains(MockAPIEndpoint.authorization.url.absoluteString), "Sync overload should build the standard authorize URL")
+        XCTAssertTrue(urlString.contains("code_challenge="), "Sync overload should never use PAR, even when par = true")
+        XCTAssertFalse(urlString.contains("request_uri="), "Sync overload should never use PAR, even when par = true")
+
+        // Only the discovery request from oidcInitialize() above should have been made — the sync
+        // overload itself must never hit the PAR endpoint.
+        XCTAssertEqual(MockURLProtocol.requestHistory.count, 1, "Sync overload must not hit the PAR endpoint")
+    }
+
     func testPopulateRequestPARWithAdditionalOidcParameters() async throws {
         oidcClientConfig.par = true
         oidcClientConfig.acrValues = "urn:acr:test"
