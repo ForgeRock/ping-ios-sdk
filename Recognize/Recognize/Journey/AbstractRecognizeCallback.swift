@@ -93,8 +93,15 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
 
     // MARK: - Output Properties
 
-    /// Whether this is an enrollment or authentication operation.
-    private(set) public var operationType: RecognizeOperationType = .enroll
+    /// Whether this is an enrollment or authentication operation, as declared by the server.
+    ///
+    /// `nil` when the server sends a missing or unrecognised `operationType` — `enroll()` and
+    /// `authenticate()` then fail closed with a `RecognizeError` instead of guessing.
+    private(set) public var operationType: RecognizeOperationType?
+
+    /// The raw, unparsed `operationType` string received from the server — kept only to build a
+    /// useful `RecognizeError` message when it doesn't match a known `RecognizeOperationType`.
+    private(set) var rawOperationType: String = ""
 
     /// The WebSocket URL for the Recognize authentication service.
     private(set) public var websocketURL: String = ""
@@ -139,7 +146,11 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
         switch name {
         case JourneyConstants.operationType:
             if let stringValue = value as? String {
-                self.operationType = RecognizeOperationType(rawValue: stringValue) ?? .enroll
+                self.rawOperationType = stringValue
+                // Exact match against "ENROLL"/"AUTHENTICATE" — matching the Android SDK's
+                // `RecognizeCallback`, which does not case-normalize either. A mis-cased value
+                // fails closed via `requireRecognizedOperationType()` just like an unknown one.
+                self.operationType = RecognizeOperationType(rawValue: stringValue)
             }
         case JourneyConstants.websocketURL:
             if let stringValue = value as? String { self.websocketURL = stringValue }
@@ -217,6 +228,30 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
     }
 
     // MARK: - Shared Biometric Operations
+
+    /// Sentinel `RecognizeError.code` for errors raised entirely on-device — never by the
+    /// Keyless SDK, whose error codes are always non-negative.
+    static let clientSideErrorCode = -1
+
+    /// Throws a `RecognizeError` when the server's `operationType` didn't resolve to a known
+    /// `RecognizeOperationType`. Called first by `enroll()` / `authenticate()` so a missing or
+    /// unrecognised value fails closed instead of silently running the wrong ceremony.
+    ///
+    /// Mirrors the two distinct checks (and messages) in the Android SDK's `RecognizeCallback`.
+    func requireRecognizedOperationType() throws {
+        guard !rawOperationType.isEmpty else {
+            throw RecognizeError(
+                "\"operationType\" is required in the PingOneRecognizeCallback output",
+                code: Self.clientSideErrorCode
+            )
+        }
+        guard operationType != nil else {
+            throw RecognizeError(
+                "\"operationType\": \"\(rawOperationType)\" is not supported",
+                code: Self.clientSideErrorCode
+            )
+        }
+    }
 
     /// Performs the biometric enrollment operation using `BiomEnrollConfig`.
     ///

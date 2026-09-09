@@ -181,10 +181,17 @@ final class RecognizeCallbackInitValueTests: XCTestCase {
         XCTAssertEqual(callback.operationType, .authenticate)
     }
 
-    func testInitValueOperationTypeUnknownDefaultsToEnroll() {
+    func testInitValueOperationTypeUnknownStaysNil() {
         let callback = RecognizeCallback()
         callback.initValue(name: JourneyConstants.operationType, value: "UNKNOWN")
-        XCTAssertEqual(callback.operationType, .enroll)
+        XCTAssertNil(callback.operationType)
+    }
+
+    func testInitValueOperationTypeMixedCaseIsRejected() {
+        // Exact match only, matching the Android SDK — no case normalization.
+        let callback = RecognizeCallback()
+        callback.initValue(name: JourneyConstants.operationType, value: "authenticate")
+        XCTAssertNil(callback.operationType)
     }
 
     // MARK: String output fields
@@ -302,7 +309,7 @@ final class RecognizeCallbackInitValueTests: XCTestCase {
         let callback = RecognizeCallback()
         // Should not crash; all properties retain their defaults.
         callback.initValue(name: "unknownOutputField", value: "irrelevant")
-        XCTAssertEqual(callback.operationType, .enroll)
+        XCTAssertNil(callback.operationType)
         XCTAssertEqual(callback.websocketURL, "")
     }
 
@@ -608,13 +615,19 @@ final class ExecutePathTests: XCTestCase {
         return inputs.first(where: { ($0["name"] as? String) == key })?["value"] as? String
     }
 
-    private func makeEnrollCallback() async -> TestableEnrollCallback {
+    /// - Parameter operationType: The `operationType` output value to send, or `nil` to omit
+    ///   the field entirely (simulating a server response that never sets it).
+    private func makeEnrollCallback(operationType: String? = "ENROLL") async -> TestableEnrollCallback {
         let inputKeys = [JourneyConstants.inputSignedJwt, JourneyConstants.inputClientState,
                          JourneyConstants.inputRecognizeId, JourneyConstants.inputDevicePublicSigningKey,
                          JourneyConstants.inputClientError, JourneyConstants.inputClientErrorCode]
+        var output: [[String: Any]] = []
+        if let operationType {
+            output.append(["name": JourneyConstants.operationType, "value": operationType])
+        }
         let json: [String: Any] = [
             "input": inputArrayWith(keys: inputKeys),
-            "output": [],
+            "output": output,
             "type": JourneyConstants.pingOneRecognizeCallback
         ]
         let cb = TestableEnrollCallback()
@@ -622,13 +635,22 @@ final class ExecutePathTests: XCTestCase {
         return cb
     }
 
-    private func makeAuthCallback(clientState: String = "") async -> TestableAuthCallback {
+    /// - Parameter operationType: The `operationType` output value to send, or `nil` to omit
+    ///   the field entirely (simulating a server response that never sets it).
+    private func makeAuthCallback(clientState: String = "", operationType: String? = "AUTHENTICATE") async -> TestableAuthCallback {
         let inputKeys = [JourneyConstants.inputSignedJwt, JourneyConstants.inputClientState,
                          JourneyConstants.inputRecognizeId, JourneyConstants.inputDevicePublicSigningKey,
                          JourneyConstants.inputClientError, JourneyConstants.inputClientErrorCode]
+        var output: [[String: Any]] = []
+        if let operationType {
+            output.append(["name": JourneyConstants.operationType, "value": operationType])
+        }
+        if !clientState.isEmpty {
+            output.append(["name": JourneyConstants.clientState, "value": clientState])
+        }
         let json: [String: Any] = [
             "input": inputArrayWith(keys: inputKeys),
-            "output": clientState.isEmpty ? [] : [["name": JourneyConstants.clientState, "value": clientState]],
+            "output": output,
             "type": JourneyConstants.pingOneRecognizeCallback
         ]
         let cb = TestableAuthCallback()
@@ -637,6 +659,43 @@ final class ExecutePathTests: XCTestCase {
             cb.initValue(name: JourneyConstants.clientState, value: clientState)
         }
         return cb
+    }
+
+    // MARK: operationType fail-closed
+
+    func testEnrollFailsClosedWhenOperationTypeMissing() async {
+        let cb = await makeEnrollCallback(operationType: nil)
+        let result = await cb.enroll()
+        guard case .failure(let error) = result else { return XCTFail("Expected failure") }
+        XCTAssertEqual((error as? RecognizeError)?.code, AbstractRecognizeCallback.clientSideErrorCode)
+        // Mirrors Android's `require(operationType.isNotEmpty())` message.
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "\"operationType\" is required in the PingOneRecognizeCallback output")
+    }
+
+    func testEnrollFailsClosedWhenOperationTypeUnrecognized() async {
+        let cb = await makeEnrollCallback()
+        cb.initValue(name: JourneyConstants.operationType, value: "SOMETHING_ELSE")
+        let result = await cb.enroll()
+        guard case .failure(let error) = result else { return XCTFail("Expected failure") }
+        XCTAssertEqual((error as? RecognizeError)?.code, AbstractRecognizeCallback.clientSideErrorCode)
+        // Mirrors Android's `else -> throw IllegalArgumentException("...is not supported")` message.
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "\"operationType\": \"SOMETHING_ELSE\" is not supported")
+    }
+
+    func testEnrollFailsClosedWhenOperationTypeMixedCase() async {
+        let cb = await makeEnrollCallback()
+        cb.initValue(name: JourneyConstants.operationType, value: "enroll")
+        let result = await cb.enroll()
+        guard case .failure = result else { return XCTFail("Expected failure — exact match only, no case normalization") }
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "\"operationType\": \"enroll\" is not supported")
+    }
+
+    func testAuthenticateFailsClosedWhenOperationTypeMissing() async {
+        let cb = await makeAuthCallback(operationType: nil)
+        let result = await cb.authenticate()
+        guard case .failure(let error) = result else { return XCTFail("Expected failure") }
+        XCTAssertEqual((error as? RecognizeError)?.code, AbstractRecognizeCallback.clientSideErrorCode)
+        XCTAssertNotNil(inputValue(for: JourneyConstants.inputClientError, in: cb))
     }
 
     // MARK: configure() failure
@@ -800,7 +859,7 @@ final class ExecutePathTests: XCTestCase {
                          JourneyConstants.inputClientError, JourneyConstants.inputClientErrorCode]
         let json: [String: Any] = [
             "input": inputArrayWith(keys: inputKeys),
-            "output": [],
+            "output": [["name": JourneyConstants.operationType, "value": "AUTHENTICATE"]],
             "type": JourneyConstants.pingOneRecognizeCallback
         ]
         let cb = TestableValidationAuthCallback()

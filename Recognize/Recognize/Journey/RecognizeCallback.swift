@@ -29,9 +29,14 @@ class RecognizeCallback: AbstractRecognizeCallback, @unchecked Sendable {
         // Parse shared output fields into self first.
         _ = await super.initialize(with: json)
 
+        // An unrecognised `operationType` can't select a concrete callback here —
+        // `initialize(with:)` isn't `throws` (a constraint shared by every Journey callback) —
+        // so it falls back to `PingOneRecognizeEnrollCallback`; its `enroll()` fails closed
+        // immediately via `requireRecognizedOperationType()` instead of running an enrollment
+        // the server never asked for.
         let callback: AbstractRecognizeCallback
         switch operationType {
-        case .enroll:
+        case .enroll, nil:
             callback = PingOneRecognizeEnrollCallback()
         case .authenticate:
             callback = PingOneRecognizeAuthenticateCallback()

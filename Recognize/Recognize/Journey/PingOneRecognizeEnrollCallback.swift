@@ -37,6 +37,7 @@ open class PingOneRecognizeEnrollCallback: AbstractRecognizeCallback, @unchecked
         let config = RecognizeEnrollConfig()
         block(config)
         do {
+            try requireRecognizedOperationType()
             try await configure()
             try Task.checkCancellation()
             let result = try await performEnroll(retrieveSelfie: config.retrieveSelfie, options: mobileSDKOptions)

@@ -45,6 +45,7 @@ open class PingOneRecognizeAuthenticateCallback: AbstractRecognizeCallback, @unc
         let config = RecognizeAuthenticateConfig()
         block(config)
         do {
+            try requireRecognizedOperationType()
             try await configure()
             try Task.checkCancellation()
             let result: RecognizeSuccess
