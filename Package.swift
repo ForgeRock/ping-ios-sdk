@@ -7,20 +7,17 @@ import PackageDescription
 // that registry is configured on the machine, so the rest of the SDK and the
 // sample apps keep building for users without registry credentials.
 let hasKeylessRegistry: Bool = {
-    // Detects a configured Keyless registry. xcodebuild sandboxes manifest
-    // evaluation, so reading the user's SwiftPM configuration is unreliable;
-    // a marker file inside the package (readable in every sandbox) plus an
-    // environment variable override cover both Xcode and CLI usage.
+    // Detects a configured Keyless registry: a marker file inside the package
+    // (checked first, since it's readable even inside xcodebuild's manifest
+    // evaluation sandbox) or, as a fallback for CLI usage, the user's SwiftPM
+    // registries.json configuration.
     let markerPath = URL(fileURLWithPath: #file).deletingLastPathComponent()
         .appendingPathComponent("Recognize/.registry-enabled").path
     if FileManager.default.fileExists(atPath: markerPath) {
         return true
     }
-    if ProcessInfo.processInfo.environment["MANIFEST_DEBUG_FATAL"] == "1" {
-        fatalError("MANIFEST-DEBUG-FATAL")
-    }
-    
-let homeDirectory = ProcessInfo.processInfo.environment["HOME"]
+
+    let homeDirectory = ProcessInfo.processInfo.environment["HOME"]
         .map { URL(fileURLWithPath: $0, isDirectory: true) }
         ?? FileManager.default.homeDirectoryForCurrentUser
     let configurationPath = homeDirectory
