@@ -23,7 +23,8 @@ public struct RecognizeSuccess: @unchecked Sendable {
     /// The client state blob produced by the Keyless SDK, if client-state generation was enabled.
     public let clientState: String?
 
-    /// The Recognize user ID assigned during enrollment. `nil` for authentication operations.
+    /// The Recognize user ID. Assigned during enrollment (from the enrollment result); on
+    /// authentication it is read from the Keyless SDK
     public let recognizeId: String?
 
     /// The captured selfie frame, present only when `retrieveSelfie` was set to `true` via the
