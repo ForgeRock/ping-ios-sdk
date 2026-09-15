@@ -70,6 +70,7 @@ struct JourneyView: View {
                 }
             }
         }
+        .pingScreenBackground()
     }
 }
 
@@ -79,42 +80,39 @@ struct JourneyNameInputView: View {
     @State private var journeyName: String = ""
     
     var body: some View {
-        VStack(spacing: 24) {
-            Spacer()
-            
-            Image("Logo")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 120, height: 120)
-            
-            VStack(spacing: 16) {
+        ScrollView {
+            VStack(spacing: PingTheme.Spacing.medium) {
+                Image("Logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: PingTheme.Control.iconSize, height: PingTheme.Control.iconSize)
+                    .accessibilityHidden(true)
+
                 Text("Enter Journey Name")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                
-                TextField("Journey Name", text: $journeyName)
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.never)
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
-                    .onAppear() { journeyName = journeyViewModel.getSavedJourneyName() }
-                
-                Spacer()
-                
-                NextButton(title: "Start Journey") {
+                    .pingScreenTitle()
+
+                VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
+                    Text("Journey Name")
+                        .pingSectionHeader()
+
+                    TextField("Journey Name", text: $journeyName)
+                        .pingTextFieldStyle()
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.never)
+                        .onAppear { journeyName = journeyViewModel.getSavedJourneyName() }
+                }
+
+                Button("Start Journey") {
                     Task {
                         journeyViewModel.saveJourneyName(journeyName)
                         await journeyViewModel.startJourney(with: journeyName)
                     }
                 }
+                .buttonStyle(.pingPrimary)
             }
-            
-            Spacer()
+            .pingReadableContentWidth()
+            .padding(PingTheme.Spacing.screen)
         }
-        .padding()
     }
 }
 
@@ -126,56 +124,46 @@ struct CallbackView: View {
     public var node: ContinueNode
     
     var body: some View {
-        VStack(spacing: 16) {
-            Image("Logo").resizable().scaledToFill().frame(width: 100, height: 100)
-            
-            // Display header if available
+        VStack(spacing: PingTheme.Spacing.medium) {
+            Image("Logo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: PingTheme.Control.iconSize, height: PingTheme.Control.iconSize)
+                .accessibilityHidden(true)
+
             if !node.pageHeader.isEmpty {
                 Text(node.pageHeader)
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                    .pingScreenTitle()
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal)
             }
-            
-            // Display description if available
+
             if !node.pageDescription.isEmpty {
                 Text(node.pageDescription)
-                    .font(.body)
-                    .foregroundColor(.secondary)
+                    .pingBodySecondary()
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal)
             }
-            
-            JourneyNodeView(continueNode: node,
-                            onNodeUpdated:  { journeyViewModel.refresh() },
-                            onStart: { Task { await journeyViewModel.startJourney(with: journeyViewModel.getSavedJourneyName()) }},
-                            onNext: { Task {
-                print("Next button tapped")
-                await journeyViewModel.next(node: node)
-            }})
-            
-            // Display footer if available
+
+            JourneyNodeView(
+                continueNode: node,
+                onNodeUpdated: { journeyViewModel.refresh() },
+                onStart: { Task { await journeyViewModel.startJourney(with: journeyViewModel.getSavedJourneyName()) } },
+                onNext: { Task { await journeyViewModel.next(node: node) } }
+            )
+
             if !node.pageFooter.isEmpty {
                 Text(node.pageFooter)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .pingCaptionText()
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
+                    .padding(.top, PingTheme.Spacing.small)
             }
-            
-            // Display stage if available
+
             if !node.stage.isEmpty {
-                Text("Stage:" + node.stage)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
+                Text("Stage: \(node.stage)")
+                    .pingCaptionText()
             }
         }
-        
+        .pingReadableContentWidth()
+        .padding(PingTheme.Spacing.screen)
     }
 }
 
@@ -200,7 +188,7 @@ struct JourneyNodeView: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.medium) {
             
             ForEach(Array(continueNode.callbacks.enumerated()), id: \.offset) { index, callback in
                 switch callback {
@@ -292,24 +280,17 @@ struct JourneyNodeView: View {
             }
             
             if showNext {
-                Button(action: {
+                Button(continueNode.submitButtonText.isEmpty ? "Next" : continueNode.submitButtonText) {
                     if let selectIDPCallback = continueNode.callbacks.first(where: {
                         $0 is SelectIdpCallback
                     }) as? SelectIdpCallback {
                         selectIDPCallback.value = "localAuthentication"
                     }
                     onNext()
-                }) {
-                    Text(continueNode.submitButtonText.isEmpty ? "Next" : continueNode.submitButtonText)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.themeButtonBackground)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
                 }
-                .padding(.top, 16)
+                .buttonStyle(.pingPrimary)
+                .padding(.top, PingTheme.Spacing.medium)
             }
         }
-        .padding()
     }
 }

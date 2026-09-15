@@ -2,7 +2,7 @@
 //  ChallengeNotificationView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -18,52 +18,38 @@ struct ChallengeNotificationView: View {
     @ObservedObject var viewModel: PushNotificationsViewModel
 
     var body: some View {
-        VStack(alignment: .center, spacing: 16) {
+        VStack(alignment: .center, spacing: PingTheme.Spacing.medium) {
             // Header with icon and timestamp
             HStack {
-                Image(systemName: "number.circle.fill")
-                    .font(.system(size: 20))
-                    .foregroundColor(.white)
-                    .frame(width: 40, height: 40)
-                    .background(
-                        LinearGradient(
-                            colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                PingIconTile(systemName: "number.circle.fill", diameter: 40, iconSize: 20)
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: PingTheme.Spacing.xxSmall) {
                     Text("Challenge Authentication")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.primary)
+                        .pingSectionHeader()
 
                     Text(notification.createdAt, style: .relative)
-                        .font(.system(size: 13))
-                        .foregroundColor(.secondary)
+                        .pingSupportingText()
                 }
 
                 Spacer()
 
                 if notification.isExpired {
                     Label("Expired", systemImage: "clock.badge.exclamationmark")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(.orange)
+                        .font(PingTheme.Typography.caption.weight(.medium))
+                        .foregroundStyle(PingTheme.Color.statusWarning)
                 }
             }
 
             // Credential info
             if let credential = viewModel.credential(for: notification) {
-                HStack(spacing: 4) {
+                HStack(spacing: PingTheme.Spacing.xSmall) {
                     Text(credential.displayIssuer)
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundColor(.primary)
+                        .font(PingTheme.Typography.body.weight(.medium))
+                        .foregroundStyle(PingTheme.Color.contentPrimary)
                     Text("•")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(PingTheme.Color.contentSecondary)
                     Text(credential.displayAccountName)
-                        .font(.system(size: 15))
-                        .foregroundColor(.secondary)
+                        .pingBodySecondary()
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -71,26 +57,25 @@ struct ChallengeNotificationView: View {
             // Message
             if let message = notification.messageText {
                 Text(message)
-                    .font(.system(size: 14))
-                    .foregroundColor(.primary)
-                    .padding(.vertical, 8)
+                    .font(PingTheme.Typography.supporting)
+                    .foregroundStyle(PingTheme.Color.contentPrimary)
+                    .padding(.vertical, PingTheme.Spacing.small)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             // Challenge selection UI
             if !notification.isExpired {
                 let challengeNumbers = notification.getNumbersChallenge()
-                
-                VStack(spacing: 24) {
+
+                VStack(spacing: PingTheme.Spacing.large) {
                     Text("Select the number shown on your other device")
-                        .font(.system(size: 15))
-                        .foregroundColor(.secondary)
+                        .pingBodySecondary()
                         .multilineTextAlignment(.center)
 
                     if !challengeNumbers.isEmpty {
-                        HStack(spacing: 16) {
+                        HStack(spacing: PingTheme.Spacing.medium) {
                             ForEach(challengeNumbers, id: \.self) { number in
-                                ChallengeNumberButton(number: number) {
+                                PingChallengeNumberButton(number: number) {
                                     Task {
                                         await viewModel.approveChallengeNotification(
                                             id: notification.id,
@@ -100,69 +85,36 @@ struct ChallengeNotificationView: View {
                                 }
                             }
                         }
-                        
-                        Spacer().frame(height: 8)
-                        
-                        Button(action: {
+
+                        Spacer().frame(height: PingTheme.Spacing.small)
+
+                        Button {
                             Task {
                                 await viewModel.denyNotification(id: notification.id)
                             }
-                        }) {
+                        } label: {
                             Text("Cancel Authentication")
-                                .fontWeight(.medium)
-                                .foregroundColor(.red)
-                                .padding(.vertical, 12)
-                                .frame(maxWidth: .infinity)
                         }
-                        .buttonStyle(.bordered)
-                        .tint(.red)
+                        .buttonStyle(.pingDestructive)
                     } else {
                         Text("No challenge numbers available")
-                            .font(.system(size: 15))
-                            .foregroundColor(.red)
-                        
-                        Spacer().frame(height: 16)
-                        
-                        Button(action: {
+                            .font(PingTheme.Typography.body)
+                            .foregroundStyle(PingTheme.Color.statusError)
+
+                        Spacer().frame(height: PingTheme.Spacing.medium)
+
+                        Button {
                             Task {
                                 await viewModel.denyNotification(id: notification.id)
                             }
-                        }) {
+                        } label: {
                             Text("Close")
-                                .fontWeight(.semibold)
-                                .foregroundColor(.white)
-                                .padding(.vertical, 12)
-                                .frame(maxWidth: .infinity)
                         }
-                        .background(Color.red)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .buttonStyle(.pingDestructive)
                     }
                 }
             }
         }
-        .padding()
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-    }
-}
-
-/// A button displaying a challenge number as a circular button
-struct ChallengeNumberButton: View {
-    let number: Int
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            Text("\(number)")
-                .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.themeButtonBackground)
-                .frame(width: 80, height: 80)
-                .background(Color.clear)
-                .overlay(
-                    Circle()
-                        .stroke(Color.themeButtonBackground, lineWidth: 2)
-                )
-        }
+        .pingCardStyle()
     }
 }

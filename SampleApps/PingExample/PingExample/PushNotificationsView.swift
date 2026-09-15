@@ -38,14 +38,10 @@ struct PushNotificationsView: View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
-            .background(Color(.systemGroupedBackground))
+            .pingScreenBackground()
 
             if viewModel.isLoading {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-                ProgressView()
-                    .scaleEffect(2.0)
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                PingLoadingOverlay()
             }
         }
         .navigationTitle("Push Notifications")
@@ -65,43 +61,35 @@ struct PushNotificationsView: View {
                 )
             }
         }
-        .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
-            Button("OK") {
-                viewModel.errorMessage = nil
-            }
-        } message: {
-            if let error = viewModel.errorMessage {
-                Text(error)
-            }
-        }
+        .pingErrorAlert(errorMessage: $viewModel.errorMessage)
     }
 
+    @ViewBuilder
     private var pendingTab: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                if viewModel.pendingNotifications.isEmpty {
-                    emptyPendingView
-                } else {
+        if viewModel.pendingNotifications.isEmpty {
+            PingCenteredScrollContent { emptyPendingView }
+        } else {
+            ScrollView {
+                VStack(spacing: PingTheme.Spacing.medium) {
                     ForEach(viewModel.pendingNotifications, id: \.id) { notification in
                         PushNotificationCardView(
                             notification: notification,
                             viewModel: viewModel
                         )
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
                 }
+                .pingScrollContentPadding()
             }
-            .padding(.bottom, 30)
         }
     }
 
+    @ViewBuilder
     private var historyTab: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                if viewModel.allNotifications.isEmpty {
-                    emptyHistoryView
-                } else {
+        if viewModel.allNotifications.isEmpty {
+            PingCenteredScrollContent { emptyHistoryView }
+        } else {
+            ScrollView {
+                VStack(spacing: PingTheme.Spacing.medium) {
                     ForEach(viewModel.allNotifications, id: \.id) { notification in
                         Button {
                             selectedNotification = notification
@@ -110,11 +98,9 @@ struct PushNotificationsView: View {
                         }
                         .buttonStyle(.plain)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
                 }
+                .pingScrollContentPadding()
             }
-            .padding(.bottom, 30)
         }
     }
 
@@ -124,7 +110,6 @@ struct PushNotificationsView: View {
             title: "No Pending Notifications",
             subtitle: "You're all caught up! New push authentication requests will appear here."
         )
-        .padding(.top, 60)
     }
 
     private var emptyHistoryView: some View {
@@ -133,7 +118,6 @@ struct PushNotificationsView: View {
             title: "No History",
             subtitle: "Your notification history will appear here after you respond to push requests."
         )
-        .padding(.top, 60)
     }
 }
 
@@ -148,67 +132,61 @@ struct NotificationHistoryCard: View {
     // 4. else -> DENIED
     private var statusInfo: (icon: String, color: Color, text: String) {
         if notification.approved {
-            return ("checkmark.circle.fill", .green, "Approved")
+            return ("checkmark.circle.fill", PingTheme.Color.statusSuccess, "Approved")
         } else if notification.isExpired && notification.pending {
-            return ("clock.badge.exclamationmark.fill", .orange, "Expired")
+            return ("clock.badge.exclamationmark.fill", PingTheme.Color.statusWarning, "Expired")
         } else if notification.pending {
-            return ("clock.fill", .blue, "Pending")
+            return ("clock.fill", PingTheme.Color.statusInfo, "Pending")
         } else {
-            return ("xmark.circle.fill", .red, "Denied")
+            return ("xmark.circle.fill", PingTheme.Color.statusError, "Denied")
         }
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
             HStack {
                 Image(systemName: statusInfo.icon)
-                    .foregroundColor(statusInfo.color)
-                    .font(.system(size: 20))
+                    .foregroundStyle(statusInfo.color)
+                    .font(PingTheme.Typography.sectionTitle)
 
                 Text(statusInfo.text)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.primary)
+                    .font(PingTheme.Typography.body.weight(.semibold))
+                    .foregroundStyle(PingTheme.Color.contentPrimary)
 
                 Spacer()
 
                 Text(notification.respondedAt ?? notification.createdAt, style: .relative)
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
+                    .pingSupportingText()
             }
 
             // Credential info
             if let credential = viewModel.credential(for: notification) {
-                HStack(spacing: 4) {
+                HStack(spacing: PingTheme.Spacing.xSmall) {
                     Text(credential.displayIssuer)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.primary)
+                        .font(PingTheme.Typography.body.weight(.medium))
+                        .foregroundStyle(PingTheme.Color.contentPrimary)
                     Text("•")
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(PingTheme.Color.contentSecondary)
                     Text(credential.displayAccountName)
-                        .font(.system(size: 14))
-                        .foregroundColor(.secondary)
+                        .pingBodySecondary()
                 }
             }
 
             if let message = notification.messageText {
                 Text(message)
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
+                    .pingSupportingText()
                     .lineLimit(2)
             }
 
             HStack {
                 Label(notification.pushType.rawValue.uppercased(), systemImage: typeIcon(notification.pushType))
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.secondary)
+                    .font(PingTheme.Typography.caption.weight(.medium))
+                    .foregroundStyle(PingTheme.Color.contentSecondary)
 
                 Spacer()
             }
         }
-        .padding()
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle()
     }
 
     private func typeIcon(_ type: PushType) -> String {

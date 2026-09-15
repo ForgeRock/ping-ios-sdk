@@ -2,7 +2,7 @@
 //  QRScannerContainerView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -29,13 +29,11 @@ struct QRScannerContainerView: View {
                 Spacer()
 
                 if viewModel.isLoading {
-                    ProgressView()
-                        .scaleEffect(2.0)
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    PingLoadingSpinner(tint: PingTheme.Color.contentInverse)
                         .padding()
                         .background(Color.black.opacity(0.7))
-                        .cornerRadius(12)
-                        .padding(.bottom, 50)
+                        .clipShape(RoundedRectangle(cornerRadius: PingTheme.Shape.cardRadius))
+                        .padding(.bottom, PingTheme.Spacing.scrollBottomInset)
                 }
             }
         }

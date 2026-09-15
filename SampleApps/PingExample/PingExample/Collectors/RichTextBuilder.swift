@@ -36,7 +36,7 @@ enum RichTextBuilder {
                     if let url = URL(string: href) {
                         var linkText = AttributedString(replacement.value)
                         linkText.link = url
-                        linkText.foregroundColor = Color.themeButtonBackground
+                        linkText.foregroundColor = PingTheme.Color.actionPrimary
                         result.append(linkText)
                     } else {
                         // Server returned a malformed URL; render as plain text so content is not lost.
