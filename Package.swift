@@ -337,6 +337,8 @@ var targets: [Target] = [
         .target(
             name: "PingOneMFA",
             dependencies: [
+                "PingLogger",
+                "PingDavinciPlugin",
                 .product(name: "PingOneSDK", package: "pingone-mobile-sdk-ios")
             ],
             path: "PingOneMFA/PingOneMFA",

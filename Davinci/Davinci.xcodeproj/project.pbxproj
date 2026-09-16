@@ -93,6 +93,8 @@
 		SDKS50680004000000000002 /* DeviceClientJsonConfigE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50680004000000000001 /* DeviceClientJsonConfigE2ETest.swift */; };
 		SDKS52810001000000000002 /* MetadataCollectorE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS52810001000000000001 /* MetadataCollectorE2ETest.swift */; };
 		SDKS52810002000000000002 /* ImageCollectorE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS52810002000000000001 /* ImageCollectorE2ETest.swift */; };
+		B258BFC0847B4BA897D70AEE /* MobilePairingCollectorIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1266ACB544CB4C9AA67B126A /* MobilePairingCollectorIntegrationTests.swift */; };
+		DAA88D08ECFC4A458E451C86 /* PingOneMFA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC8B6AB910104F87A2DD0B73 /* PingOneMFA.framework */; };
 		SDKS52810003000000000002 /* QRCodeCollectorE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS52810003000000000001 /* QRCodeCollectorE2ETest.swift */; };
 /* End PBXBuildFile section */
 
@@ -209,6 +211,8 @@
 		SDKS50680004000000000001 /* DeviceClientJsonConfigE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceClientJsonConfigE2ETest.swift; sourceTree = "<group>"; };
 		SDKS52810001000000000001 /* MetadataCollectorE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataCollectorE2ETest.swift; sourceTree = "<group>"; };
 		SDKS52810002000000000001 /* ImageCollectorE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectorE2ETest.swift; sourceTree = "<group>"; };
+		1266ACB544CB4C9AA67B126A /* MobilePairingCollectorIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePairingCollectorIntegrationTests.swift; sourceTree = "<group>"; };
+		BC8B6AB910104F87A2DD0B73 /* PingOneMFA.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOneMFA.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		SDKS52810003000000000001 /* QRCodeCollectorE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeCollectorE2ETest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -227,6 +231,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A5441AA2BCDF20700385131 /* PingDavinci.framework in Frameworks */,
+				DAA88D08ECFC4A458E451C86 /* PingOneMFA.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,6 +244,7 @@
 				EC5C81C82ECF7A1700C91570 /* PingDavinciPlugin.framework */,
 				ECBF06752D525BE20066A3BD /* Extrernal_idp.framework */,
 				A50981C12CEBDF2600F4B487 /* PingOidc.framework */,
+				BC8B6AB910104F87A2DD0B73 /* PingOneMFA.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -286,6 +292,7 @@
 				A509D1CD2C6D06CA003A0006 /* mock */,
 				A51D4CF92C6BA75000FE09E0 /* CallbackFactoryTests.swift */,
 				A51D4CE42C656A0C00FE09E0 /* CollectorRegistryTests.swift */,
+				1266ACB544CB4C9AA67B126A /* MobilePairingCollectorIntegrationTests.swift */,
 				A51D4CF12C65729A00FE09E0 /* DaVinciErrorTests.swift */,
 				EC7279B32DF9B289005D9E28 /* DaVinciBaseTests.swift */,
 				3A5441AE2BCDF20700385131 /* DaVinciTests.swift */,
@@ -596,6 +603,7 @@
 				CC5143032F0000000000CC01 /* ImageCollectorTests.swift in Sources */,
 				BB4928032F0900000000BB01 /* ReadOnlyTextCollectorTests.swift in Sources */,
 				BB4928072F0900000000BB01 /* MetadataCollectorTests.swift in Sources */,
+				B258BFC0847B4BA897D70AEE /* MobilePairingCollectorIntegrationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
