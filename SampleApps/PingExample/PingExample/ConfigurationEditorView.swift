@@ -2,7 +2,7 @@
 //  ConfigurationEditorView.swift
 //  PingExample
 //
-//  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -65,40 +65,26 @@ struct ConfigurationEditorView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: PingTheme.Spacing.large) {
                 // MARK: - Identity
                 editorSection {
-                    labeledField("Name *", text: $name, field: .name)
-                    
-                    VStack(alignment: .leading, spacing: 6) {
+                    labeledField("Name *", text: $name, field: .name, placeholder: "e.g., Alpha Environment")
+
+                    // NOTE: This visually duplicates `TabPicker` (see TabPicker.swift), but
+                    // `ConfigType` does not conform to `Identifiable` and `TabPicker`'s own
+                    // design-system migration is in flight in parallel, so reuse is deferred
+                    // rather than forcing cross-file coordination here.
+                    VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
                         Text("Type *")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.secondary)
-                        HStack(spacing: 0) {
+                            .pingSectionHeader()
+                        Picker("Type", selection: $type) {
                             ForEach(ConfigType.allCases, id: \.self) { t in
-                                Button {
-                                    withAnimation(.easeInOut(duration: 0.2)) { type = t }
-                                } label: {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: t.iconName)
-                                            .font(.system(size: 11))
-                                        Text(t.rawValue)
-                                            .font(.system(size: 13, weight: .medium))
-                                    }
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 8)
-                                    .background(type == t ? Color.themeButtonBackground : Color.clear)
-                                    .foregroundColor(type == t ? .white : .primary)
-                                    .cornerRadius(7)
-                                }
-                                .buttonStyle(.plain)
+                                Label(t.rawValue, systemImage: t.iconName).tag(t)
                             }
                         }
-                        .padding(2)
-                        .background(Color(.systemGray5))
-                        .cornerRadius(9)
+                        .pickerStyle(.segmented)
                     }
-                    
+
                     // Environment is not currently used by the SDK — commented out for now.
                     // VStack(alignment: .leading, spacing: 6) {
                     //     Text("Environment *")
@@ -112,52 +98,49 @@ struct ConfigurationEditorView: View {
                     //     .labelsHidden()
                     // }
                 }
-                
+
                 // MARK: - OAuth / OIDC
-                editorSection(header: "OAUTH / OIDC") {
-                    labeledField("Client ID *", text: $clientId, field: .clientId)
+                editorSection(header: "OAuth / OIDC") {
+                    labeledField("Client ID *", text: $clientId, field: .clientId, placeholder: "e.g., iosClient")
                     labeledField("Scopes", text: $scopes, field: .scopes, placeholder: "openid, email, profile")
-                    labeledField("Redirect URI *", text: $redirectUri, field: .redirectUri, keyboard: .URL)
-                    
+                    labeledField("Redirect URI *", text: $redirectUri, field: .redirectUri, placeholder: "e.g., com.example.app:/redirect", keyboard: .URL)
+
                     if type == .davinci {
-                        labeledField("Sign Out URI", text: $signOutUri, field: .signOutUri, keyboard: .URL)
+                        labeledField("Sign Out URI", text: $signOutUri, field: .signOutUri, placeholder: "e.g., com.example.app:/signout", keyboard: .URL)
                     }
-                    
-                    labeledField("Discovery Endpoint *", text: $discoveryEndpoint, field: .discoveryEndpoint, keyboard: .URL)
+
+                    labeledField("Discovery Endpoint *", text: $discoveryEndpoint, field: .discoveryEndpoint, placeholder: "e.g., https://openam-example.forgeblocks.com/am/oauth2/alpha/.well-known/openid-configuration", keyboard: .URL)
                 }
-                
+
                 // MARK: - Journey-specific
                 if type == .journey {
-                    editorSection(header: "JOURNEY") {
-                        labeledField("Server URL *", text: $serverUrl, field: .serverUrl, keyboard: .URL)
-                        labeledField("Cookie Name", text: $cookieName, field: .cookieName)
-                        labeledField("Realm", text: $realm, field: .realm, placeholder: "alpha")
+                    editorSection(header: "Journey") {
+                        labeledField("Server URL *", text: $serverUrl, field: .serverUrl, placeholder: "e.g., https://openam-example.forgeblocks.com/am", keyboard: .URL)
+                        labeledField("Cookie Name", text: $cookieName, field: .cookieName, placeholder: "e.g., iPlanetDirectoryPro")
+                        labeledField("Realm", text: $realm, field: .realm, placeholder: "e.g., alpha")
                     }
                 }
-                
+
                 // MARK: - Advanced
-                editorSection(header: "ADVANCED") {
-                    labeledField("ACR Values", text: $acrValues, field: .acrValues)
-                    
-                    VStack(alignment: .leading, spacing: 6) {
+                editorSection(header: "Advanced") {
+                    labeledField("ACR Values", text: $acrValues, field: .acrValues, placeholder: "e.g., urn:acme:authn:default")
+
+                    VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
                         Toggle(isOn: $par) {
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: PingTheme.Spacing.xSmall) {
                                 Text("PAR (Pushed Authorization Request)")
-                                    .font(.system(size: 14, weight: .medium))
+                                    .pingSectionHeader()
                                 Text("RFC 9126 — Push authorization parameters to the server before authorization")
-                                    .font(.system(size: 11))
-                                    .foregroundColor(.secondary)
+                                    .pingSupportingText()
                             }
                         }
-                        .tint(.blue)
+                        .tint(PingTheme.Color.actionPrimary)
                     }
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 20)
-            .padding(.bottom, 30)
+            .pingScrollContentPadding()
         }
-        .background(Color(.systemGroupedBackground))
+        .pingScreenBackground()
         .onTapGesture {
             focusedField = nil
         }
@@ -168,7 +151,7 @@ struct ConfigurationEditorView: View {
                 Button("Save") {
                     save()
                 }
-                .font(.system(size: 16, weight: .semibold))
+                .font(PingTheme.Typography.action)
             }
         }
         .alert("Validation Error", isPresented: $showValidationError) {
@@ -182,31 +165,26 @@ struct ConfigurationEditorView: View {
             }
         }
     }
-    
+
     // MARK: - Section Card
-    
+
     private func editorSection<Content: View>(header: String? = nil, @ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.medium) {
             if let header = header {
                 Text(header)
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 8)
+                    .font(PingTheme.Typography.supporting.weight(.semibold))
+                    .foregroundStyle(PingTheme.Color.contentSecondary)
+                    .textCase(.uppercase)
             }
-            
-            VStack(alignment: .leading, spacing: 16) {
+
+            VStack(alignment: .leading, spacing: PingTheme.Spacing.medium) {
                 content()
             }
-            .padding(16)
-            .background(Color(.secondarySystemGroupedBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
         }
     }
-    
+
     // MARK: - Labeled Field
-    
+
     private func labeledField(
         _ label: String,
         text: Binding<String>,
@@ -214,17 +192,14 @@ struct ConfigurationEditorView: View {
         placeholder: String = "",
         keyboard: UIKeyboardType = .default
     ) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
             Text(label)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundColor(.secondary)
+                .pingSectionHeader()
             TextField(placeholder, text: text)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
                 .keyboardType(keyboard)
-                .padding(10)
-                .background(Color(.systemGroupedBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .pingTextFieldStyle()
                 .focused($focusedField, equals: field)
                 .toolbar {
                     ToolbarItemGroup(placement: .keyboard) {

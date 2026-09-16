@@ -2,7 +2,7 @@
 //  PolicySelectionView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -15,7 +15,7 @@ import SwiftUI
 struct PolicySelectionView: View {
     @Environment(\.dismiss) var dismiss
     let onPolicySelected: (String) -> Void
-    
+
     /// Policy options with display names
     /// JSON formats:
     /// - Biometric Available: {"biometricAvailable": {}}
@@ -26,14 +26,14 @@ struct PolicySelectionView: View {
         ("deviceTampering", "Device Tampering", "Checks for jailbreak and device tampering (threshold: 0.8)"),
         ("customPolicy", "Custom Policy", "User-defined custom locking policy")
     ]
-    
+
     @State private var selectedPolicy: String
-    
+
     init(onPolicySelected: @escaping (String) -> Void) {
         self.onPolicySelected = onPolicySelected
         _selectedPolicy = State(initialValue: "biometricAvailable")
     }
-    
+
     var body: some View {
         NavigationView {
             List {
@@ -42,38 +42,39 @@ struct PolicySelectionView: View {
                         Button {
                             selectedPolicy = option.policyName
                         } label: {
-                            HStack(spacing: 12) {
+                            HStack(spacing: PingTheme.Spacing.compact) {
                                 Image(systemName: selectedPolicy == option.policyName ? "circle.fill" : "circle")
-                                    .foregroundColor(selectedPolicy == option.policyName ? .themeButtonBackground : .gray)
-                                    .font(.system(size: 20))
-                                
-                                VStack(alignment: .leading, spacing: 4) {
+                                    .foregroundStyle(selectedPolicy == option.policyName ? PingTheme.Color.actionPrimary : PingTheme.Color.contentSecondary)
+                                    .font(.system(size: PingTheme.Control.Glyph.medium))
+
+                                VStack(alignment: .leading, spacing: PingTheme.Spacing.xSmall) {
                                     Text(option.displayName)
-                                        .font(.system(size: 16, weight: .medium))
-                                        .foregroundColor(.primary)
-                                    
+                                        .font(PingTheme.Typography.body)
+                                        .foregroundStyle(PingTheme.Color.contentPrimary)  // emphasized row title
+
                                     Text(option.description)
-                                        .font(.system(size: 13))
-                                        .foregroundColor(.secondary)
+                                        .pingSupportingText()
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
-                                
+
                                 Spacer()
                             }
                             .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        .padding(.vertical, 8)
+                        .padding(.vertical, PingTheme.Spacing.small)
                     }
                 } header: {
                     Text("Select Locking Policy")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(PingTheme.Typography.sectionTitle)
                 } footer: {
                     Text("The account will be locked according to the selected policy. It can only be used again after unlocking.")
-                        .font(.system(size: 12))
+                        .font(PingTheme.Typography.caption)
                 }
             }
             .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .pingScreenBackground()
             .navigationTitle("Lock Account")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

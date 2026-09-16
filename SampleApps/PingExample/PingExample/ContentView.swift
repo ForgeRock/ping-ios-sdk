@@ -255,7 +255,7 @@ struct ContentView: View {
                     headerSection
                     
                     // Content Section
-                    VStack(spacing: 20) {
+                    VStack(spacing: PingTheme.Spacing.large) {
                         // Loop through all sections
                         ForEach(MenuSection.allCases) { section in
                             sectionCard(
@@ -263,15 +263,13 @@ struct ContentView: View {
                                 items: section.items
                             )
                         }
-                        
+
                         deviceStatusCard
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
-                    .padding(.bottom, 30)
+                    .pingScrollContentPadding()
                 }
             }
-            .background(Color(.systemGroupedBackground))
+            .pingScreenBackground()
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("NavigateToPushNotifications"))) { _ in
                 // Navigate to Push Notifications view
                 if !path.contains(.pushNotifications) {
@@ -358,9 +356,9 @@ struct ContentView: View {
                 let score = tamperDetector.analyze()
                 
                 if score > 0 {
-                    deviceStatus = "⚠️ Jailbroken (Score: \(score))"
+                    deviceStatus = "Jailbroken (Score: \(score))"
                 } else {
-                    deviceStatus = "✓ Secure"
+                    deviceStatus = "Secure"
                 }
             }
             .alert("No Configuration", isPresented: $showNoConfigAlert) {
@@ -376,46 +374,49 @@ struct ContentView: View {
     
     // MARK: - Header Section
     private var headerSection: some View {
+        // Full-bleed hero banner, not a tile: tokenized colors in place, the
+        // gradient shape is kept but repartnered with the dynamic action colors
+        // so the foreground contrast holds in dark mode.
         ZStack(alignment: .topTrailing) {
             LinearGradient(
-                colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
+                colors: [PingTheme.Color.actionPrimary, PingTheme.Color.actionPrimaryPressed],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
 
-            VStack(spacing: 12) {
+            VStack(spacing: PingTheme.Spacing.medium) {
                 Image("Logo")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 80, height: 80)
 
                 Text("Ping SDK")
-                    .font(.system(size: 28, weight: .bold))
-                    .foregroundColor(.white)
+                    .font(PingTheme.Typography.display)
+                    .foregroundColor(PingTheme.Color.actionPrimaryForeground)
 
                 Text("Development Testing Suite")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.white.opacity(0.9))
+                    .font(PingTheme.Typography.supporting.weight(.medium))
+                    .foregroundColor(PingTheme.Color.actionPrimaryForeground.opacity(0.9))
 
                 Text(sdkVersion)
-                    .font(.system(size: 13, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.7))
+                    .font(PingTheme.Typography.monospacedCaption)
+                    .foregroundColor(PingTheme.Color.actionPrimaryForeground.opacity(0.7))
             }
-            .padding(.vertical, 10)
+            .padding(.vertical, PingTheme.Spacing.small)
             .frame(maxWidth: .infinity)
 
             Button {
                 path.append(.configuration)
             } label: {
                 Image(systemName: "gearshape.fill")
-                    .font(.system(size: 20))
-                    .foregroundColor(.white.opacity(0.9))
+                    .font(.system(size: PingTheme.Control.Glyph.medium))
+                    .foregroundColor(PingTheme.Color.actionPrimaryForeground.opacity(0.9))
                     .frame(width: 36, height: 36)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(.white.opacity(0.4), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: PingTheme.Shape.fieldRadius)
+                            .stroke(PingTheme.Color.actionPrimaryForeground.opacity(0.4), lineWidth: PingTheme.Shape.borderWidth)
                     )
-                    .padding(12)
+                    .padding(PingTheme.Spacing.medium)
             }
         }
     }
@@ -424,28 +425,27 @@ struct ContentView: View {
     private func sectionCard(title: String, items: [MenuItem]) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.secondary)
+                .font(PingTheme.Typography.supporting.weight(.semibold))
+                .foregroundStyle(PingTheme.Color.contentSecondary)
                 .textCase(.uppercase)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 8)
-            
+                .padding(.horizontal, PingTheme.Spacing.medium)
+                .padding(.bottom, PingTheme.Spacing.small)
+
             VStack(spacing: 0) {
                 ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                     menuItemButton(item)
-                    
+
                     if index < items.count - 1 {
                         Divider()
-                            .padding(.leading, 60)
+                            // Aligns divider start with the text after the 40pt icon tile.
+                            .padding(.leading, 40 + PingTheme.Spacing.medium)
                     }
                 }
             }
-            .background(Color(.secondarySystemGroupedBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+            .pingCardStyle(size: .rowList)
         }
     }
-    
+
     // MARK: - Menu Item Button
     private func menuItemButton(_ item: MenuItem) -> some View {
         Button {
@@ -457,79 +457,78 @@ struct ContentView: View {
                 path.append(item)
             }
         } label: {
-            HStack(spacing: 16) {
-                Image(systemName: item.icon)
-                    .font(.system(size: 20))
-                    .foregroundColor(.white)
-                    .frame(width: 40, height: 40)
-                    .background(
-                        LinearGradient(
-                            colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                
-                VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: PingTheme.Spacing.medium) {
+                PingIconTile(systemName: item.icon, diameter: 40, iconSize: 20)
+
+                VStack(alignment: .leading, spacing: PingTheme.Spacing.xxSmall) {
                     Text(item.title)
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.primary)
-                    
+                        .font(PingTheme.Typography.body.weight(.medium))
+                        .foregroundStyle(PingTheme.Color.contentPrimary)
+
                     Text(item.subtitle)
-                        .font(.system(size: 13))
-                        .foregroundColor(.secondary)
+                        .pingSupportingText()
                 }
-                
+
                 Spacer()
-                
+
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.secondary)
+                    .font(.system(size: PingTheme.Control.Glyph.small, weight: .semibold))
+                    .foregroundColor(PingTheme.Color.contentSecondary)
             }
-            .padding(16)
+            .padding(.vertical, PingTheme.Spacing.small)
             .contentShape(Rectangle())
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
-    
+
     // MARK: - Device Status Card
     private var deviceStatusCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.medium) {
             HStack {
                 Image(systemName: "iphone.gen3")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.themeButtonBackground)
-                
+                    .font(.system(size: PingTheme.Control.Glyph.small, weight: .semibold))
+                    .foregroundColor(PingTheme.Color.actionPrimary)
+
                 Text("Device Information")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.primary)
-                
+                    .pingSectionHeader()
+
                 Spacer()
-                
-                Text(deviceStatus)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(deviceStatus.contains("Secure") ? .green : .orange)
+
+                deviceStatusContent
             }
-            
+
             Divider()
-            
-            VStack(alignment: .leading, spacing: 8) {
+
+            VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
                 Text("Device ID")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.secondary)
-                
+                    .font(PingTheme.Typography.caption.weight(.medium))
+                    .foregroundStyle(PingTheme.Color.contentSecondary)
+
                 Text(deviceID.isEmpty ? "Loading..." : deviceID)
-                    .font(.system(size: 11, design: .monospaced))
-                    .foregroundColor(.primary)
+                    .font(PingTheme.Typography.monospacedCaption)
+                    .foregroundStyle(PingTheme.Color.contentPrimary)
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
             }
         }
-        .padding(16)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle()
+    }
+
+    @ViewBuilder
+    private var deviceStatusContent: some View {
+        // The status string carries the state; render a semantic icon plus
+        // plain text rather than baking the glyph into the string.
+        let isSecure = deviceStatus.contains("Secure")
+
+        HStack(spacing: PingTheme.Spacing.xSmall) {
+            Image(systemName: isSecure ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                .font(.system(size: PingTheme.Control.Glyph.small, weight: .medium))
+                .foregroundStyle(isSecure ? PingTheme.Color.statusSuccess : PingTheme.Color.statusWarning)
+
+            Text(deviceStatus)
+                .font(PingTheme.Typography.caption.weight(.medium))
+                .foregroundStyle(isSecure ? PingTheme.Color.statusSuccess : PingTheme.Color.statusWarning)
+        }
     }
     
     // Add computed properties:

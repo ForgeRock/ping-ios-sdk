@@ -2,7 +2,7 @@
 //  QRCodeView.swift
 //  PingExample
 //
-//  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -22,7 +22,7 @@ struct QRCodeView: View {
     let collector: QRCodeCollector
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: PingTheme.Spacing.compact) {
             if let imageData = collector.imageData,
                let uiImage = UIImage(data: imageData) {
                 Image(uiImage: uiImage)
@@ -36,21 +36,18 @@ struct QRCodeView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 120, height: 120)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(PingTheme.Color.contentSecondary)
                 Text("QR code unavailable")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .pingCaptionText()
             }
 
             if !collector.fallbackText.isEmpty {
                 Text(collector.fallbackText)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                    .pingCaptionText()
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal)
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 8)
+        .padding(.vertical, PingTheme.Spacing.small)
     }
 }

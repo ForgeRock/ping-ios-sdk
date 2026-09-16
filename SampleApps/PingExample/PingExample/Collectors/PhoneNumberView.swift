@@ -73,7 +73,10 @@ struct PhoneNumberView: View {
     @State private var isValid: Bool = true
     @State private var expanded: Bool = false
     @State private var selectedCountry: Country?
-    
+
+    private let countryCodeColumnWidth: CGFloat = 84
+    private let extensionColumnWidth: CGFloat = 80
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -112,17 +115,16 @@ struct PhoneNumberView: View {
                         }
                         return (codeNumber == nil) ? "Select an option" : "+" + codeNumber!
                     }())
-                        .foregroundColor((selectedCountry?.countryCodeNumber ?? "").isEmpty ? .gray : .primary)
+                        .foregroundStyle((selectedCountry?.countryCodeNumber ?? "").isEmpty ? PingTheme.Color.contentSecondary : PingTheme.Color.contentPrimary)
+                        .lineLimit(1)
                     Image(systemName: "chevron.down")
                         .rotationEffect(Angle(degrees: expanded ? 180 : 0))
-                        .foregroundStyle(Color.themeButtonBackground)
+                        .foregroundStyle(PingTheme.Color.actionPrimary)
                 }
-                .padding()
-                .frame(width: 100)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(isValid ? Color.gray : Color.red, lineWidth: 1)
-                )
+                .frame(width: countryCodeColumnWidth)
+                .pingTextFieldStyle(showsError: !isValid)
+                // The frame sits OUTSIDE the field style so `countryCodeColumnWidth`
+                // is the column's outer width (the style's fieldPadding stays inside).
             }
             TextField(
                 field.required ? "\(field.label)*" : field.label,
@@ -131,11 +133,7 @@ struct PhoneNumberView: View {
             .keyboardType(.phonePad)
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(isValid ? Color.gray : Color.red, lineWidth: 1)
-            )
+            .pingTextFieldStyle(showsError: !isValid)
             .onAppear(perform: {
                 text = field.phoneNumber
                 extensionText = field.extension
@@ -153,12 +151,8 @@ struct PhoneNumberView: View {
                 .keyboardType(.phonePad)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
-                .padding()
-                .frame(width: 80)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray, lineWidth: 1)
-                )
+                .pingTextFieldStyle(showsError: false)
+                .frame(width: extensionColumnWidth)
                 .onChange(of: extensionText) { newValue in
                     field.extension = newValue
                     onNodeUpdated()
@@ -166,7 +160,7 @@ struct PhoneNumberView: View {
             }
         }
             if !isValid {
-                ErrorMessageView(errors: field.validate().map { $0.errorMessage }.sorted())
+                PingFieldMessages(errorMessages: field.validate().map { $0.errorMessage }.sorted())
             }
         }
         .onChange(of: validationViewModel.shouldValidate) { newValue in
@@ -174,7 +168,7 @@ struct PhoneNumberView: View {
                 isValid = field.validate().isEmpty
             }
         }
-        .padding()
+        .padding(.vertical, PingTheme.Spacing.small)
     }
 }
 

@@ -25,17 +25,16 @@ struct ContinueNodeView: View {
     @EnvironmentObject var validationViewModel: ValidationViewModel
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.medium) {
             Text(continueNode.name)
-                .font(.largeTitle)
-                .fontWeight(.bold)
+                .pingScreenTitle()
                 .frame(maxWidth: .infinity, alignment: .center)
-                .foregroundStyle(Color.gray)
+                .foregroundStyle(PingTheme.Color.contentPrimary)
             Text(continueNode.description)
-                .font(.subheadline)
+                .pingBodySecondary()
                 .frame(maxWidth: .infinity, alignment: .center)
-                .foregroundStyle(Color.gray)
-            
+                .foregroundStyle(PingTheme.Color.contentSecondary)
+
             Divider()
             
             ForEach(continueNode.collectors, id: \.id) { collector in
@@ -112,15 +111,11 @@ struct ContinueNodeView: View {
             if !continueNode.collectors.contains(where: { $0 is FlowCollector || $0 is SubmitCollector || $0 is DeviceRegistrationCollector || $0 is DeviceAuthenticationCollector || $0 is FidoRegistrationCollector || $0 is FidoAuthenticationCollector || $0 is PollingCollector || $0 is MetadataCollector }) {
                 Button(action: { onNext(false) }) {
                     Text("Next")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.themeButtonBackground)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
                 }
-                .padding(.top, 16)
+                .buttonStyle(.pingPrimary)
+                .padding(.top, PingTheme.Spacing.medium)
             }
         }
-        .padding()
+        .padding(PingTheme.Spacing.screen)
     }
 }

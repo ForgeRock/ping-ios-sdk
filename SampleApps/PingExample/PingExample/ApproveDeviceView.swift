@@ -2,7 +2,7 @@
 //  ApproveDeviceView.swift
 //  PingExample
 //
-//  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -73,26 +73,24 @@ struct ApproveDeviceView: View {
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
-                VStack(spacing: 24) {
-                    VStack(spacing: 8) {
+                VStack(spacing: PingTheme.Spacing.large) {
+                    VStack(spacing: PingTheme.Spacing.small) {
                         Image(systemName: "checkmark.shield.fill")
-                            .font(.system(size: 56))
-                            .foregroundColor(.themeButtonBackground)
+                            .font(.system(size: PingTheme.Control.Glyph.hero))
+                            .foregroundStyle(PingTheme.Color.actionPrimary)
 
                         Text("Approve on This Device")
-                            .font(.system(size: 20, weight: .semibold))
+                            .pingScreenTitle()
 
                         Text("Paste the verification URL from another device (including the user_code) and tap Approve to authorize it here.")
-                            .font(.system(size: 14))
-                            .foregroundColor(.secondary)
+                            .pingSupportingText()
                             .multilineTextAlignment(.center)
                     }
 
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
                         HStack {
                             Text("Verification URL")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(.secondary)
+                                .pingCaptionText()
                                 .textCase(.uppercase)
 
                             Spacer()
@@ -100,13 +98,12 @@ struct ApproveDeviceView: View {
                             Button {
                                 showScanner = true
                             } label: {
-                                HStack(spacing: 4) {
+                                HStack(spacing: PingTheme.Spacing.xSmall) {
                                     Image(systemName: "qrcode.viewfinder")
-                                        .font(.system(size: 14))
                                     Text("Scan")
-                                        .font(.system(size: 12, weight: .medium))
                                 }
-                                .foregroundColor(.themeButtonBackground)
+                                .font(PingTheme.Typography.caption)
+                                .foregroundStyle(PingTheme.Color.actionPrimary)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
@@ -114,40 +111,35 @@ struct ApproveDeviceView: View {
                         ZStack(alignment: .topLeading) {
                             if verificationUri.isEmpty {
                                 Text("https://…?user_code=XXXX-XXXX")
-                                    .font(.system(size: 14, design: .monospaced))
-                                    .foregroundColor(Color(.placeholderText))
+                                    .font(PingTheme.Typography.supporting.monospaced())
+                                    .foregroundStyle(PingTheme.Color.contentTertiary)
                                     .allowsHitTesting(false)
                             }
                             NoAccessoryTextView(text: $verificationUri)
                                 .frame(minHeight: 72)
                         }
-                        .padding(8)
-                        .background(Color(.systemGray6))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .pingTextFieldStyle()
                     }
 
                     if let error = errorMessage {
-                        HStack(spacing: 8) {
+                        HStack(spacing: PingTheme.Spacing.small) {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.orange)
+                                .foregroundStyle(PingTheme.Color.statusError)
                             Text(error)
-                                .font(.system(size: 13))
-                                .foregroundColor(.secondary)
+                                .font(PingTheme.Typography.supporting)
+                                .foregroundStyle(PingTheme.Color.contentPrimary)
                         }
-                        .padding(12)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color(.systemGray6))
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .pingStatusCardStyle(tint: PingTheme.Color.statusError)
                     }
                 }
-                .padding(20)
+                .padding(PingTheme.Spacing.screen)
             }
 
             // Buttons pinned to the bottom
-            VStack(spacing: 10) {
+            VStack(spacing: PingTheme.Spacing.small) {
                 if isAuthorizing {
                     ProgressView("Opening browser…")
-                        .padding(.vertical, 8)
+                        .padding(.vertical, PingTheme.Spacing.small)
                 } else {
                     if hasDavinci {
                         approveButton(
@@ -175,12 +167,12 @@ struct ApproveDeviceView: View {
                     }
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 12)
-            .padding(.bottom, 24)
-            .background(Color(.systemGroupedBackground))
+            .padding(.horizontal, PingTheme.Spacing.screen)
+            .padding(.top, bottomBarTopPadding)
+            .padding(.bottom, bottomBarBottomPadding)
+            .background(PingTheme.Color.appBackground)
         }
-        .background(Color(.systemGroupedBackground))
+        .pingScreenBackground()
         .ignoresSafeArea(.keyboard)
         .navigationTitle("Approve Device")
         .navigationBarTitleDisplayMode(.inline)
@@ -189,28 +181,21 @@ struct ApproveDeviceView: View {
         }
     }
 
+    /// Framing padding for the bottom action bar. No shared token matches these values.
+    private let bottomBarTopPadding: CGFloat = 12
+    private let bottomBarBottomPadding: CGFloat = 24
+
     private enum ButtonStyleVariant { case primary, secondary }
 
     @ViewBuilder
     private func approveButton(title: String, icon: String, style: ButtonStyleVariant, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            HStack(spacing: 8) {
+            HStack(spacing: PingTheme.Spacing.small) {
                 Image(systemName: icon)
-                    .font(.system(size: 14))
                 Text(title)
-                    .font(.system(size: 14, weight: .semibold))
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .foregroundColor(style == .primary
-                ? .white
-                : (isUriEmpty ? Color.gray : Color.themeButtonBackground))
-            .background(style == .primary
-                ? (isUriEmpty ? Color.gray.opacity(0.4) : Color.themeButtonBackground)
-                : Color.themeButtonBackground.opacity(0.12))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(PingActionButtonStyle(role: style == .primary ? .primary : .secondary))
         .disabled(isUriEmpty)
     }
 
