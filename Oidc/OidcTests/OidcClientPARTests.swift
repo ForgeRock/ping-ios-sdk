@@ -480,8 +480,8 @@ final class OidcClientPARTests: XCTestCase {
         // Explicitly typed as the non-async signature: an unqualified call here would resolve to
         // the async overload instead (Swift prefers `async` when calling from an `async` context),
         // defeating the point of this test.
-        let syncGenerateAuthorizeUrl: ([String: String]?) throws -> URL = oidcClient.generateAuthorizeUrl
-        let url = try syncGenerateAuthorizeUrl(nil)
+        let syncGenerateAuthorizeUrl: ([String: String]?, [AuthorizationDetail]?) throws -> URL = oidcClient.generateAuthorizeUrl
+        let url = try syncGenerateAuthorizeUrl(nil, nil)
 
         let urlString = url.absoluteString
         XCTAssertTrue(urlString.contains(MockAPIEndpoint.authorization.url.absoluteString), "Sync overload should build the standard authorize URL")

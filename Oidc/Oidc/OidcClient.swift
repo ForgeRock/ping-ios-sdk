@@ -38,17 +38,28 @@ public class OidcClient {
     ///   URL query string. To use PAR, call the `async` overload
     ///   `generateAuthorizeUrl(customParams:) async throws -> URL` instead.
     ///
-    /// - Parameter customParams: Custom parameters to include in the authorization request.
+    /// - Parameters:
+    ///   - customParams: Custom parameters to include in the authorization request.
+    ///   - authorizationDetails: RFC 9396 Rich Authorization Details to include in the authorization
+    ///     request. Serialized and merged in before `customParams` is applied. This overload has no
+    ///     PAR support, so both `customParams` and `authorizationDetails` always land on the returned
+    ///     URL's query string. An empty array is treated as unset (a config-level
+    ///     `authorizationDetails` value would still apply).
     /// - Returns: The fully-built authorization URL.
-    /// - Throws: `OidcError.networkError` if the HTTP client or URL cannot be resolved.
-    public func generateAuthorizeUrl(customParams: [String: String]? = nil) throws -> URL {
+    /// - Throws: `OidcError.networkError` if the HTTP client or URL cannot be resolved, or any error
+    ///   from serializing `authorizationDetails`.
+    public func generateAuthorizeUrl(customParams: [String: String]? = nil, authorizationDetails: [AuthorizationDetail]? = nil) throws -> URL {
         guard let httpClient = config.httpClient else {
             throw OidcError.networkError(message: "HTTP client not found")
         }
         var request = httpClient.request()
         let generatedPkce = Pkce.generate()
         self.pkce = generatedPkce
-        request = config.populateStandardAuthorizeRequest(request: request, pkce: generatedPkce, responseMode: OidcClient.Constants.query)
+        var extraParameters: [String: String] = [:]
+        if let authorizationDetails, !authorizationDetails.isEmpty {
+            extraParameters[OidcClient.Constants.authorization_details] = try AuthorizationDetail.wireValue(authorizationDetails)
+        }
+        request = try config.populateStandardAuthorizeRequest(request: request, pkce: generatedPkce, responseMode: OidcClient.Constants.query, extraParameters: extraParameters)
         if let customParams = customParams {
             for parameter in customParams {
                 request.setParameter(name: parameter.key, value: parameter.value)
@@ -69,11 +80,16 @@ public class OidcClient {
     ///   is checked. Without this, a config with `par == true` but no prior discovery would silently
     ///   fall back to the standard flow — emitting every `additionalParameters` value onto the
     ///   returned URL's query string instead of the PAR POST body.
-    /// - Parameter customParams: Custom parameters to include in the authorization request. These are
-    ///   applied to the URL *after* PAR population, so they always end up on the front-channel query
-    ///   string — never in the PAR body. Use `OidcClientConfig.additionalParameters` instead for any
-    ///   value that must be kept off the URL when PAR is enabled.
-    public func generateAuthorizeUrl(customParams: [String: String]? = nil) async throws -> URL {
+    /// - Parameters:
+    ///   - customParams: Custom parameters to include in the authorization request. These are
+    ///     applied to the URL *after* PAR population, so they always end up on the front-channel query
+    ///     string — never in the PAR body. Use `OidcClientConfig.additionalParameters` instead for any
+    ///     value that must be kept off the URL when PAR is enabled.
+    ///   - authorizationDetails: RFC 9396 Rich Authorization Details to include in the authorization
+    ///     request. Unlike `customParams`, this is applied *before* PAR population, so it correctly
+    ///     reaches the PAR POST body when PAR is enabled. An empty array is treated as unset (a
+    ///     config-level `authorizationDetails` value would still apply).
+    public func generateAuthorizeUrl(customParams: [String: String]? = nil, authorizationDetails: [AuthorizationDetail]? = nil) async throws -> URL {
         try await config.oidcInitialize()
         guard let httpClient = config.httpClient else {
             throw OidcError.networkError(message: "HTTP client not found")
@@ -81,7 +97,11 @@ public class OidcClient {
         var request = httpClient.request()
         let generatedPkce = Pkce.generate()
         self.pkce = generatedPkce
-        request = try await config.populateRequest(request: request, pkce: generatedPkce, responseMode: OidcClient.Constants.query)
+        var extraParameters: [String: String] = [:]
+        if let authorizationDetails, !authorizationDetails.isEmpty {
+            extraParameters[OidcClient.Constants.authorization_details] = try AuthorizationDetail.wireValue(authorizationDetails)
+        }
+        request = try await config.populateRequest(request: request, pkce: generatedPkce, responseMode: OidcClient.Constants.query, extraParameters: extraParameters)
         if let customParams = customParams {
             for parameter in customParams {
                 request.setParameter(name: parameter.key, value: parameter.value)
@@ -395,13 +415,16 @@ extension OidcClientConfig {
     /// This function populates all required and optional OAuth2/OIDC parameters for an authorization request.
     /// - Parameters:
     ///   - pkce: PKCE parameters for enhanced security.
-    ///   - extraParameters: Additional parameters specific to this authorization request.
+    ///   - extraParameters: Additional parameters specific to this authorization request. If this
+    ///     contains an `authorization_details` entry, it takes precedence over the config-level
+    ///     `authorizationDetails` property for that single parameter.
     ///   - onParam: Callback function to handle each parameter (name, value) pair.
+    /// - Throws: Any error from serializing `authorizationDetails`.
     public func buildAuthorizeParams(
         pkce: Pkce,
         extraParameters: [String: String] = [:],
         onParam: (String, String) -> Void
-    ) {
+    ) throws {
         onParam(OidcClient.Constants.client_id, clientId)
         onParam(OidcClient.Constants.response_type, OidcClient.Constants.code)
         onParam(OidcClient.Constants.scope, scopes.joined(separator: " "))
@@ -442,8 +465,19 @@ extension OidcClientConfig {
         if let uiLocales = uiLocales {
             onParam(OidcClient.Constants.ui_locales, uiLocales)
         }
-        
-        for (key, value) in extraParameters {
+
+        // Emit `authorization_details` at MOST ONCE: a per-transaction value in `extraParameters`
+        // wins over the config-level typed `authorizationDetails`. This matters because the
+        // standard-flow sink (`Request.setParameter`) APPENDS a query item on a repeated key
+        // rather than overwriting — calling `onParam` twice for the same key would duplicate the
+        // parameter on the front-channel URL instead of replacing it.
+        if let overrideValue = extraParameters[OidcClient.Constants.authorization_details] {
+            onParam(OidcClient.Constants.authorization_details, overrideValue)
+        } else if let authorizationDetails, !authorizationDetails.isEmpty {
+            onParam(OidcClient.Constants.authorization_details, try AuthorizationDetail.wireValue(authorizationDetails))
+        }
+
+        for (key, value) in extraParameters where key != OidcClient.Constants.authorization_details {
             onParam(key, value)
         }
     }
@@ -455,13 +489,14 @@ extension OidcClientConfig {
     internal func populateStandardAuthorizeRequest(
         request: Request,
         pkce: Pkce,
-        responseMode: String
-    ) -> Request {
+        responseMode: String,
+        extraParameters: [String: String] = [:]
+    ) throws -> Request {
         request.url = openId?.authorizationEndpoint ?? ""
         if !responseMode.isEmpty {
             request.setParameter(name: OidcClient.Constants.response_mode, value: responseMode)
         }
-        buildAuthorizeParams(pkce: pkce) { key, value in
+        try buildAuthorizeParams(pkce: pkce, extraParameters: extraParameters) { key, value in
             request.setParameter(name: key, value: value)
         }
         return request
@@ -476,11 +511,14 @@ extension OidcClientConfig {
     ///   - request: The request to populate.
     ///   - pkce: PKCE parameters for enhanced security.
     ///   - responseMode: The response mode to use.
+    ///   - extraParameters: Additional parameters for this authorization request, applied before
+    ///     PAR population so they correctly reach the PAR POST body when PAR is enabled.
     /// - Returns: The populated request ready for execution.
     public func populateRequest(
         request: Request,
         pkce: Pkce,
-        responseMode: String = OidcClient.Constants.piflow
+        responseMode: String = OidcClient.Constants.piflow,
+        extraParameters: [String: String] = [:]
     ) async throws -> Request {
         if par, let parEndpoint = openId?.pushedAuthorizationRequestEndpoint {
             // PAR flow: POST all params to PAR endpoint
@@ -488,10 +526,10 @@ extension OidcClientConfig {
             if !responseMode.isEmpty {
                 formParams[OidcClient.Constants.response_mode] = responseMode
             }
-            buildAuthorizeParams(pkce: pkce) { key, value in
+            try buildAuthorizeParams(pkce: pkce, extraParameters: extraParameters) { key, value in
                 formParams[key] = value
             }
-            
+
             guard let httpClient else {
                 throw OidcError.networkError(message: "HTTP client not found")
             }
@@ -522,7 +560,7 @@ extension OidcClientConfig {
             request.setParameter(name: OidcClient.Constants.client_id, value: clientId)
         } else {
             // Standard flow: all params on the authorization URL
-            _ = populateStandardAuthorizeRequest(request: request, pkce: pkce, responseMode: responseMode)
+            _ = try populateStandardAuthorizeRequest(request: request, pkce: pkce, responseMode: responseMode, extraParameters: extraParameters)
         }
         return request
     }
@@ -530,6 +568,7 @@ extension OidcClientConfig {
 
 
 public extension OidcClient.Constants {
+    static let authorization_details = "authorization_details"
     static let response_mode = "response_mode"
     static let response_type = "response_type"
     static let scope = "scope"

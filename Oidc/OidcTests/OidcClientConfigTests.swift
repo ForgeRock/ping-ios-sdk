@@ -627,9 +627,10 @@ final class OidcClientConfigTests: XCTestCase {
         oidcClientConfig.uiLocales = "uiLocales"
         oidcClientConfig.acrValues = "acrValues"
         oidcClientConfig.additionalParameters = ["param": "value"]
+        oidcClientConfig.authorizationDetails = [AuthorizationDetail(type: "payment_initiation")]
         oidcClientConfig.httpClient = MockURLProtocol.makeClient()
         oidcClientConfig.par = true
-        
+
         let clonedConfig = oidcClientConfig.clone()
         
         XCTAssertEqual(oidcClientConfig.openId.debugDescription, clonedConfig.openId.debugDescription)
@@ -646,6 +647,7 @@ final class OidcClientConfigTests: XCTestCase {
         XCTAssertEqual(oidcClientConfig.uiLocales, clonedConfig.uiLocales)
         XCTAssertEqual(oidcClientConfig.acrValues, clonedConfig.acrValues)
         XCTAssertEqual(oidcClientConfig.additionalParameters, clonedConfig.additionalParameters)
+        XCTAssertEqual(oidcClientConfig.authorizationDetails, clonedConfig.authorizationDetails)
         XCTAssertEqual(oidcClientConfig.httpClient.debugDescription, clonedConfig.httpClient.debugDescription)
         XCTAssertEqual(oidcClientConfig.par, clonedConfig.par)
     }
@@ -667,6 +669,7 @@ final class OidcClientConfigTests: XCTestCase {
         otherConfig.uiLocales = "uiLocales"
         otherConfig.acrValues = "acrValues"
         otherConfig.additionalParameters = ["param": "value"]
+        otherConfig.authorizationDetails = [AuthorizationDetail(type: "payment_initiation")]
         otherConfig.httpClient = MockURLProtocol.makeClient()
         otherConfig.par = true
         
@@ -685,8 +688,90 @@ final class OidcClientConfigTests: XCTestCase {
         XCTAssertEqual(otherConfig.uiLocales, oidcClientConfig.uiLocales)
         XCTAssertEqual(otherConfig.acrValues, oidcClientConfig.acrValues)
         XCTAssertEqual(otherConfig.additionalParameters, oidcClientConfig.additionalParameters)
+        XCTAssertEqual(otherConfig.authorizationDetails, oidcClientConfig.authorizationDetails)
         XCTAssertEqual(otherConfig.httpClient.debugDescription, oidcClientConfig.httpClient.debugDescription)
         XCTAssertEqual(otherConfig.par, oidcClientConfig.par)
+    }
+
+    // MARK: - authorizationDetails JSON config (SDKS-5425)
+
+    /// The JSON config schema accepts `authorizationDetails` as an array of RFC 9396 objects.
+    func testApplyJsonWithAuthorizationDetailsParsesCorrectly() throws {
+        let json: [String: Any] = [
+            "clientId": "json-client",
+            "discoveryEndpoint": "https://example.com/.well-known/openid-configuration",
+            "redirectUri": "http://localhost/callback",
+            "scopes": ["openid"],
+            "authorizationDetails": [
+                ["type": "payment_initiation",
+                 "locations": ["https://example.com/payments"],
+                 "instructedAmount": ["currency": "EUR", "amount": "123.50"]]
+            ]
+        ]
+
+        try oidcClientConfig.apply(json: json)
+
+        let details = try XCTUnwrap(oidcClientConfig.authorizationDetails)
+        XCTAssertEqual(details.count, 1)
+        XCTAssertEqual(details[0].type, "payment_initiation")
+        XCTAssertEqual(details[0].locations, ["https://example.com/payments"])
+        XCTAssertEqual(details[0].additionalFields["instructedAmount"],
+                       .object(["currency": .string("EUR"), "amount": .string("123.50")]))
+    }
+
+    /// A malformed `authorizationDetails` array throws `JsonConfigError.invalidType` and leaves
+    /// the config unmutated (mirroring the apply(json:) failure-atomicity tests above).
+    func testApplyJsonWithInvalidAuthorizationDetailsThrows() throws {
+        let json: [String: Any] = [
+            "clientId": "json-client",
+            "discoveryEndpoint": "https://example.com/.well-known/openid-configuration",
+            "redirectUri": "http://localhost/callback",
+            "scopes": ["openid"],
+            "authorizationDetails": [["noTypeField": "missing required type"]]
+        ]
+
+        XCTAssertThrowsError(try oidcClientConfig.apply(json: json)) { error in
+            guard case JsonConfigError.invalidType(let field, _) = error else {
+                XCTFail("Expected JsonConfigError.invalidType, got \(error)")
+                return
+            }
+            XCTAssertTrue(field.contains("authorizationDetails"))
+        }
+        XCTAssertNil(oidcClientConfig.authorizationDetails, "a rejected apply(json:) must not mutate the config")
+    }
+
+    /// A non-array value (e.g. a plain object) under `authorizationDetails` is rejected.
+    func testApplyJsonWithNonArrayAuthorizationDetailsThrows() throws {
+        let json: [String: Any] = [
+            "clientId": "json-client",
+            "discoveryEndpoint": "https://example.com/.well-known/openid-configuration",
+            "redirectUri": "http://localhost/callback",
+            "scopes": ["openid"],
+            "authorizationDetails": [["type": "payment_initiation"], "not-a-dict"]
+        ]
+
+        XCTAssertThrowsError(try oidcClientConfig.apply(json: json)) { error in
+            guard case JsonConfigError.invalidType = error else {
+                XCTFail("Expected JsonConfigError.invalidType, got \(error)")
+                return
+            }
+        }
+        XCTAssertNil(oidcClientConfig.authorizationDetails)
+    }
+
+    /// An empty `authorizationDetails` array is accepted and stores an empty list (no
+    /// `authorization_details` parameter is emitted for an empty list).
+    func testApplyJsonWithEmptyAuthorizationDetailsArray() throws {
+        let json: [String: Any] = [
+            "clientId": "json-client",
+            "discoveryEndpoint": "https://example.com/.well-known/openid-configuration",
+            "redirectUri": "http://localhost/callback",
+            "scopes": ["openid"],
+            "authorizationDetails": [[String: Any]]()
+        ]
+
+        try oidcClientConfig.apply(json: json)
+        XCTAssertEqual(oidcClientConfig.authorizationDetails, [])
     }
 }
 

@@ -20,6 +20,8 @@ struct AccessTokenResult {
     var isLoading: Bool = true
     /// Whether a session exists despite the token error (enables Get Token action).
     var hasSession: Bool = false
+    /// RFC 9396 granted authorization details echoed by the server, if any.
+    var authorizationDetails: [AuthorizationDetail]? = nil
 }
 
 /// Fetches, refreshes, revokes, and re-fetches access tokens for all three auth flows.
@@ -75,7 +77,7 @@ class AccessTokenViewModel: ObservableObject {
         case .success(let token):
             let description = String(describing: token)
             LogManager.standard.i("\(tab.rawValue) AccessToken: \(description)")
-            return AccessTokenResult(info: description, isLoading: false)
+            return AccessTokenResult(info: description, isLoading: false, authorizationDetails: token.authorizationDetails)
         case .failure(let error):
             LogManager.standard.e("", error: error)
             return AccessTokenResult(info: "", error: error.localizedDescription, isLoading: false)
@@ -92,7 +94,7 @@ class AccessTokenViewModel: ObservableObject {
         case .success(let token):
             let description = String(describing: token)
             LogManager.standard.i("\(tab.rawValue) Refreshed: \(description)")
-            results[tab] = AccessTokenResult(info: description, isLoading: false)
+            results[tab] = AccessTokenResult(info: description, isLoading: false, authorizationDetails: token.authorizationDetails)
         case .failure(let error):
             LogManager.standard.e("Refresh failed", error: error)
             results[tab] = AccessTokenResult(info: "", error: error.localizedDescription, isLoading: false)

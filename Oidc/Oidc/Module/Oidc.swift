@@ -52,8 +52,15 @@ public class OidcModule {
             context.flowContext.set(key: SharedContext.Keys.callbackURLSchemeKey, value: url?.scheme ?? "https")
             context.flowContext.set(key: SharedContext.Keys.redirectUriKey, value: config.redirectUri)
 
-            let oidcRequest = try await config.populateRequest(request: request, pkce: pkce, responseMode: "")
-            
+            var extraParameters: [String: String] = [:]
+            if let authorizationDetails = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcAuthorizationDetails) as? [AuthorizationDetail],
+               !authorizationDetails.isEmpty {
+                extraParameters[OidcClient.Constants.authorization_details] = try AuthorizationDetail.wireValue(authorizationDetails)
+            }
+            let oidcRequest = try await config.populateRequest(request: request, pkce: pkce, responseMode: "", extraParameters: extraParameters)
+
+            // Unchanged, documented legacy pitfall: additionalParameters is still applied AFTER
+            // populateRequest, so it still leaks to the front-channel URL even under PAR.
             let parameters = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcParameters) as? [String: String] ?? [:]
             for parameter in parameters {
                 oidcRequest.setParameter(name: parameter.key, value: parameter.value)
@@ -177,5 +184,8 @@ extension SharedContext.Keys {
     
     /// The key used to store additional parameters for the OIDC flow.
     static let oidcParameters = "com.pingidentity.oidcWeb.parameters"
+
+    /// The key used to store per-transaction RFC 9396 authorization_details for the OIDC flow.
+    static let oidcAuthorizationDetails = "com.pingidentity.oidcWeb.authorizationDetails"
 }
 

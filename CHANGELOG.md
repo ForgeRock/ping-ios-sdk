@@ -4,6 +4,7 @@
 - Split the Recognize sample into a dedicated `PingWithRecognize.xcworkspace` (requires the Cloudsmith `keyless` registry); the core `Ping.xcworkspace` no longer references Recognize or Keyless and builds without registry credentials [P1RECMOB-3476]
 
 #### Added
+- Added RFC 9396 (Rich Authorization Requests) support to `PingOidc`. `Token` now decodes the granted `authorization_details` from the token response (available as `Token.authorizationDetails`, and preserved through keychain storage and refresh). Authorize requests accept typed authorization details at three levels: config-wide via `OidcClientConfig.authorizationDetails`, per call via the new `authorizationDetails` parameter on `OidcClient.generateAuthorizeUrl`, and per login via `OidcOptions.authorizationDetails` on the OIDC workflow module — all serialized into the single `authorization_details` parameter and carried in the PAR POST body when PAR is enabled. A malformed `authorizationDetails` array in the unified JSON configuration is rejected with `JsonConfigError.invalidType`. Note: `buildAuthorizeParams`, `populateStandardAuthorizeRequest`, and `populateRequest` now throw [SDKS-5423, SDKS-5425]
 - Added `ImageCollector` to support image display in DaVinci forms [SDKS-5143]
 - Added `MetadataCollector` to support the DaVinci SDK Integrator connector's pause/resume model, allowing the app to invoke on-device SDKs and return a result or error before the flow continues [SDKS-5142]
 - Added `trigger` and `isAutomatic` to the DaVinci FIDO collectors [SDKS-4552]
