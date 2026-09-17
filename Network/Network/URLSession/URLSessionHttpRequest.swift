@@ -57,19 +57,6 @@ public class URLSessionHttpRequest: HttpRequest, @unchecked Sendable {
         urlRequest.setValue(NetworkConstants.requestedPlatformValue, forHTTPHeaderField: NetworkConstants.headerRequestedPlatform)
     }
 
-    /// Adds a query parameter to the request URL.
-    ///
-    /// Multiple calls with the same parameter name will add multiple values.
-    ///
-    /// - Parameters:
-    ///   - name: The parameter name.
-    ///   - value: The parameter value.
-    public func setParameter(name: String, value: String) {
-        var items = getQueryParameters()
-        items.append(URLQueryItem(name: name, value: value))
-        setQueryParameters(items)
-    }
-
     /// Sets a header value for the request.
     ///
     /// If the header already exists (case-insensitive comparison), it will be replaced.
@@ -297,16 +284,39 @@ extension URLSessionHttpRequest {
         return items
     }
     
-    // Helper to update urlRequest.url with new query parameters
+    /// Adds a query parameter to the request URL.
+    ///
+    /// Multiple calls with the same parameter name will add multiple values.
+    ///
+    /// - Note: `+` in the value is percent-encoded as `%2B`. `URLQueryItem` leaves it raw,
+    ///   and servers decode `application/x-www-form-urlencoded` values with `+` meaning
+    ///   space — so a literal `+` (e.g. in phone numbers or JSON payloads) would otherwise
+    ///   be silently corrupted to a space.
+    ///
+    /// - Parameters:
+    ///   - name: The parameter name.
+    ///   - value: The parameter value.
+    public func setParameter(name: String, value: String) {
+        var items = getQueryParameters()
+        items.append(URLQueryItem(name: name, value: value))
+        setQueryParameters(items)
+    }
+
+    // Helper to update urlRequest.url with new query parameters.
+    //
+    // `URLQueryItem` leaves `+` unencoded in values, but form-urlencoded (and many
+    // query-string) decoders treat `+` as a space — a literal `+` in a value (phone
+    // numbers, JSON payloads, base64 padding) would be silently corrupted. Re-encode
+    // the query string with RFC 3986 rules (`+` → `%2B`) before applying it.
     private func setQueryParameters(_ items: [URLQueryItem]) {
-        guard let url = urlRequest.url else { return }
+        guard let url = urlRequest.url, !items.isEmpty else { return }
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        components?.queryItems = items.isEmpty ? nil : items
+        components?.percentEncodedQuery = rfc3986EncodedQuery(items)
         if let newURL = components?.url {
             urlRequest.url = newURL
         }
     }
-    
+
     // Helper to get current cookies from Cookie header
     private func getCookies() -> [String] {
         guard let cookieHeader = urlRequest.value(forHTTPHeaderField: NetworkConstants.headerCookie) else {
@@ -338,9 +348,30 @@ extension URLSessionHttpRequest {
     // Helper to set form parameters in body
     private func setFormParameters(_ items: [URLQueryItem]) {
         var components = URLComponents()
-        components.queryItems = items
+        components.percentEncodedQuery = rfc3986EncodedQuery(items)
         if let data = components.percentEncodedQuery?.data(using: .utf8) {
             urlRequest.httpBody = data
         }
     }
+
+    /// Serializes query items into a percent-encoded query string with RFC 3986 rules:
+    /// everything except `A-Z a-z 0-9 - . _ ~` is percent-encoded — including `+`
+    /// (which `URLComponents.queryItems` leaves raw, but form decoders read as space).
+    /// The result is safe to assign to `URLComponents.percentEncodedQuery`.
+    private func rfc3986EncodedQuery(_ items: [URLQueryItem]) -> String {
+        func encode(_ raw: String) -> String {
+            raw.addingPercentEncoding(withAllowedCharacters: Self.rfc3986AllowedCharacters) ?? raw
+        }
+        return items.map { item in
+            let value = encode(item.value ?? "")
+            return "\(encode(item.name))=\(value)"
+        }.joined(separator: "&")
+    }
+
+    /// Characters permitted unescaped in an RFC 3986 query component.
+    private static let rfc3986AllowedCharacters: CharacterSet = {
+        var set = CharacterSet.alphanumerics
+        set.insert(charactersIn: "-._~")
+        return set
+    }()
 }

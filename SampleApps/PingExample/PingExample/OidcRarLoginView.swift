@@ -33,9 +33,14 @@ struct OidcRarLoginView: View {
                     loginButton
                     switch viewModel.state {
                     case .success:
-                        EmptyView().onAppear {
+                        // A real (empty) container view, NOT EmptyView: EmptyView produces
+                        // nothing in the hierarchy so its onAppear never fires, and the
+                        // navigation to the token screen would never happen.
+                        VStack {}.onAppear {
                             path.removeLast()
                             path.append(.oidcToken)
+                            // Reset so returning to this screen doesn't immediately bounce back.
+                            viewModel.reset()
                         }
                     case .failure(let error):
                         ErrorView(title: "OIDC Error", message: error.localizedDescription)
@@ -106,10 +111,7 @@ struct OidcRarLoginView: View {
     }
 
     private var jsonObjectCount: Int {
-        switch RarJson.decode(viewModel.jsonText) {
-        case .success(let details): return details.count
-        case .failure: return 0
-        }
+        viewModel.decodedDetails()?.count ?? 0
     }
 
     private var loginButton: some View {
@@ -129,6 +131,6 @@ struct OidcRarLoginView: View {
             .frame(maxWidth: .infinity)
         }
         .buttonStyle(.borderedProminent)
-        .disabled(viewModel.validate() == nil || viewModel.isLoading)
+        .disabled(viewModel.decodedDetails() == nil || viewModel.isLoading)
     }
 }

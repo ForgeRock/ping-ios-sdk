@@ -48,6 +48,8 @@ public class OidcModule {
             await oidcLoginFlow.user()?.revoke()
             let pkce = Pkce.generate()
             context.flowContext.set(key: SharedContext.Keys.pkceKey, value: pkce)
+            // Recorded for the Web module's callback state validation (CSRF check).
+            context.flowContext.set(key: SharedContext.Keys.stateKey, value: config.state ?? pkce.state)
             let url = URL(string: config.redirectUri)
             context.flowContext.set(key: SharedContext.Keys.callbackURLSchemeKey, value: url?.scheme ?? "https")
             context.flowContext.set(key: SharedContext.Keys.redirectUriKey, value: config.redirectUri)
@@ -166,6 +168,9 @@ public enum AuthorizeError: Error, LocalizedError, Sendable {
 extension SharedContext.Keys {
     /// The key used to store the PKCE value in the shared context.
     static let pkceKey = "com.pingidentity.oidcWeb.PKCE"
+
+    /// The key used to store the expected `state` value for callback validation.
+    static let stateKey = "com.pingidentity.oidcWeb.state"
     
     /// The key used to store the callbackURLScheme value in the shared context.
     static let callbackURLSchemeKey = "com.pingidentity.oidcWeb.callbackURLScheme"

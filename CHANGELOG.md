@@ -12,6 +12,9 @@
 - Bumped `facebook-ios-sdk` to 18.1.0 [SDKS-5160]
 - `oidc.discoveryEndpoint` in the unified JSON configuration is now required only when no `oidc.openId` sub-object is supplied; an `openId` block without `discoveryEndpoint` replaces the discovery document and requires `tokenEndpoint` [SDKS-5301]
 - Added `OidcError.configurationError` to report a configuration that has neither a usable `discoveryEndpoint` nor a pre-supplied `openId` [SDKS-5301]
+- Added `OAuthAuthorizationError`, a typed error carrying the OAuth2 `error`/`error_description`/`error_uri` parameters from an authorization-redirect failure (e.g. `access_denied` when the user declines consent, RFC 6749 §4.1.2.1). It surfaces as the `cause` of `OidcError.authorizeError` from `OidcWebClient.authorize()`, from `OidcClient.extractCodeAndGetToken`, and is parseable directly via the new `OidcClient.extractOAuthError(from:)`. Browser-redirect callback URLs also no longer double-wrap errors thrown by the SDK's own authorization path [SDKS-5425]
+- The browser callback now validates the returned `state` parameter against the value sent on the authorization request (RFC 6749 §10.12 CSRF protection). A mismatch or missing state throws `OidcError.authorizeError`; no validation occurs for paths that never recorded a state [SDKS-5425]
+- A PAR (RFC 9126) response whose `request_uri` `expires_in` is missing, non-positive, or at or below 30 seconds (`OidcClient.parExpiryWarningThresholdSeconds`) now logs a warning, since consent-page dwell must fit inside the request_uri lifetime or the subsequent authorize call fails [SDKS-5423]
 
 #### Fixed
 - Fixed `QRCodeCollector` not preserving the complete QR code data URI in `content` [SDKS-5299]
@@ -22,6 +25,7 @@
 - Fixed 5xx AM responses with a parseable error body being misclassified as `FailureNode` instead of `ErrorNode`, diverging from Android [SDKS-5358]
 - Fixed `Journey.start(backchannelUri:)` not rejecting whitespace-only `authIndexType`/`authIndexValue`, diverging from Android [SDKS-5359]
 - Fixed the async `OidcClient.generateAuthorizeUrl(customParams:) async throws -> URL` silently falling back to the standard (non-PAR) flow when called before `OidcClientConfig.oidcInitialize()`, which could emit `additionalParameters` onto the returned URL instead of the PAR POST body; the synchronous overload never supported PAR and is unaffected [SDKS-5403]
+- Fixed query and form parameter values containing a literal `+` (e.g. phone numbers, JSON payloads, base64 padding) being silently decoded as spaces by the server: `URLSessionHttpRequest` now percent-encodes `+` as `%2B` (RFC 3986 encoding of the full query string) in both query parameters and `application/x-www-form-urlencoded` bodies [SDKS-5423]
 
 #### Changed
 - `OidcError` gained a `configurationError` case — exhaustive `switch` statements over `OidcError` need a new branch [SDKS-5301]

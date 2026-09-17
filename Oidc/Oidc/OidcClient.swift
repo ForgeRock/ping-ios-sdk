@@ -18,6 +18,10 @@ import PingStorage
 /// Class representing an OpenID Connect client.
 /// - Property pkce: PKCE  object used for the Authorization call.
 public class OidcClient {
+    /// PAR `request_uri` lifetimes at or below this many seconds trigger a warning log
+    /// (RFC 9126 §4 — the URI must be consumed before expiry; AIC defaults to ~60s).
+    static let parExpiryWarningThresholdSeconds = 30
+
     public var pkce: Pkce?
     private let config: OidcClientConfig
     private let logger: Logger
@@ -114,9 +118,46 @@ public class OidcClient {
         return url
     }
     
+    /// Extracts an OAuth2 error response from an authorization redirect URL, if present.
+    /// Checks both the query string and the fragment (some servers deliver errors via
+    /// `response_mode=fragment`). Returns nil when the URL carries no `error` parameter.
+    /// - Parameter url: The callback URL to inspect.
+    /// - Returns: The parsed `OAuthAuthorizationError`, or nil if this is not an error redirect.
+    public static func extractOAuthError(from url: URL) -> OAuthAuthorizationError? {
+        func errorParams(from components: NSURLComponents) -> (code: String, description: String?, uri: String?)? {
+            guard let code = components.queryItems?.filter({ $0.name == Constants.error }).first?.value else {
+                return nil
+            }
+            let description = components.queryItems?.filter({ $0.name == Constants.error_description }).first?.value
+            let uri = components.queryItems?.filter({ $0.name == Constants.error_uri }).first?.value
+            return (code, description, uri)
+        }
+
+        // Query-string redirect (the standard `response_mode=query` shape).
+        if let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true),
+           let params = errorParams(from: components) {
+            return OAuthAuthorizationError(code: params.code, errorDescription: params.description, errorUri: params.uri)
+        }
+
+        // Fragment redirect (e.g. `response_mode=fragment`): re-parse `#...` as a query.
+        if let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true), let fragment = components.percentEncodedFragment, !fragment.isEmpty {
+            let fragmentComponents = NSURLComponents()
+            fragmentComponents.percentEncodedQuery = fragment
+            if let params = errorParams(from: fragmentComponents) {
+                return OAuthAuthorizationError(code: params.code, errorDescription: params.description, errorUri: params.uri)
+            }
+        }
+
+        return nil
+    }
+
     /// Extracts the code from the URL and exchanges it for an access token.
     ///  - Parameter url: The URL to extract the code from.
     public func extractCodeAndGetToken(from url: URL) async throws -> Token {
+        // Surface OAuth2 error redirects (e.g. `access_denied`) with their real code/description.
+        if let oauthError = OidcClient.extractOAuthError(from: url) {
+            throw OidcError.authorizeError(cause: oauthError, message: "Authorization failed: \(oauthError.formattedMessage)")
+        }
         if let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true), let code = components.queryItems?.filter({$0.name == Constants.code}).first?.value, let pcke = self.pkce {
             let authCode = AuthCode(code: code, codeVerifier: pcke.codeVerifier)
             return try await self.exchangeToken(authCode)
@@ -397,6 +438,7 @@ public class OidcClient {
     
     /// Represents various constants used in OIDC requests
     public enum Constants {
+        public static let expires_in = "expires_in"
         public static let client_id = "client_id"
         public static let grant_type = "grant_type"
         public static let refresh_token = "refresh_token"
@@ -550,7 +592,19 @@ extension OidcClientConfig {
             guard let requestUri = json[OidcClient.Constants.request_uri] as? String else {
                 throw OidcError.authorizeError(message: "PAR response missing required 'request_uri' field")
             }
-            
+
+            // RFC 9126 §4: the request_uri expires after `expires_in` seconds. Anything that
+            // must happen between the PAR POST and the authorize call (a consent-page dwell,
+            // user interaction) has to fit inside that window — warn when the server grants
+            // a short one so integrators can correlate timeouts with PAR expiry.
+            if let expiresIn = json[OidcClient.Constants.expires_in] as? Int {
+                if expiresIn <= 0 {
+                    logger.w("PAR request_uri has a non-positive expires_in (\(expiresIn)) — the request_uri may already be expired", error: nil)
+                } else if expiresIn < OidcClient.parExpiryWarningThresholdSeconds {
+                    logger.w("PAR request_uri expires in only \(expiresIn)s — any consent-page dwell or user interaction must complete within this window or the authorize call will fail", error: nil)
+                }
+            }
+
             // Build authorize URL with only request_uri and client_id
             request.url = openId?.authorizationEndpoint ?? ""
             if !responseMode.isEmpty {
@@ -569,6 +623,9 @@ extension OidcClientConfig {
 
 public extension OidcClient.Constants {
     static let authorization_details = "authorization_details"
+    static let error = "error"
+    static let error_description = "error_description"
+    static let error_uri = "error_uri"
     static let response_mode = "response_mode"
     static let response_type = "response_type"
     static let scope = "scope"

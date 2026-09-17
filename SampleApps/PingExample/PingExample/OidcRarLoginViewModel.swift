@@ -43,7 +43,20 @@ class OidcRarLoginViewModel: ObservableObject {
         return false
     }
 
-    /// Validates the current text, returning the decoded details when valid.
+    /// Pure validation: decodes the current text without touching published state. Safe to
+    /// call from inside a view's `body` (e.g. to drive `.disabled(...)`) — unlike
+    /// `validate()`, which writes the `@Published` `validationError` and therefore must
+    /// only run from event handlers (button actions, `onChange`), never during view updates.
+    func decodedDetails() -> [AuthorizationDetail]? {
+        let trimmed = jsonText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        if case .success(let details) = RarJson.decode(trimmed) { return details }
+        return nil
+    }
+
+    /// Validates the current text and records the outcome in `validationError` for display.
+    /// Event-handler-only: it publishes, so calling it from `body` crashes SwiftUI
+    /// ("Publishing changes from within view updates is not allowed").
     func validate() -> [AuthorizationDetail]? {
         let trimmed = jsonText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
@@ -58,6 +71,12 @@ class OidcRarLoginViewModel: ObservableObject {
             validationError = error.message
             return nil
         }
+    }
+
+    /// Clears the last login result and returns the screen to its idle state.
+    func reset() {
+        state = nil
+        isLoading = false
     }
 
     /// Starts the OIDC login with per-transaction authorization details (the PAR-safe path).

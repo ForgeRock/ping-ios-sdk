@@ -24,10 +24,10 @@ let defaultConfigurations: [Configuration] = [
     Configuration(
         name: "My Journey Config", // for displaying in the list
         type: .journey,
-        clientId: "replaceWithClientId",
+        clientId: "iosClieny",
         scopes: ["openid", "profile"], // Alter the scopes based on your clients configuration
-        redirectUri: "com.example.davinci://callback",
-        discoveryEndpoint: "https://example.com/am/oauth2/realms/root/realms/alpha/.well-known/openid-configuration",
+        redirectUri: "myapp://oauth2redirect",
+        discoveryEndpoint: "https://openam-bafaloukas.forgeblocks.com/am/oauth2/realms/root/realms/alpha/.well-known/openid-configuration",
         environment: "AIC", //"PingOne" or "AIC"
         cookieName: nil, // Optional, can be nil if not used
         serverUrl: nil, // Optional, can be nil if not used
@@ -43,5 +43,18 @@ let defaultConfigurations: [Configuration] = [
     // MARK: - OIDC (Web) Configurations
     //  TODO: Add Configurations with type `.oidcWeb` here. These will be used for the OIDC sample flows. Ensure to fill in the required details such as client ID, scopes, redirect URI, discovery endpoint, and environment based on your server configuration.
 
-
+    Configuration(
+        name: "OIDC RAR", // for displaying in the list
+        type: .oidcWeb,
+        clientId: "rarClient",
+        scopes: ["openid", "profile"], // Alter the scopes based on your clients configuration
+        redirectUri: "myapp://oauth2redirect",
+        discoveryEndpoint: "https://openam-bafaloukas.forgeblocks.com/am/oauth2/realms/root/realms/alpha/.well-known/openid-configuration",
+        environment: "AIC", //"PingOne" or "AIC"
+        cookieName: nil, // Optional, can be nil if not used
+        serverUrl: nil, // Optional, can be nil if not used
+        realm: "alpha", // Optional, can be nil if not used
+        par: true,
+        //authorizationDetailsJson: "[{\"type\":\"account_information\",\"actions\":[\"list_accounts\",\"read_balances\"],\"locations\":[\"https://example.com/accounts\"],\"datatypes\":[\"balances\"]}]"
+    ),
 ]
