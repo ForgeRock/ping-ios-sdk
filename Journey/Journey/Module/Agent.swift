@@ -28,11 +28,14 @@ internal final class CreateAgent: Agent, Sendable {
     /// - Parameters:
     /// - session: The session to use for authentication.
     /// - pkce: The PKCE (Proof Key for Code Exchange) object, if available.
-    /// - cookieName: The name of the cookie to use for the session.
+    /// - cookieName: The name of the header carrying the SSO token. Falls back to
+    ///   `JourneyConstants.cookie` when blank — an empty or whitespace-only header
+    ///   name is a malformed request (the server resets the connection with `-1005`),
+    ///   and integrators can legitimately leave `JourneyConfig.cookie` unset.
     init(session: Session, pkce: Pkce?, cookieName: String) {
         self.session = session
         self.pkce = pkce
-        self.cookieName = cookieName
+        self.cookieName = cookieName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? JourneyConstants.cookie : cookieName
     }
     
     /// Provides an empty configuration for the `CreateAgent`.

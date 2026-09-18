@@ -59,6 +59,15 @@ public class JourneyConfig: WorkflowConfig, @unchecked Sendable {
     /// The cookie name used by the Journey backend.
     /// Defaults to `JourneyConstants.cookie`.
     public var cookie: String = JourneyConstants.cookie
+
+    /// The effective header name for the SSO token: `cookie`, falling back to
+    /// `JourneyConstants.cookie` when `cookie` is blank. Consumers must send the token
+    /// under this name rather than `cookie` directly — an empty or whitespace-only
+    /// header name is a malformed request that the server rejects by resetting the
+    /// connection.
+    internal var ssoHeaderName: String {
+        cookie.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? JourneyConstants.cookie : cookie
+    }
 }
 
 // Define the Journey class

@@ -20,17 +20,28 @@ extension Journey {
     /// - Return a cached user if present
     /// - If a session exists, prepare and cache a `UserDelegate` backed by `OidcUser`
     ///
+    /// The fallback `OidcUser` is never built from the module config's agent directly: the
+    /// module's initialize step installs `DefaultAgent`, whose `authorize` ALWAYS throws
+    /// ("No AuthCode is available."), so a `token()` call on a user backed by it can never
+    /// succeed. Instead the fallback swaps in a `CreateAgent` bound to the restored session —
+    /// the same agent shape the module's success handler installs — so a token fetch through
+    /// this path can actually run the backchannel authorize (PKCE + SSO-token header).
+    ///
     /// - Returns: A `User` if available, otherwise `nil`.
     public func journeyUser() async -> User? {
         try? await initialize()
-        
+
         if let cachedUser = self.sharedContext.get(key: SharedContext.Keys.userKey) as? User {
             return cachedUser
         }
-        
+
         if let session = await session() {
-            if let oidcClientConfig = self.sharedContext.get(key: SharedContext.Keys.oidcClientConfigKey) as? OidcClientConfig {
-                return await prepareUser(journey: self, user: OidcUser(config: oidcClientConfig), session: session)
+            if let moduleConfig = self.sharedContext.get(key: SharedContext.Keys.oidcClientConfigKey) as? OidcClientConfig {
+                let journeyConfig: JourneyConfig? = self.config as? JourneyConfig
+                let usableConfig = moduleConfig.clone()
+                let agent = CreateAgent(session: session, pkce: nil, cookieName: journeyConfig?.ssoHeaderName ?? JourneyConstants.cookie)
+                usableConfig.updateAgent(agent)
+                return await prepareUser(journey: self, user: OidcUser(config: usableConfig), session: session)
             }
         }
         return nil

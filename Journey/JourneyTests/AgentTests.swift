@@ -11,6 +11,8 @@
 import XCTest
 @testable import PingJourney
 @testable import PingOidc
+@testable import PingOrchestrate
+@testable import PingStorage
 @testable import PingNetwork
 
 final class AgentTests: XCTestCase {
@@ -157,8 +159,128 @@ final class AgentTests: XCTestCase {
     func testSessionAuthCodeWithoutPkce() {
         let code = "test-code"
         let authCode = session.authCode(pkce: nil, code: code)
-        
+
         XCTAssertEqual(authCode.code, code)
         XCTAssertNil(authCode.codeVerifier)
+    }
+
+    // MARK: - Blank cookie-name fallback (JourneyConfig.ssoHeaderName)
+
+    /// Regression test: `JourneyConfig.cookie` is a plain `String` defaulting to
+    /// `iPlanetDirectoryPro`, but integrators can legitimately set it to `""` (the sample
+    /// app's config editor stores `cookieName` as an optional that the sample maps with
+    /// `?? ""`). Sending the SSO token under an empty header name is a malformed request —
+    /// the server resets the connection (observed as `-1005 The network connection was
+    /// lost`) — so `CreateAgent` must normalize a blank name to `iPlanetDirectoryPro`.
+    func testCreateAgentBlankCookieNameFallsBackToDefault() {
+        let blankAgent = CreateAgent(session: session, pkce: pkce, cookieName: "")
+        XCTAssertEqual(blankAgent.cookieName, "iPlanetDirectoryPro")
+
+        let whitespaceAgent = CreateAgent(session: session, pkce: pkce, cookieName: "   ")
+        XCTAssertEqual(whitespaceAgent.cookieName, "iPlanetDirectoryPro")
+
+        let explicitAgent = CreateAgent(session: session, pkce: pkce, cookieName: "386c0d288cac4b9")
+        XCTAssertEqual(explicitAgent.cookieName, "386c0d288cac4b9", "A non-blank name must be preserved")
+    }
+
+    /// The request must carry the SSO token under the fallback header name when the
+    /// configured name was blank.
+    func testAuthorizeSendsSSOTokenUnderFallbackHeaderName() async throws {
+        let successResponse = HTTPURLResponse(
+            url: URL(string: "https://auth.example.com/authorize")!,
+            statusCode: 302,
+            httpVersion: nil,
+            headerFields: ["Location": "https://example.com/callback?code=test-auth-code"]
+        )!
+        httpClient.mockResponse = (Data(), successResponse)
+
+        let blankAgent = CreateAgent(session: session, pkce: pkce, cookieName: "")
+        _ = try await blankAgent.authorize(oidcConfig: oidcConfig)
+
+        guard let request = httpClient.lastRequest else {
+            XCTFail("request should not be nil")
+            return
+        }
+        XCTAssertEqual(request.getHeader(name: "iPlanetDirectoryPro"), "test-session")
+        XCTAssertNil(request.getHeader(name: ""), "No header may be sent under an empty name")
+    }
+
+    /// `JourneyConfig.ssoHeaderName` mirrors the same fallback at config level.
+    func testJourneyConfigSSOHeaderNameFallback() {
+        let config = JourneyConfig()
+        XCTAssertEqual(config.ssoHeaderName, "iPlanetDirectoryPro")
+
+        config.cookie = "386c0d288cac4b9"
+        XCTAssertEqual(config.ssoHeaderName, "386c0d288cac4b9")
+
+        config.cookie = ""
+        XCTAssertEqual(config.ssoHeaderName, "iPlanetDirectoryPro")
+    }
+
+    // MARK: - journeyUser() fallback agent (DefaultAgent regression)
+
+    /// Regression test: `journeyUser()`'s fallback used to build the `OidcUser` from the
+    /// module config as-is, whose initialize step installs `DefaultAgent` — an agent whose
+    /// `authorize` ALWAYS throws "No AuthCode is available.". The fallback must instead swap
+    /// in a `CreateAgent` bound to the restored session.
+    @MainActor
+    func testJourneyUserFallbackSwapsInUsableAgent() async throws {
+        let journey = Journey.createJourney { journeyConfig in
+            journeyConfig.serverUrl = "https://example.com/am"
+            journeyConfig.realm = "alpha"
+            journeyConfig.module(PingJourney.OidcModule.config) { oidcValue in
+                oidcValue.clientId = "journey-fallback-client"
+                oidcValue.scopes = Set(["openid"])
+                oidcValue.redirectUri = "https://example.com/callback"
+                oidcValue.openId = OpenIdConfiguration(
+                    authorizationEndpoint: "https://auth.example.com/authorize",
+                    tokenEndpoint: "https://auth.example.com/token",
+                    userinfoEndpoint: "https://auth.example.com/userInfo",
+                    endSessionEndpoint: "https://auth.example.com/endSession",
+                    revocationEndpoint: "https://auth.example.com/revoke",
+                    pingEndsessionEndpoint: "https://auth.example.com/ping/endSession"
+                )
+            }
+        }
+
+        // Initialize explicitly (the pattern the existing JourneyTests use) so all module
+        // initialize handlers — SessionModule's, which publishes the SessionConfig — have run.
+        try await journey.initialize()
+        let sessionConfig = try XCTUnwrap(
+            journey.sharedContext.get(key: SharedContext.Keys.sessionConfigKey) as? SessionConfig,
+            "SessionConfig must be published after initialize()"
+        )
+        // Keep the original (keychain) storage so cleanup can clear the persisted slot.
+        let originalStorage = sessionConfig.storage
+        // Swap in in-memory storage so the test does not read a previously persisted session.
+        let memoryStorage = MemoryStorage<SSOTokenImpl>()
+        sessionConfig.storage = memoryStorage
+        try await memoryStorage.save(item: SSOTokenImpl(
+            value: "fallback-session-token",
+            successUrl: "/enduser/?realm=/alpha",
+            realm: "/alpha"
+        ))
+
+        let resolvedUser = await journey.journeyUser()
+        let user = try XCTUnwrap(resolvedUser, "A restored session must yield a user")
+
+        // token() must NOT fail with the DefaultAgent's "No AuthCode is available." — with
+        // a real CreateAgent installed, the failure (if any) comes from the backchannel
+        // authorize exchange itself.
+        let result = await user.token()
+        guard case .failure(let error) = result else {
+            XCTFail("token() against a stub config is not expected to succeed, but must not fail with the DefaultAgent's error")
+            return
+        }
+        XCTAssertFalse(
+            error.localizedDescription.contains("No AuthCode is available"),
+            "journeyUser()'s fallback must not return a user backed by DefaultAgent (got: \(error.localizedDescription))"
+        )
+
+        // Clean up: the test swapped in MemoryStorage AFTER reading the default (keychain)
+        // slot, so delete through the ORIGINAL keychain storage to clear the persisted
+        // slot — otherwise `testJourneyUserWithOidcConfig` / `...NoUserOrSession` (which
+        // rely on a clean default slot) would see this token on the next run.
+        try? await originalStorage.delete()
     }
 }
