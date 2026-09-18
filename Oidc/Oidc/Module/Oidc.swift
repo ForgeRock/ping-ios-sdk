@@ -48,40 +48,44 @@ public class OidcModule {
             await oidcLoginFlow.user()?.revoke()
             let pkce = Pkce.generate()
             context.flowContext.set(key: SharedContext.Keys.pkceKey, value: pkce)
-            // Recorded for the Web module's callback state validation (CSRF check).
-            context.flowContext.set(key: SharedContext.Keys.stateKey, value: config.state ?? pkce.state)
             let url = URL(string: config.redirectUri)
             context.flowContext.set(key: SharedContext.Keys.callbackURLSchemeKey, value: url?.scheme ?? "https")
             context.flowContext.set(key: SharedContext.Keys.redirectUriKey, value: config.redirectUri)
+
+            let parameters = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcParameters) as? [String: String] ?? [:]
 
             var extraParameters: [String: String] = [:]
             if let authorizationDetails = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcAuthorizationDetails) as? [AuthorizationDetail],
                !authorizationDetails.isEmpty {
                 extraParameters[OidcClient.Constants.authorization_details] = try AuthorizationDetail.wireValue(authorizationDetails)
             }
-            let oidcRequest = try await config.populateRequest(request: request, pkce: pkce, responseMode: "", extraParameters: extraParameters)
-
-            // Unchanged, documented legacy pitfall: additionalParameters is still applied AFTER
-            // populateRequest, so it still leaks to the front-channel URL even under PAR.
-            let parameters = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcParameters) as? [String: String] ?? [:]
-            for parameter in parameters {
-                oidcRequest.setParameter(name: parameter.key, value: parameter.value)
+            // Thread an integrator-supplied `state` override through the SAME at-most-once
+            // slot `buildAuthorizeParams` already gives `authorization_details`, instead of
+            // appending it a second time onto the front-channel URL post-hoc: `setParameter`
+            // only ever appends (never overwrites), so two `state` query items would rely on
+            // the AS reading the last duplicate — unspecified behavior — and, under PAR, a
+            // post-hoc append never reached the PAR POST body at all. Routing it through
+            // `extraParameters` fixes both: `buildAuthorizeParams` emits `state` exactly once,
+            // on the front channel AND in the PAR body.
+            if let integratorState = parameters[OidcClient.Constants.state] {
+                extraParameters[OidcClient.Constants.state] = integratorState
             }
 
-            // An integrator-supplied `state` in additionalParameters overrides the sent value
-            // on the STANDARD (non-PAR) flow only — setParameter appends, so it becomes the
-            // second/last `state` on the URL and the one a real AS echoes there. Update the
-            // recorded expectation to match, otherwise the Web module's CSRF check would
-            // reject a legitimate callback as "State mismatch".
-            //
-            // Under PAR, this override does NOT reach the PAR POST body (`extraParameters`
-            // above only carries `authorization_details` — see the "documented legacy
-            // pitfall" note) — a spec-compliant AS ignores the leaked front-channel query
-            // param when a `request_uri` is present and echoes `config.state ?? pkce.state`
-            // regardless, so the recorded expectation must NOT be overwritten in that case
-            // or it would diverge from what the AS actually sends back.
-            if !config.par, let integratorState = parameters[OidcClient.Constants.state] {
-                context.flowContext.set(key: SharedContext.Keys.stateKey, value: integratorState)
+            // Recorded for the Web module's callback state validation (CSRF check) — matches
+            // EXACTLY what `buildAuthorizeParams` emits (same precedence, same fallback),
+            // regardless of whether PAR is enabled.
+            let effectiveState = extraParameters[OidcClient.Constants.state] ?? config.state ?? pkce.state
+            context.flowContext.set(key: SharedContext.Keys.stateKey, value: effectiveState)
+
+            let oidcRequest = try await config.populateRequest(request: request, pkce: pkce, responseMode: "", extraParameters: extraParameters)
+
+            // Any OTHER additionalParameters keys still apply post-populateRequest — documented
+            // legacy pitfall: they leak onto the front-channel URL even under PAR. `state` and
+            // `authorization_details` are excluded here: both are threaded through the
+            // at-most-once `extraParameters` slot above and already emitted exactly once by
+            // `buildAuthorizeParams` (front channel and, for PAR, the PAR POST body).
+            for parameter in parameters where parameter.key != OidcClient.Constants.state && parameter.key != OidcClient.Constants.authorization_details {
+                oidcRequest.setParameter(name: parameter.key, value: parameter.value)
             }
 
             return oidcRequest

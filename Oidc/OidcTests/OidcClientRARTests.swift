@@ -485,19 +485,19 @@ final class OidcClientRARTests: XCTestCase {
         XCTAssertEqual(decoded, OidcClientRARTests.paymentInitiationDetails)
     }
 
-    // MARK: - State override does not leak past the PAR boundary (Module/Oidc.swift)
+    // MARK: - State override is threaded through the PAR body (Module/Oidc.swift → buildAuthorizeParams)
 
-    /// Regression test: an `additionalParameters["state"]` override never reaches the PAR
-    /// POST body (only `authorization_details` is threaded through `extraParameters`), so a
-    /// spec-compliant PAR-supporting AS echoes `config.state ?? pkce.state` regardless of the
-    /// override. `Module/Oidc.swift` must NOT update the recorded state expectation from the
-    /// override under PAR, or a legitimate callback (echoing the real PAR-body state) would
-    /// be rejected as a CSRF "State mismatch" against the wrongly-recorded override value.
+    /// Regression test for the "at most once" state-threading fix: an
+    /// `additionalParameters["state"]` override is now routed through the SAME
+    /// `extraParameters` slot `authorization_details` already used, rather than appended
+    /// post-hoc onto the front-channel URL. As a result the override reaches the PAR POST
+    /// body — a PAR-supporting AS correctly echoes the override value, `Module/Oidc.swift`
+    /// records exactly that as the expected callback state, and the two agree.
     ///
     /// `RarCapturingBrowser` models a spec-compliant AS: it echoes `parSentState` (the state
-    /// it actually saw in the mocked PAR POST body) on the callback, NOT the override.
+    /// it actually saw in the mocked PAR POST body).
     @MainActor
-    func testAdditionalParametersStateOverrideDoesNotBreakPARCallbackValidation() async throws {
+    func testAdditionalParametersStateOverrideReachesPARBodyAndValidatesCorrectly() async throws {
         let browser = RarCapturingBrowser()
         installMockHandlerWithTokenEndpoint(browser: browser)
         BrowserLauncher.currentBrowser = browser
@@ -517,18 +517,28 @@ final class OidcClientRARTests: XCTestCase {
         }
 
         let result = try await web.authorize { options in
-            options.additionalParameters["state"] = "integrator-override-never-sent-to-AS"
+            options.additionalParameters["state"] = "integrator-override"
         }
 
-        // The override never reached the PAR body, so the real (PKCE-generated) state is
-        // what got echoed and validated — the callback must be accepted, not rejected as a
-        // state mismatch against the (wrongly recorded, pre-fix) override value.
+        // The override reached the PAR body — confirm directly on the mocked PAR request.
+        let parRequests = MockURLProtocol.requestHistory.filter { $0.url?.path == OidcClientRARTests.parEndpointURL.path }
+        let parRequest = try XCTUnwrap(parRequests.first, "Expected a PAR request")
+        let fields = formFields(ofBody: rarBodyData(from: parRequest))
+        let sentState = fields.first { $0.0 == OidcClient.Constants.state }?.1
+        XCTAssertEqual(sentState, "integrator-override", "additionalParameters's state override must reach the PAR POST body")
+
+        // And it must NOT additionally leak onto the front-channel URL — threaded through
+        // extraParameters like authorization_details, not appended post-hoc.
+        let launched = try XCTUnwrap(browser.launchedURL)
+        XCTAssertFalse(launched.absoluteString.contains("state="),
+                       "The state override must not leak onto the front-channel URL under PAR")
+
+        // The AS echoes the override (it's the value actually pushed to the PAR endpoint),
+        // and the recorded expectation matches it — the callback must be accepted.
         if case .failure(let error) = result, case .authorizeError(_, let message) = error {
             XCTAssertFalse(message?.contains("State mismatch") ?? false,
-                           "PAR-mode callback must not be rejected due to a stateKey override that never reached the PAR body: \(String(describing: message))")
+                           "Callback echoing the correctly-threaded override state must not be rejected: \(String(describing: message))")
         }
-        // (A failure unrelated to state — e.g. token exchange details — is not asserted
-        // against here; this test only guards the CSRF state-validation boundary.)
     }
 }
 
@@ -593,11 +603,11 @@ private final class RarCapturingBrowser: BrowserLauncherProtocol, @unchecked Sen
     private func callbackResponse(url: URL) -> URL {
         // `parSentState` (the PAR-body state) takes priority over any `state` on the
         // launched URL: a PAR-compliant AS resolves the authorization request server-side
-        // from the pushed `request_uri` and ignores stray front-channel query params —
-        // including a leaked `additionalParameters["state"]` override (Module/Oidc.swift's
-        // documented legacy pitfall: additionalParameters is applied to the front-channel
-        // URL even under PAR, but never reaches the PAR POST body). Falls back to the URL's
-        // `state` for the non-PAR flow, where it IS the authoritative sent value.
+        // from the pushed `request_uri` and ignores stray front-channel query params. In
+        // practice under PAR the launched URL never carries `state` at all — `state` is
+        // threaded through the at-most-once `extraParameters` slot into the PAR body only,
+        // same as `authorization_details` — so this fallback exists for the non-PAR flow,
+        // where the URL's `state` IS the authoritative sent value.
         let sentState = parSentState ?? URLComponents(url: url, resolvingAgainstBaseURL: false)?
             .queryItems?.first(where: { $0.name == "state" })?.value
         guard let sentState else { return callbackURL }

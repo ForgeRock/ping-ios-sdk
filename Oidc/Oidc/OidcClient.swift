@@ -182,14 +182,20 @@ public class OidcClient {
     /// otherwise the PKCE-generated state. Skipped when neither is available (back-compat
     /// for callers that never used this client's authorize path).
     ///
+    /// State is validated BEFORE an OAuth2 error redirect is surfaced: RFC 6749 §4.1.2.1
+    /// requires `state` on an error response just as it does on a success response, so a
+    /// spoofed error redirect (e.g. from another app registered for the same custom URL
+    /// scheme) with a missing or mismatched `state` is rejected as a CSRF failure rather
+    /// than surfaced as the (untrustworthy) `error`/`error_description` it carries.
+    ///
     ///  - Parameter url: The URL to extract the code from.
     public func extractCodeAndGetToken(from url: URL) async throws -> Token {
+        if let expectedState = config.state ?? self.pkce?.state {
+            try OidcClient.validateState(from: url, expected: expectedState)
+        }
         // Surface OAuth2 error redirects (e.g. `access_denied`) with their real code/description.
         if let oauthError = OidcClient.extractOAuthError(from: url) {
             throw OidcError.authorizeError(cause: oauthError, message: "Authorization failed: \(oauthError.formattedMessage)")
-        }
-        if let expectedState = config.state ?? self.pkce?.state {
-            try OidcClient.validateState(from: url, expected: expectedState)
         }
         if let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true), let code = components.queryItems?.filter({$0.name == Constants.code}).first?.value, let pcke = self.pkce {
             let authCode = AuthCode(code: code, codeVerifier: pcke.codeVerifier)
@@ -492,7 +498,9 @@ extension OidcClientConfig {
     ///   - pkce: PKCE parameters for enhanced security.
     ///   - extraParameters: Additional parameters specific to this authorization request. If this
     ///     contains an `authorization_details` entry, it takes precedence over the config-level
-    ///     `authorizationDetails` property for that single parameter.
+    ///     `authorizationDetails` property for that single parameter. Likewise, a `state` entry
+    ///     takes precedence over `OidcClientConfig.state`/the PKCE-generated fallback, and is
+    ///     the only way to override `state` that also reaches a PAR POST body.
     ///   - onParam: Callback function to handle each parameter (name, value) pair.
     /// - Throws: Any error from serializing `authorizationDetails`.
     public func buildAuthorizeParams(
@@ -523,11 +531,14 @@ extension OidcClientConfig {
             onParam(OidcClient.Constants.login_hint, loginHint)
         }
         
-        // Always emit `state`. Prefer the integrator-supplied value on
-        // `OidcClientConfig.state`; otherwise fall back to the PKCE-generated
-        // state so the parameter is present for CSRF protection on
-        // redirect-based flows and remains available to server-side policies.
-        onParam(OidcClient.Constants.state, self.state ?? pkce.state)
+        // Always emit `state` at MOST ONCE, same precedence/rationale as
+        // `authorization_details` below: a per-transaction value in `extraParameters` wins,
+        // then the integrator-supplied `OidcClientConfig.state`, then the PKCE-generated
+        // fallback. Routing an override through `extraParameters` (rather than appending it
+        // separately after this function returns) is what makes it reach the PAR POST body
+        // too, and avoids relying on the AS reading the last of two duplicate `state` query
+        // items on the standard flow (`setParameter` only ever appends, never overwrites).
+        onParam(OidcClient.Constants.state, extraParameters[OidcClient.Constants.state] ?? self.state ?? pkce.state)
         
         if let nonce = nonce {
             onParam(OidcClient.Constants.nonce, nonce)
@@ -552,7 +563,7 @@ extension OidcClientConfig {
             onParam(OidcClient.Constants.authorization_details, try AuthorizationDetail.wireValue(authorizationDetails))
         }
 
-        for (key, value) in extraParameters where key != OidcClient.Constants.authorization_details {
+        for (key, value) in extraParameters where key != OidcClient.Constants.authorization_details && key != OidcClient.Constants.state {
             onParam(key, value)
         }
     }

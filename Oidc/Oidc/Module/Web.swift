@@ -44,14 +44,19 @@ public class WebModule {
                 // Ensure the redirect URI scheme is valid
                 let result = try await BrowserLauncher.currentBrowser.launch(url: url, customParams: nil, browserType: oidcLoginConfig?.browserType ?? .authSession, browserMode: oidcLoginConfig?.browserMode ?? .login, callbackURLScheme: callbackURLScheme, redirectUri: redirectUri, logger: oidcLoginFlow.config.logger)
 
+                // Validate `state` against the value sent on the authorize request (CSRF)
+                // BEFORE trusting anything else on the callback — RFC 6749 §4.1.2.1 requires
+                // `state` on an error response just as on a success response, so a spoofed
+                // error redirect (e.g. from another app registered for the same custom URL
+                // scheme) with a missing or mismatched `state` is rejected here rather than
+                // surfaced as the (untrustworthy) `error`/`error_description` it carries.
+                try WebModule.validateState(from: result, expected: expectedState)
+
                 // Surface OAuth2 error redirects (e.g. `access_denied`) with their real
                 // code/description instead of a generic "code not found" failure.
                 if let oauthError = WebModule.extractOAuthError(from: result) {
                     throw OidcError.authorizeError(cause: oauthError, message: "Authorization failed: \(oauthError.formattedMessage)")
                 }
-
-                // Validate `state` against the value sent on the authorize request (CSRF).
-                try WebModule.validateState(from: result, expected: expectedState)
 
                 // Extract and verify the auth code response
                 let code = try WebModule.extractCode(from: result)

@@ -13,6 +13,9 @@
 //  - extractOAuthError parses `error`/`error_description`/`error_uri` from query or fragment.
 //  - validateState enforces the CSRF state check on the browser callback.
 //  - extractCodeAndGetToken surfaces `access_denied` instead of a generic "code not found".
+//  - State is validated BEFORE an error redirect is surfaced (RFC 6749 §4.1.2.1: `state` is
+//    required on error responses too) — a mismatched or missing state on an error redirect
+//    is rejected as a CSRF failure instead of being trusted and surfaced as-is.
 
 import XCTest
 @testable import PingOidc
@@ -88,6 +91,86 @@ final class OidcCallbackErrorTests: XCTestCase {
             XCTAssertEqual(oauthError.code, "access_denied")
             XCTAssertEqual(oauthError.errorDescription, "User declined consent")
             XCTAssertEqual(message, "Authorization failed: access_denied: User declined consent")
+        } catch {
+            XCTFail("Expected OidcError, got \(error)")
+        }
+    }
+
+    /// State is now validated BEFORE an error redirect is surfaced (RFC 6749 §4.1.2.1: state
+    /// is required on error responses too). A MISMATCHED state on an error redirect must be
+    /// rejected as a CSRF failure, not surfaced as the `access_denied` it carries.
+    func testExtractCodeAndGetTokenRejectsErrorRedirectWithMismatchedState() async {
+        let config = OidcClientConfig()
+        config.clientId = "test-client"
+        config.state = "expected-state"
+        let client = OidcClient(config: config)
+
+        let url = URL(string: "myapp://oauth2redirect?error=access_denied&error_description=User%20declined%20consent&state=wrong-state")!
+        do {
+            _ = try await client.extractCodeAndGetToken(from: url)
+            XCTFail("Expected a state mismatch")
+        } catch let error as OidcError {
+            guard case .authorizeError(let cause, let message) = error else {
+                XCTFail("Expected .authorizeError, got \(error)")
+                return
+            }
+            XCTAssertTrue(message?.contains("State mismatch") ?? false,
+                          "Expected a state-mismatch rejection (not the surfaced OAuth error), got: \(String(describing: message))")
+            XCTAssertNil(cause as? OAuthAuthorizationError,
+                        "The access_denied error must not be surfaced when state doesn't match")
+        } catch {
+            XCTFail("Expected OidcError, got \(error)")
+        }
+    }
+
+    /// Companion: an error redirect with NO `state` at all, when one was expected, is
+    /// likewise rejected — an attacker can omit `state` just as easily as forge a wrong one.
+    func testExtractCodeAndGetTokenRejectsErrorRedirectWithMissingState() async {
+        let config = OidcClientConfig()
+        config.clientId = "test-client"
+        config.state = "expected-state"
+        let client = OidcClient(config: config)
+
+        let url = URL(string: "myapp://oauth2redirect?error=access_denied&error_description=User%20declined%20consent")!
+        do {
+            _ = try await client.extractCodeAndGetToken(from: url)
+            XCTFail("Expected a missing-state rejection")
+        } catch let error as OidcError {
+            guard case .authorizeError(let cause, let message) = error else {
+                XCTFail("Expected .authorizeError, got \(error)")
+                return
+            }
+            XCTAssertTrue(message?.contains("did not include the state parameter") ?? false,
+                          "Expected a missing-state rejection (not the surfaced OAuth error), got: \(String(describing: message))")
+            XCTAssertNil(cause as? OAuthAuthorizationError,
+                        "The access_denied error must not be surfaced when state is missing")
+        } catch {
+            XCTFail("Expected OidcError, got \(error)")
+        }
+    }
+
+    /// Companion: an error redirect with a MATCHING state IS still surfaced as the OAuth
+    /// error — the reorder is a gate, not a blanket suppression of error redirects.
+    func testExtractCodeAndGetTokenSurfacesErrorRedirectWithMatchingState() async {
+        let config = OidcClientConfig()
+        config.clientId = "test-client"
+        config.state = "expected-state"
+        let client = OidcClient(config: config)
+
+        let url = URL(string: "myapp://oauth2redirect?error=access_denied&error_description=User%20declined%20consent&state=expected-state")!
+        do {
+            _ = try await client.extractCodeAndGetToken(from: url)
+            XCTFail("Expected an error for an error redirect")
+        } catch let error as OidcError {
+            guard case .authorizeError(let cause, _) = error else {
+                XCTFail("Expected .authorizeError, got \(error)")
+                return
+            }
+            guard let oauthError = cause as? OAuthAuthorizationError else {
+                XCTFail("Expected cause to be OAuthAuthorizationError, got \(String(describing: cause))")
+                return
+            }
+            XCTAssertEqual(oauthError.code, "access_denied")
         } catch {
             XCTFail("Expected OidcError, got \(error)")
         }
@@ -231,14 +314,85 @@ final class OidcCallbackErrorTests: XCTestCase {
                                        "Expected cause to be OAuthAuthorizationError, got \(String(describing: cause))")
         XCTAssertEqual(oauthError.code, "access_denied")
     }
+
+    /// The other half of the ordering fix: an error redirect whose `state` does NOT match
+    /// the one this flow actually sent must be rejected as a CSRF failure — not surfaced as
+    /// the `access_denied` it carries. Drives the real module pipeline (so it also exercises
+    /// `Module/Oidc.swift`'s state recording), unlike the `OidcClient`-level tests above.
+    @MainActor
+    func testModulePipelineRejectsAccessDeniedWithMismatchedState() async throws {
+        MockURLProtocol.startInterceptingRequests()
+        defer { MockURLProtocol.stopInterceptingRequests() }
+        MockURLProtocol.requestHandler = { request in
+            switch request.url?.path ?? "" {
+            case MockAPIEndpoint.discovery.url.path:
+                let discovery = """
+                {
+                  "authorization_endpoint" : "\(MockAPIEndpoint.authorization.url.absoluteString)",
+                  "token_endpoint" : "\(MockAPIEndpoint.token.url.absoluteString)",
+                  "userinfo_endpoint" : "\(MockAPIEndpoint.userinfo.url.absoluteString)",
+                  "end_session_endpoint" : "\(MockAPIEndpoint.endSession.url.absoluteString)",
+                  "revocation_endpoint" : "\(MockAPIEndpoint.revocation.url.absoluteString)"
+                }
+                """.data(using: .utf8)!
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, discovery)
+            default:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+            }
+        }
+        let browser = AccessDeniedBrowser()
+        browser.forcedState = "attacker-supplied-state" // never sent by this flow
+        BrowserLauncher.currentBrowser = browser
+        defer { BrowserLauncher.currentBrowser = BrowserLauncher() }
+
+        let web = OidcWebClient.createOidcWebClient { config in
+            config.browserMode = .login
+            config.browserType = .authSession
+            config.httpClient = MockURLProtocol.makeClient()
+            config.module(OidcModule.config) { oidcValue in
+                oidcValue.clientId = "callback-error-client"
+                oidcValue.scopes = Set(["openid"])
+                oidcValue.redirectUri = "http://localhost:8080/callback"
+                oidcValue.discoveryEndpoint = MockAPIEndpoint.discovery.url.absoluteString
+            }
+        }
+
+        let result = try await web.authorize { _ in }
+
+        guard case .failure(.authorizeError(let cause, let message)) = result else {
+            XCTFail("Expected .authorizeError failure, got \(result)")
+            return
+        }
+        XCTAssertTrue(message?.contains("State mismatch") ?? false,
+                      "Expected a state-mismatch rejection, not the surfaced OAuth error: \(String(describing: message))")
+        XCTAssertNil(cause as? OAuthAuthorizationError,
+                     "The access_denied error must not be surfaced when state doesn't match")
+    }
 }
 
 /// Browser double that simulates the user declining consent: the callback carries an
 /// OAuth2 `access_denied` error redirect (mirrors `CapturingBrowser` in the E2E tests).
+///
+/// By default echoes the `state` actually sent on the launched authorize URL — modeling a
+/// spec-compliant AS (RFC 6749 §4.1.2.1 requires `state` on error responses, not just
+/// success ones). Set `forcedState` to model a spoofed/mismatched error redirect instead.
 @MainActor
 private final class AccessDeniedBrowser: BrowserLauncherProtocol, @unchecked Sendable {
     var isInProgress: Bool = false
     var launchedURL: URL?
+    /// When set, the callback carries this literal `state` instead of echoing the state
+    /// actually sent. `nil` (the default) echoes the real sent state.
+    var forcedState: String?
+
+    private func callbackResponse(url: URL) -> URL {
+        let sentState = forcedState ?? URLComponents(url: url, resolvingAgainstBaseURL: false)?
+            .queryItems?.first(where: { $0.name == "state" })?.value
+        var base = "http://localhost:8080/callback?error=access_denied&error_description=User%20declined%20consent"
+        if let sentState {
+            base += "&state=\(sentState)"
+        }
+        return URL(string: base)!
+    }
 
     func launch(
         url: URL,
@@ -249,7 +403,7 @@ private final class AccessDeniedBrowser: BrowserLauncherProtocol, @unchecked Sen
         logger: PingLogger.Logger
     ) async throws -> URL {
         launchedURL = url
-        return URL(string: "http://localhost:8080/callback?error=access_denied&error_description=User%20declined%20consent")!
+        return callbackResponse(url: url)
     }
 
     func launch(
@@ -262,7 +416,7 @@ private final class AccessDeniedBrowser: BrowserLauncherProtocol, @unchecked Sen
         logger: PingLogger.Logger
     ) async throws -> URL {
         launchedURL = url
-        return URL(string: "http://localhost:8080/callback?error=access_denied&error_description=User%20declined%20consent")!
+        return callbackResponse(url: url)
     }
 
     func reset() {}
