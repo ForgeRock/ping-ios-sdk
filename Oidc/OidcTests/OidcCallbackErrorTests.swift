@@ -93,6 +93,61 @@ final class OidcCallbackErrorTests: XCTestCase {
         }
     }
 
+    /// Regression test: `extractCodeAndGetToken` must validate against the value actually
+    /// sent on the wire (`config.state ?? pkce.state`, matching `buildAuthorizeParams`'s
+    /// precedence) — not unconditionally against `pkce.state`. When `OidcClientConfig.state`
+    /// is set, the AS echoes THAT value, not the PKCE-generated one; validating against
+    /// `pkce.state` alone would reject every legitimate callback for such integrators.
+    func testExtractCodeAndGetTokenValidatesAgainstConfigStateWhenSet() async {
+        let config = OidcClientConfig()
+        config.clientId = "test-client"
+        config.state = "integrator-state"
+        let client = OidcClient(config: config)
+        client.pkce = Pkce.generate() // a different, randomly-generated state
+
+        // The AS echoes config.state (the value actually sent) — not pkce.state.
+        let url = URL(string: "myapp://oauth2redirect?code=fake-code&state=integrator-state")!
+        do {
+            _ = try await client.extractCodeAndGetToken(from: url)
+            // Token exchange itself may fail (no mock endpoint configured) — that's fine;
+            // the point of this test is that it must NOT fail with a state mismatch.
+        } catch let error as OidcError {
+            if case .authorizeError(_, let message) = error {
+                XCTAssertFalse(message?.contains("State mismatch") ?? false,
+                               "Must not reject a callback whose state matches config.state: \(String(describing: message))")
+            }
+        } catch {
+            // Non-OidcError failures (e.g. network) are acceptable — state validation
+            // already passed by the time execution could reach one.
+        }
+    }
+
+    /// Companion to the test above: a callback echoing the (never-sent) `pkce.state`
+    /// instead of `config.state` must be rejected — `config.state` takes precedence,
+    /// matching what `buildAuthorizeParams` actually put on the wire.
+    func testExtractCodeAndGetTokenRejectsPkceStateWhenConfigStateIsSet() async {
+        let config = OidcClientConfig()
+        config.clientId = "test-client"
+        config.state = "integrator-state"
+        let client = OidcClient(config: config)
+        let pkce = Pkce.generate()
+        client.pkce = pkce
+
+        let url = URL(string: "myapp://oauth2redirect?code=fake-code&state=\(pkce.state)")!
+        do {
+            _ = try await client.extractCodeAndGetToken(from: url)
+            XCTFail("Expected a state mismatch — the AS never actually sent pkce.state")
+        } catch let error as OidcError {
+            guard case .authorizeError(_, let message) = error else {
+                XCTFail("Expected .authorizeError, got \(error)")
+                return
+            }
+            XCTAssertTrue(message?.contains("State mismatch") ?? false, "Unexpected message: \(String(describing: message))")
+        } catch {
+            XCTFail("Expected OidcError, got \(error)")
+        }
+    }
+
     // MARK: - validateState
 
     func testValidateStateAcceptsMatchingState() throws {

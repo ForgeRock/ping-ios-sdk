@@ -16,7 +16,7 @@ import Foundation
 ///
 /// Surfaced as the `cause` of `OidcError.authorizeError` when the browser callback carries
 /// `error`/`error_description`/`error_uri` query (or fragment) parameters instead of a code.
-public struct OAuthAuthorizationError: Error, Sendable, Equatable {
+public struct OAuthAuthorizationError: Error, LocalizedError, Sendable, Equatable {
     /// The OAuth2 `error` code (e.g. `access_denied`, `invalid_request`).
     public let code: String
     /// The optional human-readable `error_description` from the server.

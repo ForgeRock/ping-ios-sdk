@@ -69,10 +69,18 @@ public class OidcModule {
             }
 
             // An integrator-supplied `state` in additionalParameters overrides the sent value
-            // (setParameter appends, so it is the second/last `state` on the URL and the one a
-            // real AS echoes). Update the recorded expectation to match — otherwise the Web
-            // module's CSRF check would reject a legitimate callback as "State mismatch".
-            if let integratorState = parameters[OidcClient.Constants.state] {
+            // on the STANDARD (non-PAR) flow only — setParameter appends, so it becomes the
+            // second/last `state` on the URL and the one a real AS echoes there. Update the
+            // recorded expectation to match, otherwise the Web module's CSRF check would
+            // reject a legitimate callback as "State mismatch".
+            //
+            // Under PAR, this override does NOT reach the PAR POST body (`extraParameters`
+            // above only carries `authorization_details` — see the "documented legacy
+            // pitfall" note) — a spec-compliant AS ignores the leaked front-channel query
+            // param when a `request_uri` is present and echoes `config.state ?? pkce.state`
+            // regardless, so the recorded expectation must NOT be overwritten in that case
+            // or it would diverge from what the AS actually sends back.
+            if !config.par, let integratorState = parameters[OidcClient.Constants.state] {
                 context.flowContext.set(key: SharedContext.Keys.stateKey, value: integratorState)
             }
 

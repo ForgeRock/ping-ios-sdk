@@ -248,14 +248,18 @@ class ConfigurationManager: ObservableObject {
                 oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_JOURNEY")
                 oidcValue.logger = LogManager.standard
                 oidcValue.par = config.par ?? false
-                if let json = config.authorizationDetailsJson,
-                   case .success(let details) = RarJson.decode(json) {
-                    oidcValue.authorizationDetails = details
+                if let json = config.authorizationDetailsJson {
+                    switch RarJson.decode(json) {
+                    case .success(let details):
+                        oidcValue.authorizationDetails = details
+                    case .failure(let error):
+                        LogManager.standard.w("Invalid authorizationDetails JSON on config '\(config.name)' — ignoring: \(error.message)", error: nil)
+                    }
                 }
             }
         }
     }
-    
+
     private static func buildDaVinci(_ config: Configuration) -> DaVinci {
         DaVinci.createDaVinci { daVinciConfig in
             daVinciConfig.logger = LogManager.standard
@@ -267,9 +271,13 @@ class ConfigurationManager: ObservableObject {
                 oidcValue.acrValues = config.acrValues ?? ""
                 oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_DAVINCI")
                 oidcValue.par = config.par ?? false
-                if let json = config.authorizationDetailsJson,
-                   case .success(let details) = RarJson.decode(json) {
-                    oidcValue.authorizationDetails = details
+                if let json = config.authorizationDetailsJson {
+                    switch RarJson.decode(json) {
+                    case .success(let details):
+                        oidcValue.authorizationDetails = details
+                    case .failure(let error):
+                        LogManager.standard.w("Invalid authorizationDetails JSON on config '\(config.name)' — ignoring: \(error.message)", error: nil)
+                    }
                 }
             }
         }

@@ -364,7 +364,15 @@ extension URLSessionHttpRequest {
     /// parameters from empty values will see the `=` form here.
     private func rfc3986EncodedQuery(_ items: [URLQueryItem]) -> String {
         func encode(_ raw: String) -> String {
-            raw.addingPercentEncoding(withAllowedCharacters: Self.rfc3986AllowedCharacters) ?? raw
+            // `addingPercentEncoding` only fails on malformed/unpaired UTF-16 surrogates —
+            // rare, but falling back to the raw string silently would regress exactly the
+            // class of corruption this encoder exists to prevent (e.g. a raw `+` read back
+            // as a space). Log it so a malformed input doesn't fail silently.
+            guard let encoded = raw.addingPercentEncoding(withAllowedCharacters: Self.rfc3986AllowedCharacters) else {
+                logger.w("URLSessionHttpRequest: failed to percent-encode a query/form value; sending it unencoded, which may be corrupted by the server", error: nil)
+                return raw
+            }
+            return encoded
         }
         return items.map { item in
             let value = encode(item.value ?? "")

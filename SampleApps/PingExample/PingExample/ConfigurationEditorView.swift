@@ -392,8 +392,8 @@ struct ConfigurationEditorView: View {
             switch RarJson.decode(trimmedDetails) {
             case .success(let details):
                 parsedDetails = details
-            case .failure(let message):
-                validationMessage = "Authorization Details JSON is invalid: \(message)"
+            case .failure(let error):
+                validationMessage = "Authorization Details JSON is invalid: \(error.message)"
                 showValidationError = true
                 return
             }
