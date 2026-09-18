@@ -155,12 +155,20 @@ final class OidcClientRARTests: XCTestCase {
     /// Like `installMockHandler()`, but also serves the revoke and token endpoints so the module
     /// pipeline's pre-login revoke (OidcModule.start) and post-callback token exchange (with the
     /// fake code from the capturing browser) complete instead of hitting the `XCTFail` default case.
-    private func installMockHandlerWithTokenEndpoint() {
-        MockURLProtocol.requestHandler = { [self] request in
+    /// When `browser` is supplied, the PAR handler records the `state` from the PAR POST body on
+    /// `browser.parSentState` so the double can echo it into the callback (PAR-mode state echo).
+    private func installMockHandlerWithTokenEndpoint(browser: RarCapturingBrowser? = nil) {
+        MockURLProtocol.requestHandler = { [self, browser] request in
             switch request.url?.path ?? "" {
             case MockAPIEndpoint.discovery.url.path:
                 return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientRARTests.openIdConfigurationWithPAR)
             case OidcClientRARTests.parEndpointURL.path:
+                if let browser {
+                    let body = String(data: rarBodyData(from: request), encoding: .utf8) ?? ""
+                    var formComponents = URLComponents()
+                    formComponents.percentEncodedQuery = body
+                    browser.parSentState = formComponents.queryItems?.first { $0.name == OidcClient.Constants.state }?.value
+                }
                 return (try mockResponse(url: OidcClientRARTests.parEndpointURL, statusCode: 201, headers: MockResponse.headers), OidcClientRARTests.parResponse)
             case MockAPIEndpoint.token.url.path:
                 return (try mockResponse(url: MockAPIEndpoint.token.url, statusCode: 200, headers: MockResponse.headers), MockResponse.tokenWithAuthorizationDetails)
@@ -396,8 +404,10 @@ final class OidcClientRARTests: XCTestCase {
     /// simulation. The browser step is intercepted, so no real ASWebAuthenticationSession opens.
     @MainActor
     func testOidcOptionsAuthorizationDetailsReachesPARBodyThroughModulePipeline() async throws {
-        installMockHandlerWithTokenEndpoint()
-        BrowserLauncher.currentBrowser = RarCapturingBrowser()
+        let browser = RarCapturingBrowser()
+        installMockHandlerWithTokenEndpoint(browser: browser)
+        BrowserLauncher.currentBrowser = browser
+        defer { BrowserLauncher.currentBrowser = BrowserLauncher() }
 
         let web = OidcWebClient.createOidcWebClient { config in
             config.browserMode = .login
@@ -412,8 +422,9 @@ final class OidcClientRARTests: XCTestCase {
             }
         }
 
-        // The token exchange after the browser callback fails with the fake code — expected;
-        // everything under test (the PAR POST) has already happened by then.
+        // The token exchange after the browser callback completes (the double echoes the
+        // PAR-body state) fails with the fake code — expected; everything under test (the
+        // PAR POST) has already happened by then.
         do {
             _ = try await web.authorize { options in
                 options.authorizationDetails = OidcClientRARTests.paymentInitiationDetails
@@ -429,7 +440,6 @@ final class OidcClientRARTests: XCTestCase {
         XCTAssertEqual(decoded, OidcClientRARTests.paymentInitiationDetails)
 
         // And the front-channel URL the browser received carries only request_uri + client_id.
-        let browser = try XCTUnwrap(BrowserLauncher.currentBrowser as? RarCapturingBrowser)
         let launched = try XCTUnwrap(browser.launchedURL)
         XCTAssertTrue(launched.absoluteString.contains("request_uri="))
         XCTAssertFalse(launched.absoluteString.contains("authorization_details"),
@@ -440,8 +450,10 @@ final class OidcClientRARTests: XCTestCase {
     /// front-channel URL exactly once.
     @MainActor
     func testOidcOptionsAuthorizationDetailsOnFrontChannelThroughModulePipeline() async throws {
-        installMockHandlerWithTokenEndpoint()
-        BrowserLauncher.currentBrowser = RarCapturingBrowser()
+        let browser = RarCapturingBrowser()
+        installMockHandlerWithTokenEndpoint(browser: browser)
+        BrowserLauncher.currentBrowser = browser
+        defer { BrowserLauncher.currentBrowser = BrowserLauncher() }
 
         let web = OidcWebClient.createOidcWebClient { config in
             config.browserMode = .login
@@ -465,7 +477,6 @@ final class OidcClientRARTests: XCTestCase {
         let parRequests = MockURLProtocol.requestHistory.filter { $0.url?.path == OidcClientRARTests.parEndpointURL.path }
         XCTAssertTrue(parRequests.isEmpty, "No PAR request expected when par = false")
 
-        let browser = try XCTUnwrap(BrowserLauncher.currentBrowser as? RarCapturingBrowser)
         let launched = try XCTUnwrap(browser.launchedURL, "Browser was not launched")
         XCTAssertEqual(queryParamOccurrences(named: OidcClient.Constants.authorization_details, in: launched.absoluteString), 1,
                        "authorization_details must appear exactly once on the front-channel URL")
@@ -477,10 +488,25 @@ final class OidcClientRARTests: XCTestCase {
 
 /// Minimal browser double for the module-pipeline RAR tests (mirrors `CapturingBrowser` in
 /// `OidcWebClientE2ETests.swift`, file-private there, so re-declared here).
+///
+/// Echoes the `state` the SDK sent into the callback URL, mirroring a real authorization
+/// server — the transport's CSRF state validation (RFC 6749 §10.12) rejects a fixed
+/// `state=fake` fixture. Two sources, because the state location differs by flow:
+/// - Query mode: the `state` query item on the launched authorize URL.
+/// - PAR mode: the authorize URL carries no state (only `request_uri`), so the double
+///   records the `state` it saw in the PAR POST body (its `parSentState` property is set
+///   by the test's mock handler) and echoes that.
 private final class RarCapturingBrowser: BrowserLauncherProtocol, @unchecked Sendable {
     var launchedURL: URL?
     var isInProgress: Bool = false
     var callbackURL: URL = URL(string: "http://localhost:8080/callback?code=fake-code&state=fake")!
+    /// Lock-protected `parSentState`: mutated by the (nonisolated) mock PAR handler and
+    /// read by `launch` on the main actor. `nonisolated(unsafe)` + NSLock because the
+    /// class is MainActor-inferred via the @MainActor `BrowserLauncherProtocol` conformance,
+    /// while the mock-handler closure is nonisolated — the same pattern as
+    /// `MockURLProtocol.requestHandler`.
+    private nonisolated(unsafe) let stateLock = NSLock()
+    private nonisolated(unsafe) var sentState: String?
 
     func launch(
         url: URL,
@@ -491,7 +517,7 @@ private final class RarCapturingBrowser: BrowserLauncherProtocol, @unchecked Sen
         logger: PingLogger.Logger
     ) async throws -> URL {
         launchedURL = url
-        return callbackURL
+        return callbackResponse(url: url)
     }
 
     func launch(
@@ -504,7 +530,28 @@ private final class RarCapturingBrowser: BrowserLauncherProtocol, @unchecked Sen
         logger: PingLogger.Logger
     ) async throws -> URL {
         launchedURL = url
-        return callbackURL
+        return callbackResponse(url: url)
+    }
+
+    /// The `state` from the last mocked PAR POST body, set by the test's PAR handler when
+    /// PAR mode is under test (nil in query mode).
+    nonisolated var parSentState: String? {
+        get { stateLock.lock(); defer { stateLock.unlock() }; return sentState }
+        set { stateLock.lock(); sentState = newValue; stateLock.unlock() }
+    }
+
+    /// Builds the callback URL: substitutes the state the SDK sent for the fixture's
+    /// `state=fake`, preserving everything else on `callbackURL` (notably the code).
+    private func callbackResponse(url: URL) -> URL {
+        let sentState = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+            .queryItems?.first(where: { $0.name == "state" })?.value ?? parSentState
+        guard let sentState else { return callbackURL }
+        var components = URLComponents(url: callbackURL, resolvingAgainstBaseURL: false)!
+        var items = components.queryItems ?? []
+        items.removeAll { $0.name == "state" }
+        items.append(URLQueryItem(name: "state", value: sentState))
+        components.queryItems = items
+        return components.url ?? callbackURL
     }
 
     func reset() {}

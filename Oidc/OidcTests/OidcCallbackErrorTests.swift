@@ -81,7 +81,10 @@ final class OidcCallbackErrorTests: XCTestCase {
                 XCTFail("Expected .authorizeError, got \(error)")
                 return
             }
-            let oauthError = try! XCTUnwrap(cause as? OAuthAuthorizationError)
+            guard let oauthError = cause as? OAuthAuthorizationError else {
+                XCTFail("Expected cause to be OAuthAuthorizationError, got \(String(describing: cause))")
+                return
+            }
             XCTAssertEqual(oauthError.code, "access_denied")
             XCTAssertEqual(oauthError.errorDescription, "User declined consent")
             XCTAssertEqual(message, "Authorization failed: access_denied: User declined consent")
@@ -147,6 +150,7 @@ final class OidcCallbackErrorTests: XCTestCase {
             }
         }
         BrowserLauncher.currentBrowser = AccessDeniedBrowser()
+        defer { BrowserLauncher.currentBrowser = BrowserLauncher() }
 
         let web = OidcWebClient.createOidcWebClient { config in
             config.browserMode = .login

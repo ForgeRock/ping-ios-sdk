@@ -274,8 +274,8 @@ struct ConfigurationEditorView: View {
                 Text("Valid — \(details.count) object(s).")
                     .font(.system(size: 11))
                     .foregroundColor(.green)
-            case .failure(let message):
-                Text(verbatim: "Invalid JSON: \(message)")
+            case .failure(let error):
+                Text(verbatim: "Invalid JSON: \(error.message)")
                     .font(.system(size: 11))
                     .foregroundColor(.red)
             }

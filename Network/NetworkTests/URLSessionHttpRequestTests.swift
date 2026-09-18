@@ -137,6 +137,32 @@ final class URLSessionHttpRequestTests: XCTestCase {
         XCTAssertEqual(built?.url?.absoluteString, "https://example.com/path?a%2Bb=c")
     }
 
+    /// A value that already contains a percent escape must not be double-encoded:
+    /// RFC 3986 encoding re-escapes `%` (→ `%25`), which is correct — the caller is
+    /// expected to pass raw (unencoded) values and let this layer encode once.
+    func testQueryParameterWithPercentIsDoubleEncoded() {
+        let request = URLSessionHttpRequest()
+        request.url = "https://example.com/path"
+        // The integrator passes a LITERAL "%2B" string (e.g. a pre-serialized payload);
+        // the layer must emit %252B, not pass the already-encoded %2B through — passing
+        // it through would silently change the decoded value.
+        request.setParameter(name: "raw", value: "%2B")
+
+        let built = request.buildURLRequest()
+        XCTAssertEqual(built?.url?.absoluteString, "https://example.com/path?raw=%252B")
+    }
+
+    /// Non-ASCII values are percent-encoded (UTF-8) — guards against regressions to
+    /// `URLComponents.queryItems` assignment, which leaves non-ASCII raw on iOS.
+    func testQueryParameterWithNonASCIIValueIsPercentEncoded() {
+        let request = URLSessionHttpRequest()
+        request.url = "https://example.com/path"
+        request.setParameter(name: "name", value: "José")
+
+        let built = request.buildURLRequest()
+        XCTAssertEqual(built?.url?.absoluteString, "https://example.com/path?name=Jos%C3%A9")
+    }
+
     func testInvalidURLStringReturnsNil() {
         let request = URLSessionHttpRequest()
         request.url = "ht tp://invalid"

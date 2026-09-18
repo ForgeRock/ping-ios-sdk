@@ -663,6 +663,11 @@ final class OidcClientPARTests: XCTestCase {
         oidcClientConfig.logger = logger
     }
 
+    /// Whether the capturing logger recorded the short-expiry warning ("expires in only Ns").
+    private func warningsContainShortExpiry(_ logger: CapturingLogger) -> Bool {
+        logger.warningMessages.contains { $0.contains("expires in only \(OidcClient.parExpiryWarningThresholdSeconds)s") }
+    }
+
     /// A short `expires_in` (below the 30s threshold) logs a warning naming the window.
     func testParShortExpiresInLogsWarning() async throws {
         let logger = CapturingLogger()
@@ -688,6 +693,34 @@ final class OidcClientPARTests: XCTestCase {
 
         XCTAssertTrue(logger.warningMessages.isEmpty,
                       "Expected no expiry warning for a 60s request_uri, got: \(logger.warningMessages)")
+    }
+
+    /// Exactly-at-threshold `expires_in` (30s = `parExpiryWarningThresholdSeconds`) warns:
+    /// the docs promise "at or below this many seconds", so the comparison is inclusive
+    /// (guards against an off-by-one regression of `<=` back to `<`).
+    func testParThresholdExpiresInLogsWarning() async throws {
+        let logger = CapturingLogger()
+        makeConfig(logger: logger)
+        installParHandler(expiresIn: OidcClient.parExpiryWarningThresholdSeconds)
+
+        try await oidcClientConfig.oidcInitialize()
+        _ = try await oidcClientConfig.populateRequest(request: oidcClientConfig.httpClient!.request(), pkce: Pkce.generate(), responseMode: "")
+
+        XCTAssertTrue(warningsContainShortExpiry(logger),
+                      "Expected a warning at exactly the 30s threshold, got: \(logger.warningMessages)")
+    }
+
+    /// One second above the threshold (31s) logs no warning — the inclusive bound's other edge.
+    func testParJustAboveThresholdExpiresInLogsNoWarning() async throws {
+        let logger = CapturingLogger()
+        makeConfig(logger: logger)
+        installParHandler(expiresIn: OidcClient.parExpiryWarningThresholdSeconds + 1)
+
+        try await oidcClientConfig.oidcInitialize()
+        _ = try await oidcClientConfig.populateRequest(request: oidcClientConfig.httpClient!.request(), pkce: Pkce.generate(), responseMode: "")
+
+        XCTAssertTrue(logger.warningMessages.isEmpty,
+                      "Expected no warning for 31s request_uri, got: \(logger.warningMessages)")
     }
 
     /// A non-positive `expires_in` warns that the URI may already be expired.

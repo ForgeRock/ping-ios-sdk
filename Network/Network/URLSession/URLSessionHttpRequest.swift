@@ -358,6 +358,10 @@ extension URLSessionHttpRequest {
     /// everything except `A-Z a-z 0-9 - . _ ~` is percent-encoded — including `+`
     /// (which `URLComponents.queryItems` leaves raw, but form decoders read as space).
     /// The result is safe to assign to `URLComponents.percentEncodedQuery`.
+    ///
+    /// Note: an item with a `nil` value renders as `name=` (empty value). `URLComponents`
+    /// would render it as a bare `name` with no `=` — servers distinguishing flag
+    /// parameters from empty values will see the `=` form here.
     private func rfc3986EncodedQuery(_ items: [URLQueryItem]) -> String {
         func encode(_ raw: String) -> String {
             raw.addingPercentEncoding(withAllowedCharacters: Self.rfc3986AllowedCharacters) ?? raw

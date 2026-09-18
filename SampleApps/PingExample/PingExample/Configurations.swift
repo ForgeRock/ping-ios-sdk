@@ -24,10 +24,10 @@ let defaultConfigurations: [Configuration] = [
     Configuration(
         name: "My Journey Config", // for displaying in the list
         type: .journey,
-        clientId: "iosClieny",
+        clientId: "your-oauth2-client", // Replace with your client ID
         scopes: ["openid", "profile"], // Alter the scopes based on your clients configuration
         redirectUri: "myapp://oauth2redirect",
-        discoveryEndpoint: "https://openam-bafaloukas.forgeblocks.com/am/oauth2/realms/root/realms/alpha/.well-known/openid-configuration",
+        discoveryEndpoint: "https://example.com/am/oauth2/realms/root/realms/alpha/.well-known/openid-configuration", // Replace with your tenant's discovery endpoint
         environment: "AIC", //"PingOne" or "AIC"
         cookieName: nil, // Optional, can be nil if not used
         serverUrl: nil, // Optional, can be nil if not used
@@ -46,10 +46,10 @@ let defaultConfigurations: [Configuration] = [
     Configuration(
         name: "OIDC RAR", // for displaying in the list
         type: .oidcWeb,
-        clientId: "rarClient",
+        clientId: "your-rar-client", // Replace with your RAR-enabled client ID
         scopes: ["openid", "profile"], // Alter the scopes based on your clients configuration
         redirectUri: "myapp://oauth2redirect",
-        discoveryEndpoint: "https://openam-bafaloukas.forgeblocks.com/am/oauth2/realms/root/realms/alpha/.well-known/openid-configuration",
+        discoveryEndpoint: "https://example.com/am/oauth2/realms/root/realms/alpha/.well-known/openid-configuration", // Replace with your tenant's discovery endpoint
         environment: "AIC", //"PingOne" or "AIC"
         cookieName: nil, // Optional, can be nil if not used
         serverUrl: nil, // Optional, can be nil if not used

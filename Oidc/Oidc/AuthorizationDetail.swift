@@ -57,9 +57,9 @@ public struct AuthorizationDetail: Codable, Sendable, Equatable {
         var extra: [String: AuthorizationDetailValue] = [:]
         let dynamic = try decoder.container(keyedBy: AuthorizationDetailValue.DynamicKey.self)
         for key in dynamic.allKeys where !CodingKeys.allCases.contains(where: { $0.stringValue == key.stringValue }) {
-            if let value = try? dynamic.decode(AuthorizationDetailValue.self, forKey: key) {
-                extra[key.stringValue] = value
-            }
+            // Propagate the throw rather than dropping the value: authorization_details is
+            // security-relevant, so silent data loss on decode is worse than a loud failure.
+            extra[key.stringValue] = try dynamic.decode(AuthorizationDetailValue.self, forKey: key)
         }
         additionalFields = extra
     }
@@ -75,6 +75,12 @@ public struct AuthorizationDetail: Codable, Sendable, Equatable {
         if !additionalFields.isEmpty {
             var dynamic = encoder.container(keyedBy: AuthorizationDetailValue.DynamicKey.self)
             for (key, value) in additionalFields {
+                // Skip keys that shadow a modeled property (e.g. additionalFields["type"]):
+                // encoding them would emit the member twice on the wire, which strict
+                // parsers reject. The typed property wins.
+                if CodingKeys.allCases.contains(where: { $0.stringValue == key }) {
+                    continue
+                }
                 let codingKey = AuthorizationDetailValue.DynamicKey(stringValue: key)
                 try dynamic.encode(value, forKey: codingKey)
             }
@@ -87,9 +93,10 @@ public extension AuthorizationDetail {
     /// wire parameter (RFC 9396 §2) expects. Uses `.sortedKeys` for deterministic output.
     ///
     /// - Note: the returned value contains raw `+` characters where the JSON does (URL-encoding
-    ///   happens downstream in the request layer); form-encoded transports decode `+` as a
-    ///   space, so payloads whose JSON contains a literal `+` in a string value must avoid
-    ///   relying on it surviving a round trip through such a server.
+    ///   happens downstream in the request layer). The SDK's `URLSessionHttpRequest` percent-encodes
+    ///   the parameter with RFC 3986 rules so a literal `+` survives (`%2B`); a custom request
+    ///   layer or a transport that emits raw `+` will have it decoded as a space by
+    ///   form-urlencoded decoders on the server.
     static func wireValue(_ details: [AuthorizationDetail]) throws -> String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
@@ -132,10 +139,16 @@ public enum AuthorizationDetailValue: Codable, Sendable, Equatable {
         let container = try decoder.singleValueContainer()
         if container.decodeNil() {
             self = .null
+        } else if let v = try? container.decode(Double.self) {
+            // Double BEFORE Bool: JSON true must not decode as Double(1) — but the
+            // JSONSerialization-backed decoder (iOS < 17) bridges true → NSNumber(1), so on
+            // those OS versions a JSON `true` decodes as .double(1) and JSON 0/1 decode as
+            // .double (correct). The pure-Swift decoder (iOS 17+) keeps true→.bool and
+            // 0/1→.double. The value type distinction is best-effort for additionalFields;
+            // wire re-encoding through JSONEncoder preserves JSON numbers either way.
+            self = .double(v)
         } else if let v = try? container.decode(Bool.self) {
             self = .bool(v)
-        } else if let v = try? container.decode(Double.self) {
-            self = .double(v)
         } else if let v = try? container.decode(String.self) {
             self = .string(v)
         } else if let v = try? container.decode([String: AuthorizationDetailValue].self) {

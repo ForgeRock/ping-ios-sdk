@@ -102,7 +102,7 @@ struct OidcRarLoginView: View {
                 Text(error)
                     .font(.system(size: 11))
                     .foregroundStyle(Color(.systemRed))
-            } else {
+            } else if !viewModel.jsonText.isEmpty {
                 Text("Valid — \(jsonObjectCount) object(s). Sent in the PAR body when PAR is on, otherwise on the authorize URL.")
                     .font(.system(size: 11))
                     .foregroundStyle(Color(.systemGreen))

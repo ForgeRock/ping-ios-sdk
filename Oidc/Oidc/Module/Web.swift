@@ -120,22 +120,15 @@ extension WebModule {
     }
 
     /// Validates the `state` on the callback against the value the SDK sent on the authorize
-    /// request (RFC 6749 §10.12 CSRF protection). Skipped when no expected value was recorded
-    /// (e.g. the state was integrator-supplied through a path that did not register it).
+    /// request (RFC 6749 §10.12 CSRF protection). Skipped when no expected value was recorded.
+    /// Delegates to `OidcClient.validateState(from:expected:)` (shared with the non-UIKit path).
     /// - Parameters:
     ///   - url: The callback URL carrying the returned `state`.
     ///   - expected: The state value sent on the authorize request, if known.
     /// - Throws: `OidcError.authorizeError` on mismatch or when the callback carries no state
     ///   although one was sent.
     internal static func validateState(from url: URL, expected: String?) throws {
-        guard let expected else { return }
-        guard let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true),
-              let returned = components.queryItems?.filter({ $0.name == OidcClient.Constants.state }).first?.value else {
-            throw OidcError.authorizeError(message: "Authorization response did not include the state parameter")
-        }
-        guard returned == expected else {
-            throw OidcError.authorizeError(message: "State mismatch: the authorization response state does not match the one sent with the request (possible CSRF)")
-        }
+        try OidcClient.validateState(from: url, expected: expected)
     }
 
     /// Extracts the state from the provided URL.
