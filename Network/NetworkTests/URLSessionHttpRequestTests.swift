@@ -102,6 +102,67 @@ final class URLSessionHttpRequestTests: XCTestCase {
         XCTAssertEqual(built?.value(forHTTPHeaderField: NetworkConstants.headerContentType), NetworkConstants.contentTypeForm)
     }
 
+    /// `+` in a query value must be percent-encoded as %2B: URLQueryItem leaves it raw,
+    /// and form-urlencoded decoders (plus many query parsers) read a raw `+` as a space.
+    func testQueryParameterValueWithPlusIsPercentEncoded() {
+        let request = URLSessionHttpRequest()
+        request.url = "https://example.com/path"
+        request.setParameter(name: "phone", value: "+441234567890")
+        request.setParameter(name: "plain", value: "no-plus")
+
+        let built = request.buildURLRequest()
+        XCTAssertEqual(built?.url?.absoluteString, "https://example.com/path?phone=%2B441234567890&plain=no-plus")
+    }
+
+    /// `+` in a form (body) value must be percent-encoded as %2B for the same reason:
+    /// a raw `+` on the wire is read back as a space by any form decoder.
+    func testFormParameterValueWithPlusIsPercentEncoded() {
+        let request = URLSessionHttpRequest()
+        request.url = "https://example.com"
+        request.form(parameters: ["remittance": "Ref + Number"])
+
+        let built = request.buildURLRequest()
+        let bodyString = String(data: built?.httpBody ?? Data(), encoding: .utf8)
+        // Space is %20 and the literal plus survives as %2B — never a raw '+'.
+        XCTAssertEqual(bodyString, "remittance=Ref%20%2B%20Number")
+    }
+
+    /// A `+` in a parameter NAME is also percent-encoded (it is part of the form payload).
+    func testQueryParameterNameWithPlusIsPercentEncoded() {
+        let request = URLSessionHttpRequest()
+        request.url = "https://example.com/path"
+        request.setParameter(name: "a+b", value: "c")
+
+        let built = request.buildURLRequest()
+        XCTAssertEqual(built?.url?.absoluteString, "https://example.com/path?a%2Bb=c")
+    }
+
+    /// A value that already contains a percent escape must not be double-encoded:
+    /// RFC 3986 encoding re-escapes `%` (→ `%25`), which is correct — the caller is
+    /// expected to pass raw (unencoded) values and let this layer encode once.
+    func testQueryParameterWithPercentIsDoubleEncoded() {
+        let request = URLSessionHttpRequest()
+        request.url = "https://example.com/path"
+        // The integrator passes a LITERAL "%2B" string (e.g. a pre-serialized payload);
+        // the layer must emit %252B, not pass the already-encoded %2B through — passing
+        // it through would silently change the decoded value.
+        request.setParameter(name: "raw", value: "%2B")
+
+        let built = request.buildURLRequest()
+        XCTAssertEqual(built?.url?.absoluteString, "https://example.com/path?raw=%252B")
+    }
+
+    /// Non-ASCII values are percent-encoded (UTF-8) — guards against regressions to
+    /// `URLComponents.queryItems` assignment, which leaves non-ASCII raw on iOS.
+    func testQueryParameterWithNonASCIIValueIsPercentEncoded() {
+        let request = URLSessionHttpRequest()
+        request.url = "https://example.com/path"
+        request.setParameter(name: "name", value: "José")
+
+        let built = request.buildURLRequest()
+        XCTAssertEqual(built?.url?.absoluteString, "https://example.com/path?name=Jos%C3%A9")
+    }
+
     func testInvalidURLStringReturnsNil() {
         let request = URLSessionHttpRequest()
         request.url = "ht tp://invalid"

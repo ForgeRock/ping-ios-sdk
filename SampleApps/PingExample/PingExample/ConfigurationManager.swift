@@ -238,6 +238,9 @@ class ConfigurationManager: ObservableObject {
         Journey.createJourney { journeyConfig in
             journeyConfig.serverUrl = config.serverUrl
             journeyConfig.realm = config.realm ?? "root"
+            // A blank cookie name is fine: the SDK falls back to `iPlanetDirectoryPro`
+            // internally (`JourneyConfig.ssoHeaderName`), so an unset `cookieName` in the
+            // config editor no longer produces a malformed empty header on /authorize.
             journeyConfig.cookie = config.cookieName ?? ""
             journeyConfig.logger = LogManager.standard
             journeyConfig.module(PingJourney.OidcModule.config) { oidcValue in
@@ -248,10 +251,18 @@ class ConfigurationManager: ObservableObject {
                 oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_JOURNEY")
                 oidcValue.logger = LogManager.standard
                 oidcValue.par = config.par ?? false
+                if let json = config.authorizationDetailsJson {
+                    switch RarJson.decode(json) {
+                    case .success(let details):
+                        oidcValue.authorizationDetails = details
+                    case .failure(let error):
+                        LogManager.standard.w("Invalid authorizationDetails JSON on config '\(config.name)' — ignoring: \(error.message)", error: nil)
+                    }
+                }
             }
         }
     }
-    
+
     private static func buildDaVinci(_ config: Configuration) -> DaVinci {
         DaVinci.createDaVinci { daVinciConfig in
             daVinciConfig.logger = LogManager.standard
@@ -263,6 +274,14 @@ class ConfigurationManager: ObservableObject {
                 oidcValue.acrValues = config.acrValues ?? ""
                 oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_DAVINCI")
                 oidcValue.par = config.par ?? false
+                if let json = config.authorizationDetailsJson {
+                    switch RarJson.decode(json) {
+                    case .success(let details):
+                        oidcValue.authorizationDetails = details
+                    case .failure(let error):
+                        LogManager.standard.w("Invalid authorizationDetails JSON on config '\(config.name)' — ignoring: \(error.message)", error: nil)
+                    }
+                }
             }
         }
     }
@@ -286,6 +305,14 @@ class ConfigurationManager: ObservableObject {
                 oidcValue.acrValues = config.acrValues ?? ""
                 oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_OIDCWEB")
                 oidcValue.par = config.par ?? false
+                if let json = config.authorizationDetailsJson {
+                    switch RarJson.decode(json) {
+                    case .success(let details):
+                        oidcValue.authorizationDetails = details
+                    case .failure(let error):
+                        LogManager.standard.w("Invalid authorizationDetails JSON on config '\(config.name)' — ignoring: \(error.message)", error: nil)
+                    }
+                }
             }
         }
     }

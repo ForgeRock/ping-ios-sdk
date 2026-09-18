@@ -10,6 +10,7 @@
 
 
 import SwiftUI
+import PingOidc
 
 /// Displays access token details for Journey, DaVinci, and OIDC (Web) auth flows.
 /// Can show all tabs or be locked to a single tab via `fixedTab`.
@@ -52,8 +53,14 @@ struct AccessTokenView: View {
                     accessTokenCard(result.info)
                         .padding(.horizontal, 20)
                         .padding(.top, 8)
+
+                    if selectedTab == .oidc || selectedTab == .journey || selectedTab == .davinci {
+                        authorizationDetailsCard(result.authorizationDetails)
+                            .padding(.horizontal, 20)
+                            .padding(.top, 8)
+                    }
                 }
-                
+
                 tokenActionBar
             }
         }
@@ -159,6 +166,88 @@ struct AccessTokenView: View {
         .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
     }
     
+    /// RFC 9396: renders the granted `authorization_details` echoed by the server, one card
+    /// per object. Hidden entirely when the server granted none (non-RAR apps see no change).
+    @ViewBuilder
+    private func authorizationDetailsCard(_ details: [AuthorizationDetail]?) -> some View {
+        if let details, !details.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "checkmark.shield.badge.plus")
+                        .font(.system(size: 16))
+                        .foregroundColor(.themeButtonBackground)
+                    Text("Granted Authorization Details")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.primary)
+                    Spacer()
+                }
+
+                Divider()
+
+                ForEach(Array(details.enumerated()), id: \.offset) { index, detail in
+                    VStack(alignment: .leading, spacing: 8) {
+                        detailRow("Type", detail.type)
+                        if let locations = detail.locations { detailRow("Locations", locations) }
+                        if let actions = detail.actions { detailRow("Actions", actions) }
+                        if let datatypes = detail.datatypes { detailRow("Datatypes", datatypes) }
+                        if let privileges = detail.privileges { detailRow("Privileges", privileges) }
+                        if !detail.additionalFields.isEmpty {
+                            Text("Additional fields")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.secondary)
+                            ForEach(Array(detail.additionalFields.keys).sorted(), id: \.self) { key in
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(key)
+                                        .font(.system(size: 12, weight: .medium))
+                                        .foregroundColor(.secondary)
+                                    Text(prettyValue(detail.additionalFields[key]))
+                                        .font(.system(size: 12, design: .monospaced))
+                                        .foregroundColor(.primary)
+                                        .textSelection(.enabled)
+                                }
+                            }
+                        }
+                        if details.count > 1 && index < details.count - 1 {
+                            Divider()
+                        }
+                    }
+                }
+            }
+            .padding(16)
+            .background(Color(.secondarySystemGroupedBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        }
+    }
+
+    private func detailRow(_ label: String, _ values: [String]) -> some View {
+        detailRow(label, values.joined(separator: ", "))
+    }
+
+    private func detailRow(_ label: String, _ value: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(label)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(.secondary)
+            Text(value)
+                .font(.system(size: 12, design: .monospaced))
+                .foregroundColor(.primary)
+                .textSelection(.enabled)
+        }
+    }
+
+    /// Pretty-prints an `AuthorizationDetailValue` (objects/arrays pretty-printed via JSONEncoder).
+    private func prettyValue(_ value: AuthorizationDetailValue?) -> String {
+        guard let value else { return "" }
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys, .prettyPrinted]
+        if let data = try? encoder.encode(value),
+           let text = String(data: data, encoding: .utf8) {
+            return text
+        }
+        return String(describing: value)
+    }
+
     private func parseTokenInfo(_ info: String) -> [AccessTokenPair] {
         info.split(separator: "\n").compactMap { line in
             let parts = line.split(separator: ":", maxSplits: 1)

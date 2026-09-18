@@ -231,7 +231,9 @@ struct ConfigurationListView: View {
             cookieName: config.cookieName,
             serverUrl: config.serverUrl,
             realm: config.realm,
-            acrValues: config.acrValues
+            acrValues: config.acrValues,
+            par: config.par,
+            authorizationDetailsJson: config.authorizationDetailsJson
         )
         withAnimation {
             configManager.addConfiguration(duplicate)

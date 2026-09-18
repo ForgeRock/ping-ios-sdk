@@ -63,7 +63,7 @@ public class OidcModule {
                     let approvalConfig: JourneyConfig? = journeyFlow.config as? JourneyConfig
                     let response = try await journeyFlow.config.httpClient.request { request in
                         request.url = uriString
-                        request.setHeader(name: approvalConfig?.cookie ?? JourneyConstants.cookie, value: existingSession.value)
+                        request.setHeader(name: approvalConfig?.ssoHeaderName ?? JourneyConstants.cookie, value: existingSession.value)
                         request.form(parameters: [
                             JourneyConstants.userCode: userCode,
                             JourneyConstants.decision: JourneyConstants.decisionAllow,
@@ -81,7 +81,7 @@ public class OidcModule {
             let cloneConfig: OidcClientConfig = config.clone()
             let journeyConfig: JourneyConfig? = journeyFlow.config as? JourneyConfig
             let flowPkce = context.flowContext.get(key: SharedContext.Keys.pkceKey) as? Pkce
-            let agent = CreateAgent(session: success.session, pkce: flowPkce, cookieName: journeyConfig?.cookie ?? JourneyConstants.cookie)
+            let agent = CreateAgent(session: success.session, pkce: flowPkce, cookieName: journeyConfig?.ssoHeaderName ?? JourneyConstants.cookie)
             cloneConfig.updateAgent(agent)
 
             let oidcuser: User = OidcUser(config: cloneConfig)

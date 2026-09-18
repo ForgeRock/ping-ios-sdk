@@ -71,7 +71,7 @@ enum MenuSection: CaseIterable, Identifiable {
     var items: [MenuItem] {
         switch self {
         case .authentication:
-            return [.davinci, .journey, .backchannel, .oidc, .device]
+            return [.davinci, .journey, .backchannel, .oidc, .oidcRar, .device]
         case .userManagement:
             return [.token, .user, .deviceManagement, .logout]
         case .mfa:
@@ -90,6 +90,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case journey = "Journey"
     case backchannel = "Backchannel"
     case oidc = "OIDC (Web)"
+    case oidcRar = "OIDC RAR"
     case device = "Device Flow"
     case oathAccounts = "OATH"
     case pushAccounts = "Push"
@@ -125,6 +126,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .journey: return "map.fill"
         case .backchannel: return "arrow.left.arrow.right.circle.fill"
         case .oidc: return "lock.shield.fill"
+        case .oidcRar: return "checkmark.shield.badge.plus"
         case .device: return "tv"
         case .oathAccounts: return "key.viewfinder"
         case .pushAccounts: return "bell.badge.fill"
@@ -160,6 +162,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .journey: return "Journey Flow"
         case .backchannel: return "Backchannel Auth"
         case .oidc: return "OIDC (Web) Login"
+        case .oidcRar: return "OIDC (Web) RAR Login"
         case .device: return "Device Flow"
         case .oathAccounts: return "OATH"
         case .pushAccounts: return "Push"
@@ -195,6 +198,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .journey: return "Test Journey authentication"
         case .backchannel: return "AM/AIC transactional backchannel auth"
         case .oidc: return "OpenID Connect flow"
+        case .oidcRar: return "RFC 9396 rich authorization requests, with/without PAR"
         case .device: return "RFC 8628 device authorization"
         case .oathAccounts: return "Manage TOTP and HOTP accounts"
         case .pushAccounts: return "Manage push authentication accounts"
@@ -229,7 +233,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         switch self {
         case .journey, .journeyToken, .backchannel: return .journey
         case .davinci, .davinciToken: return .davinci
-        case .oidc, .oidcToken: return .oidcWeb
+        case .oidc, .oidcToken, .oidcRar: return .oidcWeb
         case .device, .deviceToken: return .device
         default: return nil
         }
@@ -298,6 +302,8 @@ struct ContentView: View {
                     BackchannelAuthView(path: $path)
                 case .oidc:
                     OidcLoginView(path: $path)
+                case .oidcRar:
+                    OidcRarLoginView(path: $path)
                 case .device:
                     DeviceFlowView(path: $path)
                 case .oathAccounts:

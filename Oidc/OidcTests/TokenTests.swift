@@ -87,4 +87,41 @@ final class TokenTests: XCTestCase {
         XCTAssertTrue(token.isExpired(threshold: 3601))
         XCTAssertFalse(token.isExpired(threshold: 3599))
     }
+
+    /// RFC 9396 §7: the token response MUST include the granted `authorization_details`.
+    /// Proves the field survives decode AND a JSONEncoder→JSONDecoder round trip — the exact
+    /// mechanism `KeychainStorage`'s `Keychain<T>.save/get` wrap around persistence, so this is
+    /// the correct way to prove the keychain round-trip claim without touching real Keychain.
+    func testAuthorizationDetailsSurvivesEncodingDecoding() throws {
+        let body = Data("""
+        {
+          "access_token": "rar-access-token",
+          "token_type": "Bearer",
+          "expires_in": 3600,
+          "refresh_token": "rar-refresh-token",
+          "scope": "openid",
+          "authorization_details": [{"type": "payment_initiation", "instructedAmount": {"currency": "EUR", "amount": "123.50"}}]
+        }
+        """.utf8)
+
+        let token = try JSONDecoder().decode(Token.self, from: body)
+
+        XCTAssertEqual(token.accessToken, "rar-access-token")
+        let details = try XCTUnwrap(token.authorizationDetails)
+        XCTAssertEqual(details.count, 1)
+        XCTAssertEqual(details[0].type, "payment_initiation")
+        if case .object(let amount)? = details[0].additionalFields["instructedAmount"] {
+            XCTAssertEqual(amount["currency"], .string("EUR"))
+            XCTAssertEqual(amount["amount"], .string("123.50"))
+        } else {
+            XCTFail("instructedAmount object did not decode")
+        }
+
+        // Round trip through JSONEncoder/JSONDecoder — the same encode/decode pair
+        // `Keychain<T>.save`/`get` wrap around actual persistence.
+        let reencoded = try JSONEncoder().encode(token)
+        let roundTripped = try JSONDecoder().decode(Token.self, from: reencoded)
+        XCTAssertEqual(roundTripped.authorizationDetails, token.authorizationDetails,
+                       "authorization_details must survive an encode/decode round trip")
+    }
 }

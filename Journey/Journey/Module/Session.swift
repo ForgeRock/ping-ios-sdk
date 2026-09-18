@@ -33,14 +33,14 @@ public class SessionModule {
         /// Start handler for the session module
         setup.start { @Sendable context, request in
             if let token = await journeyFlow.session(), let journeyConfig = journeyFlow.config as? JourneyConfig {
-                request.setHeader(name: journeyConfig.cookie, value: token.value)
+                request.setHeader(name: journeyConfig.ssoHeaderName, value: token.value)
             }
             return request
         }
         /// Next handler for the session module
         setup.next { @Sendable context, _, request in
             if let token = await journeyFlow.session(), let journeyConfig = journeyFlow.config as? JourneyConfig {
-                request.setHeader(name: journeyConfig.cookie, value: token.value)
+                request.setHeader(name: journeyConfig.ssoHeaderName, value: token.value)
             }
             
             if let noSession = journeyFlow.sharedContext.get(key: JourneyConstants.noSession) as? Bool {
@@ -66,7 +66,7 @@ public class SessionModule {
             if let ssoToken = await journeyFlow.session(), let journeyConfig = journeyFlow.config as? JourneyConfig {
                 request.url = "\(journeyConfig.serverUrl ?? "")/json/realms/\(journeyConfig.realm)/sessions"
                 request.setParameter(name: "_action", value: "logout")
-                request.setHeader(name: journeyConfig.cookie, value: ssoToken.value)
+                request.setHeader(name: journeyConfig.ssoHeaderName, value: ssoToken.value)
                 request.setHeader(name: JourneyConstants.acceptApiVersion, value: JourneyConstants.resource31)
                 request.post(json: [:]) // assume empty body
                 await journeyFlow.deleteSession()

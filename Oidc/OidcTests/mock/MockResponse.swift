@@ -38,6 +38,21 @@ struct MockResponse {
     }
     """.data(using: .utf8)!
     }
+
+    /// A token response carrying RFC 9396 §7 granted `authorization_details`.
+    static var tokenWithAuthorizationDetails: Data {
+         """
+    {
+      "access_token" : "Dummy AccessToken",
+      "token_type" : "Dummy Token Type",
+      "scope" : "openid email address",
+      "refresh_token" : "Dummy RefreshToken",
+      "expires_in" : 2,
+      "id_token" : "Dummy IdToken",
+      "authorization_details" : [{"type" : "payment_initiation", "instructedAmount" : {"currency" : "EUR", "amount" : "123.50"}}]
+    }
+    """.data(using: .utf8)!
+    }
     
     static var userinfo: Data {
          """
