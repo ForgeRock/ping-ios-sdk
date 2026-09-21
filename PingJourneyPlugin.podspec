@@ -25,4 +25,5 @@ Pod::Spec.new do |s|
   }
   
   s.dependency 'PingOrchestrate', '~> 2.1.0'
+  s.dependency 'PingLogger', '~> 2.1.0'
 end

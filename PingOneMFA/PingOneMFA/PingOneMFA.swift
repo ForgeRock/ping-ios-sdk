@@ -9,8 +9,18 @@
 
 import Foundation
 import UserNotifications
+#if canImport(PingOneSDK)
 import PingOneSDK
+#endif
 
+/// Error thrown on platforms where the binary PingOneSDK is unavailable (non-iOS builds).
+struct PingOneSDKUnavailableError: LocalizedError {
+    public var errorDescription: String? {
+        "PingOneMFA requires the PingOne SDK, which is only available on iOS."
+    }
+}
+
+#if canImport(PingOneSDK)
 /// Actor to manage PingOneMFA SDK state with thread safety
 @globalActor
 public actor PingOneMFAActor {
@@ -317,3 +327,30 @@ public class PingOneMFA {
     }
 
 }
+
+#else
+/// Non-iOS shim for the SDK-bound `PingOneMFA` surface: `MobilePairingCollector`
+/// (and any other DaVinci collector in this module) references `PingOneMFA.pair`
+/// unconditionally, so the symbol must exist on every platform the target builds for.
+/// On non-iOS it always throws rather than compiling against the absent binary SDK.
+@globalActor
+public actor PingOneMFAActor {
+    public static let shared = PingOneMFAActor()
+}
+
+/// Entry point for PingOne MFA operations, mirrored by the non-iOS shim below.
+///
+/// On iOS the real implementation lives in the `#if canImport(PingOneSDK)` branch above;
+/// this declaration exists only on non-iOS platforms so the module compiles when the
+/// binary PingOne SDK is unavailable.
+public class PingOneMFA {
+    /// Starts mobile-device pairing through the PingOne SDK.
+    ///
+    /// On non-iOS platforms there is no PingOne SDK to drive the pairing flow, so this
+    /// always throws `PingOneSDKUnavailableError`.
+    /// - Parameter pairingKey: The pairing key obtained from the PingOne MFA server.
+    public nonisolated static func pair(pairingKey: String) async throws {
+        throw PingOneSDKUnavailableError()
+    }
+}
+#endif

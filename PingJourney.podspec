@@ -24,7 +24,6 @@ Pod::Spec.new do |s|
     'Journey' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingDeviceProfile', '~> 2.1.0'
   s.ios.dependency 'PingJourneyPlugin', '~> 2.1.0'
   s.ios.dependency 'PingOidc', '~> 2.1.0'
   

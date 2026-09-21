@@ -327,7 +327,7 @@ AIC Journeys and integrates seamlessly with the Ping Journey framework.
 
 ### Setup
 
-PingJourney module will automatically register DeviceProfileCallback if PingDeviceProfile module is imported
+PingJourney module will automatically register DeviceProfileCallback if PingDeviceProfile module is imported. `PingDeviceProfile` is no longer pulled in transitively via `PingJourney` — add it to your target's dependencies (Swift Package Manager) or `Podfile` (CocoaPods) explicitly.
 
 ### Basic Usage with DeviceProfileCallback
 
