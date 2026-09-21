@@ -77,7 +77,7 @@ enum MenuSection: CaseIterable, Identifiable {
         case .mfa:
             return [.qrScanner, .oathAccounts, .pushAccounts, .pushNotifications]
         case .pingOneMFA:
-            return [.pingOneMFAScanner, .pingOneMFAAccounts, .pingOneMFAOtp, .pingOneMFAPayload]
+            return [.pingOneMFAScanner, .pingOneMFAAccounts, .pingOneMFAOtp, .pingOneMFAPayload, .pingOneMFADavinciPairing]
         case .developerTools:
             return [.deviceInfo, .logger, .storage, .bindingKeys, .migration, .configuration]
         }
@@ -116,6 +116,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case pingOneMFAAccounts = "PingOne MFA Accounts"
     case pingOneMFAOtp = "PingOne MFA OTP"
     case pingOneMFAPayload = "PingOne MFA Payload"
+    case pingOneMFADavinciPairing = "PingOne MFA DaVinci Pairing"
 
     var id: String { rawValue }
     
@@ -151,6 +152,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .pingOneMFAAccounts: return "person.2.fill"
         case .pingOneMFAOtp: return "number.square.fill"
         case .pingOneMFAPayload: return "doc.badge.gearshape.fill"
+        case .pingOneMFADavinciPairing: return "link.badge.plus"
         }
     }
 
@@ -186,6 +188,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .pingOneMFAAccounts: return "MFA Accounts"
         case .pingOneMFAOtp: return "One-Time Passcode"
         case .pingOneMFAPayload: return "Mobile Payload"
+        case .pingOneMFADavinciPairing: return "DaVinci Pairing"
         }
     }
 
@@ -221,6 +224,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .pingOneMFAAccounts: return "View paired MFA accounts"
         case .pingOneMFAOtp: return "OTP for your paired accounts"
         case .pingOneMFAPayload: return "Generate mobile payload for authentication and registration"
+        case .pingOneMFADavinciPairing: return "Pair device via DaVinci flow"
         }
     }
 
@@ -228,7 +232,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     var requiredConfigType: ConfigType? {
         switch self {
         case .journey, .journeyToken, .backchannel: return .journey
-        case .davinci, .davinciToken: return .davinci
+        case .davinci, .davinciToken, .pingOneMFADavinciPairing: return .davinci
         case .oidc, .oidcToken: return .oidcWeb
         case .device, .deviceToken: return .device
         default: return nil
@@ -348,6 +352,8 @@ struct ContentView: View {
                     PingOneMFAOtpView(path: $path)
                 case .pingOneMFAPayload:
                     PingOneMFAPayloadView(path: $path)
+                case .pingOneMFADavinciPairing:
+                    PingOneMFADavinciPairingView(path: $path)
                 }
             }
             .task {

@@ -85,6 +85,7 @@ public enum Constants {
     public static let devices = "devices"
     public static let DEVICE_REGISTRATION = "DEVICE_REGISTRATION"
     public static let DEVICE_AUTHENTICATION = "DEVICE_AUTHENTICATION"
+    public static let MOBILE_PAIRING = "MOBILE_PAIRING"
     public static let PHONE_NUMBER = "PHONE_NUMBER"
     public static let submit = "submit"
     public static let countryCode = "countryCode"
