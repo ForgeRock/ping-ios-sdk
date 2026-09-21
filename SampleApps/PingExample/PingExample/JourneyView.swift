@@ -189,18 +189,36 @@ struct JourneyNodeView: View {
     let onNext: () -> Void
     
     private var showNext: Bool {
-        !continueNode.callbacks.contains { callback in
+        let alwaysHidesNext = continueNode.callbacks.contains { callback in
             callback is ConfirmationCallback ||
             callback is SuspendedTextOutputCallback ||
             callback is PingOneProtectInitializeCallback ||
             callback is PingOneProtectEvaluationCallback ||
             callback is IdpCallback ||
-            callback is FidoRegistrationCallback ||
-            callback is FidoAuthenticationCallback ||
             callback is DeviceBindingCallback ||
             callback is DeviceSigningVerifierCallback ||
             JourneyNodeView.isRecognizeCallback(callback)
         }
+        if alwaysHidesNext {
+            return false
+        }
+
+        // A FIDO callback normally drives its own submission (its view calls onNext itself once
+        // a ceremony completes), so Next stays hidden when it's the only thing on the node.
+        // But a WebAuthn node can now live in the same Page Node as a username/password step —
+        // when it does, Next must stay available so the user can fall back to password login
+        // without ever completing (or having) a passkey ceremony.
+        let hasFidoCallback = continueNode.callbacks.contains { $0 is FidoRegistrationCallback || $0 is FidoAuthenticationCallback }
+        if hasFidoCallback {
+            return continueNode.callbacks.contains { callback in
+                callback is NameCallback ||
+                callback is ValidatedUsernameCallback ||
+                callback is PasswordCallback ||
+                callback is ValidatedPasswordCallback
+            }
+        }
+
+        return true
     }
 
     private static func isRecognizeCallback(_ callback: any Action) -> Bool {
@@ -210,6 +228,15 @@ struct JourneyNodeView: View {
         #else
         return false
         #endif
+    }
+
+    /// Whether this node also carries a `FidoAuthenticationCallback` requesting WebAuthn
+    /// Conditional UI — the server-driven signal that decides whether a username field on this
+    /// same node should hint `.textContentType(.username)` for autofill-assisted passkey sign-in.
+    private var isConditionalMediationActive: Bool {
+        continueNode.callbacks.contains {
+            ($0 as? FidoAuthenticationCallback)?.isConditionalMediationRequested == true
+        }
     }
     
     var body: some View {
@@ -257,10 +284,10 @@ struct JourneyNodeView: View {
                     TextOutputCallbackView(callback: suspendedTextCallback).id(suspendedTextCallback.id)
                     
                 case let nameCallback as NameCallback:
-                    NameCallbackView(callback: nameCallback, onNodeUpdated: onNodeUpdated).id(nameCallback.id)
-                    
+                    NameCallbackView(callback: nameCallback, onNodeUpdated: onNodeUpdated, isConditionalMediationActive: isConditionalMediationActive).id(nameCallback.id)
+
                 case let validatedUsernameCallback as ValidatedUsernameCallback:
-                    ValidatedUsernameCallbackView(callback: validatedUsernameCallback, onNodeUpdated: onNodeUpdated).id(validatedUsernameCallback.id)
+                    ValidatedUsernameCallbackView(callback: validatedUsernameCallback, onNodeUpdated: onNodeUpdated, isConditionalMediationActive: isConditionalMediationActive).id(validatedUsernameCallback.id)
                     
                 case let validatedPasswordCallback as ValidatedPasswordCallback:
                     ValidatedPasswordCallbackView(callback: validatedPasswordCallback, onNodeUpdated: onNodeUpdated).id(validatedPasswordCallback.id)
