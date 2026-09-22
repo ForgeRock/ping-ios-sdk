@@ -12,6 +12,7 @@
 - `oidc.discoveryEndpoint` in the unified JSON configuration is now required only when no `oidc.openId` sub-object is supplied; an `openId` block without `discoveryEndpoint` replaces the discovery document and requires `tokenEndpoint` [SDKS-5301]
 - Added `OidcError.configurationError` to report a configuration that has neither a usable `discoveryEndpoint` nor a pre-supplied `openId` [SDKS-5301]
 - Added `MobilePairingCollector` to support pairing with PingOne [P14C-91504]
+- Added WebAuthn Conditional UI (autofill-assisted passkey sign-in) support to `PingFido`: `Fido.authenticateWithAutoFill(options:window:logger:completion:)` performs an `ASAuthorizationController.performAutoFillAssistedRequests()` ceremony, and `Fido.cancel()` cancels or supersedes an in-flight ceremony. `FidoAuthenticationCallback` gained a matching `authenticateWithAutoFill(window:)`, plus `isConditionalMediationRequested`/`isManualButtonEnabled` parsed from the server's `mediation`/`conditional`/`manualButtonEnabled` metadata fields, and `cancel()` (on `FidoCallback`) to tear down a listener on teardown. The app's UI layer is still responsible for setting `UITextContentType.username` on the relevant text field [SDKS-4575]
 
 #### Fixed
 - Fixed `QRCodeCollector` not preserving the complete QR code data URI in `content` [SDKS-5299]
@@ -24,6 +25,8 @@
 - Fixed the async `OidcClient.generateAuthorizeUrl(customParams:) async throws -> URL` silently falling back to the standard (non-PAR) flow when called before `OidcClientConfig.oidcInitialize()`, which could emit `additionalParameters` onto the returned URL instead of the PAR POST body; the synchronous overload never supported PAR and is unaffected [SDKS-5403]
 
 #### Changed
+- `FidoError` gained a `canceled` case (reported when a ceremony is superseded by a newer one or torn down via `Fido.cancel()`) — exhaustive `switch` statements over `FidoError` need a new branch [SDKS-4575]
+- `Fido.register`/`Fido.authenticate` no longer silently drop an in-flight ceremony when called again: the superseded ceremony's completion is now invoked synchronously with `FidoError.canceled` before the new ceremony starts, and `Fido.cancel()` does the same for the ceremony it ends [SDKS-4575]
 - `OidcError` gained a `configurationError` case — exhaustive `switch` statements over `OidcError` need a new branch [SDKS-5301]
 - A JSON configuration with a blank `oidc.discoveryEndpoint` and no `oidc.openId` sub-object now fails at parse time instead of at first use [SDKS-5301]
 - `OidcClientConfig.oidcInitialize()` cancellation is now isolated per caller: cancelling one caller's own task still returns promptly with `CancellationError`, but no longer cancels the shared discovery/`openIdOverride` operation for any other caller currently sharing it [SDKS-5301]

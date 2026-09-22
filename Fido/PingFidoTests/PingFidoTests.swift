@@ -212,6 +212,261 @@ class PingFidoTests: XCTestCase {
         XCTAssertTrue(capturedRequests.contains { $0 is ASAuthorizationSecurityKeyPublicKeyCredentialAssertionRequest })
     }
 
+    @MainActor func testAuthenticateWithAutoFillBuildsExactlyOnePlatformRequest() {
+        // performAutoFillAssistedRequests() requires exactly one platform assertion request —
+        // no security-key branch, unlike authenticate(), even when allowCredentials is present.
+        let options: [String: Any] = [
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "rpId": "example.com",
+            "allowCredentials": [
+                ["type": "public-key", "id": "Y3JlZGVudGlhbElk"]
+            ]
+        ]
+
+        var capturedRequests: [ASAuthorizationRequest] = []
+        fido.testRequestCapture = { request in
+            capturedRequests.append(request)
+        }
+
+        let window = UIWindow()
+        fido.authenticateWithAutoFill(options: options, window: window) { _ in }
+
+        XCTAssertEqual(capturedRequests.count, 1, "Only a single platform request should be built for autofill-assisted authentication")
+        XCTAssertTrue(capturedRequests.first is ASAuthorizationPlatformPublicKeyCredentialAssertionRequest)
+    }
+
+    @MainActor func testAuthenticateWithAutoFillDoesNotScheduleTimeout() {
+        // Unlike authenticate()/register(), the autofill-assisted ceremony is meant to stay
+        // active for the lifetime of the field, not a fixed duration.
+        let options: [String: Any] = [
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "rpId": "example.com",
+            "timeout": 60000
+        ]
+
+        let window = UIWindow()
+        fido.authenticateWithAutoFill(options: options, window: window) { _ in }
+
+        XCTAssertNil(fido.timeoutTask, "authenticateWithAutoFill must not schedule a timeout task")
+    }
+
+    @MainActor func testCancelWithNoInFlightCeremonyIsNoOp() {
+        fido.cancel()
+
+        XCTAssertNil(fido.authorizationController)
+        XCTAssertNil(fido.completion)
+    }
+
+    @MainActor func testCancelCompletesInFlightCeremonySynchronouslyWithFidoErrorCanceled() {
+        let options: [String: Any] = [
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "rpId": "example.com"
+        ]
+        var capturedResult: Result<[String: Any], Error>?
+        let window = UIWindow()
+        fido.authenticate(options: options, window: window) { result in
+            capturedResult = result
+        }
+        XCTAssertNotNil(fido.authorizationController, "Ceremony should be in flight before cancel")
+
+        fido.cancel()
+
+        guard case .failure(let error) = capturedResult else {
+            XCTFail("Expected cancel() to synchronously complete the in-flight ceremony with a failure")
+            return
+        }
+        XCTAssertEqual(error as? FidoError, .canceled)
+        XCTAssertNil(fido.authorizationController)
+        XCTAssertNil(fido.window)
+    }
+
+    @MainActor func testCancelWithStaleGenerationDoesNotKillNewerCeremony() {
+        // cancel(generation:) is the teardown path for late-fired cancellation handlers: a
+        // cancel racing with a newer ceremony's start must only kill the ceremony whose
+        // generation it captured, never the unrelated newer one.
+        let options: [String: Any] = [
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "rpId": "example.com"
+        ]
+        var autoFillResult: Result<[String: Any], Error>?
+        let window = UIWindow()
+        fido.authenticateWithAutoFill(options: options, window: window) { result in
+            autoFillResult = result
+        }
+        let staleGeneration = fido.ceremonyGeneration
+
+        // A newer ceremony starts on the same singleton before the stale cancel fires. This
+        // synchronously supersedes the autofill listener (autoFillResult resolves with .canceled
+        // via supersedeInFlightCeremony — expected, not a stale-cancel effect).
+        var capturedRequests: [ASAuthorizationRequest] = []
+        fido.testRequestCapture = { request in capturedRequests.append(request) }
+        var secondResult: Result<[String: Any], Error>?
+        fido.authenticate(options: options, window: window) { result in
+            secondResult = result
+        }
+        let newController = fido.authorizationController
+        XCTAssertNotNil(newController)
+
+        guard case .failure(let error) = autoFillResult else {
+            XCTFail("Expected the superseded autofill listener to fail with .canceled")
+            return
+        }
+        XCTAssertEqual(error as? FidoError, .canceled)
+
+        fido.cancel(generation: staleGeneration)
+
+        XCTAssertEqual(capturedRequests.count, 1)
+        XCTAssertTrue(fido.authorizationController === newController, "The newer ceremony must still be in flight")
+        XCTAssertNil(secondResult, "The newer ceremony's completion must be untouched by the stale cancel")
+    }
+
+    @MainActor func testCancelWithCurrentGenerationCancelsInFlightCeremony() {
+        // The counterpart pin: when the generation still matches (no supersede happened),
+        // cancel(generation:) behaves like cancel().
+        let options: [String: Any] = [
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "rpId": "example.com"
+        ]
+        var capturedResult: Result<[String: Any], Error>?
+        let window = UIWindow()
+
+        fido.authenticateWithAutoFill(options: options, window: window) { result in
+            capturedResult = result
+        }
+        let generation = fido.ceremonyGeneration
+
+        fido.cancel(generation: generation)
+
+        guard case .failure(let error) = capturedResult else {
+            XCTFail("Expected cancel(generation:) to end the matching ceremony with .canceled")
+            return
+        }
+        XCTAssertEqual(error as? FidoError, .canceled)
+        XCTAssertNil(fido.authorizationController)
+    }
+
+    @MainActor func testNewCeremonySupersedesInFlightAutoFillListener() {
+        let options: [String: Any] = [
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "rpId": "example.com"
+        ]
+        var autoFillResult: Result<[String: Any], Error>?
+        let window = UIWindow()
+        fido.authenticateWithAutoFill(options: options, window: window) { result in
+            autoFillResult = result
+        }
+        let autoFillController = fido.authorizationController
+        XCTAssertNotNil(autoFillController)
+
+        var capturedRequests: [ASAuthorizationRequest] = []
+        fido.testRequestCapture = { request in capturedRequests.append(request) }
+
+        fido.authenticate(options: options, window: window) { _ in }
+
+        guard case .failure(let error) = autoFillResult else {
+            XCTFail("Expected the superseded autofill listener to fail with .canceled")
+            return
+        }
+        XCTAssertEqual(error as? FidoError, .canceled)
+        XCTAssertEqual(capturedRequests.count, 1, "The new authenticate() ceremony's request should have been captured")
+        XCTAssertFalse(fido.authorizationController === autoFillController, "A new controller should have replaced the superseded one")
+    }
+
+    @MainActor func testStaleDelegateCallbackAfterSupersessionIsIgnored() {
+        let options: [String: Any] = [
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "rpId": "example.com"
+        ]
+        var firstResult: Result<[String: Any], Error>?
+        var secondResult: Result<[String: Any], Error>?
+        let window = UIWindow()
+
+        fido.authenticateWithAutoFill(options: options, window: window) { result in
+            firstResult = result
+        }
+        let staleController = fido.authorizationController!
+
+        fido.authenticate(options: options, window: window) { result in
+            secondResult = result
+        }
+        // The synchronous supersede already resolved firstResult with .canceled at this point.
+        XCTAssertNotNil(firstResult)
+
+        // Simulate a late delegate callback arriving from the now-superseded controller.
+        let staleError = NSError(domain: ASAuthorizationError.errorDomain, code: ASAuthorizationError.canceled.rawValue, userInfo: nil)
+        fido.authorizationController(controller: staleController, didCompleteWithError: staleError)
+
+        XCTAssertNil(secondResult, "The stale callback must not touch the new ceremony's completion")
+        XCTAssertNotNil(fido.authorizationController, "The new ceremony's state must remain intact")
+    }
+
+    @MainActor func testRegisterSupersedesInFlightAutoFillListener() {
+        // register() also calls supersedeInFlightCeremony() at its start; this pins that a
+        // ceremony other than authenticate()/authenticateWithAutoFill can be the "new" one too.
+        let authOptions: [String: Any] = [
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "rpId": "example.com"
+        ]
+        var autoFillResult: Result<[String: Any], Error>?
+        let window = UIWindow()
+        fido.authenticateWithAutoFill(options: authOptions, window: window) { result in
+            autoFillResult = result
+        }
+        XCTAssertNotNil(fido.authorizationController)
+
+        let registrationOptions: [String: Any] = [
+            "rp": ["id": "example.com", "name": "Example Corp"],
+            "user": ["id": "testuser", "name": "testuser", "displayName": "Test User"],
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "pubKeyCredParams": [["type": "public-key", "alg": -7]]
+        ]
+        var capturedRequests: [ASAuthorizationRequest] = []
+        fido.testRequestCapture = { request in capturedRequests.append(request) }
+
+        fido.register(options: registrationOptions, window: window) { _ in }
+
+        guard case .failure(let error) = autoFillResult else {
+            XCTFail("Expected the superseded autofill listener to fail with .canceled")
+            return
+        }
+        XCTAssertEqual(error as? FidoError, .canceled)
+        XCTAssertFalse(capturedRequests.isEmpty, "register()'s own request(s) should have been captured")
+    }
+
+    @MainActor func testStaleTimeoutAfterSupersessionIsIgnored() {
+        // The timeout task's `Task.isCancelled` check runs off-actor; it can pass a moment before
+        // a supersede lands on the MainActor. fireTimeout(generation:) must re-check the
+        // ceremony's identity once actually isolated, so a stale timeout from a since-superseded
+        // ceremony can't complete (or clean up the state of) whatever ceremony is current by then.
+        let optionsWithTimeout: [String: Any] = [
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "rpId": "example.com",
+            "timeout": 60000
+        ]
+        var firstResult: Result<[String: Any], Error>?
+        var secondResult: Result<[String: Any], Error>?
+        let window = UIWindow()
+
+        fido.authenticate(options: optionsWithTimeout, window: window) { result in
+            firstResult = result
+        }
+        XCTAssertNotNil(fido.timeoutTask, "A timeout task should have been scheduled")
+        let staleGeneration = fido.ceremonyGeneration
+
+        // Supersede with a fresh ceremony before the original timeout fires.
+        fido.authenticate(options: optionsWithTimeout, window: window) { result in
+            secondResult = result
+        }
+        XCTAssertNotNil(firstResult, "The first ceremony should have been synchronously superseded")
+
+        // Simulate the original timeout task finally reaching its MainActor body late, using the
+        // generation it captured before it was superseded.
+        fido.fireTimeout(generation: staleGeneration)
+
+        XCTAssertNil(secondResult, "The stale timeout must not touch the new ceremony's completion")
+        XCTAssertNotNil(fido.authorizationController, "The new ceremony's state must remain intact")
+    }
+
     func testFidoRegistrationCallbackTransform() {
         let callback = FidoRegistrationCallback()
         let input: [String: Any] = [
@@ -261,7 +516,24 @@ class PingFidoTests: XCTestCase {
         
         XCTAssertEqual(hiddenValueCallback.value, "ERROR::NotAllowedError:The operation was canceled.")
     }
-    
+
+    func testHandleErrorMapsFidoErrorCanceledToNotAllowedError() {
+        // Mirrors AbstractFidoCollector's handling of the same enum case (DaVinci side) — a
+        // superseded/explicitly-cancelled ceremony must map to the same NotAllowedError outcome
+        // as a native ASAuthorizationError.canceled, not fall through to a generic UnknownError.
+        let callback = FidoCallback()
+        let journey = Journey.createJourney()
+        let hiddenValueCallback = HiddenValueCallback()
+        hiddenValueCallback.initValue(name: JourneyConstants.id, value: FidoConstants.WEB_AUTHN_OUTCOME)
+        let continueNode = MockContinueNode(callbacks: Callbacks([hiddenValueCallback]))
+        callback.journey = journey
+        callback.continueNode = continueNode
+
+        callback.handleError(error: FidoError.canceled)
+
+        XCTAssertEqual(hiddenValueCallback.value, "ERROR::NotAllowedError:The operation was canceled.")
+    }
+
     func testFidoRegistrationCallbackInit() {
         let callback = FidoRegistrationCallback()
         let data: [String: Any] = [
