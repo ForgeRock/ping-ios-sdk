@@ -273,6 +273,37 @@ class FidoCallbackTests: XCTestCase {
     }
 
     @MainActor
+    func testFidoAuthenticationCallbackAuthenticateWithAutoFillStillHandlesNonCancellationErrors() async {
+        // The mediated path's silent-cancellation behavior must not blanket-suppress genuine
+        // errors: a non-cancellation failure (e.g. invalidChallenge) still has to go through
+        // handleError and report to the server.
+        let callback = FidoAuthenticationCallback()
+        callback.fido = mockFido
+
+        let journey = Journey.createJourney()
+        let hiddenValueCallback = HiddenValueCallback()
+        hiddenValueCallback.initValue(name: JourneyConstants.id, value: FidoConstants.WEB_AUTHN_OUTCOME)
+        let continueNode = MockContinueNode(callbacks: Callbacks([hiddenValueCallback]))
+        callback.journey = journey
+        callback.continueNode = continueNode
+
+        mockFido.autoFillAuthenticationResult = .failure(FidoError.invalidChallenge)
+
+        let result = await callback.authenticateWithAutoFill(window: MockASPresentationAnchor())
+
+        switch result {
+        case .success:
+            XCTFail("Expected authenticateWithAutoFill to fail with FidoError.invalidChallenge")
+        case .failure(let error):
+            XCTAssertEqual(error as? FidoError, .invalidChallenge)
+        }
+        // handleError's pre-existing mapping for invalidChallenge on the Journey side: not a
+        // cancellation, so it must be reported (the specific DOMException code here is
+        // unchanged legacy behavior — UnknownError via the generic fallback).
+        XCTAssertEqual(hiddenValueCallback.value, "ERROR::UnknownError:Invalid challenge")
+    }
+
+    @MainActor
     func testFidoAuthenticationCallbackAuthenticateStillReportsNativeCanceledAsNotAllowedError() async {
         // Regression pin: the traditional (button-triggered) path's handling of a native
         // ASAuthorizationError.canceled must be completely unchanged by the mediated path's

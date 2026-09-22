@@ -23,6 +23,13 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
     /// A flag indicating whether the server supports a JSON response format.
     private var supportsJsonResponse: Bool = false
 
+    /// The `Fido.ceremonyGeneration` captured by this callback's most recent
+    /// `authenticateWithAutoFill` call. The `onCancel` teardown handler compares it against the
+    /// `Fido` instance's current generation so a late-fired cancel can't kill an unrelated newer
+    /// ceremony that has since started on the shared singleton.
+    @MainActor
+    private var ceremonyGeneration: Int = 0
+
     /// Whether the server requested WebAuthn Conditional UI (autofill-assisted) mediation for
     /// this ceremony. Parsed defensively from the `mediation`/`conditional` fields on the
     /// `MetadataCallback` payload — mirroring the Ping JavaScript SDK's
@@ -32,8 +39,10 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
     public var isConditionalMediationRequested: Bool = false
 
     /// Whether the server wants a manual "Sign in with a passkey" button shown alongside
-    /// Conditional UI. Defaults to `true` (matching the server's own default) when the field is
-    /// absent from the payload.
+    /// Conditional UI. Defaults to `true` when the field is absent from the payload — showing
+    /// the button is the safe fallback, since an unintended omission then degrades to the
+    /// pre-existing button flow rather than hiding the only non-autofill way to authenticate.
+    /// (Behavior per the AM Conditional UI node, SDKS-4575 / AME-32680.)
     public var isManualButtonEnabled: Bool = true
 
     /// Initializes the callback's properties with values from the JSON payload.
@@ -91,9 +100,22 @@ public class FidoAuthenticationCallback: FidoCallback, @unchecked Sendable {
         return await withTaskCancellationHandler {
             await performAuthentication(isMediated: true) { completion in
                 fido.authenticateWithAutoFill(options: publicKeyCredentialRequestOptions, window: window, logger: logger, completion: completion)
+                // Captured after the ceremony is installed (the fido call supersedes any prior
+                // ceremony and starts this one synchronously): identifies OUR ceremony for the
+                // onCancel teardown below. If our ceremony is itself superseded before the
+                // handler fires, the stale generation makes that cancel a no-op.
+                ceremonyGeneration = fido.ceremonyGeneration
             }
         } onCancel: {
-            Task { @MainActor in self.fido.cancel() }
+            // The cancellation handler may run AFTER authenticateWithAutoFill has returned —
+            // e.g. when the SwiftUI task is cancelled while the ceremony is being superseded —
+            // and it races with the next ceremony's start on the shared `Fido` singleton. An
+            // unconditional `fido.cancel()` there could kill an unrelated newer ceremony (the
+            // next journey node's own FIDO call). The generation-checked `cancel(generation:)`
+            // only tears down the ceremony this call started.
+            Task { @MainActor in
+                self.fido.cancel(generation: self.ceremonyGeneration)
+            }
         }
     }
 

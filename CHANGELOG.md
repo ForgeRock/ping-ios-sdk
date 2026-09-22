@@ -25,6 +25,8 @@
 - Fixed the async `OidcClient.generateAuthorizeUrl(customParams:) async throws -> URL` silently falling back to the standard (non-PAR) flow when called before `OidcClientConfig.oidcInitialize()`, which could emit `additionalParameters` onto the returned URL instead of the PAR POST body; the synchronous overload never supported PAR and is unaffected [SDKS-5403]
 
 #### Changed
+- `FidoError` gained a `canceled` case (reported when a ceremony is superseded by a newer one or torn down via `Fido.cancel()`) — exhaustive `switch` statements over `FidoError` need a new branch [SDKS-4575]
+- `Fido.register`/`Fido.authenticate` no longer silently drop an in-flight ceremony when called again: the superseded ceremony's completion is now invoked synchronously with `FidoError.canceled` before the new ceremony starts, and `Fido.cancel()` does the same for the ceremony it ends [SDKS-4575]
 - `OidcError` gained a `configurationError` case — exhaustive `switch` statements over `OidcError` need a new branch [SDKS-5301]
 - A JSON configuration with a blank `oidc.discoveryEndpoint` and no `oidc.openId` sub-object now fails at parse time instead of at first use [SDKS-5301]
 - `OidcClientConfig.oidcInitialize()` cancellation is now isolated per caller: cancelling one caller's own task still returns promptly with `CancellationError`, but no longer cancels the shared discovery/`openIdOverride` operation for any other caller currently sharing it [SDKS-5301]

@@ -280,6 +280,71 @@ class PingFidoTests: XCTestCase {
         XCTAssertNil(fido.window)
     }
 
+    @MainActor func testCancelWithStaleGenerationDoesNotKillNewerCeremony() {
+        // cancel(generation:) is the teardown path for late-fired cancellation handlers: a
+        // cancel racing with a newer ceremony's start must only kill the ceremony whose
+        // generation it captured, never the unrelated newer one.
+        let options: [String: Any] = [
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "rpId": "example.com"
+        ]
+        var autoFillResult: Result<[String: Any], Error>?
+        let window = UIWindow()
+        fido.authenticateWithAutoFill(options: options, window: window) { result in
+            autoFillResult = result
+        }
+        let staleGeneration = fido.ceremonyGeneration
+
+        // A newer ceremony starts on the same singleton before the stale cancel fires. This
+        // synchronously supersedes the autofill listener (autoFillResult resolves with .canceled
+        // via supersedeInFlightCeremony — expected, not a stale-cancel effect).
+        var capturedRequests: [ASAuthorizationRequest] = []
+        fido.testRequestCapture = { request in capturedRequests.append(request) }
+        var secondResult: Result<[String: Any], Error>?
+        fido.authenticate(options: options, window: window) { result in
+            secondResult = result
+        }
+        let newController = fido.authorizationController
+        XCTAssertNotNil(newController)
+
+        guard case .failure(let error) = autoFillResult else {
+            XCTFail("Expected the superseded autofill listener to fail with .canceled")
+            return
+        }
+        XCTAssertEqual(error as? FidoError, .canceled)
+
+        fido.cancel(generation: staleGeneration)
+
+        XCTAssertEqual(capturedRequests.count, 1)
+        XCTAssertTrue(fido.authorizationController === newController, "The newer ceremony must still be in flight")
+        XCTAssertNil(secondResult, "The newer ceremony's completion must be untouched by the stale cancel")
+    }
+
+    @MainActor func testCancelWithCurrentGenerationCancelsInFlightCeremony() {
+        // The counterpart pin: when the generation still matches (no supersede happened),
+        // cancel(generation:) behaves like cancel().
+        let options: [String: Any] = [
+            "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",
+            "rpId": "example.com"
+        ]
+        var capturedResult: Result<[String: Any], Error>?
+        let window = UIWindow()
+
+        fido.authenticateWithAutoFill(options: options, window: window) { result in
+            capturedResult = result
+        }
+        let generation = fido.ceremonyGeneration
+
+        fido.cancel(generation: generation)
+
+        guard case .failure(let error) = capturedResult else {
+            XCTFail("Expected cancel(generation:) to end the matching ceremony with .canceled")
+            return
+        }
+        XCTAssertEqual(error as? FidoError, .canceled)
+        XCTAssertNil(fido.authorizationController)
+    }
+
     @MainActor func testNewCeremonySupersedesInFlightAutoFillListener() {
         let options: [String: Any] = [
             "challenge": "IrmRP2U3shw3plwrICzAkw/yupRI60s2dnGhfwExd/o=",

@@ -48,6 +48,14 @@ struct FidoAuthenticationCallbackView: View {
                         case .success(let responseDict):
                             print("FIDO Authentication successful: \(responseDict)")
                             onNext()
+                        case .failure(FidoError.canceled):
+                            // A superseded ceremony (e.g. this button double-tapped, superseding
+                            // ceremony A with ceremony B) must not advance the journey — the
+                            // superseding ceremony is still in flight and will call onNext() when
+                            // it resolves. Do NOT skip on native ASAuthorizationError.canceled
+                            // here: a user-dismissed modal is still reported to the server as
+                            // NotAllowedError and advances, as before this change.
+                            print("FIDO Authentication was superseded by a newer ceremony")
                         case .failure(let error):
                             print("FIDO Authentication failed: \(error.localizedDescription)")
                             onNext()

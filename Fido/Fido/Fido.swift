@@ -140,6 +140,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
         } catch {
             logger?.e("Fido: Registration failed", error: error)
             completion(.failure(error))
+            cleanup()
         }
     }
     
@@ -274,6 +275,25 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     /// delegate callback — before the controller itself is told to cancel. Safe to call when
     /// nothing is in flight (no-op).
     public func cancel() {
+        supersedeInFlightCeremony()
+    }
+
+    /// Cancels the in-flight ceremony only if it is still the one identified by `generation`.
+    ///
+    /// Teardown paths that race with ceremony starts — e.g. `withTaskCancellationHandler`'s
+    /// `onCancel`, which may run *after* the cancelled operation has already returned — must not
+    /// unconditionally kill whatever ceremony is current by then: that could be an unrelated
+    /// newer ceremony on the same singleton (the next journey node's own FIDO call, say). This
+    /// variant, unlike `cancel()`, supersedes nothing unless `generation` still identifies the
+    /// current ceremony. Intentionally internal: external callers always want the unconditional
+    /// `cancel()`.
+    ///
+    /// - Parameter generation: The `ceremonyGeneration` value captured by the caller's ceremony.
+    public func cancel(generation: Int) {
+        guard generation == ceremonyGeneration else {
+            logger?.d("Fido: Skipping cancel — the ceremony has already been superseded")
+            return
+        }
         supersedeInFlightCeremony()
     }
 
