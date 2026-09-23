@@ -23,9 +23,6 @@ struct DeviceManagementView: View {
     
     var body: some View {
         ZStack {
-            Color(.systemGroupedBackground)
-                .ignoresSafeArea()
-            
             // Main content with initialization handling
             if viewModel.isInitializing {
                 initializingView
@@ -35,6 +32,7 @@ struct DeviceManagementView: View {
                 mainContentView
             }
         }
+        .pingScreenBackground()
         .navigationTitle(menuItem.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -46,6 +44,7 @@ struct DeviceManagementView: View {
                 } label: {
                     Image(systemName: "arrow.clockwise")
                 }
+                .accessibilityLabel("Refresh Devices")
                 .disabled(viewModel.isLoading || viewModel.isInitializing)
             }
         }
@@ -58,15 +57,7 @@ struct DeviceManagementView: View {
                 initializationFailed = true
             }
         }
-        .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
-            Button("OK") {
-                viewModel.clearMessages()
-            }
-        } message: {
-            if let error = viewModel.errorMessage {
-                Text(error)
-            }
-        }
+        .pingErrorAlert(errorMessage: $viewModel.errorMessage)
         .sheet(isPresented: $showingUpdateSheet) {
             updateDeviceSheet
         }
@@ -99,23 +90,21 @@ struct DeviceManagementView: View {
     // MARK: - Initializing View
     
     private var initializingView: some View {
-        VStack(spacing: 20) {
-            ProgressView()
-                .scaleEffect(1.5)
-            
+        VStack(spacing: PingTheme.Spacing.large) {
+            PingLoadingSpinner()
+
             Text("Initializing Device Management...")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.primary)
-            
+                .font(PingTheme.Typography.body.weight(.medium))
+                .foregroundStyle(PingTheme.Color.contentPrimary)
+
             Text("Retrieving authentication details")
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
+                .pingSupportingText()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    
+
     // MARK: - Initialization Error View
-    
+
     private var initializationErrorView: some View {
         EmptyStateView(
             icon: "exclamationmark.triangle.fill",
@@ -137,139 +126,123 @@ struct DeviceManagementView: View {
                     Image(systemName: "arrow.clockwise")
                     Text("Try Again")
                 }
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.white)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
-                .background(
-                    LinearGradient(
-                        colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            .padding(.top, 10)
+            .buttonStyle(.pingPrimary)
+            .padding(.top, PingTheme.Spacing.small)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding()
     }
-    
+
     // MARK: - Loading View
-    
+
     private var loadingView: some View {
-        VStack(spacing: 16) {
-            ProgressView()
-                .scaleEffect(1.5)
-            
+        VStack(spacing: PingTheme.Spacing.medium) {
+            PingLoadingSpinner()
+
             Text("Loading \(viewModel.selectedDeviceType.rawValue.lowercased()) devices...")
-                .font(.system(size: 16))
-                .foregroundColor(.secondary)
+                .pingBodySecondary()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     // MARK: - Device List View
-    
+
     @ViewBuilder
     private var deviceListView: some View {
-        ScrollView {
-            LazyVStack(spacing: 12) {
-                // Success message
-                if let success = viewModel.successMessage {
-                    successBanner(success)
-                }
-                
-                // Device list based on selected type
-                switch viewModel.selectedDeviceType {
-                case .oath:
-                    deviceList(devices: viewModel.oathDevices)
-                case .push:
-                    deviceList(devices: viewModel.pushDevices)
-                case .bound:
-                    deviceList(devices: viewModel.boundDevices)
-                case .profile:
-                    deviceList(devices: viewModel.profileDevices)
-                case .webAuthn:
-                    deviceList(devices: viewModel.webAuthnDevices)
-                }
+        VStack(spacing: 0) {
+            // Success message stays fixed above the list so it remains
+            // visible even when the action that produced it emptied the list.
+            if let success = viewModel.successMessage {
+                successBanner(success)
+                    .pingScrollContentPadding(bottom: 0)
             }
-            .padding(20)
+
+            // Device list based on selected type
+            switch viewModel.selectedDeviceType {
+            case .oath:
+                deviceListContent(devices: viewModel.oathDevices)
+            case .push:
+                deviceListContent(devices: viewModel.pushDevices)
+            case .bound:
+                deviceListContent(devices: viewModel.boundDevices)
+            case .profile:
+                deviceListContent(devices: viewModel.profileDevices)
+            case .webAuthn:
+                deviceListContent(devices: viewModel.webAuthnDevices)
+            }
         }
     }
-    
+
     // MARK: - Generic Device List
-    
-    private func deviceList<T: Device>(devices: [T]) -> some View {
-        Group {
-            if devices.isEmpty {
-                emptyStateView
-            } else {
-                ForEach(Array(devices.enumerated()), id: \.element.id) { index, device in
-                    deviceCard(device)
+
+    @ViewBuilder
+    private func deviceListContent<T: Device>(devices: [T]) -> some View {
+        if devices.isEmpty {
+            PingCenteredScrollContent { emptyStateView }
+        } else {
+            ScrollView {
+                LazyVStack(spacing: PingTheme.Spacing.medium) {
+                    ForEach(Array(devices.enumerated()), id: \.element.id) { index, device in
+                        deviceCard(device)
+                    }
                 }
+                .padding(PingTheme.Spacing.screen)
             }
         }
     }
-    
+
     // MARK: - Empty State
-    
+
     private var emptyStateView: some View {
         EmptyStateView(
             icon: "tray",
             title: "No Devices Found",
             subtitle: "No \(viewModel.selectedDeviceType.rawValue.lowercased()) devices are registered for this user."
         )
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 80)
     }
     
     // MARK: - Device Card
     
     private func deviceCard<T: Device>(_ device: T) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.medium) {
             // Header
             HStack {
                 Image(systemName: viewModel.selectedDeviceType.icon)
-                    .font(.system(size: 16))
-                    .foregroundColor(.themeButtonBackground)
-                
+                    .font(.system(size: PingTheme.Control.Glyph.small))
+                    .foregroundColor(PingTheme.Color.actionPrimary)
+
                 Text(device.deviceName)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.primary)
-                
+                    .pingSectionHeader()
+
                 Spacer()
-                
-                
-                    Button {
-                        deviceToUpdate = (device.id, device.deviceName, viewModel.selectedDeviceType)
-                        updatedName = device.deviceName
-                        showingUpdateSheet = true
-                    } label: {
-                        Image(systemName: "pencil.circle.fill")
-                            .font(.system(size: 22))
-                            .foregroundColor(.blue)
-                    }
-                    .disabled(viewModel.isLoading)
-               
-                
+
+                Button {
+                    deviceToUpdate = (device.id, device.deviceName, viewModel.selectedDeviceType)
+                    updatedName = device.deviceName
+                    showingUpdateSheet = true
+                } label: {
+                    Image(systemName: "pencil.circle.fill")
+                        .font(.system(size: PingTheme.Control.Glyph.medium))
+                        .foregroundColor(PingTheme.Color.actionPrimary)
+                }
+                .disabled(viewModel.isLoading)
+
                 Button(role: .destructive) {
                     Task {
                         await deleteDevice(device)
                     }
                 } label: {
                     Image(systemName: "trash.circle.fill")
-                        .font(.system(size: 22))
-                        .foregroundColor(.red)
+                        .font(.system(size: PingTheme.Control.Glyph.medium))
+                        .foregroundColor(PingTheme.Color.statusError)
                 }
                 .disabled(viewModel.isLoading)
             }
-            
+
             Divider()
-            
+
             // Device-specific details
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
                 if let oathDevice = device as? OathDevice {
                     oathDeviceDetails(oathDevice)
                 } else if let pushDevice = device as? PushDevice {
@@ -283,10 +256,7 @@ struct DeviceManagementView: View {
                 }
             }
         }
-        .padding(16)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle()
     }
     
     // MARK: - Device Type Specific Details
@@ -320,30 +290,31 @@ struct DeviceManagementView: View {
         Group {
             detailRow(label: "Identifier", value: device.identifier)
             detailRow(label: "Last Selected", value: formatDate(device.lastSelectedDate))
-            
+
             if let location = device.location {
                 detailRow(label: "Location", value: "Lat: \(String(describing: location.latitude)), Lon: \(String(describing: location.longitude))")
             }
-            
+
             if !device.metadata.isEmpty {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
                     Text("Metadata:")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(.secondary)
-                    
+                        .font(PingTheme.Typography.caption.weight(.medium))
+                        .foregroundStyle(PingTheme.Color.contentSecondary)
+
                     ForEach(Array(device.metadata.keys.sorted()), id: \.self) { key in
                         if let value = device.metadata[key] {
-                            Text("\(key): \(String(describing: value))")
-                                .font(.system(size: 11, design: .monospaced))
-                                .foregroundColor(.primary)
-                                .lineLimit(1)
+                            PingInfoRow(
+                                label: key,
+                                value: String(describing: value),
+                                valueStyle: .monospaced
+                            )
                         }
                     }
                 }
             }
         }
     }
-    
+
     private func webAuthnDeviceDetails(_ device: WebAuthnDevice) -> some View {
         Group {
             detailRow(label: "Credential ID", value: device.credentialId)
@@ -352,65 +323,56 @@ struct DeviceManagementView: View {
             detailRow(label: "Last Access", value: formatDate(device.lastAccessDate))
         }
     }
-    
+
     private func detailRow(label: String, value: String) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(label)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundColor(.secondary)
-            
-            Text(value)
-                .font(.system(size: 12, design: .monospaced))
-                .foregroundColor(.primary)
-                .lineLimit(2)
-        }
+        PingInfoRow(label: label, value: value, valueStyle: .monospaced)
     }
-    
+
     // MARK: - Success Banner
-    
+
     private func successBanner(_ message: String) -> some View {
         HStack {
             Image(systemName: "checkmark.circle.fill")
-                .foregroundColor(.green)
-            
+                .foregroundColor(PingTheme.Color.statusSuccess)
+
             Text(message)
-                .font(.system(size: 14))
-                .foregroundColor(.primary)
-            
+                .font(PingTheme.Typography.supporting)
+                .foregroundStyle(PingTheme.Color.contentPrimary)
+
             Spacer()
-            
+
             Button {
                 viewModel.clearMessages()
             } label: {
                 Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.secondary)
+                    .foregroundColor(PingTheme.Color.contentSecondary)
             }
         }
-        .padding(12)
-        .background(Color.green.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .padding(PingTheme.Spacing.compact)
+        .background(PingTheme.Color.statusSuccess.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: PingTheme.Shape.fieldRadius))
     }
-    
+
     // MARK: - Update Sheet
-    
+
     private var updateDeviceSheet: some View {
         NavigationView {
-            VStack(spacing: 20) {
-                VStack(alignment: .leading, spacing: 8) {
+            VStack(spacing: PingTheme.Spacing.large) {
+                VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
                     Text("Device Name")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
-                    
+                        .font(PingTheme.Typography.supporting.weight(.medium))
+                        .foregroundStyle(PingTheme.Color.contentSecondary)
+
                     TextField("Enter new name", text: $updatedName)
-                        .textFieldStyle(.roundedBorder)
-                        .font(.system(size: 16))
+                        .pingTextFieldStyle()
+                        .font(PingTheme.Typography.body)
                         .autocorrectionDisabled()
                 }
-                .padding(.horizontal)
-                
+                .padding(.horizontal, PingTheme.Spacing.screen)
+
                 Spacer()
             }
-            .padding(.top, 20)
+            .padding(.top, PingTheme.Spacing.screen)
             .navigationTitle("Update Device")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

@@ -45,13 +45,10 @@ struct PingOneMFADavinciPairingView: View {
             }
 
             if davinciViewModel.isLoading {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-                ProgressView()
-                    .scaleEffect(2)
-                    .tint(.themeButtonBackground)
+                PingLoadingOverlay()
             }
         }
+        .pingScreenBackground()
         .navigationTitle("DaVinci Pairing")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -62,11 +59,11 @@ struct PingOneMFADavinciPairingView: View {
     /// the submission failed. Ordinary collectors progress the flow normally.
     @ViewBuilder
     private func pairingStep(_ node: ContinueNode) -> some View {
-        VStack(spacing: 16) {
+        VStack(spacing: PingTheme.Spacing.medium) {
             Image("Logo")
                 .resizable()
                 .scaledToFill()
-                .frame(width: 100, height: 100)
+                .frame(width: PingTheme.Control.iconSize, height: PingTheme.Control.iconSize)
             ContinueNodeView(
                 continueNode: node,
                 onNodeUpdated: { davinciViewModel.refresh() },

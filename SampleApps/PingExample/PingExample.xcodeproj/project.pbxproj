@@ -51,7 +51,6 @@
 		3A5441422BCDF10B00385131 /* PingExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5441412BCDF10B00385131 /* PingExampleTests.swift */; };
 		3A54414C2BCDF10B00385131 /* PingExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A54414B2BCDF10B00385131 /* PingExampleUITests.swift */; };
 		3A54414E2BCDF10B00385131 /* PingExampleUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A54414D2BCDF10B00385131 /* PingExampleUITestsLaunchTests.swift */; };
-		3A8092F42BE99F0F00AD667F /* CustomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8092F32BE99F0F00AD667F /* CustomViews.swift */; };
 		3A8532332BE2D5D800F8619D /* DavinciView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8532322BE2D5D800F8619D /* DavinciView.swift */; };
 		3ACD90E12BE586BC00DABCE6 /* DavinciViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ACD90E02BE586BC00DABCE6 /* DavinciViewModel.swift */; };
 		76E9B793304AFD300071590C /* AccessTokenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AECD2D3037BC000533ED /* AccessTokenViewModel.swift */; };
@@ -311,6 +310,7 @@
 		A5768D222E29BFF6000290EE /* PingOneProtectEvaluationCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5768D212E29BFF5000290EE /* PingOneProtectEvaluationCallbackView.swift */; };
 		A588D0062BF6A0E500F9052A /* StorageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A588D0042BF6A0E500F9052A /* StorageViewModel.swift */; };
 		A588D0072BF6A0E500F9052A /* LoggerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A588D0052BF6A0E500F9052A /* LoggerViewModel.swift */; };
+		A58CEA4C3058DE0600646689 /* PingDesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = A58CEA4B3058DE0600646689 /* PingDesignSystem */; };
 		A58CFBD02EB0046B007C4A31 /* PingReCaptchaEnterprise.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A58CFBC92EB00434007C4A31 /* PingReCaptchaEnterprise.framework */; };
 		A58CFBD12EB0046B007C4A31 /* PingReCaptchaEnterprise.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A58CFBC92EB00434007C4A31 /* PingReCaptchaEnterprise.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A58CFBFB2EB00D4C007C4A31 /* ReCaptchaEnterpriseCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A58CFBFA2EB00D4A007C4A31 /* ReCaptchaEnterpriseCallbackView.swift */; };
@@ -328,7 +328,6 @@
 		A5E9AED82D303962000533ED /* StorageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AED72D30395D000533ED /* StorageView.swift */; };
 		A5E9AEDB2D30A020000533ED /* LabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEDA2D30A01D000533ED /* LabelView.swift */; };
 		A5E9AEDD2D30A22A000533ED /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEDC2D30A226000533ED /* TextView.swift */; };
-		A5E9AEDF2D30CA34000533ED /* ErrorMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEDE2D30CA2C000533ED /* ErrorMessageView.swift */; };
 		A5E9AEE12D30D304000533ED /* SubmitButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEE02D30D301000533ED /* SubmitButtonView.swift */; };
 		A5E9AEE32D318524000533ED /* FlowButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEE22D318521000533ED /* FlowButtonView.swift */; };
 		A5EFA9772D35F2FA00F771FE /* CheckBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA96C2D35F2F800F771FE /* CheckBoxView.swift */; };
@@ -338,8 +337,7 @@
 		A5EFA97F2D35F88D00F771FE /* PasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA97E2D35F88C00F771FE /* PasswordView.swift */; };
 		A5EFA9812D360ACC00F771FE /* ContinueNodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA9802D360AC800F771FE /* ContinueNodeView.swift */; };
 		A5F39AB82F9B0000001AB5C7 /* PingOneMFANotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5F39AB72F9B0000001AB5C7 /* PingOneMFANotificationView.swift */; };
-		ABCD12340001000100010001 /* TabPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCD12340001000100010002 /* TabPicker.swift */; };
-		ABCD12340002000200020001 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCD12340002000200020002 /* EmptyStateView.swift */; };
+		D5A100000000000000000004 /* PingDesignSystemImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A100000000000000000003 /* PingDesignSystemImport.swift */; };
 		CAF10002FACE000000000001 /* RecognizeEnrollCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF10001FACE000000000001 /* RecognizeEnrollCallbackView.swift */; };
 		CAF10004FACE000000000001 /* RecognizeAuthenticateCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF10003FACE000000000001 /* RecognizeAuthenticateCallbackView.swift */; };
 		CAF3100C2BCDF10900385131 /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = EC92B38E2DA03E0700E4246D /* SVGKit */; };
@@ -956,7 +954,6 @@
 		3A54414D2BCDF10B00385131 /* PingExampleUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingExampleUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		3A54420F2BCE1F2900385131 /* Davinci.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Davinci.xcodeproj; path = ../../Davinci/Davinci.xcodeproj; sourceTree = "<group>"; };
 		3A5442212BCE1F3800385131 /* Orchestrate.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Orchestrate.xcodeproj; path = ../../Orchestrate/Orchestrate.xcodeproj; sourceTree = "<group>"; };
-		3A8092F32BE99F0F00AD667F /* CustomViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomViews.swift; sourceTree = "<group>"; };
 		3A8532322BE2D5D800F8619D /* DavinciView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DavinciView.swift; sourceTree = "<group>"; };
 		3AB1CA1F2BD6F9AD003FCE3C /* Oidc.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Oidc.xcodeproj; path = ../../Oidc/Oidc.xcodeproj; sourceTree = "<group>"; };
 		3ACD90E02BE586BC00DABCE6 /* DavinciViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DavinciViewModel.swift; sourceTree = "<group>"; };
@@ -1025,7 +1022,6 @@
 		A5E9AED72D30395D000533ED /* StorageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageView.swift; sourceTree = "<group>"; };
 		A5E9AEDA2D30A01D000533ED /* LabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelView.swift; sourceTree = "<group>"; };
 		A5E9AEDC2D30A226000533ED /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
-		A5E9AEDE2D30CA2C000533ED /* ErrorMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessageView.swift; sourceTree = "<group>"; };
 		A5E9AEE02D30D301000533ED /* SubmitButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmitButtonView.swift; sourceTree = "<group>"; };
 		A5E9AEE22D318521000533ED /* FlowButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowButtonView.swift; sourceTree = "<group>"; };
 		A5EFA96C2D35F2F800F771FE /* CheckBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBoxView.swift; sourceTree = "<group>"; };
@@ -1035,11 +1031,10 @@
 		A5EFA97E2D35F88C00F771FE /* PasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordView.swift; sourceTree = "<group>"; };
 		A5EFA9802D360AC800F771FE /* ContinueNodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinueNodeView.swift; sourceTree = "<group>"; };
 		A5F39AB72F9B0000001AB5C7 /* PingOneMFANotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFANotificationView.swift; sourceTree = "<group>"; };
-		ABCD12340001000100010002 /* TabPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabPicker.swift; sourceTree = "<group>"; };
-		ABCD12340002000200020002 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		B4A000010000000000000012 /* PingOneMFADavinciPairingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFADavinciPairingView.swift; sourceTree = "<group>"; };
 		B4A000010000000000000013 /* MobilePairingCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePairingCollectorView.swift; sourceTree = "<group>"; };
 		BB284B4547584EE8B336A683 /* PingOneMFAScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAScannerViewModel.swift; sourceTree = "<group>"; };
+		D5A100000000000000000003 /* PingDesignSystemImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingDesignSystemImport.swift; sourceTree = "<group>"; };
 		CAF10001FACE000000000001 /* RecognizeEnrollCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizeEnrollCallbackView.swift; sourceTree = "<group>"; };
 		CAF10003FACE000000000001 /* RecognizeAuthenticateCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizeAuthenticateCallbackView.swift; sourceTree = "<group>"; };
 		CAF310022BCDF10900385131 /* PingExampleWithRecognize.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PingExampleWithRecognize.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1124,6 +1119,7 @@
 				EC5C81F32ED08C2D00C91570 /* PingDavinci.framework in Frameworks */,
 				EC5384B32F23B07300FC28AD /* PingJourneyPlugin.framework in Frameworks */,
 				1B2933CD2E7DF429004D1D38 /* PingOath.framework in Frameworks */,
+				A58CEA4C3058DE0600646689 /* PingDesignSystem in Frameworks */,
 				A54EE722303E030200986AE3 /* PingOneSDK in Frameworks */,
 				1B7A9AD02ED5316F00989A55 /* PingNetwork.framework in Frameworks */,
 				A525E7B72DD7647200B02C17 /* PingExternalIdPFacebook.framework in Frameworks */,
@@ -1320,9 +1316,9 @@
 				22FC525493FF7344F586E3C1 /* AuthMigrationView.swift */,
 				2BE27407BC6A20DE66B3B585 /* AuthMigrationViewModel.swift */,
 				3A5441322BCDF10900385131 /* ContentView.swift */,
+				D5A100000000000000000003 /* PingDesignSystemImport.swift */,
 				EC92B38B2DA039B700E4246D /* AsyncSVGImage.swift */,
 				A5EFA9802D360AC800F771FE /* ContinueNodeView.swift */,
-				3A8092F32BE99F0F00AD667F /* CustomViews.swift */,
 				3A8532322BE2D5D800F8619D /* DavinciView.swift */,
 				3ACD90E02BE586BC00DABCE6 /* DavinciViewModel.swift */,
 				B4A000010000000000000012 /* PingOneMFADavinciPairingView.swift */,
@@ -1331,8 +1327,6 @@
 				A570D52F2ECCE48B00CBBCCF /* DeviceManagementView.swift */,
 				A570D52D2ECCE47400CBBCCF /* DeviceManagementViewModel.swift */,
 				A5A5F7FF2D4C64490053BF24 /* ErrorView.swift */,
-				ABCD12340001000100010002 /* TabPicker.swift */,
-				ABCD12340002000200020002 /* EmptyStateView.swift */,
 				EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */,
 				SDKS51560002000000000001 /* BackchannelAuthView.swift */,
 				EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */,
@@ -1606,7 +1600,6 @@
 				EC92B3922DA0422200E4246D /* DeviceCardView.swift */,
 				EC92B3892DA02D7800E4246D /* DeviceRegistrationView.swift */,
 				A5EFA97A2D35F6D500F771FE /* DropdownView.swift */,
-				A5E9AEDE2D30CA2C000533ED /* ErrorMessageView.swift */,
 				A5E9AEE22D318521000533ED /* FlowButtonView.swift */,
 				A5E9AEDA2D30A01D000533ED /* LabelView.swift */,
 				SDKS42450002000000000000 /* RichTextBuilder.swift */,
@@ -1733,6 +1726,7 @@
 			name = PingExample;
 			packageProductDependencies = (
 				A54EE721303E030200986AE3 /* PingOneSDK */,
+				A58CEA4B3058DE0600646689 /* PingDesignSystem */,
 			);
 			productName = PingExample;
 			productReference = 3A54412D2BCDF10900385131 /* PingExample.app */;
@@ -1848,6 +1842,7 @@
 				EC92B38D2DA03E0700E4246D /* XCRemoteSwiftPackageReference "SVGKit" */,
 				A551E96B302DFD120087A732 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
 				A54EE720303E030200986AE3 /* XCRemoteSwiftPackageReference "pingone-mobile-sdk-ios" */,
+				A58CEA4A3058DE0600646689 /* XCRemoteSwiftPackageReference "ping-ios-design-system" */,
 			);
 			productRefGroup = 3A54412E2BCDF10900385131 /* Products */;
 			projectDirPath = "";
@@ -2411,6 +2406,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5E9AECE2D3037BE000533ED /* AccessTokenViewModel.swift in Sources */,
+				D5A100000000000000000004 /* PingDesignSystemImport.swift in Sources */,
 				A5768D142E297260000290EE /* ValidatedUsernameCallbackView.swift in Sources */,
 				A5768D1A2E29B228000290EE /* NumberAttributeInputCallbackView.swift in Sources */,
 				1B7A9C852EE7BD2A00989A55 /* PushNotificationsView.swift in Sources */,
@@ -2490,14 +2486,10 @@
 				A5EFA9772D35F2FA00F771FE /* CheckBoxView.swift in Sources */,
 				1B18D64A2EF0E7000004F205 /* PolicySelectionView.swift in Sources */,
 				ECC52B0D2E81AF5B00C468C7 /* ScenePhaseManager.swift in Sources */,
-				A5E9AEDF2D30CA34000533ED /* ErrorMessageView.swift in Sources */,
 				A5E9AED22D30380B000533ED /* UserInfoViewModel.swift in Sources */,
 				A5EFA97D2D35F78800F771FE /* ComboBoxView.swift in Sources */,
 				A5A5F80A2D4C644E0053BF24 /* ErrorView.swift in Sources */,
-				ABCD12340001000100010001 /* TabPicker.swift in Sources */,
-				ABCD12340002000200020001 /* EmptyStateView.swift in Sources */,
 				A5E9AEE12D30D304000533ED /* SubmitButtonView.swift in Sources */,
-				3A8092F42BE99F0F00AD667F /* CustomViews.swift in Sources */,
 				EC23D5712E2E8ECF00C43D42 /* OidcLoginView.swift in Sources */,
 				A5517AB42FB5007B00E575CF /* DeviceFlowView.swift in Sources */,
 				A5517AC12FB5007B00E575CF /* ApproveDeviceView.swift in Sources */,
@@ -3165,6 +3157,14 @@
 				minimumVersion = 18.1.0;
 			};
 		};
+		A58CEA4A3058DE0600646689 /* XCRemoteSwiftPackageReference "ping-ios-design-system" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ForgeRock/ping-ios-design-system";
+			requirement = {
+				kind = exactVersion;
+				version = 0.1.1;
+			};
+		};
 		EC92B38D2DA03E0700E4246D /* XCRemoteSwiftPackageReference "SVGKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SVGKit/SVGKit";
@@ -3190,6 +3190,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A551E96B302DFD120087A732 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
 			productName = FacebookLogin;
+		};
+		A58CEA4B3058DE0600646689 /* PingDesignSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A58CEA4A3058DE0600646689 /* XCRemoteSwiftPackageReference "ping-ios-design-system" */;
+			productName = PingDesignSystem;
 		};
 		EC92B38E2DA03E0700E4246D /* SVGKit */ = {
 			isa = XCSwiftPackageProductDependency;

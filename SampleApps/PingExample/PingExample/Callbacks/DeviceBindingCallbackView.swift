@@ -1,3 +1,13 @@
+//
+//  DeviceBindingCallbackView.swift
+//  PingExample
+//
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
+//
+
 import SwiftUI
 import PingBinding
 
@@ -8,11 +18,10 @@ struct DeviceBindingCallbackView: View {
     var body: some View {
         VStack {
             Text("Device Binding")
-                .font(.title)
+                .pingScreenTitle()
             Text("Please wait while we bind your device.")
-                .font(.body)
-                .padding()
-            ProgressView()
+                .pingBodySecondary()
+            PingLoadingSpinner()
         }
         .onAppear(perform: handleDeviceBinding)
     }

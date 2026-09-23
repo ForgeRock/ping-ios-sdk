@@ -2,7 +2,7 @@
 //  PasswordRequirementsView.swift
 //  PingExample
 //
-//  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -18,11 +18,10 @@ struct PasswordRequirementsView: View {
     let password: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
             Text("Password Requirements")
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundColor(.secondary)
+                .font(PingTheme.Typography.sectionTitle)
+                .foregroundStyle(PingTheme.Color.contentSecondary)  // intentionally de-emphasized header
             
             requirementRow(
                 label: "Between \(policy.length.min) and \(policy.length.max) characters",
@@ -54,18 +53,18 @@ struct PasswordRequirementsView: View {
                 )
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, PingTheme.Spacing.xSmall)
     }
     
     @ViewBuilder
     private func requirementRow(label: String, isMet: Bool) -> some View {
-        HStack(alignment: .top, spacing: 6) {
+        HStack(alignment: .top, spacing: PingTheme.Spacing.small) {
             Image(systemName: isMet ? "checkmark.circle.fill" : "circle")
-                .foregroundColor(isMet ? .green : .secondary)
-                .font(.footnote)
+                .foregroundStyle(isMet ? PingTheme.Color.statusSuccess : PingTheme.Color.contentSecondary)
+                .font(PingTheme.Typography.supporting)
             Text(label)
-                .font(.footnote)
-                .foregroundColor(isMet ? .primary : .secondary)
+                .font(PingTheme.Typography.supporting)
+                .foregroundStyle(isMet ? PingTheme.Color.contentPrimary : PingTheme.Color.contentSecondary)
         }
     }
     

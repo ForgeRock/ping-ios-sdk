@@ -34,129 +34,104 @@ struct AccessTokenView: View {
             }
             
             let result = accessTokenViewModel.results[selectedTab] ?? AccessTokenResult()
-            
+
             if result.isLoading {
-                Color(.systemGroupedBackground)
-                    .overlay(ProgressView())
+                PingTheme.Color.appBackground
+                    .overlay(PingLoadingSpinner())
             } else if let error = result.error {
                 ErrorView(title: "\(selectedTab.rawValue) Error", message: error)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
+                    .padding(.top, PingTheme.Spacing.small)
                 Spacer()
-                
+
                 if result.hasSession {
                     getTokenBar
                 }
             } else {
                 ScrollView {
                     accessTokenCard(result.info)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 8)
+                        .pingScrollContentPadding(top: PingTheme.Spacing.small, bottom: 0)
                 }
-                
+
                 tokenActionBar
             }
         }
-        .background(Color(.systemGroupedBackground))
+        .pingScreenBackground()
         .navigationTitle(menuItem.title)
+        .navigationBarTitleDisplayMode(.inline)
     }
-    
+
+    /// Vertical padding for the pinned action bars beneath the token card.
+    /// No shared token matches this value exactly.
+    private let actionBarVerticalPadding: CGFloat = 12
+
     private var tokenActionBar: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: PingTheme.Spacing.medium) {
             Button {
                 Task { await accessTokenViewModel.refresh(tab: selectedTab) }
             } label: {
-                HStack(spacing: 6) {
+                HStack(spacing: PingTheme.Spacing.small) {
                     Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 14))
                     Text("Refresh")
-                        .font(.system(size: 14, weight: .semibold))
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .foregroundColor(.white)
-                .background(Color.themeButtonBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            
+            .buttonStyle(.pingPrimary)
+
             Button {
                 Task { await accessTokenViewModel.revoke(tab: selectedTab) }
             } label: {
-                HStack(spacing: 6) {
+                HStack(spacing: PingTheme.Spacing.small) {
                     Image(systemName: "xmark.circle")
-                        .font(.system(size: 14))
                     Text("Revoke")
-                        .font(.system(size: 14, weight: .semibold))
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .foregroundColor(.themeButtonBackground)
-                .background(Color.themeButtonBackground.opacity(0.12))
-                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
+            .buttonStyle(.pingDestructive)
         }
-        .buttonStyle(PlainButtonStyle())
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
-        .background(Color(.secondarySystemGroupedBackground))
+        .padding(.horizontal, PingTheme.Spacing.screen)
+        .padding(.vertical, actionBarVerticalPadding)
+        .background(PingTheme.Color.groupedSurface)
     }
-    
+
     private var getTokenBar: some View {
         Button {
             Task { await accessTokenViewModel.getToken(tab: selectedTab) }
         } label: {
-            HStack(spacing: 6) {
+            HStack(spacing: PingTheme.Spacing.small) {
                 Image(systemName: "key.fill")
-                    .font(.system(size: 14))
                 Text("Get Token")
-                    .font(.system(size: 14, weight: .semibold))
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .foregroundColor(.white)
-            .background(Color.themeButtonBackground)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
         }
-        .buttonStyle(PlainButtonStyle())
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
-        .background(Color(.secondarySystemGroupedBackground))
+        .buttonStyle(.pingPrimary)
+        .padding(.horizontal, PingTheme.Spacing.screen)
+        .padding(.vertical, actionBarVerticalPadding)
+        .background(PingTheme.Color.groupedSurface)
     }
-    
-    
+
+
     private func accessTokenCard(_ info: String) -> some View {
         let pairs = parseTokenInfo(info)
-        return VStack(alignment: .leading, spacing: 12) {
+        return VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
             HStack {
                 Image(systemName: selectedTab.icon)
-                    .font(.system(size: 16))
-                    .foregroundColor(.themeButtonBackground)
+                    .foregroundStyle(PingTheme.Color.actionPrimary)
                 Text("\(selectedTab.rawValue) Access Token")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.primary)
+                    .pingSectionHeader()
                 Spacer()
             }
-            
+
             Divider()
-            
-            VStack(alignment: .leading, spacing: 8) {
+
+            VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
                 ForEach(pairs, id: \.key) { pair in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(pair.key)
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.secondary)
-                        Text(pair.value)
-                            .font(.system(size: 12, design: .monospaced))
-                            .foregroundColor(.primary)
-                            .textSelection(.enabled)
-                    }
+                    PingInfoRow(
+                        label: pair.key,
+                        value: pair.value,
+                        layout: .vertical,
+                        valueStyle: .monospaced
+                    )
                 }
             }
         }
-        .padding(16)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle()
     }
     
     private func parseTokenInfo(_ info: String) -> [AccessTokenPair] {

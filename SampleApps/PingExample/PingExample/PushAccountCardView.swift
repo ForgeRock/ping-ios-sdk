@@ -2,7 +2,7 @@
 //  PushAccountCardView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -21,85 +21,53 @@ struct PushAccountCardView: View {
         Button(action: onTap) {
             cardContent
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
     
     private var cardContent: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 12) {
-                ZStack(alignment: .bottomTrailing) {
-                    Image(systemName: "bell.badge.fill")
-                        .font(.system(size: 20))
-                        .foregroundColor(.white)
-                        .frame(width: 40, height: 40)
-                        .background(
-                            LinearGradient(
-                                colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                    
-                    if credential.isLocked {
-                        Image(systemName: "lock.fill")
-                            .font(.system(size: 10))
-                            .foregroundColor(.white)
-                            .padding(3)
-                            .background(Color.red)
-                            .clipShape(Circle())
-                            .offset(x: 4, y: 4)
-                    }
-                }
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.medium) {
+            HStack(spacing: PingTheme.Spacing.medium) {
+                PingIconTile(systemName: "bell.badge.fill", diameter: 40, iconSize: 20, isLocked: credential.isLocked)
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: PingTheme.Spacing.xSmall) {
                     Text(credential.displayIssuer)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.primary)
+                        .pingSectionHeader()
 
                     Text(credential.displayAccountName)
-                        .font(.system(size: 13))
-                        .foregroundColor(.secondary)
+                        .pingSupportingText()
                 }
 
                 Spacer()
 
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 24))
-                    .foregroundColor(.green)
+                    .font(.system(size: PingTheme.Control.Glyph.medium))
+                    .foregroundColor(PingTheme.Color.statusSuccess)
             }
-            .padding(16)
 
             Divider()
-                .padding(.horizontal, 16)
 
             HStack {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: PingTheme.Spacing.xSmall) {
                     Text("Status")
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
+                        .pingCaptionText()
 
                     Text("Active")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.green)
+                        .font(PingTheme.Typography.supporting.weight(.medium))
+                        .foregroundStyle(PingTheme.Color.statusSuccess)
                 }
 
                 Spacer()
 
-                VStack(alignment: .trailing, spacing: 4) {
+                VStack(alignment: .trailing, spacing: PingTheme.Spacing.xSmall) {
                     Text("Created")
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
+                        .pingCaptionText()
 
                     Text(credential.createdAt, style: .date)
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.primary)
+                        .font(PingTheme.Typography.supporting.weight(.medium))
+                        .foregroundStyle(PingTheme.Color.contentPrimary)
                 }
             }
-            .padding(16)
         }
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle()
     }
 }

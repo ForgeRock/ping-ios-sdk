@@ -1,5 +1,5 @@
 {
-  "originHash" : "5c61e12613bb929eb0cef383e3cdb9a9f6da60c496ca0c1ad3c49984c98f5216",
+  "originHash" : "c822045663a9cdcaf94de5f9d915e87462dc177c7c9fcff35c2423b751e81cc9",
   "pins" : [
     {
       "identity" : "app-check",
@@ -80,6 +80,15 @@
       "state" : {
         "revision" : "040d087ac2267d2ddd4cca36c757d1c6a05fdbfe",
         "version" : "101.0.0"
+      }
+    },
+    {
+      "identity" : "ping-ios-design-system",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ForgeRock/ping-ios-design-system",
+      "state" : {
+        "revision" : "c87bb7da4b3b2ec9a54924beb7c9afb15bc019ea",
+        "version" : "0.1.1"
       }
     },
     {

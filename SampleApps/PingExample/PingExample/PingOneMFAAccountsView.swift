@@ -2,7 +2,7 @@
 //  PingOneMFAAccountsView.swift
 //  PingExample
 //
-//  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -19,37 +19,32 @@ struct PingOneMFAAccountsView: View {
 
     var body: some View {
         ZStack {
-            Color(.systemGroupedBackground)
-                .ignoresSafeArea()
-
-            ScrollView {
-                VStack(spacing: 20) {
-                    if viewModel.isLoading && viewModel.accounts.isEmpty {
-                        ProgressView()
-                            .scaleEffect(1.5)
+            if viewModel.isLoading && viewModel.accounts.isEmpty {
+                ScrollView {
+                    VStack(spacing: PingTheme.Spacing.large) {
+                        PingLoadingSpinner()
                             .padding()
-                    } else if viewModel.accounts.isEmpty {
-                        emptyStateView
-                    } else {
+                    }
+                    .frame(maxWidth: .infinity)
+                    .pingScrollContentPadding()
+                }
+            } else if viewModel.accounts.isEmpty {
+                PingCenteredScrollContent { emptyStateView }
+            } else {
+                ScrollView {
+                    VStack(spacing: PingTheme.Spacing.large) {
                         accountsList
                     }
+                    .frame(maxWidth: .infinity)
+                    .pingScrollContentPadding()
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal, 20)
-                .padding(.top, 20)
-                .padding(.bottom, 30)
             }
 
             if viewModel.isLoading && !viewModel.accounts.isEmpty {
-                ZStack {
-                    Color.black.opacity(0.4)
-                        .ignoresSafeArea()
-                    ProgressView()
-                        .scaleEffect(2.0)
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                }
+                PingLoadingOverlay()
             }
         }
+        .pingScreenBackground()
         .navigationTitle("MFA Accounts")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -59,6 +54,7 @@ struct PingOneMFAAccountsView: View {
                 } label: {
                     Image(systemName: "qrcode.viewfinder")
                 }
+                .accessibilityLabel("Scan QR Code")
             }
         }
         .task {
@@ -68,15 +64,7 @@ struct PingOneMFAAccountsView: View {
         .refreshable {
             await viewModel.loadAccounts()
         }
-        .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
-            Button("OK") {
-                viewModel.errorMessage = nil
-            }
-        } message: {
-            if let error = viewModel.errorMessage {
-                Text(error)
-            }
-        }
+        .pingErrorAlert(errorMessage: $viewModel.errorMessage)
     }
 
     private var emptyStateView: some View {
@@ -88,24 +76,23 @@ struct PingOneMFAAccountsView: View {
             Button {
                 path.append(.pingOneMFAScanner)
             } label: {
-                VStack(spacing: 8) {
+                VStack(spacing: PingTheme.Spacing.small) {
                     Image(systemName: "qrcode.viewfinder")
-                        .font(.system(size: 24))
+                        .font(PingTheme.Typography.screenTitle)
                     Text("Scan QR Code")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(PingTheme.Typography.supporting.weight(.medium))
                 }
                 .frame(width: 140, height: 100)
-                .background(Color(.secondarySystemGroupedBackground))
-                .cornerRadius(12)
+                .background(PingTheme.Color.groupedSurface)
+                .clipShape(RoundedRectangle(cornerRadius: PingTheme.Shape.cardRadius))
             }
-            .buttonStyle(PlainButtonStyle())
-            .padding(.top, 20)
+            .buttonStyle(.plain)
+            .padding(.top, PingTheme.Spacing.large)
         }
-        .padding()
     }
 
     private var accountsList: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: PingTheme.Spacing.medium) {
             ForEach(viewModel.accounts, id: \.id) { account in
                 PingOneMFAAccountCardView(account: account)
             }
@@ -121,39 +108,22 @@ private struct PingOneMFAAccountCardView: View {
     let account: PingOneMfaAccount
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: 12) {
-                Image(systemName: "person.2.fill")
-                    .font(.system(size: 20))
-                    .foregroundColor(.white)
-                    .frame(width: 40, height: 40)
-                    .background(
-                        LinearGradient(
-                            colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+        HStack(spacing: PingTheme.Spacing.medium) {
+            PingIconTile(systemName: "person.2.fill", diameter: 40, iconSize: 20)
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("\(account.name) \(account.family)")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.primary)
+            VStack(alignment: .leading, spacing: PingTheme.Spacing.xxSmall) {
+                Text("\(account.name) \(account.family)")
+                    .font(PingTheme.Typography.supporting.weight(.semibold))
+                    .foregroundStyle(PingTheme.Color.contentPrimary)
 
-                    Text("Region: \(account.region)")
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
+                Text("Region: \(account.region)")
+                    .pingCaptionText()
 
-                    Text("ID: \(account.id)")
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
-                }
+                Text("ID: \(account.id)")
+                    .font(PingTheme.Typography.caption)
+                    .foregroundStyle(PingTheme.Color.contentTertiary)
             }
-            .padding(16)
         }
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle()
     }
 }
