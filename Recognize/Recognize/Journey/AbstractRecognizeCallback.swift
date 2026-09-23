@@ -259,7 +259,8 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
     /// the not-yet-enrolled path in `PingOneRecognizeAuthenticateCallback.authenticate()`
     /// (enrollment restore, `clientStateOverride` set to the server-supplied `clientState`).
     ///
-    /// On success, populates the `recognizeId`, `signedJwt`, and `clientState` input fields.
+    /// On success, populates the `recognizeId`, `signedJwt`, `clientState`, and
+    /// `devicePublicSigningKey` input fields.
     /// The captured selfie (if `retrieveSelfie` is `true`) is returned only in the
     /// `RecognizeSuccess` to the caller — it is never written to an input field, so it never
     /// reaches Journey or the callback payload.
@@ -308,9 +309,12 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
             }
         }
 
-        if let keylessId = enrollmentResult.keylessId { setRecognizeId(keylessId) }
-        if let jwt = enrollmentResult.signedJwt { setSignedJwt(jwt) }
-        if let state = enrollmentResult.clientState { setClientState(state) }
+        populateResultInputs(
+            signedJwt: enrollmentResult.signedJwt,
+            clientState: enrollmentResult.clientState,
+            recognizeId: enrollmentResult.keylessId,
+            devicePublicSigningKey: try? Keyless.getDevicePublicSigningKey().get()
+        )
         return RecognizeSuccess(
             signedJwt: enrollmentResult.signedJwt,
             clientState: enrollmentResult.clientState,
@@ -365,19 +369,37 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
             }
         }
 
-        if let jwt = authResult.signedJwt { setSignedJwt(jwt) }
-        if let state = authResult.clientState { setClientState(state) }
-        if case .success(let key) = Keyless.getDevicePublicSigningKey() {
-            setDevicePublicSigningKey(key)
-        }
         let userId = try? Keyless.getUserId().get()
-        if let userId { setRecognizeId(userId) }
+        populateResultInputs(
+            signedJwt: authResult.signedJwt,
+            clientState: authResult.clientState,
+            recognizeId: userId,
+            devicePublicSigningKey: try? Keyless.getDevicePublicSigningKey().get()
+        )
         return RecognizeSuccess(
             signedJwt: authResult.signedJwt,
             clientState: authResult.clientState,
             recognizeId: userId,
             selfie: authResult.authenticationFrame
         )
+    }
+
+    /// Writes the outputs of a successful Keyless operation into the callback's input fields.
+    ///
+    /// Shared by `performEnroll` and `performAuthenticate` so both ceremonies submit the same
+    /// set of results — the server uses the same callback for enrollment and authentication
+    /// and expects `devicePublicSigningKey` from both. `nil` values leave the corresponding
+    /// input field untouched.
+    func populateResultInputs(
+        signedJwt: String?,
+        clientState: String?,
+        recognizeId: String?,
+        devicePublicSigningKey: String?
+    ) {
+        if let signedJwt { setSignedJwt(signedJwt) }
+        if let clientState { setClientState(clientState) }
+        if let recognizeId { setRecognizeId(recognizeId) }
+        if let devicePublicSigningKey { setDevicePublicSigningKey(devicePublicSigningKey) }
     }
 
     // MARK: - Keyless SDK Configuration
@@ -488,7 +510,7 @@ extension JourneyConstants {
     public static let inputClientState = "clientState"
     /// Input field suffix for the Recognize user ID produced during enrollment.
     public static let inputRecognizeId = "recognizeId"
-    /// Input field suffix for the device public signing key retrieved after authentication.
+    /// Input field suffix for the device public signing key retrieved after enrollment or authentication.
     public static let inputDevicePublicSigningKey = "devicePublicSigningKey"
     /// Input field suffix for the client error message.
     public static let inputClientError = "clientError"

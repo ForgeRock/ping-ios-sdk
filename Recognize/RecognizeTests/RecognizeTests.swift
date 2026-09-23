@@ -385,6 +385,52 @@ final class RecognizeCallbackInputSetterTests: XCTestCase {
     }
 }
 
+// MARK: - PopulateResultInputsTests
+
+final class PopulateResultInputsTests: XCTestCase {
+
+    private func makeCallback() async -> RecognizeCallback {
+        let inputKeys = [
+            JourneyConstants.inputSignedJwt,
+            JourneyConstants.inputClientState,
+            JourneyConstants.inputRecognizeId,
+            JourneyConstants.inputDevicePublicSigningKey,
+            JourneyConstants.inputClientError,
+            JourneyConstants.inputClientErrorCode
+        ]
+        let inputArray = inputKeys.map { ["name": $0, "value": ""] }
+        let json: [String: Any] = ["input": inputArray, "output": [], "type": "PingOneRecognizeCallback"]
+        let callback = RecognizeCallback()
+        _ = await callback.initialize(with: json)
+        return callback
+    }
+
+    private func inputValue(for key: String, in callback: RecognizeCallback) -> String? {
+        guard let inputs = callback.json["input"] as? [[String: Any]] else { return nil }
+        return inputs.first(where: { ($0["name"] as? String) == key })?["value"] as? String
+    }
+
+    func testPopulatesAllFourResultInputs() async {
+        let callback = await makeCallback()
+        callback.populateResultInputs(
+            signedJwt: "jwt", clientState: "state", recognizeId: "rid", devicePublicSigningKey: "pem-key"
+        )
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputSignedJwt, in: callback), "jwt")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientState, in: callback), "state")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputRecognizeId, in: callback), "rid")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputDevicePublicSigningKey, in: callback), "pem-key")
+    }
+
+    func testNilValuesLeaveInputsUntouched() async {
+        let callback = await makeCallback()
+        callback.populateResultInputs(signedJwt: nil, clientState: nil, recognizeId: nil, devicePublicSigningKey: nil)
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputSignedJwt, in: callback), "")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientState, in: callback), "")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputRecognizeId, in: callback), "")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputDevicePublicSigningKey, in: callback), "")
+    }
+}
+
 // MARK: - StringDictionaryTests
 
 final class StringDictionaryTests: XCTestCase {
