@@ -22,6 +22,7 @@
 - Fixed 5xx AM responses with a parseable error body being misclassified as `FailureNode` instead of `ErrorNode`, diverging from Android [SDKS-5358]
 - Fixed `Journey.start(backchannelUri:)` not rejecting whitespace-only `authIndexType`/`authIndexValue`, diverging from Android [SDKS-5359]
 - Fixed the async `OidcClient.generateAuthorizeUrl(customParams:) async throws -> URL` silently falling back to the standard (non-PAR) flow when called before `OidcClientConfig.oidcInitialize()`, which could emit `additionalParameters` onto the returned URL instead of the PAR POST body; the synchronous overload never supported PAR and is unaffected [SDKS-5403]
+- Fixed `PingOneRecognizeEnrollCallback.enroll()` not populating the `devicePublicSigningKey` input field during enrollment; only `PingOneRecognizeAuthenticateCallback.authenticate()` did
 
 #### Changed
 - `OidcError` gained a `configurationError` case — exhaustive `switch` statements over `OidcError` need a new branch [SDKS-5301]
