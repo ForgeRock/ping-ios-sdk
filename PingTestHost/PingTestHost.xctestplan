@@ -115,10 +115,6 @@
       }
     },
     {
-      "skippedTests" : [
-        "DeviceProfileCallbackE2ETest",
-        "MetadataCallbackE2ETest"
-      ],
       "target" : {
         "containerPath" : "container:..\/ExternalIdPApple\/ExternalIdPApple.xcodeproj",
         "identifier" : "ECA7A2AB2DC24BC60011E59C",

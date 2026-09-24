@@ -22,12 +22,16 @@
 - Fixed 5xx AM responses with a parseable error body being misclassified as `FailureNode` instead of `ErrorNode`, diverging from Android [SDKS-5358]
 - Fixed `Journey.start(backchannelUri:)` not rejecting whitespace-only `authIndexType`/`authIndexValue`, diverging from Android [SDKS-5359]
 - Fixed the async `OidcClient.generateAuthorizeUrl(customParams:) async throws -> URL` silently falling back to the standard (non-PAR) flow when called before `OidcClientConfig.oidcInitialize()`, which could emit `additionalParameters` onto the returned URL instead of the PAR POST body; the synchronous overload never supported PAR and is unaffected [SDKS-5403]
+- Fixed `swift build` (macOS) failing in `PingOidc`: `OidcDeviceClient.authorize(verificationUriComplete:)` now throws `BrowserError.httpsCallbackUnsupportedOS` on non-iOS platforms instead of referencing the iOS-only `BrowserLauncher` type, and the `PingOneMFA` target's `PingOneSDK` dependency is iOS-conditioned [SDKS-5443]
+- Removed a no-op `skippedTests` entry from `PingTestHost.xctestplan` that attached `DeviceProfileCallbackE2ETest`/`MetadataCallbackE2ETest` skips to `ExternalIdPAppleTests`, where those classes do not exist; the tests actually live (and run) in `JourneyTests` [SDKS-5443]
 - Fixed `PingOneRecognizeEnrollCallback.enroll()` not populating the `devicePublicSigningKey` input field during enrollment; only `PingOneRecognizeAuthenticateCallback.authenticate()` did
 
 #### Changed
 - `OidcError` gained a `configurationError` case — exhaustive `switch` statements over `OidcError` need a new branch [SDKS-5301]
 - A JSON configuration with a blank `oidc.discoveryEndpoint` and no `oidc.openId` sub-object now fails at parse time instead of at first use [SDKS-5301]
 - `OidcClientConfig.oidcInitialize()` cancellation is now isolated per caller: cancelling one caller's own task still returns promptly with `CancellationError`, but no longer cancels the shared discovery/`openIdOverride` operation for any other caller currently sharing it [SDKS-5301]
+- `PingJourney` no longer hard-depends on `PingDeviceProfile`. Previously, every `PingJourney` consumer's binary transitively linked `PingDeviceProfile`, whose `BluetoothCollector` instantiates `CBCentralManager`, causing App Store Connect to flag the app for a missing `NSBluetoothAlwaysUsageDescription` even when no `DeviceProfileCallback` node was used. Apps whose journeys use the Device Profile Collector node must now add the `PingDeviceProfile` product/pod explicitly to their own `Package.swift` or `Podfile` [SDKS-5443]
+- `CallbackRegistry.callback(from:)` now logs a debug message when a journey response contains a callback type with no registered handler (e.g. a `DeviceProfileCallback` on an app that did not add the `PingDeviceProfile` module), making the missing-module misconfiguration diagnosable instead of silently dropping the callback [SDKS-5443]
 
 ## [2.1.0]
 #### Added
