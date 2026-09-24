@@ -24,6 +24,7 @@
 - Fixed the async `OidcClient.generateAuthorizeUrl(customParams:) async throws -> URL` silently falling back to the standard (non-PAR) flow when called before `OidcClientConfig.oidcInitialize()`, which could emit `additionalParameters` onto the returned URL instead of the PAR POST body; the synchronous overload never supported PAR and is unaffected [SDKS-5403]
 - Fixed `swift build` (macOS) failing in `PingOidc`: `OidcDeviceClient.authorize(verificationUriComplete:)` now throws `BrowserError.httpsCallbackUnsupportedOS` on non-iOS platforms instead of referencing the iOS-only `BrowserLauncher` type, and the `PingOneMFA` target's `PingOneSDK` dependency is iOS-conditioned [SDKS-5443]
 - Removed a no-op `skippedTests` entry from `PingTestHost.xctestplan` that attached `DeviceProfileCallbackE2ETest`/`MetadataCallbackE2ETest` skips to `ExternalIdPAppleTests`, where those classes do not exist; the tests actually live (and run) in `JourneyTests` [SDKS-5443]
+- Fixed `PingOneRecognizeEnrollCallback.enroll()` not populating the `devicePublicSigningKey` input field during enrollment; only `PingOneRecognizeAuthenticateCallback.authenticate()` did
 
 #### Changed
 - `OidcError` gained a `configurationError` case — exhaustive `switch` statements over `OidcError` need a new branch [SDKS-5301]
