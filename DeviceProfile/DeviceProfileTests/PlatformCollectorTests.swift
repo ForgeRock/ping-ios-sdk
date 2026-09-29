@@ -49,6 +49,12 @@ class PlatformCollectorTests: XCTestCase {
         // Test jailbreak score range
         XCTAssertGreaterThanOrEqual(platformInfo.jailBreakScore, 0.0, "Jailbreak score should be >= 0")
         XCTAssertLessThanOrEqual(platformInfo.jailBreakScore, 1.0, "Jailbreak score should be <= 1")
+
+        // modelName is nil-or-nonempty: nil on Simulator/Mac or for identifiers
+        // missing from the catalog; non-empty when a commercial name resolves
+        if let modelName = platformInfo.modelName {
+            XCTAssertFalse(modelName.isEmpty, "modelName should not be empty if present")
+        }
     }
     
     func testPlatformInfoSystemValues() async {
@@ -96,6 +102,19 @@ class PlatformCollectorTests: XCTestCase {
         // Should not contain spaces (device models typically don't have spaces)
         XCTAssertFalse(platformInfo.model.contains(" "), "Model should not contain spaces")
     }
+
+    func testModelNameMatchesResolver() async {
+        let platformInfo = await PlatformInfo()
+
+        // Guards the init wiring (modelName is computed via the resolver inside
+        // PlatformInfo.init), not the resolver logic itself. Note: on Simulator
+        // both sides are nil, so this test only pins the wiring when run on
+        // physical hardware — there is no simulator-testable seam because the
+        // init has no injectable resolver.
+        XCTAssertEqual(platformInfo.modelName,
+                       DeviceModelResolver.commercialName(for: platformInfo.model),
+                       "modelName should be exactly DeviceModelResolver.commercialName(for: model)")
+    }
     
     func testPlatformInfoCodable() async throws {
         let platformInfo = await PlatformInfo()
@@ -114,10 +133,35 @@ class PlatformCollectorTests: XCTestCase {
         XCTAssertEqual(platformInfo.device, decodedInfo.device)
         XCTAssertEqual(platformInfo.deviceName, decodedInfo.deviceName)
         XCTAssertEqual(platformInfo.model, decodedInfo.model)
+        XCTAssertEqual(platformInfo.modelName, decodedInfo.modelName,
+                       "modelName should round-trip through Codable (non-nil case)")
         XCTAssertEqual(platformInfo.brand, decodedInfo.brand)
         XCTAssertEqual(platformInfo.locale, decodedInfo.locale)
         XCTAssertEqual(platformInfo.timeZone, decodedInfo.timeZone)
         XCTAssertEqual(platformInfo.jailBreakScore, decodedInfo.jailBreakScore)
+
+        // Round-trip equality including the nil case: constructing PlatformInfo
+        // from a decoded instance whose modelName was nil must stay nil
+        if platformInfo.modelName == nil {
+            XCTAssertNil(decodedInfo.modelName, "nil modelName should round-trip as nil")
+        }
+
+        // Round-trip a hand-built JSON payload with an explicit null modelName
+        let nilPayload: [String: Any] = [
+            "platform": "iOS",
+            "version": "17.0.1",
+            "device": "iPhone",
+            "deviceName": "Test iPhone",
+            "model": "iPhone15,2",
+            "modelName": NSNull(),
+            "brand": "Apple",
+            "locale": "en",
+            "timeZone": "America/New_York",
+            "jailBreakScore": 0.0
+        ]
+        let nilData = try JSONSerialization.data(withJSONObject: nilPayload)
+        let nilDecoded = try decoder.decode(PlatformInfo.self, from: nilData)
+        XCTAssertNil(nilDecoded.modelName, "Decoded modelName should be nil for a null JSON value")
     }
     
     func testPlatformInfoJSONStructure() async throws {
@@ -153,6 +197,19 @@ class PlatformCollectorTests: XCTestCase {
         if jsonObject?["locale"] != nil {
             let isStringOrNull = (jsonObject?["locale"] is String) || (jsonObject?["locale"] is NSNull)
             XCTAssertTrue(isStringOrNull, "locale should be String or null")
+        }
+
+        // modelName: present as a String when non-nil; absent (synthesized
+        // Codable uses encodeIfPresent for optionals, mirroring locale) or
+        // NSNull when nil
+        if let modelName = platformInfo.modelName {
+            XCTAssertTrue(jsonObject?["modelName"] is String,
+                          "modelName should be a String when non-nil, got \(String(describing: jsonObject?["modelName"]))")
+            XCTAssertEqual(jsonObject?["modelName"] as? String, modelName,
+                           "Encoded modelName should match the collected value")
+        } else {
+            XCTAssertTrue(jsonObject?["modelName"] == nil || jsonObject?["modelName"] is NSNull,
+                          "modelName should be absent or null when nil")
         }
     }
     
@@ -230,6 +287,11 @@ class PlatformCollectorTests: XCTestCase {
         XCTAssertFalse(platformInfo.timeZone.isEmpty)
         XCTAssertGreaterThanOrEqual(platformInfo.jailBreakScore, 0.0)
         XCTAssertLessThanOrEqual(platformInfo.jailBreakScore, 1.0)
+
+        // modelName is nil-or-nonempty (nil expected on Simulator)
+        if let modelName = platformInfo.modelName {
+            XCTAssertFalse(modelName.isEmpty, "modelName should not be empty if present")
+        }
     }
     
     func testCollectorCollectConsistency() async {
@@ -328,6 +390,8 @@ class PlatformCollectorTests: XCTestCase {
                     XCTAssertEqual(result.version, first.version)
                     XCTAssertEqual(result.device, first.device)
                     XCTAssertEqual(result.model, first.model)
+                    XCTAssertEqual(result.modelName, first.modelName,
+                                   "modelName should be identical across concurrent collections")
                     XCTAssertEqual(result.brand, first.brand)
                     XCTAssertEqual(result.timeZone, first.timeZone)
                     XCTAssertEqual(result.jailBreakScore, first.jailBreakScore)
@@ -404,6 +468,8 @@ class PlatformCollectorTests: XCTestCase {
         XCTAssertEqual(info1.version, info2.version)
         XCTAssertEqual(info1.device, info2.device)
         XCTAssertEqual(info1.model, info2.model)
+        XCTAssertEqual(info1.modelName, info2.modelName,
+                       "modelName should be identical across instances")
         XCTAssertEqual(info1.brand, info2.brand)
         XCTAssertEqual(info1.locale, info2.locale)
         XCTAssertEqual(info1.timeZone, info2.timeZone)
