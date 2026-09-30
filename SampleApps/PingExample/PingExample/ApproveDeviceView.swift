@@ -138,7 +138,7 @@ struct ApproveDeviceView: View {
             // Buttons pinned to the bottom
             VStack(spacing: PingTheme.Spacing.small) {
                 if isAuthorizing {
-                    ProgressView("Opening browser…")
+                    PingLoadingSpinner()
                         .padding(.vertical, PingTheme.Spacing.small)
                 } else {
                     if hasDavinci {

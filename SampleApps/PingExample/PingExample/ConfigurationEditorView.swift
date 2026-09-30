@@ -70,10 +70,10 @@ struct ConfigurationEditorView: View {
                 editorSection {
                     labeledField("Name *", text: $name, field: .name, placeholder: "e.g., Alpha Environment")
 
-                    // NOTE: This visually duplicates `TabPicker` (see TabPicker.swift), but
-                    // `ConfigType` does not conform to `Identifiable` and `TabPicker`'s own
-                    // design-system migration is in flight in parallel, so reuse is deferred
-                    // rather than forcing cross-file coordination here.
+                    // NOTE: This visually duplicates `TabPicker` (now shipped in the
+                    // PingDesignSystem package), but `ConfigType` does not conform to
+                    // `Identifiable` and `TabPicker` requires it, so reuse is deferred
+                    // rather than forcing a conformance onto a shared enum.
                     VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
                         Text("Type *")
                             .pingSectionHeader()

@@ -62,7 +62,7 @@ struct PingOneMFADavinciPairingView: View {
         VStack(spacing: PingTheme.Spacing.medium) {
             Image("Logo")
                 .resizable()
-                .scaledToFill()
+                .scaledToFit()
                 .frame(width: PingTheme.Control.iconSize, height: PingTheme.Control.iconSize)
             ContinueNodeView(
                 continueNode: node,

@@ -121,8 +121,8 @@ struct PhoneNumberView: View {
                         .rotationEffect(Angle(degrees: expanded ? 180 : 0))
                         .foregroundStyle(PingTheme.Color.actionPrimary)
                 }
-                .frame(width: countryCodeColumnWidth)
                 .pingTextFieldStyle(showsError: !isValid)
+                .frame(width: countryCodeColumnWidth)
                 // The frame sits OUTSIDE the field style so `countryCodeColumnWidth`
                 // is the column's outer width (the style's fieldPadding stays inside).
             }
