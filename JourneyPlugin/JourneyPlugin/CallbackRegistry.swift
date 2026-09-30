@@ -9,6 +9,7 @@
 //
 
 import Foundation
+import PingLogger
 import PingOrchestrate
 
 /// A registry for managing Callback instances.
@@ -49,6 +50,14 @@ public actor CallbackRegistry {
         for item in array {
             guard let typeKey = item[JourneyConstants.type] as? String,
                   let registeredType = callbacksStorage[typeKey] else {
+                // The journey returned a callback type with no registered handler. This happens
+                // when the server includes a callback whose module is not linked into the app
+                // (e.g. DeviceProfileCallback without the PingDeviceProfile module). Log it so
+                // the "forgot to add the module" misconfiguration is diagnosable instead of
+                // silently dropping the callback.
+                if let typeKey = item[JourneyConstants.type] as? String {
+                    LogManager.logger.d("CallbackRegistry: no handler registered for callback type '\(typeKey)' — if this type belongs to an optional module (e.g. DeviceProfile, Protect, Fido), add that module's product/pod to your app explicitly.")
+                }
                 continue
             }
 
