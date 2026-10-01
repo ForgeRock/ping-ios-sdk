@@ -106,11 +106,10 @@ class PlatformCollectorTests: XCTestCase {
     func testModelNameMatchesResolver() async {
         let platformInfo = await PlatformInfo()
 
-        // Guards the init wiring (modelName is computed via the resolver inside
-        // PlatformInfo.init), not the resolver logic itself. Note: on Simulator
-        // both sides are nil, so this test only pins the wiring when run on
-        // physical hardware — there is no simulator-testable seam because the
-        // init has no injectable resolver.
+        // Pins the real-hardware path (`init()` feeds `uname()` into the resolver).
+        // On the Simulator both sides are nil, so the deterministic tests in
+        // "modelName Wire Format Tests" below are what verify the resolved-name
+        // behavior in CI.
         XCTAssertEqual(platformInfo.modelName,
                        DeviceModelResolver.commercialName(for: platformInfo.model),
                        "modelName should be exactly DeviceModelResolver.commercialName(for: model)")
@@ -213,8 +212,97 @@ class PlatformCollectorTests: XCTestCase {
         }
     }
     
+    // MARK: - modelName Wire Format Tests
+
+    // `PlatformInfo.init()` reads `uname()`, which on the iOS Simulator reports the host
+    // architecture ("arm64") rather than a device identifier, so `modelName` is always nil
+    // there. These tests inject the hardware identifier through `PlatformInfo(model:)` so
+    // the resolved-name path and the encoded payload are verified on every host.
+
+    /// Keys the SDK sent before `modelName` existed. `locale` is optional and absent when
+    /// the system has no language code, so it is excluded from key-set comparisons.
+    private static let legacyPayloadKeys: Set<String> = [
+        "platform", "version", "device", "deviceName", "model", "brand", "timeZone", "jailBreakScore"
+    ]
+
+    /// Encodes the way `[DeviceCollector].collect()` does (JSONEncoder, then JSONSerialization)
+    private func encodedPayload(of platformInfo: PlatformInfo) throws -> [String: Any] {
+        let data = try JSONEncoder().encode(platformInfo)
+        return try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+    }
+
+    func testModelNameResolvedForRecognizedIdentifier() async {
+        let platformInfo = await PlatformInfo(model: "iPhone15,2")
+
+        XCTAssertEqual(platformInfo.model, "iPhone15,2",
+                       "model must keep carrying the raw hardware identifier")
+        XCTAssertEqual(platformInfo.modelName, "iPhone 14 Pro")
+    }
+
+    func testModelNameIsNilForUnrecognizedIdentifier() async {
+        // Simulator machine strings, hardware newer than the catalog, and an empty string
+        for identifier in ["arm64", "x86_64", "iPhone99,9", ""] {
+            let platformInfo = await PlatformInfo(model: identifier)
+
+            XCTAssertEqual(platformInfo.model, identifier,
+                           "model must carry the raw identifier even when it is not recognized")
+            XCTAssertNil(platformInfo.modelName,
+                         "'\(identifier)' is not in the catalog, so modelName should be nil")
+        }
+    }
+
+    func testEncodedPayloadForRecognizedIdentifierAddsOnlyModelName() async throws {
+        let platformInfo = await PlatformInfo(model: "iPhone15,2")
+        let json = try encodedPayload(of: platformInfo)
+
+        XCTAssertEqual(json["model"] as? String, "iPhone15,2",
+                       "model must stay the raw identifier on the wire")
+        XCTAssertEqual(json["modelName"] as? String, "iPhone 14 Pro",
+                       "modelName must carry the commercial name on the wire")
+        XCTAssertEqual(Set(json.keys).subtracting(["locale"]),
+                       Self.legacyPayloadKeys.union(["modelName"]),
+                       "modelName must be the only key added to the platform payload")
+    }
+
+    func testEncodedPayloadForUnrecognizedIdentifierMatchesPreviousSDKVersions() async throws {
+        // The Simulator and any hardware newer than the catalog take this path. The payload
+        // must be exactly what earlier SDK versions sent — `modelName` absent, not null — so
+        // server-side profile matching (e.g. PingAM's Device Match node) sees no new attribute.
+        let platformInfo = await PlatformInfo(model: "arm64")
+        let json = try encodedPayload(of: platformInfo)
+
+        XCTAssertEqual(json["model"] as? String, "arm64")
+        XCTAssertNil(json["modelName"], "modelName must be absent, not null, when unresolved")
+        XCTAssertEqual(Set(json.keys).subtracting(["locale"]), Self.legacyPayloadKeys,
+                       "an unrecognized identifier must not change the platform payload")
+    }
+
+    func testDecodingPayloadFromPreviousSDKVersionWithoutModelName() throws {
+        // The shape earlier SDK versions produced: no `modelName` key at all
+        let legacyJSON = """
+        {"platform":"iOS","version":"17.0.1","device":"iPhone","deviceName":"Test iPhone",
+         "model":"iPhone15,2","brand":"Apple","locale":"en","timeZone":"America/New_York",
+         "jailBreakScore":0.0}
+        """
+        let decoded = try JSONDecoder().decode(PlatformInfo.self, from: Data(legacyJSON.utf8))
+
+        XCTAssertEqual(decoded.model, "iPhone15,2")
+        XCTAssertNil(decoded.modelName,
+                     "a payload without modelName must still decode, with modelName == nil")
+    }
+
+    func testModelNameRoundTripsThroughCodableForRecognizedIdentifier() async throws {
+        // Covers the non-nil encode and decode path on every host; on the Simulator
+        // `PlatformInfo()` never resolves a name, so testPlatformInfoCodable only round-trips nil.
+        let original = await PlatformInfo(model: "iPhone15,2")
+        let decoded = try JSONDecoder().decode(PlatformInfo.self, from: JSONEncoder().encode(original))
+
+        XCTAssertEqual(decoded.model, "iPhone15,2")
+        XCTAssertEqual(decoded.modelName, "iPhone 14 Pro")
+    }
+
     // MARK: - Static Method Tests
-    
+
     func testGetDeviceModel() {
         let model = PlatformInfo.getDeviceModel()
         

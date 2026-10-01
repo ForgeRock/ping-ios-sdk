@@ -12,7 +12,7 @@ TARGET_FILE="${ROOT_DIR}/DeviceProfile/DeviceProfile/Collectors/DeviceModelCatal
 #   names are maintained by hand in KNOWN_NAMES below and verified against
 #   Apple's articles during review.
 # - The community-maintained adamawolf gist and the ipsw.me device API are used
-#   to discover which hardware identifiers exist at regeneration time.
+#   only to discover hardware identifiers that still need a curated name.
 GIST_URL="https://gist.githubusercontent.com/adamawolf/3048717/raw/Apple_mobile_device_types.txt"
 IPSW_DEVICES_URL="https://api.ipsw.me/v4/devices"
 
@@ -48,7 +48,9 @@ IOS_FAMILY_PATTERN = re.compile(r"(?:iPhone|iPad|iPod)\d+,\d+\Z")
 # shorthand like "iPad Pro 3"), so this table is the authoritative name
 # source. Identifiers discovered in the fetched data but absent here are
 # reported for review and deliberately omitted from the catalog rather than
-# guessed.
+# guessed. Names follow Apple's, with a generation or size qualifier added
+# where Apple's name alone would be ambiguous (e.g. "iPad Pro 12.9-inch (2nd
+# generation)"); connectivity variants (Wi-Fi / Cellular) share one name.
 KNOWN_NAMES = {
     # iPhone
     "iPhone1,1": "iPhone",
@@ -114,6 +116,9 @@ KNOWN_NAMES = {
     "iPhone18,3": "iPhone 17",
     "iPhone18,4": "iPhone Air",
     "iPhone18,5": "iPhone 17e",
+    "iPhone19,2": "iPhone 18 Pro",
+    "iPhone19,3": "iPhone 18 Pro Max",
+    "iPhone19,7": "iPhone 18 Pro Max",
     # iPod touch (discontinued line; last generation is the 7th)
     "iPod1,1": "iPod touch (1st generation)",
     "iPod2,1": "iPod touch (2nd generation)",
@@ -124,7 +129,7 @@ KNOWN_NAMES = {
     "iPod9,1": "iPod touch (7th generation)",
     # iPad
     "iPad1,1": "iPad",
-    "iPad1,2": "iPad Wi-Fi + 3G",
+    "iPad1,2": "iPad",
     "iPad2,1": "iPad 2",
     "iPad2,2": "iPad 2",
     "iPad2,3": "iPad 2",
@@ -247,15 +252,23 @@ for device in json.load(open(ipsw_path, encoding="utf-8")):
     if IOS_FAMILY_PATTERN.fullmatch(identifier):
         sources_seen.setdefault(identifier, set()).add("ipsw.me")
 
-# 2. Map identifiers to curated commercial names; report everything else.
-mapped = []
-skipped = []
-for identifier in sorted(sources_seen):
-    if identifier in KNOWN_NAMES:
-        mapped.append((identifier, KNOWN_NAMES[identifier]))
-    else:
-        skipped.append(identifier)
+if not sources_seen:
+    sys.exit("error: no iPhone/iPad/iPod identifiers found in the fetched sources; "
+             "refusing to overwrite the catalog (network or source-format problem?)")
 
+# 2. Emit every curated entry; report everything else.
+#    KNOWN_NAMES is the single authority for what ships. Fetched sources only
+#    discover identifiers that still need a curated name: community lists lag
+#    Apple's releases, so a name a maintainer has already verified must not be
+#    dropped just because no source lists its identifier yet.
+NAME_PATTERN = re.compile(r"[A-Za-z0-9 ().+\-]+\Z")
+for identifier, name in KNOWN_NAMES.items():
+    if (not IOS_FAMILY_PATTERN.fullmatch(identifier)
+            or not NAME_PATTERN.fullmatch(name) or name != name.strip()):
+        sys.exit("error: malformed KNOWN_NAMES entry %r: %r" % (identifier, name))
+
+mapped = sorted(KNOWN_NAMES.items())
+skipped = sorted(set(sources_seen) - set(KNOWN_NAMES))
 unmatched_known = sorted(set(KNOWN_NAMES) - set(sources_seen))
 
 # 3. Emit the Swift catalog file (deterministic: sorted, fixed template).
@@ -286,8 +299,9 @@ generated = """\
 //
 //  Generated: %s
 //  Review note: commercial names in this catalog are curated against Apple's
-//  published model-identifier documentation. Identifiers without a verified
-//  commercial name are intentionally omitted (they resolve to nil at runtime).
+//  "Identify your iPhone/iPad model" support articles. Identifiers without a
+//  verified commercial name are intentionally omitted (they resolve to nil at
+//  runtime).
 //
 
 import Foundation
@@ -324,7 +338,7 @@ if skipped:
         print("  %s (seen in: %s) — verify against Apple's model docs, add to KNOWN_NAMES, rerun" % (
             identifier, ", ".join(sorted(sources_seen[identifier]))))
 if unmatched_known:
-    print("Warning: %d KNOWN_NAMES entries were absent from both fetched sources:" % len(unmatched_known))
+    print("Note: %d KNOWN_NAMES entries are not listed by either fetched source (emitted anyway - check the identifier spelling):" % len(unmatched_known))
     for identifier in unmatched_known:
         print("  %s" % identifier)
 PYEOF

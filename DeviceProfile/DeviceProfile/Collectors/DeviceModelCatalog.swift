@@ -16,10 +16,11 @@
 //    - adamawolf "Apple_mobile_device_types.txt" gist (identifier coverage)
 //    - ipsw.me device API (identifier coverage)
 //
-//  Generated: 2026-09-29
+//  Generated: 2026-10-01
 //  Review note: commercial names in this catalog are curated against Apple's
-//  published model-identifier documentation. Identifiers without a verified
-//  commercial name are intentionally omitted (they resolve to nil at runtime).
+//  "Identify your iPhone/iPad model" support articles. Identifiers without a
+//  verified commercial name are intentionally omitted (they resolve to nil at
+//  runtime).
 //
 
 import Foundation
@@ -42,7 +43,7 @@ enum DeviceModelCatalog {
     /// commercial device name (e.g. `"iPhone 14 Pro"`).
     static let identifierToCommercialName: [String: String] = [
         "iPad1,1": "iPad",
-        "iPad1,2": "iPad Wi-Fi + 3G",
+        "iPad1,2": "iPad",
         "iPad11,1": "iPad mini (5th generation)",
         "iPad11,2": "iPad mini (5th generation)",
         "iPad11,3": "iPad Air (3rd generation)",
@@ -190,6 +191,9 @@ enum DeviceModelCatalog {
         "iPhone18,3": "iPhone 17",
         "iPhone18,4": "iPhone Air",
         "iPhone18,5": "iPhone 17e",
+        "iPhone19,2": "iPhone 18 Pro",
+        "iPhone19,3": "iPhone 18 Pro Max",
+        "iPhone19,7": "iPhone 18 Pro Max",
         "iPhone2,1": "iPhone 3GS",
         "iPhone3,1": "iPhone 4",
         "iPhone3,2": "iPhone 4",

@@ -158,13 +158,15 @@ maintenance script at the root of the repository:
 ./generate-device-model-catalog.sh
 ```
 
-The script fetches the current public identifier references, merges them with
-the curated commercial-name table, and rewrites
+The script's curated `KNOWN_NAMES` table is the source of truth: every entry in
+it is written to
 `DeviceProfile/DeviceProfile/Collectors/DeviceModelCatalog.swift` as a sorted
-Swift dictionary literal. It requires network access and `python3`, and is run
-by hand only — it is not part of the build or CI. Identifiers without a
-verified commercial name are reported and skipped; add them to the script's
-`KNOWN_NAMES` table (checking the names against Apple's "Identify your
+Swift dictionary literal. The current public identifier references are fetched
+only to report hardware that still needs a name (and curated entries that no
+source lists yet, which are still emitted). It requires network access and
+`python3`, and is run by hand only — it is not part of the build or CI.
+Identifiers without a verified commercial name are reported and skipped; add
+them to `KNOWN_NAMES` (checking the names against Apple's "Identify your
 iPhone/iPad model" support articles) and rerun. Review the diff before
 committing.
 
