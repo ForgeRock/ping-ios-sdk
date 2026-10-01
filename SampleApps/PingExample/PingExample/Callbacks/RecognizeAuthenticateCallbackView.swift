@@ -19,16 +19,14 @@ struct RecognizeAuthenticateCallbackView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
-            ProgressView()
-                .progressViewStyle(CircularProgressViewStyle())
-                .scaleEffect(1.5)
+        VStack(spacing: PingTheme.Spacing.medium) {
+            PingLoadingSpinner()
 
             Text("Processing biometric authentication...")
-                .foregroundColor(.secondary)
+                .pingSupportingText()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding()
+        // Edge spacing comes from CallbackView's screen padding; no own inset.
         .onAppear {
             viewModel.startIfNeeded()
         }

@@ -17,32 +17,23 @@ struct PingOneMFAOtpView: View {
 
     var body: some View {
         ZStack {
-            Color(.systemGroupedBackground)
-                .ignoresSafeArea()
-
             if viewModel.isLoading && viewModel.otpInfo == nil {
-                ProgressView()
-                    .scaleEffect(1.5)
+                PingLoadingSpinner()
             } else {
                 ScrollView {
-                    VStack(spacing: 32) {
+                    VStack(spacing: PingTheme.Spacing.large) {
                         otpCard
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 40)
-                    .padding(.bottom, 30)
+                    .pingScrollContentPadding()
                 }
             }
 
             // Loading overlay while refreshing an already-displayed code.
             if viewModel.isLoading && viewModel.otpInfo != nil {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-                ProgressView()
-                    .scaleEffect(2.0)
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                PingLoadingOverlay()
             }
         }
+        .pingScreenBackground()
         .navigationTitle("One-Time Passcode")
         .navigationBarTitleDisplayMode(.inline)
         .task {
@@ -51,56 +42,33 @@ struct PingOneMFAOtpView: View {
         .onDisappear {
             viewModel.stopRefreshing()
         }
-        .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
-            Button("OK") {
-                viewModel.errorMessage = nil
-            }
-        } message: {
-            if let error = viewModel.errorMessage {
-                Text(error)
-            }
-        }
+        .pingErrorAlert(errorMessage: $viewModel.errorMessage)
     }
 
     // MARK: - OTP Card
 
     private var otpCard: some View {
-        VStack(spacing: 24) {
-            // Gradient icon
-            Image(systemName: "number.square.fill")
-                .font(.system(size: 48))
-                .foregroundColor(.white)
-                .frame(width: 80, height: 80)
-                .background(
-                    LinearGradient(
-                        colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 20))
+        VStack(spacing: PingTheme.Spacing.large) {
+            PingIconTile(systemName: "number.square.fill", diameter: 80, cornerRadius: PingTheme.Shape.pillRadius, iconSize: 48)
 
             if let info = viewModel.otpInfo {
                 // OTP code — large, prominent, monospaced
                 Text(info.code)
-                    .font(.system(size: 48, weight: .bold, design: .monospaced))
-                    .foregroundColor(.primary)
+                    .font(PingTheme.Typography.code)
+                    .foregroundStyle(PingTheme.Color.contentPrimary)
                     .tracking(8)
 
                 // Live countdown
                 Text(viewModel.countdown > 0 ? "Refreshes in \(viewModel.countdown)s" : "Expired")
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(.secondary)
+                    .font(PingTheme.Typography.body.weight(.medium))
+                    .foregroundStyle(PingTheme.Color.contentSecondary)
             } else if !viewModel.isLoading {
                 Text("—")
-                    .font(.system(size: 48, weight: .bold, design: .monospaced))
-                    .foregroundColor(.secondary)
+                    .font(PingTheme.Typography.code)
+                    .foregroundStyle(PingTheme.Color.contentSecondary)
             }
         }
-        .padding(32)
         .frame(maxWidth: .infinity)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 3)
+        .pingCardStyle(size: .large)
     }
 }
