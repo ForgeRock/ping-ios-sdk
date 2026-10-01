@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2DA2EE4DDB9FC42F4E783461 /* DeviceModelCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF213711B87A5CE9DC87BF9 /* DeviceModelCatalog.swift */; };
 		A50143BA2E84ADA200FC2E9A /* HardwareCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50143B92E84AD8900FC2E9A /* HardwareCollectorTests.swift */; };
 		A50143BC2E84ADD000FC2E9A /* NetworkCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50143BB2E84ADCE00FC2E9A /* NetworkCollectorTests.swift */; };
 		A50143BE2E84ADF800FC2E9A /* PlatformCollectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50143BD2E84ADF600FC2E9A /* PlatformCollectorTests.swift */; };
@@ -38,9 +39,11 @@
 		A5D296952E7B46FF0093A761 /* LocationCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296942E7B46FD0093A761 /* LocationCollector.swift */; };
 		A5D296972E7B475C0093A761 /* DefaultDeviceCollector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296962E7B475A0093A761 /* DefaultDeviceCollector.swift */; };
 		A5D296992E7C72350093A761 /* NetworkPathMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D296982E7C72330093A761 /* NetworkPathMonitor.swift */; };
+		E5B87C2455207FE5CDF17633 /* DeviceModelResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A3D6DD34780DC3C007643D /* DeviceModelResolverTests.swift */; };
 		EC5C81F02ED0851000C91570 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */; };
 		EC5C81F12ED0851000C91570 /* PingJourneyPlugin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		ECB2A2892F226F9200B0F5F1 /* DeviceProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = A5554B262E840F6400BA6217 /* DeviceProfile.h */; };
+		F8873A061BC4AA929A5CE67A /* DeviceModelResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F9E8E509258874ACA5733BA /* DeviceModelResolver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +73,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		79A3D6DD34780DC3C007643D /* DeviceModelResolverTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeviceModelResolverTests.swift; sourceTree = "<group>"; };
+		7F9E8E509258874ACA5733BA /* DeviceModelResolver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeviceModelResolver.swift; sourceTree = "<group>"; };
 		A50143B92E84AD8900FC2E9A /* HardwareCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardwareCollectorTests.swift; sourceTree = "<group>"; };
 		A50143BB2E84ADCE00FC2E9A /* NetworkCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkCollectorTests.swift; sourceTree = "<group>"; };
 		A50143BD2E84ADF600FC2E9A /* PlatformCollectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformCollectorTests.swift; sourceTree = "<group>"; };
@@ -106,6 +111,7 @@
 		A5D296962E7B475A0093A761 /* DefaultDeviceCollector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDeviceCollector.swift; sourceTree = "<group>"; };
 		A5D296982E7C72330093A761 /* NetworkPathMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPathMonitor.swift; sourceTree = "<group>"; };
 		EC5C81EF2ED0851000C91570 /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECF213711B87A5CE9DC87BF9 /* DeviceModelCatalog.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DeviceModelCatalog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,6 +161,7 @@
 			children = (
 				A5554B2A2E84106F00BA6217 /* BluetoothCollectorTests.swift */,
 				A5554B2C2E84109300BA6217 /* BrowserCollectorTests.swift */,
+				79A3D6DD34780DC3C007643D /* DeviceModelResolverTests.swift */,
 				A50143C12E84AE9700FC2E9A /* DeviceProfileCollectorTests.swift */,
 				A50143C32E84AEB500FC2E9A /* DeviceProfileCallbackTests.swift */,
 				A50143B92E84AD8900FC2E9A /* HardwareCollectorTests.swift */,
@@ -202,6 +209,8 @@
 				A5D2968C2E79DFD90093A761 /* BrowserCollector.swift */,
 				A5D296962E7B475A0093A761 /* DefaultDeviceCollector.swift */,
 				A5D296862E79DD5C0093A761 /* DeviceCollector.swift */,
+				ECF213711B87A5CE9DC87BF9 /* DeviceModelCatalog.swift */,
+				7F9E8E509258874ACA5733BA /* DeviceModelResolver.swift */,
 				A5554B242E840EF200BA6217 /* DeviceProfileCollector.swift */,
 				A5D2968A2E79DE9A0093A761 /* HardwareCollector.swift */,
 				A5D296942E7B46FD0093A761 /* LocationCollector.swift */,
@@ -342,6 +351,8 @@
 				A5554B252E840EFA00BA6217 /* DeviceProfileCollector.swift in Sources */,
 				A569DBE82E78A0FC00F4D7A8 /* DeviceProfile.swift in Sources */,
 				A5D2968F2E79E1C10093A761 /* TelephonyCollector.swift in Sources */,
+				2DA2EE4DDB9FC42F4E783461 /* DeviceModelCatalog.swift in Sources */,
+				F8873A061BC4AA929A5CE67A /* DeviceModelResolver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,6 +371,7 @@
 				A50143C22E84AE9900FC2E9A /* DeviceProfileCollectorTests.swift in Sources */,
 				A50143C02E84AE7400FC2E9A /* TelephonyCollectorTests.swift in Sources */,
 				A50143BA2E84ADA200FC2E9A /* HardwareCollectorTests.swift in Sources */,
+				E5B87C2455207FE5CDF17633 /* DeviceModelResolverTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

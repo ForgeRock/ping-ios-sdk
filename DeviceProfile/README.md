@@ -132,6 +132,7 @@ struct ContentView: View {
     "device": "iPhone",
     "deviceName": "John's iPhone",
     "model": "iPhone15,2",
+    "modelName": "iPhone 14 Pro",
     "brand": "Apple",
     "locale": "en",
     "timeZone": "America/New_York",
@@ -182,6 +183,7 @@ Gathers platform and device identification information:
       "device": "iPhone",
       "deviceName": "John's iPhone",
       "model": "iPhone15,2",
+      "modelName": "iPhone 14 Pro",
       "brand": "Apple",
       "locale": "en",
       "timeZone": "America/New_York",
@@ -189,6 +191,20 @@ Gathers platform and device identification information:
    }
 }
 ```
+
+`model` is always the raw hardware identifier. `modelName` is the device's commercial name, resolved offline
+by `DeviceModelResolver` from a catalog built into the SDK. It is **omitted** (not `null`) when the identifier is
+not in the catalog, which is the case on the iOS Simulator and on hardware released after your SDK version, so treat
+it as best-effort and fall back to `model`. Updating the SDK picks up newer devices.
+
+> **Upgrade note — profile matching.** On recognised devices the submitted profile gains one attribute,
+> `platform.modelName`. PingAM / PingOne AIC's built-in **Device Match** node compares every attribute of the
+> submitted profile with the saved one, and with its default *Acceptable Variance* of `0` an attribute the saved
+> profile lacks counts as a difference. Users returning on an upgraded app can therefore fail the match once, until
+> their profile is saved again (for example by a *Device Profile Save* node on the step-up path). Plan for this before
+> rolling out the SDK upgrade: raise *Acceptable Variance* by one for the rollout window, or match with a script that
+> ignores `platform.modelName`. Simulator builds and unrecognised hardware are unaffected, because the attribute is
+> omitted there.
 
 ### HardwareCollector
 Collects comprehensive hardware specifications:

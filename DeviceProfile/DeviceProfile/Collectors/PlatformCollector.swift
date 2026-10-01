@@ -56,8 +56,18 @@ public struct PlatformInfo: Codable, Sendable {
     let deviceName: String
     
     /// Specific device model identifier (e.g., "iPhone15,2")
-    /// - Note: This is the technical model identifier, not the marketing name
+    /// - Note: This is the technical model identifier, not the marketing name.
+    ///   It remains the raw hardware identifier (as returned by `uname()`);
+    ///   use `modelName` for the commercial (marketing) name.
     let model: String
+
+    /// Commercial (marketing) device name resolved from `model` (e.g., "iPhone 14 Pro")
+    /// - Note: May be nil if the identifier is not recognized — e.g. Simulator
+    ///   machine strings ("arm64", "x86_64"), Mac identifiers, or hardware
+    ///   released after the static `DeviceModelCatalog` was generated.
+    ///   Resolution is an offline, exact dictionary lookup via
+    ///   `DeviceModelResolver`; an unrecognized identifier is not an error.
+    let modelName: String?
     
     /// Device manufacturer (always "Apple" for iOS devices)
     let brand: String
@@ -74,6 +84,18 @@ public struct PlatformInfo: Codable, Sendable {
     
     /// Initializes platform information by collecting system details
     init() async {
+        await self.init(model: Self.getDeviceModel())
+    }
+
+    /// Initializes platform information for the given hardware model identifier
+    /// - Parameter model: Raw hardware identifier (e.g., "iPhone15,2")
+    ///
+    /// Everything other than the model is collected from the running system.
+    /// `init()` passes the identifier reported by `uname()`; tests pass a fixed
+    /// one, because on the iOS Simulator `uname()` reports the host architecture
+    /// ("arm64"), so `modelName` could never be exercised with a resolvable
+    /// identifier through `init()`.
+    init(model: String) async {
         #if canImport(UIKit)
         self.platform = await UIDevice.current.systemName
         self.version = await UIDevice.current.systemVersion
@@ -86,7 +108,10 @@ public struct PlatformInfo: Codable, Sendable {
         self.device = "Mac"
         self.deviceName = Host.current().localizedName ?? "Mac"
         #endif
-        self.model = Self.getDeviceModel()
+        self.model = model
+        // Resolved from the same identifier; an unrecognized identifier
+        // (Simulator, Mac, newer hardware) yields nil — see `modelName` docs.
+        self.modelName = DeviceModelResolver.commercialName(for: model)
         self.brand = "Apple"
         self.locale = Locale.current.language.languageCode?.identifier
         self.timeZone = TimeZone.current.identifier
