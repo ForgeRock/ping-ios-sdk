@@ -1,0 +1,18 @@
+name: Copyright Check
+
+on:
+  pull_request
+
+jobs:
+  copyright:
+    name: Validate copyright headers
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate copyright headers
+        run: .github/scripts/check-copyright.sh

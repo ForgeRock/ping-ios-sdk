@@ -39,6 +39,7 @@ jobs:
     outputs:
       head_sha: ${{ steps.ctx.outputs.head_sha }}
       head_repo: ${{ steps.ctx.outputs.head_repo }}
+      base_sha: ${{ steps.ctx.outputs.base_sha }}
     steps:
       - name: React to /run-ci comment with 👀
         if: github.event_name == 'issue_comment'
@@ -64,23 +65,49 @@ jobs:
             if (context.eventName === 'push') {
               core.setOutput('head_sha', context.sha);
               core.setOutput('head_repo', `${context.repo.owner}/${context.repo.repo}`);
+              core.setOutput('base_sha', context.payload.before);
             } else if (context.eventName === 'pull_request') {
               core.setOutput('head_sha', context.payload.pull_request.head.sha);
               core.setOutput('head_repo', context.payload.pull_request.head.repo.full_name);
+              core.setOutput('base_sha', context.payload.pull_request.base.sha);
             } else {
               const pr = await github.rest.pulls.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 pull_number: context.issue.number,
               });
+
               core.setOutput('head_sha', pr.data.head.sha);
               core.setOutput('head_repo', pr.data.head.repo.full_name);
+              core.setOutput('base_sha', pr.data.base.sha);
             }
+
+  # Copyright check. This job validates that all source files have the correct Ping Identity copyright headers.
+  # If not, the job will fail and prevent subsequent jobs from running.
+  copyright-check:
+    name: Copyright Check
+    needs: resolve-context
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ needs.resolve-context.outputs.head_repo }}
+          ref: ${{ needs.resolve-context.outputs.head_sha }}
+          fetch-depth: 0
+
+      - name: Validate copyright headers
+        env:
+          BASE_SHA: ${{ needs.resolve-context.outputs.base_sha }}
+        run: .github/scripts/check-copyright.sh
 
   # Build and run unit tests
   build-and-test:
     name: Build and test
-    needs: resolve-context
+    needs: 
+      - resolve-context
+      - copyright-check
     uses: ./.github/workflows/build-and-test.yaml
     with:
       head_sha: ${{ needs.resolve-context.outputs.head_sha }}
@@ -93,7 +120,9 @@ jobs:
   mend-cli-scan:
     name: Mend CLI Scan
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    needs: resolve-context
+    needs: 
+      - resolve-context
+      - copyright-check
     uses: ./.github/workflows/mend-cli-scan.yaml
     with:
       head_sha: ${{ needs.resolve-context.outputs.head_sha }}
@@ -107,12 +136,16 @@ jobs:
   generate-docs:
     name: Generate API Docs
     if: github.event_name == 'push'
+    needs: 
+      - copyright-check
     uses: ./.github/workflows/docs.yaml
 
   # Calculate package sizes — not applicable for issue_comment (no PR merge ref available)
   package-sizes:
     name: Package Sizes
     if: github.event_name != 'issue_comment'
+    needs:
+      - copyright-check
     uses: ./.github/workflows/package-sizes.yml
 
   # Build BrowserStack test artifacts — skip for fork PRs (signing secrets unavailable)
@@ -162,6 +195,7 @@ jobs:
     if: always() && github.event_name == 'issue_comment' && needs.resolve-context.result == 'success'
     needs:
       - resolve-context
+      - copyright-check
       - build-and-test
       - mend-cli-scan
       - browserstack-results
@@ -172,6 +206,7 @@ jobs:
         with:
           script: |
             const results = [
+              '${{ needs.copyright-check.result }}',
               '${{ needs.build-and-test.result }}',
               '${{ needs.mend-cli-scan.result }}',
               '${{ needs.browserstack-results.result }}',
