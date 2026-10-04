@@ -25,6 +25,11 @@ struct PingOneMFADavinciAuthenticationView: View {
                     switch davinciViewModel.state.node {
                     case let continueNode as ContinueNode:
                         authenticationStep(continueNode)
+                    case is SuccessNode:
+                        VStack {}.onAppear {
+                            path.removeLast()
+                            path.append(.davinciToken)
+                        }
                     case let failureNode as FailureNode:
                         let apiError = failureNode.cause as? ApiError
                         switch apiError {
@@ -178,10 +183,18 @@ struct PingOneMFADavinciAuthenticationMetadataView: View {
         guard !isSubmitting else { return }
         isSubmitting = true
 
-        guard let status = field.metadata["status"] as? String else {
+        guard let rawResponse = field.metadata["rawResponse"] as? [String: Any] else {
             submitError(
                 code: "MOBILE_AUTHENTICATION_INVALID_RESPONSE",
-                message: "The mobile authentication response does not contain a status."
+                message: "The mobile authentication response does not contain a rawResponse."
+            )
+            return
+        }
+
+        guard let status = rawResponse["status"] as? String else {
+            submitError(
+                code: "MOBILE_AUTHENTICATION_INVALID_RESPONSE",
+                message: "The mobile authentication rawResponse does not contain a status."
             )
             return
         }
@@ -194,10 +207,10 @@ struct PingOneMFADavinciAuthenticationMetadataView: View {
             return
         }
 
-        guard let authenticators = field.metadata["authenticators"] as? [String] else {
+        guard let authenticators = rawResponse["authenticators"] as? [String] else {
             submitError(
                 code: "MOBILE_AUTHENTICATION_INVALID_RESPONSE",
-                message: "The mobile authentication response does not contain authenticators."
+                message: "The mobile authentication rawResponse does not contain authenticators."
             )
             return
         }
