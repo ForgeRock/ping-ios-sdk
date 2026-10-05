@@ -77,7 +77,7 @@ enum MenuSection: CaseIterable, Identifiable {
         case .mfa:
             return [.qrScanner, .oathAccounts, .pushAccounts, .pushNotifications]
         case .pingOneMFA:
-            return [.pingOneMFAScanner, .pingOneMFAAccounts, .pingOneMFAOtp, .pingOneMFAPayload, .pingOneMFADavinciPairing, .pingOneMFADavinciAuthentication]
+            return [.pingOneMFAScanner, .pingOneMFAAccounts, .pingOneMFAOtp, .pingOneMFAPayload, .pingOneMFADavinciPairing, .pingOneMFADavinciAuthorization]
         case .developerTools:
             return [.deviceInfo, .logger, .storage, .bindingKeys, .migration, .configuration]
         }
@@ -117,7 +117,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case pingOneMFAOtp = "PingOne MFA OTP"
     case pingOneMFAPayload = "PingOne MFA Payload"
     case pingOneMFADavinciPairing = "PingOne MFA DaVinci Pairing"
-    case pingOneMFADavinciAuthentication = "PingOne MFA DaVinci Authorization"
+    case pingOneMFADavinciAuthorization = "PingOne MFA DaVinci Authorization"
 
     var id: String { rawValue }
     
@@ -154,7 +154,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .pingOneMFAOtp: return "number.square.fill"
         case .pingOneMFAPayload: return "doc.badge.gearshape.fill"
         case .pingOneMFADavinciPairing: return "link.badge.plus"
-        case .pingOneMFADavinciAuthentication: return "checkmark.shield.fill"
+        case .pingOneMFADavinciAuthorization: return "checkmark.shield.fill"
         }
     }
 
@@ -191,13 +191,13 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .pingOneMFAOtp: return "One-Time Passcode"
         case .pingOneMFAPayload: return "Mobile Payload"
         case .pingOneMFADavinciPairing: return "DaVinci Pairing"
-        case .pingOneMFADavinciAuthentication: return "DaVinci Authorization"
+        case .pingOneMFADavinciAuthorization: return "DaVinci Authorization"
         }
     }
 
     var subtitle: String {
         switch self {
-        case .davinci: return "Test DaVinci authorization"
+        case .davinci: return "Test DaVinci authentication"
         case .journey: return "Test Journey authentication"
         case .backchannel: return "AM/AIC transactional backchannel auth"
         case .oidc: return "OpenID Connect flow"
@@ -228,7 +228,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .pingOneMFAOtp: return "OTP for your paired accounts"
         case .pingOneMFAPayload: return "Generate mobile payload for authentication and registration"
         case .pingOneMFADavinciPairing: return "Pair device via DaVinci flow"
-        case .pingOneMFADavinciAuthentication: return "Authenticate device via DaVinci flow"
+        case .pingOneMFADavinciAuthorization: return "Authorization device via DaVinci flow"
         }
     }
 
@@ -236,7 +236,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     var requiredConfigType: ConfigType? {
         switch self {
         case .journey, .journeyToken, .backchannel: return .journey
-        case .davinci, .davinciToken, .pingOneMFADavinciPairing, .pingOneMFADavinciAuthentication: return .davinci
+        case .davinci, .davinciToken, .pingOneMFADavinciPairing, .pingOneMFADavinciAuthorization: return .davinci
         case .oidc, .oidcToken: return .oidcWeb
         case .device, .deviceToken: return .device
         default: return nil
@@ -356,8 +356,8 @@ struct ContentView: View {
                     PingOneMFAPayloadView(path: $path)
                 case .pingOneMFADavinciPairing:
                     PingOneMFADavinciPairingView(path: $path)
-                case .pingOneMFADavinciAuthentication:
-                    PingOneMFADavinciAuthorizationView(path: $path)
+                case .pingOneMFADavinciAuthorization:
+                    PingOneMFADavinciAuthorizationView()
                 }
             }
             .task {

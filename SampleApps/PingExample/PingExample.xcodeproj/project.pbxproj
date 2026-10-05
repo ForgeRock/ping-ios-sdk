@@ -336,6 +336,7 @@
 		A5EFA9812D360ACC00F771FE /* ContinueNodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA9802D360AC800F771FE /* ContinueNodeView.swift */; };
 		A5F39AB82F9B0000001AB5C7 /* PingOneMFANotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5F39AB72F9B0000001AB5C7 /* PingOneMFANotificationView.swift */; };
 		D5A100000000000000000004 /* PingDesignSystemImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A100000000000000000003 /* PingDesignSystemImport.swift */; };
+		A54EE722303E030200986AE3 /* PingOneSDK in Frameworks */ = {isa = PBXBuildFile; productRef = A54EE721303E030200986AE3 /* PingOneSDK */; };
 		AC5BED6127AA4D6798BDFFF7 /* PingOneSDK in Frameworks */ = {isa = PBXBuildFile; productRef = A54EE721303E030200986AE3 /* PingOneSDK */; };
 		B4A000010000000000000002 /* PingOneMFADavinciPairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A000010000000000000012 /* PingOneMFADavinciPairingView.swift */; };
 		B4A000010000000000000003 /* MobilePairingCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A000010000000000000013 /* MobilePairingCollectorView.swift */; };
@@ -1784,6 +1785,7 @@
 			);
 			name = Test;
 			packageProductDependencies = (
+				A54EE721303E030200986AE3 /* PingOneSDK */,
 			);
 			productName = Test;
 			productReference = A5D295F52E78B1B90093A761 /* libTest.a */;

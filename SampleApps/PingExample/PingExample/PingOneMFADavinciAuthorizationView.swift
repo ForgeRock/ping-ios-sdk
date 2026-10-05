@@ -1,5 +1,5 @@
 //
-//  PingOneMFADavinciAuthenticationView.swift
+//  PingOneMFADavinciAuthorizationView.swift
 //  PingExample
 //
 //  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
@@ -14,7 +14,6 @@ import PingOneMFA
 import PingOrchestrate
 
 struct PingOneMFADavinciAuthorizationView: View {
-    @Binding var path: [MenuItem]
     @StateObject private var davinciViewModel = DavinciViewModel()
     @StateObject private var validationViewModel = ValidationViewModel()
 
@@ -26,7 +25,9 @@ struct PingOneMFADavinciAuthorizationView: View {
                     case let continueNode as ContinueNode:
                         authenticationStep(continueNode)
                     case is SuccessNode:
-                        EmptyView()
+                        Label("DaVinci Authorization complete", systemImage: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                            .padding()
                     case let failureNode as FailureNode:
                         let apiError = failureNode.cause as? ApiError
                         switch apiError {
@@ -73,7 +74,12 @@ struct PingOneMFADavinciAuthorizationView: View {
                     Task { await handleNext(node: node, isSubmit: isSubmit) }
                 },
                 metadataViewBuilder: { field, onNext in
-                    AnyView(
+                    // Only METADATA steps owned by this flow get the custom view; any other
+                    // METADATA collector (e.g. PROTECT/INITIALIZE) keeps the default behavior.
+                    guard PingOneMFADavinciAuthenticationMetadataView.handles(field) else {
+                        return AnyView(MetadataView(field: field, onNext: onNext))
+                    }
+                    return AnyView(
                         PingOneMFADavinciAuthenticationMetadataView(
                             field: field,
                             onNext: onNext
@@ -107,14 +113,20 @@ struct PingOneMFADavinciAuthenticationMetadataView: View {
         case failed
     }
 
-    private var isMobilePayloadRequest: Bool {
-        (field.metadata["sdk"] as? String) == "MFA"
-            && (field.metadata["action"] as? String) == "MOBILE_PAYLOAD"
+    /// Whether this view owns the given METADATA step: the `MFA`/`MOBILE_PAYLOAD` request, or the
+    /// device-authentication result, which the flow delivers wrapped in a `rawResponse` object.
+    static func handles(_ field: MetadataCollector) -> Bool {
+        isMobilePayloadRequest(field.metadata) || field.metadata["rawResponse"] is [String: Any]
+    }
+
+    private static func isMobilePayloadRequest(_ metadata: [String: Any]) -> Bool {
+        (metadata["sdk"] as? String) == "MFA"
+            && (metadata["action"] as? String) == "MOBILE_PAYLOAD"
     }
 
     var body: some View {
         Group {
-            if isMobilePayloadRequest {
+            if Self.isMobilePayloadRequest(field.metadata) {
                 HStack(spacing: 8) {
                     ProgressView()
                     Text("Collecting mobile payload…")
