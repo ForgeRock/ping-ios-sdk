@@ -37,6 +37,7 @@
 		A5COM0012F0100000000001 /* PingCommons.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5COM0002F0100000000001 /* PingCommons.framework */; };
 		A5COM0022F0100000000001 /* PingCommons.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A5COM0002F0100000000001 /* PingCommons.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AD17DA6D5CFCCE27C5D5D88E /* OidcCallbackErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA261952B041BAFD2627C56F /* OidcCallbackErrorTests.swift */; };
+		B7E4C1A09D2F4E6A8C3B5D71 /* OidcMultiTokenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8F5D2B10E3A5F7B9D4C6E82 /* OidcMultiTokenTests.swift */; };
 		C3B3D4C6C1637C4911B34B62 /* AuthorizationDetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6439A1B1333061E5BD3A809F /* AuthorizationDetailTests.swift */; };
 		CCCCCCCC00000001FAA0E2E0 /* OidcWebClientE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCCCCCC00000000FAA0E2E0 /* OidcWebClientE2ETests.swift */; };
 		CCCCCCCC00000003FAA0E2E0 /* RecordingHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCCCCCC00000002FAA0E2E0 /* RecordingHttpClient.swift */; };
@@ -122,6 +123,7 @@
 		CCCCCCCC00000000FAA0E2E0 /* OidcWebClientE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcWebClientE2ETests.swift; sourceTree = "<group>"; };
 		CCCCCCCC00000002FAA0E2E0 /* RecordingHttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordingHttpClient.swift; path = ../Network/NetworkTests/RecordingHttpClient.swift; sourceTree = SOURCE_ROOT; };
 		EA261952B041BAFD2627C56F /* OidcCallbackErrorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OidcCallbackErrorTests.swift; sourceTree = "<group>"; };
+		C8F5D2B10E3A5F7B9D4C6E82 /* OidcMultiTokenTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OidcMultiTokenTests.swift; sourceTree = "<group>"; };
 		EC0CB5942E266F3400A82D6C /* Oidc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Oidc.swift; sourceTree = "<group>"; };
 		EC23D5122E295AAB00C43D42 /* Web.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Web.swift; sourceTree = "<group>"; };
 		EC23D5142E2E7A1100C43D42 /* OidcWebClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OidcWebClientTests.swift; sourceTree = "<group>"; };
@@ -237,6 +239,7 @@
 				6439A1B1333061E5BD3A809F /* AuthorizationDetailTests.swift */,
 				1138BBAF85460DCFB0206D7B /* OidcClientRARTests.swift */,
 				EA261952B041BAFD2627C56F /* OidcCallbackErrorTests.swift */,
+				C8F5D2B10E3A5F7B9D4C6E82 /* OidcMultiTokenTests.swift */,
 			);
 			path = OidcTests;
 			sourceTree = "<group>";
@@ -451,6 +454,7 @@
 				C3B3D4C6C1637C4911B34B62 /* AuthorizationDetailTests.swift in Sources */,
 				FA28EEB8F72D73291B594448 /* OidcClientRARTests.swift in Sources */,
 				AD17DA6D5CFCCE27C5D5D88E /* OidcCallbackErrorTests.swift in Sources */,
+				B7E4C1A09D2F4E6A8C3B5D71 /* OidcMultiTokenTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

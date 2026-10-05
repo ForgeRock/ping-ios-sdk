@@ -19,6 +19,7 @@ enum AuthTab: String, CaseIterable, Identifiable {
     case journey = "Journey"
     case davinci = "DaVinci"
     case oidc = "OIDC (Web)"
+    case oidcRar = "OIDC (Web) RAR"
     case device = "Device Flow"
 
     var id: String { rawValue }
@@ -28,6 +29,7 @@ enum AuthTab: String, CaseIterable, Identifiable {
         case .journey: return "map.fill"
         case .davinci: return "key.fill"
         case .oidc: return "lock.shield.fill"
+        case .oidcRar: return "checkmark.shield.fill"
         case .device: return "tv"
         }
     }
@@ -49,6 +51,7 @@ class UserInfoViewModel: ObservableObject {
         .journey: UserInfoResult(),
         .davinci: UserInfoResult(),
         .oidc: UserInfoResult(),
+        .oidcRar: UserInfoResult(),
         .device: UserInfoResult()
     ]
     
@@ -64,6 +67,7 @@ class UserInfoViewModel: ObservableObject {
             group.addTask { await (.journey, self.fetchUserInfo(for: .journey)) }
             group.addTask { await (.davinci, self.fetchUserInfo(for: .davinci)) }
             group.addTask { await (.oidc, self.fetchUserInfo(for: .oidc)) }
+            group.addTask { await (.oidcRar, self.fetchUserInfo(for: .oidcRar)) }
             group.addTask { await (.device, self.fetchUserInfo(for: .device)) }
 
             for await (tab, result) in group {
@@ -81,6 +85,8 @@ class UserInfoViewModel: ObservableObject {
             user = await ConfigurationManager.shared.davinciUser
         case .oidc:
             user = await ConfigurationManager.shared.oidcUser
+        case .oidcRar:
+            user = await ConfigurationManager.shared.rarUser
         case .device:
             user = await ConfigurationManager.shared.deviceUser
         }

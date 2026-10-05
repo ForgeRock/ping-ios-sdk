@@ -109,6 +109,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case journeyToken = "Journey Token"
     case davinciToken = "DaVinci Token"
     case oidcToken = "OIDC Token"
+    case oidcRarToken = "OIDC RAR Token"
     case deviceToken = "Device Token"
     case davinciDeviceApprove = "Approve with DaVinci"
     case journeyDeviceApprove = "Approve with Journey"
@@ -127,7 +128,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .journey: return "map.fill"
         case .backchannel: return "arrow.left.arrow.right.circle.fill"
         case .oidc: return "lock.shield.fill"
-        case .oidcRar: return "checkmark.shield.badge.plus"
+        case .oidcRar: return "checkmark.shield.fill"
         case .device: return "tv"
         case .oathAccounts: return "key.viewfinder"
         case .pushAccounts: return "bell.badge.fill"
@@ -146,6 +147,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .journeyToken: return "map.fill"
         case .davinciToken: return "key.fill"
         case .oidcToken: return "lock.shield.fill"
+        case .oidcRarToken: return "checkmark.shield.fill"
         case .deviceToken: return "tv"
         case .davinciDeviceApprove: return "key.fill"
         case .journeyDeviceApprove: return "map.fill"
@@ -183,6 +185,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .journeyToken: return "Journey Access Token"
         case .davinciToken: return "DaVinci Access Token"
         case .oidcToken: return "OIDC (Web) Access Token"
+        case .oidcRarToken: return "Access Tokens"
         case .deviceToken: return "Device Flow Access Token"
         case .davinciDeviceApprove: return "Approve with DaVinci"
         case .journeyDeviceApprove: return "Approve with Journey"
@@ -220,6 +223,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .journeyToken: return "View Journey token"
         case .davinciToken: return "View DaVinci token"
         case .oidcToken: return "View OIDC token"
+        case .oidcRarToken: return "View the RAR token alongside your other tokens"
         case .deviceToken: return "View Device Flow token"
         case .davinciDeviceApprove: return "Approve device flow via DaVinci"
         case .journeyDeviceApprove: return "Approve device flow via Journey"
@@ -324,6 +328,10 @@ struct ContentView: View {
                     AccessTokenView(menuItem: item, fixedTab: .davinci)
                 case .oidcToken:
                     AccessTokenView(menuItem: item, fixedTab: .oidc)
+                case .oidcRarToken:
+                    // All tabs stay visible (not `fixedTab`) so the RAR token (B) can be compared
+                    // with the Journey / DaVinci / OIDC token (A); it just opens on the RAR tab.
+                    AccessTokenView(menuItem: item, initialTab: .oidcRar)
                 case .deviceToken:
                     AccessTokenView(menuItem: item, fixedTab: .device)
                 case .user:

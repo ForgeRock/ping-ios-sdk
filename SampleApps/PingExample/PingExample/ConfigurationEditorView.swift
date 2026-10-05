@@ -189,7 +189,6 @@ struct ConfigurationEditorView: View {
         }
     }
 
-<<<<<<< HEAD
     // MARK: - RFC 9396 Authorization Details (config-level)
 
     /// Monospaced editor for a config-level `authorization_details` JSON array (RFC 9396 §2).

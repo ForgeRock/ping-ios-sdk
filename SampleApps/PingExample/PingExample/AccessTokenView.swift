@@ -22,10 +22,13 @@ struct AccessTokenView: View {
     @StateObject private var accessTokenViewModel = AccessTokenViewModel()
     @State private var selectedTab: AuthTab = .journey
     
-    init(menuItem: MenuItem, fixedTab: AuthTab? = nil) {
+    /// - Parameters:
+    ///   - fixedTab: Locks the view to one tab and hides the tab picker.
+    ///   - initialTab: The tab to open on when the picker is visible.
+    init(menuItem: MenuItem, fixedTab: AuthTab? = nil, initialTab: AuthTab? = nil) {
         self.menuItem = menuItem
         self.fixedTab = fixedTab
-        self._selectedTab = State(initialValue: fixedTab ?? .journey)
+        self._selectedTab = State(initialValue: fixedTab ?? initialTab ?? .journey)
     }
     
     var body: some View {
@@ -148,9 +151,9 @@ struct AccessTokenView: View {
         if let details, !details.isEmpty {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    Image(systemName: "checkmark.shield.badge.plus")
+                    Image(systemName: "checkmark.shield.fill")
                         .font(.system(size: 16))
-                        .foregroundColor(.themeButtonBackground)
+                        .foregroundStyle(PingTheme.Color.actionPrimary)
                     Text("Granted Authorization Details")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.primary)

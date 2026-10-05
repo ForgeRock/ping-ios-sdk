@@ -38,7 +38,7 @@ struct OidcRarLoginView: View {
                         // navigation to the token screen would never happen.
                         VStack {}.onAppear {
                             path.removeLast()
-                            path.append(.oidcToken)
+                            path.append(.oidcRarToken)
                             // Reset so returning to this screen doesn't immediately bounce back.
                             viewModel.reset()
                         }
@@ -69,6 +69,10 @@ struct OidcRarLoginView: View {
             }
             .font(.system(size: 12))
             Text("Per-transaction details below win over config-level details for this login. PAR toggling rebuilds the client (config-level flag).")
+                .font(.system(size: 11))
+                .foregroundStyle(Color(.systemGray))
+            Label("The RAR token is stored separately, so any Journey, DaVinci or OIDC (Web) login stays valid. Compare both on the Access Token screen; revoke or log out each independently.",
+                  systemImage: "square.stack.3d.up")
                 .font(.system(size: 11))
                 .foregroundStyle(Color(.systemGray))
         }

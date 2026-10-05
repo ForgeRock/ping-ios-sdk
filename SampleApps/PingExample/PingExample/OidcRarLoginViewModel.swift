@@ -80,13 +80,18 @@ class OidcRarLoginViewModel: ObservableObject {
     }
 
     /// Starts the OIDC login with per-transaction authorization details (the PAR-safe path).
+    ///
+    /// Runs on the dedicated `rarLogin` workflow, not `oidcLogin`: starting an authorization
+    /// revokes and replaces the token held by *that workflow's* storage, so a separate workflow
+    /// with its own storage account keeps the Journey / DaVinci / OIDC token (A) valid while this
+    /// login issues the RAR token (B).
     func login(details: [AuthorizationDetail]) {
         isLoading = true
         Task {
             defer { isLoading = false }
-            guard let oidcLogin = oidcLogin else { return }
+            guard let rarLogin = ConfigurationManager.shared.rarLogin else { return }
             do {
-                self.state = try await oidcLogin.authorize { options in
+                self.state = try await rarLogin.authorize { options in
                     options.authorizationDetails = details
                 }
             } catch let error as OidcError {

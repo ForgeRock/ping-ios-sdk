@@ -59,6 +59,13 @@ class ConfigurationManager: ObservableObject {
     public var journey: Journey?
     public var davinci: DaVinci?
     public var oidcLogin: OidcWebClient?
+    /// Dedicated workflow for RFC 9396 RAR logins. It is built from the same OIDC (Web)
+    /// configuration as `oidcLogin`, but owns its own token storage account. A workflow holds
+    /// one token and revokes/replaces it when a new authorization starts, so running RAR on
+    /// `oidcLogin` (or on a client sharing its storage) would revoke the user's existing token.
+    /// With its own workflow and storage, the RAR token (B) lives alongside the Journey /
+    /// DaVinci / OIDC token (A) and can be used, revoked and logged out independently.
+    public var rarLogin: OidcWebClient?
     public var deviceClient: OidcDeviceClient?
 
     // MFA Clients
@@ -105,6 +112,7 @@ class ConfigurationManager: ObservableObject {
                 .flatMap { ConfigurationManager.buildOidcWebClient(fromJSON: $0) }
                 ?? ConfigurationManager.buildOidcWebClient(config)
         }
+        self.rarLogin = oidcWebConfig.map { ConfigurationManager.buildRarLoginClient($0) }
         self.deviceClient = deviceConfig.map { config in
             ConfigurationManager.resolveJson(for: config)
                 .flatMap { ConfigurationManager.buildDeviceClient(fromJSON: $0) }
@@ -147,6 +155,7 @@ class ConfigurationManager: ObservableObject {
         case .oidcWeb:
             oidcLogin = json.flatMap { ConfigurationManager.buildOidcWebClient(fromJSON: $0) }
                 ?? ConfigurationManager.buildOidcWebClient(config)
+            rarLogin = ConfigurationManager.buildRarLoginClient(config)
         case .device:
             deviceClient = json.flatMap { ConfigurationManager.buildDeviceClient(fromJSON: $0) }
                 ?? ConfigurationManager.buildDeviceClient(config)
@@ -193,7 +202,9 @@ class ConfigurationManager: ObservableObject {
                 switch config.type {
                 case .journey: journey = nil
                 case .davinci: davinci = nil
-                case .oidcWeb: oidcLogin = nil
+                case .oidcWeb:
+                    oidcLogin = nil
+                    rarLogin = nil
                 case .device: deviceClient = nil
                 }
             }
@@ -225,7 +236,14 @@ class ConfigurationManager: ObservableObject {
             return await oidcLogin?.oidcLoginUser()
         }
     }
-    
+
+    /// The user holding the RAR token (B), independent of `journeyUser` / `davinciUser` / `oidcUser` (A).
+    public var rarUser: User? {
+        get async {
+            return await rarLogin?.oidcLoginUser()
+        }
+    }
+
     public var journeySession: SSOToken? {
         get async {
             return await journey?.session()
@@ -286,7 +304,24 @@ class ConfigurationManager: ObservableObject {
         }
     }
     
-    private static func buildOidcWebClient(_ config: Configuration) -> OidcWebClient {
+    /// Keychain account for the primary OIDC (Web) token (A).
+    private static let oidcWebStorageAccount = "ACCESS_TOKEN_STORAGE_OIDCWEB"
+    /// Keychain account for the RAR token (B). Must differ from every other flow's account:
+    /// `KeychainStorage` items are keyed by account only, so a shared account means a shared slot.
+    private static let rarStorageAccount = "ACCESS_TOKEN_STORAGE_OIDCWEB_RAR"
+
+    /// Builds the dedicated RAR workflow for an OIDC (Web) configuration.
+    ///
+    /// Always built from the `Configuration` fields, even for JSON-backed configs: the unified
+    /// JSON builder has no storage setting, so a JSON-built client would fall back to the shared
+    /// default `ACCESS_TOKEN_STORAGE` account and collide with the other flows' tokens. PAR and
+    /// config-level `authorizationDetails` are carried too — `JsonConfigLoader` maps them onto
+    /// the `Configuration`, so JSON-backed configs keep both on the RAR client.
+    private static func buildRarLoginClient(_ config: Configuration) -> OidcWebClient {
+        buildOidcWebClient(config, storageAccount: rarStorageAccount)
+    }
+
+    private static func buildOidcWebClient(_ config: Configuration, storageAccount: String = oidcWebStorageAccount) -> OidcWebClient {
         OidcWebClient.createOidcWebClient { webConfig in
             webConfig.browserMode = .login
             // Default browserType is `.authSession`. If `config.redirectUri` is an `https`
@@ -303,7 +338,7 @@ class ConfigurationManager: ObservableObject {
                 oidcValue.redirectUri = config.redirectUri
                 oidcValue.discoveryEndpoint = config.discoveryEndpoint
                 oidcValue.acrValues = config.acrValues ?? ""
-                oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_OIDCWEB")
+                oidcValue.storage = KeychainStorage<Token>(account: storageAccount)
                 oidcValue.par = config.par ?? false
                 if let json = config.authorizationDetailsJson {
                     switch RarJson.decode(json) {

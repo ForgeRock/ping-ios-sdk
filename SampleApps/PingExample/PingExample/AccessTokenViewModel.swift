@@ -32,6 +32,7 @@ class AccessTokenViewModel: ObservableObject {
         .journey: AccessTokenResult(),
         .davinci: AccessTokenResult(),
         .oidc: AccessTokenResult(),
+        .oidcRar: AccessTokenResult(),
         .device: AccessTokenResult()
     ]
     
@@ -47,6 +48,7 @@ class AccessTokenViewModel: ObservableObject {
             group.addTask { await (.journey, self.fetchToken(for: .journey)) }
             group.addTask { await (.davinci, self.fetchToken(for: .davinci)) }
             group.addTask { await (.oidc, self.fetchToken(for: .oidc)) }
+            group.addTask { await (.oidcRar, self.fetchToken(for: .oidcRar)) }
             group.addTask { await (.device, self.fetchToken(for: .device)) }
 
             for await (tab, result) in group {
@@ -64,10 +66,12 @@ class AccessTokenViewModel: ObservableObject {
             user = await ConfigurationManager.shared.davinciUser
         case .oidc:
             user = await ConfigurationManager.shared.oidcUser
+        case .oidcRar:
+            user = await ConfigurationManager.shared.rarUser
         case .device:
             user = await ConfigurationManager.shared.deviceUser
         }
-        
+
         guard let user = user else {
             return AccessTokenResult(info: "", error: "No session, please start \(tab.rawValue) flow to authenticate.", isLoading: false)
         }
@@ -126,6 +130,8 @@ class AccessTokenViewModel: ObservableObject {
             return await ConfigurationManager.shared.davinciUser
         case .oidc:
             return await ConfigurationManager.shared.oidcUser
+        case .oidcRar:
+            return await ConfigurationManager.shared.rarUser
         case .device:
             return await ConfigurationManager.shared.deviceUser
         }
