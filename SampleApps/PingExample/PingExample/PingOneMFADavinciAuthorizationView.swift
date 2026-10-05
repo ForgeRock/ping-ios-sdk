@@ -51,7 +51,7 @@ struct PingOneMFADavinciAuthorizationView: View {
                     .ignoresSafeArea()
                 ProgressView()
                     .scaleEffect(2)
-                    .tint(.themeButtonBackground)
+                    .tint(PingTheme.Color.actionPrimary)
             }
         }
         .navigationTitle("DaVinci Authorization")
