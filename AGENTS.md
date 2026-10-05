@@ -116,10 +116,11 @@ PingNetwork ← PingLogger
 PingCommons ← PingLogger
 PingBrowser ← PingLogger
 PingOrchestrate ← PingStorage, PingNetwork
-PingDavinciPlugin, PingJourneyPlugin ← PingOrchestrate
+PingDavinciPlugin ← PingOrchestrate
+PingJourneyPlugin ← PingOrchestrate, PingLogger
 PingOidc ← PingOrchestrate, PingBrowser, PingCommons
 PingDavinci ← PingOidc, PingDavinciPlugin
-PingJourney ← PingOidc, PingJourneyPlugin, PingDeviceProfile
+PingJourney ← PingOidc, PingJourneyPlugin
 PingReCaptchaEnterprise ← PingCommons, PingJourneyPlugin, ReCaptcha Enterprise (iOS only)
 PingExternalIdP ← PingBrowser, PingDavinciPlugin, PingJourneyPlugin
 PingExternalIdP{Apple,Google,Facebook} ← PingExternalIdP (+ vendor SDK on iOS only)
@@ -131,6 +132,7 @@ PingPush ← PingNetwork, PingTamperDetector
 PingAuthMigration ← PingOath, PingPush
 PingRecognize ← PingJourneyPlugin, KeylessSDK (iOS only)
 PingDeviceClient ← PingCommons, PingNetwork
+PingDeviceProfile ← PingDeviceId, PingJourneyPlugin, PingTamperDetector
 ```
 
 ### Storage Layer

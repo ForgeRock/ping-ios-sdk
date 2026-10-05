@@ -2,7 +2,7 @@
 //  DeviceFlowView.swift
 //  PingExample
 //
-//  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -112,11 +112,12 @@ struct DeviceFlowView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(spacing: PingTheme.Spacing.medium) {
                 content
             }
-            .padding(20)
+            .padding(PingTheme.Spacing.screen)
         }
+        .pingScreenBackground()
         .navigationTitle("Device Flow")
         .navigationBarTitleDisplayMode(.inline)
         .onDisappear { viewModel.reset() }
@@ -143,7 +144,7 @@ struct DeviceFlowView: View {
         case .accessDenied:
             resultCard(
                 icon: "xmark.circle.fill",
-                iconColor: .red,
+                iconColor: PingTheme.Color.statusError,
                 title: "Access Denied",
                 message: "The authorization request was denied."
             )
@@ -151,15 +152,17 @@ struct DeviceFlowView: View {
         case .expired:
             resultCard(
                 icon: "clock.badge.xmark",
-                iconColor: .orange,
+                iconColor: PingTheme.Color.statusWarning,
                 title: "Expired",
                 message: "The device code has expired. Please start a new flow."
             )
 
         case .failure(let message):
+            // Semantically an error rather than a warning; corrected from the
+            // legacy raw-orange treatment to match the rest of the app.
             resultCard(
                 icon: "exclamationmark.triangle.fill",
-                iconColor: .orange,
+                iconColor: PingTheme.Color.statusError,
                 title: "Error",
                 message: message
             )
@@ -169,21 +172,20 @@ struct DeviceFlowView: View {
     // MARK: - Idle
 
     private var idleCard: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: PingTheme.Spacing.large) {
             Image(systemName: "tv")
-                .font(.system(size: 64))
-                .foregroundColor(.themeButtonBackground)
+                .font(.system(size: PingTheme.Control.Glyph.heroLarge))
+                .foregroundStyle(PingTheme.Color.actionPrimary)
 
             Text("Device Authorization Flow")
-                .font(.system(size: 20, weight: .semibold))
+                .pingScreenTitle()
 
             Text("Start the RFC 8628 device authorization grant. The server returns a user code and verification URL — enter them on another device (phone, laptop) to complete sign-in here.")
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
+                .pingSupportingText()
                 .multilineTextAlignment(.center)
 
             if viewModel.isLoading {
-                ProgressView("Starting flow…")
+                PingLoadingSpinner()
             } else {
                 Button {
                     Task {
@@ -196,85 +198,66 @@ struct DeviceFlowView: View {
                     }
                 } label: {
                     Text("Start Device Flow")
-                        .font(.system(size: 14, weight: .semibold))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .foregroundColor(.white)
-                        .background(Color.themeButtonBackground)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.pingPrimary)
             }
         }
-        .padding(24)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle(size: .large)
     }
 
     // MARK: - Divider
 
     private var orDivider: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: PingTheme.Spacing.small) {
             Rectangle()
-                .fill(Color.secondary.opacity(0.3))
+                .fill(PingTheme.Color.contentSecondary.opacity(0.3))
                 .frame(height: 1)
             Text("OR")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.secondary)
+                .font(PingTheme.Typography.caption)
+                .fontWeight(.semibold)
+                .foregroundStyle(PingTheme.Color.contentSecondary)
             Rectangle()
-                .fill(Color.secondary.opacity(0.3))
+                .fill(PingTheme.Color.contentSecondary.opacity(0.3))
                 .frame(height: 1)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, PingTheme.Spacing.xSmall)
     }
 
     // MARK: - Approve
 
     private var approveCard: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: PingTheme.Spacing.large) {
             Image(systemName: "checkmark.shield.fill")
-                .font(.system(size: 64))
-                .foregroundColor(.themeButtonBackground)
+                .font(.system(size: PingTheme.Control.Glyph.heroLarge))
+                .foregroundStyle(PingTheme.Color.actionPrimary)
 
             Text("Approve a Device")
-                .font(.system(size: 20, weight: .semibold))
+                .pingScreenTitle()
 
             Text("This device is approving another device's request. Paste or scan the verification URL from the requesting device to complete sign-in there.")
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
+                .pingSupportingText()
                 .multilineTextAlignment(.center)
 
             Button {
                 path.append(.approveDevice)
             } label: {
                 Text("Approve a Device")
-                    .font(.system(size: 14, weight: .semibold))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .foregroundColor(.white)
-                    .background(Color.themeButtonBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(.pingPrimary)
         }
-        .padding(24)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle(size: .large)
     }
 
     // MARK: - Activation (persists through polling)
 
     private var activationCard: some View {
-        VStack(spacing: 20) {
-            VStack(spacing: 8) {
+        VStack(spacing: PingTheme.Spacing.large) {
+            VStack(spacing: PingTheme.Spacing.small) {
                 Text("Activate Your Device")
-                    .font(.system(size: 18, weight: .semibold))
+                    .pingSectionHeader()
 
                 Text("Scan the QR code or visit the URL below and enter the code.")
-                    .font(.system(size: 13))
-                    .foregroundColor(.secondary)
+                    .pingSupportingText()
                     .multilineTextAlignment(.center)
             }
 
@@ -283,105 +266,84 @@ struct DeviceFlowView: View {
             if !qrContent.isEmpty {
                 QRCodeDisplayView(content: qrContent)
                     .frame(width: 180, height: 180)
-                    .padding(8)
+                    .padding(PingTheme.Spacing.small)
                     .background(Color.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .clipShape(RoundedRectangle(cornerRadius: PingTheme.Shape.cardRadius))
             }
 
-            VStack(spacing: 4) {
+            VStack(spacing: PingTheme.Spacing.xSmall) {
                 Text("User Code")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(.secondary)
+                    .pingCaptionText()
                     .textCase(.uppercase)
 
                 CopyableRow {
                     Text(viewModel.userCode)
-                        .font(.system(size: 36, weight: .bold, design: .monospaced))
-                        .foregroundColor(.themeButtonBackground)
+                        .font(PingTheme.Typography.code)
+                        .foregroundStyle(PingTheme.Color.actionPrimary)
                 } value: { viewModel.userCode }
             }
 
-            VStack(spacing: 4) {
+            VStack(spacing: PingTheme.Spacing.xSmall) {
                 Text("Verification URL")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(.secondary)
+                    .pingCaptionText()
                     .textCase(.uppercase)
 
                 CopyableRow {
                     Text(viewModel.verificationUriComplete ?? viewModel.verificationUri)
-                        .font(.system(size: 13, design: .monospaced))
-                        .foregroundColor(.primary)
+                        .font(PingTheme.Typography.monospacedCaption)
+                        .foregroundStyle(PingTheme.Color.contentPrimary)
                         .multilineTextAlignment(.center)
                 } value: { viewModel.verificationUriComplete ?? viewModel.verificationUri }
             }
         }
-        .padding(24)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle(size: .large)
     }
 
     // MARK: - Polling Status
 
     private func pollingStatusCard(pollCount: Int?, nextPollAt: Date?) -> some View {
-        HStack(spacing: 12) {
-            ProgressView()
+        HStack(spacing: PingTheme.Spacing.small) {
+            PingLoadingSpinner()
 
             if let count = pollCount, let next = nextPollAt {
                 TimelineView(.periodic(from: .now, by: 1)) { context in
                     let remaining = max(0, Int(next.timeIntervalSince(context.date).rounded()))
                     let timeStr = next.formatted(.dateTime.hour().minute().second())
                     Text("Poll #\(count) — next in \(remaining)s (at \(timeStr))")
-                        .font(.system(size: 13))
-                        .foregroundColor(.secondary)
+                        .pingSupportingText()
                 }
             } else {
                 Text("Waiting for authorization…")
-                    .font(.system(size: 13))
-                    .foregroundColor(.secondary)
+                    .pingSupportingText()
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle()
     }
 
     // MARK: - Result
 
     private func resultCard(icon: String, iconColor: Color, title: String, message: String) -> some View {
-        VStack(spacing: 16) {
+        VStack(spacing: PingTheme.Spacing.medium) {
             Image(systemName: icon)
-                .font(.system(size: 56))
-                .foregroundColor(iconColor)
+                .font(.system(size: PingTheme.Control.Glyph.hero))
+                .foregroundStyle(iconColor)
 
             Text(title)
-                .font(.system(size: 20, weight: .semibold))
+                .pingScreenTitle()
 
             Text(message)
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
+                .pingSupportingText()
                 .multilineTextAlignment(.center)
 
             Button {
                 viewModel.reset()
             } label: {
                 Text("Start New Flow")
-                    .font(.system(size: 14, weight: .semibold))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .foregroundColor(.white)
-                    .background(Color.themeButtonBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(.pingPrimary)
         }
-        .padding(24)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle(size: .large)
     }
 }
 
@@ -398,18 +360,18 @@ private struct CopyableRow<Label: View>: View {
             copied = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { copied = false }
         } label: {
-            HStack(spacing: 10) {
+            HStack(spacing: PingTheme.Spacing.compact) {
                 label()
                     .frame(maxWidth: .infinity)
                 Image(systemName: copied ? "checkmark" : "doc.on.doc")
-                    .font(.system(size: 15))
-                    .foregroundColor(copied ? .green : .secondary)
+                    .font(.system(size: PingTheme.Control.Glyph.small))
+                    .foregroundColor(copied ? PingTheme.Color.statusSuccess : PingTheme.Color.contentSecondary)
                     .animation(.easeInOut(duration: 0.2), value: copied)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background(Color(.systemGray6))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .padding(.horizontal, PingTheme.Spacing.medium)
+            .padding(.vertical, PingTheme.Spacing.compact)
+            .background(PingTheme.Color.groupedSurface)
+            .clipShape(RoundedRectangle(cornerRadius: PingTheme.Shape.tileRadius))
         }
         .buttonStyle(.plain)
     }

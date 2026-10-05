@@ -1,4 +1,4 @@
-// 
+//
 //  UserInfoView.swift
 //  PingExample
 //
@@ -16,70 +16,61 @@ struct UserInfoView: View {
     let menuItem: MenuItem
     @StateObject private var userInfoViewModel = UserInfoViewModel()
     @State private var selectedTab: AuthTab = .journey
-    
+
     var body: some View {
         VStack(spacing: 0) {
             TabPicker(selection: $selectedTab, label: \.rawValue, icon: \.icon)
-            
+
             let result = userInfoViewModel.results[selectedTab] ?? UserInfoResult()
-            
+
             if result.isLoading {
                 Spacer()
-                ProgressView()
+                PingLoadingSpinner()
                 Spacer()
             } else if let error = result.error {
                 ErrorView(title: "\(selectedTab.rawValue) Error", message: error)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
+                    .padding(.top, PingTheme.Spacing.small)
                 Spacer()
             } else {
                 ScrollView {
                     userInfoCard(result.info)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 8)
+                        .pingScrollContentPadding(top: PingTheme.Spacing.small, bottom: 0)
                 }
             }
         }
-        .background(Color(.systemGroupedBackground))
+        .pingScreenBackground()
         .navigationTitle(menuItem.title)
+        .navigationBarTitleDisplayMode(.inline)
     }
-    
-    
+
+
     private func userInfoCard(_ info: String) -> some View {
         let pairs = parseUserInfo(info)
-        return VStack(alignment: .leading, spacing: 12) {
+        return VStack(alignment: .leading, spacing: PingTheme.Spacing.medium) {
             HStack {
                 Image(systemName: selectedTab.icon)
-                    .font(.system(size: 16))
-                    .foregroundColor(.themeButtonBackground)
+                    .foregroundStyle(PingTheme.Color.actionPrimary)
                 Text("\(selectedTab.rawValue) User Info")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.primary)
+                    .pingSectionHeader()
                 Spacer()
             }
-            
+
             Divider()
-            
-            VStack(alignment: .leading, spacing: 8) {
+
+            VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
                 ForEach(pairs, id: \.key) { pair in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(pair.key)
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.secondary)
-                        Text(pair.value)
-                            .font(.system(size: 12, design: .monospaced))
-                            .foregroundColor(.primary)
-                            .textSelection(.enabled)
-                    }
+                    PingInfoRow(
+                        label: pair.key,
+                        value: pair.value,
+                        layout: .vertical,
+                        valueStyle: .monospaced
+                    )
                 }
             }
         }
-        .padding(16)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle()
     }
-    
+
     private func parseUserInfo(_ info: String) -> [UserInfoPair] {
         info.split(separator: "\n").compactMap { line in
             let parts = line.split(separator: ":", maxSplits: 1)
@@ -95,4 +86,3 @@ private struct UserInfoPair: Identifiable {
     let value: String
     var id: String { key }
 }
-

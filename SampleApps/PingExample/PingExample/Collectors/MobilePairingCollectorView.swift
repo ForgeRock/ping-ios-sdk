@@ -27,48 +27,54 @@ struct MobilePairingCollectorView: View {
     @State private var isSubmitting = false
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: PingTheme.Spacing.large) {
             switch phase {
             case .pairing:
-                ProgressView()
+                PingLoadingSpinner()
                 Text("Pairing your device…")
+                    .pingSupportingText()
                 actionButton("Cancel", role: .destructive) {
                     Task { await cancel() }
                 }
             case .success:
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 52))
-                    .foregroundStyle(.green)
+                    .font(.system(size: PingTheme.Control.Glyph.large))
+                    .foregroundStyle(PingTheme.Color.statusSuccess)
                 Text("Pairing successful")
-                actionButton("Continue") {
+                    .pingSectionHeader()
+                actionButton("Continue", role: .primary) {
                     Task { await submit() }
                 }
             case let .initializationFailure(message):
                 Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.system(size: 52))
-                    .foregroundStyle(.orange)
+                    .font(.system(size: PingTheme.Control.Glyph.large))
+                    .foregroundStyle(PingTheme.Color.statusWarning)
                 Text("Unable to initialize PingOne MFA")
+                    .pingSectionHeader()
                 Text(message)
+                    .pingSupportingText()
                     .multilineTextAlignment(.center)
-                actionButton("Retry") {
+                actionButton("Retry", role: .primary) {
                     startPairingIfNeeded(forceRetry: true)
                 }
             case let .failure(code, message):
                 Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.system(size: 52))
-                    .foregroundStyle(.orange)
+                    .font(.system(size: PingTheme.Control.Glyph.large))
+                    .foregroundStyle(PingTheme.Color.statusWarning)
                 Text("Pairing failed")
+                    .pingSectionHeader()
                 Text(code)
-                    .font(.caption.monospaced())
+                    .font(PingTheme.Typography.monospacedCaption)
                 Text(message)
+                    .pingSupportingText()
                     .multilineTextAlignment(.center)
-                actionButton("Continue") {
+                actionButton("Continue", role: .primary) {
                     Task { await submit() }
                 }
             }
         }
         .frame(maxWidth: .infinity)
-        .padding()
+        .padding(.vertical, PingTheme.Spacing.small)
         .onAppear { startPairingIfNeeded() }
         .onDisappear {
             pairingTask?.cancel()
@@ -79,17 +85,12 @@ struct MobilePairingCollectorView: View {
     @ViewBuilder
     private func actionButton(
         _ title: String,
-        role: ButtonRole? = nil,
+        role: PingButtonRole,
         action: @escaping () -> Void
     ) -> some View {
-        Button(role: role, action: action) {
-            Text(title)
-                .frame(maxWidth: .infinity)
-                .padding()
-        }
-        .buttonStyle(.borderedProminent)
-        .tint(role == .destructive ? .red : .themeButtonBackground)
-        .disabled(isSubmitting)
+        Button(title, action: action)
+            .buttonStyle(PingActionButtonStyle(role: role))
+            .disabled(isSubmitting)
     }
 
     private func startPairingIfNeeded(forceRetry: Bool = false) {

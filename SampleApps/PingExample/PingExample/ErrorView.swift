@@ -13,26 +13,23 @@ import SwiftUI
 import PingDavinci
 import PingOrchestrate
 
-/// A reusable error card view with a title and message in red text.
+/// A reusable error card view with a title and message in the semantic error color.
 struct ErrorView: View {
     let title: String
     let message: String
-    
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
             Text(title)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(Color(.systemRed))
+                .font(PingTheme.Typography.body.weight(.semibold))
+                .foregroundStyle(PingTheme.Color.statusError)
             Text(message)
-                .font(.system(size: 13))
-                .foregroundStyle(Color(.systemRed))
+                .font(PingTheme.Typography.supporting)
+                .foregroundStyle(PingTheme.Color.statusError)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.red.opacity(0.08))
-        )
+        .pingStatusCardStyle(tint: PingTheme.Color.statusError)
+        .padding(.horizontal, PingTheme.Spacing.screen)
     }
 }
 

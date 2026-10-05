@@ -15,25 +15,24 @@ struct ReadOnlyTextView: View {
     var field: ReadOnlyTextCollector
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
             if field.titleEnabled && !field.title.isEmpty {
                 Text(field.title)
-                    .font(.headline)
-                    .fontWeight(.bold)
+                    .pingSectionHeader()
             }
-            
+
             ScrollView {
                 Text(field.content)
-                    .font(.caption)
+                    .pingCaptionText()
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .frame(maxHeight: 200)
-            .padding(8)
+            .padding(PingTheme.Spacing.small)
             .overlay(
-                RoundedRectangle(cornerRadius: 4)
-                    .stroke(Color.gray, lineWidth: 1)
+                RoundedRectangle(cornerRadius: PingTheme.Shape.fieldRadius)
+                    .stroke(PingTheme.Color.separator, lineWidth: PingTheme.Shape.borderWidth)
             )
         }
-        .padding(8)
+        .padding(.vertical, PingTheme.Spacing.small)
     }
 }
