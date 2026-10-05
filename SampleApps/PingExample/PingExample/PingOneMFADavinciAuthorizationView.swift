@@ -13,7 +13,7 @@ import PingDavinci
 import PingOneMFA
 import PingOrchestrate
 
-struct PingOneMFADavinciAuthenticationView: View {
+struct PingOneMFADavinciAuthorizationView: View {
     @Binding var path: [MenuItem]
     @StateObject private var davinciViewModel = DavinciViewModel()
     @StateObject private var validationViewModel = ValidationViewModel()
@@ -31,9 +31,9 @@ struct PingOneMFADavinciAuthenticationView: View {
                         let apiError = failureNode.cause as? ApiError
                         switch apiError {
                         case .error(_, _, let message):
-                            ErrorView(title: "DaVinci Authentication Error", message: message)
+                            ErrorView(title: "DaVinci Authorization Error", message: message)
                         default:
-                            ErrorView(title: "DaVinci Authentication Error", message: "unknown error")
+                            ErrorView(title: "DaVinci Authorization Error", message: "unknown error")
                         }
                     case let errorNode as ErrorNode:
                         ErrorNodeView(node: errorNode)
@@ -54,7 +54,7 @@ struct PingOneMFADavinciAuthenticationView: View {
                     .tint(.themeButtonBackground)
             }
         }
-        .navigationTitle("DaVinci Authentication")
+        .navigationTitle("DaVinci Authorization")
         .navigationBarTitleDisplayMode(.inline)
     }
 

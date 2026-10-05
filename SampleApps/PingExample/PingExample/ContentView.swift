@@ -117,7 +117,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case pingOneMFAOtp = "PingOne MFA OTP"
     case pingOneMFAPayload = "PingOne MFA Payload"
     case pingOneMFADavinciPairing = "PingOne MFA DaVinci Pairing"
-    case pingOneMFADavinciAuthentication = "PingOne MFA DaVinci Authentication"
+    case pingOneMFADavinciAuthentication = "PingOne MFA DaVinci Authorization"
 
     var id: String { rawValue }
     
@@ -191,13 +191,13 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .pingOneMFAOtp: return "One-Time Passcode"
         case .pingOneMFAPayload: return "Mobile Payload"
         case .pingOneMFADavinciPairing: return "DaVinci Pairing"
-        case .pingOneMFADavinciAuthentication: return "DaVinci Authentication"
+        case .pingOneMFADavinciAuthentication: return "DaVinci Authorization"
         }
     }
 
     var subtitle: String {
         switch self {
-        case .davinci: return "Test DaVinci authentication"
+        case .davinci: return "Test DaVinci authorization"
         case .journey: return "Test Journey authentication"
         case .backchannel: return "AM/AIC transactional backchannel auth"
         case .oidc: return "OpenID Connect flow"
@@ -359,7 +359,7 @@ struct ContentView: View {
                 case .pingOneMFADavinciPairing:
                     PingOneMFADavinciPairingView(path: $path)
                 case .pingOneMFADavinciAuthentication:
-                    PingOneMFADavinciAuthenticationView(path: $path)
+                    PingOneMFADavinciAuthorizationView(path: $path)
                 }
             }
             .task {
