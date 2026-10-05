@@ -26,10 +26,7 @@ struct PingOneMFADavinciAuthenticationView: View {
                     case let continueNode as ContinueNode:
                         authenticationStep(continueNode)
                     case is SuccessNode:
-                        VStack {}.onAppear {
-                            path.removeLast()
-                            path.append(.davinciToken)
-                        }
+                        EmptyView()
                     case let failureNode as FailureNode:
                         let apiError = failureNode.cause as? ApiError
                         switch apiError {
@@ -76,7 +73,12 @@ struct PingOneMFADavinciAuthenticationView: View {
                     Task { await handleNext(node: node, isSubmit: isSubmit) }
                 },
                 metadataViewBuilder: { field, onNext in
-                    AnyView(PingOneMFADavinciAuthenticationMetadataView(field: field, onNext: onNext))
+                    AnyView(
+                        PingOneMFADavinciAuthenticationMetadataView(
+                            field: field,
+                            onNext: onNext
+                        )
+                    )
                 }
             )
             .environmentObject(validationViewModel)
@@ -97,67 +99,57 @@ struct PingOneMFADavinciAuthenticationMetadataView: View {
     let onNext: (Bool) -> Void
 
     @State private var isSubmitting = false
+    @State private var authenticationValidationState: AuthenticationValidationState = .validating
+
+    private enum AuthenticationValidationState {
+        case validating
+        case validated
+        case failed
+    }
 
     private var isMobilePayloadRequest: Bool {
         (field.metadata["sdk"] as? String) == "MFA"
             && (field.metadata["action"] as? String) == "MOBILE_PAYLOAD"
     }
 
-    private var prettyMetadata: String {
-        guard
-            let data = try? JSONSerialization.data(
-                withJSONObject: field.metadata,
-                options: [.prettyPrinted, .sortedKeys]
-            ),
-            let string = String(data: data, encoding: .utf8)
-        else {
-            return "{}"
-        }
-        return string
-    }
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("SDK Metadata")
-                .font(.headline)
-
-            Text("Payload from DaVinci:")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-
-            ScrollView {
-                Text(prettyMetadata)
-                    .font(.system(.footnote, design: .monospaced))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(8)
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(8)
-            }
-            .frame(maxHeight: 240)
-
+        Group {
             if isMobilePayloadRequest {
                 HStack(spacing: 8) {
                     ProgressView()
                     Text("Collecting mobile payload…")
                         .foregroundStyle(.secondary)
                 }
-                .frame(maxWidth: .infinity)
                 .task {
                     await collectMobilePayload()
                 }
             } else {
-                HStack(spacing: 8) {
-                    ProgressView()
-                    Text("Validating mobile authentication…")
-                        .foregroundStyle(.secondary)
-                }
-                .frame(maxWidth: .infinity)
-                .task {
-                    submitAuthenticationResult()
-                }
+                authenticationValidationStatus
+                    .task {
+                        submitAuthenticationResult()
+                    }
             }
         }
+        .frame(maxWidth: .infinity)
         .padding()
+    }
+
+    @ViewBuilder
+    private var authenticationValidationStatus: some View {
+        switch authenticationValidationState {
+        case .validating:
+            HStack(spacing: 8) {
+                ProgressView()
+                Text("Validating mobile authentication…")
+                    .foregroundStyle(.secondary)
+            }
+        case .validated:
+            Label("Mobile authentication validated", systemImage: "checkmark.circle.fill")
+                .foregroundStyle(.green)
+        case .failed:
+            Label("Failed to validate mobile authentication", systemImage: "xmark.circle.fill")
+                .foregroundStyle(.red)
+        }
     }
 
     private func collectMobilePayload() async {
@@ -225,12 +217,12 @@ struct PingOneMFADavinciAuthenticationMetadataView: View {
         
         isSubmitting = false
         field.setResult(["success": true])
-        onNext(true)
+        authenticationValidationState = .validated
     }
 
     private func submitError(code: String, message: String) {
         isSubmitting = false
         field.setError(code: code, message: message)
-        onNext(true)
+        authenticationValidationState = .failed
     }
 }
