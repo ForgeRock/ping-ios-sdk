@@ -1,18 +1,62 @@
+#
+# Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
+#
+# This software may be modified and distributed under the terms
+# of the MIT license. See the LICENSE file for details.
+#
+
+# Validates Ping Identity copyright headers of the source files changed by a PR / push.
+# The validation script is taken from the trusted workflow ref, never from the (possibly fork)
+# head being validated, so a /run-ci against a fork PR cannot execute fork-controlled code.
+
 name: Copyright Check
 
 on:
-  pull_request
+  workflow_call:
+    inputs:
+      head_sha:
+        description: Head commit SHA to validate
+        type: string
+        required: true
+      head_repo:
+        description: Head repository to validate
+        type: string
+        required: true
+      base_sha:
+        description: Commit to diff against (PR base or push "before" SHA)
+        type: string
+      base_repo:
+        description: Repository to fetch base_sha from when missing in the head repository
+        type: string
+
+permissions:
+  contents: read
 
 jobs:
-  copyright:
+  copyright-check:
     name: Validate copyright headers
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout trusted scripts
+        uses: actions/checkout@v6
         with:
+          path: trusted
+          sparse-checkout: .github/scripts
+          persist-credentials: false
+
+      - name: Checkout head
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.head_sha }}
+          repository: ${{ inputs.head_repo }}
+          path: head
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Validate copyright headers
-        run: .github/scripts/check-copyright.sh
+        working-directory: head
+        env:
+          BASE_SHA: ${{ inputs.base_sha }}
+          BASE_REPO: ${{ inputs.base_repo }}
+        run: bash "$GITHUB_WORKSPACE/trusted/.github/scripts/check-copyright.sh"

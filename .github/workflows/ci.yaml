@@ -40,6 +40,7 @@ jobs:
       head_sha: ${{ steps.ctx.outputs.head_sha }}
       head_repo: ${{ steps.ctx.outputs.head_repo }}
       base_sha: ${{ steps.ctx.outputs.base_sha }}
+      base_repo: ${{ steps.ctx.outputs.base_repo }}
     steps:
       - name: React to /run-ci comment with 👀
         if: github.event_name == 'issue_comment'
@@ -66,46 +67,40 @@ jobs:
               core.setOutput('head_sha', context.sha);
               core.setOutput('head_repo', `${context.repo.owner}/${context.repo.repo}`);
               core.setOutput('base_sha', context.payload.before);
+              core.setOutput('base_repo', `${context.repo.owner}/${context.repo.repo}`);
             } else if (context.eventName === 'pull_request') {
               core.setOutput('head_sha', context.payload.pull_request.head.sha);
               core.setOutput('head_repo', context.payload.pull_request.head.repo.full_name);
               core.setOutput('base_sha', context.payload.pull_request.base.sha);
+              core.setOutput('base_repo', context.payload.pull_request.base.repo.full_name);
             } else {
               const pr = await github.rest.pulls.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 pull_number: context.issue.number,
               });
-
               core.setOutput('head_sha', pr.data.head.sha);
               core.setOutput('head_repo', pr.data.head.repo.full_name);
               core.setOutput('base_sha', pr.data.base.sha);
+              core.setOutput('base_repo', pr.data.base.repo.full_name);
             }
 
-  # Copyright check. This job validates that all source files have the correct Ping Identity copyright headers.
-  # If not, the job will fail and prevent subsequent jobs from running.
+  # Validates Ping Identity copyright headers of the source files changed by the PR / push.
+  # Fails fast: every other job depends on it (directly or transitively).
   copyright-check:
     name: Copyright Check
     needs: resolve-context
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ needs.resolve-context.outputs.head_repo }}
-          ref: ${{ needs.resolve-context.outputs.head_sha }}
-          fetch-depth: 0
-
-      - name: Validate copyright headers
-        env:
-          BASE_SHA: ${{ needs.resolve-context.outputs.base_sha }}
-        run: .github/scripts/check-copyright.sh
+    uses: ./.github/workflows/copyright-check.yml
+    with:
+      head_sha: ${{ needs.resolve-context.outputs.head_sha }}
+      head_repo: ${{ needs.resolve-context.outputs.head_repo }}
+      base_sha: ${{ needs.resolve-context.outputs.base_sha }}
+      base_repo: ${{ needs.resolve-context.outputs.base_repo }}
 
   # Build and run unit tests
   build-and-test:
     name: Build and test
-    needs: 
+    needs:
       - resolve-context
       - copyright-check
     uses: ./.github/workflows/build-and-test.yaml
@@ -120,7 +115,7 @@ jobs:
   mend-cli-scan:
     name: Mend CLI Scan
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    needs: 
+    needs:
       - resolve-context
       - copyright-check
     uses: ./.github/workflows/mend-cli-scan.yaml
@@ -136,7 +131,7 @@ jobs:
   generate-docs:
     name: Generate API Docs
     if: github.event_name == 'push'
-    needs: 
+    needs:
       - copyright-check
     uses: ./.github/workflows/docs.yaml
 
