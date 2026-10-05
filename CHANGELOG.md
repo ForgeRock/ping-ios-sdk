@@ -1,6 +1,5 @@
 ## [UNRELEASED]
 #### Updated
-- Updated `RecaptchaEnterprise` dependency to 18.9.1 for Xcode 27 / iOS 27 compatibility [SDKS-5306]
 - Split the Recognize sample into a dedicated `PingWithRecognize.xcworkspace` (requires the Cloudsmith `keyless` registry); the core `Ping.xcworkspace` no longer references Recognize or Keyless and builds without registry credentials [P1RECMOB-3476]
 
 #### Added
@@ -33,6 +32,13 @@
 - `OidcClientConfig.oidcInitialize()` cancellation is now isolated per caller: cancelling one caller's own task still returns promptly with `CancellationError`, but no longer cancels the shared discovery/`openIdOverride` operation for any other caller currently sharing it [SDKS-5301]
 - `PingJourney` no longer hard-depends on `PingDeviceProfile`. Previously, every `PingJourney` consumer's binary transitively linked `PingDeviceProfile`, whose `BluetoothCollector` instantiates `CBCentralManager`, causing App Store Connect to flag the app for a missing `NSBluetoothAlwaysUsageDescription` even when no `DeviceProfileCallback` node was used. Apps whose journeys use the Device Profile Collector node must now add the `PingDeviceProfile` product/pod explicitly to their own `Package.swift` or `Podfile` [SDKS-5443]
 - `CallbackRegistry.callback(from:)` now logs a debug message when a journey response contains a callback type with no registered handler (e.g. a `DeviceProfileCallback` on an app that did not add the `PingDeviceProfile` module), making the missing-module misconfiguration diagnosable instead of silently dropping the callback [SDKS-5443]
+
+## [2.1.1]
+#### Added
+- Added support for Xcode 27 and iOS 27 [SDKS-5306]
+
+#### Updated
+- Updated `RecaptchaEnterprise` dependency to 18.9.1 for Xcode 27 / iOS 27 compatibility [SDKS-5306]
 
 ## [2.1.0]
 #### Added
