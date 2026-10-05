@@ -2,7 +2,7 @@
 //  ImageView.swift
 //  PingExample
 //
-//  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -27,14 +27,13 @@ struct ImageView: View {
             .resizable()
             .scaledToFit()
             .frame(width: 120, height: 120)
-            .foregroundColor(.secondary)
+            .foregroundStyle(PingTheme.Color.contentSecondary)
         Text("Image unavailable")
-            .font(.caption)
-            .foregroundColor(.secondary)
+            .pingCaptionText()
     }
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: PingTheme.Spacing.compact) {
             if !collector.imageUrl.isEmpty, let imageURL = URL(string: collector.imageUrl) {
                 AsyncImage(url: imageURL) { phase in
                     switch phase {
@@ -47,7 +46,7 @@ struct ImageView: View {
                     case .failure:
                         imagePlaceholder
                     case .empty:
-                        ProgressView()
+                        PingLoadingSpinner()
                             .frame(width: 120, height: 120)
                     @unknown default:
                         EmptyView()
@@ -59,9 +58,8 @@ struct ImageView: View {
 
             if !collector.description.isEmpty {
                 Text(collector.description)
-                    .font(.subheadline)
+                    .pingSupportingText()
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal)
             }
 
             if let hyperlinkUrl = collector.hyperlinkUrl,
@@ -70,16 +68,12 @@ struct ImageView: View {
                let scheme = linkURL.scheme?.lowercased(),
                scheme == "http" || scheme == "https" {
                 Link(collector.description.isEmpty ? "Open link" : collector.description, destination: linkURL)
-                    .font(.caption)
+                    .font(PingTheme.Typography.caption)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal)
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(12)
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.secondary.opacity(0.4), lineWidth: 1)
-        )
+        .padding(PingTheme.Spacing.medium)
+        .pingOutlinedContainerStyle()
     }
 }

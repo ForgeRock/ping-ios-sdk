@@ -25,25 +25,27 @@ struct BindingKeysView: View {
             } else {
                 List {
                     ForEach(viewModel.userKeys) { key in
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
                             Text("User ID: \(key.userId)")
-                                .font(.headline)
+                                .pingSectionHeader()
                             Text("Key Tag: \(key.keyTag)")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                                .pingSupportingText()
                             Text("Auth Type: \(key.authType.rawValue)")
-                                .font(.caption)
-                                .padding(4)
-                                .background(Color.blue.opacity(0.2))
-                                .cornerRadius(4)
+                                .font(PingTheme.Typography.caption)
+                                .padding(PingTheme.Spacing.xSmall)
+                                .background(PingTheme.Color.actionPrimary.opacity(0.2))
+                                .clipShape(RoundedRectangle(cornerRadius: PingTheme.Shape.fieldRadius))
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, PingTheme.Spacing.xSmall)
                     }
                     .onDelete(perform: delete)
                 }
+                .scrollContentBackground(.hidden)
             }
         }
+        .pingScreenBackground()
         .navigationTitle("Binding Keys")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Delete All", role: .destructive) {

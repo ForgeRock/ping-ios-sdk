@@ -2,7 +2,7 @@
 //  PingOneMFAScannerContainerView.swift
 //  PingExample
 //
-//  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -30,12 +30,12 @@ struct PingOneMFAScannerContainerView: View {
                 Spacer()
 
                 // Manual pairing key entry
-                VStack(spacing: 12) {
+                VStack(spacing: PingTheme.Spacing.small) {
                     TextField("Enter pairing key manually", text: $manualKey)
-                        .textFieldStyle(.roundedBorder)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                         .focused($isTextFieldFocused)
+                        .pingTextFieldStyle()
 
                     Button {
                         let key = manualKey.trimmingCharacters(in: .whitespaces)
@@ -44,26 +44,22 @@ struct PingOneMFAScannerContainerView: View {
                         Task { await viewModel.handleScannedCode(key) }
                     } label: {
                         Text("Pair")
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
                     }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(.pingPrimary)
                     .disabled(manualKey.trimmingCharacters(in: .whitespaces).isEmpty || viewModel.isLoading)
                 }
                 .padding()
                 .background(.regularMaterial)
-                .cornerRadius(12)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 30)
+                .clipShape(RoundedRectangle(cornerRadius: PingTheme.Shape.cardRadius))
+                .padding(.horizontal, PingTheme.Spacing.screen)
+                .padding(.bottom, PingTheme.Spacing.scrollBottomInset)
 
                 if viewModel.isLoading {
-                    ProgressView()
-                        .scaleEffect(2.0)
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    PingLoadingSpinner(tint: PingTheme.Color.contentInverse)
                         .padding()
                         .background(Color.black.opacity(0.7))
-                        .cornerRadius(12)
-                        .padding(.bottom, 16)
+                        .clipShape(RoundedRectangle(cornerRadius: PingTheme.Shape.cardRadius))
+                        .padding(.bottom, PingTheme.Spacing.medium)
                 }
             }
         }

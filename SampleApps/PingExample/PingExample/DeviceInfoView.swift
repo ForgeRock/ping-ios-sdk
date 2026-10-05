@@ -21,15 +21,12 @@ struct DeviceInfoView: View {
     
     var body: some View {
         ZStack {
-            Color(.systemGroupedBackground).ignoresSafeArea()
-            
             if deviceInfoViewModel.isLoading {
-                ProgressView()
+                PingLoadingSpinner()
             } else if let error = deviceInfoViewModel.error {
                 VStack {
                     ErrorView(title: "Device Info Error", message: error)
-                        .padding(.horizontal, 20)
-                        .padding(.top, 8)
+                        .padding(.top, PingTheme.Spacing.small)
                     Spacer()
                 }
             } else if viewMode == .raw {
@@ -38,7 +35,9 @@ struct DeviceInfoView: View {
                 styledView
             }
         }
+        .pingScreenBackground()
         .navigationTitle(menuItem.title)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 if !deviceInfoViewModel.isLoading && deviceInfoViewModel.error == nil {
@@ -46,10 +45,11 @@ struct DeviceInfoView: View {
                         viewMode = viewMode == .styled ? .raw : .styled
                     } label: {
                         Image(systemName: viewMode == .styled ? "curlybraces" : "list.bullet.rectangle")
-                            .font(.system(size: 16))
+                            .font(.system(size: PingTheme.Control.Glyph.small))
                             .frame(width: 24, height: 24)
                             .contentTransition(.identity)
                     }
+                    .accessibilityLabel(viewMode == .styled ? "Show Raw JSON" : "Show Formatted View")
                     .buttonStyle(.plain)
                 }
             }
@@ -59,7 +59,7 @@ struct DeviceInfoView: View {
     
     private var styledView: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(spacing: PingTheme.Spacing.medium) {
                 if !deviceInfoViewModel.topLevel.isEmpty {
                     sectionCard(icon: "info.circle.fill", title: "Device", entries: deviceInfoViewModel.topLevel)
                 }
@@ -68,9 +68,7 @@ struct DeviceInfoView: View {
                     sectionCard(icon: sectionIcon(section.name), title: section.name.capitalized, entries: section.entries)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
-            .padding(.bottom, 30)
+            .pingScrollContentPadding(top: PingTheme.Spacing.small)
         }
         .textSelection(.enabled)
     }
@@ -78,50 +76,40 @@ struct DeviceInfoView: View {
     private var rawView: some View {
         ScrollView {
             Text(deviceInfoViewModel.rawJSON)
-                .font(.system(size: 12, design: .monospaced))
-                .foregroundColor(.primary)
-                .padding(16)
+                .font(PingTheme.Typography.monospacedCaption)
+                .foregroundStyle(PingTheme.Color.contentPrimary)
+                .padding(PingTheme.Spacing.medium)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(.secondarySystemGroupedBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-                .padding(.horizontal, 20)
-                .padding(.top, 8)
-                .padding(.bottom, 30)
+                .pingCardStyle()
+                .pingScrollContentPadding(top: PingTheme.Spacing.small)
         }
     }
-    
+
     private func sectionCard(icon: String, title: String, entries: [(key: String, value: String)]) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.medium) {
             HStack {
                 Image(systemName: icon)
-                    .font(.system(size: 16))
-                    .foregroundColor(.themeButtonBackground)
+                    .font(.system(size: PingTheme.Control.Glyph.small))
+                    .foregroundColor(PingTheme.Color.actionPrimary)
                 Text(title)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.primary)
+                    .pingSectionHeader()
                 Spacer()
             }
-            
+
             Divider()
-            
-            VStack(alignment: .leading, spacing: 8) {
+
+            VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
                 ForEach(entries, id: \.key) { entry in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(entry.key)
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.secondary)
-                        Text(entry.value)
-                            .font(.system(size: 12, design: .monospaced))
-                            .foregroundColor(.primary)
-                    }
+                    PingInfoRow(
+                        label: entry.key,
+                        value: entry.value,
+                        layout: .vertical,
+                        valueStyle: .monospaced
+                    )
                 }
             }
         }
-        .padding(16)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle()
     }
     
     private func sectionIcon(_ name: String) -> String {

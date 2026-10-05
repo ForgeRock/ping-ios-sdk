@@ -20,18 +20,17 @@ struct ConfigurationListView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
+            VStack(spacing: PingTheme.Spacing.large) {
                 ForEach(ConfigType.allCases, id: \.self) { type in
                     let configs = configManager.configurations.filter { $0.type == type }
                     configSection(type: type, configs: configs)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 20)
-            .padding(.bottom, 30)
+            .pingScrollContentPadding()
         }
-        .background(Color(.systemGroupedBackground))
+        .pingScreenBackground()
         .navigationTitle("Configurations")
+        .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $previewingJsonConfig) { config in
             JsonConfigPreviewView(config: config)
         }
@@ -41,8 +40,9 @@ struct ConfigurationListView: View {
                     ConfigurationEditorView()
                 } label: {
                     Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.system(size: PingTheme.Control.Glyph.small, weight: .semibold))
                 }
+                .accessibilityLabel("Add Configuration")
             }
         }
         .alert("Delete Configuration", isPresented: $showDeleteConfirmation) {
@@ -64,64 +64,61 @@ struct ConfigurationListView: View {
     private func configSection(type: ConfigType, configs: [Configuration]) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(type.rawValue.uppercased())
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.secondary)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 8)
-            
+                .font(PingTheme.Typography.supporting.weight(.semibold))
+                .foregroundStyle(PingTheme.Color.contentSecondary)
+                .padding(.horizontal, PingTheme.Spacing.medium)
+                .padding(.bottom, PingTheme.Spacing.small)
+
             if configs.isEmpty {
                 HStack {
                     Spacer()
-                    VStack(spacing: 6) {
+                    VStack(spacing: PingTheme.Spacing.small) {
                         Image(systemName: type.icon)
-                            .font(.system(size: 24))
-                            .foregroundColor(Color(.tertiaryLabel))
+                            .font(.system(size: PingTheme.Control.Glyph.medium))
+                            .foregroundColor(PingTheme.Color.contentTertiary)
                         Text("No configurations")
-                            .font(.system(size: 14))
-                            .foregroundColor(.secondary)
+                            .pingSupportingText()
                         Text("Tap + to add one")
-                            .font(.system(size: 12))
-                            .foregroundColor(Color(.tertiaryLabel))
+                            .font(PingTheme.Typography.caption)
+                            .foregroundStyle(PingTheme.Color.contentTertiary)
                     }
-                    .padding(.vertical, 24)
+                    .padding(.vertical, PingTheme.Spacing.large)
                     Spacer()
                 }
-                .background(Color(.secondarySystemGroupedBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .pingCardStyle()
             } else {
                 VStack(spacing: 0) {
                     ForEach(Array(configs.enumerated()), id: \.element.name) { index, config in
                         configRow(config)
-                        
+
                         if index < configs.count - 1 {
                             Divider()
-                                .padding(.leading, 72)
+                                // Approximates the inset under configRowContent's icon tile,
+                                // past the leading selection toggle.
+                                .padding(.leading, 60)
                         }
                     }
                 }
-                .background(Color(.secondarySystemGroupedBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .pingCardStyle(size: .rowList)
             }
         }
     }
-    
+
     private func configRow(_ config: Configuration) -> some View {
         let isSelected = configManager.selections[config.type]?.name == config.name
         let host = URL(string: config.discoveryEndpoint).flatMap { $0.host } ?? config.discoveryEndpoint
-        
-        return HStack(spacing: 16) {
+
+        return HStack(spacing: PingTheme.Spacing.medium) {
             Button {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     configManager.select(config)
                 }
             } label: {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 22))
-                    .foregroundColor(isSelected ? .themeButtonBackground : Color(.tertiaryLabel))
+                    .font(.system(size: PingTheme.Control.Glyph.medium))
+                    .foregroundColor(isSelected ? PingTheme.Color.actionPrimary : PingTheme.Color.contentTertiary)
             }
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(.plain)
             
             if config.isJsonBased {
                 Button {
@@ -129,7 +126,7 @@ struct ConfigurationListView: View {
                 } label: {
                     configRowContent(config: config, host: host)
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
             } else if config.isDefault {
                 configRowContent(config: config, host: host)
             } else {
@@ -138,10 +135,10 @@ struct ConfigurationListView: View {
                 } label: {
                     configRowContent(config: config, host: host)
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
             }
         }
-        .padding(16)
+        .padding(.vertical, PingTheme.Spacing.small)
         .contentShape(Rectangle())
         .contextMenu {
             if !config.isJsonBased {
@@ -163,55 +160,42 @@ struct ConfigurationListView: View {
     }
     
     private func configRowContent(config: Configuration, host: String) -> some View {
-        HStack(spacing: 16) {
-            Image(systemName: config.type.icon)
-                .font(.system(size: 20))
-                .foregroundColor(.white)
-                .frame(width: 40, height: 40)
-                .background(
-                    LinearGradient(
-                        colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-            
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 6) {
+        HStack(spacing: PingTheme.Spacing.medium) {
+            PingIconTile(systemName: config.type.icon, diameter: 40, iconSize: 20)
+
+            VStack(alignment: .leading, spacing: PingTheme.Spacing.xxSmall) {
+                HStack(spacing: PingTheme.Spacing.small) {
                     Text(config.name)
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.primary)
+                        .font(PingTheme.Typography.body.weight(.medium))
+                        .foregroundStyle(PingTheme.Color.contentPrimary)
                     if config.isJsonBased {
                         Text("JSON")
-                            .font(.system(size: 10, weight: .semibold))
-                            .foregroundColor(.themeButtonBackground)
-                            .padding(.horizontal, 5)
-                            .padding(.vertical, 2)
-                            .background(
+                            .font(PingTheme.Typography.caption.weight(.semibold))
+                            .foregroundStyle(PingTheme.Color.actionPrimary)
+                            .padding(.horizontal, PingTheme.Spacing.xSmall)
+                            .padding(.vertical, PingTheme.Spacing.xxSmall)
+                            .overlay(
                                 Capsule()
-                                    .strokeBorder(Color.themeButtonBackground, lineWidth: 1)
+                                    .strokeBorder(PingTheme.Color.actionPrimary, lineWidth: PingTheme.Shape.borderWidth)
                             )
                     }
                 }
                 Text(host)
-                    .font(.system(size: 13))
-                    .foregroundColor(.secondary)
+                    .pingSupportingText()
                 Text(config.clientId)
-                    .font(.system(size: 13))
-                    .foregroundColor(.secondary)
+                    .pingSupportingText()
             }
 
             Spacer()
 
             if !config.isDefault {
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundColor(Color(.tertiaryLabel))
+                    .font(.system(size: PingTheme.Control.Glyph.small, weight: .semibold))
+                    .foregroundColor(PingTheme.Color.contentSecondary)
             }
         }
     }
-    
+
     private func duplicateConfiguration(_ config: Configuration) {
         var baseName = config.name + " (Copy)"
         var counter = 2

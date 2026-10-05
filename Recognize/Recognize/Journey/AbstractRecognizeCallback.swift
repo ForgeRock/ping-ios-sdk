@@ -253,13 +253,57 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
         }
     }
 
+    /// Performs the raw Keyless enrollment ceremony and converts its outcome into a
+    /// `RecognizeSuccess`.
+    ///
+    /// Extracted as `open` — mirroring `validateUserDeviceActive()` in
+    /// `PingOneRecognizeAuthenticateCallback` — because `Keyless.EnrollmentSuccess` has no
+    /// public initializer and so cannot be constructed in test code. Converting to
+    /// `RecognizeSuccess` at this boundary lets a test subclass stub the ceremony's outcome
+    /// while leaving `performEnroll`'s own body (the `devicePublicSigningKey()` lookup and the
+    /// `populateResultInputs` call) real, rather than overriding `performEnroll` wholesale.
+    open func performKeylessEnroll(configuration: BiomEnrollConfig) async throws -> RecognizeSuccess {
+        let enrollmentResult = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Keyless.EnrollmentSuccess, Error>) in
+            Keyless.enroll(configuration: configuration) { result in
+                switch result {
+                case .success(let enrollmentResult):
+                    continuation.resume(returning: enrollmentResult)
+                case .failure(let error):
+                    if let sdkError = error as? KeylessSDKError {
+                        continuation.resume(throwing: RecognizeError(
+                            sdkError.message, code: sdkError.code, debuggingInfo: sdkError.debuggingInfo
+                        ))
+                    } else {
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
+        return RecognizeSuccess(
+            signedJwt: enrollmentResult.signedJwt,
+            clientState: enrollmentResult.clientState,
+            recognizeId: enrollmentResult.keylessId,
+            selfie: enrollmentResult.enrollmentFrame
+        )
+    }
+
+    /// Retrieves the device's public signing key from the Keyless SDK.
+    ///
+    /// Extracted as `open` so a test subclass can stub the returned key and drive it through
+    /// the real `performEnroll` / `performAuthenticate` bodies, pinning the call site itself
+    /// rather than only the extracted `populateResultInputs` helper.
+    open func devicePublicSigningKey() -> String? {
+        try? Keyless.getDevicePublicSigningKey().get()
+    }
+
     /// Performs the biometric enrollment operation using `BiomEnrollConfig`.
     ///
     /// Shared by `PingOneRecognizeEnrollCallback.enroll()` (plain enrollment, no override) and
     /// the not-yet-enrolled path in `PingOneRecognizeAuthenticateCallback.authenticate()`
     /// (enrollment restore, `clientStateOverride` set to the server-supplied `clientState`).
     ///
-    /// On success, populates the `recognizeId`, `signedJwt`, and `clientState` input fields.
+    /// On success, populates the `recognizeId`, `signedJwt`, `clientState`, and
+    /// `devicePublicSigningKey` input fields.
     /// The captured selfie (if `retrieveSelfie` is `true`) is returned only in the
     /// `RecognizeSuccess` to the caller — it is never written to an input field, so it never
     /// reaches Journey or the callback payload.
@@ -291,11 +335,34 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
             presentationStyle: Self.enrollPresentationStyle(from: options.presentation)
         )
 
-        let enrollmentResult = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Keyless.EnrollmentSuccess, Error>) in
-            Keyless.enroll(configuration: enrollConfig) { result in
+        let result = try await performKeylessEnroll(configuration: enrollConfig)
+
+        populateResultInputs(
+            signedJwt: result.signedJwt,
+            clientState: result.clientState,
+            recognizeId: result.recognizeId,
+            devicePublicSigningKey: devicePublicSigningKey()
+        )
+        return result
+    }
+
+    /// Performs the raw Keyless authentication ceremony and converts its outcome into a
+    /// `RecognizeSuccess`. `recognizeId` is left `nil` here — the real SDK derives it from a
+    /// separate `Keyless.getUserId()` call rather than from the authentication result itself,
+    /// so it's populated afterwards via `authenticatedUserId()`.
+    ///
+    /// Extracted as `open` — mirroring `performKeylessEnroll(configuration:)` — because
+    /// `Keyless.AuthenticationSuccess` has no public initializer and so cannot be constructed
+    /// in test code. Converting to `RecognizeSuccess` at this boundary lets a test subclass
+    /// stub the ceremony's outcome while leaving `performAuthenticate`'s own body (the
+    /// `authenticatedUserId()` / `devicePublicSigningKey()` lookups and the
+    /// `populateResultInputs` call) real, rather than overriding `performAuthenticate` wholesale.
+    open func performKeylessAuthenticate(configuration: BiomAuthConfig) async throws -> RecognizeSuccess {
+        let authResult = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Keyless.AuthenticationSuccess, Error>) in
+            Keyless.authenticate(configuration: configuration) { result in
                 switch result {
-                case .success(let enrollmentResult):
-                    continuation.resume(returning: enrollmentResult)
+                case .success(let authResult):
+                    continuation.resume(returning: authResult)
                 case .failure(let error):
                     if let sdkError = error as? KeylessSDKError {
                         continuation.resume(throwing: RecognizeError(
@@ -307,16 +374,20 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
                 }
             }
         }
-
-        if let keylessId = enrollmentResult.keylessId { setRecognizeId(keylessId) }
-        if let jwt = enrollmentResult.signedJwt { setSignedJwt(jwt) }
-        if let state = enrollmentResult.clientState { setClientState(state) }
         return RecognizeSuccess(
-            signedJwt: enrollmentResult.signedJwt,
-            clientState: enrollmentResult.clientState,
-            recognizeId: enrollmentResult.keylessId,
-            selfie: enrollmentResult.enrollmentFrame
+            signedJwt: authResult.signedJwt,
+            clientState: authResult.clientState,
+            recognizeId: nil,
+            selfie: authResult.authenticationFrame
         )
+    }
+
+    /// Retrieves the authenticated user's Recognize ID from the Keyless SDK.
+    ///
+    /// Extracted as `open` — mirroring `devicePublicSigningKey()` — so a test subclass can stub
+    /// the returned ID and drive it through the real `performAuthenticate` body.
+    open func authenticatedUserId() -> String? {
+        try? Keyless.getUserId().get()
     }
 
     /// Performs the biometric authentication operation using `BiomAuthConfig`.
@@ -348,36 +419,39 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
             presentationStyle: Self.authPresentationStyle(from: options.presentationStyle)
         )
 
-        let authResult = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Keyless.AuthenticationSuccess, Error>) in
-            Keyless.authenticate(configuration: authConfig) { result in
-                switch result {
-                case .success(let authResult):
-                    continuation.resume(returning: authResult)
-                case .failure(let error):
-                    if let sdkError = error as? KeylessSDKError {
-                        continuation.resume(throwing: RecognizeError(
-                            sdkError.message, code: sdkError.code, debuggingInfo: sdkError.debuggingInfo
-                        ))
-                    } else {
-                        continuation.resume(throwing: error)
-                    }
-                }
-            }
-        }
+        let result = try await performKeylessAuthenticate(configuration: authConfig)
+        let userId = authenticatedUserId()
 
-        if let jwt = authResult.signedJwt { setSignedJwt(jwt) }
-        if let state = authResult.clientState { setClientState(state) }
-        if case .success(let key) = Keyless.getDevicePublicSigningKey() {
-            setDevicePublicSigningKey(key)
-        }
-        let userId = try? Keyless.getUserId().get()
-        if let userId { setRecognizeId(userId) }
-        return RecognizeSuccess(
-            signedJwt: authResult.signedJwt,
-            clientState: authResult.clientState,
+        populateResultInputs(
+            signedJwt: result.signedJwt,
+            clientState: result.clientState,
             recognizeId: userId,
-            selfie: authResult.authenticationFrame
+            devicePublicSigningKey: devicePublicSigningKey()
         )
+        return RecognizeSuccess(
+            signedJwt: result.signedJwt,
+            clientState: result.clientState,
+            recognizeId: userId,
+            selfie: result.selfie
+        )
+    }
+
+    /// Writes the outputs of a successful Keyless operation into the callback's input fields.
+    ///
+    /// Shared by `performEnroll` and `performAuthenticate` so both ceremonies submit the same
+    /// set of results — the server uses the same callback for enrollment and authentication
+    /// and expects `devicePublicSigningKey` from both. `nil` values leave the corresponding
+    /// input field untouched.
+    func populateResultInputs(
+        signedJwt: String?,
+        clientState: String?,
+        recognizeId: String?,
+        devicePublicSigningKey: String?
+    ) {
+        if let signedJwt { setSignedJwt(signedJwt) }
+        if let clientState { setClientState(clientState) }
+        if let recognizeId { setRecognizeId(recognizeId) }
+        if let devicePublicSigningKey { setDevicePublicSigningKey(devicePublicSigningKey) }
     }
 
     // MARK: - Keyless SDK Configuration
@@ -488,7 +562,7 @@ extension JourneyConstants {
     public static let inputClientState = "clientState"
     /// Input field suffix for the Recognize user ID produced during enrollment.
     public static let inputRecognizeId = "recognizeId"
-    /// Input field suffix for the device public signing key retrieved after authentication.
+    /// Input field suffix for the device public signing key retrieved after enrollment or authentication.
     public static let inputDevicePublicSigningKey = "devicePublicSigningKey"
     /// Input field suffix for the client error message.
     public static let inputClientError = "clientError"

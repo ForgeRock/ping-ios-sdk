@@ -2,7 +2,7 @@
 //  PollingView.swift
 //  PingExample
 //
-//  Copyright (c) 2026 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -48,21 +48,16 @@ struct PollingView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: PingTheme.Spacing.medium) {
             switch currentStatus {
             case .continue(let retry, let max):
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .scaleEffect(1.5)
-                    .tint(.themeButtonBackground)
+                PingLoadingSpinner()
                 if max > 0 {
                     Text("Please wait… (\(retry)/\(max))")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .pingSupportingText()
                 } else {
                     Text("Please wait…")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .pingSupportingText()
                 }
 
             case .complete:
@@ -71,33 +66,30 @@ struct PollingView: View {
 
             case .timedOut:
                 Image(systemName: "clock.badge.xmark")
-                    .font(.system(size: 40))
-                    .foregroundColor(.orange)
+                    .font(.system(size: PingTheme.Control.Glyph.large))
+                    .foregroundStyle(PingTheme.Color.statusWarning)
                 Text("Request timed out.")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .pingSupportingText()
                     .multilineTextAlignment(.center)
 
             case .expired:
                 Image(systemName: "xmark.circle")
-                    .font(.system(size: 40))
-                    .foregroundColor(.red)
+                    .font(.system(size: PingTheme.Control.Glyph.large))
+                    .foregroundStyle(PingTheme.Color.statusError)
                 Text("The request has expired. Please try again.")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .pingSupportingText()
                     .multilineTextAlignment(.center)
 
             case .error(let error):
                 Image(systemName: "exclamationmark.triangle")
-                    .font(.system(size: 40))
-                    .foregroundColor(.red)
+                    .font(.system(size: PingTheme.Control.Glyph.large))
+                    .foregroundStyle(PingTheme.Color.statusError)
                 Text("An error occurred: \(error.localizedDescription)")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .pingSupportingText()
                     .multilineTextAlignment(.center)
             }
         }
-        .padding()
+        .padding(.vertical, PingTheme.Spacing.small)
         .frame(maxWidth: .infinity)
         .task {
             for await status in collector.poll() {

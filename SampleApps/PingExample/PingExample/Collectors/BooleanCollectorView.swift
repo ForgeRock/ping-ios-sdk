@@ -21,17 +21,17 @@ struct BooleanCollectorView: View {
     @State private var isValid: Bool = true
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
             if field.appearance == .switch {
                 switchAppearance
             } else {
                 checkboxAppearance
             }
             if !isValid {
-                ErrorMessageView(errors: field.validate().map { $0.errorMessage }.sorted())
+                PingFieldMessages(errorMessages: field.validate().map { $0.errorMessage }.sorted())
             }
         }
-        .padding(.horizontal, 16)
+        .padding(.vertical, PingTheme.Spacing.small)
         .onAppear {
             isChecked = field.value
         }
@@ -48,21 +48,19 @@ struct BooleanCollectorView: View {
         HStack(alignment: .top) {
             Button(action: toggleValue) {
                 Image(systemName: isChecked ? "checkmark.square.fill" : "square")
-                    .foregroundStyle(isChecked ? Color.themeButtonBackground : Color.gray)
+                    .foregroundStyle(isChecked ? PingTheme.Color.actionPrimary : PingTheme.Color.contentSecondary)
             }
             .buttonStyle(PlainButtonStyle())
             labelContent
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(isValid ? Color.gray : Color.red, lineWidth: 1)
-        )
+        .padding(.horizontal, PingTheme.Control.fieldPadding)
+        .padding(.vertical, PingTheme.Spacing.compact)
+        .pingOutlinedContainerStyle(showsError: !isValid)
     }
-    
+
     // MARK: - Switch Appearance
-    
+
     private var switchAppearance: some View {
         HStack(alignment: .top) {
             Toggle("", isOn: $isChecked)
@@ -73,12 +71,11 @@ struct BooleanCollectorView: View {
                     onNodeUpdated()
                 }
             labelContent
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(isValid ? Color.gray : Color.red, lineWidth: 1)
-        )
+        .padding(.horizontal, PingTheme.Control.fieldPadding)
+        .padding(.vertical, PingTheme.Spacing.compact)
+        .pingOutlinedContainerStyle(showsError: !isValid)
     }
     
     // MARK: - Label Content

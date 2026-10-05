@@ -118,6 +118,9 @@ extension DaVinci {
             if let c: NSObject.Type = NSClassFromString("PingFido.CollectorInitializer") as? NSObject.Type {
                 c.perform(Selector(("registerCollectors")))
             }
+            if let initializer = NSClassFromString("PingOneMFA.CollectorInitializer") as? NSObject.Type {
+                initializer.perform(Selector(("registerCollectors")))
+            }
             if let c: NSObject.Type = NSClassFromString("PingExternalIdP.IdpCollector") as? NSObject.Type {
                 c.perform(Selector(("registerCollector")))
             }
