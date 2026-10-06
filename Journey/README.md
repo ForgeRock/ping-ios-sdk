@@ -419,7 +419,11 @@ class JourneyViewModel: ObservableObject {
             let currentConfig = ConfigurationManager.shared.currentConfigurationViewModel
             config.serverUrl = currentConfig?.serverUrl
             config.realm = currentConfig?.realm ?? "root"
-            config.cookie = currentConfig?.cookieName ?? ""
+            // Only override the default (`iPlanetDirectoryPro`) when a cookie name is configured;
+            // an explicit empty string is sent as the header name as-is and is a configuration error.
+            if let cookieName = currentConfig?.cookieName, !cookieName.isEmpty {
+                config.cookie = cookieName
+            }
             config.module(PingJourney.OidcModule.config) { oidcValue in
                 oidcValue.clientId = currentConfig?.clientId ?? ""
                 oidcValue.scopes = Set<String>(currentConfig?.scopes ?? [])

@@ -164,59 +164,6 @@ final class AgentTests: XCTestCase {
         XCTAssertNil(authCode.codeVerifier)
     }
 
-    // MARK: - Blank cookie-name fallback (JourneyConfig.ssoHeaderName)
-
-    /// Regression test: `JourneyConfig.cookie` is a plain `String` defaulting to
-    /// `iPlanetDirectoryPro`, but integrators can legitimately set it to `""` (the sample
-    /// app's config editor stores `cookieName` as an optional that the sample maps with
-    /// `?? ""`). Sending the SSO token under an empty header name is a malformed request —
-    /// the server resets the connection (observed as `-1005 The network connection was
-    /// lost`) — so `CreateAgent` must normalize a blank name to `iPlanetDirectoryPro`.
-    func testCreateAgentBlankCookieNameFallsBackToDefault() {
-        let blankAgent = CreateAgent(session: session, pkce: pkce, cookieName: "")
-        XCTAssertEqual(blankAgent.cookieName, "iPlanetDirectoryPro")
-
-        let whitespaceAgent = CreateAgent(session: session, pkce: pkce, cookieName: "   ")
-        XCTAssertEqual(whitespaceAgent.cookieName, "iPlanetDirectoryPro")
-
-        let explicitAgent = CreateAgent(session: session, pkce: pkce, cookieName: "386c0d288cac4b9")
-        XCTAssertEqual(explicitAgent.cookieName, "386c0d288cac4b9", "A non-blank name must be preserved")
-    }
-
-    /// The request must carry the SSO token under the fallback header name when the
-    /// configured name was blank.
-    func testAuthorizeSendsSSOTokenUnderFallbackHeaderName() async throws {
-        let successResponse = HTTPURLResponse(
-            url: URL(string: "https://auth.example.com/authorize")!,
-            statusCode: 302,
-            httpVersion: nil,
-            headerFields: ["Location": "https://example.com/callback?code=test-auth-code"]
-        )!
-        httpClient.mockResponse = (Data(), successResponse)
-
-        let blankAgent = CreateAgent(session: session, pkce: pkce, cookieName: "")
-        _ = try await blankAgent.authorize(oidcConfig: oidcConfig)
-
-        guard let request = httpClient.lastRequest else {
-            XCTFail("request should not be nil")
-            return
-        }
-        XCTAssertEqual(request.getHeader(name: "iPlanetDirectoryPro"), "test-session")
-        XCTAssertNil(request.getHeader(name: ""), "No header may be sent under an empty name")
-    }
-
-    /// `JourneyConfig.ssoHeaderName` mirrors the same fallback at config level.
-    func testJourneyConfigSSOHeaderNameFallback() {
-        let config = JourneyConfig()
-        XCTAssertEqual(config.ssoHeaderName, "iPlanetDirectoryPro")
-
-        config.cookie = "386c0d288cac4b9"
-        XCTAssertEqual(config.ssoHeaderName, "386c0d288cac4b9")
-
-        config.cookie = ""
-        XCTAssertEqual(config.ssoHeaderName, "iPlanetDirectoryPro")
-    }
-
     // MARK: - journeyUser() fallback agent (DefaultAgent regression)
 
     /// Regression test: `journeyUser()`'s fallback used to build the `OidcUser` from the

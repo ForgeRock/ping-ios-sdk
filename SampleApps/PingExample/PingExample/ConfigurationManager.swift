@@ -256,10 +256,14 @@ class ConfigurationManager: ObservableObject {
         Journey.createJourney { journeyConfig in
             journeyConfig.serverUrl = config.serverUrl
             journeyConfig.realm = config.realm ?? "root"
-            // A blank cookie name is fine: the SDK falls back to `iPlanetDirectoryPro`
-            // internally (`JourneyConfig.ssoHeaderName`), so an unset `cookieName` in the
-            // config editor no longer produces a malformed empty header on /authorize.
-            journeyConfig.cookie = config.cookieName ?? ""
+            // Only override the SDK default (`iPlanetDirectoryPro`) when a cookie name is
+            // configured. The SDK sends the name as the SSO header verbatim, so an explicit
+            // empty string is a configuration error (same as the Android SDK). AIC tenants
+            // use a tenant-specific name, so set it in the configuration for AIC.
+            if let cookieName = config.cookieName,
+               !cookieName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                journeyConfig.cookie = cookieName
+            }
             journeyConfig.logger = LogManager.standard
             journeyConfig.module(PingJourney.OidcModule.config) { oidcValue in
                 oidcValue.clientId = config.clientId

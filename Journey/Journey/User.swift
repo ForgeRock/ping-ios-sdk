@@ -39,7 +39,7 @@ extension Journey {
             if let moduleConfig = self.sharedContext.get(key: SharedContext.Keys.oidcClientConfigKey) as? OidcClientConfig {
                 let journeyConfig: JourneyConfig? = self.config as? JourneyConfig
                 let usableConfig = moduleConfig.clone()
-                let agent = CreateAgent(session: session, pkce: nil, cookieName: journeyConfig?.ssoHeaderName ?? JourneyConstants.cookie)
+                let agent = CreateAgent(session: session, pkce: nil, cookieName: journeyConfig?.cookie ?? JourneyConstants.cookie)
                 usableConfig.updateAgent(agent)
                 return await prepareUser(journey: self, user: OidcUser(config: usableConfig), session: session)
             }
