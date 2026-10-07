@@ -11,6 +11,7 @@
 - Added Facebook Limited Login support in `PingExternalIdPFacebook` [SDKS-5160, SDKS-5161, SDKS-5162]
 - Added present-only launch mode to `BrowserLauncher` via `browserMode: .custom` [SDKS-5357]
 - Added `OidcError.configurationError` for configurations with neither a usable `discoveryEndpoint` nor `openId` [SDKS-5301]
+- Added opt-in commercial device-model-name resolution to `DeviceProfileCallback` via `PlatformCollector(includeModelName: true)`; the default `PlatformCollector()` payload is unchanged. See the `DeviceProfile` README for upgrade notes [SDKS-5275]
 
 #### Updated
 
