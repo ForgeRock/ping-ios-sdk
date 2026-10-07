@@ -172,6 +172,20 @@ jobs:
         run: |
           xcrun simctl bootstatus "iPhone 17" -b || true
 
+      # Prime the package cache with the standalone swift CLI before xcodebuild.
+      # The swift CLI resolves registry packages with its libcurl HTTP client,
+      # which reads ~/.netrc; whether xcodebuild's embedded SwiftPM honors the
+      # netrc on this toolchain is unproven (runs 9c032a7 and 929138d 404'd
+      # with a correct netrc). If this step fails, the credential itself is
+      # wrong (clear error surface). If it succeeds, the fetched checkouts and
+      # Package.resolved let xcodebuild resolve without touching the registry.
+      - name: Prime KeylessSDK via swift CLI (netrc auth)
+        if: ${{ env.CLOUDSMITH_KEYLESS_TOKEN != '' }}
+        run: |
+          set -o pipefail
+          swift package resolve | xcbeautify || \
+            { echo "::error::swift CLI could not resolve keyless.mobile-sdk — check CLOUDSMITH_KEYLESS_TOKEN validity"; exit 1; }
+
       # Build the SDK for testing
       - name: Build for testing
         run: |
