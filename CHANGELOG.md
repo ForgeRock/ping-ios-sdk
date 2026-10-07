@@ -13,6 +13,7 @@
 - `oidc.discoveryEndpoint` in the unified JSON configuration is now required only when no `oidc.openId` sub-object is supplied; an `openId` block without `discoveryEndpoint` replaces the discovery document and requires `tokenEndpoint` [SDKS-5301]
 - Added `OidcError.configurationError` to report a configuration that has neither a usable `discoveryEndpoint` nor a pre-supplied `openId` [SDKS-5301]
 - Added `MobilePairingCollector` to support pairing with PingOne [P14C-91504]
+- Added opt-in commercial device-model-name resolution to `DeviceProfileCallback`'s platform metadata. Construct `PlatformCollector(includeModelName: true)` (or `DefaultDeviceCollector` users: pass a custom collectors array) and the `platform` metadata gains a `modelName` attribute (e.g. `"iPhone15,2"` resolves to `"iPhone 14 Pro"`); the raw hardware identifier stays in `model`, and `modelName` is omitted when the identifier is not in the SDK's catalog (Simulator, or hardware newer than the catalog). The default `PlatformCollector()` payload is unchanged from previous SDK versions. **Upgrade note (opting-in apps only):** on recognised devices the submitted profile gains one attribute, which PingAM / PingOne AIC's built-in `Device Match` node (default *Acceptable Variance* of `0`) counts as a difference against profiles saved by earlier SDK versions; see the `DeviceProfile` README [SDKS-5275]
 
 #### Fixed
 - Fixed `QRCodeCollector` not preserving the complete QR code data URI in `content` [SDKS-5299]
