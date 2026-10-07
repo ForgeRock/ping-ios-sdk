@@ -101,10 +101,19 @@ jobs:
           # "token" to send the netrc password as a Bearer token. Note login
           # must NOT run — it would create the keychain entry again.
           python3 - <<'EOF'
-          import json, os
-          path = os.path.expanduser("~/.swiftpm/configuration/registries.json")
-          with open(path) as f:
-              cfg = json.load(f)
+          import json, os, sys
+          # SwiftPM's user config lives in ~/Library/org.swift.swiftpm on macOS
+          # and ~/.swiftpm on Linux. (~/.swiftpm only exists on Macs where
+          # tooling created a symlink to the Library path — never on CI.)
+          config_dir = os.path.expanduser(
+              "~/Library/org.swift.swiftpm/configuration" if sys.platform == "darwin"
+              else "~/.swiftpm/configuration")
+          os.makedirs(config_dir, exist_ok=True)
+          path = os.path.join(config_dir, "registries.json")
+          cfg = {}
+          if os.path.exists(path):
+              with open(path) as f:
+                  cfg = json.load(f)
           cfg.setdefault("authentication", {})
           cfg["authentication"]["swift.cloudsmith.io"] = {
               "loginAPIPath": "/keyless/partners",
@@ -112,7 +121,7 @@ jobs:
           }
           with open(path, "w") as f:
               json.dump(cfg, f, indent=2)
-          print("registries.json authentication section written")
+          print(f"authentication section written to {path}")
           EOF
           printf 'machine swift.cloudsmith.io\nlogin token\npassword %s\n' "$CLOUDSMITH_KEYLESS_TOKEN" > ~/.netrc
           chmod 600 ~/.netrc
