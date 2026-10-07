@@ -65,7 +65,7 @@ targets: [
 dependencies: [
     .package(
         url: "https://github.com/ForgeRock/ping-ios-sdk",
-        from: "2.2.0"
+        from: "2.2.0-beta1"
     )
 ],
 targets: [
@@ -1292,7 +1292,7 @@ let journey = Journey.createJourney { config in
 | Legacy Module | Modern Module(s) |
 |---------------|------------------|
 | `FRCore` | `PingLogger`, `PingStorage`, `PingNetwork`, `PingCommons` |
-| `FRAuth` | `PingOrchestrate`, `PingJourney`, `PingOidc` (add `PingDeviceProfile` explicitly if your journeys use the Device Profile Collector node — no longer transitively included since `2.2.0`) |
+| `FRAuth` | `PingOrchestrate`, `PingJourney`, `PingOidc` (add `PingDeviceProfile` explicitly if your journeys use the Device Profile Collector node — no longer transitively included since `2.2.0-beta1`) |
 | `FRDeviceBinding` | `PingBinding` |
 | `FRProximity` | `PingDeviceProfile` |
 | `FRAuthenticator` | `PingOath`, `PingPush` |

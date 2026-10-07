@@ -340,7 +340,7 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
         XCTAssertEqual("Registration Form", continueNode.name)
     }
     
-    // TestRailCase(21270)
+    // TestRailCase(2.2.0-beta1)
     func testUserRegistrationFailureInvalidEmail() async throws {
         var node = await daVinci.start()
         XCTAssertTrue(node is ContinueNode)
