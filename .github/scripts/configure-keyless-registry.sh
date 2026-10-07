@@ -49,15 +49,19 @@ if [[ "$secret" =~ [[:space:]\"\\] ]]; then
   exit 1
 fi
 
+# curl_auth_config <auth-kind> [username] — prints a curl config carrying the credential.
+# (Kept as a function of its own: macOS's bash 3.2 cannot parse `case` inside $( ).)
+curl_auth_config() {
+  case "$1" in
+    basic) printf 'user = "%s:%s"\n' "${2:-}" "$secret" ;;
+    bearer) printf 'header = "Authorization: Bearer %s"\n' "$secret" ;;
+  esac
+}
+
 # http_code <auth-kind> [username] — prints the HTTP status of the registry probe, or 000.
 http_code() {
-  local kind="$1" user="${2:-}" code
-  code="$({
-    case "$kind" in
-      basic) printf 'user = "%s:%s"\n' "$user" "$secret" ;;
-      bearer) printf 'header = "Authorization: Bearer %s"\n' "$secret" ;;
-    esac
-  } | curl -sS -o /dev/null -w '%{http_code}' --max-time 30 --config - -H "$ACCEPT_HEADER" "$PROBE_URL" 2>/dev/null)" || true
+  local code
+  code="$(curl_auth_config "$@" | curl -sS -o /dev/null -w '%{http_code}' --max-time 30 --config - -H "$ACCEPT_HEADER" "$PROBE_URL" 2>/dev/null)" || true
   echo "${code:-000}"
 }
 
