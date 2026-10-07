@@ -92,39 +92,16 @@ jobs:
           # project-local .swiftpm/, which xcodebuild does not read. It must go
           # to the user-level config (~/.swiftpm/configuration/registries.json).
           swift package-registry set --global --scope keyless https://swift.cloudsmith.io/keyless/partners/
-          # Headless-runner auth must avoid the keychain: `swift package-registry
-          # login` stores the credential there, and on macOS xcodebuild's SwiftPM
-          # then blocks on a keychain ACL consent prompt that nobody can answer
-          # on a CI runner (CI run for d700231 hung 15 min with zero output).
-          # Instead: write the token-type authentication section into
-          # registries.json plus a netrc entry. SwiftPM uses authentication.type
-          # "token" to send the netrc password as a Bearer token. Note login
-          # must NOT run — it would create the keychain entry again.
-          python3 - <<'EOF'
-          import json, os, sys
-          # SwiftPM's user config lives in ~/Library/org.swift.swiftpm on macOS
-          # and ~/.swiftpm on Linux. (~/.swiftpm only exists on Macs where
-          # tooling created a symlink to the Library path — never on CI.)
-          config_dir = os.path.expanduser(
-              "~/Library/org.swift.swiftpm/configuration" if sys.platform == "darwin"
-              else "~/.swiftpm/configuration")
-          os.makedirs(config_dir, exist_ok=True)
-          path = os.path.join(config_dir, "registries.json")
-          cfg = {}
-          if os.path.exists(path):
-              with open(path) as f:
-                  cfg = json.load(f)
-          cfg.setdefault("authentication", {})
-          cfg["authentication"]["swift.cloudsmith.io"] = {
-              "loginAPIPath": "/keyless/partners",
-              "type": "token",
-          }
-          with open(path, "w") as f:
-              json.dump(cfg, f, indent=2)
-          print(f"authentication section written to {path}")
-          EOF
-          printf 'machine swift.cloudsmith.io\nlogin token\npassword %s\n' "$CLOUDSMITH_KEYLESS_TOKEN" > ~/.netrc
-          chmod 600 ~/.netrc
+          # Credential delivery for the headless runner: SWIFTPM_REGISTRY_TOKEN.
+          # SwiftPM's env-var credentials take precedence over keychain and
+          # netrc, so xcodebuild never touches either. Keychain is unusable in
+          # CI (swift package-registry login stores there, and xcodebuild's
+          # SwiftPM then blocks on a keychain ACL consent prompt nobody can
+          # answer — the d700231 run hung 15 min on it). netrc proved
+          # insufficient on its own: the 9c032a7 run wrote a correct netrc plus
+          # token-type auth config and still got Cloudsmith's unauthenticated
+          # 404 ("package not found on registry").
+          echo "SWIFTPM_REGISTRY_TOKEN=$CLOUDSMITH_KEYLESS_TOKEN" >> "$GITHUB_ENV"
           touch Recognize/.registry-enabled
 
       # The test plan's RecognizeTests entry resolves through the workspace graph
