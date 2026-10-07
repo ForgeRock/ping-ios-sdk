@@ -88,9 +88,10 @@ jobs:
         env:
           CLOUDSMITH_KEYLESS_TOKEN: ${{ secrets.CLOUDSMITH_KEYLESS_TOKEN }}
         run: |
-          # Probes Cloudsmith with the secret to pick the matching auth scheme (entitlement
-          # token vs API key), then writes the SwiftPM registry config + netrc. See the script
-          # for why this deliberately avoids `swift package-registry login` (keychain hang).
+          # Probes Cloudsmith with the secret to pick the matching auth scheme, then writes the
+          # SwiftPM registry config and stores the credential in a dedicated keychain. The
+          # keychain (not ~/.netrc) is mandatory: SwiftPM 6.2 on macOS only consults the
+          # keychain for registry credentials. See the script for details.
           .github/scripts/configure-keyless-registry.sh
           touch Recognize/.registry-enabled
 
@@ -140,19 +141,19 @@ jobs:
           xcrun simctl bootstatus "iPhone 17" -b || true
 
       # Resolve the root package with the standalone swift CLI before xcodebuild. This is a
-      # second, independent check of the registry configuration written above, through the
-      # same SwiftPM the configuration targets (netrc + registries.json). If it passes while
-      # the xcodebuild step below fails to authenticate, xcodebuild's embedded SwiftPM is not
-      # honoring that configuration. Whether the fetched package is reused by xcodebuild
-      # (which uses its own SourcePackages directory) is not established.
-      - name: Prime KeylessSDK via swift CLI (netrc auth)
+      # second, independent check of the registry configuration written above (keychain item +
+      # registries.json). If it passes while the xcodebuild step below fails to authenticate,
+      # xcodebuild's embedded SwiftPM is not honoring that configuration. Whether the fetched
+      # package is reused by xcodebuild (which uses its own SourcePackages directory) is not
+      # established, so this step is a diagnostic first and a cache warm-up at best.
+      - name: Resolve KeylessSDK via swift CLI (registry check)
         if: ${{ env.CLOUDSMITH_KEYLESS_TOKEN != '' }}
         env:
           CLOUDSMITH_KEYLESS_TOKEN: ${{ secrets.CLOUDSMITH_KEYLESS_TOKEN }}
         run: |
           set -o pipefail
           swift package resolve | xcbeautify || \
-            { echo "::error::swift CLI could not resolve keyless.mobile-sdk — registry configuration step passed, so see its probe output"; exit 1; }
+            { echo "::error::swift CLI could not resolve keyless.mobile-sdk — the credential was accepted by the probe, so the swift CLI is not applying it (see the configuration step)"; exit 1; }
 
       # Build the SDK for testing
       - name: Build for testing

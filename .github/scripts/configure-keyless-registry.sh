@@ -16,14 +16,21 @@
 # Cloudsmith accepts. If none is accepted the credential is genuinely unusable and the script fails
 # with the probe results.
 #
-# The credential is delivered through ~/.netrc plus an `authentication` entry in the user-level
-# registries.json. It is NOT stored with `swift package-registry login`: on macOS that writes to
-# the keychain, and xcodebuild then blocks forever on a keychain ACL consent prompt that nobody
-# can answer on a headless runner.
+# The credential is delivered through the macOS keychain plus an `authentication` entry in the
+# user-level registries.json. A ~/.netrc entry is useless here: SwiftPM (6.2, as bundled with
+# Xcode 26.2) builds its registry credential provider as [Keychain, netrc] and then returns only
+# the first element ("Use at-most one AuthorizationProvider"), so on macOS the netrc is never
+# consulted (Workspace+Configuration.swift, makeRegistryAuthorizationProvider).
+#
+# The keychain item is created here, not with `swift package-registry login`, because the
+# keychain on a headless runner needs care: the item goes into a dedicated keychain that is
+# unlocked and marked accessible to every application (-A), so neither the swift CLI nor
+# xcodebuild can block on a locked-keychain or per-application access prompt that nobody can
+# answer in CI. (A `login`-created item hung xcodebuild for 15 minutes in an earlier CI run.)
 #
 # Environment:
 #   CLOUDSMITH_KEYLESS_TOKEN  The Cloudsmith credential. Required. Never printed.
-#   CI                        Must be "true" — the script overwrites ~/.netrc.
+#   CI                        Must be "true" — the script changes the user's keychain search list.
 
 set -euo pipefail
 
@@ -33,7 +40,7 @@ PROBE_URL="${REGISTRY_URL}keyless/mobile-sdk"
 ACCEPT_HEADER="Accept: application/vnd.swift.registry.v1+json"
 
 if [[ "${CI:-}" != "true" ]]; then
-  echo "Refusing to run outside CI: this script overwrites ~/.netrc." >&2
+  echo "Refusing to run outside CI: this script rewrites the user's keychain search list and SwiftPM config." >&2
   exit 1
 fi
 
@@ -78,7 +85,7 @@ fi
 rm -f "$self_json"
 echo "Secret is a Cloudsmith user API key: $([[ "$self_code" == "200" ]] && echo yes || echo "no (API answered $self_code)")"
 
-# label | auth kind | netrc login. Order is the order tried.
+# label | auth kind | login (the keychain item's account). Order is the order tried.
 candidates=("basic-token|basic|token" "basic-pingidentity|basic|pingidentity" "bearer|bearer|token")
 if [[ -n "$api_user" ]]; then
   candidates+=("basic-account|basic|$api_user")
@@ -108,8 +115,10 @@ echo "Using scheme: $chosen_label"
 # it the mapping lands in a project-local .swiftpm/ that xcodebuild does not read.
 swift package-registry set --global --scope keyless "$REGISTRY_URL"
 
-# Declare how SwiftPM should use the netrc credential. On macOS the user-level SwiftPM config lives
-# in ~/Library/org.swift.swiftpm (~/.swiftpm is only a symlink some developer machines have).
+# Declare how SwiftPM should use the credential. SwiftPM only authenticates a registry request when
+# this entry exists AND the credential provider returns a user/password. On macOS the user-level
+# SwiftPM config lives in ~/Library/org.swift.swiftpm (~/.swiftpm is only a symlink some developer
+# machines have).
 AUTH_TYPE="$([[ "$chosen_kind" == "bearer" ]] && echo token || echo basic)" \
 REGISTRY_HOST="$REGISTRY_HOST" \
 python3 - <<'EOF'
@@ -133,6 +142,30 @@ with open(path, "w") as f:
 print(f"Wrote {os.environ['AUTH_TYPE']} authentication for {os.environ['REGISTRY_HOST']} to {path}")
 EOF
 
-umask 077
-printf 'machine %s\nlogin %s\npassword %s\n' "$REGISTRY_HOST" "$chosen_login" "$secret" > "$HOME/.netrc"
-echo "Wrote ~/.netrc entry for ${REGISTRY_HOST}"
+# Store the credential in a dedicated, unlocked, any-application-accessible keychain. SwiftPM looks
+# for an internet-password item with protocol https, server = registry host, and uses the item's
+# account as the user (only meaningful for Basic auth).
+keychain="${RUNNER_TEMP:-$(mktemp -d)}/keyless-registry.keychain-db"
+keychain_password="$(openssl rand -hex 16)"
+security create-keychain -p "$keychain_password" "$keychain"
+security set-keychain-settings -lut 21600 "$keychain"
+security unlock-keychain -p "$keychain_password" "$keychain"
+
+# Put the new keychain first in the user's search list without dropping the existing entries.
+existing_keychains=()
+while IFS= read -r line; do
+  line="${line#"${line%%[![:space:]]*}"}"   # trim leading whitespace
+  line="${line%\"}"; line="${line#\"}"       # strip the surrounding quotes
+  [[ -n "$line" ]] && existing_keychains+=("$line")
+done < <(security list-keychains -d user)
+security list-keychains -d user -s "$keychain" ${existing_keychains[@]+"${existing_keychains[@]}"}
+
+security add-internet-password -a "$chosen_login" -s "$REGISTRY_HOST" -r htps \
+  -l "Cloudsmith Keyless registry" -w "$secret" -A -U "$keychain"
+
+# Prove SwiftPM's lookup will find it (this reads the attributes, not the password).
+if ! security find-internet-password -s "$REGISTRY_HOST" -r htps >/dev/null 2>&1; then
+  echo "::error::Stored the credential but it is not visible through the keychain search list."
+  exit 1
+fi
+echo "Stored credential for ${REGISTRY_HOST} in a dedicated keychain"
