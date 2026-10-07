@@ -16,6 +16,9 @@ on:
       DAVINCI_E2E_CONFIG:
         description: 'DaVinci e2e test configuration JSON'
         required: false
+      CLOUDSMITH_KEYLESS_TOKEN:
+        description: 'Cloudsmith API key for the private Keyless registry (keyless scope). Required to run RecognizeTests; absent on fork PRs, which then skip those tests.'
+        required: false
   
 env:
   WORKSPACE: SampleApps/Ping.xcworkspace
@@ -74,6 +77,40 @@ jobs:
           # Fix: The binary is inside the 'product' folder
           chmod +x product/xcresultparser
           sudo mv product/xcresultparser /usr/local/bin/
+
+      # RecognizeTests depends on KeylessSDK from the private Cloudsmith registry.
+      # When the token secret is present (internal PRs, branch pushes, /run-ci fork runs),
+      # configure the registry and enable the Recognize targets. Fork PRs have no access
+      # to secrets, so RecognizeTests is stripped from the test plan instead — everything
+      # else still runs.
+      - name: Configure Cloudsmith registry (Recognize)
+        if: ${{ env.CLOUDSMITH_KEYLESS_TOKEN != '' }}
+        env:
+          CLOUDSMITH_KEYLESS_TOKEN: ${{ secrets.CLOUDSMITH_KEYLESS_TOKEN }}
+        run: |
+          swift package-registry set --scope keyless https://swift.cloudsmith.io/keyless/partners/
+          printf 'machine swift.cloudsmith.io\nlogin pingidentity\npassword %s\n' "$CLOUDSMITH_KEYLESS_TOKEN" > ~/.netrc
+          chmod 600 ~/.netrc
+          touch Recognize/.registry-enabled
+
+      - name: Strip RecognizeTests from test plan (no registry on fork PRs)
+        if: ${{ env.CLOUDSMITH_KEYLESS_TOKEN == '' }}
+        env:
+          CLOUDSMITH_KEYLESS_TOKEN: ${{ secrets.CLOUDSMITH_KEYLESS_TOKEN }}
+        run: |
+          python3 - <<'EOF'
+          import json
+          path = "PingTestHost/PingTestHost.xctestplan"
+          with open(path) as f:
+              plan = json.load(f)
+          plan["testTargets"] = [
+              t for t in plan["testTargets"]
+              if t.get("target", {}).get("name") != "RecognizeTests"
+          ]
+          with open(path, "w") as f:
+              json.dump(plan, f, indent=2)
+          print("RecognizeTests removed from test plan (Keyless registry unavailable)")
+          EOF
 
       - name: Reset simulators
         run: |
