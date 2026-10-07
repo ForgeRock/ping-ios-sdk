@@ -88,7 +88,10 @@ jobs:
         env:
           CLOUDSMITH_KEYLESS_TOKEN: ${{ secrets.CLOUDSMITH_KEYLESS_TOKEN }}
         run: |
-          swift package-registry set --scope keyless https://swift.cloudsmith.io/keyless/partners/
+          # --global is required: without it the scope mapping lands in the
+          # project-local .swiftpm/, which xcodebuild does not read. It must go
+          # to the user-level config (~/.swiftpm/configuration/registries.json).
+          swift package-registry set --global --scope keyless https://swift.cloudsmith.io/keyless/partners/
           printf 'machine swift.cloudsmith.io\nlogin pingidentity\npassword %s\n' "$CLOUDSMITH_KEYLESS_TOKEN" > ~/.netrc
           chmod 600 ~/.netrc
           touch Recognize/.registry-enabled
