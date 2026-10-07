@@ -93,6 +93,18 @@ jobs:
           chmod 600 ~/.netrc
           touch Recognize/.registry-enabled
 
+      # The test plan's RecognizeTests entry resolves through the workspace graph
+      # (container:../Recognize/Recognize.xcodeproj). Ping.xcworkspace cannot reference
+      # Recognize.xcodeproj — that would break local builds for users without registry
+      # credentials — so swap to PingWithRecognize.xcworkspace when the registry is
+      # configured. All other test targets resolve identically in both workspaces;
+      # fork PRs keep Ping.xcworkspace and strip the entry instead (step below).
+      - name: Select Recognize workspace
+        if: ${{ env.CLOUDSMITH_KEYLESS_TOKEN != '' }}
+        env:
+          CLOUDSMITH_KEYLESS_TOKEN: ${{ secrets.CLOUDSMITH_KEYLESS_TOKEN }}
+        run: echo "WORKSPACE=SampleApps/PingWithRecognize.xcworkspace" >> "$GITHUB_ENV"
+
       - name: Strip RecognizeTests from test plan (no registry on fork PRs)
         if: ${{ env.CLOUDSMITH_KEYLESS_TOKEN == '' }}
         env:
