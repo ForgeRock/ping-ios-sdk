@@ -167,7 +167,9 @@ source lists yet, which are still emitted). It requires network access and
 `python3`, and is run by hand only — it is not part of the build or CI.
 Identifiers without a verified commercial name are reported and skipped; add
 them to `KNOWN_NAMES` (checking the names against Apple's "Identify your
-iPhone/iPad model" support articles) and rerun. Review the diff before
+iPhone/iPad model" support articles) and rerun. Identifiers of devices that
+cannot run the SDK's minimum iOS version (see `Package.swift`) are excluded
+from `KNOWN_NAMES` as unreachable. Review the diff before
 committing.
 
 ## 6. Standards of Practice

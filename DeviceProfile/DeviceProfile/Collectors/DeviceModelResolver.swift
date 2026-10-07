@@ -35,13 +35,13 @@ import Foundation
 /// DeviceModelResolver.commercialName(for: "iphone15,2") // nil (case-sensitive)
 /// DeviceModelResolver.commercialName(for: "arm64")      // nil (Simulator)
 /// ```
-public enum DeviceModelResolver: Sendable {
+enum DeviceModelResolver {
 
     /// Returns the commercial (marketing) name for the given hardware model
     /// identifier, or `nil` if the identifier is not in the catalog.
     /// - Parameter identifier: The raw model identifier (e.g. `"iPhone15,2"`).
     /// - Returns: The commercial name (e.g. `"iPhone 14 Pro"`), or `nil`.
-    public static func commercialName(for identifier: String) -> String? {
+    static func commercialName(for identifier: String) -> String? {
         DeviceModelCatalog.identifierToCommercialName[identifier]
     }
 }

@@ -16,11 +16,12 @@
 //    - adamawolf "Apple_mobile_device_types.txt" gist (identifier coverage)
 //    - ipsw.me device API (identifier coverage)
 //
-//  Generated: 2026-10-01
+//  Generated: 2026-10-07
 //  Review note: commercial names in this catalog are curated against Apple's
 //  "Identify your iPhone/iPad model" support articles. Identifiers without a
 //  verified commercial name are intentionally omitted (they resolve to nil at
-//  runtime).
+//  runtime). Identifiers of devices that cannot run iOS 16 — the SDK's
+//  deployment target (Package.swift / podspec) — are excluded as unreachable.
 //
 
 import Foundation
@@ -42,8 +43,6 @@ enum DeviceModelCatalog {
     /// Maps a hardware model identifier (e.g. `"iPhone15,2"`) to Apple's
     /// commercial device name (e.g. `"iPhone 14 Pro"`).
     static let identifierToCommercialName: [String: String] = [
-        "iPad1,1": "iPad",
-        "iPad1,2": "iPad",
         "iPad11,1": "iPad mini (5th generation)",
         "iPad11,2": "iPad mini (5th generation)",
         "iPad11,3": "iPad Air (3rd generation)",
@@ -96,32 +95,6 @@ enum DeviceModelCatalog {
         "iPad17,2": "iPad Pro 11-inch (M5)",
         "iPad17,3": "iPad Pro 13-inch (M5)",
         "iPad17,4": "iPad Pro 13-inch (M5)",
-        "iPad2,1": "iPad 2",
-        "iPad2,2": "iPad 2",
-        "iPad2,3": "iPad 2",
-        "iPad2,4": "iPad 2",
-        "iPad2,5": "iPad mini",
-        "iPad2,6": "iPad mini",
-        "iPad2,7": "iPad mini",
-        "iPad3,1": "iPad (3rd generation)",
-        "iPad3,2": "iPad (3rd generation)",
-        "iPad3,3": "iPad (3rd generation)",
-        "iPad3,4": "iPad (4th generation)",
-        "iPad3,5": "iPad (4th generation)",
-        "iPad3,6": "iPad (4th generation)",
-        "iPad4,1": "iPad Air",
-        "iPad4,2": "iPad Air",
-        "iPad4,3": "iPad Air",
-        "iPad4,4": "iPad mini 2",
-        "iPad4,5": "iPad mini 2",
-        "iPad4,6": "iPad mini 2",
-        "iPad4,7": "iPad mini 3",
-        "iPad4,8": "iPad mini 3",
-        "iPad4,9": "iPad mini 3",
-        "iPad5,1": "iPad mini 4",
-        "iPad5,2": "iPad mini 4",
-        "iPad5,3": "iPad Air 2",
-        "iPad5,4": "iPad Air 2",
         "iPad6,11": "iPad (5th generation)",
         "iPad6,12": "iPad (5th generation)",
         "iPad6,3": "iPad Pro (9.7-inch)",
@@ -148,8 +121,6 @@ enum DeviceModelCatalog {
         "iPad8,7": "iPad Pro 12.9-inch (3rd generation)",
         "iPad8,8": "iPad Pro 12.9-inch (3rd generation)",
         "iPad8,9": "iPad Pro 11-inch (2nd generation)",
-        "iPhone1,1": "iPhone",
-        "iPhone1,2": "iPhone 3G",
         "iPhone10,1": "iPhone 8",
         "iPhone10,2": "iPhone 8 Plus",
         "iPhone10,3": "iPhone X",
@@ -193,33 +164,6 @@ enum DeviceModelCatalog {
         "iPhone18,5": "iPhone 17e",
         "iPhone19,2": "iPhone 18 Pro",
         "iPhone19,3": "iPhone 18 Pro Max",
-        "iPhone19,7": "iPhone 18 Pro Max",
-        "iPhone2,1": "iPhone 3GS",
-        "iPhone3,1": "iPhone 4",
-        "iPhone3,2": "iPhone 4",
-        "iPhone3,3": "iPhone 4",
-        "iPhone4,1": "iPhone 4s",
-        "iPhone5,1": "iPhone 5",
-        "iPhone5,2": "iPhone 5",
-        "iPhone5,3": "iPhone 5c",
-        "iPhone5,4": "iPhone 5c",
-        "iPhone6,1": "iPhone 5s",
-        "iPhone6,2": "iPhone 5s",
-        "iPhone7,1": "iPhone 6 Plus",
-        "iPhone7,2": "iPhone 6",
-        "iPhone8,1": "iPhone 6s",
-        "iPhone8,2": "iPhone 6s Plus",
-        "iPhone8,4": "iPhone SE (1st generation)",
-        "iPhone9,1": "iPhone 7",
-        "iPhone9,2": "iPhone 7 Plus",
-        "iPhone9,3": "iPhone 7",
-        "iPhone9,4": "iPhone 7 Plus",
-        "iPod1,1": "iPod touch (1st generation)",
-        "iPod2,1": "iPod touch (2nd generation)",
-        "iPod3,1": "iPod touch (3rd generation)",
-        "iPod4,1": "iPod touch (4th generation)",
-        "iPod5,1": "iPod touch (5th generation)",
-        "iPod7,1": "iPod touch (6th generation)",
-        "iPod9,1": "iPod touch (7th generation)"
+        "iPhone19,7": "iPhone 18 Pro Max"
     ]
 }

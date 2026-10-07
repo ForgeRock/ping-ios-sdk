@@ -20,20 +20,35 @@ import UIKit
 ///
 /// This collector gathers comprehensive information about the iOS platform,
 /// device model, system version, localization settings, and security status.
+///
+/// The commercial device model name (`PlatformInfo.modelName`) is opt-in:
+/// construct with `PlatformCollector(includeModelName: true)` to resolve it.
 public class PlatformCollector: DeviceCollector, @unchecked Sendable {
     public typealias DataType = PlatformInfo
-    
+
     /// Unique identifier for platform information data
     public let key = "platform"
-    
+
+    /// Whether `PlatformInfo.modelName` should be resolved from the raw
+    /// hardware model identifier. Off by default, so the platform payload is
+    /// identical to previous SDK versions unless the app opts in.
+    private let includeModelName: Bool
+
     /// Collects comprehensive platform information
     /// - Returns: PlatformInfo containing system and device details
     public func collect() async -> PlatformInfo? {
-        return await PlatformInfo()
+        return await PlatformInfo(includeModelName: includeModelName)
     }
-    
+
     /// Initializes a new instance
-    public init() {}
+    /// - Parameter includeModelName: Pass `true` to resolve the commercial
+    ///   (marketing) device name into `PlatformInfo.modelName`. Defaults to
+    ///   `false`, keeping the platform payload identical to previous SDK
+    ///   versions (see the `DeviceProfile` README for the profile-matching
+    ///   impact of opting in).
+    public init(includeModelName: Bool = false) {
+        self.includeModelName = includeModelName
+    }
 }
 
 // MARK: - PlatformInfo
@@ -58,11 +73,14 @@ public struct PlatformInfo: Codable, Sendable {
     /// Specific device model identifier (e.g., "iPhone15,2")
     /// - Note: This is the technical model identifier, not the marketing name.
     ///   It remains the raw hardware identifier (as returned by `uname()`);
-    ///   use `modelName` for the commercial (marketing) name.
+    ///   when resolved (see `modelName`), the commercial (marketing) name
+    ///   is available there.
     let model: String
 
     /// Commercial (marketing) device name resolved from `model` (e.g., "iPhone 14 Pro")
-    /// - Note: May be nil if the identifier is not recognized — e.g. Simulator
+    /// - Note: Resolved only when the collector was created with
+    ///   `PlatformCollector(includeModelName: true)`. When resolved, it is
+    ///   still `nil` if the identifier is not recognized — e.g. Simulator
     ///   machine strings ("arm64", "x86_64"), Mac identifiers, or hardware
     ///   released after the static `DeviceModelCatalog` was generated.
     ///   Resolution is an offline, exact dictionary lookup via
@@ -83,19 +101,33 @@ public struct PlatformInfo: Codable, Sendable {
     let jailBreakScore: Double
     
     /// Initializes platform information by collecting system details
+    /// - Note: `modelName` is not resolved; pass `includeModelName: true` or
+    ///   use `PlatformCollector(includeModelName: true)` and `collect()` to
+    ///   produce platform information with the commercial device name.
     init() async {
-        await self.init(model: Self.getDeviceModel())
+        await self.init(includeModelName: false)
+    }
+
+    /// Initializes platform information by collecting system details
+    /// - Parameter includeModelName: Pass `true` to also resolve the commercial
+    ///   (marketing) device name into `modelName`.
+    init(includeModelName: Bool) async {
+        await self.init(model: Self.getDeviceModel(), includeModelName: includeModelName)
     }
 
     /// Initializes platform information for the given hardware model identifier
-    /// - Parameter model: Raw hardware identifier (e.g., "iPhone15,2")
+    /// - Parameters:
+    ///   - model: Raw hardware identifier (e.g., "iPhone15,2")
+    ///   - includeModelName: Pass `true` to resolve the commercial (marketing)
+    ///     device name into `modelName`.
     ///
     /// Everything other than the model is collected from the running system.
-    /// `init()` passes the identifier reported by `uname()`; tests pass a fixed
-    /// one, because on the iOS Simulator `uname()` reports the host architecture
-    /// ("arm64"), so `modelName` could never be exercised with a resolvable
-    /// identifier through `init()`.
-    init(model: String) async {
+    /// `PlatformCollector.collect()` passes the identifier reported by
+    /// `uname()`; tests pass a fixed one, because on the iOS Simulator
+    /// `uname()` reports the host architecture ("arm64"), so `modelName`
+    /// could never be exercised with a resolvable identifier through
+    /// `PlatformInfo()`.
+    init(model: String, includeModelName: Bool) async {
         #if canImport(UIKit)
         self.platform = await UIDevice.current.systemName
         self.version = await UIDevice.current.systemVersion
@@ -109,9 +141,9 @@ public struct PlatformInfo: Codable, Sendable {
         self.deviceName = Host.current().localizedName ?? "Mac"
         #endif
         self.model = model
-        // Resolved from the same identifier; an unrecognized identifier
-        // (Simulator, Mac, newer hardware) yields nil — see `modelName` docs.
-        self.modelName = DeviceModelResolver.commercialName(for: model)
+        // Resolved from the same identifier only when the collector opted in;
+        // nil otherwise (see `modelName` docs for the unresolved-identifier case).
+        self.modelName = includeModelName ? DeviceModelResolver.commercialName(for: model) : nil
         self.brand = "Apple"
         self.locale = Locale.current.language.languageCode?.identifier
         self.timeZone = TimeZone.current.identifier

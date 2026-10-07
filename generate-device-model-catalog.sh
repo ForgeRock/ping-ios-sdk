@@ -52,29 +52,10 @@ IOS_FAMILY_PATTERN = re.compile(r"(?:iPhone|iPad|iPod)\d+,\d+\Z")
 # where Apple's name alone would be ambiguous (e.g. "iPad Pro 12.9-inch (2nd
 # generation)"); connectivity variants (Wi-Fi / Cellular) share one name.
 KNOWN_NAMES = {
-    # iPhone
-    "iPhone1,1": "iPhone",
-    "iPhone1,2": "iPhone 3G",
-    "iPhone2,1": "iPhone 3GS",
-    "iPhone3,1": "iPhone 4",
-    "iPhone3,2": "iPhone 4",
-    "iPhone3,3": "iPhone 4",
-    "iPhone4,1": "iPhone 4s",
-    "iPhone5,1": "iPhone 5",
-    "iPhone5,2": "iPhone 5",
-    "iPhone5,3": "iPhone 5c",
-    "iPhone5,4": "iPhone 5c",
-    "iPhone6,1": "iPhone 5s",
-    "iPhone6,2": "iPhone 5s",
-    "iPhone7,1": "iPhone 6 Plus",
-    "iPhone7,2": "iPhone 6",
-    "iPhone8,1": "iPhone 6s",
-    "iPhone8,2": "iPhone 6s Plus",
-    "iPhone8,4": "iPhone SE (1st generation)",
-    "iPhone9,1": "iPhone 7",
-    "iPhone9,2": "iPhone 7 Plus",
-    "iPhone9,3": "iPhone 7",
-    "iPhone9,4": "iPhone 7 Plus",
+    # iPhone — identifiers of devices that cannot run iOS 16 (the SDK's
+    # deployment target) are excluded: iPhone 7 / 7 Plus and older max out at
+    # iOS 15.8.x. iPhone 8 / 8 Plus / X (iPhone10,x) run iOS 16 (16.7.10) and
+    # are the oldest entries kept.
     "iPhone10,1": "iPhone 8",
     "iPhone10,2": "iPhone 8 Plus",
     "iPhone10,3": "iPhone X",
@@ -119,43 +100,13 @@ KNOWN_NAMES = {
     "iPhone19,2": "iPhone 18 Pro",
     "iPhone19,3": "iPhone 18 Pro Max",
     "iPhone19,7": "iPhone 18 Pro Max",
-    # iPod touch (discontinued line; last generation is the 7th)
-    "iPod1,1": "iPod touch (1st generation)",
-    "iPod2,1": "iPod touch (2nd generation)",
-    "iPod3,1": "iPod touch (3rd generation)",
-    "iPod4,1": "iPod touch (4th generation)",
-    "iPod5,1": "iPod touch (5th generation)",
-    "iPod7,1": "iPod touch (6th generation)",
-    "iPod9,1": "iPod touch (7th generation)",
-    # iPad
-    "iPad1,1": "iPad",
-    "iPad1,2": "iPad",
-    "iPad2,1": "iPad 2",
-    "iPad2,2": "iPad 2",
-    "iPad2,3": "iPad 2",
-    "iPad2,4": "iPad 2",
-    "iPad2,5": "iPad mini",
-    "iPad2,6": "iPad mini",
-    "iPad2,7": "iPad mini",
-    "iPad3,1": "iPad (3rd generation)",
-    "iPad3,2": "iPad (3rd generation)",
-    "iPad3,3": "iPad (3rd generation)",
-    "iPad3,4": "iPad (4th generation)",
-    "iPad3,5": "iPad (4th generation)",
-    "iPad3,6": "iPad (4th generation)",
-    "iPad4,1": "iPad Air",
-    "iPad4,2": "iPad Air",
-    "iPad4,3": "iPad Air",
-    "iPad4,4": "iPad mini 2",
-    "iPad4,5": "iPad mini 2",
-    "iPad4,6": "iPad mini 2",
-    "iPad4,7": "iPad mini 3",
-    "iPad4,8": "iPad mini 3",
-    "iPad4,9": "iPad mini 3",
-    "iPad5,1": "iPad mini 4",
-    "iPad5,2": "iPad mini 4",
-    "iPad5,3": "iPad Air 2",
-    "iPad5,4": "iPad Air 2",
+    # iPod touch — discontinued line (last generation is the 7th, max iOS
+    # 15.8.x); no iPod can run iOS 16, so the whole family is excluded.
+    # iPad — same iOS 16 floor as iPhone: iPad Air 2 (iPad5,3/5,4) and iPad
+    # mini 4 (iPad5,1/5,2) max out at iOS 15.8.x, the iPad 1–4 / Air 1 /
+    # mini 1–3 families at iOS 12.5.7 or lower. iPad (5th gen) and the
+    # 9.7-inch / 12.9-inch (1st gen) iPad Pros (iPad6,x) run iPadOS 16
+    # (16.7.10) and are the oldest entries kept.
     "iPad6,3": "iPad Pro (9.7-inch)",
     "iPad6,4": "iPad Pro (9.7-inch)",
     "iPad6,7": "iPad Pro 12.9-inch (1st generation)",
@@ -301,7 +252,8 @@ generated = """\
 //  Review note: commercial names in this catalog are curated against Apple's
 //  "Identify your iPhone/iPad model" support articles. Identifiers without a
 //  verified commercial name are intentionally omitted (they resolve to nil at
-//  runtime).
+//  runtime). Identifiers of devices that cannot run iOS 16 — the SDK's
+//  deployment target (Package.swift / podspec) — are excluded as unreachable.
 //
 
 import Foundation

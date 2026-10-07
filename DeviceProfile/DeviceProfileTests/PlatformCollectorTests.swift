@@ -104,12 +104,16 @@ class PlatformCollectorTests: XCTestCase {
     }
 
     func testModelNameMatchesResolver() async {
-        let platformInfo = await PlatformInfo()
+        // Pins the real-hardware path: the opt-in collector feeds `uname()` into
+        // the resolver. On the Simulator both sides are nil (uname reports the
+        // host architecture); on real hardware both resolve, so the equality
+        // holds in both environments. The deterministic resolved-name behavior
+        // is covered by the "modelName Wire Format Tests" below.
+        let platformInfo = await PlatformCollector(includeModelName: true).collect()
+        guard let platformInfo else {
+            return XCTFail("PlatformCollector(includeModelName: true) should return PlatformInfo")
+        }
 
-        // Pins the real-hardware path (`init()` feeds `uname()` into the resolver).
-        // On the Simulator both sides are nil, so the deterministic tests in
-        // "modelName Wire Format Tests" below are what verify the resolved-name
-        // behavior in CI.
         XCTAssertEqual(platformInfo.modelName,
                        DeviceModelResolver.commercialName(for: platformInfo.model),
                        "modelName should be exactly DeviceModelResolver.commercialName(for: model)")
@@ -133,7 +137,7 @@ class PlatformCollectorTests: XCTestCase {
         XCTAssertEqual(platformInfo.deviceName, decodedInfo.deviceName)
         XCTAssertEqual(platformInfo.model, decodedInfo.model)
         XCTAssertEqual(platformInfo.modelName, decodedInfo.modelName,
-                       "modelName should round-trip through Codable (non-nil case)")
+                       "modelName should round-trip through Codable (nil case on Simulator); the non-nil case is covered by the wire-format tests")
         XCTAssertEqual(platformInfo.brand, decodedInfo.brand)
         XCTAssertEqual(platformInfo.locale, decodedInfo.locale)
         XCTAssertEqual(platformInfo.timeZone, decodedInfo.timeZone)
@@ -214,10 +218,11 @@ class PlatformCollectorTests: XCTestCase {
     
     // MARK: - modelName Wire Format Tests
 
-    // `PlatformInfo.init()` reads `uname()`, which on the iOS Simulator reports the host
-    // architecture ("arm64") rather than a device identifier, so `modelName` is always nil
-    // there. These tests inject the hardware identifier through `PlatformInfo(model:)` so
-    // the resolved-name path and the encoded payload are verified on every host.
+    // `PlatformInfo()` reads `uname()`, which on the iOS Simulator reports the host
+    // architecture ("arm64") rather than a device identifier, and `modelName` is
+    // opt-in (`includeModelName: true`) on top of that. These tests inject the
+    // hardware identifier through `PlatformInfo(model:includeModelName:)` so the
+    // resolved-name path and the encoded payload are verified on every host.
 
     /// Keys the SDK sent before `modelName` existed. `locale` is optional and absent when
     /// the system has no language code, so it is excluded from key-set comparisons.
@@ -232,7 +237,7 @@ class PlatformCollectorTests: XCTestCase {
     }
 
     func testModelNameResolvedForRecognizedIdentifier() async {
-        let platformInfo = await PlatformInfo(model: "iPhone15,2")
+        let platformInfo = await PlatformInfo(model: "iPhone15,2", includeModelName: true)
 
         XCTAssertEqual(platformInfo.model, "iPhone15,2",
                        "model must keep carrying the raw hardware identifier")
@@ -242,7 +247,7 @@ class PlatformCollectorTests: XCTestCase {
     func testModelNameIsNilForUnrecognizedIdentifier() async {
         // Simulator machine strings, hardware newer than the catalog, and an empty string
         for identifier in ["arm64", "x86_64", "iPhone99,9", ""] {
-            let platformInfo = await PlatformInfo(model: identifier)
+            let platformInfo = await PlatformInfo(model: identifier, includeModelName: true)
 
             XCTAssertEqual(platformInfo.model, identifier,
                            "model must carry the raw identifier even when it is not recognized")
@@ -251,8 +256,23 @@ class PlatformCollectorTests: XCTestCase {
         }
     }
 
+    func testModelNameNotResolvedByDefault() async {
+        // Default-off opt-in: identical model input, no resolution, whether or
+        // not the identifier is in the catalog.
+        for identifier in ["iPhone15,2", "iPhone99,9"] {
+            let platformInfo = await PlatformInfo(model: identifier, includeModelName: false)
+
+            XCTAssertEqual(platformInfo.model, identifier)
+            XCTAssertNil(platformInfo.modelName,
+                         "modelName must stay nil when resolution was not opted into")
+        }
+        let collected = await PlatformCollector().collect()
+        XCTAssertNil(collected?.modelName,
+                     "PlatformCollector()'s default init must not resolve modelName")
+    }
+
     func testEncodedPayloadForRecognizedIdentifierAddsOnlyModelName() async throws {
-        let platformInfo = await PlatformInfo(model: "iPhone15,2")
+        let platformInfo = await PlatformInfo(model: "iPhone15,2", includeModelName: true)
         let json = try encodedPayload(of: platformInfo)
 
         XCTAssertEqual(json["model"] as? String, "iPhone15,2",
@@ -264,17 +284,21 @@ class PlatformCollectorTests: XCTestCase {
                        "modelName must be the only key added to the platform payload")
     }
 
-    func testEncodedPayloadForUnrecognizedIdentifierMatchesPreviousSDKVersions() async throws {
-        // The Simulator and any hardware newer than the catalog take this path. The payload
-        // must be exactly what earlier SDK versions sent — `modelName` absent, not null — so
-        // server-side profile matching (e.g. PingAM's Device Match node) sees no new attribute.
-        let platformInfo = await PlatformInfo(model: "arm64")
-        let json = try encodedPayload(of: platformInfo)
+    func testEncodedPayloadForUnresolvedNameMatchesPreviousSDKVersions() async throws {
+        // The Simulator, hardware newer than the catalog, and any collection that
+        // did not opt in all take this path. The payload must be exactly what
+        // earlier SDK versions sent — `modelName` absent, not null — so
+        // server-side profile matching (e.g. PingAM's Device Match node) sees no
+        // new attribute.
+        for identifier in ["arm64", "iPhone15,2"] {
+            let platformInfo = await PlatformInfo(model: identifier, includeModelName: false)
+            let json = try encodedPayload(of: platformInfo)
 
-        XCTAssertEqual(json["model"] as? String, "arm64")
-        XCTAssertNil(json["modelName"], "modelName must be absent, not null, when unresolved")
-        XCTAssertEqual(Set(json.keys).subtracting(["locale"]), Self.legacyPayloadKeys,
-                       "an unrecognized identifier must not change the platform payload")
+            XCTAssertEqual(json["model"] as? String, identifier)
+            XCTAssertNil(json["modelName"], "modelName must be absent, not null, when not opted in")
+            XCTAssertEqual(Set(json.keys).subtracting(["locale"]), Self.legacyPayloadKeys,
+                           "a non-opted-in collection must not change the platform payload")
+        }
     }
 
     func testDecodingPayloadFromPreviousSDKVersionWithoutModelName() throws {
@@ -293,8 +317,9 @@ class PlatformCollectorTests: XCTestCase {
 
     func testModelNameRoundTripsThroughCodableForRecognizedIdentifier() async throws {
         // Covers the non-nil encode and decode path on every host; on the Simulator
-        // `PlatformInfo()` never resolves a name, so testPlatformInfoCodable only round-trips nil.
-        let original = await PlatformInfo(model: "iPhone15,2")
+        // an opt-in `PlatformInfo()` never resolves a name, so testPlatformInfoCodable
+        // only round-trips nil.
+        let original = await PlatformInfo(model: "iPhone15,2", includeModelName: true)
         let decoded = try JSONDecoder().decode(PlatformInfo.self, from: JSONEncoder().encode(original))
 
         XCTAssertEqual(decoded.model, "iPhone15,2")
@@ -455,7 +480,7 @@ class PlatformCollectorTests: XCTestCase {
         let iterations = 10
         
         await withTaskGroup(of: PlatformInfo?.self) { group in
-            let testCollector = PlatformCollector()
+            let testCollector = PlatformCollector(includeModelName: true)
             for _ in 0..<iterations {
                 group.addTask {
                     return await testCollector.collect()
@@ -548,8 +573,8 @@ class PlatformCollectorTests: XCTestCase {
     // MARK: - Validation Helper Tests
     
     func testPlatformInfoEquality() async {
-        let info1 = await PlatformInfo()
-        let info2 = await PlatformInfo()
+        let info1 = await PlatformInfo(model: "iPhone15,2", includeModelName: true)
+        let info2 = await PlatformInfo(model: "iPhone15,2", includeModelName: true)
         
         // All platform info should be identical across instances
         XCTAssertEqual(info1.platform, info2.platform)
