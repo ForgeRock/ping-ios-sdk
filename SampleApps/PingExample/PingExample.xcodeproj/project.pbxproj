@@ -131,14 +131,10 @@
 		76E9B7DE304AFD300071590C /* CheckBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA96C2D35F2F800F771FE /* CheckBoxView.swift */; };
 		76E9B7DF304AFD300071590C /* PolicySelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B18D6492EF0E7000004F205 /* PolicySelectionView.swift */; };
 		76E9B7E0304AFD300071590C /* ScenePhaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC52B0C2E81AF5B00C468C7 /* ScenePhaseManager.swift */; };
-		76E9B7E1304AFD300071590C /* ErrorMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEDE2D30CA2C000533ED /* ErrorMessageView.swift */; };
 		76E9B7E2304AFD300071590C /* UserInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AED12D303804000533ED /* UserInfoViewModel.swift */; };
 		76E9B7E3304AFD300071590C /* ComboBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5EFA97C2D35F78700F771FE /* ComboBoxView.swift */; };
 		76E9B7E4304AFD300071590C /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A5F7FF2D4C64490053BF24 /* ErrorView.swift */; };
-		76E9B7E5304AFD300071590C /* TabPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCD12340001000100010002 /* TabPicker.swift */; };
-		76E9B7E6304AFD300071590C /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCD12340002000200020002 /* EmptyStateView.swift */; };
 		76E9B7E7304AFD300071590C /* SubmitButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5E9AEE02D30D301000533ED /* SubmitButtonView.swift */; };
-		76E9B7E8304AFD300071590C /* CustomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8092F32BE99F0F00AD667F /* CustomViews.swift */; };
 		76E9B7E9304AFD300071590C /* OidcLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC23D56F2E2E8ECF00C43D42 /* OidcLoginView.swift */; };
 		76E9B7EA304AFD300071590C /* DeviceFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5517AB32FB5007B00E575CF /* DeviceFlowView.swift */; };
 		76E9B7EB304AFD300071590C /* ApproveDeviceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5517AC02FB5007B00E575CF /* ApproveDeviceView.swift */; };
@@ -340,8 +336,12 @@
 		D5A100000000000000000004 /* PingDesignSystemImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A100000000000000000003 /* PingDesignSystemImport.swift */; };
 		CAF10002FACE000000000001 /* RecognizeEnrollCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF10001FACE000000000001 /* RecognizeEnrollCallbackView.swift */; };
 		CAF10004FACE000000000001 /* RecognizeAuthenticateCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF10003FACE000000000001 /* RecognizeAuthenticateCallbackView.swift */; };
+		CAF10005FACE000000000001 /* PingDesignSystemImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A100000000000000000003 /* PingDesignSystemImport.swift */; };
+		CAF10007FACE000000000001 /* PingOneMFADavinciPairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A000010000000000000012 /* PingOneMFADavinciPairingView.swift */; };
+		CAF10008FACE000000000001 /* MobilePairingCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A000010000000000000013 /* MobilePairingCollectorView.swift */; };
 		CAF3100C2BCDF10900385131 /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = EC92B38E2DA03E0700E4246D /* SVGKit */; };
 		CAF3100D2BCDF10900385131 /* SVGKitSwift in Frameworks */ = {isa = PBXBuildFile; productRef = EC92B3902DA03E0700E4246D /* SVGKitSwift */; };
+		CAF10009FACE000000000001 /* PingDesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = A58CEA4B3058DE0600646689 /* PingDesignSystem */; };
 		CB786C6B2B5F4E02A11AA691 /* PingRecognize.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 53B74567F879D1C1EA250FC5 /* PingRecognize.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FB91FE2D4F274E8598623F24 /* KeylessSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B7A4BB72AB7D4F51B8EDD3D5 /* KeylessSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B4A000010000000000000002 /* PingOneMFADavinciPairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A000010000000000000012 /* PingOneMFADavinciPairingView.swift */; };
@@ -1165,6 +1165,7 @@
 				33890A96736247E4A2A87CCE /* FacebookCore in Frameworks */,
 				32D4C9157C6B4DAD8EC987C5 /* FacebookLogin in Frameworks */,
 				AC5BED6127AA4D6798BDFFF7 /* PingOneSDK in Frameworks */,
+				CAF10009FACE000000000001 /* PingDesignSystem in Frameworks */,
 				76E9B813304AFD300071590C /* PingOneMFA.framework in Frameworks */,
 				76E9B814304AFD300071590C /* PingBrowser.framework in Frameworks */,
 				76E9B815304AFD300071590C /* (null) in Frameworks */,
@@ -1801,6 +1802,9 @@
 			dependencies = (
 			);
 			name = PingExampleWithRecognize;
+			packageProductDependencies = (
+				A58CEA4B3058DE0600646689 /* PingDesignSystem */,
+			);
 			productName = PingExampleWithRecognize;
 			productReference = CAF310022BCDF10900385131 /* PingExampleWithRecognize.app */;
 			productType = "com.apple.product-type.application";
@@ -2641,14 +2645,10 @@
 				76E9B7DE304AFD300071590C /* CheckBoxView.swift in Sources */,
 				76E9B7DF304AFD300071590C /* PolicySelectionView.swift in Sources */,
 				76E9B7E0304AFD300071590C /* ScenePhaseManager.swift in Sources */,
-				76E9B7E1304AFD300071590C /* ErrorMessageView.swift in Sources */,
 				76E9B7E2304AFD300071590C /* UserInfoViewModel.swift in Sources */,
 				76E9B7E3304AFD300071590C /* ComboBoxView.swift in Sources */,
 				76E9B7E4304AFD300071590C /* ErrorView.swift in Sources */,
-				76E9B7E5304AFD300071590C /* TabPicker.swift in Sources */,
-				76E9B7E6304AFD300071590C /* EmptyStateView.swift in Sources */,
 				76E9B7E7304AFD300071590C /* SubmitButtonView.swift in Sources */,
-				76E9B7E8304AFD300071590C /* CustomViews.swift in Sources */,
 				76E9B7E9304AFD300071590C /* OidcLoginView.swift in Sources */,
 				76E9B7EA304AFD300071590C /* DeviceFlowView.swift in Sources */,
 				76E9B7EB304AFD300071590C /* ApproveDeviceView.swift in Sources */,
@@ -2693,6 +2693,9 @@
 				76E9B812304AFD300071590C /* PingOneMFANotificationView.swift in Sources */,
 				CAF10002FACE000000000001 /* RecognizeEnrollCallbackView.swift in Sources */,
 				CAF10004FACE000000000001 /* RecognizeAuthenticateCallbackView.swift in Sources */,
+				CAF10005FACE000000000001 /* PingDesignSystemImport.swift in Sources */,
+				CAF10007FACE000000000001 /* PingOneMFADavinciPairingView.swift in Sources */,
+				CAF10008FACE000000000001 /* MobilePairingCollectorView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
