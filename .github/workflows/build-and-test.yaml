@@ -92,8 +92,13 @@ jobs:
           # project-local .swiftpm/, which xcodebuild does not read. It must go
           # to the user-level config (~/.swiftpm/configuration/registries.json).
           swift package-registry set --global --scope keyless https://swift.cloudsmith.io/keyless/partners/
-          printf 'machine swift.cloudsmith.io\nlogin pingidentity\npassword %s\n' "$CLOUDSMITH_KEYLESS_TOKEN" > ~/.netrc
-          chmod 600 ~/.netrc
+          # Authenticate via `login` (mirrors the local setup): it records the
+          # token-type auth config in registries.json and stores the credential
+          # in the macOS keychain, which xcodebuild's SwiftPM consults for
+          # registry requests. A bare ~/.netrc entry is NOT read by xcodebuild
+          # on macOS — CI proved that (401 "package not found" with netrc only).
+          swift package-registry login https://swift.cloudsmith.io/keyless/partners/ \
+            --token "$CLOUDSMITH_KEYLESS_TOKEN" --no-confirm
           touch Recognize/.registry-enabled
 
       # The test plan's RecognizeTests entry resolves through the workspace graph
