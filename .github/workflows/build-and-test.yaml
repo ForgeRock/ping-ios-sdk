@@ -181,6 +181,8 @@ jobs:
       # Package.resolved let xcodebuild resolve without touching the registry.
       - name: Prime KeylessSDK via swift CLI (netrc auth)
         if: ${{ env.CLOUDSMITH_KEYLESS_TOKEN != '' }}
+        env:
+          CLOUDSMITH_KEYLESS_TOKEN: ${{ secrets.CLOUDSMITH_KEYLESS_TOKEN }}
         run: |
           set -o pipefail
           swift package resolve | xcbeautify || \
