@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'PingJourneyPlugin'
-  s.version          = '2.1.0'
+  s.version          = '2.2.0'
   s.summary          = 'Journey Plugin for PingJourney SDK'
   s.description      = <<-DESC
     The PingJourneyPlugin provides plugin functionality for the PingJourney SDK.
@@ -24,6 +24,6 @@ Pod::Spec.new do |s|
     'JourneyPlugin' => [base_dir + '/*.xcprivacy']
   }
   
-  s.dependency 'PingOrchestrate', '~> 2.1.0'
-  s.dependency 'PingLogger', '~> 2.1.0'
+  s.dependency 'PingOrchestrate', '~> 2.2.0'
+  s.dependency 'PingLogger', '~> 2.2.0'
 end
