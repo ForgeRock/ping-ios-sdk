@@ -16,6 +16,9 @@ on:
       DAVINCI_E2E_CONFIG:
         description: 'DaVinci e2e test configuration JSON'
         required: false
+      CLOUDSMITH_KEYLESS_TOKEN:
+        description: 'Cloudsmith API key for the private Keyless registry (keyless scope). Required to run RecognizeTests; absent on fork PRs, which then skip those tests.'
+        required: false
   
 env:
   WORKSPACE: SampleApps/Ping.xcworkspace
@@ -75,6 +78,54 @@ jobs:
           chmod +x product/xcresultparser
           sudo mv product/xcresultparser /usr/local/bin/
 
+      # RecognizeTests depends on KeylessSDK from the private Cloudsmith registry.
+      # When the token secret is present (internal PRs, branch pushes, /run-ci fork runs),
+      # configure the registry and enable the Recognize targets. Fork PRs have no access
+      # to secrets, so RecognizeTests is stripped from the test plan instead — everything
+      # else still runs.
+      - name: Configure Cloudsmith registry (Recognize)
+        if: ${{ env.CLOUDSMITH_KEYLESS_TOKEN != '' }}
+        env:
+          CLOUDSMITH_KEYLESS_TOKEN: ${{ secrets.CLOUDSMITH_KEYLESS_TOKEN }}
+        run: |
+          # Probes Cloudsmith with the secret to pick the matching auth scheme, then writes the
+          # SwiftPM registry config and stores the credential in a dedicated keychain. The
+          # keychain (not ~/.netrc) is mandatory: SwiftPM 6.2 on macOS only consults the
+          # keychain for registry credentials. See the script for details.
+          .github/scripts/configure-keyless-registry.sh
+          touch Recognize/.registry-enabled
+
+      # The test plan's RecognizeTests entry resolves through the workspace graph
+      # (container:../Recognize/Recognize.xcodeproj). Ping.xcworkspace cannot reference
+      # Recognize.xcodeproj — that would break local builds for users without registry
+      # credentials — so swap to PingWithRecognize.xcworkspace when the registry is
+      # configured. All other test targets resolve identically in both workspaces;
+      # fork PRs keep Ping.xcworkspace and strip the entry instead (step below).
+      - name: Select Recognize workspace
+        if: ${{ env.CLOUDSMITH_KEYLESS_TOKEN != '' }}
+        env:
+          CLOUDSMITH_KEYLESS_TOKEN: ${{ secrets.CLOUDSMITH_KEYLESS_TOKEN }}
+        run: echo "WORKSPACE=SampleApps/PingWithRecognize.xcworkspace" >> "$GITHUB_ENV"
+
+      - name: Strip RecognizeTests from test plan (no registry on fork PRs)
+        if: ${{ env.CLOUDSMITH_KEYLESS_TOKEN == '' }}
+        env:
+          CLOUDSMITH_KEYLESS_TOKEN: ${{ secrets.CLOUDSMITH_KEYLESS_TOKEN }}
+        run: |
+          python3 - <<'EOF'
+          import json
+          path = "PingTestHost/PingTestHost.xctestplan"
+          with open(path) as f:
+              plan = json.load(f)
+          plan["testTargets"] = [
+              t for t in plan["testTargets"]
+              if t.get("target", {}).get("name") != "RecognizeTests"
+          ]
+          with open(path, "w") as f:
+              json.dump(plan, f, indent=2)
+          print("RecognizeTests removed from test plan (Keyless registry unavailable)")
+          EOF
+
       - name: Reset simulators
         run: |
           xcrun simctl shutdown all || true
@@ -88,6 +139,21 @@ jobs:
       - name: Pre-boot Simulator
         run: |
           xcrun simctl bootstatus "iPhone 17" -b || true
+
+      # Resolve the root package with the standalone swift CLI before xcodebuild. This is a
+      # second, independent check of the registry configuration written above (keychain item +
+      # registries.json). If it passes while the xcodebuild step below fails to authenticate,
+      # xcodebuild's embedded SwiftPM is not honoring that configuration. Whether the fetched
+      # package is reused by xcodebuild (which uses its own SourcePackages directory) is not
+      # established, so this step is a diagnostic first and a cache warm-up at best.
+      - name: Resolve KeylessSDK via swift CLI (registry check)
+        if: ${{ env.CLOUDSMITH_KEYLESS_TOKEN != '' }}
+        env:
+          CLOUDSMITH_KEYLESS_TOKEN: ${{ secrets.CLOUDSMITH_KEYLESS_TOKEN }}
+        run: |
+          set -o pipefail
+          swift package resolve | xcbeautify || \
+            { echo "::error::swift CLI could not resolve keyless.mobile-sdk — the credential was accepted by the probe, so the swift CLI is not applying it (see the configuration step)"; exit 1; }
 
       # Build the SDK for testing
       - name: Build for testing

@@ -5,6 +5,9 @@
       location = "group:PingExample/PingExample.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:../PingTestHost/PingTestHost.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:../Recognize/Recognize.xcodeproj">
    </FileRef>
 </Workspace>

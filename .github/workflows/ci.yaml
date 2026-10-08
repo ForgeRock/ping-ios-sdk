@@ -110,6 +110,7 @@ jobs:
     secrets:
       SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
       DAVINCI_E2E_CONFIG: ${{ secrets.DAVINCI_E2E_CONFIG }}
+      CLOUDSMITH_KEYLESS_TOKEN: ${{ secrets.CLOUDSMITH_KEYLESS_TOKEN }}
 
   # Run Mend CLI Scan — skip for fork PRs (Mend credentials unavailable)
   mend-cli-scan:
