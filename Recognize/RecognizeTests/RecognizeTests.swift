@@ -17,14 +17,34 @@ import PingJourneyPlugin
 
 final class RecognizeErrorTests: XCTestCase {
 
-    func testInitStoresMessage() {
-        let error = RecognizeError("something went wrong", code: 30000)
+    func testInitStoresMessageCodeNameAndSdkCode() {
+        let error = RecognizeError(
+            "something went wrong", code: 3003, name: "CORE_USER_NOT_ENROLLED", sdkCode: 20000
+        )
         XCTAssertEqual(error.message, "something went wrong")
-        XCTAssertEqual(error.code, 30000)
+        XCTAssertEqual(error.code, 3003)
+        XCTAssertEqual(error.name, "CORE_USER_NOT_ENROLLED")
+        XCTAssertEqual(error.sdkCode, 20000)
+    }
+
+    func testNameAndSdkCodeDefaultToNil() {
+        let error = RecognizeError("created without a shared name", code: 5)
+        XCTAssertEqual(error.code, 5)
+        XCTAssertNil(error.name)
+        XCTAssertNil(error.sdkCode)
+    }
+
+    func testClientSideErrorIsSdkErrorWithoutSdkCode() {
+        // Errors raised on-device, before any Keyless SDK call, are reported as SDK_ERROR.
+        let error = AbstractRecognizeCallback.clientSideError("on-device failure")
+        XCTAssertEqual(error.message, "on-device failure")
+        XCTAssertEqual(error.code, 1000)
+        XCTAssertEqual(error.name, "SDK_ERROR")
+        XCTAssertNil(error.sdkCode)
     }
 
     func testErrorDescriptionMatchesMessage() {
-        let error = RecognizeError("network timeout", code: 30005)
+        let error = RecognizeError("network timeout", code: 1007)
         XCTAssertEqual(error.errorDescription, "network timeout")
     }
 
@@ -51,6 +71,153 @@ final class RecognizeErrorTests: XCTestCase {
         )
         XCTAssertEqual(error.debuggingInfo["flowId"], "flow-123")
         XCTAssertEqual(error.debuggingInfo["sessionId"], "session-456")
+    }
+}
+
+// MARK: - SharedErrorCodeTests
+
+final class SharedErrorCodeTests: XCTestCase {
+
+    // MARK: Transcription guard
+
+    /// The shared iOS mapping (version 6.0.0), written out independently of the production
+    /// table: (native Keyless code, shared code, shared name). A typo in either place fails
+    /// the test below. This guards against accidental edits only: it does not read the
+    /// shared model, so when that gains an entry (e.g. native 20024 userProfileError) the
+    /// table and this list have to be updated by hand.
+    private static let expectedMapping: [(native: Int, shared: Int, name: String)] = [
+        (10000, 1000, "SDK_ERROR"),
+        (10001, 1009, "SDK_ARTIFACT_RETRIEVE_FAILED"),
+        (10003, 1003, "SDK_LOGGING_CONFIGURATION_FAILED"),
+        (10004, 2000, "CAMERA_ERROR"),
+        (10005, 1004, "SDK_STORAGE_FAILED"),
+        (10006, 1016, "SDK_INVALID_CUSTOMER_PROPERTIES"),
+        (10100, 4000, "BIOM_ERROR"),
+        (10200, 3000, "CORE_ERROR"),
+        (20000, 3003, "CORE_USER_NOT_ENROLLED"),
+        (20001, 3002, "CORE_USER_ALREADY_ENROLLED"),
+        (20002, 1001, "SDK_NOT_CONFIGURED"),
+        (20010, 1002, "SDK_INVALID_CONFIGURATION"),
+        (20013, 3001, "CORE_NOT_ENOUGH_API_KEY_SEATS"),
+        (20021, 4003, "BIOM_LIVENESS_ENVIRONMENT_AWARE_NOT_SUPPORTED"),
+        (20022, 4004, "BIOM_DEVICE_ENVIRONMENT_AWARE_NOT_SUPPORTED"),
+        (20023, 1010, "SDK_INVALID_CLIENT_STATE"),
+        (20150, 1008, "SDK_DYNAMIC_LINKING_PAYLOAD_MALFORMED"),
+        (20300, 3006, "CORE_SECRET_NOT_FOUND"),
+        (30000, 4002, "BIOM_GENUINE_PRESENCE_NOT_ESTABLISHED"),
+        (30001, 1006, "SDK_TIMEOUT"),
+        (30003, 1005, "SDK_USER_CANCELLED"),
+        (30004, 3004, "CORE_FACE_NOT_MATCHING"),
+        (30005, 1007, "SDK_NO_NETWORK_CONNECTION"),
+        (30007, 3007, "CORE_USER_LOCKED_OUT"),
+        (30008, 4001, "BIOM_REJECTED"),
+        (30009, 2002, "CAMERA_PERMISSION_DENIED"),
+        (30010, 1012, "SDK_OUTDATED_APP"),
+        (40000, 6000, "SECURITY_ERROR"),
+        (40002, 6001, "SECURITY_DEVICE_NOT_GENUINE"),
+    ]
+
+    func testNativeToSharedTableMatchesExpectedMapping() {
+        XCTAssertEqual(SharedErrorCode.nativeToShared.count, Self.expectedMapping.count)
+        XCTAssertEqual(Self.expectedMapping.count, 29)
+        for expected in Self.expectedMapping {
+            let resolved = SharedErrorCode.resolve(nativeCode: expected.native)
+            XCTAssertEqual(resolved.rawValue, expected.shared, "shared code for native \(expected.native)")
+            XCTAssertEqual(resolved.name, expected.name, "shared name for native \(expected.native)")
+            XCTAssertNotNil(SharedErrorCode.nativeToShared[expected.native], "native \(expected.native) must be an explicit entry, not the fallback")
+        }
+    }
+
+    // MARK: The integrator-reported scenario
+
+    /// The reported scenario: a not-enrolled user authenticating surfaced the raw Keyless
+    /// message. After the mapping, native 20000 (userNotEnrolled) resolves to the shared
+    /// CORE_USER_NOT_ENROLLED (3003) — the same name the shared model defines.
+    func testResolveNotEnrolledToSharedCoreUserNotEnrolled() {
+        let resolved = SharedErrorCode.resolve(nativeCode: 20000)
+        XCTAssertEqual(resolved, .coreUserNotEnrolled)
+        XCTAssertEqual(resolved.rawValue, 3003)
+        XCTAssertEqual(resolved.name, "CORE_USER_NOT_ENROLLED")
+    }
+
+    // MARK: Fallback for unmapped native codes
+
+    func testResolveUnmappedNativeCodeFallsBackToSdkError() {
+        // 20024 (userProfileError) exists in the Keyless SDK but is not in the shared mapping.
+        for unmapped in [20024, 99999, 0, -5] {
+            let resolved = SharedErrorCode.resolve(nativeCode: unmapped)
+            XCTAssertEqual(resolved, .sdkError)
+            XCTAssertEqual(resolved.rawValue, 1000)
+            XCTAssertEqual(resolved.name, "SDK_ERROR")
+        }
+    }
+
+    // MARK: Conversion helper (the createRecognizeError counterpart)
+
+    func testRecognizeErrorFromNativeMapsKnownCode() {
+        let error = AbstractRecognizeCallback.recognizeError(
+            fromNativeMessage: "You must be enrolled to perform this action",
+            nativeCode: 20000,
+            debuggingInfo: ["flowId": "flow-1"]
+        )
+        XCTAssertEqual(error.message, "You must be enrolled to perform this action")
+        XCTAssertEqual(error.code, 3003)
+        XCTAssertEqual(error.name, "CORE_USER_NOT_ENROLLED")
+        XCTAssertEqual(error.sdkCode, 20000)
+        XCTAssertEqual(error.errorDescription, "You must be enrolled to perform this action")
+        XCTAssertEqual(error.debuggingInfo["flowId"], "flow-1")
+        // The native code is mirrored into debuggingInfo for log-based debugging.
+        XCTAssertEqual(error.debuggingInfo["sdkCode"], "20000")
+    }
+
+    func testRecognizeErrorFromNativeFallbackPreservesNativeCode() {
+        let error = AbstractRecognizeCallback.recognizeError(
+            fromNativeMessage: "profile error", nativeCode: 20024, debuggingInfo: [:]
+        )
+        XCTAssertEqual(error.code, 1000)
+        XCTAssertEqual(error.name, "SDK_ERROR")
+        XCTAssertEqual(error.sdkCode, 20024)
+        XCTAssertEqual(error.debuggingInfo["sdkCode"], "20024")
+    }
+
+    func testRecognizeErrorFromNativeDoesNotMutatePassedDebuggingInfo() {
+        var info = ["flowId": "flow-1"]
+        _ = AbstractRecognizeCallback.recognizeError(
+            fromNativeMessage: "msg", nativeCode: 20000, debuggingInfo: info
+        )
+        XCTAssertNil(info["sdkCode"])
+        XCTAssertEqual(info["flowId"], "flow-1")
+    }
+
+    // MARK: End-to-end wire value
+
+    private func inputValue(for key: String, in callback: AbstractRecognizeCallback) -> String? {
+        guard let inputs = callback.json["input"] as? [[String: Any]] else { return nil }
+        return inputs.first(where: { ($0["name"] as? String) == key })?["value"] as? String
+    }
+
+    /// `report()` submits the shared error name in `clientError` (the Journey filters on it)
+    /// and the shared code in `clientErrorCode`, not the human message or the native Keyless
+    /// code. The mapping itself is covered by the helper tests above.
+    func testReportSubmitsSharedNameAndCode() async {
+        let inputKeys = [JourneyConstants.inputSignedJwt, JourneyConstants.inputClientState,
+                         JourneyConstants.inputRecognizeId, JourneyConstants.inputDevicePublicSigningKey,
+                         JourneyConstants.inputClientError, JourneyConstants.inputClientErrorCode]
+        let json: [String: Any] = [
+            "input": inputKeys.map { ["name": $0, "value": ""] },
+            "output": [["name": JourneyConstants.operationType, "value": "ENROLL"]],
+            "type": JourneyConstants.pingOneRecognizeCallback
+        ]
+        let cb = RealPathEnrollCallback()
+        _ = await cb.initialize(with: json)
+        cb.keylessEnrollResult = .failure(RecognizeError(
+            "You must be enrolled to perform this action",
+            code: 3003, name: "CORE_USER_NOT_ENROLLED", sdkCode: 20000
+        ))
+        let result = await cb.enroll()
+        guard case .failure = result else { return XCTFail("Expected failure") }
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "CORE_USER_NOT_ENROLLED")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "3003")
     }
 }
 
@@ -526,11 +693,11 @@ final class RealPathEnrollTests: XCTestCase {
 
     func testRealPerformEnrollCeremonyFailurePropagatesWithoutWritingSigningKey() async {
         let cb = await makeCallback()
-        cb.keylessEnrollResult = .failure(RecognizeError("ceremony failed", code: 30001))
+        cb.keylessEnrollResult = .failure(RecognizeError("ceremony failed", code: 1006, name: "SDK_TIMEOUT", sdkCode: 30001))
         let result = await cb.enroll()
         guard case .failure = result else { return XCTFail("Expected failure") }
         XCTAssertEqual(inputValue(for: JourneyConstants.inputDevicePublicSigningKey, in: cb), "")
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "ceremony failed")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "SDK_TIMEOUT")
     }
 }
 
@@ -651,11 +818,11 @@ final class RealPathAuthenticateTests: XCTestCase {
 
     func testRealPerformAuthenticateCeremonyFailurePropagatesWithoutWritingSigningKey() async {
         let cb = await makeCallback()
-        cb.keylessAuthenticateResult = .failure(RecognizeError("ceremony failed", code: 50001))
+        cb.keylessAuthenticateResult = .failure(RecognizeError("ceremony failed", code: 1000, name: "SDK_ERROR", sdkCode: 50001))
         let result = await cb.authenticate()
         guard case .failure = result else { return XCTFail("Expected failure") }
         XCTAssertEqual(inputValue(for: JourneyConstants.inputDevicePublicSigningKey, in: cb), "")
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "ceremony failed")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "SDK_ERROR")
     }
 }
 
@@ -941,9 +1108,15 @@ final class ExecutePathTests: XCTestCase {
         let cb = await makeEnrollCallback(operationType: nil)
         let result = await cb.enroll()
         guard case .failure(let error) = result else { return XCTFail("Expected failure") }
-        XCTAssertEqual((error as? RecognizeError)?.code, AbstractRecognizeCallback.clientSideErrorCode)
+        let recognizeError = error as? RecognizeError
         // Mirrors Android's `require(operationType.isNotEmpty())` message.
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "\"operationType\" is required in the PingOneRecognizeCallback output")
+        XCTAssertEqual(recognizeError?.message, "\"operationType\" is required in the PingOneRecognizeCallback output")
+        XCTAssertEqual(recognizeError?.code, 1000)
+        XCTAssertEqual(recognizeError?.name, "SDK_ERROR")
+        XCTAssertNil(recognizeError?.sdkCode)
+        // The Journey receives the shared SDK_ERROR, like any other unknown error.
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "SDK_ERROR")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "1000")
     }
 
     func testEnrollFailsClosedWhenOperationTypeUnrecognized() async {
@@ -951,56 +1124,61 @@ final class ExecutePathTests: XCTestCase {
         cb.initValue(name: JourneyConstants.operationType, value: "SOMETHING_ELSE")
         let result = await cb.enroll()
         guard case .failure(let error) = result else { return XCTFail("Expected failure") }
-        XCTAssertEqual((error as? RecognizeError)?.code, AbstractRecognizeCallback.clientSideErrorCode)
+        let recognizeError = error as? RecognizeError
         // Mirrors Android's `else -> throw IllegalArgumentException("...is not supported")` message.
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "\"operationType\": \"SOMETHING_ELSE\" is not supported")
+        XCTAssertEqual(recognizeError?.message, "\"operationType\": \"SOMETHING_ELSE\" is not supported")
+        XCTAssertEqual(recognizeError?.name, "SDK_ERROR")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "SDK_ERROR")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "1000")
     }
 
     func testEnrollFailsClosedWhenOperationTypeMixedCase() async {
         let cb = await makeEnrollCallback()
         cb.initValue(name: JourneyConstants.operationType, value: "enroll")
         let result = await cb.enroll()
-        guard case .failure = result else { return XCTFail("Expected failure — exact match only, no case normalization") }
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "\"operationType\": \"enroll\" is not supported")
+        guard case .failure(let error) = result else { return XCTFail("Expected failure — exact match only, no case normalization") }
+        XCTAssertEqual((error as? RecognizeError)?.message, "\"operationType\": \"enroll\" is not supported")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "SDK_ERROR")
     }
 
     func testAuthenticateFailsClosedWhenOperationTypeMissing() async {
         let cb = await makeAuthCallback(operationType: nil)
         let result = await cb.authenticate()
         guard case .failure(let error) = result else { return XCTFail("Expected failure") }
-        XCTAssertEqual((error as? RecognizeError)?.code, AbstractRecognizeCallback.clientSideErrorCode)
-        XCTAssertNotNil(inputValue(for: JourneyConstants.inputClientError, in: cb))
+        XCTAssertEqual((error as? RecognizeError)?.name, "SDK_ERROR")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "SDK_ERROR")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "1000")
     }
 
     // MARK: configure() failure
 
     func testEnrollConfigureFailurePopulatesClientError() async {
         let cb = await makeEnrollCallback()
-        cb.configureResult = RecognizeError("sdk setup failed", code: 10001)
+        cb.configureResult = RecognizeError("sdk setup failed", code: 1009, name: "SDK_ARTIFACT_RETRIEVE_FAILED", sdkCode: 10001)
         let result = await cb.enroll()
         guard case .failure = result else { return XCTFail("Expected failure") }
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "sdk setup failed")
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "10001")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "SDK_ARTIFACT_RETRIEVE_FAILED")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "1009")
     }
 
     func testAuthConfigureFailurePopulatesClientError() async {
         let cb = await makeAuthCallback()
-        cb.configureResult = RecognizeError("setup error", code: 20002)
+        cb.configureResult = RecognizeError("setup error", code: 1001, name: "SDK_NOT_CONFIGURED", sdkCode: 20002)
         let result = await cb.authenticate()
         guard case .failure = result else { return XCTFail("Expected failure") }
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "setup error")
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "20002")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "SDK_NOT_CONFIGURED")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "1001")
     }
 
     // MARK: enroll() failure
 
     func testEnrollFailurePopulatesClientErrorAndCode() async {
         let cb = await makeEnrollCallback()
-        cb.enrollResult = .failure(RecognizeError("enroll failed", code: 30001))
+        cb.enrollResult = .failure(RecognizeError("enroll failed", code: 1006, name: "SDK_TIMEOUT", sdkCode: 30001))
         let result = await cb.enroll()
         guard case .failure = result else { return XCTFail("Expected failure") }
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "enroll failed")
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "30001")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "SDK_TIMEOUT")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "1006")
     }
 
     func testEnrollSuccessReturnsResult() async {
@@ -1032,11 +1210,11 @@ final class ExecutePathTests: XCTestCase {
 
     func testEnrollWithClientStateFailurePopulatesClientError() async {
         let cb = await makeAuthCallback(clientState: "existing-state")
-        cb.enrollWithClientStateIfNeededResult = .failure(RecognizeError("restore failed", code: 40001))
+        cb.enrollWithClientStateIfNeededResult = .failure(RecognizeError("restore failed", code: 1000, name: "SDK_ERROR", sdkCode: 40001))
         let result = await cb.authenticate()
         guard case .failure = result else { return XCTFail("Expected failure") }
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "restore failed")
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "40001")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "SDK_ERROR")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "1000")
     }
 
     func testEnrollWithClientStateSuccessReturnsResult() async {
@@ -1052,11 +1230,11 @@ final class ExecutePathTests: XCTestCase {
 
     func testAuthFailurePopulatesClientErrorAndCode() async {
         let cb = await makeAuthCallback()
-        cb.performAuthenticateResult = .failure(RecognizeError("auth failed", code: 50001))
+        cb.performAuthenticateResult = .failure(RecognizeError("auth failed", code: 1000, name: "SDK_ERROR", sdkCode: 50001))
         let result = await cb.authenticate()
         guard case .failure = result else { return XCTFail("Expected failure") }
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "auth failed")
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "50001")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "SDK_ERROR")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "1000")
     }
 
     func testAuthSuccessReturnsResult() async {
@@ -1112,17 +1290,27 @@ final class ExecutePathTests: XCTestCase {
 
     // MARK: non-RecognizeError propagation
 
-    func testNonRecognizeErrorUsesLocalizedDescription() async {
+    func testNonRecognizeErrorIsReportedAsSdkError() async {
         struct PlainError: LocalizedError {
             var errorDescription: String? { "plain error message" }
         }
         let cb = await makeAuthCallback()
         cb.performAuthenticateResult = .failure(PlainError())
         let result = await cb.authenticate()
+        // The caller still receives the original error unchanged...
+        guard case .failure(let error) = result, error is PlainError else { return XCTFail("Expected the original error") }
+        // ...while the Journey receives the shared SDK_ERROR, like any other unknown error.
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "SDK_ERROR")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "1000")
+    }
+
+    func testRecognizeErrorWithoutNameIsReportedAsSdkError() async {
+        let cb = await makeAuthCallback()
+        cb.performAuthenticateResult = .failure(RecognizeError("no shared name", code: 5))
+        let result = await cb.authenticate()
         guard case .failure = result else { return XCTFail("Expected failure") }
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "plain error message")
-        // No error code set for non-RecognizeError
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "SDK_ERROR")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "1000")
     }
 
     // MARK: validateUserDeviceActive routing inside enrollWithClientStateIfNeeded
@@ -1166,13 +1354,76 @@ final class ExecutePathTests: XCTestCase {
 
     func testValidationOtherErrorPropagatesWithoutEnrolling() async {
         let cb = await makeValidationCallback()
+        // Native code 60001 has no entry in the shared mapping — exercises the SDK_ERROR fallback
+        // through the real conversion helper in the .otherError throw path.
         cb.validateResult = .otherError(message: "device locked", code: 60001)
         // Neither performEnroll nor performAuthenticate should be called
         cb.performEnrollResult = .failure(RecognizeError("should not enroll", code: 9999))
         cb.performAuthenticateResult = .failure(RecognizeError("should not authenticate", code: 9999))
         let result = await cb.authenticate()
         guard case .failure = result else { return XCTFail("Expected failure") }
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "device locked")
-        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "60001")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "SDK_ERROR")
+        // Mapped: unmapped native 60001 falls back to the shared SDK_ERROR (1000).
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "1000")
+    }
+
+    func testValidationOtherErrorMapsKnownNativeCode() async {
+        let cb = await makeValidationCallback()
+        // Native Keyless 20000 (userNotEnrolled) → shared CORE_USER_NOT_ENROLLED (3003).
+        cb.validateResult = .otherError(message: "user not enrolled", code: 20000)
+        cb.performEnrollResult = .failure(RecognizeError("should not enroll", code: 9999))
+        cb.performAuthenticateResult = .failure(RecognizeError("should not authenticate", code: 9999))
+        let result = await cb.authenticate()
+        guard case .failure(let error) = result else { return XCTFail("Expected failure") }
+        let recognizeError = error as? RecognizeError
+        XCTAssertEqual(recognizeError?.code, 3003)
+        XCTAssertEqual(recognizeError?.name, "CORE_USER_NOT_ENROLLED")
+        XCTAssertEqual(recognizeError?.sdkCode, 20000)
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientError, in: cb), "CORE_USER_NOT_ENROLLED")
+        XCTAssertEqual(inputValue(for: JourneyConstants.inputClientErrorCode, in: cb), "3003")
+    }
+}
+
+// MARK: - KeylessErrorConversionTests
+
+/// Drives the real Keyless SDK call sites. `KeylessSDKError` cannot be created outside the
+/// Keyless SDK, but the SDK produces one itself, so these tests pin that the real call sites
+/// map native errors to the shared model instead of forwarding the native code:
+/// - `Keyless.enroll` fails immediately with `sdkNotConfigured` (native 20002), because
+///   Keyless is never configured in the test process;
+/// - `Keyless.configure` fails immediately with `invalidConfiguration` (native 20010) for an
+///   empty host, and leaves the SDK unconfigured.
+///
+/// `Keyless.authenticate` cannot be covered the same way: with the SDK unconfigured it crashes
+/// the test host instead of returning an error. That call site is not covered by a unit test.
+final class KeylessErrorConversionTests: XCTestCase {
+
+    func testKeylessEnrollErrorIsMappedToSharedModel() async {
+        let callback = PingOneRecognizeEnrollCallback()
+        do {
+            _ = try await callback.performKeylessEnroll(configuration: BiomEnrollConfig())
+            XCTFail("Expected the unconfigured Keyless SDK to fail")
+        } catch {
+            let recognizeError = error as? RecognizeError
+            XCTAssertNotNil(recognizeError, "the Keyless error must be converted to a RecognizeError, got \(error)")
+            XCTAssertEqual(recognizeError?.sdkCode, 20002)
+            XCTAssertEqual(recognizeError?.code, 1001)
+            XCTAssertEqual(recognizeError?.name, "SDK_NOT_CONFIGURED")
+        }
+    }
+
+    func testKeylessConfigureErrorIsMappedToSharedModel() async {
+        // Empty api key and host: the real Keyless.configure rejects the configuration.
+        let callback = PingOneRecognizeEnrollCallback()
+        do {
+            try await callback.configure()
+            XCTFail("Expected configure with an empty api key and host to fail")
+        } catch {
+            let recognizeError = error as? RecognizeError
+            XCTAssertNotNil(recognizeError, "the Keyless error must be converted to a RecognizeError, got \(error)")
+            XCTAssertEqual(recognizeError?.sdkCode, 20010)
+            XCTAssertEqual(recognizeError?.code, 1002)
+            XCTAssertEqual(recognizeError?.name, "SDK_INVALID_CONFIGURATION")
+        }
     }
 }
