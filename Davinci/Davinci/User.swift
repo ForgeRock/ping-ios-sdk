@@ -35,8 +35,15 @@ extension DaVinci {
         }
         
         if await hasCookies() {
-            if let oidcClientConfig = self.sharedContext.get(key: SharedContext.Keys.oidcClientConfigKey) as? OidcClientConfig {
-                return await prepareUser(daVinci: self, user: OidcUser(config: oidcClientConfig))
+            if let moduleConfig = self.sharedContext.get(key: SharedContext.Keys.oidcClientConfigKey) as? OidcClientConfig {
+                // Never hand out a user backed by the module config's own agent: the module's
+                // initialize step installs `DefaultAgent`, whose `authorize` ALWAYS throws
+                // ("No AuthCode is available."). Swap in a `CreateAgent` bound to the current
+                // session — the same shape the module's success handler installs — so a token
+                // fetch through this fallback can actually complete.
+                let usableConfig = moduleConfig.clone()
+                usableConfig.updateAgent(CreateAgent(session: EmptySession(), pkce: nil))
+                return await prepareUser(daVinci: self, user: OidcUser(config: usableConfig))
             }
         }
         return nil

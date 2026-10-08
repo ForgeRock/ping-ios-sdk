@@ -11,6 +11,38 @@
 
 import Foundation
 
+/// An OAuth2 error response carried on the authorization redirect (RFC 6749 §4.1.2.1) —
+/// for example `access_denied` when the user declines consent at the authorization server.
+///
+/// Surfaced as the `cause` of `OidcError.authorizeError` when the browser callback carries
+/// `error`/`error_description`/`error_uri` query (or fragment) parameters instead of a code.
+public struct OAuthAuthorizationError: Error, LocalizedError, Sendable, Equatable {
+    /// The OAuth2 `error` code (e.g. `access_denied`, `invalid_request`).
+    public let code: String
+    /// The optional human-readable `error_description` from the server.
+    public let errorDescription: String?
+    /// The optional `error_uri` pointing to human-readable documentation.
+    public let errorUri: String?
+
+    public init(code: String, errorDescription: String? = nil, errorUri: String? = nil) {
+        self.code = code
+        self.errorDescription = errorDescription
+        self.errorUri = errorUri
+    }
+
+    /// A formatted one-line rendering used as the wrapping `OidcError` message.
+    var formattedMessage: String {
+        var text = code
+        if let errorDescription {
+            text += ": \(errorDescription)"
+        }
+        if let errorUri {
+            text += " (see \(errorUri))"
+        }
+        return text
+    }
+}
+
 /// Enum for OIDC errors.
 public enum OidcError: LocalizedError, Sendable {
     /// An error that occurs during the authorization process.

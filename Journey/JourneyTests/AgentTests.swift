@@ -11,6 +11,8 @@
 import XCTest
 @testable import PingJourney
 @testable import PingOidc
+@testable import PingOrchestrate
+@testable import PingStorage
 @testable import PingNetwork
 
 final class AgentTests: XCTestCase {
@@ -157,8 +159,75 @@ final class AgentTests: XCTestCase {
     func testSessionAuthCodeWithoutPkce() {
         let code = "test-code"
         let authCode = session.authCode(pkce: nil, code: code)
-        
+
         XCTAssertEqual(authCode.code, code)
         XCTAssertNil(authCode.codeVerifier)
+    }
+
+    // MARK: - journeyUser() fallback agent (DefaultAgent regression)
+
+    /// Regression test: `journeyUser()`'s fallback used to build the `OidcUser` from the
+    /// module config as-is, whose initialize step installs `DefaultAgent` — an agent whose
+    /// `authorize` ALWAYS throws "No AuthCode is available.". The fallback must instead swap
+    /// in a `CreateAgent` bound to the restored session.
+    @MainActor
+    func testJourneyUserFallbackSwapsInUsableAgent() async throws {
+        let journey = Journey.createJourney { journeyConfig in
+            journeyConfig.serverUrl = "https://example.com/am"
+            journeyConfig.realm = "alpha"
+            journeyConfig.module(PingJourney.OidcModule.config) { oidcValue in
+                oidcValue.clientId = "journey-fallback-client"
+                oidcValue.scopes = Set(["openid"])
+                oidcValue.redirectUri = "https://example.com/callback"
+                oidcValue.openId = OpenIdConfiguration(
+                    authorizationEndpoint: "https://auth.example.com/authorize",
+                    tokenEndpoint: "https://auth.example.com/token",
+                    userinfoEndpoint: "https://auth.example.com/userInfo",
+                    endSessionEndpoint: "https://auth.example.com/endSession",
+                    revocationEndpoint: "https://auth.example.com/revoke",
+                    pingEndsessionEndpoint: "https://auth.example.com/ping/endSession"
+                )
+            }
+        }
+
+        // Initialize explicitly (the pattern the existing JourneyTests use) so all module
+        // initialize handlers — SessionModule's, which publishes the SessionConfig — have run.
+        try await journey.initialize()
+        let sessionConfig = try XCTUnwrap(
+            journey.sharedContext.get(key: SharedContext.Keys.sessionConfigKey) as? SessionConfig,
+            "SessionConfig must be published after initialize()"
+        )
+        // Keep the original (keychain) storage so cleanup can clear the persisted slot.
+        let originalStorage = sessionConfig.storage
+        // Swap in in-memory storage so the test does not read a previously persisted session.
+        let memoryStorage = MemoryStorage<SSOTokenImpl>()
+        sessionConfig.storage = memoryStorage
+        try await memoryStorage.save(item: SSOTokenImpl(
+            value: "fallback-session-token",
+            successUrl: "/enduser/?realm=/alpha",
+            realm: "/alpha"
+        ))
+
+        let resolvedUser = await journey.journeyUser()
+        let user = try XCTUnwrap(resolvedUser, "A restored session must yield a user")
+
+        // token() must NOT fail with the DefaultAgent's "No AuthCode is available." — with
+        // a real CreateAgent installed, the failure (if any) comes from the backchannel
+        // authorize exchange itself.
+        let result = await user.token()
+        guard case .failure(let error) = result else {
+            XCTFail("token() against a stub config is not expected to succeed, but must not fail with the DefaultAgent's error")
+            return
+        }
+        XCTAssertFalse(
+            error.localizedDescription.contains("No AuthCode is available"),
+            "journeyUser()'s fallback must not return a user backed by DefaultAgent (got: \(error.localizedDescription))"
+        )
+
+        // Clean up: the test swapped in MemoryStorage AFTER reading the default (keychain)
+        // slot, so delete through the ORIGINAL keychain storage to clear the persisted
+        // slot — otherwise `testJourneyUserWithOidcConfig` / `...NoUserOrSession` (which
+        // rely on a clean default slot) would see this token on the next run.
+        try? await originalStorage.delete()
     }
 }

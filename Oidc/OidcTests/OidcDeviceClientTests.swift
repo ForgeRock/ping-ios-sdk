@@ -243,6 +243,51 @@ class OidcDeviceClientTests: XCTestCase {
         XCTAssertTrue(tokenBody.contains("device_code="), "Token POST body should contain device_code parameter")
     }
 
+    // MARK: - Test 1b: token poll preserves RFC 9396 authorization_details
+
+    /// Lock-in test for SDKS-5423: the device-flow poll decode site is wrapped in `try?`
+    /// (OidcDeviceClient poll loop), so a decode regression there would silently drop the
+    /// field and keep polling forever. Device-flow RAR itself is out of scope — this only
+    /// proves the shared `Token` model preserves the field on this decode path too.
+    func testDeviceAuthorizationTokenPollPreservesAuthorizationDetails() async throws {
+        MockURLProtocol.startInterceptingRequests()
+        defer { MockURLProtocol.stopInterceptingRequests() }
+
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
+            case MockAPIEndpoint.deviceAuthorization.url.path:
+                return (mockHTTPResponse(url: MockAPIEndpoint.deviceAuthorization.url, statusCode: 200),
+                        MockResponse.deviceAuthorizationResponseFastInterval)
+            case MockAPIEndpoint.token.url.path:
+                return (mockHTTPResponse(url: MockAPIEndpoint.token.url, statusCode: 200),
+                        MockResponse.tokenWithAuthorizationDetails)
+            default:
+                XCTFail("Unexpected request: \(request.url?.absoluteString ?? "<nil>")")
+                return (mockHTTPResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500), Data())
+            }
+        }
+
+        let storage = MockStorage<Token>()
+        let config = makeConfig()
+        config.storage = storage
+        let client = OidcDeviceClient(config: config)
+
+        let stream = try await client.deviceAuthorization()
+
+        var sawSuccess = false
+        for try await status in stream {
+            if case .success = status {
+                sawSuccess = true
+            }
+        }
+        XCTAssertTrue(sawSuccess, "Device flow should complete successfully")
+
+        let stored = try await storage.get()
+        let details = try XCTUnwrap(stored?.authorizationDetails, "device-flow token poll must preserve authorization_details in the stored Token")
+        XCTAssertEqual(details.count, 1)
+        XCTAssertEqual(details[0].type, "payment_initiation")
+    }
+
     // MARK: - Test 2: slow_down increases interval
 
     /// Test: slow_down response increases interval by 5.

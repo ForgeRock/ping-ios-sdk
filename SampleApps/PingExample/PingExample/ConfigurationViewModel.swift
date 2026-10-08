@@ -41,6 +41,9 @@ struct Configuration: Codable, Sendable, Identifiable {
     var acrValues: String?
     /// Enable PAR (Pushed Authorization Request) RFC 9126.
     var par: Bool?
+    /// RFC 9396 `authorization_details` JSON array string, applied config-level to every
+    /// authorize request built from this config. Parsed with `RarJson`/`PingOidc` at build time.
+    var authorizationDetailsJson: String? = nil
     /// The bundled JSON filename this config was loaded from (e.g. `"journey-rn-forgeblocks.json"`).
     /// Non-nil indicates the config is read-only and the SDK should be built from the raw JSON.
     var jsonFileName: String?

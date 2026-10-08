@@ -229,6 +229,107 @@ let oidcLogin = OidcWebClient.createOidcWebClient { config in
 - The server's OpenID configuration (discovery document) must include a `pushed_authorization_request_endpoint`.
 - If `par` is enabled but the discovery document does not include the PAR endpoint, the SDK falls back to the standard authorization flow automatically.
 
+## Rich Authorization Requests (RFC 9396)
+
+`PingOidc` supports [Rich Authorization Requests (RFC 9396)](https://datatracker.ietf.org/doc/html/rfc9396). You describe what the user is approving with `AuthorizationDetail` objects, the SDK sends them as the `authorization_details` parameter (in the PAR POST body when [PAR](#pushed-authorization-requests-par) is enabled), and the details the server actually granted are echoed back on `Token.authorizationDetails`.
+
+```swift
+let payment = AuthorizationDetail(
+    type: "payment_initiation",
+    actions: ["initiate"],
+    additionalFields: [
+        "instructedAmount": .object(["currency": .string("EUR"), "amount": .string("123.50")])
+    ]
+)
+
+// 1. Config-wide: added to every authorization request made from this configuration
+oidcValue.authorizationDetails = [payment]
+
+// 2. Per login: one OidcWebClient.authorize call only
+let result = try await rarLogin.authorize { options in
+    options.authorizationDetails = [payment]
+}
+
+// 3. Per call: when building the authorize URL yourself with OidcClient
+let url = try await OidcClient(config: config).generateAuthorizeUrl(authorizationDetails: [payment])
+
+// What the server granted
+if case .success(let token) = await rarUser.token() {
+    print(token.authorizationDetails ?? [])
+}
+```
+
+### Using RAR alongside an existing login (multiple tokens)
+
+A RAR login typically happens *after* the user has already signed in, and the app then holds two tokens: the token from the original login (**Token A**) and the token issued for the RAR transaction (**Token B**). The app can use either one, revoke only B, or revoke both on logout.
+
+Every workflow (`Journey`, `DaVinci`, `OidcWebClient`) keeps **one token in its own `storage`**. The browser-based and DaVinci workflows **revoke the token currently in their storage and replace it** when a new authorization starts — so running the RAR login on the same workflow (or on a client sharing its storage) revokes Token A. (Journey does not revoke or replace its stored token on a new login: the previous token remains stored and `token()` keeps serving it until it expires.) To keep both tokens, give the RAR login **its own workflow with its own storage account**:
+
+```swift
+import PingJourney
+import PingOidc
+import PingStorage
+
+// Token A: the original login. Scenario 1 uses a native Journey login,
+// scenario 2 a browser login with an OidcWebClient, each with its own storage account.
+let journey = Journey.createJourney { config in
+    config.serverUrl = "https://example.com/am"
+    config.realm = "alpha"
+    config.module(PingJourney.OidcModule.config) { oidcValue in
+        oidcValue.clientId = "ClientID"
+        oidcValue.scopes = ["openid", "profile"]
+        oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
+        oidcValue.discoveryEndpoint = "https://example.com/.well-known/openid-configuration"
+        oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_JOURNEY")
+    }
+}
+
+// Token B: the browser-based RAR login, a separate workflow with a separate storage account.
+// It can use the same OAuth client as the original login, or a different one.
+let rarLogin = OidcWebClient.createOidcWebClient { config in
+    config.module(PingOidc.OidcModule.config) { oidcValue in
+        oidcValue.clientId = "ClientID"
+        oidcValue.scopes = ["openid", "profile"]
+        oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
+        oidcValue.discoveryEndpoint = "https://example.com/.well-known/openid-configuration"
+        oidcValue.storage = KeychainStorage<Token>(account: "ACCESS_TOKEN_STORAGE_RAR")
+    }
+}
+
+// Sign in once (Token A), then run the RAR login (Token B). Token A stays valid.
+// `payment` is the AuthorizationDetail defined in the previous snippet.
+let journeyUser = await journey.journeyUser()
+let rarResult = try await rarLogin.authorize { options in
+    options.authorizationDetails = [payment]
+}
+
+// Use either token, whenever you need it
+let tokenA = await journeyUser?.token()
+let tokenB = await rarLogin.oidcLoginUser()?.token()
+
+// Revoke only Token B. Token A is untouched.
+await rarLogin.oidcLoginUser()?.revoke()
+
+// Log out of everything: each workflow only knows its own storage, so this is one call per workflow.
+await journeyUser?.logout()
+await rarLogin.oidcLoginUser()?.logout()
+```
+
+| Scenario | Token A | Token B (RAR) |
+|---|---|---|
+| **1. Native login, then browser RAR** | `Journey` workflow, storage account `A` | `OidcWebClient`, storage account `B` |
+| **2. Browser login, then browser RAR** | `OidcWebClient`, storage account `A` | A second `OidcWebClient`, storage account `B` |
+
+> **Important: the storage account is what separates the tokens.** `KeychainStorage` items are identified by their `account` name, so two configurations with the same account share one slot. The default account is `ACCESS_TOKEN_STORAGE`, so clients that do not set `storage` all share it. Clients created from the [JSON configuration](#json-configuration) have no `storage` setting and always use the default account. Sharing a slot has these effects:
+> - **Same OAuth client:** on the browser-based workflows, the RAR login revokes Token A and replaces it with Token B.
+> - **Different OAuth clients:** the RAR login deletes Token A from the device, but its revocation request is sent with the RAR client's `client_id`. The authorization server is expected to refuse it ([RFC 7009 §2.1](https://datatracker.ietf.org/doc/html/rfc7009#section-2.1)), so Token A stays valid at the server yet can no longer be used or revoked by the app. Token B is then returned by the original workflow's `token()` too, although it was issued to a different client.
+
+**Things to be aware of:**
+- **One token per workflow.** On the browser-based and DaVinci workflows, signing in again — including running a second RAR login on `rarLogin` — revokes and replaces that workflow's previous token. Journey does not revoke on re-login: the previously stored token remains until it expires. To hold several RAR tokens at once, use one workflow and storage account for each.
+- **Logging out of both takes two calls.** `logout()` revokes the token of the workflow it is called on and signs that workflow out. Nothing links `journeyUser` and the RAR user, so the app calls `logout()` on each.
+
+The PingExample sample app shows this pattern: the **OIDC (Web) RAR Login** screen runs on a dedicated `rarLogin` workflow with its own storage account, the **Access Token** screen has a tab per workflow so Token A and Token B can be compared and revoked independently, and the **Logout** screen signs out of each workflow separately.
+
 ## Device Authorization Grant (RFC 8628)
 
 `PingOidc` supports the [OAuth 2.0 Device Authorization Grant (RFC 8628)](https://datatracker.ietf.org/doc/html/rfc8628) for input-constrained devices (smart TVs, CLI tools) that can't directly open a browser. Use `OidcDeviceClient` to start a device flow, display the user code and verification URL, and poll for the access token.

@@ -43,7 +43,26 @@ private func bodyData(from request: URLRequest) -> Data {
 }
 
 final class OidcClientPARTests: XCTestCase {
-    
+
+    /// Test logger double that records warning messages (thread-safe via a lock, since
+    /// `Logger` is `Sendable` and may be called from any executor).
+    final class CapturingLogger: Logger, @unchecked Sendable {
+        private let lock = NSLock()
+        private var warnings: [String] = []
+
+        func d(_ message: String) {}
+        func i(_ message: String) {}
+        func w(_ message: String, error: Error?) {
+            lock.lock(); warnings.append(message); lock.unlock()
+        }
+        func e(_ message: String, error: Error?) {}
+
+        var warningMessages: [String] {
+            lock.lock(); defer { lock.unlock() }
+            return warnings
+        }
+    }
+
     var oidcClientConfig: OidcClientConfig!
     
     static let parEndpointURL = URL(string: "\(MockAPIEndpoint.baseURL)/par")!
@@ -480,8 +499,8 @@ final class OidcClientPARTests: XCTestCase {
         // Explicitly typed as the non-async signature: an unqualified call here would resolve to
         // the async overload instead (Swift prefers `async` when calling from an `async` context),
         // defeating the point of this test.
-        let syncGenerateAuthorizeUrl: ([String: String]?) throws -> URL = oidcClient.generateAuthorizeUrl
-        let url = try syncGenerateAuthorizeUrl(nil)
+        let syncGenerateAuthorizeUrl: ([String: String]?, [AuthorizationDetail]?) throws -> URL = oidcClient.generateAuthorizeUrl
+        let url = try syncGenerateAuthorizeUrl(nil, nil)
 
         let urlString = url.absoluteString
         XCTAssertTrue(urlString.contains(MockAPIEndpoint.authorization.url.absoluteString), "Sync overload should build the standard authorize URL")
@@ -615,5 +634,117 @@ final class OidcClientPARTests: XCTestCase {
         // so state should NOT leak into it.
         let authorizeUrl = try XCTUnwrap(request.url, "Populated request should have a URL")
         XCTAssertFalse(authorizeUrl.contains("state="), "Authorize URL should NOT contain state when PAR is used")
+    }
+
+    // MARK: - PAR expires_in warnings (RFC 9126 §4 request_uri expiry visibility)
+
+    /// Installs a PAR handler that returns a `request_uri` with the given `expires_in`.
+    private func installParHandler(expiresIn: Int?) {
+        let parBody: Data
+        if let expiresIn {
+            parBody = "{\"request_uri\": \"urn:ietf:params:oauth:request_uri:par-tests\", \"expires_in\": \(expiresIn)}".data(using: .utf8)!
+        } else {
+            parBody = "{\"request_uri\": \"urn:ietf:params:oauth:request_uri:par-tests\"}".data(using: .utf8)!
+        }
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
+            case MockAPIEndpoint.discovery.url.path:
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
+            case OidcClientPARTests.parEndpointURL.path:
+                return (try mockResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, headers: MockResponse.headers), parBody)
+            default:
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500), Data())
+            }
+        }
+    }
+
+    private func makeConfig(logger: Logger) {
+        oidcClientConfig.par = true
+        oidcClientConfig.logger = logger
+    }
+
+    /// Whether the capturing logger recorded the short-expiry warning ("expires in only Ns").
+    private func warningsContainShortExpiry(_ logger: CapturingLogger) -> Bool {
+        logger.warningMessages.contains { $0.contains("expires in only \(OidcClient.parExpiryWarningThresholdSeconds)s") }
+    }
+
+    /// A short `expires_in` (below the 30s threshold) logs a warning naming the window.
+    func testParShortExpiresInLogsWarning() async throws {
+        let logger = CapturingLogger()
+        makeConfig(logger: logger)
+        installParHandler(expiresIn: 10)
+
+        try await oidcClientConfig.oidcInitialize()
+        _ = try await oidcClientConfig.populateRequest(request: oidcClientConfig.httpClient!.request(), pkce: Pkce.generate(), responseMode: "")
+
+        let warnings = logger.warningMessages
+        XCTAssertTrue(warnings.contains { $0.contains("expires in only 10s") },
+                      "Expected a short-expiry warning, got: \(warnings)")
+    }
+
+    /// A healthy `expires_in` (60s, above the threshold) logs no warning.
+    func testParHealthyExpiresInLogsNoWarning() async throws {
+        let logger = CapturingLogger()
+        makeConfig(logger: logger)
+        installParHandler(expiresIn: 60)
+
+        try await oidcClientConfig.oidcInitialize()
+        _ = try await oidcClientConfig.populateRequest(request: oidcClientConfig.httpClient!.request(), pkce: Pkce.generate(), responseMode: "")
+
+        XCTAssertTrue(logger.warningMessages.isEmpty,
+                      "Expected no expiry warning for a 60s request_uri, got: \(logger.warningMessages)")
+    }
+
+    /// Exactly-at-threshold `expires_in` (30s = `parExpiryWarningThresholdSeconds`) warns:
+    /// the docs promise "at or below this many seconds", so the comparison is inclusive
+    /// (guards against an off-by-one regression of `<=` back to `<`).
+    func testParThresholdExpiresInLogsWarning() async throws {
+        let logger = CapturingLogger()
+        makeConfig(logger: logger)
+        installParHandler(expiresIn: OidcClient.parExpiryWarningThresholdSeconds)
+
+        try await oidcClientConfig.oidcInitialize()
+        _ = try await oidcClientConfig.populateRequest(request: oidcClientConfig.httpClient!.request(), pkce: Pkce.generate(), responseMode: "")
+
+        XCTAssertTrue(warningsContainShortExpiry(logger),
+                      "Expected a warning at exactly the 30s threshold, got: \(logger.warningMessages)")
+    }
+
+    /// One second above the threshold (31s) logs no warning — the inclusive bound's other edge.
+    func testParJustAboveThresholdExpiresInLogsNoWarning() async throws {
+        let logger = CapturingLogger()
+        makeConfig(logger: logger)
+        installParHandler(expiresIn: OidcClient.parExpiryWarningThresholdSeconds + 1)
+
+        try await oidcClientConfig.oidcInitialize()
+        _ = try await oidcClientConfig.populateRequest(request: oidcClientConfig.httpClient!.request(), pkce: Pkce.generate(), responseMode: "")
+
+        XCTAssertTrue(logger.warningMessages.isEmpty,
+                      "Expected no warning for 31s request_uri, got: \(logger.warningMessages)")
+    }
+
+    /// A non-positive `expires_in` warns that the URI may already be expired.
+    func testParNonPositiveExpiresInLogsWarning() async throws {
+        let logger = CapturingLogger()
+        makeConfig(logger: logger)
+        installParHandler(expiresIn: 0)
+
+        try await oidcClientConfig.oidcInitialize()
+        _ = try await oidcClientConfig.populateRequest(request: oidcClientConfig.httpClient!.request(), pkce: Pkce.generate(), responseMode: "")
+
+        XCTAssertTrue(logger.warningMessages.contains { $0.contains("non-positive expires_in (0)") },
+                      "Expected a non-positive-expiry warning, got: \(logger.warningMessages)")
+    }
+
+    /// A PAR response without `expires_in` (allowed by RFC 9126) logs no warning.
+    func testParMissingExpiresInLogsNoWarning() async throws {
+        let logger = CapturingLogger()
+        makeConfig(logger: logger)
+        installParHandler(expiresIn: nil)
+
+        try await oidcClientConfig.oidcInitialize()
+        _ = try await oidcClientConfig.populateRequest(request: oidcClientConfig.httpClient!.request(), pkce: Pkce.generate(), responseMode: "")
+
+        XCTAssertTrue(logger.warningMessages.isEmpty, "No warning expected when expires_in is absent")
     }
 }

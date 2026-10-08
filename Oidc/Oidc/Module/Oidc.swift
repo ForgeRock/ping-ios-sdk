@@ -52,13 +52,42 @@ public class OidcModule {
             context.flowContext.set(key: SharedContext.Keys.callbackURLSchemeKey, value: url?.scheme ?? "https")
             context.flowContext.set(key: SharedContext.Keys.redirectUriKey, value: config.redirectUri)
 
-            let oidcRequest = try await config.populateRequest(request: request, pkce: pkce, responseMode: "")
-            
             let parameters = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcParameters) as? [String: String] ?? [:]
-            for parameter in parameters {
+
+            var extraParameters: [String: String] = [:]
+            if let authorizationDetails = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcAuthorizationDetails) as? [AuthorizationDetail],
+               !authorizationDetails.isEmpty {
+                extraParameters[OidcClient.Constants.authorization_details] = try AuthorizationDetail.wireValue(authorizationDetails)
+            }
+            // Thread an integrator-supplied `state` override through the SAME at-most-once
+            // slot `buildAuthorizeParams` already gives `authorization_details`, instead of
+            // appending it a second time onto the front-channel URL post-hoc: `setParameter`
+            // only ever appends (never overwrites), so two `state` query items would rely on
+            // the AS reading the last duplicate — unspecified behavior — and, under PAR, a
+            // post-hoc append never reached the PAR POST body at all. Routing it through
+            // `extraParameters` fixes both: `buildAuthorizeParams` emits `state` exactly once,
+            // on the front channel AND in the PAR body.
+            if let integratorState = parameters[OidcClient.Constants.state] {
+                extraParameters[OidcClient.Constants.state] = integratorState
+            }
+
+            // Recorded for the Web module's callback state validation (CSRF check) — matches
+            // EXACTLY what `buildAuthorizeParams` emits (same precedence, same fallback),
+            // regardless of whether PAR is enabled.
+            let effectiveState = extraParameters[OidcClient.Constants.state] ?? config.state ?? pkce.state
+            context.flowContext.set(key: SharedContext.Keys.stateKey, value: effectiveState)
+
+            let oidcRequest = try await config.populateRequest(request: request, pkce: pkce, responseMode: "", extraParameters: extraParameters)
+
+            // Any OTHER additionalParameters keys still apply post-populateRequest — documented
+            // legacy pitfall: they leak onto the front-channel URL even under PAR. `state` and
+            // `authorization_details` are excluded here: both are threaded through the
+            // at-most-once `extraParameters` slot above and already emitted exactly once by
+            // `buildAuthorizeParams` (front channel and, for PAR, the PAR POST body).
+            for parameter in parameters where parameter.key != OidcClient.Constants.state && parameter.key != OidcClient.Constants.authorization_details {
                 oidcRequest.setParameter(name: parameter.key, value: parameter.value)
             }
-            
+
             return oidcRequest
         }
         
@@ -159,6 +188,9 @@ public enum AuthorizeError: Error, LocalizedError, Sendable {
 extension SharedContext.Keys {
     /// The key used to store the PKCE value in the shared context.
     static let pkceKey = "com.pingidentity.oidcWeb.PKCE"
+
+    /// The key used to store the expected `state` value for callback validation.
+    static let stateKey = "com.pingidentity.oidcWeb.state"
     
     /// The key used to store the callbackURLScheme value in the shared context.
     static let callbackURLSchemeKey = "com.pingidentity.oidcWeb.callbackURLScheme"
@@ -177,5 +209,8 @@ extension SharedContext.Keys {
     
     /// The key used to store additional parameters for the OIDC flow.
     static let oidcParameters = "com.pingidentity.oidcWeb.parameters"
+
+    /// The key used to store per-transaction RFC 9396 authorization_details for the OIDC flow.
+    static let oidcAuthorizationDetails = "com.pingidentity.oidcWeb.authorizationDetails"
 }
 
