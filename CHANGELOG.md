@@ -1,3 +1,9 @@
+## [UNRELEASED]
+
+#### Changed
+
+- Changed Recognize error reporting to the shared cross-platform error model, matching the web SDK. `RecognizeError` now carries the shared `code` and `name` (e.g. `CORE_USER_NOT_ENROLLED` / 3003), and keeps the native Keyless code in the new `sdkCode` property. The `clientError` Journey input now carries the shared error name and `clientErrorCode` the shared code; an error with no shared name is reported as `SDK_ERROR` (1000). **Upgrade note:** `RecognizeError.code` and the submitted `clientErrorCode` used to be native Keyless codes (e.g. 20000), and `clientError` used to be the error message. App or Journey logic that branches on those values must use the shared codes and names listed in the Recognize README. The native code is still available in `sdkCode`, and the message in `RecognizeError.message` [P1RECMOB-3847]
+
 ## [2.2.0]
 
 #### Added
