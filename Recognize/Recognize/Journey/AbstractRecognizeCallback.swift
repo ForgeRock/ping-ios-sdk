@@ -187,7 +187,8 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
 
     // MARK: - Input Helpers
 
-    /// Writes the error message into the `clientError` input field (suffix match).
+    /// Writes the shared error name — or the human message for errors with no shared
+    /// name — into the `clientError` input field (suffix match).
     public func error(_ value: String) {
         updateInputValue(value, forSuffix: JourneyConstants.inputClientError)
     }
@@ -605,7 +606,8 @@ extension JourneyConstants {
     public static let inputRecognizeId = "recognizeId"
     /// Input field suffix for the device public signing key retrieved after enrollment or authentication.
     public static let inputDevicePublicSigningKey = "devicePublicSigningKey"
-    /// Input field suffix for the client error message.
+    /// Input field suffix carrying the shared error name, or the human message when the
+    /// error has no shared name.
     public static let inputClientError = "clientError"
     /// Input field suffix for a structured client error code.
     public static let inputClientErrorCode = "clientErrorCode"
