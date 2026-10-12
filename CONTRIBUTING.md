@@ -147,7 +147,32 @@ The project uses [Jazzy](https://github.com/realm/jazzy) to generate HTML API re
 
 The generated HTML output will be placed in `docs/`.
 
-## 5. Standards of Practice
+## 5. Regenerate the Device Model Catalog
+
+`DeviceProfile` ships a static catalog mapping Apple hardware model identifiers
+(e.g. `iPhone15,2`) to their commercial names (e.g. `iPhone 14 Pro`), used by
+`DeviceModelResolver`. When Apple releases new hardware, regenerate it with the
+maintenance script at the root of the repository:
+
+```sh
+./generate-device-model-catalog.sh
+```
+
+The script's curated `KNOWN_NAMES` table is the source of truth: every entry in
+it is written to
+`DeviceProfile/DeviceProfile/Collectors/DeviceModelCatalog.swift` as a sorted
+Swift dictionary literal. The current public identifier references are fetched
+only to report hardware that still needs a name (and curated entries that no
+source lists yet, which are still emitted). It requires network access and
+`python3`, and is run by hand only — it is not part of the build or CI.
+Identifiers without a verified commercial name are reported and skipped; add
+them to `KNOWN_NAMES` (checking the names against Apple's "Identify your
+iPhone/iPad model" support articles) and rerun. Identifiers of devices that
+cannot run the SDK's minimum iOS version (see `Package.swift`) are excluded
+from `KNOWN_NAMES` as unreachable. Review the diff before
+committing.
+
+## 6. Standards of Practice
 
 This project follows the internal standards maintained by the Ping Identity SDK team. Please review and adhere to these guidelines before submitting any code:
 
@@ -156,7 +181,7 @@ This project follows the internal standards maintained by the Ping Identity SDK 
 
 In general, try to match the style of the existing code in the project.
 
-## 6. Submitting a Pull Request
+## 7. Submitting a Pull Request
 
 ### 1. Create a new branch
 

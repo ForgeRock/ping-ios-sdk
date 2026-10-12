@@ -42,7 +42,7 @@ class DeviceInfoViewModel: ObservableObject {
         config.location = true
         config.collectors {
             return [
-                PlatformCollector(),
+                PlatformCollector(includeModelName: true),
                 HardwareCollector(),
                 BrowserCollector(),
                 TelephonyCollector(),

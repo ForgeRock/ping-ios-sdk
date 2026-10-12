@@ -307,7 +307,7 @@ The repository contains **two workspaces** in `SampleApps/`, sharing the same pr
 
 The two workspaces keep those worlds separate:
 
-- **Core development** (everything except Recognize): open `Ping.xcworkspace`. It contains no Recognize or keyless references at all, so it resolves and builds without the registry. CI uses this workspace.
+- **Core development** (everything except Recognize): open `Ping.xcworkspace`. It contains no Recognize or keyless references at all, so it resolves and builds without the registry. CI uses this workspace when the Cloudsmith secret is unavailable (fork PRs, where `RecognizeTests` is skipped); otherwise it uses `PingWithRecognize.xcworkspace` so `RecognizeTests` runs.
 - **Recognize development**: open `PingWithRecognize.xcworkspace` and build the **`PingExampleWithRecognize`** scheme. It links `PingRecognize.framework` from `Recognize.xcodeproj` (the same framework pattern as the other SDK modules) and embeds the Keyless SDK. **Requires the Cloudsmith registry** — if you don't have credentials for the `keyless` scope, this target cannot be built.
 
 Both workspaces reference the *same* projects and sources: there is no code duplication between them. The Recognize views live in the `PingExampleWithRecognize` target of the shared `PingExample` project.

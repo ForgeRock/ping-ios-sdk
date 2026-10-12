@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'PingRecognize'
-  s.version          = '2.1.0'
+  s.version          = '2.2.0'
   s.summary          = 'PingOne Recognize biometric authentication module for the Ping iOS SDK'
   s.description      = <<-DESC
     PingOne Recognize biometric authentication module for the Ping iOS SDK
@@ -34,6 +34,6 @@ Pod::Spec.new do |s|
     'Recognize' => [base_dir + '/*.xcprivacy']
   }
 
-  s.ios.dependency 'PingJourneyPlugin', '~> 2.1.0'
+  s.ios.dependency 'PingJourneyPlugin', '~> 2.2.0'
   s.ios.dependency 'KeylessSDK', '~> 6.0'
 end
