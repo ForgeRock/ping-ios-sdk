@@ -19,10 +19,10 @@ import Foundation
 ///
 /// Each case's raw value is the shared numeric code, and `name` is the shared error name
 /// string. The Keyless SDK raises errors with its own native codes, so
-/// `resolve(nativeCode:)` translates a native code into the shared model.
-///
-/// Exposed as public API so apps can branch on compile-time-checked values instead of
-/// string or numeric literals, e.g. `SharedErrorCode.coreUserNotEnrolled`.
+/// `resolve(nativeCode:)` translates a native Keyless code into the shared model; it is
+/// internal, because native codes are an SDK detail. Apps branch on the shared model
+/// directly: compare `RecognizeError.name` / `code`, or use the public cases as
+/// compile-time-checked constants, e.g. `SharedErrorCode.coreUserNotEnrolled`.
 ///
 /// Only the shared codes the Keyless iOS SDK can actually produce are declared here. The
 /// shared model also defines web-only codes (`SDK_WEB_ASSEMBLY_*`, `CAMERA_NOT_FOUND`,
@@ -153,7 +153,7 @@ public enum SharedErrorCode: Int, Sendable {
     /// vocabulary (`get-recognize-error-code-key` returns `SDK_ERROR` for unknown codes).
     /// This also covers native codes absent from the shared mapping (e.g. Keyless
     /// `20024` userProfileError, which the shared model does not define yet).
-    public static func resolve(nativeCode: Int) -> SharedErrorCode {
+    static func resolve(nativeCode: Int) -> SharedErrorCode {
         nativeToShared[nativeCode] ?? .sdkError
     }
 }
