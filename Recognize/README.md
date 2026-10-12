@@ -222,7 +222,7 @@ On failure, `enroll()` / `authenticate()` return `.failure(RecognizeError)` and 
 
 ### Error code mapping
 
-The table below maps the native Keyless SDK error codes to the shared Recognize error model (version 6.0.0). The shared codes and names are the same on the web, Android, and iOS Recognize SDKs. In your app, branch on `RecognizeError.code` or `RecognizeError.name`; the Journey receives the shared name in the `clientError` input and the shared code in the `clientErrorCode` input.
+The table below maps the native Keyless SDK error codes to the shared Recognize error model (version 6.0.0). The shared codes and names are the same on the web, Android, and iOS Recognize SDKs. In your app, branch on `RecognizeError.code` or `RecognizeError.name`, or on the public `SharedErrorCode` enum (e.g. `SharedErrorCode.coreUserNotEnrolled`, or `.name` for the string) for compile-time-checked values; the Journey receives the shared name in the `clientError` input and the shared code in the `clientErrorCode` input.
 
 | Native Keyless code | Shared code | Shared name |
 |---|---|---|

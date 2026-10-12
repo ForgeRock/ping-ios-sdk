@@ -21,6 +21,9 @@ import Foundation
 /// string. The Keyless SDK raises errors with its own native codes, so
 /// `resolve(nativeCode:)` translates a native code into the shared model.
 ///
+/// Exposed as public API so apps can branch on compile-time-checked values instead of
+/// string or numeric literals, e.g. `SharedErrorCode.coreUserNotEnrolled`.
+///
 /// Only the shared codes the Keyless iOS SDK can actually produce are declared here. The
 /// shared model also defines web-only codes (`SDK_WEB_ASSEMBLY_*`, `CAMERA_NOT_FOUND`,
 /// `CAMERA_NOT_SUPPORTED`, `CORE_NOT_ENOUGH_CIRCUITS`, `CORE_CUSTOMER_NOT_FOUND`, and the
@@ -28,7 +31,7 @@ import Foundation
 ///
 /// Unlike the module's Journey files, no `#if canImport(KeylessSDK)` guard is needed: this
 /// type references no Keyless symbols, mirroring `RecognizeError` in `Recognize.swift`.
-enum SharedErrorCode: Int, Sendable {
+public enum SharedErrorCode: Int, Sendable {
 
     // MARK: SDK (1000–1016)
 
@@ -75,7 +78,7 @@ enum SharedErrorCode: Int, Sendable {
     case securityDeviceNotGenuine = 6001
 
     /// The shared error name, spelled exactly as in the shared model.
-    var name: String {
+    public var name: String {
         switch self {
         case .sdkError: return "SDK_ERROR"
         case .sdkNotConfigured: return "SDK_NOT_CONFIGURED"
@@ -150,7 +153,7 @@ enum SharedErrorCode: Int, Sendable {
     /// vocabulary (`get-recognize-error-code-key` returns `SDK_ERROR` for unknown codes).
     /// This also covers native codes absent from the shared mapping (e.g. Keyless
     /// `20024` userProfileError, which the shared model does not define yet).
-    static func resolve(nativeCode: Int) -> SharedErrorCode {
+    public static func resolve(nativeCode: Int) -> SharedErrorCode {
         nativeToShared[nativeCode] ?? .sdkError
     }
 }
