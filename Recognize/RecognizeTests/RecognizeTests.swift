@@ -1394,6 +1394,9 @@ final class ExecutePathTests: XCTestCase {
 /// - `Keyless.configure` fails immediately with `invalidConfiguration` (native 20010) for an
 ///   empty host, and leaves the SDK unconfigured.
 ///
+/// Re-verify these assumptions when bumping the KeylessSDK version (`Package.swift` allows
+/// any 6.x).
+///
 /// `Keyless.authenticate` cannot be covered the same way: with the SDK unconfigured it crashes
 /// the test host instead of returning an error. That call site is not covered by a unit test.
 final class KeylessErrorConversionTests: XCTestCase {
