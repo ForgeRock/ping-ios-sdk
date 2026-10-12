@@ -218,7 +218,7 @@ On failure, `enroll()` / `authenticate()` return `.failure(RecognizeError)` and 
 - `name` — the shared error name (e.g. `"CORE_USER_NOT_ENROLLED"`; `"SDK_ERROR"` for on-device errors)
 - `message` — the human-readable text from the underlying Keyless SDK error
 - `sdkCode` — the native Keyless SDK error code (`nil` for on-device errors), kept for debugging
-- `debuggingInfo` — diagnostic keys such as `flowId`, `sessionId`, `underlyingError`, and `stacktrace` when available (also includes `sdkCode`)
+- `debuggingInfo` — diagnostic keys such as `flowId`, `sessionId`, `underlyingError`, and `stacktrace` when available (for errors converted from a native Keyless error, also includes `sdkCode`)
 
 ### Error code mapping
 
