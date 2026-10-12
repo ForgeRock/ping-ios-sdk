@@ -539,6 +539,9 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
     /// that is not a `RecognizeError`, or one created without a name) is unknown to the
     /// shared model and is reported as `SDK_ERROR` (1000), like on the web SDK. The human
     /// readable message is not submitted: it stays in `RecognizeError.message`.
+    /// A cooperative `CancellationError` also has no shared name and is reported as
+    /// `SDK_ERROR` (1000); only a cancel raised inside the Keyless SDK (native 30003)
+    /// maps to `SDK_USER_CANCELLED`.
     func report(_ error: Error) {
         let shared: (name: String, code: Int)
         if let recognizeError = error as? RecognizeError, let name = recognizeError.name {
