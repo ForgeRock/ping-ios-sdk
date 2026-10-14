@@ -124,4 +124,21 @@ final class TokenTests: XCTestCase {
         XCTAssertEqual(roundTripped.authorizationDetails, token.authorizationDetails,
                        "authorization_details must survive an encode/decode round trip")
     }
+
+    /// A malformed `authorization_details` must not invalidate an otherwise valid token.
+    func testMalformedAuthorizationDetailsKeepsTokenWithoutDetails() throws {
+        let body = Data("""
+        {
+          "access_token": "rar-access-token",
+          "token_type": "Bearer",
+          "expires_in": 3600,
+          "authorization_details": [{"type": "payment_initiation", "locations": "not-an-array"}]
+        }
+        """.utf8)
+
+        let token = try JSONDecoder().decode(Token.self, from: body)
+
+        XCTAssertEqual(token.accessToken, "rar-access-token")
+        XCTAssertNil(token.authorizationDetails)
+    }
 }

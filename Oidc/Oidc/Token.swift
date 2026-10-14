@@ -10,6 +10,7 @@
 
 
 import Foundation
+import PingLogger
 
 /// Struct representing an OIDC token.
 public struct Token: Codable, Sendable {
@@ -75,7 +76,27 @@ public struct Token: Codable, Sendable {
         refreshToken = try container.decodeIfPresent(String.self, forKey: .refreshToken)
         idToken = try container.decodeIfPresent(String.self, forKey: .idToken)
         expiresAt = try container.decodeIfPresent(Int64.self, forKey: .expiresAt) ?? Int64(Date().timeIntervalSince1970) + expiresIn
-        authorizationDetails = try container.decodeIfPresent([AuthorizationDetail].self, forKey: .authorizationDetails)
+        // Optional field: a malformed value must not invalidate an otherwise valid token.
+        authorizationDetails = try? container.decodeIfPresent([AuthorizationDetail].self, forKey: .authorizationDetails)
+    }
+
+    /// Decodes a token endpoint response and logs a warning when `authorization_details` is
+    /// present but malformed. The token is returned without authorization details in that case.
+    static func decode(response data: Data, logger: Logger) throws -> Token {
+        let token = try JSONDecoder().decode(Token.self, from: data)
+        if token.authorizationDetails == nil,
+           let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+           let raw = json[CodingKeys.authorizationDetails.rawValue], !(raw is NSNull) {
+            var decodeError: Error?
+            do {
+                let rawData = try JSONSerialization.data(withJSONObject: raw, options: .fragmentsAllowed)
+                _ = try JSONDecoder().decode([AuthorizationDetail].self, from: rawData)
+            } catch {
+                decodeError = error
+            }
+            logger.w("Token response contains a malformed authorization_details value. Keeping the token without authorization details.", error: decodeError)
+        }
+        return token
     }
     
     /// Encodes the `Token` instance to an encoder.

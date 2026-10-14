@@ -59,31 +59,30 @@ public class OidcModule {
                !authorizationDetails.isEmpty {
                 extraParameters[OidcClient.Constants.authorization_details] = try AuthorizationDetail.wireValue(authorizationDetails)
             }
-            // Thread an integrator-supplied `state` override through the SAME at-most-once
-            // slot `buildAuthorizeParams` already gives `authorization_details`, instead of
-            // appending it a second time onto the front-channel URL post-hoc: `setParameter`
-            // only ever appends (never overwrites), so two `state` query items would rely on
-            // the AS reading the last duplicate — unspecified behavior — and, under PAR, a
-            // post-hoc append never reached the PAR POST body at all. Routing it through
-            // `extraParameters` fixes both: `buildAuthorizeParams` emits `state` exactly once,
-            // on the front channel AND in the PAR body.
+            // `state` and `authorization_details` go through `extraParameters` so
+            // `buildAuthorizeParams` emits each exactly once, on the front channel and in the
+            // PAR body. `setParameter` appends, so setting them afterwards would duplicate them.
             if let integratorState = parameters[OidcClient.Constants.state] {
                 extraParameters[OidcClient.Constants.state] = integratorState
             }
+            // A raw `authorization_details` string is forwarded when no typed details are set;
+            // the typed value wins when both are present.
+            if let rawAuthorizationDetails = parameters[OidcClient.Constants.authorization_details] {
+                if extraParameters[OidcClient.Constants.authorization_details] == nil {
+                    extraParameters[OidcClient.Constants.authorization_details] = rawAuthorizationDetails
+                } else {
+                    config.logger.w("Both OidcOptions.authorizationDetails and additionalParameters[\"authorization_details\"] are set. Using the typed value and ignoring the raw one.", error: nil)
+                }
+            }
 
-            // Recorded for the Web module's callback state validation (CSRF check) — matches
-            // EXACTLY what `buildAuthorizeParams` emits (same precedence, same fallback),
-            // regardless of whether PAR is enabled.
+            // The state the callback is validated against; same precedence as `buildAuthorizeParams`.
             let effectiveState = extraParameters[OidcClient.Constants.state] ?? config.state ?? pkce.state
             context.flowContext.set(key: SharedContext.Keys.stateKey, value: effectiveState)
 
             let oidcRequest = try await config.populateRequest(request: request, pkce: pkce, responseMode: "", extraParameters: extraParameters)
 
-            // Any OTHER additionalParameters keys still apply post-populateRequest — documented
-            // legacy pitfall: they leak onto the front-channel URL even under PAR. `state` and
-            // `authorization_details` are excluded here: both are threaded through the
-            // at-most-once `extraParameters` slot above and already emitted exactly once by
-            // `buildAuthorizeParams` (front channel and, for PAR, the PAR POST body).
+            // Remaining additionalParameters are applied after population, so under PAR they
+            // land on the front-channel URL rather than in the PAR body.
             for parameter in parameters where parameter.key != OidcClient.Constants.state && parameter.key != OidcClient.Constants.authorization_details {
                 oidcRequest.setParameter(name: parameter.key, value: parameter.value)
             }

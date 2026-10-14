@@ -540,6 +540,203 @@ final class OidcClientRARTests: XCTestCase {
                            "Callback echoing the correctly-threaded override state must not be rejected: \(String(describing: message))")
         }
     }
+
+    // MARK: - Raw authorization_details in OidcOptions.additionalParameters
+
+    @MainActor
+    private func makeModuleWebClient(par: Bool) -> OidcWebClient {
+        OidcWebClient.createOidcWebClient { config in
+            config.browserMode = .login
+            config.browserType = .authSession
+            config.httpClient = MockURLProtocol.makeClient()
+            config.module(OidcModule.config) { oidcValue in
+                oidcValue.clientId = "rar-module-client"
+                oidcValue.scopes = Set(["openid"])
+                oidcValue.redirectUri = "http://localhost:8080/callback"
+                oidcValue.discoveryEndpoint = MockAPIEndpoint.discovery.url.absoluteString
+                oidcValue.par = par
+            }
+        }
+    }
+
+    /// A raw `authorization_details` string in `additionalParameters` with no typed details is
+    /// still sent, once, and reaches the PAR body.
+    @MainActor
+    func testRawAuthorizationDetailsInAdditionalParametersReachesPARBody() async throws {
+        let browser = RarCapturingBrowser()
+        installMockHandlerWithTokenEndpoint(browser: browser)
+        BrowserLauncher.currentBrowser = browser
+        defer { BrowserLauncher.currentBrowser = BrowserLauncher() }
+
+        let rawValue = try AuthorizationDetail.wireValue(OidcClientRARTests.paymentInitiationDetails)
+        let web = makeModuleWebClient(par: true)
+        do {
+            _ = try await web.authorize { options in
+                options.additionalParameters[OidcClient.Constants.authorization_details] = rawValue
+            }
+        } catch { /* fake code fails token exchange — expected */ }
+
+        let parRequests = MockURLProtocol.requestHistory.filter { $0.url?.path == OidcClientRARTests.parEndpointURL.path }
+        let fields = formFields(ofBody: rarBodyData(from: try XCTUnwrap(parRequests.first)))
+        XCTAssertEqual(fields.filter { $0.0 == OidcClient.Constants.authorization_details }.map { $0.1 }, [rawValue])
+        XCTAssertFalse(try XCTUnwrap(browser.launchedURL).absoluteString.contains("authorization_details"))
+    }
+
+    /// Without PAR, the raw value lands on the front-channel URL exactly once.
+    @MainActor
+    func testRawAuthorizationDetailsInAdditionalParametersOnFrontChannelOnce() async throws {
+        let browser = RarCapturingBrowser()
+        installMockHandlerWithTokenEndpoint(browser: browser)
+        BrowserLauncher.currentBrowser = browser
+        defer { BrowserLauncher.currentBrowser = BrowserLauncher() }
+
+        let rawValue = try AuthorizationDetail.wireValue(OidcClientRARTests.paymentInitiationDetails)
+        let web = makeModuleWebClient(par: false)
+        do {
+            _ = try await web.authorize { options in
+                options.additionalParameters[OidcClient.Constants.authorization_details] = rawValue
+            }
+        } catch { /* fake code fails token exchange — expected */ }
+
+        let launched = try XCTUnwrap(browser.launchedURL).absoluteString
+        XCTAssertEqual(queryParamOccurrences(named: OidcClient.Constants.authorization_details, in: launched), 1)
+        XCTAssertEqual(rawQueryValue(named: OidcClient.Constants.authorization_details, in: launched), rawValue)
+    }
+
+    /// When typed details and a raw string are both set, the typed value is sent and the raw
+    /// one is dropped.
+    @MainActor
+    func testTypedAuthorizationDetailsWinOverRawAdditionalParameter() async throws {
+        let browser = RarCapturingBrowser()
+        installMockHandlerWithTokenEndpoint(browser: browser)
+        BrowserLauncher.currentBrowser = browser
+        defer { BrowserLauncher.currentBrowser = BrowserLauncher() }
+
+        let web = makeModuleWebClient(par: true)
+        do {
+            _ = try await web.authorize { options in
+                options.authorizationDetails = OidcClientRARTests.paymentInitiationDetails
+                options.additionalParameters[OidcClient.Constants.authorization_details] = "[{\"type\":\"raw_ignored\"}]"
+            }
+        } catch { /* fake code fails token exchange — expected */ }
+
+        let parRequests = MockURLProtocol.requestHistory.filter { $0.url?.path == OidcClientRARTests.parEndpointURL.path }
+        let fields = formFields(ofBody: rarBodyData(from: try XCTUnwrap(parRequests.first)))
+        let sent = fields.filter { $0.0 == OidcClient.Constants.authorization_details }
+        XCTAssertEqual(sent.count, 1)
+        let decoded = try JSONDecoder().decode([AuthorizationDetail].self, from: Data(try XCTUnwrap(sent.first).1.utf8))
+        XCTAssertEqual(decoded, OidcClientRARTests.paymentInitiationDetails)
+    }
+
+    // MARK: - state in customParams
+
+    /// `customParams["state"]` is sent once on the standard flow, and the callback is validated against it.
+    func testCustomParamsStateIsSentOnceAndValidatedOnStandardFlow() async throws {
+        installMockHandlerWithTokenEndpoint()
+        try await oidcClientConfig.oidcInitialize()
+
+        let oidcClient = OidcClient(config: oidcClientConfig)
+        let syncGenerateAuthorizeUrl: ([String: String]?, [AuthorizationDetail]?) throws -> URL = oidcClient.generateAuthorizeUrl
+        let url = try syncGenerateAuthorizeUrl(["state": "mine", "custom": "value"], nil)
+
+        XCTAssertEqual(queryParamOccurrences(named: OidcClient.Constants.state, in: url.absoluteString), 1)
+        XCTAssertEqual(rawQueryValue(named: OidcClient.Constants.state, in: url.absoluteString), "mine")
+        XCTAssertEqual(rawQueryValue(named: "custom", in: url.absoluteString), "value")
+
+        let mismatched = URL(string: "http://localhost:8080/callback?code=abc&state=other")!
+        do {
+            _ = try await oidcClient.extractCodeAndGetToken(from: mismatched)
+            XCTFail("A state different from customParams[\"state\"] must be rejected")
+        } catch let OidcError.authorizeError(_, message) {
+            XCTAssertTrue(message?.contains("State mismatch") ?? false)
+        }
+
+        let matching = URL(string: "http://localhost:8080/callback?code=abc&state=mine")!
+        let token = try await oidcClient.extractCodeAndGetToken(from: matching)
+        XCTAssertFalse(token.accessToken.isEmpty)
+    }
+
+    /// Under PAR, `customParams["state"]` goes into the PAR body and not onto the front-channel URL.
+    func testCustomParamsStateReachesPARBodyOnce() async throws {
+        oidcClientConfig.par = true
+        installMockHandler()
+
+        let oidcClient = OidcClient(config: oidcClientConfig)
+        let url = try await oidcClient.generateAuthorizeUrl(customParams: ["state": "mine"])
+
+        let parRequests = MockURLProtocol.requestHistory.filter { $0.url?.path == OidcClientRARTests.parEndpointURL.path }
+        let fields = formFields(ofBody: rarBodyData(from: try XCTUnwrap(parRequests.first)))
+        XCTAssertEqual(fields.filter { $0.0 == OidcClient.Constants.state }.map { $0.1 }, ["mine"])
+        XCTAssertEqual(queryParamOccurrences(named: OidcClient.Constants.state, in: url.absoluteString), 0)
+    }
+
+    // MARK: - Malformed authorization_details in the token response
+
+    /// Runs the code exchange against a token endpoint returning `tokenBody` and returns the token
+    /// plus the warnings logged along the way.
+    private func exchangeCode(tokenBody: String) async throws -> (Token, [String]) {
+        let logger = OidcClientPARTests.CapturingLogger()
+        oidcClientConfig.logger = logger
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
+            case MockAPIEndpoint.discovery.url.path:
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientRARTests.openIdConfigurationWithPAR)
+            case MockAPIEndpoint.token.url.path:
+                return (try mockResponse(url: MockAPIEndpoint.token.url, statusCode: 200, headers: MockResponse.headers), Data(tokenBody.utf8))
+            default:
+                XCTFail("Unexpected request: \(request.url?.path ?? "<no url>")")
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500), Data())
+            }
+        }
+        let client = OidcClient(config: oidcClientConfig)
+        _ = try await client.generateAuthorizeUrl()
+        let state = try XCTUnwrap(client.pkce?.state)
+        let callback = try XCTUnwrap(URL(string: "http://localhost:8080/callback?code=abc&state=\(state)"))
+        let token = try await client.extractCodeAndGetToken(from: callback)
+        return (token, logger.warningMessages)
+    }
+
+    /// A malformed `authorization_details` keeps the token and logs a warning.
+    func testMalformedAuthorizationDetailsInTokenResponseKeepsTokenAndWarns() async throws {
+        let (token, warnings) = try await exchangeCode(tokenBody: """
+        {"access_token": "at", "token_type": "Bearer", "expires_in": 60,
+         "authorization_details": [{"type": "payment_initiation", "locations": "not-an-array"}]}
+        """)
+
+        XCTAssertEqual(token.accessToken, "at")
+        XCTAssertNil(token.authorizationDetails)
+        XCTAssertTrue(warnings.contains { $0.contains("malformed authorization_details") }, "Got: \(warnings)")
+    }
+
+    /// A valid, `null`, or absent `authorization_details` logs no warning.
+    func testWellFormedAuthorizationDetailsInTokenResponseDoesNotWarn() async throws {
+        let (valid, validWarnings) = try await exchangeCode(tokenBody: String(decoding: MockResponse.tokenWithAuthorizationDetails, as: UTF8.self))
+        XCTAssertNotNil(valid.authorizationDetails)
+        XCTAssertTrue(validWarnings.isEmpty, "Got: \(validWarnings)")
+
+        let (nullToken, nullWarnings) = try await exchangeCode(tokenBody: """
+        {"access_token": "at", "token_type": "Bearer", "expires_in": 60, "authorization_details": null}
+        """)
+        XCTAssertNil(nullToken.authorizationDetails)
+        XCTAssertTrue(nullWarnings.isEmpty, "Got: \(nullWarnings)")
+
+        let (absent, absentWarnings) = try await exchangeCode(tokenBody: """
+        {"access_token": "at", "token_type": "Bearer", "expires_in": 60}
+        """)
+        XCTAssertNil(absent.authorizationDetails)
+        XCTAssertTrue(absentWarnings.isEmpty, "Got: \(absentWarnings)")
+    }
+
+    // MARK: - OAuthAuthorizationError
+
+    /// `localizedDescription` includes the OAuth error code even when the server sent no `error_description`.
+    func testOAuthAuthorizationErrorLocalizedDescriptionIncludesCode() {
+        let codeOnly = OAuthAuthorizationError(code: "access_denied")
+        XCTAssertEqual(codeOnly.localizedDescription, "access_denied")
+
+        let full = OAuthAuthorizationError(code: "access_denied", description: "User declined", errorUri: "https://example.com/e")
+        XCTAssertEqual(full.localizedDescription, "access_denied: User declined (see https://example.com/e)")
+    }
 }
 
 /// Minimal browser double for the module-pipeline RAR tests (mirrors `CapturingBrowser` in

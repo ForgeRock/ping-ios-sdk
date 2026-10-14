@@ -32,7 +32,7 @@ final class OidcCallbackErrorTests: XCTestCase {
         let url = URL(string: "myapp://oauth2redirect?error=access_denied&error_description=The%20user%20denied%20the%20request&error_uri=https%3A%2F%2Fexample.com%2Fdocs")!
         let error = try XCTUnwrap(OidcClient.extractOAuthError(from: url))
         XCTAssertEqual(error.code, "access_denied")
-        XCTAssertEqual(error.errorDescription, "The user denied the request")
+        XCTAssertEqual(error.description, "The user denied the request")
         XCTAssertEqual(error.errorUri, "https://example.com/docs")
     }
 
@@ -40,14 +40,14 @@ final class OidcCallbackErrorTests: XCTestCase {
         let url = URL(string: "myapp://oauth2redirect#error=invalid_request&error_description=Duplicate%20parameter")!
         let error = try XCTUnwrap(OidcClient.extractOAuthError(from: url))
         XCTAssertEqual(error.code, "invalid_request")
-        XCTAssertEqual(error.errorDescription, "Duplicate parameter")
+        XCTAssertEqual(error.description, "Duplicate parameter")
     }
 
     func testExtractOAuthErrorMinimalErrorOnly() throws {
         let url = URL(string: "myapp://oauth2redirect?error=access_denied")!
         let error = try XCTUnwrap(OidcClient.extractOAuthError(from: url))
         XCTAssertEqual(error.code, "access_denied")
-        XCTAssertNil(error.errorDescription)
+        XCTAssertNil(error.description)
         XCTAssertNil(error.errorUri)
     }
 
@@ -89,7 +89,7 @@ final class OidcCallbackErrorTests: XCTestCase {
                 return
             }
             XCTAssertEqual(oauthError.code, "access_denied")
-            XCTAssertEqual(oauthError.errorDescription, "User declined consent")
+            XCTAssertEqual(oauthError.description, "User declined consent")
             XCTAssertEqual(message, "Authorization failed: access_denied: User declined consent")
         } catch {
             XCTFail("Expected OidcError, got \(error)")

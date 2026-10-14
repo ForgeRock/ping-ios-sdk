@@ -640,9 +640,14 @@ final class OidcClientPARTests: XCTestCase {
 
     /// Installs a PAR handler that returns a `request_uri` with the given `expires_in`.
     private func installParHandler(expiresIn: Int?) {
+        installParHandler(rawExpiresIn: expiresIn.map { String($0) })
+    }
+
+    /// Like `installParHandler(expiresIn:)`, with `expires_in` given as a raw JSON value (nil omits it).
+    private func installParHandler(rawExpiresIn: String?) {
         let parBody: Data
-        if let expiresIn {
-            parBody = "{\"request_uri\": \"urn:ietf:params:oauth:request_uri:par-tests\", \"expires_in\": \(expiresIn)}".data(using: .utf8)!
+        if let rawExpiresIn {
+            parBody = "{\"request_uri\": \"urn:ietf:params:oauth:request_uri:par-tests\", \"expires_in\": \(rawExpiresIn)}".data(using: .utf8)!
         } else {
             parBody = "{\"request_uri\": \"urn:ietf:params:oauth:request_uri:par-tests\"}".data(using: .utf8)!
         }
@@ -736,8 +741,8 @@ final class OidcClientPARTests: XCTestCase {
                       "Expected a non-positive-expiry warning, got: \(logger.warningMessages)")
     }
 
-    /// A PAR response without `expires_in` (allowed by RFC 9126) logs no warning.
-    func testParMissingExpiresInLogsNoWarning() async throws {
+    /// A PAR response without `expires_in` (required by RFC 9126 §2.2) logs a warning.
+    func testParMissingExpiresInLogsWarning() async throws {
         let logger = CapturingLogger()
         makeConfig(logger: logger)
         installParHandler(expiresIn: nil)
@@ -745,6 +750,32 @@ final class OidcClientPARTests: XCTestCase {
         try await oidcClientConfig.oidcInitialize()
         _ = try await oidcClientConfig.populateRequest(request: oidcClientConfig.httpClient!.request(), pkce: Pkce.generate(), responseMode: "")
 
-        XCTAssertTrue(logger.warningMessages.isEmpty, "No warning expected when expires_in is absent")
+        XCTAssertTrue(logger.warningMessages.contains { $0.contains("missing or non-numeric expires_in") },
+                      "Expected a missing-expires_in warning, got: \(logger.warningMessages)")
+    }
+
+    /// A non-numeric `expires_in` (e.g. a JSON string) logs the same warning.
+    func testParNonNumericExpiresInLogsWarning() async throws {
+        let logger = CapturingLogger()
+        makeConfig(logger: logger)
+        installParHandler(rawExpiresIn: "\"60\"")
+
+        try await oidcClientConfig.oidcInitialize()
+        _ = try await oidcClientConfig.populateRequest(request: oidcClientConfig.httpClient!.request(), pkce: Pkce.generate(), responseMode: "")
+
+        XCTAssertTrue(logger.warningMessages.contains { $0.contains("missing or non-numeric expires_in") },
+                      "Expected a non-numeric-expires_in warning, got: \(logger.warningMessages)")
+    }
+
+    /// A healthy `expires_in` expressed as a JSON decimal (60.0) is accepted without a warning.
+    func testParDecimalExpiresInLogsNoWarning() async throws {
+        let logger = CapturingLogger()
+        makeConfig(logger: logger)
+        installParHandler(rawExpiresIn: "60.0")
+
+        try await oidcClientConfig.oidcInitialize()
+        _ = try await oidcClientConfig.populateRequest(request: oidcClientConfig.httpClient!.request(), pkce: Pkce.generate(), responseMode: "")
+
+        XCTAssertTrue(logger.warningMessages.isEmpty, "Unexpected warning: \(logger.warningMessages)")
     }
 }
