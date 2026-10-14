@@ -1,46 +1,70 @@
 ## [UNRELEASED]
-#### Updated
-- Updated `RecaptchaEnterprise` dependency to 18.9.1 for Xcode 27 / iOS 27 compatibility [SDKS-5306]
-- Split the Recognize sample into a dedicated `PingWithRecognize.xcworkspace` (requires the Cloudsmith `keyless` registry); the core `Ping.xcworkspace` no longer references Recognize or Keyless and builds without registry credentials [P1RECMOB-3476]
 
 #### Added
-- Added RFC 9396 (Rich Authorization Requests) support to `PingOidc`. `Token` now decodes the granted `authorization_details` from the token response (available as `Token.authorizationDetails`, and preserved through keychain storage and refresh). Authorize requests accept typed authorization details at three levels: config-wide via `OidcClientConfig.authorizationDetails`, per call via the new `authorizationDetails` parameter on `OidcClient.generateAuthorizeUrl`, and per login via `OidcOptions.authorizationDetails` on the OIDC workflow module — all serialized into the single `authorization_details` parameter and carried in the PAR POST body when PAR is enabled. A malformed `authorizationDetails` array in the unified JSON configuration is rejected with `JsonConfigError.invalidType`. A malformed `authorization_details` in a token response no longer fails the token decode: the token is returned with `authorizationDetails` set to `nil` and a warning is logged. A raw `authorization_details` string in `OidcOptions.additionalParameters` is still forwarded when no typed details are set (the typed value wins when both are present) [SDKS-5423, SDKS-5425]
-- Added `ImageCollector` to support image display in DaVinci forms [SDKS-5143]
-- Added `MetadataCollector` to support the DaVinci SDK Integrator connector's pause/resume model, allowing the app to invoke on-device SDKs and return a result or error before the flow continues [SDKS-5142]
-- Added `trigger` and `isAutomatic` to the DaVinci FIDO collectors [SDKS-4552]
-- Added Facebook Limited Login (OIDC ID-token flow) support in `PingExternalIdPFacebook`. Toggle via the new `facebookLimitedLoginEnabled` property on `IdpCollector` (DaVinci) or on `FacebookHandler` / `FacebookRequestHandler` directly; defaults to `false` (classic OAuth2). On the Journey path, provider names containing `fb-limited` automatically opt into Limited Login [SDKS-5160, SDKS-5161, SDKS-5162]
-- Bumped `facebook-ios-sdk` to 18.1.0 [SDKS-5160]
-- Added present-only launch mode to `BrowserLauncher` via `browserMode: .custom` — `launch()` resolves as soon as the browser UI is presented, without waiting for a callback, for use cases like session handoff / in-app SSO where no redirect back to the app is ever expected [SDKS-5357]
-- `oidc.discoveryEndpoint` in the unified JSON configuration is now required only when no `oidc.openId` sub-object is supplied; an `openId` block without `discoveryEndpoint` replaces the discovery document and requires `tokenEndpoint` [SDKS-5301]
-- Added `OidcError.configurationError` to report a configuration that has neither a usable `discoveryEndpoint` nor a pre-supplied `openId` [SDKS-5301]
-- Added `OAuthAuthorizationError`, a typed error carrying the OAuth2 `error`/`error_description`/`error_uri` parameters from an authorization-redirect failure (e.g. `access_denied` when the user declines consent, RFC 6749 §4.1.2.1). It surfaces as the `cause` of `OidcError.authorizeError` from `OidcWebClient.authorize()`, from `OidcClient.extractCodeAndGetToken`, and is parseable directly via the new `OidcClient.extractOAuthError(from:)`. Browser-redirect callback URLs also no longer double-wrap errors thrown by the SDK's own authorization path [SDKS-5425]
-- The browser callback now validates the returned `state` parameter against the value sent on the authorization request (RFC 6749 §10.12 CSRF protection). A mismatch or missing state throws `OidcError.authorizeError`; no validation occurs for paths that never recorded a state. State is validated **before** an OAuth2 error redirect (e.g. `access_denied`) is surfaced — RFC 6749 §4.1.2.1 requires `state` on error responses just as on success ones, so an error redirect with a missing or mismatched state is now rejected as a CSRF failure rather than trusted and surfaced as-is (`OidcClient.extractCodeAndGetToken` and the `OidcWebClient` browser transport both changed) [SDKS-5425]
-- A `state` override passed via `OidcOptions.additionalParameters["state"]` on the OIDC workflow module, or via `customParams["state"]` on `OidcClient.generateAuthorizeUrl`, is now sent exactly once and reaches the PAR POST body under PAR. Previously it was appended after the request was built, so the standard flow emitted two `state` query parameters and PAR never carried it. `OidcClient.extractCodeAndGetToken` validates the callback against a `customParams` state [SDKS-5425]
-- A PAR (RFC 9126) response whose `request_uri` `expires_in` is missing, non-numeric, non-positive, or at or below 30 seconds (`OidcClient.parExpiryWarningThresholdSeconds`) now logs a warning, since consent-page dwell must fit inside the request_uri lifetime or the subsequent authorize call fails [SDKS-5423]
-- Added `MobilePairingCollector` to support pairing with PingOne [P14C-91504]
-- Added opt-in commercial device-model-name resolution to `DeviceProfileCallback`'s platform metadata. Construct `PlatformCollector(includeModelName: true)` (or `DefaultDeviceCollector` users: pass a custom collectors array) and the `platform` metadata gains a `modelName` attribute (e.g. `"iPhone15,2"` resolves to `"iPhone 14 Pro"`); the raw hardware identifier stays in `model`, and `modelName` is omitted when the identifier is not in the SDK's catalog (Simulator, or hardware newer than the catalog). The default `PlatformCollector()` payload is unchanged from previous SDK versions. **Upgrade note (opting-in apps only):** on recognised devices the submitted profile gains one attribute, which PingAM / PingOne AIC's built-in `Device Match` node (default *Acceptable Variance* of `0`) counts as a difference against profiles saved by earlier SDK versions; see the `DeviceProfile` README [SDKS-5275]
+
+- Added RFC 9396 (Rich Authorization Requests) support to `PingOidc`. `Token.authorizationDetails` exposes the granted details. Typed details can be set config-wide (`OidcClientConfig.authorizationDetails`), per call (`OidcClient.generateAuthorizeUrl(authorizationDetails:)`) or per login (`OidcOptions.authorizationDetails`), and are sent in the PAR POST body when PAR is enabled. A raw `authorization_details` string in `OidcOptions.additionalParameters` is still forwarded when no typed details are set. A malformed `authorization_details` in a token response keeps the token without details and logs a warning [SDKS-5423, SDKS-5425]
+- Added `OAuthAuthorizationError`, the `cause` of `OidcError.authorizeError` for OAuth2 error redirects such as `access_denied`, and `OidcClient.extractOAuthError(from:)` to parse it [SDKS-5425]
+- The authorization callback now validates the returned `state` (RFC 6749 §10.12) before surfacing an error redirect. A mismatch or missing `state` throws `OidcError.authorizeError` [SDKS-5425]
+- A PAR response whose `expires_in` is missing, non-numeric, non-positive or at most 30 seconds now logs a warning [SDKS-5423]
 
 #### Fixed
-- Fixed `QRCodeCollector` not preserving the complete QR code data URI in `content` [SDKS-5299]
-- Fixed `OidcWebClient` `.authSession` and `.ephemeralAuthSession` not completing for Universal Link (https) redirect URIs [SDKS-5239]
-- Fixed `OidcWebClient.authorize()` collapsing `FailureNode.cause` to `.unknown`, losing typed browser-cancellation and unsupported-OS error identity [SDKS-5295]
-- Fixed FIDO registration/authentication not launching automatically when the DaVinci form's `trigger` property is not `BUTTON` [SDKS-4552]
-- Restored `OidcClientConfig.openId` as a publicly settable property and made `oidcInitialize()` skip OpenID discovery when it is pre-supplied, restoring the 2.0.0 no-discovery configuration path [SDKS-5301]
-- Fixed 5xx AM responses with a parseable error body being misclassified as `FailureNode` instead of `ErrorNode`, diverging from Android [SDKS-5358]
-- Fixed `Journey.start(backchannelUri:)` not rejecting whitespace-only `authIndexType`/`authIndexValue`, diverging from Android [SDKS-5359]
-- Fixed the async `OidcClient.generateAuthorizeUrl(customParams:) async throws -> URL` silently falling back to the standard (non-PAR) flow when called before `OidcClientConfig.oidcInitialize()`, which could emit `additionalParameters` onto the returned URL instead of the PAR POST body; the synchronous overload never supported PAR and is unaffected [SDKS-5403]
-- Fixed query and form parameter values containing a literal `+` (e.g. phone numbers, JSON payloads, base64 padding) being silently decoded as spaces by the server: `URLSessionHttpRequest` now percent-encodes `+` as `%2B` (RFC 3986 encoding of the full query string) in both query parameters and `application/x-www-form-urlencoded` bodies [SDKS-5423]
-- Fixed `swift build` (macOS) failing in `PingOidc`: `OidcDeviceClient.authorize(verificationUriComplete:)` now throws `BrowserError.httpsCallbackUnsupportedOS` on non-iOS platforms instead of referencing the iOS-only `BrowserLauncher` type, and the `PingOneMFA` target's `PingOneSDK` dependency is iOS-conditioned [SDKS-5443]
-- Removed a no-op `skippedTests` entry from `PingTestHost.xctestplan` that attached `DeviceProfileCallbackE2ETest`/`MetadataCallbackE2ETest` skips to `ExternalIdPAppleTests`, where those classes do not exist; the tests actually live (and run) in `JourneyTests` [SDKS-5443]
-- Fixed `PingOneRecognizeEnrollCallback.enroll()` not populating the `devicePublicSigningKey` input field during enrollment; only `PingOneRecognizeAuthenticateCallback.authenticate()` did
+
+- Fixed a `state` override passed via `OidcOptions.additionalParameters` or `customParams` being sent twice on the standard flow and never reaching the PAR body. It is now sent once [SDKS-5425]
+- Fixed literal `+` characters in query and form parameter values being decoded as spaces by the server; `URLSessionHttpRequest` now encodes `+` as `%2B` [SDKS-5423]
 
 #### Changed
-- `OidcClientConfig.buildAuthorizeParams(pkce:extraParameters:onParam:)` is now `throws` because it serializes `authorizationDetails`; callers need `try` [SDKS-5423, SDKS-5425]
-- `OidcError` gained a `configurationError` case — exhaustive `switch` statements over `OidcError` need a new branch [SDKS-5301]
-- A JSON configuration with a blank `oidc.discoveryEndpoint` and no `oidc.openId` sub-object now fails at parse time instead of at first use [SDKS-5301]
-- `OidcClientConfig.oidcInitialize()` cancellation is now isolated per caller: cancelling one caller's own task still returns promptly with `CancellationError`, but no longer cancels the shared discovery/`openIdOverride` operation for any other caller currently sharing it [SDKS-5301]
-- `PingJourney` no longer hard-depends on `PingDeviceProfile`. Previously, every `PingJourney` consumer's binary transitively linked `PingDeviceProfile`, whose `BluetoothCollector` instantiates `CBCentralManager`, causing App Store Connect to flag the app for a missing `NSBluetoothAlwaysUsageDescription` even when no `DeviceProfileCallback` node was used. Apps whose journeys use the Device Profile Collector node must now add the `PingDeviceProfile` product/pod explicitly to their own `Package.swift` or `Podfile` [SDKS-5443]
-- `CallbackRegistry.callback(from:)` now logs a debug message when a journey response contains a callback type with no registered handler (e.g. a `DeviceProfileCallback` on an app that did not add the `PingDeviceProfile` module), making the missing-module misconfiguration diagnosable instead of silently dropping the callback [SDKS-5443]
+
+- `OidcClientConfig.buildAuthorizeParams(pkce:extraParameters:onParam:)` is now `throws`; callers need `try` [SDKS-5423, SDKS-5425]
+
+## [2.2.0]
+
+#### Added
+
+- Added new `PingRecognize` module for PingOne Recognize biometric authentication (enrollment and authentication) [P1RECMOB-3663]
+- Added new `PingOneMFA` module wrapping the native PingOne MFA SDK (`PingOneSDK`)
+- Added `MobilePairingCollector` to support pairing with PingOne [P14C-91504]
+- Added `ImageCollector` to support image display in DaVinci forms [SDKS-5143]
+- Added `MetadataCollector` for the DaVinci SDK Connector pause/resume model [SDKS-5142]
+- Added `trigger` and `isAutomatic` to the DaVinci FIDO collectors [SDKS-4552]
+- Added Facebook Limited Login support in `PingExternalIdPFacebook` [SDKS-5160, SDKS-5161, SDKS-5162]
+- Added present-only launch mode to `BrowserLauncher` via `browserMode: .custom` [SDKS-5357]
+- Added `OidcError.configurationError` for configurations with neither a usable `discoveryEndpoint` nor `openId` [SDKS-5301]
+- Added opt-in commercial device-model-name resolution to `DeviceProfileCallback` via `PlatformCollector(includeModelName: true)`; the default `PlatformCollector()` payload is unchanged. See the `DeviceProfile` README for upgrade notes [SDKS-5275]
+
+#### Updated
+
+- Redesigned the PingExample sample app with a shared design system [SDKS-5054]
+- Updated `facebook-ios-sdk` dependency to 18.1.0 [SDKS-5160]
+- `oidc.discoveryEndpoint` in the unified JSON configuration is now optional when `oidc.openId` is supplied [SDKS-5301]
+
+#### Fixed
+
+- Fixed FIDO registration/authentication not launching automatically when the DaVinci form's `trigger` is not `BUTTON` [SDKS-4552]
+- Fixed FIDO2 client-side WebAuthn errors (cancellation, timeout, etc.) not routing to the DaVinci error branch [SDKS-4478]
+- Fixed `OidcWebClient` `.authSession` and `.ephemeralAuthSession` not completing for Universal Link (https) redirect URIs [SDKS-5239]
+- Fixed `OidcWebClient.authorize()` collapsing `FailureNode.cause` to `.unknown` [SDKS-5295]
+- Restored support for supplying `OidcClientConfig.openId` directly (no-discovery mode), as in 2.0.0 [SDKS-5301]
+- Fixed the async `OidcClient.generateAuthorizeUrl(customParams:)` silently skipping PAR when called before `oidcInitialize()` [SDKS-5403]
+- Fixed 5xx AM responses with a parseable error body being misclassified as `FailureNode` instead of `ErrorNode` [SDKS-5358]
+- Fixed `Journey.start(backchannelUri:)` not rejecting whitespace-only `authIndexType`/`authIndexValue` [SDKS-5359]
+- Fixed `QRCodeCollector` not preserving the complete QR code data URI in `content` [SDKS-5299]
+- Fixed `swift build` (macOS) failing in `PingOidc` on non-iOS platforms [SDKS-5443]
+
+#### Changed
+
+- `PingJourney` no longer hard-depends on `PingDeviceProfile` — apps using the Device Profile Collector node must add `PingDeviceProfile` to their `Package.swift` or `Podfile` [SDKS-5443]
+- `CallbackRegistry.callback(from:)` now logs when a callback type has no registered handler [SDKS-5443]
+- A blank `oidc.discoveryEndpoint` with no `oidc.openId` now fails at parse time instead of at first use [SDKS-5301]
+- `OidcError` now includes `configurationError`; exhaustive `switch` statements over `OidcError` must handle the new case [SDKS-5301]
+- `OidcClientConfig.oidcInitialize()` cancellation is now isolated per caller, so cancelling one caller no longer cancels a shared discovery operation for other callers [SDKS-5301]
+- `SubmitCollector`, `FlowCollector`, and `MetadataCollector` now expose `actionKey` via the new `ActionKeyProvider` protocol [SDKS-5290]
+
+## [2.1.1]
+#### Added
+- Added support for Xcode 27 and iOS 27 [SDKS-5306]
+
+#### Updated
+- Updated `RecaptchaEnterprise` dependency to 18.9.1 for Xcode 27 / iOS 27 compatibility [SDKS-5306]
 
 ## [2.1.0]
 #### Added
@@ -55,7 +79,6 @@
 - Added phone number extension support in `PhoneNumberCollector` [SDKS-4668]
 - Added `PushError.pushNumberChallengeError` to surface a distinct failure for Push Number Challenge responses [SDKS-5115]
 - Added `preferImmediatelyAvailableCredentials` option to FIDO authentication to restrict the ceremony to locally-available credentials only [SDKS-5212]
-- Added `PingRecognize` module for PingOne Recognize biometric authentication (enrollment and authentication) [P1RECMOB-3663]
 - Added `AuthMigration` module for migrating existing sessions from the legacy ForgeRock SDK [SDKS-4773]
 - Added Page Node description, header, and footer support [SDKS-4762]
 - Added AM/AIC backchannel authentication support to the `PingJourney` module via `Journey.start(backchannelUri:configure:)` [SDKS-5156]
