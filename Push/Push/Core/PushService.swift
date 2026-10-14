@@ -534,7 +534,8 @@ actor PushService {
     /// - Returns: `true` when the handler reports success, `false` when the notification was already handled
     ///   or the handler reported failure.
     /// - Throws: `PushError` when storage access fails, the notification or credential is missing, the
-    ///   credential is locked, no handler is available, or the handler throws an error.
+    ///   notification has expired, the credential is locked, no handler is available, or the handler
+    ///   throws an error.
     func approveNotification(
         notificationId: String,
         params: [String: any Sendable] = [:]
@@ -546,6 +547,11 @@ actor PushService {
         guard notification.pending else {
             logger?.d("Notification \(notification.id) already responded; skipping approval")
             return false
+        }
+
+        guard !notification.isExpired else {
+            logger?.w("Cannot approve notification: \(notification.id), notification has expired", error: nil)
+            throw PushError.notificationExpired(notificationId: notification.id, ttl: notification.ttl)
         }
 
         let credential = try await fetchCredential(credentialId: notification.credentialId)
@@ -625,6 +631,11 @@ actor PushService {
         guard notification.pending else {
             logger?.d("Notification \(notification.id) already responded; skipping denial")
             return false
+        }
+
+        guard !notification.isExpired else {
+            logger?.w("Cannot deny notification: \(notification.id), notification has expired", error: nil)
+            throw PushError.notificationExpired(notificationId: notification.id, ttl: notification.ttl)
         }
 
         let credential = try await fetchCredential(credentialId: notification.credentialId)
