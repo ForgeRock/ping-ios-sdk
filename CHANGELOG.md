@@ -7,11 +7,11 @@
 - The authorization callback now validates the returned `state` (RFC 6749 §10.12) before surfacing an error redirect. A mismatch or missing `state` throws `OidcError.authorizeError` [SDKS-5425]
 - A PAR response whose `expires_in` is missing, non-numeric, non-positive or at most 30 seconds now logs a warning [SDKS-5423]
 - The callback `state` is read from the query string or the fragment, so `response_mode=fragment` error redirects are validated and surfaced correctly [SDKS-5425]
-- A `state` or `authorization_details` entry in `OidcClientConfig.additionalParameters` is now sent once instead of being duplicated next to the generated state [SDKS-5425]
 
 #### Fixed
 
 - Fixed a `state` override passed via `OidcOptions.additionalParameters` or `customParams` being sent twice on the standard flow and never reaching the PAR body. It is now sent once [SDKS-5425]
+- Fixed a `state` or `authorization_details` entry in `OidcClientConfig.additionalParameters` being sent twice (next to the generated state) on the standard flow; it is now sent once, and the callback is validated against a config-level `state` [SDKS-5425]
 - `Journey.journeyUser()` now returns a user whose `token()` can complete on a restored session (it previously failed with "No AuthCode is available."); the DaVinci `daVinciUser()` fallback reports an actionable error message [SDKS-5423]
 - Fixed literal `+` characters in query and form parameter values being decoded as spaces by the server; `URLSessionHttpRequest` now RFC 3986-encodes query and form values (e.g. `+` as `%2B`) and renders `nil`-valued items as `name=` [SDKS-5423]
 

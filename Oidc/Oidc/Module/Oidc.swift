@@ -76,7 +76,7 @@ public class OidcModule {
             }
 
             // The state the callback is validated against; same precedence as `buildAuthorizeParams`.
-            let effectiveState = extraParameters[OidcClient.Constants.state] ?? config.state ?? pkce.state
+            let effectiveState = extraParameters[OidcClient.Constants.state] ?? config.additionalParameters[OidcClient.Constants.state] ?? config.state ?? pkce.state
             context.flowContext.set(key: SharedContext.Keys.stateKey, value: effectiveState)
 
             let oidcRequest = try await config.populateRequest(request: request, pkce: pkce, responseMode: "", extraParameters: extraParameters)

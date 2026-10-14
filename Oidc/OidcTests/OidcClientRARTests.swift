@@ -781,6 +781,44 @@ final class OidcClientRARTests: XCTestCase {
         }
     }
 
+    // MARK: - Config-level additionalParameters emit-then-validate round trip
+
+    /// The full loop for a config-level `additionalParameters["state"]`: the authorize URL
+    /// carries the config value, and a callback echoing it passes validation.
+    func testConfigAdditionalParametersStateRoundTripValidates() async throws {
+        oidcClientConfig.additionalParameters = [OidcClient.Constants.state: "fixed"]
+        installMockHandlerWithTokenEndpoint()
+        try await oidcClientConfig.oidcInitialize()
+
+        let oidcClient = OidcClient(config: oidcClientConfig)
+        let syncGenerateAuthorizeUrl: ([String: String]?, [AuthorizationDetail]?) throws -> URL = oidcClient.generateAuthorizeUrl
+        let url = try syncGenerateAuthorizeUrl(nil, nil)
+        XCTAssertEqual(rawQueryValue(named: OidcClient.Constants.state, in: url.absoluteString), "fixed")
+
+        let callback = try XCTUnwrap(URL(string: "http://localhost:8080/callback?code=abc&state=fixed"))
+        let token = try await oidcClient.extractCodeAndGetToken(from: callback)
+        XCTAssertFalse(token.accessToken.isEmpty)
+    }
+
+    /// The bridge rejects malformed modeled array fields instead of coercing or dropping them.
+    func testAuthorizationDetailBridgeRejectsMalformedArrayFields() throws {
+        XCTAssertThrowsError(try AuthorizationDetail(anyValue: ["type": "x", "locations": "https://api.example.com"])) { error in
+            guard case OidcError.configurationError(let message) = error else { return XCTFail("wrong error: \(error)") }
+            XCTAssertTrue(message.contains("locations"))
+        }
+        XCTAssertThrowsError(try AuthorizationDetail(anyValue: ["type": "x", "actions": [42]])) { error in
+            guard case OidcError.configurationError(let message) = error else { return XCTFail("wrong error: \(error)") }
+            XCTAssertTrue(message.contains("actions"))
+        }
+        XCTAssertThrowsError(try AuthorizationDetail(anyValue: "not-a-dict")) { _ in }
+        XCTAssertThrowsError(try AuthorizationDetail(anyValue: ["locations": ["a"]])) { _ in }
+
+        // Well-formed arrays still decode, and booleans stay booleans.
+        let detail = try AuthorizationDetail(anyValue: ["type": "payment_initiation", "locations": ["https://example.com"], "isReadOnly": true])
+        XCTAssertEqual(detail.locations, ["https://example.com"])
+        XCTAssertEqual(detail.additionalFields["isReadOnly"], .bool(true))
+    }
+
     // MARK: - OAuthAuthorizationError
 
     /// `localizedDescription` includes the OAuth error code even when the server sent no `error_description`.

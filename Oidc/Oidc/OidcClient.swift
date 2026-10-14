@@ -202,7 +202,8 @@ public class OidcClient {
     /// request (RFC 6749 §10.12 CSRF protection): a `state` passed in `customParams`, else
     /// `config.state`, else the PKCE-generated state (the precedence `buildAuthorizeParams`
     /// uses). Skipped when none is available (callers that never used this client's
-    /// authorize path).
+    /// authorize path, or a client whose recorded values were consumed by a completed
+    /// exchange).
     ///
     /// State is validated BEFORE an OAuth2 error redirect is surfaced: RFC 6749 §4.1.2.1
     /// requires `state` on an error response just as it does on a success response, so a
@@ -212,7 +213,7 @@ public class OidcClient {
     ///
     ///  - Parameter url: The URL to extract the code from.
     public func extractCodeAndGetToken(from url: URL) async throws -> Token {
-        if let expectedState = customState ?? config.state ?? self.pkce?.state {
+        if let expectedState = customState ?? config.additionalParameters[Constants.state] ?? config.state ?? self.pkce?.state {
             try OidcClient.validateState(from: url, expected: expectedState)
         }
         // Surface OAuth2 error redirects (e.g. `access_denied`) with their real code/description.

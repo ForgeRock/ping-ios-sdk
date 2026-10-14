@@ -64,6 +64,25 @@ public struct AuthorizationDetail: Codable, Sendable, Equatable {
         additionalFields = extra
     }
 
+    /// Decodes an optional array-of-strings field, throwing instead of coercing or dropping:
+    /// these fields are security-relevant constraints, and silent data loss broadens where
+    /// the granted token is usable.
+    private static func stringArray(_ value: Any?, field: String) throws -> [String]? {
+        guard let value else { return nil }
+        guard let array = value as? [Any] else {
+            throw OidcError.configurationError(message: "authorization_details field '\(field)' must be an array of strings")
+        }
+        var result = [String]()
+        result.reserveCapacity(array.count)
+        for element in array {
+            guard let string = element as? String else {
+                throw OidcError.configurationError(message: "authorization_details field '\(field)' must contain only strings")
+            }
+            result.append(string)
+        }
+        return result
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type, forKey: .type)
@@ -97,12 +116,19 @@ public extension AuthorizationDetail {
     ///   the parameter with RFC 3986 rules so a literal `+` survives (`%2B`); a custom request
     ///   layer or a transport that emits raw `+` will have it decoded as a space by
     ///   form-urlencoded decoders on the server.
+    static func wireValue(_ details: [AuthorizationDetail]) throws -> String {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        let data = try encoder.encode(details)
+        return String(decoding: data, as: UTF8.self)
+    }
+
     /// Bridges an untyped JSON value (as produced by `JSONSerialization`) into an
     /// `AuthorizationDetail`. Goes through `AuthorizationDetailValue(any:)`, which classifies
     /// JSON booleans correctly on every OS version (the JSONDecoder path loses them to
-    /// `.double(1)` on the iOS < 17 runtime). Throws when the value is not an object or has
-    /// no string `type`.
-    public init(anyValue: Any) throws {
+    /// `.double(1)` on the iOS < 17 runtime). Throws when the value is not an object, has
+    /// no string `type`, or has malformed modeled array fields.
+    init(anyValue: Any) throws {
         guard let object = anyValue as? [String: Any] else {
             throw OidcError.configurationError(message: "authorization_details entries must be JSON objects")
         }
@@ -110,22 +136,15 @@ public extension AuthorizationDetail {
             throw OidcError.configurationError(message: "authorization_details entries require a string 'type' field")
         }
         self.type = type
-        locations = (object["locations"] as? [Any])?.map { ($0 as? String) ?? String(describing: $0) }
-        actions = (object["actions"] as? [Any])?.map { ($0 as? String) ?? String(describing: $0) }
-        datatypes = (object["datatypes"] as? [Any])?.map { ($0 as? String) ?? String(describing: $0) }
-        privileges = (object["privileges"] as? [Any])?.map { ($0 as? String) ?? String(describing: $0) }
+        locations = try Self.stringArray(object["locations"], field: "locations")
+        actions = try Self.stringArray(object["actions"], field: "actions")
+        datatypes = try Self.stringArray(object["datatypes"], field: "datatypes")
+        privileges = try Self.stringArray(object["privileges"], field: "privileges")
         var extra: [String: AuthorizationDetailValue] = [:]
         for (key, value) in object where !["type", "locations", "actions", "datatypes", "privileges"].contains(key) {
             extra[key] = AuthorizationDetailValue(any: value)
         }
         additionalFields = extra
-    }
-
-    static func wireValue(_ details: [AuthorizationDetail]) throws -> String {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.sortedKeys]
-        let data = try encoder.encode(details)
-        return String(decoding: data, as: UTF8.self)
     }
 }
 
