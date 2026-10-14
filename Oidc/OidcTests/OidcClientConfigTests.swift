@@ -719,6 +719,32 @@ final class OidcClientConfigTests: XCTestCase {
                        .object(["currency": .string("EUR"), "amount": .string("123.50")]))
     }
 
+    /// JSON-config booleans in `authorizationDetails` survive the parse as booleans on every
+    /// OS runtime (the JSONDecoder path loses them to `.double(1)` on iOS < 17).
+    func testApplyJsonAuthorizationDetailsPreservesBooleans() throws {
+        let json: [String: Any] = [
+            "clientId": "json-client",
+            "discoveryEndpoint": "https://example.com/.well-known/openid-configuration",
+            "redirectUri": "http://localhost/callback",
+            "scopes": ["openid"],
+            "authorizationDetails": [
+                ["type": "payment_initiation",
+                 "isReadOnly": true,
+                 "amount": 42]
+            ]
+        ]
+
+        try oidcClientConfig.apply(json: json)
+
+        let details = try XCTUnwrap(oidcClientConfig.authorizationDetails)
+        XCTAssertEqual(details[0].additionalFields["isReadOnly"], .bool(true))
+        XCTAssertEqual(details[0].additionalFields["amount"], .double(42))
+
+        // And the wire value keeps `true` as a boolean.
+        let wire = try AuthorizationDetail.wireValue(details)
+        XCTAssertTrue(wire.contains("\"isReadOnly\":true"), "Got: \(wire)")
+    }
+
     /// A malformed `authorizationDetails` array throws `JsonConfigError.invalidType` and leaves
     /// the config unmutated (mirroring the apply(json:) failure-atomicity tests above).
     func testApplyJsonWithInvalidAuthorizationDetailsThrows() throws {

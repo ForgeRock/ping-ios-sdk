@@ -38,9 +38,9 @@ extension DaVinci {
             if let moduleConfig = self.sharedContext.get(key: SharedContext.Keys.oidcClientConfigKey) as? OidcClientConfig {
                 // Never hand out a user backed by the module config's own agent: the module's
                 // initialize step installs `DefaultAgent`, whose `authorize` ALWAYS throws
-                // ("No AuthCode is available."). Swap in a `CreateAgent` bound to the current
-                // session — the same shape the module's success handler installs — so a token
-                // fetch through this fallback can actually complete.
+                // ("No AuthCode is available."). Swap in a `CreateAgent` so a token fetch
+                // through this fallback fails with the actionable "Please start DaVinci flow
+                // to authenticate." message instead.
                 let usableConfig = moduleConfig.clone()
                 usableConfig.updateAgent(CreateAgent(session: EmptySession(), pkce: nil))
                 return await prepareUser(daVinci: self, user: OidcUser(config: usableConfig))

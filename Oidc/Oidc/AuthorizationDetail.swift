@@ -97,6 +97,30 @@ public extension AuthorizationDetail {
     ///   the parameter with RFC 3986 rules so a literal `+` survives (`%2B`); a custom request
     ///   layer or a transport that emits raw `+` will have it decoded as a space by
     ///   form-urlencoded decoders on the server.
+    /// Bridges an untyped JSON value (as produced by `JSONSerialization`) into an
+    /// `AuthorizationDetail`. Goes through `AuthorizationDetailValue(any:)`, which classifies
+    /// JSON booleans correctly on every OS version (the JSONDecoder path loses them to
+    /// `.double(1)` on the iOS < 17 runtime). Throws when the value is not an object or has
+    /// no string `type`.
+    public init(anyValue: Any) throws {
+        guard let object = anyValue as? [String: Any] else {
+            throw OidcError.configurationError(message: "authorization_details entries must be JSON objects")
+        }
+        guard let type = object["type"] as? String else {
+            throw OidcError.configurationError(message: "authorization_details entries require a string 'type' field")
+        }
+        self.type = type
+        locations = (object["locations"] as? [Any])?.map { ($0 as? String) ?? String(describing: $0) }
+        actions = (object["actions"] as? [Any])?.map { ($0 as? String) ?? String(describing: $0) }
+        datatypes = (object["datatypes"] as? [Any])?.map { ($0 as? String) ?? String(describing: $0) }
+        privileges = (object["privileges"] as? [Any])?.map { ($0 as? String) ?? String(describing: $0) }
+        var extra: [String: AuthorizationDetailValue] = [:]
+        for (key, value) in object where !["type", "locations", "actions", "datatypes", "privileges"].contains(key) {
+            extra[key] = AuthorizationDetailValue(any: value)
+        }
+        additionalFields = extra
+    }
+
     static func wireValue(_ details: [AuthorizationDetail]) throws -> String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]

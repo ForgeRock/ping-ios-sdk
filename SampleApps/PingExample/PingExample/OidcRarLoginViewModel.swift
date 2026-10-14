@@ -89,7 +89,10 @@ class OidcRarLoginViewModel: ObservableObject {
         isLoading = true
         Task {
             defer { isLoading = false }
-            guard let rarLogin = ConfigurationManager.shared.rarLogin else { return }
+            guard let rarLogin = ConfigurationManager.shared.rarLogin else {
+                self.state = .failure(.configurationError(message: "The RAR login workflow is not configured. Check the OIDC (Web) configuration."))
+                return
+            }
             do {
                 self.state = try await rarLogin.authorize { options in
                     options.authorizationDetails = details

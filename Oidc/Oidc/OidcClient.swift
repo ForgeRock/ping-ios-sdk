@@ -169,7 +169,9 @@ public class OidcClient {
     /// the state sent with the authorization request (RFC 6749 §10.12 CSRF protection).
     ///
     /// Skipped when `expected` is `nil` (back-compat for paths that never recorded a
-    /// state). Read from the query string, matching where `extractCode` reads the code.
+    /// state). The state is read from the query string first, then from the fragment, so
+    /// `response_mode=fragment` error redirects (the shape `extractOAuthError` already
+    /// parses) are validated too.
     ///
     /// - Parameters:
     ///   - url: The callback URL to inspect.
@@ -180,7 +182,13 @@ public class OidcClient {
         guard let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true) else {
             throw OidcError.authorizeError(message: "Authorization response URL is malformed")
         }
-        guard let returnedState = components.queryItems?.filter({ $0.name == Constants.state }).first?.value else {
+        let returnedState = components.queryItems?.filter({ $0.name == Constants.state }).first?.value
+            ?? components.percentEncodedFragment.flatMap { fragment -> String? in
+                let fragmentComponents = NSURLComponents()
+                fragmentComponents.percentEncodedQuery = fragment
+                return fragmentComponents.queryItems?.filter({ $0.name == Constants.state }).first?.value
+            }
+        guard let returnedState else {
             throw OidcError.authorizeError(message: "Authorization response did not include the state parameter")
         }
         guard returnedState == expected else {
@@ -213,7 +221,12 @@ public class OidcClient {
         }
         if let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true), let code = components.queryItems?.filter({$0.name == Constants.code}).first?.value, let pcke = self.pkce {
             let authCode = AuthCode(code: code, codeVerifier: pcke.codeVerifier)
-            return try await self.exchangeToken(authCode)
+            let token = try await self.exchangeToken(authCode)
+            // The transaction is done: drop the recorded `state`/PKCE so a later forged
+            // callback on this client cannot be validated against a completed login.
+            customState = nil
+            self.pkce = nil
+            return token
         } else {
             throw OidcError.authorizeError(message: "Authorization code not found")
         }
@@ -537,7 +550,10 @@ extension OidcClientConfig {
             onParam(OidcClient.Constants.display, display)
         }
         
-        for (key, value) in additionalParameters {
+        // `state` and `authorization_details` are excluded here: both are emitted exactly
+        // once below (the same at-most-once slot the per-transaction `extraParameters` use),
+        // so a config-level entry only sets the value, never a second copy of the parameter.
+        for (key, value) in additionalParameters where key != OidcClient.Constants.state && key != OidcClient.Constants.authorization_details {
             onParam(key, value)
         }
         
@@ -552,7 +568,7 @@ extension OidcClientConfig {
         // separately after this function returns) is what makes it reach the PAR POST body
         // too, and avoids relying on the AS reading the last of two duplicate `state` query
         // items on the standard flow (`setParameter` only ever appends, never overwrites).
-        onParam(OidcClient.Constants.state, extraParameters[OidcClient.Constants.state] ?? self.state ?? pkce.state)
+        onParam(OidcClient.Constants.state, extraParameters[OidcClient.Constants.state] ?? additionalParameters[OidcClient.Constants.state] ?? self.state ?? pkce.state)
         
         if let nonce = nonce {
             onParam(OidcClient.Constants.nonce, nonce)
@@ -575,6 +591,8 @@ extension OidcClientConfig {
             onParam(OidcClient.Constants.authorization_details, overrideValue)
         } else if let authorizationDetails, !authorizationDetails.isEmpty {
             onParam(OidcClient.Constants.authorization_details, try AuthorizationDetail.wireValue(authorizationDetails))
+        } else if let rawValue = additionalParameters[OidcClient.Constants.authorization_details] {
+            onParam(OidcClient.Constants.authorization_details, rawValue)
         }
 
         for (key, value) in extraParameters where key != OidcClient.Constants.authorization_details && key != OidcClient.Constants.state {

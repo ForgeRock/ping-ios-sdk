@@ -421,7 +421,8 @@ class JourneyViewModel: ObservableObject {
             config.realm = currentConfig?.realm ?? "root"
             // Only override the default (`iPlanetDirectoryPro`) when a cookie name is configured;
             // an explicit empty string is sent as the header name as-is and is a configuration error.
-            if let cookieName = currentConfig?.cookieName, !cookieName.isEmpty {
+            if let cookieName = currentConfig?.cookieName,
+               !cookieName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 config.cookie = cookieName
             }
             config.module(PingJourney.OidcModule.config) { oidcValue in

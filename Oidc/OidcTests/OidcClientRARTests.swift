@@ -727,6 +727,60 @@ final class OidcClientRARTests: XCTestCase {
         XCTAssertTrue(absentWarnings.isEmpty, "Got: \(absentWarnings)")
     }
 
+    // MARK: - validateState fragment handling and transaction cleanup
+
+    /// A `response_mode=fragment` callback validates the returned state read from the fragment.
+    func testValidateStateAcceptsFragmentState() throws {
+        let url = URL(string: "myapp://oauth2redirect#code=abc&state=mine")!
+        try OidcClient.validateState(from: url, expected: "mine")
+    }
+
+    /// A fragment callback whose state mismatches is rejected as CSRF, not accepted.
+    func testValidateStateRejectsFragmentStateMismatch() throws {
+        let url = URL(string: "myapp://oauth2redirect#code=abc&state=other")!
+        XCTAssertThrowsError(try OidcClient.validateState(from: url, expected: "mine")) { error in
+            guard case OidcError.authorizeError(_, let message) = error else { return XCTFail("wrong error") }
+            XCTAssertTrue(message?.contains("State mismatch") ?? false)
+        }
+    }
+
+    /// A fragment callback with no state at all is rejected.
+    func testValidateStateRejectsMissingFragmentState() throws {
+        let url = URL(string: "myapp://oauth2redirect#code=abc")!
+        XCTAssertThrowsError(try OidcClient.validateState(from: url, expected: "mine")) { error in
+            guard case OidcError.authorizeError(_, let message) = error else { return XCTFail("wrong error") }
+            XCTAssertTrue(message?.contains("did not include the state") ?? false)
+        }
+    }
+
+    /// A reused OidcClient rejects a forged callback fired after a completed login: the
+    /// recorded state/PKCE are consumed by a successful exchange and no longer validate.
+    func testStaleStateIsRejectedAfterCompletedExchange() async throws {
+        installMockHandlerWithTokenEndpoint()
+        try await oidcClientConfig.oidcInitialize()
+
+        let oidcClient = OidcClient(config: oidcClientConfig)
+        let syncGenerateAuthorizeUrl: ([String: String]?, [AuthorizationDetail]?) throws -> URL = oidcClient.generateAuthorizeUrl
+        let url = try syncGenerateAuthorizeUrl(["state": "s1"], nil)
+        let callback = try XCTUnwrap(URL(string: "http://localhost:8080/callback?code=abc&state=\(rawQueryValue(named: OidcClient.Constants.state, in: url.absoluteString) ?? "s1")"))
+        _ = try await oidcClient.extractCodeAndGetToken(from: callback)
+
+        // A forged callback carrying the consumed state must no longer pass validation.
+        let forged = URL(string: "http://localhost:8080/callback?code=evil&state=s1")!
+        do {
+            _ = try await oidcClient.extractCodeAndGetToken(from: forged)
+            XCTFail("A forged callback carrying the consumed state must be rejected")
+        } catch let error as OidcError {
+            // The consumed state is gone, so validation re-arms as "expected is nil"; the
+            // forged callback then fails later in the pipeline ("code not found") rather
+            // than being accepted. Reaching any error here is the point: no token issued.
+            guard case .authorizeError(_, let message) = error else { return XCTFail("wrong error: \(error)") }
+            XCTAssertTrue(message?.contains("State mismatch") ?? false
+                          || message?.contains("Authorization code not found") ?? false,
+                          "Got: \(String(describing: message))")
+        }
+    }
+
     // MARK: - OAuthAuthorizationError
 
     /// `localizedDescription` includes the OAuth error code even when the server sent no `error_description`.

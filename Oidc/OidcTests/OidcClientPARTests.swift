@@ -636,6 +636,113 @@ final class OidcClientPARTests: XCTestCase {
         XCTAssertFalse(authorizeUrl.contains("state="), "Authorize URL should NOT contain state when PAR is used")
     }
 
+    /// Installs the standard discovery + PAR mock handler (mirrors OidcClientRARTests).
+    private func installMockHandler() {
+        MockURLProtocol.requestHandler = { [self] request in
+            switch request.url?.path ?? "" {
+            case MockAPIEndpoint.discovery.url.path:
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, headers: MockResponse.headers), OidcClientPARTests.openIdConfigurationWithPAR)
+            case OidcClientPARTests.parEndpointURL.path:
+                return (try mockResponse(url: OidcClientPARTests.parEndpointURL, statusCode: 201, headers: MockResponse.headers), OidcClientPARTests.parResponse)
+            default:
+                XCTFail("Unexpected request: \(request.url?.path ?? "<no url>")")
+                return (try mockResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500), Data())
+            }
+        }
+    }
+
+    /// Extracts the raw (still URL-encoded) value of one query parameter from a URL string.
+    private func rawQueryValue(named name: String, in urlString: String) -> String? {
+        guard let components = URLComponents(string: urlString),
+              let item = components.queryItems?.first(where: { $0.name == name }) else {
+            return nil
+        }
+        return item.value
+    }
+
+    /// Counts occurrences of a query parameter name in a URL string.
+    private func queryParamOccurrences(named name: String, in urlString: String) -> Int {
+        guard let components = URLComponents(string: urlString) else { return 0 }
+        return (components.queryItems ?? []).filter { $0.name == name }.count
+    }
+
+    /// URL-decodes an `application/x-www-form-urlencoded` body into (name, value) pairs.
+    private func formFields(ofBody body: Data) -> [(String, String)] {
+        guard let bodyString = String(data: body, encoding: .utf8) else { return [] }
+        var components = URLComponents()
+        components.percentEncodedQuery = bodyString
+        return (components.queryItems ?? []).map { ($0.name, $0.value ?? "") }
+    }
+
+    /// Reads a URLRequest body that may be backed by a stream (mirrors the helper in OidcClientRARTests).
+    private func parBodyData(from request: URLRequest) -> Data {
+        if let body = request.httpBody {
+            return body
+        }
+        guard let stream = request.httpBodyStream else {
+            return Data()
+        }
+        stream.open()
+        defer { stream.close() }
+        var data = Data()
+        let bufferSize = 4096
+        let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
+        defer { buffer.deallocate() }
+        while stream.hasBytesAvailable {
+            let bytesRead = stream.read(buffer, maxLength: bufferSize)
+            if bytesRead > 0 {
+                data.append(buffer, count: bytesRead)
+            } else {
+                break
+            }
+        }
+        return data
+    }
+
+    // MARK: - Config-level additionalParameters state/authorization_details at-most-once
+
+    /// A `state` entry in config-level `additionalParameters` is sent exactly once (replacing
+    /// the generated state), not duplicated next to it.
+    func testConfigAdditionalParametersStateIsSentOnceOnStandardFlow() async throws {
+        oidcClientConfig.additionalParameters = [OidcClient.Constants.state: "fixed"]
+        installMockHandler()
+        try await oidcClientConfig.oidcInitialize()
+
+        let request = try XCTUnwrap(oidcClientConfig.httpClient).request()
+        _ = try await oidcClientConfig.populateRequest(request: request, pkce: Pkce.generate(), responseMode: OidcClient.Constants.query)
+        let urlString = try XCTUnwrap(request.url)
+        XCTAssertEqual(queryParamOccurrences(named: OidcClient.Constants.state, in: urlString), 1)
+        XCTAssertEqual(rawQueryValue(named: OidcClient.Constants.state, in: urlString), "fixed")
+    }
+
+    /// Under PAR, a config-level `state` reaches the PAR body once.
+    func testConfigAdditionalParametersStateReachesPARBodyOnce() async throws {
+        oidcClientConfig.par = true
+        oidcClientConfig.additionalParameters = [OidcClient.Constants.state: "fixed"]
+        installMockHandler()
+        try await oidcClientConfig.oidcInitialize()
+
+        let request = try XCTUnwrap(oidcClientConfig.httpClient).request()
+        _ = try await oidcClientConfig.populateRequest(request: request, pkce: Pkce.generate(), responseMode: "")
+        let parRequests = MockURLProtocol.requestHistory.filter { $0.url?.path == OidcClientPARTests.parEndpointURL.path }
+        let fields = formFields(ofBody: parBodyData(from: try XCTUnwrap(parRequests.first)))
+        XCTAssertEqual(fields.filter { $0.0 == OidcClient.Constants.state }.map { $0.1 }, ["fixed"])
+    }
+
+    /// A config-level raw `authorization_details` is sent when nothing else provides one.
+    func testConfigAdditionalParametersRawAuthorizationDetailsIsSentOnce() async throws {
+        oidcClientConfig.additionalParameters = [
+            OidcClient.Constants.authorization_details: try AuthorizationDetail.wireValue([AuthorizationDetail(type: "account_information", actions: ["read"])])
+        ]
+        installMockHandler()
+        try await oidcClientConfig.oidcInitialize()
+
+        let request = try XCTUnwrap(oidcClientConfig.httpClient).request()
+        _ = try await oidcClientConfig.populateRequest(request: request, pkce: Pkce.generate(), responseMode: OidcClient.Constants.query)
+        let urlString = try XCTUnwrap(request.url)
+        XCTAssertEqual(queryParamOccurrences(named: OidcClient.Constants.authorization_details, in: urlString), 1)
+    }
+
     // MARK: - PAR expires_in warnings (RFC 9126 §4 request_uri expiry visibility)
 
     /// Installs a PAR handler that returns a `request_uri` with the given `expires_in`.

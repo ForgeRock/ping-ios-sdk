@@ -495,8 +495,11 @@ public class OidcClientConfig: @unchecked Sendable {
         var parsedAuthorizationDetails: [AuthorizationDetail]?
         if let rawArray: [Any] = try p.optionalValue(JsonConfigKey.authorizationDetails, field: f(JsonConfigKey.authorizationDetails)) {
             do {
-                let data = try JSONSerialization.data(withJSONObject: rawArray)
-                parsedAuthorizationDetails = try JSONDecoder().decode([AuthorizationDetail].self, from: data)
+                // Decode through the `AuthorizationDetail(anyValue:)` bridge, not JSONDecoder:
+                // on the iOS < 17 runtime JSONDecoder bridges JSON `true` to NSNumber(1), which
+                // decodes as .double(1) and re-serializes as `1` on the wire. The bridge
+                // classifies CFBoolean correctly on every OS version.
+                parsedAuthorizationDetails = try rawArray.map { try AuthorizationDetail(anyValue: $0) }
             } catch {
                 throw JsonConfigError.invalidType(field: f(JsonConfigKey.authorizationDetails), expected: "array of RFC 9396 authorization_details objects")
             }
