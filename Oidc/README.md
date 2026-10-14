@@ -233,6 +233,8 @@ let oidcLogin = OidcWebClient.createOidcWebClient { config in
 
 `PingOidc` supports [Rich Authorization Requests (RFC 9396)](https://datatracker.ietf.org/doc/html/rfc9396). You describe what the user is approving with `AuthorizationDetail` objects, the SDK sends them as the `authorization_details` parameter (in the PAR POST body when [PAR](#pushed-authorization-requests-par) is enabled), and the details the server actually granted are echoed back on `Token.authorizationDetails`.
 
+A raw `authorization_details` string in `OidcOptions.additionalParameters` is still sent when no typed details are set; if both are set, the typed value wins and a warning is logged. A `state` passed via `additionalParameters` or `customParams` is sent once (in the PAR body when PAR is enabled) and the callback is validated against it.
+
 If the token response contains a malformed `authorization_details` value, the token is still returned with `Token.authorizationDetails` set to `nil`, and a warning is logged.
 
 ```swift
