@@ -228,7 +228,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .pingOneMFAOtp: return "OTP for your paired accounts"
         case .pingOneMFAPayload: return "Generate mobile payload for authentication and registration"
         case .pingOneMFADavinciPairing: return "Pair device via DaVinci flow"
-        case .pingOneMFADavinciAuthorization: return "Authorization device via DaVinci flow"
+        case .pingOneMFADavinciAuthorization: return "Authorize device via DaVinci flow"
         }
     }
 

@@ -26,7 +26,7 @@ struct PingOneMFADavinciAuthorizationView: View {
                         authenticationStep(continueNode)
                     case is SuccessNode:
                         Label("DaVinci Authorization complete", systemImage: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
+                            .foregroundStyle(PingTheme.Color.statusSuccess)
                             .padding()
                     case let failureNode as FailureNode:
                         let apiError = failureNode.cause as? ApiError
@@ -48,11 +48,7 @@ struct PingOneMFADavinciAuthorizationView: View {
             }
 
             if davinciViewModel.isLoading {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-                ProgressView()
-                    .scaleEffect(2)
-                    .tint(PingTheme.Color.actionPrimary)
+                PingLoadingOverlay()
             }
         }
         .navigationTitle("DaVinci Authorization")
@@ -157,10 +153,10 @@ struct PingOneMFADavinciAuthenticationMetadataView: View {
             }
         case .validated:
             Label("Mobile authentication validated", systemImage: "checkmark.circle.fill")
-                .foregroundStyle(.green)
+                .foregroundStyle(PingTheme.Color.statusSuccess)
         case .failed:
             Label("Failed to validate mobile authentication", systemImage: "xmark.circle.fill")
-                .foregroundStyle(.red)
+                .foregroundStyle(PingTheme.Color.statusError)
         }
     }
 
