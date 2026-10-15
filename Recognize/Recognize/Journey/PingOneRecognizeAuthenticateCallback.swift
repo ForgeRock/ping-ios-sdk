@@ -72,6 +72,8 @@ open class PingOneRecognizeAuthenticateCallback: AbstractRecognizeCallback, @unc
     /// - `.active` — device is enrolled, proceed with authentication.
     /// - `.notEnrolled` — device is not enrolled, proceed with enrollment.
     /// - `.otherError(message:code:debuggingInfo:)` — unexpected error, propagate to caller.
+    ///   Its `code` is the native Keyless SDK code; it is mapped to the shared
+    ///   cross-platform model when thrown as a `RecognizeError`.
     public enum ValidationResult: Sendable {
         case active
         case notEnrolled
@@ -117,7 +119,14 @@ open class PingOneRecognizeAuthenticateCallback: AbstractRecognizeCallback, @unc
             try Task.checkCancellation()
             return try await performAuthenticate(retrieveSelfie: retrieveSelfie, options: options)
         case .otherError(let message, let code, let debuggingInfo):
-            throw RecognizeError(message, code: code, debuggingInfo: debuggingInfo)
+            // `code` is the native Keyless code carried by `ValidationResult` — map it to
+            // the shared cross-platform model at this boundary, like every other site
+            // where a native Keyless error becomes a `RecognizeError`.
+            throw AbstractRecognizeCallback.recognizeError(
+                fromNativeMessage: message,
+                nativeCode: code,
+                debuggingInfo: debuggingInfo
+            )
         case .notEnrolled:
             try Task.checkCancellation()
             return try await performEnroll(clientStateOverride: clientState, retrieveSelfie: retrieveSelfie, options: options)
