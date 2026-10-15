@@ -212,9 +212,8 @@ public class OidcClientConfig: @unchecked Sendable {
     /// parameter, so it is automatically carried in the PAR POST body when `par == true`.
     ///
     /// - Note: if the legacy string escape hatch `additionalParameters` also contains an
-    ///   `authorization_details` entry, the typed value here wins on the PAR flow (the form
-    ///   dictionary is last-write-wins), but the standard front-channel flow emits BOTH entries
-    ///   (the URL query appends on repeated keys). Do not set both.
+    ///   `authorization_details` entry, the typed value here wins and the raw entry is ignored. A
+    ///   per-call or per-login `authorization_details` (typed or raw) takes precedence over both.
     public var authorizationDetails: [AuthorizationDetail]?
     /// Enable PAR (Pushed Authorization Request) RFC 9126.
     /// When enabled, authorization parameters are pushed to the server before authorization.

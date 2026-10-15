@@ -12,10 +12,10 @@
 //  SDKS-5425 — RFC 9396 Rich Authorization Requests: first-class `authorizationDetails`
 //  on the authorize surface with a PAR-safe per-transaction path.
 //
-//  Part of this file documents (and locks in) the still-accurate legacy pitfalls from the
-//  SDKS-3895 spike: customParams / additionalParameters / per-login OidcOptions are applied
-//  AFTER PAR population, so they never reach the PAR body and leak onto the front-channel
-//  URL. The new typed `authorizationDetails` surface is the PAR-safe replacement.
+//  `state` and `authorization_details` passed through customParams or per-login OidcOptions are
+//  routed through `extraParameters`, so they are sent once and reach the PAR body. Any other
+//  customParams / additionalParameters entry is applied AFTER PAR population and lands on the
+//  front-channel URL.
 
 import XCTest
 @testable import PingOidc
@@ -234,8 +234,8 @@ final class OidcClientRARTests: XCTestCase {
     }
 
     /// The new `authorizationDetails:` named parameter on the async PAR-capable overload must
-    /// reach the PAR body — in contrast to `customParams`, which (documented, unchanged) is
-    /// applied after PAR population and never reaches it.
+    /// reach the PAR body — in contrast to other `customParams` entries, which are applied after
+    /// PAR population and never reach it.
     func testAuthorizationDetailsParameterReachesPARBody() async throws {
         oidcClientConfig.par = true
         installMockHandler()
@@ -400,6 +400,21 @@ final class OidcClientRARTests: XCTestCase {
         let fields = formFields(ofBody: rarBodyData(from: try XCTUnwrap(parRequests.first)))
         XCTAssertEqual(fields.filter { $0.0 == OidcClient.Constants.authorization_details }.map { $0.1 }, [typedValue])
         XCTAssertEqual(queryParamOccurrences(named: OidcClient.Constants.authorization_details, in: url.absoluteString), 0)
+    }
+
+    /// A per-call raw `customParams["authorization_details"]` takes precedence over config-wide typed
+    /// details and is sent once.
+    func testRawAuthorizationDetailsViaCustomParamsOverridesConfigLevelDetails() async throws {
+        oidcClientConfig.authorizationDetails = OidcClientRARTests.paymentInitiationDetails
+        installMockHandler()
+
+        let oidcClient = OidcClient(config: oidcClientConfig)
+        let url = try await oidcClient.generateAuthorizeUrl(customParams: [
+            OidcClient.Constants.authorization_details: "raw-value"
+        ])
+
+        XCTAssertEqual(queryParamOccurrences(named: OidcClient.Constants.authorization_details, in: url.absoluteString), 1)
+        XCTAssertEqual(rawQueryValue(named: OidcClient.Constants.authorization_details, in: url.absoluteString), "raw-value")
     }
 
     // MARK: - End-to-end through the real OidcModule pipeline (OidcOptions → PAR body)

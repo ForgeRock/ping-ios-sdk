@@ -88,9 +88,9 @@ public class OidcClient {
     ///   fall back to the standard flow — emitting every `additionalParameters` value onto the
     ///   returned URL's query string instead of the PAR POST body.
     /// - Parameters:
-    ///   - customParams: Custom parameters to include in the authorization request. These are
-    ///     applied to the URL *after* PAR population, so they always end up on the front-channel query
-    ///     string — never in the PAR body. Use `OidcClientConfig.additionalParameters` instead for any
+    ///   - customParams: Custom parameters to include in the authorization request. Apart from the
+    ///     exceptions below, these are applied to the URL *after* PAR population, so they end up on
+    ///     the front-channel query string — never in the PAR body. Use `OidcClientConfig.additionalParameters` instead for any
     ///     value that must be kept off the URL when PAR is enabled. The exceptions are `state`, which
     ///     replaces the generated state, and a raw `authorization_details`, which is ignored with a
     ///     warning when `authorizationDetails` is also set. Both are sent once, in the PAR body when
