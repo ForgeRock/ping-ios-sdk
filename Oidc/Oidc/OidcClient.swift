@@ -46,7 +46,8 @@ public class OidcClient {
     ///
     /// - Parameters:
     ///   - customParams: Custom parameters to include in the authorization request. A `state`
-    ///     entry replaces the generated state and is sent once.
+    ///     entry replaces the generated state and is sent once. A raw `authorization_details` entry
+    ///     is sent once and is ignored, with a warning, when `authorizationDetails` is also set.
     ///   - authorizationDetails: RFC 9396 Rich Authorization Details to include in the authorization
     ///     request. Serialized and merged in before `customParams` is applied. This overload has no
     ///     PAR support, so both `customParams` and `authorizationDetails` always land on the returned
@@ -66,7 +67,7 @@ public class OidcClient {
         if let authorizationDetails, !authorizationDetails.isEmpty {
             extraParameters[OidcClient.Constants.authorization_details] = try AuthorizationDetail.wireValue(authorizationDetails)
         }
-        let remainingParams = takeStateOverride(from: customParams, into: &extraParameters)
+        let remainingParams = takeReservedOverrides(from: customParams, into: &extraParameters)
         request = try config.populateStandardAuthorizeRequest(request: request, pkce: generatedPkce, responseMode: OidcClient.Constants.query, extraParameters: extraParameters)
         for parameter in remainingParams {
             request.setParameter(name: parameter.key, value: parameter.value)
@@ -90,8 +91,10 @@ public class OidcClient {
     ///   - customParams: Custom parameters to include in the authorization request. These are
     ///     applied to the URL *after* PAR population, so they always end up on the front-channel query
     ///     string — never in the PAR body. Use `OidcClientConfig.additionalParameters` instead for any
-    ///     value that must be kept off the URL when PAR is enabled. The exception is `state`, which
-    ///     replaces the generated state and is sent once, in the PAR body when PAR is enabled.
+    ///     value that must be kept off the URL when PAR is enabled. The exceptions are `state`, which
+    ///     replaces the generated state, and a raw `authorization_details`, which is ignored with a
+    ///     warning when `authorizationDetails` is also set. Both are sent once, in the PAR body when
+    ///     PAR is enabled.
     ///   - authorizationDetails: RFC 9396 Rich Authorization Details to include in the authorization
     ///     request. Unlike `customParams`, this is applied *before* PAR population, so it correctly
     ///     reaches the PAR POST body when PAR is enabled. An empty array is treated as unset (a
@@ -108,7 +111,7 @@ public class OidcClient {
         if let authorizationDetails, !authorizationDetails.isEmpty {
             extraParameters[OidcClient.Constants.authorization_details] = try AuthorizationDetail.wireValue(authorizationDetails)
         }
-        let remainingParams = takeStateOverride(from: customParams, into: &extraParameters)
+        let remainingParams = takeReservedOverrides(from: customParams, into: &extraParameters)
         request = try await config.populateRequest(request: request, pkce: generatedPkce, responseMode: OidcClient.Constants.query, extraParameters: extraParameters)
         for parameter in remainingParams {
             request.setParameter(name: parameter.key, value: parameter.value)
@@ -120,14 +123,23 @@ public class OidcClient {
         return url
     }
     
-    /// Moves a `state` entry out of `customParams` into `extraParameters` so it is sent once
-    /// (and, under PAR, in the PAR body), and records it for `extractCodeAndGetToken`.
-    /// - Returns: `customParams` without the `state` entry.
-    private func takeStateOverride(from customParams: [String: String]?, into extraParameters: inout [String: String]) -> [String: String] {
+    /// Moves the `state` and `authorization_details` entries out of `customParams` into
+    /// `extraParameters` so each is sent once (and, under PAR, in the PAR body), and records `state`
+    /// for `extractCodeAndGetToken`. A typed `authorization_details` already in `extraParameters`
+    /// wins over a raw `customParams` value, which is dropped with a warning.
+    /// - Returns: `customParams` without the `state` and `authorization_details` entries.
+    private func takeReservedOverrides(from customParams: [String: String]?, into extraParameters: inout [String: String]) -> [String: String] {
         var remaining = customParams ?? [:]
         customState = remaining.removeValue(forKey: OidcClient.Constants.state)
         if let customState {
             extraParameters[OidcClient.Constants.state] = customState
+        }
+        if let rawAuthorizationDetails = remaining.removeValue(forKey: OidcClient.Constants.authorization_details) {
+            if extraParameters[OidcClient.Constants.authorization_details] == nil {
+                extraParameters[OidcClient.Constants.authorization_details] = rawAuthorizationDetails
+            } else {
+                logger.w("Both authorizationDetails and customParams[\"authorization_details\"] are set. Using the typed value and ignoring the raw one.", error: nil)
+            }
         }
         return remaining
     }

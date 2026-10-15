@@ -334,15 +334,11 @@ final class OidcClientRARTests: XCTestCase {
                        "extraParameters must be forwarded into the PAR body")
     }
 
-    // MARK: - Legacy pitfalls (locked in, still accurate by design)
+    // MARK: - authorization_details in customParams
 
-    /// `generateAuthorizeUrl(customParams:)` applies custom params to the URL *after* the PAR
-    /// round-trip, so with PAR enabled `authorization_details` passed via customParams:
-    ///  - never reaches the PAR POST body (the server never binds it to the transaction), and
-    ///  - is emitted onto the front-channel query string anyway (payload size / privacy leak).
-    /// Documented behavior — this is precisely why the typed `authorizationDetails:` parameter
-    /// exists as the PAR-safe alternative.
-    func testAuthorizationDetailsViaCustomParamsDoesNotReachPARBody() async throws {
+    /// A raw `customParams["authorization_details"]` is routed like `state`: under PAR it reaches the
+    /// PAR POST body exactly once and stays off the front-channel query string.
+    func testRawAuthorizationDetailsViaCustomParamsReachesPARBodyOnce() async throws {
         oidcClientConfig.par = true
         installMockHandler()
 
@@ -351,49 +347,59 @@ final class OidcClientRARTests: XCTestCase {
         let url = try await oidcClient.generateAuthorizeUrl(customParams: [
             OidcClient.Constants.authorization_details: customValue
         ])
-        let urlString = url.absoluteString
 
-        let parRequest = MockURLProtocol.requestHistory[1]
-        let fields = formFields(ofBody: parRequest.httpBody ?? Data())
-        XCTAssertNil(fields.first { $0.0 == OidcClient.Constants.authorization_details },
-                     "customParams are not forwarded into the PAR body (documented behavior)")
-
-        XCTAssertNotNil(rawQueryValue(named: OidcClient.Constants.authorization_details, in: urlString),
-                        "customParams always end up on the front-channel query string, even in PAR mode")
+        let parRequests = MockURLProtocol.requestHistory.filter { $0.url?.path == OidcClientRARTests.parEndpointURL.path }
+        let fields = formFields(ofBody: rarBodyData(from: try XCTUnwrap(parRequests.first)))
+        XCTAssertEqual(fields.filter { $0.0 == OidcClient.Constants.authorization_details }.map { $0.1 }, [customValue])
+        XCTAssertEqual(queryParamOccurrences(named: OidcClient.Constants.authorization_details, in: url.absoluteString), 0)
     }
 
-    /// Per-login `OidcOptions.additionalParameters` behave like customParams (applied after
-    /// PAR population in OidcModule.start) — the same legacy pitfall, locked in. The typed
-    /// `OidcOptions.authorizationDetails` field is the PAR-safe replacement.
-    func testPerLoginOptionsAdditionalParametersAreAppliedAfterPARPopulation() async throws {
+    /// Raw `customParams["authorization_details"]` alongside typed details is not sent twice: the
+    /// typed value wins and the raw one is dropped with a warning, on both overloads.
+    func testRawAuthorizationDetailsWithTypedDetailsIsSentOnceStandardFlow() async throws {
+        let logger = OidcClientPARTests.CapturingLogger()
+        oidcClientConfig.logger = logger
+        installMockHandler()
+        try await oidcClientConfig.oidcInitialize()
+
+        let oidcClient = OidcClient(config: oidcClientConfig)
+        let typedValue = try AuthorizationDetail.wireValue(OidcClientRARTests.paymentInitiationDetails)
+        let syncGenerateAuthorizeUrl: ([String: String]?, [AuthorizationDetail]?) throws -> URL = oidcClient.generateAuthorizeUrl
+        let syncURL = try syncGenerateAuthorizeUrl(
+            [OidcClient.Constants.authorization_details: "raw-value"],
+            OidcClientRARTests.paymentInitiationDetails
+        )
+        let asyncURL = try await oidcClient.generateAuthorizeUrl(
+            customParams: [OidcClient.Constants.authorization_details: "raw-value"],
+            authorizationDetails: OidcClientRARTests.paymentInitiationDetails
+        )
+
+        for url in [syncURL, asyncURL] {
+            XCTAssertEqual(queryParamOccurrences(named: OidcClient.Constants.authorization_details, in: url.absoluteString), 1)
+            let sent = try XCTUnwrap(rawQueryValue(named: OidcClient.Constants.authorization_details, in: url.absoluteString))
+            XCTAssertEqual(sent.removingPercentEncoding, typedValue)
+        }
+        XCTAssertEqual(logger.warningMessages.filter { $0.contains("customParams[\"authorization_details\"]") }.count, 2,
+                       "Got: \(logger.warningMessages)")
+    }
+
+    /// Under PAR, typed details plus a raw customParams value still produce a single parameter, in
+    /// the PAR body, with the typed value.
+    func testRawAuthorizationDetailsWithTypedDetailsIsSentOnceUnderPAR() async throws {
         oidcClientConfig.par = true
         installMockHandler()
 
         let oidcClient = OidcClient(config: oidcClientConfig)
-        _ = try await oidcClient.generateAuthorizeUrl() // let discovery + PAR happen once
-        MockURLProtocol.requestHistory.removeAll()
-
-        // Simulate OidcModule.start: PAR-populate, then apply per-login options afterwards.
-        let httpClient = try XCTUnwrap(oidcClientConfig.httpClient)
-        var request = httpClient.request()
-        let pkce = Pkce.generate()
-        request = try await oidcClientConfig.populateRequest(request: request, pkce: pkce, responseMode: "")
-
-        let perLoginOptions: [String: String] = [
-            OidcClient.Constants.authorization_details: try AuthorizationDetail.wireValue(OidcClientRARTests.paymentInitiationDetails)
-        ]
-        for parameter in perLoginOptions {
-            request.setParameter(name: parameter.key, value: parameter.value)
-        }
+        let typedValue = try AuthorizationDetail.wireValue(OidcClientRARTests.paymentInitiationDetails)
+        let url = try await oidcClient.generateAuthorizeUrl(
+            customParams: [OidcClient.Constants.authorization_details: "raw-value"],
+            authorizationDetails: OidcClientRARTests.paymentInitiationDetails
+        )
 
         let parRequests = MockURLProtocol.requestHistory.filter { $0.url?.path == OidcClientRARTests.parEndpointURL.path }
-        XCTAssertEqual(parRequests.count, 1)
-        let fields = formFields(ofBody: rarBodyData(from: parRequests[0]))
-        XCTAssertNil(fields.first { $0.0 == OidcClient.Constants.authorization_details },
-                     "Per-login additionalParameters are applied after PAR population (documented pitfall)")
-        let urlString = try XCTUnwrap(request.url)
-        XCTAssertNotNil(rawQueryValue(named: OidcClient.Constants.authorization_details, in: urlString),
-                        "Per-login authorization_details ends up on the front-channel URL when PAR is enabled")
+        let fields = formFields(ofBody: rarBodyData(from: try XCTUnwrap(parRequests.first)))
+        XCTAssertEqual(fields.filter { $0.0 == OidcClient.Constants.authorization_details }.map { $0.1 }, [typedValue])
+        XCTAssertEqual(queryParamOccurrences(named: OidcClient.Constants.authorization_details, in: url.absoluteString), 0)
     }
 
     // MARK: - End-to-end through the real OidcModule pipeline (OidcOptions → PAR body)
