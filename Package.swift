@@ -1,3 +1,13 @@
+//
+//  Package.swift
+//  Ping Orchestration SDK for iOS
+//
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
+//
+//  This software may be modified and distributed under the terms
+//  of the MIT license. See the LICENSE file for details.
+//
+
 // swift-tools-version: 6.0
 import Foundation
 import PackageDescription
