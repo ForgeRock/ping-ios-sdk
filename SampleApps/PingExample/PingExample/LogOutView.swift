@@ -44,29 +44,6 @@ struct LogOutView: View {
                     }
                     .padding(.top, PingTheme.Spacing.medium)
                 }
-                .padding(.top, 16)
-            }
-            
-            if !logoutViewModel.isLoading && logoutViewModel.activeSessions.count > 0 {
-                VStack(spacing: 0) {
-                    Divider()
-                    Button {
-                        Task {
-                            await logoutViewModel.logoutAll()
-                        }
-                    } label: {
-                        Text("Log Out of All Sessions")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(Color.themeButtonBackground)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
-                }
-                .background(Color(.systemGroupedBackground))
             }
 
             if !logoutViewModel.isLoading && logoutViewModel.activeSessions.count > 0 {

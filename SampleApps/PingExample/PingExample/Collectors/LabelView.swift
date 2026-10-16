@@ -33,15 +33,4 @@ struct LabelView: View {
             Text(field.content)
         }
     }
-
-    // MARK: - Label Content
-
-    @ViewBuilder
-    private var labelContent: some View {
-        if let richContent = field.richContent {
-            Text(RichTextBuilder.build(from: richContent))
-        } else {
-            Text(field.content)
-        }
-    }
 }

@@ -347,8 +347,6 @@
 		D5A100000000000000000004 /* PingDesignSystemImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A100000000000000000003 /* PingDesignSystemImport.swift */; };
 		E53994EB73A94FEF922CA2F8 /* PingOneMFAScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB284B4547584EE8B336A683 /* PingOneMFAScannerViewModel.swift */; };
 		EC0816C12D4A833400F1AD02 /* ConfigurationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */; };
-		SDKS50660005000000000004 /* JsonConfigPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50660005000000000003 /* JsonConfigPreviewView.swift */; };
-		SDKS50660005000000000002 /* JsonConfigLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = SDKS50660005000000000001 /* JsonConfigLoader.swift */; };
 		EC0816C32D4A83E200F1AD02 /* ConfigurationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */; };
 		EC0CB5CA2E27AE4C00A82D6C /* JourneyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */; };
 		EC0CB5CB2E27AE4C00A82D6C /* JourneyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */; };
@@ -1044,8 +1042,6 @@
 		E29A730854404FF9B3D4F464 /* PingOneMFAOtpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAOtpView.swift; sourceTree = "<group>"; };
 		EC0816A12D4A692900F1AD02 /* Browser.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Browser.xcodeproj; path = ../../Browser/Browser.xcodeproj; sourceTree = SOURCE_ROOT; };
 		EC0816C02D4A833400F1AD02 /* ConfigurationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewModel.swift; sourceTree = "<group>"; };
-		SDKS50660005000000000003 /* JsonConfigPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonConfigPreviewView.swift; sourceTree = "<group>"; };
-		SDKS50660005000000000001 /* JsonConfigLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonConfigLoader.swift; sourceTree = "<group>"; };
 		EC0816C22D4A83E200F1AD02 /* ConfigurationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationManager.swift; sourceTree = "<group>"; };
 		EC0CB5A52E27AD3D00A82D6C /* Journey.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Journey.xcodeproj; path = ../../Journey/Journey.xcodeproj; sourceTree = SOURCE_ROOT; };
 		EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyView.swift; sourceTree = "<group>"; };
@@ -1332,8 +1328,6 @@
 				A570D52F2ECCE48B00CBBCCF /* DeviceManagementView.swift */,
 				A570D52D2ECCE47400CBBCCF /* DeviceManagementViewModel.swift */,
 				A5A5F7FF2D4C64490053BF24 /* ErrorView.swift */,
-				ABCD12340001000100010002 /* TabPicker.swift */,
-				ABCD12340002000200020002 /* EmptyStateView.swift */,
 				EC0CB5C82E27AE4C00A82D6C /* JourneyView.swift */,
 				SDKS51560002000000000001 /* BackchannelAuthView.swift */,
 				EC0CB5C92E27AE4C00A82D6C /* JourneyViewModel.swift */,
@@ -2498,8 +2492,6 @@
 				A5E9AED22D30380B000533ED /* UserInfoViewModel.swift in Sources */,
 				A5EFA97D2D35F78800F771FE /* ComboBoxView.swift in Sources */,
 				A5A5F80A2D4C644E0053BF24 /* ErrorView.swift in Sources */,
-				ABCD12340001000100010001 /* TabPicker.swift in Sources */,
-				ABCD12340002000200020001 /* EmptyStateView.swift in Sources */,
 				A5E9AEE12D30D304000533ED /* SubmitButtonView.swift in Sources */,
 				EC23D5712E2E8ECF00C43D42 /* OidcLoginView.swift in Sources */,
 				A5517AB42FB5007B00E575CF /* DeviceFlowView.swift in Sources */,

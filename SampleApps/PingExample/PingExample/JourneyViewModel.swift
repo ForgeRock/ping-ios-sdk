@@ -140,10 +140,6 @@ class JourneyViewModel: ObservableObject {
     /// When set, the user_code is extracted and the requesting device is approved on success.
     public var verificationUriComplete: URL?
 
-    /// Optional verification URI for the RFC 8628 device authorization grant.
-    /// When set, the user_code is extracted and the requesting device is approved on success.
-    public var verificationUriComplete: URL?
-
     /// Initializes the view model but does NOT automatically start the journey.
     /// The journey will start when the user enters a journey name.
     init(verificationUriComplete: URL? = nil) {
