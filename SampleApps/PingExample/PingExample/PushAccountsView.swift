@@ -20,32 +20,33 @@ struct PushAccountsView: View {
 
     var body: some View {
         ZStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    deviceTokenSection
+            VStack(spacing: 0) {
+                deviceTokenSection
+                    .pingScrollContentPadding(bottom: 0)
 
-                    if viewModel.isLoading && viewModel.accounts.isEmpty {
-                        ProgressView()
-                            .scaleEffect(1.5)
-                            .padding()
-                    } else if viewModel.accounts.isEmpty {
-                        emptyStateView
-                    } else {
-                        accountsList
+                if viewModel.isLoading && viewModel.accounts.isEmpty {
+                    ScrollView {
+                        VStack(spacing: PingTheme.Spacing.large) {
+                            PingLoadingSpinner()
+                                .padding()
+                        }
+                        .pingScrollContentPadding(top: PingTheme.Spacing.large)
+                    }
+                } else if viewModel.accounts.isEmpty {
+                    PingCenteredScrollContent { emptyStateView }
+                } else {
+                    ScrollView {
+                        VStack(spacing: PingTheme.Spacing.large) {
+                            accountsList
+                        }
+                        .pingScrollContentPadding(top: PingTheme.Spacing.large)
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 20)
-                .padding(.bottom, 30)
             }
-            .background(Color(.systemGroupedBackground))
+            .pingScreenBackground()
 
             if viewModel.isLoading && !viewModel.accounts.isEmpty {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-                ProgressView()
-                    .scaleEffect(2.0)
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                PingLoadingOverlay()
             }
         }
         .navigationTitle("Push Accounts")
@@ -57,6 +58,7 @@ struct PushAccountsView: View {
                 } label: {
                     Image(systemName: "qrcode.viewfinder")
                 }
+                .accessibilityLabel("Scan QR Code")
             }
         }
         .task {
@@ -84,50 +86,37 @@ struct PushAccountsView: View {
             await viewModel.loadAccounts()
             await viewModel.loadDeviceToken()
         }
-        .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
-            Button("OK") {
-                viewModel.errorMessage = nil
-            }
-        } message: {
-            if let error = viewModel.errorMessage {
-                Text(error)
-            }
-        }
+        .pingErrorAlert(errorMessage: $viewModel.errorMessage)
     }
 
     private var deviceTokenSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.large) {
             HStack {
                 Image(systemName: "smartphone")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.themeButtonBackground)
+                    .font(PingTheme.Typography.sectionTitle)
+                    .foregroundColor(PingTheme.Color.actionPrimary)
 
                 Text("Device Token")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.primary)
+                    .pingSectionHeader()
 
                 Spacer()
 
                 Image(systemName: viewModel.deviceToken != nil ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
-                    .foregroundColor(viewModel.deviceToken != nil ? .green : .orange)
+                    .foregroundColor(viewModel.deviceToken != nil ? PingTheme.Color.statusSuccess : PingTheme.Color.statusWarning)
             }
 
             if let token = viewModel.deviceToken {
                 Text(token)
-                    .font(.system(size: 11, design: .monospaced))
-                    .foregroundColor(.secondary)
+                    .font(PingTheme.Typography.monospacedCaption)
+                    .foregroundStyle(PingTheme.Color.contentSecondary)
                     .lineLimit(2)
                     .truncationMode(.middle)
             } else {
                 Text("No device token registered")
-                    .font(.system(size: 13))
-                    .foregroundColor(.secondary)
+                    .pingSupportingText()
             }
         }
-        .padding(16)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle()
     }
 
     private var emptyStateView: some View {
@@ -139,24 +128,23 @@ struct PushAccountsView: View {
             Button {
                 path.append(.qrScanner)
             } label: {
-                VStack(spacing: 8) {
+                VStack(spacing: PingTheme.Spacing.small) {
                     Image(systemName: "qrcode.viewfinder")
-                        .font(.system(size: 24))
+                        .font(PingTheme.Typography.screenTitle)
                     Text("Scan QR Code")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(PingTheme.Typography.supporting.weight(.medium))
                 }
                 .frame(width: 140, height: 100)
-                .background(Color(.secondarySystemGroupedBackground))
-                .cornerRadius(12)
+                .background(PingTheme.Color.groupedSurface)
+                .clipShape(RoundedRectangle(cornerRadius: PingTheme.Shape.cardRadius))
             }
-            .buttonStyle(PlainButtonStyle())
-            .padding(.top, 20)
+            .buttonStyle(.plain)
+            .padding(.top, PingTheme.Spacing.large)
         }
-        .padding()
     }
 
     private var accountsList: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: PingTheme.Spacing.medium) {
             ForEach(viewModel.accounts, id: \.id) { account in
                 PushAccountCardView(credential: account) {
                     selectedAccount = account

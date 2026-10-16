@@ -18,8 +18,19 @@ struct LabelView: View {
     var body: some View {
         HStack {
             labelContent
-                .font(.subheadline)
-                .frame(maxWidth: .infinity, alignment: .center)
+                .pingSectionHeader()
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    // MARK: - Label Content
+
+    @ViewBuilder
+    private var labelContent: some View {
+        if let richContent = field.richContent {
+            Text(RichTextBuilder.build(from: richContent))
+        } else {
+            Text(field.content)
         }
     }
 

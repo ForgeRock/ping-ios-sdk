@@ -17,14 +17,25 @@ import PingExternalIdP
 
 /// A handler class for managing Facebook Identity Provider (IdP) authorization.
 @MainActor
-@objc public class FacebookHandler: NSObject, @preconcurrency IdpHandler, Sendable {
+@objc public class FacebookHandler: NSObject, @preconcurrency IdpHandler, FacebookLimitedLoginConfigurable, Sendable {
     
-    /// The type of token this handler supports.
+    /// The type of token this handler supports. Updated automatically when `facebookLimitedLoginEnabled` changes.
     public var tokenType: String = IdpConstants.access_token
-    
+
+    /// When `true`, uses Facebook Limited Login (OIDC ID token) with `tracking: .limited`;
+    /// otherwise classic OAuth2 (access token) with `tracking: .enabled`.
+    /// KVC-settable for callers that cannot import this module directly (e.g. `IdpCallback`
+    /// in `ExternalIdP`, which reaches this handler via `NSClassFromString`).
+    @objc public var facebookLimitedLoginEnabled: Bool = false {
+        didSet {
+            tokenType = facebookLimitedLoginEnabled ? IdpConstants.id_token : IdpConstants.access_token
+        }
+    }
+
     /// `LoginManager` instance for Facebook SDK
     private var manager: LoginManager
-    /// The IdpClient to use for requests.
+    /// The IdpClient to use for requests. Populated by `authorize(idpClient:)` so `configuration`
+    /// can read `scopes` and `nonce` off it.
     private var idpClient: IdpClient?
     /// LoginConfiguration computed var
     private var configuration: LoginConfiguration? {
@@ -33,17 +44,18 @@ import PingExternalIdP
             let permission = FBSDKCoreKit.Permission(stringLiteral: scope)
             scopes.insert(permission)
         }
+        let tracking: LoginTracking = facebookLimitedLoginEnabled ? .limited : .enabled
         if let nonce = idpClient?.nonce, !nonce.isEmpty {
             return LoginConfiguration(
                 permissions: scopes,
-                tracking: .enabled,
+                tracking: tracking,
                 nonce: nonce
             )
         }
         else {
             return LoginConfiguration(
                 permissions: scopes,
-                tracking: .enabled
+                tracking: tracking
             )
         }
     }
@@ -72,15 +84,15 @@ import PingExternalIdP
     ///  - options: Additional options for opening the URL.
     /// - Returns: A boolean indicating whether the URL was handled successfully.
     @discardableResult
-      public static func handleOpenURL(_ app: UIApplication, url: URL, options: [UIApplication.OpenURLOptionsKey:Any]?) -> Bool {
-          ApplicationDelegate.shared.application(
-                      app,
-                      open: url,
-                      sourceApplication: options?[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
-                      annotation: options?[UIApplication.OpenURLOptionsKey.annotation]
-                  )
-          return true
-      }
+    public static func handleOpenURL(_ app: UIApplication, url: URL, options: [UIApplication.OpenURLOptionsKey: Any]?) -> Bool {
+        ApplicationDelegate.shared.application(
+            app,
+            open: url,
+            sourceApplication: options?[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+            annotation: options?[UIApplication.OpenURLOptionsKey.annotation]
+        )
+        return true
+    }
     
     /// Authorizes the user with the IDP, based on the IdpClient.
     /// - Parameters:
@@ -88,7 +100,8 @@ import PingExternalIdP
     /// - Throws: An error if the authorization fails.
     /// - Returns: An `IdpResult` object containing the result of the authorization.
     public func authorize(idpClient: IdpClient) async throws -> IdpResult {
-        return try await FacebookHandlerUtils.authorize(idpClient: idpClient, configuration: self.configuration, manager: self.manager)
+        self.idpClient = idpClient
+        return try await FacebookHandlerUtils.authorize(idpClient: idpClient, configuration: self.configuration, manager: self.manager, isLimited: facebookLimitedLoginEnabled)
     }
 }
 #endif

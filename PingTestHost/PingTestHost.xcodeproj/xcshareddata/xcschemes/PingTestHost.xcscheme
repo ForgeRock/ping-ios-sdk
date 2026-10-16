@@ -59,6 +59,20 @@
                reference = "container:PingTestHost.xctestplan">
             </TestPlanReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "14C0CBAE9D4D412388F63F45"
+               BuildableName = "PingOneMFATests.xctest"
+               BlueprintName = "PingOneMFATests"
+               ReferencedContainer = "container:../PingOneMFA/PingOneMFA.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -501,6 +515,16 @@
                BuildableName = "PingJourneyPluginTests.xctest"
                BlueprintName = "PingJourneyPluginTests"
                ReferencedContainer = "container:../JourneyPlugin/JourneyPlugin.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "14C0CBAE9D4D412388F63F45"
+               BuildableName = "PingOneMFATests.xctest"
+               BlueprintName = "PingOneMFATests"
+               ReferencedContainer = "container:../PingOneMFA/PingOneMFA.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>

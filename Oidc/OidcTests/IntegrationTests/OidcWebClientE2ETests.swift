@@ -14,6 +14,7 @@ import XCTest
 @testable import PingNetwork
 @testable import PingLogger
 @testable import PingStorage
+@testable import PingOrchestrate
 
 /// Real-server E2E tests for `OidcWebClient` PAR (RFC 9126).
 ///
@@ -151,11 +152,44 @@ final class OidcWebClientE2ETests: XCTestCase {
         }
     }
 
+    // MARK: - Redirect URI plumbing (SDKS-5239)
+
+    /// Proves that `Web.swift` forwards `flowContext[redirectUriKey]` — populated by
+    /// `Oidc.swift`'s `start` handler from `OidcClientConfig.redirectUri` — through to the
+    /// 7-arg `BrowserLauncher.launch(...)` overload end-to-end.
+    func testAuthorizeForwardsHttpsRedirectUriToBrowserLauncher() async throws {
+        let httpsRedirectUri = "https://host/path"
+        let web = makeWebClient(config: aicConfig, additionalParameters: [:], par: false, redirectUri: httpsRedirectUri)
+
+        do { _ = try await web.authorize() } catch { /* token exchange fails with fake code — expected */ }
+
+        XCTAssertEqual(browser.launchedRedirectUri, httpsRedirectUri)
+        XCTAssertEqual(browser.launchedBrowserType, .authSession)
+    }
+
+    // MARK: - Completion-path transform (SDKS-5239)
+
+    /// Proves that the completion path — `WebModule.extractCode` and the `SuccessNode` transform —
+    /// is unaffected by which `ASWebAuthenticationSession` initializer branch produced the
+    /// callback URL: a canned https callback with `code`/`state` query items still yields a
+    /// `SuccessNode` carrying the extracted code.
+    func testCompletionPathExtractsCodeFromHttpsCallback() async throws {
+        browser.callbackURL = URL(string: "https://host/path?code=abc&state=xyz")!
+        let web = makeWebClient(config: aicConfig, additionalParameters: [:], par: false, redirectUri: "https://host/path")
+
+        let node = await web.start()
+
+        XCTAssertEqual(try WebModule.extractCode(from: browser.callbackURL), "abc")
+        let success = try XCTUnwrap(node as? SuccessNode, "Expected a SuccessNode, got: \(node)")
+        XCTAssertEqual(success.session.value, "abc")
+    }
+
     // MARK: - Helper
 
     private func makeWebClient(config: OidcE2EConfig,
                                 additionalParameters: [String: String],
-                                par: Bool) -> OidcWebClient {
+                                par: Bool,
+                                redirectUri: String? = nil) -> OidcWebClient {
         let rec = self.recorder!
         var merged = additionalParameters
         if !config.responseMode.isEmpty {
@@ -167,7 +201,7 @@ final class OidcWebClientE2ETests: XCTestCase {
             webConfig.module(PingOidc.OidcModule.config) { oidc in
                 oidc.clientId = config.clientId
                 oidc.scopes = Set(config.scopes)
-                oidc.redirectUri = config.redirectUri
+                oidc.redirectUri = redirectUri ?? config.redirectUri
                 oidc.discoveryEndpoint = config.discoveryEndpoint
                 if !config.acrValues.isEmpty {
                     oidc.acrValues = config.acrValues
@@ -187,8 +221,11 @@ final class OidcWebClientE2ETests: XCTestCase {
 /// for tests that only care about the authorize URL shape.
 private final class CapturingBrowser: BrowserLauncherProtocol, @unchecked Sendable {
     var launchedURL: URL?
+    var launchedRedirectUri: String?
+    var launchedBrowserType: BrowserType?
     var isInProgress: Bool = false
-    private let callbackURL: URL = URL(string: "frauth://com.forgerock.ios.frexample?code=fake-code&state=fake")!
+    /// Overridable per-test so the completion path can be exercised with a canned code/state.
+    var callbackURL: URL = URL(string: "frauth://com.forgerock.ios.frexample?code=fake-code&state=fake")!
 
     func launch(
         url: URL,
@@ -199,6 +236,22 @@ private final class CapturingBrowser: BrowserLauncherProtocol, @unchecked Sendab
         logger: PingLogger.Logger
     ) async throws -> URL {
         launchedURL = url
+        launchedBrowserType = browserType
+        return callbackURL
+    }
+
+    func launch(
+        url: URL,
+        customParams: [String: String]?,
+        browserType: BrowserType,
+        browserMode: BrowserMode,
+        callbackURLScheme: String,
+        redirectUri: String?,
+        logger: PingLogger.Logger
+    ) async throws -> URL {
+        launchedURL = url
+        launchedBrowserType = browserType
+        launchedRedirectUri = redirectUri
         return callbackURL
     }
 

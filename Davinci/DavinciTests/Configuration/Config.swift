@@ -16,6 +16,8 @@ import Foundation
 public enum ConfigError: Error {
     case emptyConfiguration
     case invalidConfiguration(String)
+    /// A required configuration field is JSON `null` — intentional placeholder for local development.
+    case notConfigured
 }
 
 class Config: NSObject {
@@ -25,7 +27,7 @@ class Config: NSObject {
     var password: String
     var newPassword: String
     var verificationCode: String
-    
+
     var clientId: String
     var discoveryEndpoint: String
     var scopes: [String]
@@ -39,9 +41,16 @@ class Config: NSObject {
     // Device Authorization Grant — shared test credentials
     var deviceUsername: String = ""
     var devicePassword: String = ""
-    
+
+    // Feature-specific ACR values — optional; tests fall back to the main acrValues if empty
+    var mfaDeviceAcrValues: String = ""
+    var formFieldsAcrValues: String = ""
+    var pollingAcrValues: String = ""
+    var metadataAcrValues: String = ""
+    var imageAcrValues: String = ""
+
     var configJSON: [String: Any]?
-    
+
     override init() {
         username = ""
         userFname = ""
@@ -49,89 +58,85 @@ class Config: NSObject {
         password = ""
         newPassword = ""
         verificationCode = ""
-        
+
         clientId = ""
         discoveryEndpoint = ""
         scopes = []
         redirectUri = ""
         acrValues = ""
     }
-    
-    
+
+
     init(_ configFileName: String) throws {
-        
+
         username = ""
         userFname = ""
         userLname = ""
         password = ""
         newPassword = ""
         verificationCode = ""
-        
+
         clientId = ""
         discoveryEndpoint = ""
         scopes = []
         redirectUri = ""
         acrValues = ""
-        
-        if let path = Bundle(for: DaVinciTests.self).path(forResource: configFileName, ofType: "json") {
-            do {
-                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
-                let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
-                if let config = jsonResult as? [String: Any] {
-                    self.configJSON = config
-                    guard let username = config["username"] as? String,
-                          let userFname = config["userFname"] as? String,
-                          let userLname = config["userLname"] as? String,
-                          let password = config["password"] as? String,
-                          let newPassword = config["newPassword"] as? String,
-                          let verificationCode = config["verificationCode"] as? String
-                    else {
-                        throw ConfigError.invalidConfiguration("Test config data is empty or invalid")
-                    }
-                    
-                    self.username = username
-                    self.userFname = userFname
-                    self.userLname = userLname
-                    self.password = password
-                    self.newPassword = newPassword
-                    self.verificationCode = verificationCode
-                    
-                    if let configPlistFileName = config["configPlistFileName"] as? String {
-                        self.configPlistFileName = configPlistFileName
-                    }
-                                                            
-                    guard let clientId = config["clientId"] as? String,
-                          let discoveryEndpoint = config["discoveryEndpoint"] as? String,
-                          let scopes = config["scopes"] as? String,
-                          let redirectUri = config["redirectUri"] as? String,
-                          let acrValues = config["acrValues"] as? String
-                    else {
-                        throw ConfigError.invalidConfiguration("Test DV config data is empty or invalid")
-                    }
-                    
-                    self.clientId = clientId
-                    self.discoveryEndpoint = discoveryEndpoint
-                    self.scopes = scopes
-                      .components(separatedBy: .whitespaces)
-                      .filter { !$0.isEmpty }
-                    self.redirectUri = redirectUri
-                    self.acrValues = acrValues
 
-                    // Device Authorization Grant fields are optional — tests that don't
-                    // exercise device flow simply read empty strings from the config.
-                    self.deviceClientId = config["deviceClientId"] as? String ?? ""
-                    self.deviceUsername = config["deviceUsername"] as? String ?? ""
-                    self.devicePassword = config["devicePassword"] as? String ?? ""
-                }
-                else {
-                    throw ConfigError.invalidConfiguration("\(configFileName) is invalid or missing some value")
-                }
-            } catch {
-                throw error
+        if let path = Bundle(for: DaVinciTests.self).path(forResource: configFileName, ofType: "json") {
+            let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
+            let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
+            guard let config = jsonResult as? [String: Any] else {
+                throw ConfigError.invalidConfiguration("\(configFileName) is not a valid JSON object")
             }
+            self.configJSON = config
+
+            // Required fields: throw if absent or wrong type; null is allowed and
+            // treated as "not configured" — DaVinciBaseTests will skip via XCTSkip.
+            self.username          = try Self.requiredString("username",          from: config)
+            self.userFname         = try Self.requiredString("userFname",         from: config)
+            self.userLname         = try Self.requiredString("userLname",         from: config)
+            self.password          = try Self.requiredString("password",          from: config)
+            self.newPassword       = try Self.requiredString("newPassword",       from: config)
+            self.verificationCode  = try Self.requiredString("verificationCode",  from: config)
+
+            if let configPlistFileName = config["configPlistFileName"] as? String {
+                self.configPlistFileName = configPlistFileName
+            }
+
+            self.clientId           = try Self.requiredString("clientId",           from: config)
+            self.discoveryEndpoint  = try Self.requiredString("discoveryEndpoint",  from: config)
+            let scopesRaw           = try Self.requiredString("scopes",             from: config)
+            self.scopes = scopesRaw.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
+            self.redirectUri        = try Self.requiredString("redirectUri",        from: config)
+            self.acrValues          = try Self.requiredString("acrValues",          from: config)
+
+            // Device Authorization Grant fields — optional
+            self.deviceClientId = config["deviceClientId"] as? String ?? ""
+            self.deviceUsername = config["deviceUsername"] as? String ?? ""
+            self.devicePassword = config["devicePassword"] as? String ?? ""
+
+            // Feature-specific ACR values — fall back to main acrValues when missing or empty
+            self.mfaDeviceAcrValues = (config["mfaDeviceAcrValues"] as? String).flatMap { $0.isEmpty ? nil : $0 } ?? self.acrValues
+            self.formFieldsAcrValues = (config["formFieldsAcrValues"] as? String).flatMap { $0.isEmpty ? nil : $0 } ?? self.acrValues
+            self.pollingAcrValues = (config["pollingAcrValues"] as? String).flatMap { $0.isEmpty ? nil : $0 } ?? self.acrValues
+            self.metadataAcrValues = (config["metadataAcrValues"] as? String).flatMap { $0.isEmpty ? nil : $0 } ?? self.acrValues
+            self.imageAcrValues = (config["imageAcrValues"] as? String).flatMap { $0.isEmpty ? nil : $0 } ?? self.acrValues
         }
         else {
             throw ConfigError.emptyConfiguration
         }
+    }
+
+    // Throws .notConfigured for JSON null (placeholder mode); throws .invalidConfiguration
+    // for a missing key or wrong type.
+    private static func requiredString(_ key: String, from config: [String: Any]) throws -> String {
+        guard let value = config[key] else {
+            throw ConfigError.invalidConfiguration("Required field '\(key)' is missing from test configuration")
+        }
+        if value is NSNull { throw ConfigError.notConfigured }
+        guard let string = value as? String else {
+            throw ConfigError.invalidConfiguration("Field '\(key)' must be a string")
+        }
+        return string
     }
 }

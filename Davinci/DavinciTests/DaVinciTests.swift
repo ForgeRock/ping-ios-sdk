@@ -35,7 +35,7 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
     }
     
     override func setUp() {
-        self.configFileName = "Config"
+        self.configFileName = "DaVinci-e2e-config"
         super.setUp()
         
         self.davinci = DaVinci.createDaVinci { config in

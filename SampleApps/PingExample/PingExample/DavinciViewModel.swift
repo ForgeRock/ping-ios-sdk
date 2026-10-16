@@ -11,6 +11,7 @@
 
 import Foundation
 import PingDavinci
+import PingDavinciPlugin
 import PingOidc
 import PingOrchestrate
 import PingLogger
@@ -157,7 +158,7 @@ class DavinciViewModel: ObservableObject {
                     return shouldValidate
                 }
             }
-            if let collector = collector as? ValidatedCollector {
+            if let collector = collector as? any Validator {
                 if collector.validate().count > 0 {
                     shouldValidate = true
                 }

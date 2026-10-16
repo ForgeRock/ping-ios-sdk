@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'PingJourney'
-  s.version          = '2.1.1'
+  s.version          = '2.2.0'
   s.summary          = 'PingJourney SDK for iOS'
   s.description      = <<-DESC
   The PingJourney SDK is a powerful and flexible library for Authentication and Authorization.
@@ -24,8 +24,7 @@ Pod::Spec.new do |s|
     'Journey' => [base_dir + '/*.xcprivacy']
   }
   
-  s.ios.dependency 'PingDeviceProfile', '~> 2.1.1'
-  s.ios.dependency 'PingJourneyPlugin', '~> 2.1.1'
-  s.ios.dependency 'PingOidc', '~> 2.1.1'
+  s.ios.dependency 'PingJourneyPlugin', '~> 2.2.0'
+  s.ios.dependency 'PingOidc', '~> 2.2.0'
   
 end

@@ -60,6 +60,8 @@ public struct IdpErrorMessages {
     
     // MARK: - Facebook Sign-In Errors
     public static let facebookTokenMissing = "Facebook login completed but no access token was received"
+    /// Shown when Facebook Limited Login succeeds but no OIDC ID token (`AuthenticationToken`) is available.
+    public static let facebookAuthTokenMissing = "Facebook Limited Login completed but no authentication token was received"
     public static let facebookConfigurationInvalid = "Facebook login configuration is invalid"
     public static let facebookManagerMissing = "Facebook login manager is not initialized"
 }

@@ -22,7 +22,7 @@ import PingDavinciPlugin
 class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
     
     override func setUp() {
-        self.configFileName = "Config"
+        self.configFileName = "DaVinci-e2e-config"
         super.setUp()
         
         self.config.clientId = "test"
