@@ -111,6 +111,9 @@ public extension Journey {
             if let c: NSObject.Type = NSClassFromString("PingProtect.ProtectCallbacks") as? NSObject.Type {
                 c.perform(Selector(("registerCallbacks")))
             }
+            if let c: NSObject.Type = NSClassFromString("PingOneProtect.ProtectCallbacks") as? NSObject.Type {
+                c.perform(Selector(("registerCallbacks")))
+            }
             if let c: NSObject.Type = NSClassFromString("PingExternalIdP.IdpCallbacks") as? NSObject.Type {
                 c.perform(Selector(("registerCallbacks")))
             }
