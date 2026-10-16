@@ -46,6 +46,19 @@ The app's UI is built on the [PingDesignSystem](https://github.com/ForgeRock/pin
 
 Each screen renders the callbacks/collectors returned by the corresponding SDK module (e.g. `PingJourney` callbacks, `PingDavinci` collectors) using SwiftUI views built on the `PingDesignSystem`.
 
+### PingOneMFA
+
+The **PingOne MFA** section demonstrates the `PingOneMFA` module, both directly and through DaVinci flows:
+
+| Flow             | Summary                                                                                                                                                                                                                     |
+|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| QR Code Registration  | Scans a PingOne MFA pairing QR code with the camera (or accepts the pairing key typed in manually) and pairs this device with `PingOneMFA.pair(pairingKey:)`.                                                                   |
+| MFA Accounts          | Lists the accounts paired with this device (name, ID, and region). Pull to refresh, or use the scan button to pair another account; an empty list prompts you to scan a QR code.                                              |
+| One-Time Passcode     | Shows the current one-time passcode for your paired account with a live countdown, and refreshes it automatically when it expires.                                                                                              |
+| Mobile Payload        | Generates the mobile payload used for authentication and registration (`PingOneMFA.generateMobilePayload()`) and lets you copy it.                                                                                              |
+| DaVinci Pairing       | Runs a DaVinci flow in which a `MobilePairingCollector` pairs this device with PingOne MFA, then returns to the main menu when pairing completes. Requires a DaVinci configuration.                                            |
+| DaVinci Authorization | Runs a DaVinci flow that sends this device's mobile payload to DaVinci, then checks the device-authentication result the flow returns. It reports success only when the status is `COMPLETED` and the authenticators include both `swk` and `mfa`. Requires a DaVinci configuration. |
+
 ## License
 
 This software may be modified and distributed under the terms of the MIT license. See the [LICENSE](../../../LICENSE) file for details.

@@ -335,6 +335,7 @@
 		AC5BED6127AA4D6798BDFFF7 /* PingOneSDK in Frameworks */ = {isa = PBXBuildFile; productRef = A54EE721303E030200986AE3 /* PingOneSDK */; };
 		B4A000010000000000000002 /* PingOneMFADavinciPairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A000010000000000000012 /* PingOneMFADavinciPairingView.swift */; };
 		B4A000010000000000000003 /* MobilePairingCollectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A000010000000000000013 /* MobilePairingCollectorView.swift */; };
+		B4A000010000000000000004 /* PingOneMFADavinciAuthorizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A000010000000000000014 /* PingOneMFADavinciAuthorizationView.swift */; };
 		CAF10002FACE000000000001 /* RecognizeEnrollCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF10001FACE000000000001 /* RecognizeEnrollCallbackView.swift */; };
 		CAF10004FACE000000000001 /* RecognizeAuthenticateCallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF10003FACE000000000001 /* RecognizeAuthenticateCallbackView.swift */; };
 		CAF10005FACE000000000001 /* PingDesignSystemImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5A100000000000000000003 /* PingDesignSystemImport.swift */; };
@@ -1032,6 +1033,7 @@
 		A5F39AB72F9B0000001AB5C7 /* PingOneMFANotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFANotificationView.swift; sourceTree = "<group>"; };
 		B4A000010000000000000012 /* PingOneMFADavinciPairingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFADavinciPairingView.swift; sourceTree = "<group>"; };
 		B4A000010000000000000013 /* MobilePairingCollectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobilePairingCollectorView.swift; sourceTree = "<group>"; };
+		B4A000010000000000000014 /* PingOneMFADavinciAuthorizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFADavinciAuthorizationView.swift; sourceTree = "<group>"; };
 		B7A4BB72AB7D4F51B8EDD3D5 /* KeylessSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KeylessSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB284B4547584EE8B336A683 /* PingOneMFAScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingOneMFAScannerViewModel.swift; sourceTree = "<group>"; };
 		CAF10001FACE000000000001 /* RecognizeEnrollCallbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizeEnrollCallbackView.swift; sourceTree = "<group>"; };
@@ -1323,6 +1325,7 @@
 				3A8532322BE2D5D800F8619D /* DavinciView.swift */,
 				3ACD90E02BE586BC00DABCE6 /* DavinciViewModel.swift */,
 				B4A000010000000000000012 /* PingOneMFADavinciPairingView.swift */,
+				B4A000010000000000000014 /* PingOneMFADavinciAuthorizationView.swift */,
 				A5BE8C572E8C3680007AF0B9 /* DeviceInfoView.swift */,
 				A5BE8C752E8C368F007AF0B9 /* DeviceInfoViewModel.swift */,
 				A570D52F2ECCE48B00CBBCCF /* DeviceManagementView.swift */,
@@ -1783,6 +1786,7 @@
 			);
 			name = Test;
 			packageProductDependencies = (
+				A54EE721303E030200986AE3 /* PingOneSDK */,
 			);
 			productName = Test;
 			productReference = A5D295F52E78B1B90093A761 /* libTest.a */;
@@ -2434,6 +2438,7 @@
 				ECF7EB862E464EDD002A5E8E /* IdpCallbackView.swift in Sources */,
 				3ACD90E12BE586BC00DABCE6 /* DavinciViewModel.swift in Sources */,
 				B4A000010000000000000002 /* PingOneMFADavinciPairingView.swift in Sources */,
+				B4A000010000000000000004 /* PingOneMFADavinciAuthorizationView.swift in Sources */,
 				B4A000010000000000000003 /* MobilePairingCollectorView.swift in Sources */,
 				A5768D0E2E29603B000290EE /* TextOutputCallbackView.swift in Sources */,
 				A5BE8C762E8C3695007AF0B9 /* DeviceInfoViewModel.swift in Sources */,

@@ -139,11 +139,20 @@ struct ConfigurationEditorView: View {
                 }
             }
             .pingScrollContentPadding()
+            // Tap-to-dismiss-keyboard target. It sits *behind* the form rather
+            // than as a gesture on the ScrollView itself: on iOS 17 an ancestor
+            // tap gesture wins arbitration over the UISegmentedControl-backed
+            // `Picker`, so taps on the Type selector never selected a segment.
+            // From behind, only taps on empty space reach this layer.
+            .background {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        focusedField = nil
+                    }
+            }
         }
         .pingScreenBackground()
-        .onTapGesture {
-            focusedField = nil
-        }
         .navigationTitle(editingConfig == nil ? "New Configuration" : "Edit Configuration")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

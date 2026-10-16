@@ -22,17 +22,20 @@ struct ContinueNodeView: View {
     let onNodeUpdated: () -> Void
     let onStart: () -> Void
     let onNext: (Bool) -> Void
+    let metadataViewBuilder: ((MetadataCollector, @escaping (Bool) -> Void) -> AnyView)?
 
     init(
         continueNode: ContinueNode,
         onNodeUpdated: @escaping () -> Void,
         onStart: @escaping () -> Void,
-        onNext: @escaping (Bool) -> Void
+        onNext: @escaping (Bool) -> Void,
+        metadataViewBuilder: ((MetadataCollector, @escaping (Bool) -> Void) -> AnyView)? = nil
     ) {
         self.continueNode = continueNode
         self.onNodeUpdated = onNodeUpdated
         self.onStart = onStart
         self.onNext = onNext
+        self.metadataViewBuilder = metadataViewBuilder
     }
 
     @EnvironmentObject var validationViewModel: ValidationViewModel
@@ -114,7 +117,11 @@ struct ContinueNodeView: View {
                 case let imageCollector as ImageCollector:
                     ImageView(collector: imageCollector).id(imageCollector.id)
                 case let metadataCollector as MetadataCollector:
-                    MetadataView(field: metadataCollector, onNext: onNext)
+                    if let metadataViewBuilder {
+                        metadataViewBuilder(metadataCollector, onNext)
+                    } else {
+                        MetadataView(field: metadataCollector, onNext: onNext)
+                    }
                 case let mobilePairingCollector as MobilePairingCollector:
                     MobilePairingCollectorView(
                         collector: mobilePairingCollector,
