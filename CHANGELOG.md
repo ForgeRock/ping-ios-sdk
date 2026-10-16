@@ -1,7 +1,24 @@
 ## [UNRELEASED]
 
+#### Added
+
+- Added RFC 9396 (Rich Authorization Requests) support to `PingOidc`. `Token.authorizationDetails` exposes the granted details. Typed details can be set config-wide (`OidcClientConfig.authorizationDetails`), per call (`OidcClient.generateAuthorizeUrl(authorizationDetails:)`) or per login (`OidcOptions.authorizationDetails`), and are sent in the PAR POST body when PAR is enabled. A raw `authorization_details` string in `OidcOptions.additionalParameters` or `customParams` is still forwarded when no typed details are set. A malformed `authorization_details` in a token response keeps the token without details and logs a warning [SDKS-5423, SDKS-5425]
+- Added `OAuthAuthorizationError`, the `cause` of `OidcError.authorizeError` for OAuth2 error redirects such as `access_denied`, and `OidcClient.extractOAuthError(from:)` to parse it [SDKS-5425]
+- The authorization callback now validates the returned `state` (RFC 6749 §10.12) before surfacing an error redirect. A mismatch or missing `state` throws `OidcError.authorizeError` [SDKS-5425]
+- A PAR response whose `expires_in` is missing, non-numeric, non-positive or at most 30 seconds now logs a warning [SDKS-5423]
+- The callback `state` is read from the query string or the fragment, so `response_mode=fragment` error redirects are validated and surfaced correctly [SDKS-5425]
+
+#### Fixed
+
+- Fixed a `state` override passed via `OidcOptions.additionalParameters` or `customParams` being sent twice on the standard flow and never reaching the PAR body. It is now sent once [SDKS-5425]
+- Fixed a `state` or `authorization_details` entry in `OidcClientConfig.additionalParameters` being sent twice (next to the generated state) on the standard flow; it is now sent once, and the callback is validated against a config-level `state` [SDKS-5425]
+- `Journey.journeyUser()` now returns a user whose `token()` can complete on a restored session (it previously failed with "No AuthCode is available."); the DaVinci `daVinciUser()` fallback reports an actionable error message [SDKS-5423]
+- Fixed literal `+` characters in query and form parameter values being decoded as spaces by the server; `URLSessionHttpRequest` now RFC 3986-encodes query and form values (e.g. `+` as `%2B`) and renders `nil`-valued items as `name=` [SDKS-5423]
+
 #### Changed
 
+- `OidcClientConfig.buildAuthorizeParams(pkce:extraParameters:onParam:)` is now `throws`; callers need `try` [SDKS-5423, SDKS-5425]
+- A raw `authorization_details` in `OidcClient.generateAuthorizeUrl(customParams:)` is now sent once, in the PAR POST body when PAR is enabled (it previously went onto the front-channel URL only). When typed `authorizationDetails` are also passed, the typed value wins and a warning is logged [SDKS-5423]
 - Changed Recognize error reporting to the shared cross-platform error model, matching the web SDK. `RecognizeError` now carries the shared `code` and `name` (e.g. `CORE_USER_NOT_ENROLLED` / 3003), and keeps the native Keyless code in the new `sdkCode` property, with the mapping exposed as the public `SharedErrorCode` enum. The `clientError` Journey input now carries the shared error name and `clientErrorCode` the shared code; an error with no shared name is reported as `SDK_ERROR` (1000). **Upgrade note:** `RecognizeError.code` and the submitted `clientErrorCode` used to be native Keyless codes (e.g. 20000), and `clientError` used to be the error message. App or Journey logic that branches on those values must use the shared codes and names listed in the Recognize README. The native code is still available in `sdkCode`, and the message in `RecognizeError.message`. `clientErrorCode` is now always submitted: failures that are not a `RecognizeError` previously left it empty and now report `SDK_ERROR` / `1000`, and on-device errors that used the code `-1` now report `1000` [P1RECMOB-3847]
 
 ## [2.2.0]

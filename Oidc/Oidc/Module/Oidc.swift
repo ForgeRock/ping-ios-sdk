@@ -52,13 +52,41 @@ public class OidcModule {
             context.flowContext.set(key: SharedContext.Keys.callbackURLSchemeKey, value: url?.scheme ?? "https")
             context.flowContext.set(key: SharedContext.Keys.redirectUriKey, value: config.redirectUri)
 
-            let oidcRequest = try await config.populateRequest(request: request, pkce: pkce, responseMode: "")
-            
             let parameters = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcParameters) as? [String: String] ?? [:]
-            for parameter in parameters {
+
+            var extraParameters: [String: String] = [:]
+            if let authorizationDetails = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcAuthorizationDetails) as? [AuthorizationDetail],
+               !authorizationDetails.isEmpty {
+                extraParameters[OidcClient.Constants.authorization_details] = try AuthorizationDetail.wireValue(authorizationDetails)
+            }
+            // `state` and `authorization_details` go through `extraParameters` so
+            // `buildAuthorizeParams` emits each exactly once, on the front channel and in the
+            // PAR body. `setParameter` appends, so setting them afterwards would duplicate them.
+            if let integratorState = parameters[OidcClient.Constants.state] {
+                extraParameters[OidcClient.Constants.state] = integratorState
+            }
+            // A raw `authorization_details` string is forwarded when no typed details are set;
+            // the typed value wins when both are present.
+            if let rawAuthorizationDetails = parameters[OidcClient.Constants.authorization_details] {
+                if extraParameters[OidcClient.Constants.authorization_details] == nil {
+                    extraParameters[OidcClient.Constants.authorization_details] = rawAuthorizationDetails
+                } else {
+                    config.logger.w("Both OidcOptions.authorizationDetails and additionalParameters[\"authorization_details\"] are set. Using the typed value and ignoring the raw one.", error: nil)
+                }
+            }
+
+            // The state the callback is validated against; same precedence as `buildAuthorizeParams`.
+            let effectiveState = extraParameters[OidcClient.Constants.state] ?? config.additionalParameters[OidcClient.Constants.state] ?? config.state ?? pkce.state
+            context.flowContext.set(key: SharedContext.Keys.stateKey, value: effectiveState)
+
+            let oidcRequest = try await config.populateRequest(request: request, pkce: pkce, responseMode: "", extraParameters: extraParameters)
+
+            // Remaining additionalParameters are applied after population, so under PAR they
+            // land on the front-channel URL rather than in the PAR body.
+            for parameter in parameters where parameter.key != OidcClient.Constants.state && parameter.key != OidcClient.Constants.authorization_details {
                 oidcRequest.setParameter(name: parameter.key, value: parameter.value)
             }
-            
+
             return oidcRequest
         }
         
@@ -159,6 +187,9 @@ public enum AuthorizeError: Error, LocalizedError, Sendable {
 extension SharedContext.Keys {
     /// The key used to store the PKCE value in the shared context.
     static let pkceKey = "com.pingidentity.oidcWeb.PKCE"
+
+    /// The key used to store the expected `state` value for callback validation.
+    static let stateKey = "com.pingidentity.oidcWeb.state"
     
     /// The key used to store the callbackURLScheme value in the shared context.
     static let callbackURLSchemeKey = "com.pingidentity.oidcWeb.callbackURLScheme"
@@ -177,5 +208,8 @@ extension SharedContext.Keys {
     
     /// The key used to store additional parameters for the OIDC flow.
     static let oidcParameters = "com.pingidentity.oidcWeb.parameters"
+
+    /// The key used to store per-transaction RFC 9396 authorization_details for the OIDC flow.
+    static let oidcAuthorizationDetails = "com.pingidentity.oidcWeb.authorizationDetails"
 }
 
