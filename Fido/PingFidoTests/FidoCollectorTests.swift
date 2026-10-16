@@ -1,4 +1,3 @@
-
 //
 //  FidoCollectorTests.swift
 //  PingFidoTests
@@ -10,7 +9,10 @@
 //
 
 import XCTest
+import AuthenticationServices
 @testable import PingFido
+@testable import PingDavinci
+@testable import PingDavinciPlugin
 internal import PingCommons
 
 class FidoCollectorTests: XCTestCase {
@@ -123,6 +125,98 @@ class FidoCollectorTests: XCTestCase {
         }
     }
     
+    // MARK: - Error Propagation Tests
+
+    func testHandleErrorSetsDOMExceptionNameForFidoErrors() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+
+        let cases: [(FidoError, String)] = [
+            (.timeout, FidoConstants.ERROR_TIMEOUT),
+            (.unsupportedAction("msg"), FidoConstants.ERROR_NOT_SUPPORTED),
+            (.invalidResponse, FidoConstants.ERROR_INVALID_STATE),
+            (.invalidChallenge, FidoConstants.ERROR_INVALID_STATE),
+            (.invalidWindow, FidoConstants.ERROR_UNKNOWN),
+            (.invalidAction, FidoConstants.ERROR_NOT_SUPPORTED),
+            (.missingParameters("msg"), FidoConstants.ERROR_NOT_SUPPORTED),
+        ]
+
+        for (fidoError, expectedCode) in cases {
+            collector.errorCode = nil
+            _ = collector.handleError(error: fidoError)
+            XCTAssertEqual(collector.errorCode, expectedCode, "Expected errorCode \(expectedCode) for \(fidoError)")
+        }
+    }
+
+    func testHandleErrorSetsDOMExceptionNameForASAuthorizationErrors() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+
+        let cases: [(Int, String)] = [
+            (ASAuthorizationError.canceled.rawValue, FidoConstants.ERROR_NOT_ALLOWED),
+            (ASAuthorizationError.failed.rawValue, FidoConstants.ERROR_NOT_ALLOWED),
+            (ASAuthorizationError.invalidResponse.rawValue, FidoConstants.ERROR_INVALID_STATE),
+            (ASAuthorizationError.notHandled.rawValue, FidoConstants.ERROR_NOT_SUPPORTED),
+            (ASAuthorizationError.unknown.rawValue, FidoConstants.ERROR_UNKNOWN),
+        ]
+
+        for (code, expectedCode) in cases {
+            collector.errorCode = nil
+            let nsError = NSError(domain: ASAuthorizationError.errorDomain, code: code, userInfo: nil)
+            _ = collector.handleError(error: nsError)
+            XCTAssertEqual(collector.errorCode, expectedCode, "Expected errorCode \(expectedCode) for ASAuthorizationError code \(code)")
+        }
+    }
+
+    func testEventTypeIsSubmitByDefault() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        XCTAssertEqual(collector.eventType(), FidoConstants.EVENT_TYPE_SUBMIT)
+    }
+
+    func testEventTypeIsActionAfterError() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        collector.errorCode = FidoConstants.ERROR_NOT_ALLOWED
+        XCTAssertEqual(collector.eventType(), FidoConstants.EVENT_TYPE_ACTION)
+    }
+
+    func testPayloadIsNonNilAfterError() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        XCTAssertNil(collector.payload())
+
+        collector.errorCode = FidoConstants.ERROR_NOT_ALLOWED
+        let payload = collector.payload()
+        XCTAssertNotNil(payload)
+        XCTAssertTrue(payload?.isEmpty == true, "Error-path payload must be empty dict so formData stays empty")
+    }
+
+    func testActionKeyMatchesErrorCode() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        XCTAssertNil(collector.actionKey)
+
+        collector.errorCode = FidoConstants.ERROR_NOT_ALLOWED
+        XCTAssertEqual(collector.actionKey, FidoConstants.ERROR_NOT_ALLOWED)
+    }
+
+    func testAsJsonContainsActionKeyOnAuthenticationError() {
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        _ = collector.handleError(error: NSError(domain: ASAuthorizationError.errorDomain, code: ASAuthorizationError.canceled.rawValue, userInfo: nil))
+
+        let collectors: Collectors = [collector]
+        let json = collectors.asJson()
+
+        XCTAssertEqual(json["actionKey"] as? String, FidoConstants.ERROR_NOT_ALLOWED)
+        XCTAssertTrue((json["formData"] as? [String: Any])?.isEmpty == true)
+    }
+
+    func testAsJsonContainsActionKeyOnRegistrationError() {
+        let collector = FidoRegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
+        _ = collector.handleError(error: FidoError.timeout)
+
+        let collectors: Collectors = [collector]
+        let json = collectors.asJson()
+
+        XCTAssertEqual(json["actionKey"] as? String, FidoConstants.ERROR_TIMEOUT)
+        XCTAssertTrue((json["formData"] as? [String: Any])?.isEmpty == true)
+    }
+
     @MainActor
     func testFidoAuthenticationCollectorForwardsPreferImmediatelyAvailableCredentials() async {
         let successResponse: [String: Any] = [
@@ -222,5 +316,121 @@ class FidoCollectorTests: XCTestCase {
             }
             XCTAssertEqual(fidoError, .invalidChallenge)
         }
+    }
+
+    // MARK: - Trigger Tests
+
+    func testTriggerIsParsedFromJson() {
+        let registrationJson: [String: Any] = [
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]],
+            FidoConstants.FIELD_TRIGGER: "BUTTON"
+        ]
+        let registrationCollector = FidoRegistrationCollector(with: registrationJson)
+        XCTAssertEqual(registrationCollector.trigger, "BUTTON")
+
+        let authenticationJson: [String: Any] = [
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"],
+            FidoConstants.FIELD_TRIGGER: "BUTTON"
+        ]
+        let authenticationCollector = FidoAuthenticationCollector(with: authenticationJson)
+        XCTAssertEqual(authenticationCollector.trigger, "BUTTON")
+    }
+
+    func testTriggerDefaultsToEmptyWhenAbsent() {
+        let registrationCollector = FidoRegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
+        XCTAssertEqual(registrationCollector.trigger, "")
+
+        let authenticationCollector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        XCTAssertEqual(authenticationCollector.trigger, "")
+    }
+
+    func testIsAutomaticIsFalseForButtonTrigger() {
+        let registrationCollector = FidoRegistrationCollector(with: [
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]],
+            FidoConstants.FIELD_TRIGGER: "BUTTON"
+        ])
+        XCTAssertFalse(registrationCollector.isAutomatic)
+
+        let authenticationCollector = FidoAuthenticationCollector(with: [
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"],
+            FidoConstants.FIELD_TRIGGER: "BUTTON"
+        ])
+        XCTAssertFalse(authenticationCollector.isAutomatic)
+    }
+
+    func testIsAutomaticIsFalseWhenTriggerAbsent() {
+        let registrationCollector = FidoRegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
+        XCTAssertFalse(registrationCollector.isAutomatic)
+
+        let authenticationCollector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        XCTAssertFalse(authenticationCollector.isAutomatic)
+    }
+
+    func testIsAutomaticIsTrueForNonButtonTrigger() {
+        for token in ["AUTOMATIC", "AUTOMATICALLY", "Automatic"] {
+            let registrationCollector = FidoRegistrationCollector(with: [
+                FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]],
+                FidoConstants.FIELD_TRIGGER: token
+            ])
+            XCTAssertTrue(registrationCollector.isAutomatic, "Expected isAutomatic to be true for trigger \(token)")
+
+            let authenticationCollector = FidoAuthenticationCollector(with: [
+                FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"],
+                FidoConstants.FIELD_TRIGGER: token
+            ])
+            XCTAssertTrue(authenticationCollector.isAutomatic, "Expected isAutomatic to be true for trigger \(token)")
+        }
+    }
+
+    func testIsAutomaticIsCaseInsensitiveForButton() {
+        for token in ["BUTTON", "button", "Button", "bUtToN"] {
+            let registrationCollector = FidoRegistrationCollector(with: [
+                FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]],
+                FidoConstants.FIELD_TRIGGER: token
+            ])
+            XCTAssertFalse(registrationCollector.isAutomatic, "Expected isAutomatic to be false for trigger \(token)")
+
+            let authenticationCollector = FidoAuthenticationCollector(with: [
+                FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"],
+                FidoConstants.FIELD_TRIGGER: token
+            ])
+            XCTAssertFalse(authenticationCollector.isAutomatic, "Expected isAutomatic to be false for trigger \(token)")
+        }
+    }
+
+    func testTriggerSurvivesGetCollectorFactory() {
+        let registrationJson: [String: Any] = [
+            FidoConstants.FIELD_ACTION: FidoConstants.ACTION_REGISTER,
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]],
+            FidoConstants.FIELD_TRIGGER: "AUTOMATIC"
+        ]
+        let registrationCollector = try? AbstractFidoCollector.getCollector(with: registrationJson)
+        XCTAssertEqual(registrationCollector?.trigger, "AUTOMATIC")
+        XCTAssertEqual(registrationCollector?.isAutomatic, true)
+
+        let authenticationJson: [String: Any] = [
+            FidoConstants.FIELD_ACTION: FidoConstants.ACTION_AUTHENTICATE,
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"],
+            FidoConstants.FIELD_TRIGGER: "BUTTON"
+        ]
+        let authenticationCollector = try? AbstractFidoCollector.getCollector(with: authenticationJson)
+        XCTAssertEqual(authenticationCollector?.trigger, "BUTTON")
+        XCTAssertEqual(authenticationCollector?.isAutomatic, false)
+    }
+
+    func testNonStringTriggerFallsBackToEmpty() {
+        let registrationCollector = FidoRegistrationCollector(with: [
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]],
+            FidoConstants.FIELD_TRIGGER: 42
+        ])
+        XCTAssertEqual(registrationCollector.trigger, "")
+        XCTAssertFalse(registrationCollector.isAutomatic)
+
+        let authenticationCollector = FidoAuthenticationCollector(with: [
+            FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"],
+            FidoConstants.FIELD_TRIGGER: 42
+        ])
+        XCTAssertEqual(authenticationCollector.trigger, "")
+        XCTAssertFalse(authenticationCollector.isAutomatic)
     }
 }

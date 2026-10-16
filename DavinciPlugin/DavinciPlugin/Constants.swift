@@ -85,6 +85,7 @@ public enum Constants {
     public static let devices = "devices"
     public static let DEVICE_REGISTRATION = "DEVICE_REGISTRATION"
     public static let DEVICE_AUTHENTICATION = "DEVICE_AUTHENTICATION"
+    public static let MOBILE_PAIRING = "MOBILE_PAIRING"
     public static let PHONE_NUMBER = "PHONE_NUMBER"
     public static let submit = "submit"
     public static let countryCode = "countryCode"
@@ -129,4 +130,12 @@ public enum Constants {
     public static let enabled = "enabled"
     public static let agreement = "agreement"
     public static let useDynamicAgreement = "useDynamicAgreement"
+    // MARK: - Image
+    public static let IMAGE = "IMAGE"
+    public static let imageUrl = "imageUrl"
+    public static let hyperlinkUrl = "hyperlinkUrl"
+    // MARK: - SDK Integrator
+    public static let METADATA = "METADATA"
+    public static let payload = "payload"
+    public static let action = "action"
 }

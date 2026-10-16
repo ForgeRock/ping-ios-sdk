@@ -103,6 +103,12 @@ extension DaVinci {
             await CollectorFactory.shared.register(type: Constants.READ_ONLY_TEXT, closure: { json in
                 return ReadOnlyTextCollector(with: json)
             })
+            await CollectorFactory.shared.register(type: Constants.IMAGE, closure: { json in
+                return ImageCollector(with: json)
+            })
+            await CollectorFactory.shared.register(type: Constants.METADATA, closure: { json in
+                return MetadataCollector(with: json)
+            })
             if let c: NSObject.Type = NSClassFromString("PingProtect.ProtectCollector") as? NSObject.Type {
                 c.perform(Selector(("registerCollector")))
             }
@@ -111,6 +117,9 @@ extension DaVinci {
             }
             if let c: NSObject.Type = NSClassFromString("PingFido.CollectorInitializer") as? NSObject.Type {
                 c.perform(Selector(("registerCollectors")))
+            }
+            if let initializer = NSClassFromString("PingOneMFA.CollectorInitializer") as? NSObject.Type {
+                initializer.perform(Selector(("registerCollectors")))
             }
             if let c: NSObject.Type = NSClassFromString("PingExternalIdP.IdpCollector") as? NSObject.Type {
                 c.perform(Selector(("registerCollector")))

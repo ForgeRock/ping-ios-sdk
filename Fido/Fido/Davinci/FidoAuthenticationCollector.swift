@@ -22,9 +22,10 @@ import PingCommons
 /// A collector for FIDO authentication within a DaVinci flow.
 public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unchecked Sendable {
     
-    /// Resets the collector's state by clearing the assertion value.
+    /// Resets the collector's state by clearing the assertion value and any recorded error code.
     public func close() {
         self.assertionValue = nil
+        self.errorCode = nil
     }
     
     /// The public key credential request options provided by the server.
@@ -49,8 +50,13 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
     
     /// The payload to be sent to the DaVinci server.
     ///
-    /// - Returns: A dictionary containing the assertion value, or `nil` if authentication has not been completed.
+    /// Returns an empty dictionary when a FIDO error has occurred (non-nil sentinel so
+    /// `Collectors.eventType()` picks up this collector and the `actionKey` error path fires).
+    /// Returns `nil` when no FIDO operation has been completed yet.
     override public func payload() -> [String: Any]? {
+        if errorCode != nil {
+            return [:]
+        }
         guard let assertionValue = assertionValue else {
             logger.d("No assertion value available, returning null payload")
             return nil
@@ -123,6 +129,7 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
             ]
             
             logger.d("assertionValue object created successfully")
+            self.errorCode = nil
             self.assertionValue = newAssertionValue // Store the value (side effect)
             
             // 4. Return success with the constructed assertionValue

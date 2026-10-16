@@ -25,7 +25,7 @@ final class DaVinciJsonConfigE2ETest: DaVinciBaseTests, @unchecked Sendable {
     private var password: String!
 
     override func setUp() async throws {
-        self.configFileName = "Config"
+        self.configFileName = "DaVinci-e2e-config"
         try await super.setUp()
         username = self.config.username
         password = self.config.password

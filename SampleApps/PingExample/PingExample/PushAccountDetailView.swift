@@ -2,7 +2,7 @@
 //  PushAccountDetailView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -28,7 +28,7 @@ struct PushAccountDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: PingTheme.Spacing.large) {
                 headerSection
 
                 accountInfoSection
@@ -53,11 +53,9 @@ struct PushAccountDetailView: View {
                     showDeleteAlert = true
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 20)
-            .padding(.bottom, 30)
+            .pingScrollContentPadding()
         }
-        .background(Color(.systemGroupedBackground))
+        .pingScreenBackground()
         .navigationTitle("Push Account Details")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -70,6 +68,7 @@ struct PushAccountDetailView: View {
                 } label: {
                     Image(systemName: "pencil")
                 }
+                .accessibilityLabel("Edit Account")
             }
         }
         .sheet(isPresented: $showEditSheet) {
@@ -105,67 +104,44 @@ struct PushAccountDetailView: View {
         } message: {
             Text("Are you sure you want to unlock this account?")
         }
-        .alert("Error", isPresented: .constant(errorMessage != nil)) {
-            Button("OK") {
-                errorMessage = nil
-            }
-        } message: {
-            if let error = errorMessage {
-                Text(error)
-            }
-        }
+        .pingErrorAlert(errorMessage: $errorMessage)
     }
 
     private var headerSection: some View {
         let displayCredential = currentCredential ?? credential
-        return VStack(spacing: 12) {
-            Image(systemName: "bell.badge.fill")
-                .font(.system(size: 50))
-                .foregroundColor(.white)
-                .frame(width: 100, height: 100)
-                .background(
-                    LinearGradient(
-                        colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .clipShape(Circle())
+        return VStack(spacing: PingTheme.Spacing.large) {
+            PingIconTile(systemName: "bell.badge.fill", diameter: 100, iconSize: 50, shape: .circle)
 
             Text(displayCredential.displayIssuer)
-                .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.primary)
+                .font(PingTheme.Typography.screenTitle.weight(.bold))
+                .foregroundStyle(PingTheme.Color.contentPrimary)
 
             Text(displayCredential.displayAccountName)
-                .font(.system(size: 16))
-                .foregroundColor(.secondary)
+                .pingBodySecondary()
         }
-        .padding()
+        .padding(PingTheme.Spacing.medium)
     }
 
     private var accountInfoSection: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Account Information")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.primary)
-                .padding(.bottom, 16)
+                .pingScreenTitle()
+                .padding(.bottom, PingTheme.Spacing.medium)
 
-            PushInfoRow(label: "Status", value: "Active")
-            Divider().padding(.leading, 100)
+            PingInfoRow(label: "Status", value: "Active", labelWidth: 90)
+            Divider().padding(.leading, PingTheme.Control.infoRowDividerInset)
 
-            PushInfoRow(label: "Platform", value: credential.platform.rawValue)
-            Divider().padding(.leading, 100)
+            PingInfoRow(label: "Platform", value: credential.platform.rawValue, labelWidth: 90)
+            Divider().padding(.leading, PingTheme.Control.infoRowDividerInset)
 
-            PushInfoRow(label: "Created", value: formatDate(credential.createdAt))
-            
+            PingInfoRow(label: "Created", value: formatDate(credential.createdAt), labelWidth: 90)
+
             if let userId = credential.userId {
-                Divider().padding(.leading, 100)
-                PushInfoRow(label: "User ID", value: userId)
+                Divider().padding(.leading, PingTheme.Control.infoRowDividerInset)
+                PingInfoRow(label: "User ID", value: userId, labelWidth: 90)
             }
         }
-        .padding()
-        .background(Color(.secondarySystemGroupedBackground))
-        .cornerRadius(12)
+        .pingCardStyle()
     }
 
     private func formatDate(_ date: Date) -> String {
@@ -294,26 +270,5 @@ struct PushAccountDetailView: View {
         } catch {
             errorMessage = "Failed to unlock account: \(error.localizedDescription)"
         }
-    }
-}
-
-struct PushInfoRow: View {
-    let label: String
-    let value: String
-
-    var body: some View {
-        HStack {
-            Text(label)
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
-                .frame(width: 90, alignment: .leading)
-
-            Text(value)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.primary)
-
-            Spacer()
-        }
-        .padding(.vertical, 12)
     }
 }

@@ -20,6 +20,7 @@ import PingStorage
 import PingOath
 import PingPush
 import PingLogger
+import PingOneMFA
 
 //The ConfigurationManager class is used to manage the configuration settings for the SDK.
 //The class provides the following functionality:
@@ -63,6 +64,7 @@ class ConfigurationManager: ObservableObject {
     // MFA Clients
     public var oathClient: OathClient?
     public var pushClient: PushClient?
+    public var isPingOneMFAInitialized: Bool = false
     
     // MFA Services
     public var oathTimerService: OathTimerService?
@@ -268,7 +270,13 @@ class ConfigurationManager: ObservableObject {
     private static func buildOidcWebClient(_ config: Configuration) -> OidcWebClient {
         OidcWebClient.createOidcWebClient { webConfig in
             webConfig.browserMode = .login
-            webConfig.browserType = .sfViewController
+            // Default browserType is `.authSession`. If `config.redirectUri` is an `https`
+            // Universal Link, completing the redirect on-device on iOS 17.4+/macOS 14.4+
+            // requires the app to hold the `webcredentials:<host>` associated-domains
+            // entitlement, and the host to serve a matching apple-app-site-association file.
+            // See Oidc/README.md (section "Redirect URI and browser type") for details, including the
+            // pre-17.4 fallback (switch to `.sfViewController`/`.nativeBrowserApp`, or register a
+            // custom-scheme redirect URI).
             webConfig.logger = LogManager.standard
             webConfig.module(PingOidc.OidcModule.config) { oidcValue in
                 oidcValue.clientId = config.clientId
@@ -450,10 +458,18 @@ class ConfigurationManager: ObservableObject {
                 config.logger = LogManager.logger
             }
         }
-        
+
         if let client = client {
             self.pushClient = client
         }
+    }
+
+    /// Initialize the PingOne MFA SDK
+    public func initializePingOneMFAClient() async throws {
+        guard !isPingOneMFAInitialized else { return }
+
+        try await PingOneMFA.initialize(geo: .northAmerica)
+        isPingOneMFAInitialized = true
     }
 }
 
@@ -464,24 +480,24 @@ private actor ClientInitializationActor {
     private var isPushInitializing = false
     private var oathInitialized = false
     private var pushInitialized = false
-    
+
     func initializeOath(factory: @Sendable () async throws -> OathClient) async throws -> OathClient? {
         guard !oathInitialized && !isOathInitializing else { return nil }
-        
+
         isOathInitializing = true
         defer { isOathInitializing = false }
-        
+
         let client = try await factory()
         oathInitialized = true
         return client
     }
-    
+
     func initializePush(factory: @Sendable () async throws -> PushClient) async throws -> PushClient? {
         guard !pushInitialized && !isPushInitializing else { return nil }
-        
+
         isPushInitializing = true
         defer { isPushInitializing = false }
-        
+
         let client = try await factory()
         pushInitialized = true
         return client

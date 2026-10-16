@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+ * Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -38,18 +38,29 @@ class FidoRegistrationCollectorTests: XCTestCase {
     func testCloseShouldAllowReuse() {
         let attestation1 = ["test": "value1"]
         let attestation2 = ["test": "value2"]
-        
+
         collector.attestationValue = attestation1
         var payload = collector.payload()
         XCTAssertNotNil(payload)
         XCTAssertEqual(payload?["attestationValue"] as? [String: String], attestation1)
-        
+
         collector.close()
         XCTAssertNil(collector.payload())
-        
+
         collector.attestationValue = attestation2
         payload = collector.payload()
         XCTAssertNotNil(payload)
         XCTAssertEqual(payload?["attestationValue"] as? [String: String], attestation2)
+    }
+
+    func testCloseShouldClearErrorCode() {
+        collector.errorCode = FidoConstants.ERROR_NOT_ALLOWED
+        XCTAssertNotNil(collector.errorCode)
+        XCTAssertNotNil(collector.payload())
+
+        collector.close()
+
+        XCTAssertNil(collector.errorCode)
+        XCTAssertNil(collector.payload())
     }
 }

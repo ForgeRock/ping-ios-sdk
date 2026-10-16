@@ -2,7 +2,7 @@
 //  KbaCreateCallbackView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -23,13 +23,12 @@ struct KbaCreateCallbackView: View {
     private let customQuestionOption = "Provide your own"
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.medium) {
             // Question Picker
             VStack(alignment: .leading) {
                 if !callback.prompt.isEmpty {
                     Text(callback.prompt)
-                        .font(.headline)
-                        .foregroundColor(.primary)
+                        .pingSectionHeader()
                         .multilineTextAlignment(.leading)
                 }
 
@@ -45,11 +44,7 @@ struct KbaCreateCallbackView: View {
                 }
                 .pickerStyle(.menu)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray, lineWidth: 1)
-                )
+                .pingTextFieldStyle()
                 .onChange(of: selectedQuestion) { newValue in
                     if newValue == customQuestionOption {
                         isCustomQuestion = true
@@ -70,11 +65,7 @@ struct KbaCreateCallbackView: View {
                     )
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.sentences)
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
+                    .pingTextFieldStyle()
                     .onChange(of: customQuestionText) { newValue in
                         callback.selectedQuestion = newValue
                     }
@@ -89,11 +80,7 @@ struct KbaCreateCallbackView: View {
                 )
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray, lineWidth: 1)
-                )
+                .pingTextFieldStyle()
                 .onChange(of: answerText) { newValue in
                     callback.selectedAnswer = newValue
                 }
@@ -102,7 +89,6 @@ struct KbaCreateCallbackView: View {
                 }
             }
         }
-        .padding()
         .onAppear {
             selectedQuestion = callback.predefinedQuestions.first ?? ""
             answerText = callback.selectedAnswer

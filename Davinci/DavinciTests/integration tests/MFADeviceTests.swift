@@ -14,7 +14,7 @@ import XCTest
 @testable import PingDavinci
 @testable import PingLogger
 
-class MFADeviceTests: XCTestCase {
+class MFADeviceTests: DaVinciBaseTests, @unchecked Sendable {
     
     private var daVinci: DaVinci!
         
@@ -32,30 +32,31 @@ class MFADeviceTests: XCTestCase {
     private var phoneNumber2: String!
     
     override func setUp() async throws {
+        self.configFileName = "DaVinci-e2e-config"
         try await super.setUp()
-        
+
         // Configure DaVinci
         daVinci = DaVinci.createDaVinci { config in
             config.logger = LogManager.standard
             config.module(OidcModule.config) { oidcValue in
-                oidcValue.clientId = "021b83ce-a9b1-4ad4-8c1d-79e576eeab76"
-                oidcValue.discoveryEndpoint = "https://auth.pingone.ca/02fb4743-189a-4bc7-9d6c-a919edfe6447/as/.well-known/openid-configuration"
-                oidcValue.scopes = ["openid", "email", "address", "phone", "profile"]
-                oidcValue.redirectUri = "org.forgerock.demo://oauth2redirect"
-                oidcValue.acrValues = "1557008a3c8b6105d5f4e8e053ac7a29"
+                oidcValue.clientId = self.config.clientId
+                oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
+                oidcValue.scopes = Set(self.config.scopes)
+                oidcValue.redirectUri = self.config.redirectUri
+                oidcValue.acrValues = self.config.mfaDeviceAcrValues
             }
         }
-        
+
         // Initialize test data
         usernamePrefix = "MFA"
-        password = "Demo1234#1"
+        password = self.config.password
         username = "\(usernamePrefix!)\(Int(Date().timeIntervalSince1970 * 1000))@example.com"
         userFname = "GAGA"
         userLname = "User"
         email1 = "\(usernamePrefix!)\(Int(Date().timeIntervalSince1970 * 1000))@example.com"
         email2 = "\(usernamePrefix!)\(Int(Date().timeIntervalSince1970 * 1000))@example.net"
-        phoneNumber1 = "888123456"
-        phoneNumber2 = "888123457"
+        phoneNumber1 = "7783177184"
+        phoneNumber2 = "7783177185"
         
         // Start with a clean session
         await daVinci.daVinciUser()?.logout()
@@ -63,8 +64,9 @@ class MFADeviceTests: XCTestCase {
     }
     
     override func tearDown() async throws {
-        // Ignore failures — if setUp threw, username/daVinci may be in a bad state
-        try? await deleteUser(username: username, password: password)
+        if let username = username, let password = password {
+            try? await deleteUser(username: username, password: password)
+        }
         try await super.tearDown()
     }
     
@@ -143,7 +145,7 @@ class MFADeviceTests: XCTestCase {
         (node.collectors[1] as? FlowCollector)?.value = "click"
         node = await node.next() as! ContinueNode
         
-        XCTAssertEqual("SDK Automation - Device Authentication", node.name)
+        XCTAssertEqual("Automation - Device Authentication", node.name)
         XCTAssertEqual("Test form for DEVICE_AUTHENTICATION collector", node.description)
         
         // There is only one collector in this node ("device-authentication" collector)
@@ -211,7 +213,7 @@ class MFADeviceTests: XCTestCase {
         (node.collectors[1] as? FlowCollector)?.value = "click"
         node = await node.next() as! ContinueNode
         
-        XCTAssertEqual("SDK Automation - Device Authentication", node.name)
+        XCTAssertEqual("Automation - Device Authentication", node.name)
         deviceAuthenticationCollector = node.collectors[0] as! DeviceAuthenticationCollector
         
         // Assert the available devices
@@ -316,7 +318,7 @@ class MFADeviceTests: XCTestCase {
         node = afterLoginClick
 
         // Make sure that we are at the user registration form
-        XCTAssertEqual("SDK Automation - Sign On", node.name)
+        XCTAssertEqual("Automation - Sign On", node.name)
         
         // Fill in the login form with valid credentials and submit...
         (node.collectors[1] as? TextCollector)?.value = username
@@ -376,7 +378,7 @@ class MFADeviceTests: XCTestCase {
         node = afterEmailSelect
 
         // Make sure that we are at the EMAIL device registration form
-        XCTAssertEqual("SDK Automation - Enter Email", node.name)
+        XCTAssertEqual("Automation - Enter Email", node.name)
         XCTAssertEqual("Enter email for registration", node.description)
         
         // Assert the collectors
@@ -428,7 +430,7 @@ class MFADeviceTests: XCTestCase {
         node = afterPhoneSelect
 
         // Make sure that we are at the Phone Number registration form
-        XCTAssertEqual("SDK Automation - Enter Phone Number", node.name)
+        XCTAssertEqual("Automation - Enter Phone Number", node.name)
         XCTAssertEqual("Enter phone number", node.description)
         
         // Assert the collectors
@@ -463,9 +465,9 @@ class MFADeviceTests: XCTestCase {
         XCTAssertTrue(phoneNumberCollector.showExtension)
         
         // Select a country code and enter a valid phone number:...
-        dropdown.value = "359"  // Select Bulgaria...
+        dropdown.value = "CA"  // Select Canada...
         phoneNumberCollector.phoneNumber = phone
-        phoneNumberCollector.countryCode = "BG"
+        phoneNumberCollector.countryCode = "CA"
         phoneNumberCollector.extension = "100" // Enter extension
         
         // Submit the form

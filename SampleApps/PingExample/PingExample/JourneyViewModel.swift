@@ -133,6 +133,8 @@ class JourneyViewModel: ObservableObject {
     @Published public var isLoading: Bool = false
     /// Published property to control whether to show the journey name input screen
     @Published public var showJourneyNameInput: Bool = true
+    /// Published property holding an inline error message for the input screen (e.g. an unparseable backchannel URI).
+    @Published public var errorMessage: String? = nil
 
     /// Optional verification URI for the RFC 8628 device authorization grant.
     /// When set, the user_code is extracted and the requesting device is approved on success.
@@ -142,6 +144,45 @@ class JourneyViewModel: ObservableObject {
     /// The journey will start when the user enters a journey name.
     init(verificationUriComplete: URL? = nil) {
         self.verificationUriComplete = verificationUriComplete
+    }
+
+    /// Starts a Journey from an AM/AIC backchannel `redirectUri`.
+    ///
+    /// A federation gateway (server-side) initialises a transaction with AM and forwards a
+    /// `redirectUri` to the app; the SDK extracts `authIndexType` / `authIndexValue` from that
+    /// URI and drives the standard authenticate journey. The `redirectUri` host/path are ignored —
+    /// the authenticate endpoint is reconstructed from `JourneyConfig.serverUrl` + `JourneyConfig.realm`.
+    ///
+    /// - Parameter redirectUriString: The gateway-supplied `redirectUri`, pasted by the user.
+    public func startBackchannel(with redirectUriString: String) async {
+        let trimmed = redirectUriString.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let backchannelUri = URL(string: trimmed) else {
+            await MainActor.run {
+                self.errorMessage = "Invalid redirect URI — could not parse a URL."
+            }
+            return
+        }
+
+        await MainActor.run {
+            isLoading = true
+            errorMessage = nil
+        }
+
+        guard let journey = journey else {
+            await MainActor.run {
+                self.errorMessage = "No Journey configuration found."
+                self.isLoading = false
+            }
+            return
+        }
+
+        let next = await journey.start(backchannelUri: backchannelUri)
+
+        await MainActor.run {
+            self.state = JourneyState(node: next)
+            self.showJourneyNameInput = false
+            self.isLoading = false
+        }
     }
 
     /// Starts the Journey orchestration process with a specific journey name.

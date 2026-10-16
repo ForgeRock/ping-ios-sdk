@@ -18,36 +18,32 @@ struct OathAccountsView: View {
     @StateObject private var viewModel = OathAccountsViewModel()
     @State private var showManualRegistration = false
     @State private var selectedAccount: OathCredential?
-    @State private var showError = false
 
     var body: some View {
         ZStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    if viewModel.isLoading && viewModel.accounts.isEmpty {
-                        ProgressView()
-                            .scaleEffect(1.5)
+            if viewModel.isLoading && viewModel.accounts.isEmpty {
+                ScrollView {
+                    VStack(spacing: PingTheme.Spacing.large) {
+                        PingLoadingSpinner()
                             .padding()
-                    } else if viewModel.accounts.isEmpty {
-                        emptyStateView
-                    } else {
+                    }
+                    .pingScrollContentPadding()
+                }
+            } else if viewModel.accounts.isEmpty {
+                PingCenteredScrollContent { emptyStateView }
+            } else {
+                ScrollView {
+                    VStack(spacing: PingTheme.Spacing.large) {
                         accountsList
                     }
+                    .pingScrollContentPadding()
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 20)
-                .padding(.bottom, 30)
             }
-            .background(Color(.systemGroupedBackground))
-
             if viewModel.isLoading && !viewModel.accounts.isEmpty {
-                Color.black.opacity(0.4)
-                    .ignoresSafeArea()
-                ProgressView()
-                    .scaleEffect(2.0)
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                PingLoadingOverlay()
             }
         }
+        .pingScreenBackground()
         .navigationTitle("OATH Accounts")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -104,19 +100,7 @@ struct OathAccountsView: View {
                 ConfigurationManager.shared.oathTimerService?.stopTracking()
             }
         }
-        .onChange(of: viewModel.errorMessage) { newError in
-            showError = newError != nil
-        }
-        .alert("Error", isPresented: $showError) {
-            Button("OK") {
-                viewModel.errorMessage = nil
-                showError = false
-            }
-        } message: {
-            if let error = viewModel.errorMessage {
-                Text(error)
-            }
-        }
+        .pingErrorAlert(errorMessage: $viewModel.errorMessage)
     }
 
     private var emptyStateView: some View {
@@ -125,44 +109,43 @@ struct OathAccountsView: View {
             title: "No OATH Accounts",
             subtitle: "Add your first account using QR code or manual entry"
         ) {
-            HStack(spacing: 16) {
+            HStack(spacing: PingTheme.Spacing.medium) {
                 Button {
                     path.append(.qrScanner)
                 } label: {
-                    VStack(spacing: 8) {
+                    VStack(spacing: PingTheme.Spacing.small) {
                         Image(systemName: "qrcode.viewfinder")
-                            .font(.system(size: 24))
+                            .font(PingTheme.Typography.screenTitle)
                         Text("Scan QR")
-                            .font(.system(size: 14, weight: .medium))
+                            .font(PingTheme.Typography.supporting.weight(.medium))
                     }
                     .frame(width: 120, height: 100)
-                    .background(Color(.secondarySystemGroupedBackground))
-                    .cornerRadius(12)
+                    .background(PingTheme.Color.groupedSurface)
+                    .clipShape(RoundedRectangle(cornerRadius: PingTheme.Shape.cardRadius))
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
 
                 Button {
                     showManualRegistration = true
                 } label: {
-                    VStack(spacing: 8) {
+                    VStack(spacing: PingTheme.Spacing.small) {
                         Image(systemName: "keyboard")
-                            .font(.system(size: 24))
+                            .font(PingTheme.Typography.screenTitle)
                         Text("Manual Entry")
-                            .font(.system(size: 14, weight: .medium))
+                            .font(PingTheme.Typography.supporting.weight(.medium))
                     }
                     .frame(width: 120, height: 100)
-                    .background(Color(.secondarySystemGroupedBackground))
-                    .cornerRadius(12)
+                    .background(PingTheme.Color.groupedSurface)
+                    .clipShape(RoundedRectangle(cornerRadius: PingTheme.Shape.cardRadius))
                 }
-                .buttonStyle(PlainButtonStyle())
+                .buttonStyle(.plain)
             }
-            .padding(.top, 20)
+            .padding(.top, PingTheme.Spacing.large)
         }
-        .padding()
     }
 
     private var accountsList: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: PingTheme.Spacing.medium) {
             ForEach(viewModel.accounts, id: \.id) { account in
                 if let timerService = ConfigurationManager.shared.oathTimerService {
                     OathAccountCardView(credential: account, timerService: timerService) {
