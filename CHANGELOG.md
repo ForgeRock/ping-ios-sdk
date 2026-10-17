@@ -1,3 +1,13 @@
+## [Unreleased]
+
+#### Fixed
+
+- Fixed `PushNotification.isExpired` calculating expiry from the local creation time instead of the server send time (`sentAt`); notifications without a send time fall back to the creation time with unchanged behaviour [SDKS-5490]
+
+#### Changed
+
+- `PushError` now includes `notificationExpired`; exhaustive `switch` statements over `PushError` must handle the new case. Approving or denying an expired notification now throws locally instead of being rejected by the server with HTTP 400 [SDKS-5490]
+
 ## [2.2.0]
 
 #### Added

@@ -2,7 +2,7 @@
 //  PushErrorTests.swift
 //  PingPushTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -103,6 +103,15 @@ final class PushErrorTests: XCTestCase {
         let error = PushError.notificationNotFound("notif-789")
         XCTAssertTrue(error.localizedDescription.contains("Notification not found"))
         XCTAssertTrue(error.localizedDescription.contains("notif-789"))
+    }
+
+    func testNotificationExpiredError() {
+        let error = PushError.notificationExpired(notificationId: "notif-789", ttl: 120)
+        // Byte-identical to Android's NotificationExpiredException message (parity contract).
+        XCTAssertEqual(
+            error.localizedDescription,
+            "Notification 'notif-789' has expired (TTL: 120s)"
+        )
     }
     
     func testPolicyViolationError() {
