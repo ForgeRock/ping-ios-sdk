@@ -63,6 +63,7 @@ struct FidoAuthenticationCallbackView: View {
                 }) {
                     Text("Authenticate with FIDO")
                 }
+                .buttonStyle(.pingPrimary)
             }
         }
         .task {
@@ -92,7 +93,7 @@ struct FidoAuthenticationCallbackView: View {
                 // successful ceremony should.
                 print("FIDO Conditional UI authentication did not complete: \(error.localizedDescription)")
             }
-            .buttonStyle(.pingPrimary)
+            
         }
     }
 
