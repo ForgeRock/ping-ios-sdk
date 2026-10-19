@@ -107,7 +107,7 @@ final class PushErrorTests: XCTestCase {
 
     func testNotificationExpiredError() {
         let error = PushError.notificationExpired(notificationId: "notif-789", ttl: 120)
-        // Byte-identical to Android's NotificationExpiredException message (parity contract).
+        // The message must stay byte-identical to Android's NotificationExpiredException message.
         XCTAssertEqual(
             error.localizedDescription,
             "Notification 'notif-789' has expired (TTL: 120s)"

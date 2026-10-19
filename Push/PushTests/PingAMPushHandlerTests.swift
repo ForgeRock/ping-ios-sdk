@@ -91,7 +91,7 @@ final class PingAMPushHandlerTests: XCTestCase {
         // The `i` claim may arrive as a JSON string (e.g. "1731000000000"). The
         // handler must accept it and expose it as an Int `timeInterval` still
         // representing milliseconds since epoch. This locks in the
-        // `Int(stringValue)` branch of `parseInteger` (SDKS-5490 parity contract).
+        // `Int(stringValue)` branch of `parseInteger`.
         let jwt = try jwt(withStringInterval: "1731000000000")
         let messageData: [String: Any] = [
             "messageId": "message-string-i",

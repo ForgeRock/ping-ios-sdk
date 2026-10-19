@@ -916,15 +916,10 @@ actor PushService {
             pushType = .default
         }
 
+        // A non-positive timestamp is not a real send time; treat it as missing so expiry falls back to `createdAt`.
         let sentAt: Date?
-        if let intervalValue = parsedData[NotificationKeys.timeInterval] {
-            if let milliseconds = intValue(intervalValue, defaultValue: nil) {
-                sentAt = Date(timeIntervalSince1970: Double(milliseconds) / 1000.0)
-            } else if let doubleValue = intervalValue as? Double {
-                sentAt = Date(timeIntervalSince1970: doubleValue / 1000.0)
-            } else {
-                sentAt = nil
-            }
+        if let milliseconds = intValue(parsedData[NotificationKeys.timeInterval], defaultValue: nil), milliseconds > 0 {
+            sentAt = Date(timeIntervalSince1970: Double(milliseconds) / 1000.0)
         } else {
             sentAt = nil
         }

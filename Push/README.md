@@ -143,7 +143,7 @@ await pushClient.close() // clears caches and runs global cleanup
 - `.invalidUri`, `.invalidParameterValue`
 - `.deviceTokenNotSet`, `.credentialLocked`
 - `.messageParsingFailed`, `.networkFailure`, `.storageFailure`
-- `.notificationExpired` — thrown by approve/deny when the notification's TTL has elapsed. Expiry is measured from the server send time (`sentAt`) when available, otherwise from the local creation time.
+- `.notificationExpired` — thrown by approve/deny when the notification's TTL has elapsed. Expiry is measured from the server send time (`sentAt`) when available, otherwise from the local creation time, and is evaluated against the device clock. If the device clock is skewed relative to the server, `.notificationExpired` may be thrown earlier, or later, than the server's own expiry decision.
 
 Most methods throw; callers should `try`/`catch` and map to user-facing messaging or retry logic. Integration tests exercise both success and failure flows to match Android parity.
 
