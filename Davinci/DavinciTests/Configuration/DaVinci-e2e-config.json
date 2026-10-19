@@ -1,0 +1,24 @@
+{
+    "username" : null,
+    "userFname" : "E2E",
+    "userLname" : "iOS",
+    "password" : null,
+    "newPassword" : null,
+    "verificationCode" : "1234",
+
+    "clientId" : null,
+    "discoveryEndpoint" : null,
+    "scopes" : "openid email address phone profile",
+    "redirectUri" : "org.forgerock.demo://oauth2redirect",
+    "acrValues" : "62802895b230cafbc8e58217631d837f",
+
+    "mfaDeviceAcrValues" : "ef38c1f30b8936007480bb918f088087",
+    "formFieldsAcrValues" : "b63ac7fb5db6d893efdd5e29d06a7477",
+    "pollingAcrValues" : "fae6bc3d08a5c4f5b8ff95175b117278",
+    "metadataAcrValues" : "14f7988fc922112d599a14c1016a6ec6",
+    "imageAcrValues" : "14f7988fc922112d599a14c1016a6ec6",
+
+    "deviceClientId" : null,
+    "deviceUsername" : null,
+    "devicePassword" : null
+}

@@ -18,8 +18,8 @@ struct LabelView: View {
     var body: some View {
         HStack {
             labelContent
-                .font(.subheadline)
-                .frame(maxWidth: .infinity, alignment: .center)
+                .pingSectionHeader()
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 

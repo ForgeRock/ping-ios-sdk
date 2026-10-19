@@ -21,9 +21,10 @@ import PingCommons
 /// A collector for FIDO registration within a DaVinci flow.
 public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unchecked Sendable {
     
-    /// Resets the collector's state by clearing the attestation value.
+    /// Resets the collector's state by clearing the attestation value and any recorded error code.
     public func close() {
         self.attestationValue = nil
+        self.errorCode = nil
     }
     
     /// The public key credential creation options provided by the server.
@@ -48,8 +49,13 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
     
     /// The payload to be sent to the DaVinci server.
     ///
-    /// - Returns: A dictionary containing the attestation value, or `nil` if registration has not been completed.
+    /// Returns an empty dictionary when a FIDO error has occurred (non-nil sentinel so
+    /// `Collectors.eventType()` picks up this collector and the `actionKey` error path fires).
+    /// Returns `nil` when no FIDO operation has been completed yet.
     override public func payload() -> [String: Any]? {
+        if errorCode != nil {
+            return [:]
+        }
         guard let attestationValue = attestationValue else {
             logger.d("No attestation value available, returning null payload")
             return nil
@@ -113,6 +119,7 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
             ]
             
             logger.d("attestationValue object created successfully")
+            self.errorCode = nil
             self.attestationValue = newAttestationValue // Store the value (side effect)
             
             // 4. Return success with the constructed attestationValue

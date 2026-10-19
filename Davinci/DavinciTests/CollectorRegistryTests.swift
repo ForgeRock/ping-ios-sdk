@@ -45,11 +45,12 @@ final class CollectorRegistryTests: XCTestCase {
             ["inputType": "SINGLE_SELECT"],
             ["inputType": "MULTI_SELECT"],
             ["inputType": "MULTI_SELECT"],
+            ["type": "METADATA"],
         ]
 
         let collectors = await CollectorFactory.shared.collector(daVinci: davinci, from: jsonArray)
-        XCTAssertEqual(collectors.count, 11)
-        if collectors.count == 11 {
+        XCTAssertEqual(collectors.count, 12)
+        if collectors.count == 12 {
             XCTAssertTrue(collectors[0] is TextCollector)
             XCTAssertTrue(collectors[1] is PasswordCollector)
             XCTAssertTrue(collectors[2] is SubmitCollector)
@@ -61,6 +62,7 @@ final class CollectorRegistryTests: XCTestCase {
             XCTAssertTrue(collectors[8] is SingleSelectCollector)
             XCTAssertTrue(collectors[9] is MultiSelectCollector)
             XCTAssertTrue(collectors[10] is MultiSelectCollector)
+            XCTAssertTrue(collectors[11] is MetadataCollector)
         }
     }
 

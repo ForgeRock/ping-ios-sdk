@@ -39,5 +39,6 @@ struct OidcLoginView: View {
                 }
             }
         }
+        .pingScreenBackground()
     }
 }

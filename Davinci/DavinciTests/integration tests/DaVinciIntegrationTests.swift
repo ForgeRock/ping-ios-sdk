@@ -25,7 +25,7 @@ class DaVinciIntegrationTests: DaVinciBaseTests, @unchecked Sendable {
     private var verificationCode: String!
     
     override func setUp() async throws {
-        self.configFileName = "Config"
+        self.configFileName = "DaVinci-e2e-config"
         try await super.setUp()
         
         username = self.config.username

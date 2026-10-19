@@ -50,7 +50,8 @@ public class OidcModule {
             context.flowContext.set(key: SharedContext.Keys.pkceKey, value: pkce)
             let url = URL(string: config.redirectUri)
             context.flowContext.set(key: SharedContext.Keys.callbackURLSchemeKey, value: url?.scheme ?? "https")
-                
+            context.flowContext.set(key: SharedContext.Keys.redirectUriKey, value: config.redirectUri)
+
             let oidcRequest = try await config.populateRequest(request: request, pkce: pkce, responseMode: "")
             
             let parameters = oidcLoginFlow.sharedContext.get(key: SharedContext.Keys.oidcParameters) as? [String: String] ?? [:]
@@ -161,7 +162,10 @@ extension SharedContext.Keys {
     
     /// The key used to store the callbackURLScheme value in the shared context.
     static let callbackURLSchemeKey = "com.pingidentity.oidcWeb.callbackURLScheme"
-    
+
+    /// The key used to store the full redirectUri value in the shared context.
+    static let redirectUriKey = "com.pingidentity.oidcWeb.redirectUri"
+
     /// The key used to store the user in the shared context.
     static let userKey = "com.pingidentity.oidcWeb.User"
     

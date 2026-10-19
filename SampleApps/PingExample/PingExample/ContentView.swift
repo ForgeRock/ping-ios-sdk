@@ -20,6 +20,7 @@ import PingProtect
 import PingBinding
 import PingOath
 import PingPush
+import PingOneMFA
 
 /// The main application entry point.
 @main
@@ -52,6 +53,7 @@ enum MenuSection: CaseIterable, Identifiable {
     case authentication
     case userManagement
     case mfa
+    case pingOneMFA
     case developerTools
 
     var id: String { title }
@@ -61,6 +63,7 @@ enum MenuSection: CaseIterable, Identifiable {
         case .authentication: return "Authentication"
         case .userManagement: return "User Management"
         case .mfa: return "MFA"
+        case .pingOneMFA: return "PingOne MFA"
         case .developerTools: return "Developer Tools"
         }
     }
@@ -68,11 +71,13 @@ enum MenuSection: CaseIterable, Identifiable {
     var items: [MenuItem] {
         switch self {
         case .authentication:
-            return [.davinci, .journey, .oidc, .device]
+            return [.davinci, .journey, .backchannel, .oidc, .device]
         case .userManagement:
             return [.token, .user, .deviceManagement, .logout]
         case .mfa:
             return [.qrScanner, .oathAccounts, .pushAccounts, .pushNotifications]
+        case .pingOneMFA:
+            return [.pingOneMFAScanner, .pingOneMFAAccounts, .pingOneMFAOtp, .pingOneMFAPayload, .pingOneMFADavinciPairing]
         case .developerTools:
             return [.deviceInfo, .logger, .storage, .bindingKeys, .migration, .configuration]
         }
@@ -83,6 +88,7 @@ enum MenuSection: CaseIterable, Identifiable {
 enum MenuItem: String, CaseIterable, Identifiable {
     case davinci = "DaVinci"
     case journey = "Journey"
+    case backchannel = "Backchannel"
     case oidc = "OIDC (Web)"
     case device = "Device Flow"
     case oathAccounts = "OATH"
@@ -106,6 +112,11 @@ enum MenuItem: String, CaseIterable, Identifiable {
     case davinciDeviceApprove = "Approve with DaVinci"
     case journeyDeviceApprove = "Approve with Journey"
     case approveDevice = "Approve Device"
+    case pingOneMFAScanner = "QR Code Registration"
+    case pingOneMFAAccounts = "PingOne MFA Accounts"
+    case pingOneMFAOtp = "PingOne MFA OTP"
+    case pingOneMFAPayload = "PingOne MFA Payload"
+    case pingOneMFADavinciPairing = "PingOne MFA DaVinci Pairing"
 
     var id: String { rawValue }
     
@@ -113,6 +124,7 @@ enum MenuItem: String, CaseIterable, Identifiable {
         switch self {
         case .davinci: return "key.fill"
         case .journey: return "map.fill"
+        case .backchannel: return "arrow.left.arrow.right.circle.fill"
         case .oidc: return "lock.shield.fill"
         case .device: return "tv"
         case .oathAccounts: return "key.viewfinder"
@@ -136,13 +148,19 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .davinciDeviceApprove: return "key.fill"
         case .journeyDeviceApprove: return "map.fill"
         case .approveDevice: return "checkmark.shield.fill"
+        case .pingOneMFAScanner: return "qrcode.viewfinder"
+        case .pingOneMFAAccounts: return "person.2.fill"
+        case .pingOneMFAOtp: return "number.square.fill"
+        case .pingOneMFAPayload: return "doc.badge.gearshape.fill"
+        case .pingOneMFADavinciPairing: return "link.badge.plus"
         }
     }
-    
+
     var title: String {
         switch self {
         case .davinci: return "DaVinci Flow"
         case .journey: return "Journey Flow"
+        case .backchannel: return "Backchannel Auth"
         case .oidc: return "OIDC (Web) Login"
         case .device: return "Device Flow"
         case .oathAccounts: return "OATH"
@@ -166,13 +184,19 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .davinciDeviceApprove: return "Approve with DaVinci"
         case .journeyDeviceApprove: return "Approve with Journey"
         case .approveDevice: return "Approve Device"
+        case .pingOneMFAScanner: return "QR Code Registration"
+        case .pingOneMFAAccounts: return "MFA Accounts"
+        case .pingOneMFAOtp: return "One-Time Passcode"
+        case .pingOneMFAPayload: return "Mobile Payload"
+        case .pingOneMFADavinciPairing: return "DaVinci Pairing"
         }
     }
-    
+
     var subtitle: String {
         switch self {
         case .davinci: return "Test DaVinci authentication"
         case .journey: return "Test Journey authentication"
+        case .backchannel: return "AM/AIC transactional backchannel auth"
         case .oidc: return "OpenID Connect flow"
         case .device: return "RFC 8628 device authorization"
         case .oathAccounts: return "Manage TOTP and HOTP accounts"
@@ -196,14 +220,19 @@ enum MenuItem: String, CaseIterable, Identifiable {
         case .davinciDeviceApprove: return "Approve device flow via DaVinci"
         case .journeyDeviceApprove: return "Approve device flow via Journey"
         case .approveDevice: return "Approve a device's verification URL"
+        case .pingOneMFAScanner: return "Scan QR code to pair with PingOne MFA"
+        case .pingOneMFAAccounts: return "View paired MFA accounts"
+        case .pingOneMFAOtp: return "OTP for your paired accounts"
+        case .pingOneMFAPayload: return "Generate mobile payload for authentication and registration"
+        case .pingOneMFADavinciPairing: return "Pair device via DaVinci flow"
         }
     }
-    
+
     /// The config type required to use this menu item, or nil if none required.
     var requiredConfigType: ConfigType? {
         switch self {
-        case .journey, .journeyToken: return .journey
-        case .davinci, .davinciToken: return .davinci
+        case .journey, .journeyToken, .backchannel: return .journey
+        case .davinci, .davinciToken, .pingOneMFADavinciPairing: return .davinci
         case .oidc, .oidcToken: return .oidcWeb
         case .device, .deviceToken: return .device
         default: return nil
@@ -220,7 +249,8 @@ struct ContentView: View {
     @State private var navigateToPushNotifications = false
     @State private var showNoConfigAlert = false
     @State private var noConfigTypeName = ""
-    
+    @State private var pingOneMFANotification: MFAPushNotification? = nil
+
     var body: some View {
         NavigationStack(path: $path) {
             ScrollView {
@@ -229,7 +259,7 @@ struct ContentView: View {
                     headerSection
                     
                     // Content Section
-                    VStack(spacing: 20) {
+                    VStack(spacing: PingTheme.Spacing.large) {
                         // Loop through all sections
                         ForEach(MenuSection.allCases) { section in
                             sectionCard(
@@ -237,20 +267,26 @@ struct ContentView: View {
                                 items: section.items
                             )
                         }
-                        
+
                         deviceStatusCard
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
-                    .padding(.bottom, 30)
+                    .pingScrollContentPadding()
                 }
             }
-            .background(Color(.systemGroupedBackground))
+            .pingScreenBackground()
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("NavigateToPushNotifications"))) { _ in
                 // Navigate to Push Notifications view
                 if !path.contains(.pushNotifications) {
                     path.append(.pushNotifications)
                 }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowPingOneMFANotification"))) { notification in
+                if let pushNotification = notification.userInfo?["notification"] as? MFAPushNotification {
+                    pingOneMFANotification = pushNotification
+                }
+            }
+            .sheet(item: $pingOneMFANotification) { pushNotification in
+                PingOneMFANotificationView(notification: pushNotification)
             }
             .navigationDestination(for: MenuItem.self) { item in
                 switch item {
@@ -260,6 +296,8 @@ struct ContentView: View {
                     DavinciView(path: $path)
                 case .journey:
                     JourneyView(path: $path)
+                case .backchannel:
+                    BackchannelAuthView(path: $path)
                 case .oidc:
                     OidcLoginView(path: $path)
                 case .device:
@@ -304,6 +342,16 @@ struct ContentView: View {
                     JourneyView(path: $path, verificationUriComplete: DeviceApproval.pendingVerificationUri)
                 case .approveDevice:
                     ApproveDeviceView(path: $path)
+                case .pingOneMFAScanner:
+                    PingOneMFAScannerContainerView(path: $path)
+                case .pingOneMFAAccounts:
+                    PingOneMFAAccountsView(path: $path)
+                case .pingOneMFAOtp:
+                    PingOneMFAOtpView(path: $path)
+                case .pingOneMFAPayload:
+                    PingOneMFAPayloadView(path: $path)
+                case .pingOneMFADavinciPairing:
+                    PingOneMFADavinciPairingView(path: $path)
                 }
             }
             .task {
@@ -314,9 +362,9 @@ struct ContentView: View {
                 let score = tamperDetector.analyze()
                 
                 if score > 0 {
-                    deviceStatus = "⚠️ Jailbroken (Score: \(score))"
+                    deviceStatus = "Jailbroken (Score: \(score))"
                 } else {
-                    deviceStatus = "✓ Secure"
+                    deviceStatus = "Secure"
                 }
             }
             .alert("No Configuration", isPresented: $showNoConfigAlert) {
@@ -332,46 +380,49 @@ struct ContentView: View {
     
     // MARK: - Header Section
     private var headerSection: some View {
+        // Full-bleed hero banner, not a tile: tokenized colors in place, the
+        // gradient shape is kept but repartnered with the dynamic action colors
+        // so the foreground contrast holds in dark mode.
         ZStack(alignment: .topTrailing) {
             LinearGradient(
-                colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
+                colors: [PingTheme.Color.actionPrimary, PingTheme.Color.actionPrimaryPressed],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
 
-            VStack(spacing: 12) {
+            VStack(spacing: PingTheme.Spacing.medium) {
                 Image("Logo")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 80, height: 80)
 
                 Text("Ping SDK")
-                    .font(.system(size: 28, weight: .bold))
-                    .foregroundColor(.white)
+                    .font(PingTheme.Typography.display)
+                    .foregroundColor(PingTheme.Color.actionPrimaryForeground)
 
                 Text("Development Testing Suite")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.white.opacity(0.9))
+                    .font(PingTheme.Typography.supporting.weight(.medium))
+                    .foregroundColor(PingTheme.Color.actionPrimaryForeground.opacity(0.9))
 
                 Text(sdkVersion)
-                    .font(.system(size: 13, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.7))
+                    .font(PingTheme.Typography.monospacedCaption)
+                    .foregroundColor(PingTheme.Color.actionPrimaryForeground.opacity(0.7))
             }
-            .padding(.vertical, 10)
+            .padding(.vertical, PingTheme.Spacing.small)
             .frame(maxWidth: .infinity)
 
             Button {
                 path.append(.configuration)
             } label: {
                 Image(systemName: "gearshape.fill")
-                    .font(.system(size: 20))
-                    .foregroundColor(.white.opacity(0.9))
+                    .font(.system(size: PingTheme.Control.Glyph.medium))
+                    .foregroundColor(PingTheme.Color.actionPrimaryForeground.opacity(0.9))
                     .frame(width: 36, height: 36)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(.white.opacity(0.4), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: PingTheme.Shape.fieldRadius)
+                            .stroke(PingTheme.Color.actionPrimaryForeground.opacity(0.4), lineWidth: PingTheme.Shape.borderWidth)
                     )
-                    .padding(12)
+                    .padding(PingTheme.Spacing.medium)
             }
         }
     }
@@ -380,28 +431,27 @@ struct ContentView: View {
     private func sectionCard(title: String, items: [MenuItem]) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.secondary)
+                .font(PingTheme.Typography.supporting.weight(.semibold))
+                .foregroundStyle(PingTheme.Color.contentSecondary)
                 .textCase(.uppercase)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 8)
-            
+                .padding(.horizontal, PingTheme.Spacing.medium)
+                .padding(.bottom, PingTheme.Spacing.small)
+
             VStack(spacing: 0) {
                 ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                     menuItemButton(item)
-                    
+
                     if index < items.count - 1 {
                         Divider()
-                            .padding(.leading, 60)
+                            // Aligns divider start with the text after the 40pt icon tile.
+                            .padding(.leading, 40 + PingTheme.Spacing.medium)
                     }
                 }
             }
-            .background(Color(.secondarySystemGroupedBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+            .pingCardStyle(size: .rowList)
         }
     }
-    
+
     // MARK: - Menu Item Button
     private func menuItemButton(_ item: MenuItem) -> some View {
         Button {
@@ -413,79 +463,78 @@ struct ContentView: View {
                 path.append(item)
             }
         } label: {
-            HStack(spacing: 16) {
-                Image(systemName: item.icon)
-                    .font(.system(size: 20))
-                    .foregroundColor(.white)
-                    .frame(width: 40, height: 40)
-                    .background(
-                        LinearGradient(
-                            colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                
-                VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: PingTheme.Spacing.medium) {
+                PingIconTile(systemName: item.icon, diameter: 40, iconSize: 20)
+
+                VStack(alignment: .leading, spacing: PingTheme.Spacing.xxSmall) {
                     Text(item.title)
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.primary)
-                    
+                        .font(PingTheme.Typography.body.weight(.medium))
+                        .foregroundStyle(PingTheme.Color.contentPrimary)
+
                     Text(item.subtitle)
-                        .font(.system(size: 13))
-                        .foregroundColor(.secondary)
+                        .pingSupportingText()
                 }
-                
+
                 Spacer()
-                
+
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.secondary)
+                    .font(.system(size: PingTheme.Control.Glyph.small, weight: .semibold))
+                    .foregroundColor(PingTheme.Color.contentSecondary)
             }
-            .padding(16)
+            .padding(.vertical, PingTheme.Spacing.small)
             .contentShape(Rectangle())
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
-    
+
     // MARK: - Device Status Card
     private var deviceStatusCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.medium) {
             HStack {
                 Image(systemName: "iphone.gen3")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.themeButtonBackground)
-                
+                    .font(.system(size: PingTheme.Control.Glyph.small, weight: .semibold))
+                    .foregroundColor(PingTheme.Color.actionPrimary)
+
                 Text("Device Information")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.primary)
-                
+                    .pingSectionHeader()
+
                 Spacer()
-                
-                Text(deviceStatus)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(deviceStatus.contains("Secure") ? .green : .orange)
+
+                deviceStatusContent
             }
-            
+
             Divider()
-            
-            VStack(alignment: .leading, spacing: 8) {
+
+            VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
                 Text("Device ID")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.secondary)
-                
+                    .font(PingTheme.Typography.caption.weight(.medium))
+                    .foregroundStyle(PingTheme.Color.contentSecondary)
+
                 Text(deviceID.isEmpty ? "Loading..." : deviceID)
-                    .font(.system(size: 11, design: .monospaced))
-                    .foregroundColor(.primary)
+                    .font(PingTheme.Typography.monospacedCaption)
+                    .foregroundStyle(PingTheme.Color.contentPrimary)
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
             }
         }
-        .padding(16)
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+        .pingCardStyle()
+    }
+
+    @ViewBuilder
+    private var deviceStatusContent: some View {
+        // The status string carries the state; render a semantic icon plus
+        // plain text rather than baking the glyph into the string.
+        let isSecure = deviceStatus.contains("Secure")
+
+        HStack(spacing: PingTheme.Spacing.xSmall) {
+            Image(systemName: isSecure ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                .font(.system(size: PingTheme.Control.Glyph.small, weight: .medium))
+                .foregroundStyle(isSecure ? PingTheme.Color.statusSuccess : PingTheme.Color.statusWarning)
+
+            Text(deviceStatus)
+                .font(PingTheme.Typography.caption.weight(.medium))
+                .foregroundStyle(isSecure ? PingTheme.Color.statusSuccess : PingTheme.Color.statusWarning)
+        }
     }
     
     // Add computed properties:

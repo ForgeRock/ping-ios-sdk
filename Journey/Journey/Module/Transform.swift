@@ -49,9 +49,23 @@ public class NodeTransformModule: @unchecked Sendable {
                 return FailureNode(cause: ApiError.error(status, [:], "Location: \(String(describing: locationHeader))" ))
             }
             
-            // 5XX errors are treated as unrecoverable failures
-            let json = try response.json()
-            return FailureNode(cause: ApiError.error(status, json, body))
+            // Catch-all branch (5XX and any other unclassified status code): classify by
+            // body shape, not status code. AM errors with a parseable JSON body are
+            // recoverable ErrorNodes, regardless of status code; unparseable bodies
+            // remain unrecoverable failures — matches Android's Transform.kt.
+            //
+            // Note: Android's 4XX branch additionally filters errorCode == 1999
+            // (requestTimedOut) to a FailureNode, but that filtering does not exist in
+            // Android's catch-all (5XX) branch, so it is intentionally not replicated
+            // here — this stays faithful to Android's actual catch-all behavior rather
+            // than the 4XX branch's extra special-case.
+            do {
+                let json = try response.json()
+                let message = json[JourneyConstants.message] as? String ?? ""
+                return ErrorNode(status: status, input: json, message: message, context: flowContext)
+            } catch {
+                return FailureNode(cause: ApiError.error(status, ["Exception": error], body))
+            }
         }
     })
     

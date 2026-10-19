@@ -20,10 +20,9 @@ struct FidoAuthenticationCallbackView: View {
     var body: some View {
         VStack {
             Text("FIDO Authentication")
-                .font(.title)
+                .pingScreenTitle()
 
             Toggle("Local credentials only", isOn: $preferImmediatelyAvailableCredentials)
-                .padding(.horizontal)
 
             Button(action: {
                 Task {
@@ -50,6 +49,7 @@ struct FidoAuthenticationCallbackView: View {
             }) {
                 Text("Authenticate with FIDO")
             }
+            .buttonStyle(.pingPrimary)
         }
     }
 }

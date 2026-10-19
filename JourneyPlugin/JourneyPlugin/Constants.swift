@@ -21,6 +21,7 @@ public enum JourneyConstants {
     public static let authIndexValue = "authIndexValue"
     public static let service = "service"
     public static let suspendedId = "suspendedId"
+    public static let transaction = "transaction"
 
     public static let forceAuthParam = "ForceAuth"
     public static let noSessionParam = "noSession"
@@ -135,6 +136,8 @@ public enum JourneyConstants {
     public static let SIWA = "siwa"
     public static let GOOGLE = "google"
     public static let FACEBOOK = "facebook"
+    /// Provider identifier for Facebook Limited Login (OIDC ID token instead of classic OAuth2 access token).
+    public static let FB_LIMITED = "fb-limited"
     public static let providers = "providers"
     public static let acceptsJSON = "acceptsJSON"
     

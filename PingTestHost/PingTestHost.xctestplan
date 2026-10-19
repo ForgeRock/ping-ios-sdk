@@ -115,10 +115,6 @@
       }
     },
     {
-      "skippedTests" : [
-        "DeviceProfileCallbackE2ETest",
-        "MetadataCallbackE2ETest"
-      ],
       "target" : {
         "containerPath" : "container:..\/ExternalIdPApple\/ExternalIdPApple.xcodeproj",
         "identifier" : "ECA7A2AB2DC24BC60011E59C",
@@ -205,6 +201,20 @@
         "containerPath" : "container:..\/AuthMigration\/AuthMigration.xcodeproj",
         "identifier" : "4D205FDC26F64EF2AE058C6C",
         "name" : "AuthMigrationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/PingOneMFA\/PingOneMFA.xcodeproj",
+        "identifier" : "14C0CBAE9D4D412388F63F45",
+        "name" : "PingOneMFATests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Recognize\/Recognize.xcodeproj",
+        "identifier" : "E61A92DC2C3915B0A2357F23",
+        "name" : "RecognizeTests"
       }
     }
   ],

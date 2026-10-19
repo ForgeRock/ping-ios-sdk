@@ -2,7 +2,7 @@
 //  FidoConstants.swift
 //  Fido
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -20,9 +20,11 @@ public struct FidoConstants {
     public static let ACTION_AUTHENTICATE = "AUTHENTICATE"
 
     // MARK: - Event Types
-    
+
     /// Event type for submitting a FIDO response.
     public static let EVENT_TYPE_SUBMIT = "submit"
+    /// Event type for reporting a FIDO error back to the DaVinci server.
+    public static let EVENT_TYPE_ACTION = "action"
 
     // MARK: - JSON Fields
     // Key field
@@ -33,6 +35,9 @@ public struct FidoConstants {
     public static let label = "label"
     // Required field
     public static let required = "required"
+    /// The key for the DaVinci form-field trigger property, which indicates whether the FIDO
+    /// ceremony should be launched by a button press or automatically on render.
+    public static let FIELD_TRIGGER = "trigger"
     /// The key for the main data payload in a callback.
     public static let FIELD_DATA = "data"
     /// The key for the action to be performed (e.g., "REGISTER" or "AUTHENTICATE").
@@ -145,6 +150,12 @@ public struct FidoConstants {
     /// The default relying party ID for testing.
     public static let DEFAULT_RELYING_PARTY_ID = "credential-manager-test.example.com"
 
+    // MARK: - Trigger Values
+
+    /// The confirmed server value for `trigger` meaning "manual, render a button". Any other
+    /// non-empty value is treated as automatic (see `AbstractFidoCollector.isAutomatic`).
+    public static let TRIGGER_BUTTON = "BUTTON"
+
     // MARK: - Separators
     
     /// The separator used for concatenating data in legacy FIDO responses.
@@ -158,8 +169,8 @@ public struct FidoConstants {
     public static let WEB_AUTHN_OUTCOME = "webAuthnOutcome"
 
     // MARK: - Error Types
-    
     /// An unsupported error type.
+    @available(*, deprecated, renamed: "ERROR_NOT_SUPPORTED")
     public static let ERROR_UNSUPPORTED = "unsupported"
     /// A timeout error type.
     public static let ERROR_TIMEOUT = "TimeoutError"

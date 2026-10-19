@@ -1,3 +1,46 @@
+## [2.2.0]
+
+#### Added
+
+- Added new `PingRecognize` module for PingOne Recognize biometric authentication (enrollment and authentication) [P1RECMOB-3663]
+- Added new `PingOneMFA` module wrapping the native PingOne MFA SDK (`PingOneSDK`)
+- Added `MobilePairingCollector` to support pairing with PingOne [P14C-91504]
+- Added `ImageCollector` to support image display in DaVinci forms [SDKS-5143]
+- Added `MetadataCollector` for the DaVinci SDK Connector pause/resume model [SDKS-5142]
+- Added `trigger` and `isAutomatic` to the DaVinci FIDO collectors [SDKS-4552]
+- Added Facebook Limited Login support in `PingExternalIdPFacebook` [SDKS-5160, SDKS-5161, SDKS-5162]
+- Added present-only launch mode to `BrowserLauncher` via `browserMode: .custom` [SDKS-5357]
+- Added `OidcError.configurationError` for configurations with neither a usable `discoveryEndpoint` nor `openId` [SDKS-5301]
+- Added opt-in commercial device-model-name resolution to `DeviceProfileCallback` via `PlatformCollector(includeModelName: true)`; the default `PlatformCollector()` payload is unchanged. See the `DeviceProfile` README for upgrade notes [SDKS-5275]
+
+#### Updated
+
+- Redesigned the PingExample sample app with a shared design system [SDKS-5054]
+- Updated `facebook-ios-sdk` dependency to 18.1.0 [SDKS-5160]
+- `oidc.discoveryEndpoint` in the unified JSON configuration is now optional when `oidc.openId` is supplied [SDKS-5301]
+
+#### Fixed
+
+- Fixed FIDO registration/authentication not launching automatically when the DaVinci form's `trigger` is not `BUTTON` [SDKS-4552]
+- Fixed FIDO2 client-side WebAuthn errors (cancellation, timeout, etc.) not routing to the DaVinci error branch [SDKS-4478]
+- Fixed `OidcWebClient` `.authSession` and `.ephemeralAuthSession` not completing for Universal Link (https) redirect URIs [SDKS-5239]
+- Fixed `OidcWebClient.authorize()` collapsing `FailureNode.cause` to `.unknown` [SDKS-5295]
+- Restored support for supplying `OidcClientConfig.openId` directly (no-discovery mode), as in 2.0.0 [SDKS-5301]
+- Fixed the async `OidcClient.generateAuthorizeUrl(customParams:)` silently skipping PAR when called before `oidcInitialize()` [SDKS-5403]
+- Fixed 5xx AM responses with a parseable error body being misclassified as `FailureNode` instead of `ErrorNode` [SDKS-5358]
+- Fixed `Journey.start(backchannelUri:)` not rejecting whitespace-only `authIndexType`/`authIndexValue` [SDKS-5359]
+- Fixed `QRCodeCollector` not preserving the complete QR code data URI in `content` [SDKS-5299]
+- Fixed `swift build` (macOS) failing in `PingOidc` on non-iOS platforms [SDKS-5443]
+
+#### Changed
+
+- `PingJourney` no longer hard-depends on `PingDeviceProfile` — apps using the Device Profile Collector node must add `PingDeviceProfile` to their `Package.swift` or `Podfile` [SDKS-5443]
+- `CallbackRegistry.callback(from:)` now logs when a callback type has no registered handler [SDKS-5443]
+- A blank `oidc.discoveryEndpoint` with no `oidc.openId` now fails at parse time instead of at first use [SDKS-5301]
+- `OidcError` now includes `configurationError`; exhaustive `switch` statements over `OidcError` must handle the new case [SDKS-5301]
+- `OidcClientConfig.oidcInitialize()` cancellation is now isolated per caller, so cancelling one caller no longer cancels a shared discovery operation for other callers [SDKS-5301]
+- `SubmitCollector`, `FlowCollector`, and `MetadataCollector` now expose `actionKey` via the new `ActionKeyProvider` protocol [SDKS-5290]
+
 ## [2.1.1]
 #### Added
 - Added support for Xcode 27 and iOS 27 [SDKS-5306]
@@ -20,6 +63,7 @@
 - Added `preferImmediatelyAvailableCredentials` option to FIDO authentication to restrict the ceremony to locally-available credentials only [SDKS-5212]
 - Added `AuthMigration` module for migrating existing sessions from the legacy ForgeRock SDK [SDKS-4773]
 - Added Page Node description, header, and footer support [SDKS-4762]
+- Added AM/AIC backchannel authentication support to the `PingJourney` module via `Journey.start(backchannelUri:configure:)` [SDKS-5156]
 
 #### Fixed
 - Fixed permanent authentication failure after iCloud device migration caused by Secure Enclave key mismatch [SDKS-5172]

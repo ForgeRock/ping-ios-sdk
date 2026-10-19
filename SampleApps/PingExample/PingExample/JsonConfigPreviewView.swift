@@ -30,12 +30,14 @@ struct JsonConfigPreviewView: View {
         NavigationStack {
             ScrollView {
                 Text(jsonContent)
-                    .font(.system(.footnote, design: .monospaced))
-                    .foregroundColor(.primary)
+                    .font(PingTheme.Typography.monospacedCaption)
+                    .foregroundStyle(PingTheme.Color.contentPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(16)
+                    .padding(PingTheme.Spacing.medium)
+                    .pingCardStyle()
+                    .pingScrollContentPadding(top: PingTheme.Spacing.small)
             }
-            .background(Color(.systemGroupedBackground))
+            .pingScreenBackground()
             .navigationTitle(config.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

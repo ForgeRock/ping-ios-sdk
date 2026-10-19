@@ -10,12 +10,17 @@
 
 import UIKit
 import UserNotifications
+import AppTrackingTransparency
 import PingPush
+import PingOneMFA
 
 /// AppDelegate to handle push notifications
 /// - Note: Ensure that `PushClient` is initialized in `ConfigurationManager` before processing notifications.
 @MainActor
 class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotificationCenterDelegate {
+
+    /// Category identifiers registered by PingOneMFA, stored at launch for push routing.
+    private var pingOneMFACategoryIdentifiers: Set<String> = []
 
     func application(
         _ application: UIApplication,
@@ -27,10 +32,30 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         // Request notification permissions
         requestNotificationPermissions()
 
+        // ATT prompt only appears when the app is active. SwiftUI scene-based apps don't invoke
+        // applicationDidBecomeActive on UIApplicationDelegate, so observe the notification directly.
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+
         // Register for remote notifications
         application.registerForRemoteNotifications()
 
+        // Register PingOneMFA notification categories so the system can deliver
+        // actionable banner notifications (approve / deny actions).
+        let pingOneMFACategories = PingOneMFA.getNotificationCategories()
+        pingOneMFACategoryIdentifiers = Set(pingOneMFACategories.map { $0.identifier })
+        UNUserNotificationCenter.current().setNotificationCategories(pingOneMFACategories)
+
         return true
+    }
+
+    @objc private func handleDidBecomeActive() {
+        guard ATTrackingManager.trackingAuthorizationStatus == .notDetermined else { return }
+        requestTrackingAuthorization()
     }
 
     private func requestNotificationPermissions() {
@@ -47,7 +72,27 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         }
     }
 
+    private func requestTrackingAuthorization() {
+        ATTrackingManager.requestTrackingAuthorization { status in
+            switch status {
+            case .authorized:    print("ATT: authorized")
+            case .denied:        print("ATT: denied")
+            case .restricted:    print("ATT: restricted")
+            case .notDetermined: print("ATT: not determined")
+            @unknown default:    print("ATT: unknown status \(status.rawValue)")
+            }
+        }
+    }
+
     // MARK: - Helper Methods
+
+    /// Ensures PingOneMFA SDK is initialized.
+    /// - Throws: Error if initialization fails.
+    private func ensurePingOneMFAInitialized() async throws {
+        if !ConfigurationManager.shared.isPingOneMFAInitialized {
+            try await ConfigurationManager.shared.initializePingOneMFAClient()
+        }
+    }
 
     /// Ensures PushClient is initialized and returns it
     /// - Returns: Initialized PushClient instance
@@ -93,6 +138,17 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
                 print("Failed to update device token: \(error.localizedDescription)")
             }
         }
+
+        // Register raw APNS token with PingOneMFA
+        Task {
+            do {
+                try await ensurePingOneMFAInitialized()
+                try await PingOneMFA.setDeviceToken(deviceToken)
+                print("PingOneMFA device token registered successfully")
+            } catch {
+                print("Failed to register PingOneMFA device token: \(error.localizedDescription)")
+            }
+        }
     }
 
     func application(
@@ -113,25 +169,47 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         print("Received push notification in foreground")
         print("Raw notification userInfo: \(userInfo)")
 
-        // Process the notification through PushClient
         nonisolated(unsafe) let userInfoCopy = userInfo
-        Task {
-            do {
-                let client = try await getInitializedPushClient()
 
-                // Process the notification - PushClient automatically extracts APNs payload
-                if let pushNotification = try await client.processNotification(userInfo: userInfoCopy) {
-                    print("Processed foreground push notification - ID: \(pushNotification.id), MessageID: \(pushNotification.messageId)")
-                } else {
-                    print("Foreground notification was not processed (may be unsupported type)")
+        // Call immediately so the system knows how to present the banner.
+        completionHandler([.banner, .sound, .badge])
+
+        // Process in background — hold an assertion so the system doesn't suspend
+        // before the async work completes.
+        let bgTask = UIApplication.shared.beginBackgroundTask(withName: "willPresent-processing")
+
+        Task {
+            defer { UIApplication.shared.endBackgroundTask(bgTask) }
+            do {
+                try await ensurePingOneMFAInitialized()
+                let pingOneMFANotification: MFAPushNotification? = try await PingOneMFA.processRemoteNotification(userInfo: userInfoCopy)
+                if let pingOneMFANotification = pingOneMFANotification {
+                    print("Processed PingOneMFA foreground push notification")
+                    if pingOneMFANotification.pushType != .dry {
+                        NotificationCenter.default.post(
+                            name: NSNotification.Name("ShowPingOneMFANotification"),
+                            object: nil,
+                            userInfo: ["notification": pingOneMFANotification]
+                        )
+                    }
                 }
             } catch {
-                print("Failed to process foreground push notification: \(error.localizedDescription)")
+                // PingOne SDK throws when the notification isn't a PingOne MFA push — fall through to PushClient.
+                print("Failed to process PingOneMFA foreground push notification: \(error.localizedDescription)")
+                do {
+                    let client = try await getInitializedPushClient()
+
+                    // Process the notification - PushClient automatically extracts APNs payload
+                    if let pushNotification = try await client.processNotification(userInfo: userInfoCopy) {
+                        print("Processed foreground push notification - ID: \(pushNotification.id), MessageID: \(pushNotification.messageId)")
+                    } else {
+                        print("Foreground notification was not processed (may be unsupported type)")
+                    }
+                } catch {
+                    print("Failed to process foreground push notification: \(error.localizedDescription)")
+                }
             }
         }
-
-        // Show notification even when app is in foreground
-        completionHandler([.banner, .sound, .badge])
     }
 
     func userNotificationCenter(
@@ -140,32 +218,68 @@ class AppDelegate: NSObject, UIApplicationDelegate, @preconcurrency UNUserNotifi
         withCompletionHandler completionHandler: @escaping @Sendable () -> Void
     ) {
         let userInfo = response.notification.request.content.userInfo
+        let categoryIdentifier = response.notification.request.content.categoryIdentifier
         print("Received push notification tap")
         print("Raw notification userInfo: \(userInfo)")
 
-        // Process the notification through PushClient
         nonisolated(unsafe) let userInfoCopy = userInfo
-        Task {
-            do {
-                let client = try await getInitializedPushClient()
+        let actionIdentifier = response.actionIdentifier
 
-                // Process the notification - PushClient automatically extracts APNs payload
-                if let notification = try await client.processNotification(userInfo: userInfoCopy) {
-                    print("Processed push notification successfully - ID: \(notification.id), MessageID: \(notification.messageId)")
-                    
-                    // Navigate to Push Notifications view
-                    NotificationCenter.default.post(
-                        name: NSNotification.Name("NavigateToPushNotifications"),
-                        object: nil
-                    )
-                } else {
-                    print("Notification was not processed (may be unsupported type)")
+        let bgTask = UIApplication.shared.beginBackgroundTask(withName: "didReceive-processing")
+
+        // Route to PingOneMFA if the category matches one registered by PingOneMFA.
+        if pingOneMFACategoryIdentifiers.contains(categoryIdentifier) {
+            Task {
+                defer {
+                    completionHandler()
+                    UIApplication.shared.endBackgroundTask(bgTask)
                 }
-            } catch {
-                print("Failed to process push notification: \(error.localizedDescription)")
+                do {
+                    try await ensurePingOneMFAInitialized()
+                    if let pingOneMFANotification: MFAPushNotification = try await PingOneMFA.processRemoteNotificationAction(
+                        identifier: actionIdentifier,
+                        authenticationMethod: "user",
+                        userInfo: userInfoCopy
+                    ) {
+                        print("Processed PingOneMFA banner action: \(actionIdentifier)")
+                        NotificationCenter.default.post(
+                            name: NSNotification.Name("ShowPingOneMFANotification"),
+                            object: nil,
+                            userInfo: ["notification": pingOneMFANotification]
+                        )
+                    } else {
+                        print("PingOneMFA handled notification action internally: \(actionIdentifier)")
+                    }
+                } catch {
+                    print("Failed to process PingOneMFA notification action: \(error.localizedDescription)")
+                }
+            }
+        } else {
+            // Process the notification through PushClient (existing PingPush flow)
+            Task {
+                defer {
+                    completionHandler()
+                    UIApplication.shared.endBackgroundTask(bgTask)
+                }
+                do {
+                    let client = try await getInitializedPushClient()
+
+                    // Process the notification - PushClient automatically extracts APNs payload
+                    if let notification = try await client.processNotification(userInfo: userInfoCopy) {
+                        print("Processed push notification successfully - ID: \(notification.id), MessageID: \(notification.messageId)")
+
+                        // Navigate to Push Notifications view
+                        NotificationCenter.default.post(
+                            name: NSNotification.Name("NavigateToPushNotifications"),
+                            object: nil
+                        )
+                    } else {
+                        print("Notification was not processed (may be unsupported type)")
+                    }
+                } catch {
+                    print("Failed to process push notification: \(error.localizedDescription)")
+                }
             }
         }
-
-        completionHandler()
     }
 }
