@@ -110,10 +110,13 @@ public enum PushError: Error, LocalizedError, Sendable {
     case duplicateCredential(issuer: String, accountName: String)
     
     // MARK: - Notification Errors
-    
+
     /// The specified notification was not found.
     case notificationNotFound(String)
-    
+
+    /// The specified notification has expired and can no longer be approved or denied.
+    case notificationExpired(notificationId: String, ttl: Int)
+
     // MARK: - Policy Errors
     
     /// A policy violation occurred.
@@ -189,7 +192,10 @@ public enum PushError: Error, LocalizedError, Sendable {
             
         case .notificationNotFound(let id):
             return "Notification not found: \(id)"
-            
+
+        case .notificationExpired(let notificationId, let ttl):
+            return "Notification '\(notificationId)' has expired (TTL: \(ttl)s)"
+
         case .policyViolation(let message):
             return "Policy violation: \(message)"
             
