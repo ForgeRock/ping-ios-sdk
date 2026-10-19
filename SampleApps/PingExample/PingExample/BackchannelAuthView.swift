@@ -62,6 +62,7 @@ struct BackchannelAuthView: View {
                 }
             }
         }
+        .pingScreenBackground()
     }
 }
 
@@ -71,7 +72,7 @@ struct BackchannelUriInputView: View {
     @State private var redirectUri: String = ""
 
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: PingTheme.Spacing.large) {
             Spacer()
 
             Image("Logo")
@@ -79,53 +80,45 @@ struct BackchannelUriInputView: View {
                 .scaledToFill()
                 .frame(width: 120, height: 120)
 
-            VStack(spacing: 16) {
+            VStack(spacing: PingTheme.Spacing.medium) {
                 Text("Backchannel Authentication")
-                    .font(.title2)
-                    .fontWeight(.semibold)
+                    .pingScreenTitle()
 
                 Text("Paste the redirect URI supplied by the federation gateway. The SDK reads authIndexType / authIndexValue from it and drives the authenticate journey.")
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .pingSupportingText()
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal)
 
                 TextField("Redirect URI", text: $redirectUri, axis: .vertical)
                     .lineLimit(2...5)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
                     .keyboardType(.URL)
-                    .font(.system(size: 14, design: .monospaced))
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray, lineWidth: 1)
-                    )
+                    .font(PingTheme.Typography.monospacedCaption)
+                    .pingTextFieldStyle()
 
                 if let error = journeyViewModel.errorMessage {
-                    HStack(spacing: 8) {
+                    HStack(spacing: PingTheme.Spacing.small) {
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundColor(.orange)
+                            .foregroundStyle(PingTheme.Color.statusError)
                         Text(error)
-                            .font(.system(size: 13))
-                            .foregroundColor(.secondary)
+                            .pingSupportingText()
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
                 }
 
                 Spacer()
 
-                NextButton(title: "Start Backchannel Auth") {
+                Button("Start Backchannel Auth") {
                     Task {
                         await journeyViewModel.startBackchannel(with: redirectUri)
                     }
                 }
+                .buttonStyle(.pingPrimary)
                 .disabled(redirectUri.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
 
             Spacer()
         }
-        .padding()
+        .padding(PingTheme.Spacing.screen)
     }
 }

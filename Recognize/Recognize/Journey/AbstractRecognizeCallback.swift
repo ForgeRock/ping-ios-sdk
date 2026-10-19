@@ -187,7 +187,9 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
 
     // MARK: - Input Helpers
 
-    /// Writes the error message into the `clientError` input field (suffix match).
+    /// Writes the shared error name into the `clientError` input field (suffix match).
+    /// `report()` is the only SDK-side writer: it always submits a shared name
+    /// (`SDK_ERROR` when the error has no shared name).
     public func error(_ value: String) {
         updateInputValue(value, forSuffix: JourneyConstants.inputClientError)
     }
@@ -229,9 +231,17 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
 
     // MARK: - Shared Biometric Operations
 
-    /// Sentinel `RecognizeError.code` for errors raised entirely on-device — never by the
-    /// Keyless SDK, whose error codes are always non-negative.
-    static let clientSideErrorCode = -1
+    /// Builds the `RecognizeError` for an error raised entirely on-device, before any Keyless
+    /// SDK call. The shared model has no specific error for it, so it is reported as
+    /// `SDK_ERROR` (1000), like any other unknown error on the web SDK. `sdkCode` is `nil`
+    /// because the Keyless SDK never saw the error; the specific text stays in `message`.
+    static func clientSideError(_ message: String) -> RecognizeError {
+        RecognizeError(
+            message,
+            code: SharedErrorCode.sdkError.rawValue,
+            name: SharedErrorCode.sdkError.name
+        )
+    }
 
     /// Throws a `RecognizeError` when the server's `operationType` didn't resolve to a known
     /// `RecognizeOperationType`. Called first by `enroll()` / `authenticate()` so a missing or
@@ -240,17 +250,60 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
     /// Mirrors the two distinct checks (and messages) in the Android SDK's `RecognizeCallback`.
     func requireRecognizedOperationType() throws {
         guard !rawOperationType.isEmpty else {
-            throw RecognizeError(
-                "\"operationType\" is required in the PingOneRecognizeCallback output",
-                code: Self.clientSideErrorCode
+            throw Self.clientSideError(
+                "\"operationType\" is required in the PingOneRecognizeCallback output"
             )
         }
         guard operationType != nil else {
-            throw RecognizeError(
-                "\"operationType\": \"\(rawOperationType)\" is not supported",
-                code: Self.clientSideErrorCode
+            throw Self.clientSideError(
+                "\"operationType\": \"\(rawOperationType)\" is not supported"
             )
         }
+    }
+
+    /// Performs the raw Keyless enrollment ceremony and converts its outcome into a
+    /// `RecognizeSuccess`.
+    ///
+    /// Extracted as `open` — mirroring `validateUserDeviceActive()` in
+    /// `PingOneRecognizeAuthenticateCallback` — because `Keyless.EnrollmentSuccess` has no
+    /// public initializer and so cannot be constructed in test code. Converting to
+    /// `RecognizeSuccess` at this boundary lets a test subclass stub the ceremony's outcome
+    /// while leaving `performEnroll`'s own body (the `devicePublicSigningKey()` lookup and the
+    /// `populateResultInputs` call) real, rather than overriding `performEnroll` wholesale.
+    open func performKeylessEnroll(configuration: BiomEnrollConfig) async throws -> RecognizeSuccess {
+        let enrollmentResult = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Keyless.EnrollmentSuccess, Error>) in
+            Keyless.enroll(configuration: configuration) { result in
+                switch result {
+                case .success(let enrollmentResult):
+                    continuation.resume(returning: enrollmentResult)
+                case .failure(let error):
+                    if let sdkError = error as? KeylessSDKError {
+                        continuation.resume(throwing: Self.recognizeError(
+                            fromNativeMessage: sdkError.message,
+                            nativeCode: sdkError.code,
+                            debuggingInfo: sdkError.debuggingInfo
+                        ))
+                    } else {
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        }
+        return RecognizeSuccess(
+            signedJwt: enrollmentResult.signedJwt,
+            clientState: enrollmentResult.clientState,
+            recognizeId: enrollmentResult.keylessId,
+            selfie: enrollmentResult.enrollmentFrame
+        )
+    }
+
+    /// Retrieves the device's public signing key from the Keyless SDK.
+    ///
+    /// Extracted as `open` so a test subclass can stub the returned key and drive it through
+    /// the real `performEnroll` / `performAuthenticate` bodies, pinning the call site itself
+    /// rather than only the extracted `populateResultInputs` helper.
+    open func devicePublicSigningKey() -> String? {
+        try? Keyless.getDevicePublicSigningKey().get()
     }
 
     /// Performs the biometric enrollment operation using `BiomEnrollConfig`.
@@ -259,7 +312,8 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
     /// the not-yet-enrolled path in `PingOneRecognizeAuthenticateCallback.authenticate()`
     /// (enrollment restore, `clientStateOverride` set to the server-supplied `clientState`).
     ///
-    /// On success, populates the `recognizeId`, `signedJwt`, and `clientState` input fields.
+    /// On success, populates the `recognizeId`, `signedJwt`, `clientState`, and
+    /// `devicePublicSigningKey` input fields.
     /// The captured selfie (if `retrieveSelfie` is `true`) is returned only in the
     /// `RecognizeSuccess` to the caller — it is never written to an input field, so it never
     /// reaches Journey or the callback payload.
@@ -291,15 +345,40 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
             presentationStyle: Self.enrollPresentationStyle(from: options.presentation)
         )
 
-        let enrollmentResult = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Keyless.EnrollmentSuccess, Error>) in
-            Keyless.enroll(configuration: enrollConfig) { result in
+        let result = try await performKeylessEnroll(configuration: enrollConfig)
+
+        populateResultInputs(
+            signedJwt: result.signedJwt,
+            clientState: result.clientState,
+            recognizeId: result.recognizeId,
+            devicePublicSigningKey: devicePublicSigningKey()
+        )
+        return result
+    }
+
+    /// Performs the raw Keyless authentication ceremony and converts its outcome into a
+    /// `RecognizeSuccess`. `recognizeId` is left `nil` here — the real SDK derives it from a
+    /// separate `Keyless.getUserId()` call rather than from the authentication result itself,
+    /// so it's populated afterwards via `authenticatedUserId()`.
+    ///
+    /// Extracted as `open` — mirroring `performKeylessEnroll(configuration:)` — because
+    /// `Keyless.AuthenticationSuccess` has no public initializer and so cannot be constructed
+    /// in test code. Converting to `RecognizeSuccess` at this boundary lets a test subclass
+    /// stub the ceremony's outcome while leaving `performAuthenticate`'s own body (the
+    /// `authenticatedUserId()` / `devicePublicSigningKey()` lookups and the
+    /// `populateResultInputs` call) real, rather than overriding `performAuthenticate` wholesale.
+    open func performKeylessAuthenticate(configuration: BiomAuthConfig) async throws -> RecognizeSuccess {
+        let authResult = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Keyless.AuthenticationSuccess, Error>) in
+            Keyless.authenticate(configuration: configuration) { result in
                 switch result {
-                case .success(let enrollmentResult):
-                    continuation.resume(returning: enrollmentResult)
+                case .success(let authResult):
+                    continuation.resume(returning: authResult)
                 case .failure(let error):
                     if let sdkError = error as? KeylessSDKError {
-                        continuation.resume(throwing: RecognizeError(
-                            sdkError.message, code: sdkError.code, debuggingInfo: sdkError.debuggingInfo
+                        continuation.resume(throwing: Self.recognizeError(
+                            fromNativeMessage: sdkError.message,
+                            nativeCode: sdkError.code,
+                            debuggingInfo: sdkError.debuggingInfo
                         ))
                     } else {
                         continuation.resume(throwing: error)
@@ -307,16 +386,20 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
                 }
             }
         }
-
-        if let keylessId = enrollmentResult.keylessId { setRecognizeId(keylessId) }
-        if let jwt = enrollmentResult.signedJwt { setSignedJwt(jwt) }
-        if let state = enrollmentResult.clientState { setClientState(state) }
         return RecognizeSuccess(
-            signedJwt: enrollmentResult.signedJwt,
-            clientState: enrollmentResult.clientState,
-            recognizeId: enrollmentResult.keylessId,
-            selfie: enrollmentResult.enrollmentFrame
+            signedJwt: authResult.signedJwt,
+            clientState: authResult.clientState,
+            recognizeId: nil,
+            selfie: authResult.authenticationFrame
         )
+    }
+
+    /// Retrieves the authenticated user's Recognize ID from the Keyless SDK.
+    ///
+    /// Extracted as `open` — mirroring `devicePublicSigningKey()` — so a test subclass can stub
+    /// the returned ID and drive it through the real `performAuthenticate` body.
+    open func authenticatedUserId() -> String? {
+        try? Keyless.getUserId().get()
     }
 
     /// Performs the biometric authentication operation using `BiomAuthConfig`.
@@ -348,36 +431,39 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
             presentationStyle: Self.authPresentationStyle(from: options.presentationStyle)
         )
 
-        let authResult = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Keyless.AuthenticationSuccess, Error>) in
-            Keyless.authenticate(configuration: authConfig) { result in
-                switch result {
-                case .success(let authResult):
-                    continuation.resume(returning: authResult)
-                case .failure(let error):
-                    if let sdkError = error as? KeylessSDKError {
-                        continuation.resume(throwing: RecognizeError(
-                            sdkError.message, code: sdkError.code, debuggingInfo: sdkError.debuggingInfo
-                        ))
-                    } else {
-                        continuation.resume(throwing: error)
-                    }
-                }
-            }
-        }
+        let result = try await performKeylessAuthenticate(configuration: authConfig)
+        let userId = authenticatedUserId()
 
-        if let jwt = authResult.signedJwt { setSignedJwt(jwt) }
-        if let state = authResult.clientState { setClientState(state) }
-        if case .success(let key) = Keyless.getDevicePublicSigningKey() {
-            setDevicePublicSigningKey(key)
-        }
-        let userId = try? Keyless.getUserId().get()
-        if let userId { setRecognizeId(userId) }
-        return RecognizeSuccess(
-            signedJwt: authResult.signedJwt,
-            clientState: authResult.clientState,
+        populateResultInputs(
+            signedJwt: result.signedJwt,
+            clientState: result.clientState,
             recognizeId: userId,
-            selfie: authResult.authenticationFrame
+            devicePublicSigningKey: devicePublicSigningKey()
         )
+        return RecognizeSuccess(
+            signedJwt: result.signedJwt,
+            clientState: result.clientState,
+            recognizeId: userId,
+            selfie: result.selfie
+        )
+    }
+
+    /// Writes the outputs of a successful Keyless operation into the callback's input fields.
+    ///
+    /// Shared by `performEnroll` and `performAuthenticate` so both ceremonies submit the same
+    /// set of results — the server uses the same callback for enrollment and authentication
+    /// and expects `devicePublicSigningKey` from both. `nil` values leave the corresponding
+    /// input field untouched.
+    func populateResultInputs(
+        signedJwt: String?,
+        clientState: String?,
+        recognizeId: String?,
+        devicePublicSigningKey: String?
+    ) {
+        if let signedJwt { setSignedJwt(signedJwt) }
+        if let clientState { setClientState(clientState) }
+        if let recognizeId { setRecognizeId(recognizeId) }
+        if let devicePublicSigningKey { setDevicePublicSigningKey(devicePublicSigningKey) }
     }
 
     // MARK: - Keyless SDK Configuration
@@ -392,8 +478,10 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             Keyless.configure(setupConfiguration: setupConfig) { error in
                 if let error = error {
-                    continuation.resume(throwing: RecognizeError(
-                        error.message, code: error.code, debuggingInfo: error.debuggingInfo
+                    continuation.resume(throwing: Self.recognizeError(
+                        fromNativeMessage: error.message,
+                        nativeCode: error.code,
+                        debuggingInfo: error.debuggingInfo
                     ))
                 } else {
                     continuation.resume()
@@ -421,15 +509,49 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
         Keyless.LivenessConfiguration(rawValue: string.uppercased()) ?? BiomAuthConfig.DEFAULT_LIVENESS_CONFIG
     }
 
-    /// Records an error into the `clientError` and, if a `RecognizeError`, `clientErrorCode` input fields.
+    /// Converts a native `KeylessSDKError` payload into a `RecognizeError` carrying the
+    /// shared cross-platform code and name — the iOS counterpart of the web SDK's
+    /// `createRecognizeError`. Unmapped native codes fall back to `SDK_ERROR`.
+    ///
+    /// The native Keyless code is also copied into `debuggingInfo["sdkCode"]` so it reaches
+    /// logs; the typed `RecognizeError.sdkCode` remains the primary channel.
+    static func recognizeError(
+        fromNativeMessage message: String,
+        nativeCode: Int,
+        debuggingInfo: [String: String]
+    ) -> RecognizeError {
+        let shared = SharedErrorCode.resolve(nativeCode: nativeCode)
+        var info = debuggingInfo
+        info["sdkCode"] = String(nativeCode)
+        return RecognizeError(
+            message,
+            code: shared.rawValue,
+            name: shared.name,
+            sdkCode: nativeCode,
+            debuggingInfo: info
+        )
+    }
+
+    /// Records an error into the `clientError` and `clientErrorCode` input fields.
+    ///
+    /// The Journey filters error outcomes on the shared cross-platform error name, as the
+    /// web SDK does, so `clientError` carries the shared name (e.g. `CORE_USER_NOT_ENROLLED`)
+    /// and `clientErrorCode` carries the shared code. An error without a shared name (an error
+    /// that is not a `RecognizeError`, or one created without a name) is unknown to the
+    /// shared model and is reported as `SDK_ERROR` (1000), like on the web SDK. The human
+    /// readable message is not submitted: it stays in `RecognizeError.message`.
+    /// A cooperative `CancellationError` also has no shared name and is reported as
+    /// `SDK_ERROR` (1000); only a cancel raised inside the Keyless SDK (native 30003)
+    /// maps to `SDK_USER_CANCELLED`.
     func report(_ error: Error) {
-        let message = error.localizedDescription.isEmpty
-            ? JourneyConstants.clientError
-            : error.localizedDescription
-        self.error(message)
-        if let recognizeError = error as? RecognizeError {
-            setClientErrorCode(String(recognizeError.code))
+        let shared: (name: String, code: Int)
+        if let recognizeError = error as? RecognizeError, let name = recognizeError.name {
+            shared = (name, recognizeError.code)
+        } else {
+            shared = (SharedErrorCode.sdkError.name, SharedErrorCode.sdkError.rawValue)
         }
+        self.error(shared.name)
+        setClientErrorCode(String(shared.code))
     }
 
     /// Maps the server `presentation` string to `BiomEnrollConfig.PresentationStyle`; not `RawRepresentable`, so an explicit switch is required.
@@ -480,17 +602,15 @@ open class AbstractRecognizeCallback: AbstractCallback, ContinueNodeAware, @unch
 // MARK: - JourneyConstants (Recognize input field keys)
 
 extension JourneyConstants {
-    /// The string value used as a fallback client error when `localizedDescription` is empty.
-    static let clientError = "clientError"
     /// Input field suffix for the signed JWT produced by the Keyless SDK.
     public static let inputSignedJwt = "signedJwt"
     /// Input field suffix for the client state produced by the Keyless SDK.
     public static let inputClientState = "clientState"
     /// Input field suffix for the Recognize user ID produced during enrollment.
     public static let inputRecognizeId = "recognizeId"
-    /// Input field suffix for the device public signing key retrieved after authentication.
+    /// Input field suffix for the device public signing key retrieved after enrollment or authentication.
     public static let inputDevicePublicSigningKey = "devicePublicSigningKey"
-    /// Input field suffix for the client error message.
+    /// Input field suffix carrying the shared error name.
     public static let inputClientError = "clientError"
     /// Input field suffix for a structured client error code.
     public static let inputClientErrorCode = "clientErrorCode"

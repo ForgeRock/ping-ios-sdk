@@ -1,6 +1,5 @@
 {
-  "originHash" : "d7c11f42b7e75f9760c665f984f3d82e952dae1b197f0f06d9b41243e7ad9f68",
-  "pins" : [
+  "originHash" : "19a8a3b1613af6b8532e3e8620ac23b2eee38b46ecfca34b5ca7920d4d2e0f86",  "pins" : [
     {
       "identity" : "app-check",
       "kind" : "remoteSourceControl",

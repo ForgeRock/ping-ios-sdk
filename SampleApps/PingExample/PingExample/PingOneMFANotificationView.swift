@@ -79,7 +79,7 @@ struct PingOneMFANotificationView: View {
     }
 
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: PingTheme.Spacing.large) {
             // Header
             header
 
@@ -104,11 +104,9 @@ struct PingOneMFANotificationView: View {
 
             Spacer()
         }
-        .padding()
-        .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
-        .padding()
+        .padding(PingTheme.Spacing.screen)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .pingScreenBackground()
         .onAppear {
             if viewModel.notification.isCancelAuthentication {
                 dismiss()
@@ -119,41 +117,21 @@ struct PingOneMFANotificationView: View {
         } message: {
             Text(viewModel.isDenied ? "Authentication denied successfully" : "Authentication approved successfully")
         }
-        .alert("Error", isPresented: Binding(
-            get: { viewModel.errorMessage != nil },
-            set: { if !$0 { viewModel.errorMessage = nil } }
-        )) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(viewModel.errorMessage ?? "")
-        }
+        .pingErrorAlert(errorMessage: $viewModel.errorMessage)
     }
 
     // MARK: - Subviews
 
     private var header: some View {
         HStack {
-            Image(systemName: "bell.badge.fill")
-                .font(.system(size: 20))
-                .foregroundColor(.white)
-                .frame(width: 40, height: 40)
-                .background(
-                    LinearGradient(
-                        colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+            PingIconTile(systemName: "bell.badge.fill", diameter: 40, iconSize: 20)
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: PingTheme.Spacing.xxSmall) {
                 Text("PingOne MFA Authentication")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.primary)
+                    .pingSectionHeader()
 
                 Text("Approve or deny this request")
-                    .font(.system(size: 13))
-                    .foregroundColor(.secondary)
+                    .pingSupportingText()
             }
 
             Spacer()
@@ -161,18 +139,17 @@ struct PingOneMFANotificationView: View {
     }
 
     private var notificationContent: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
             if let title = viewModel.notification.title {
                 Text(title)
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(.primary)
+                    .font(PingTheme.Typography.body.weight(.medium))
+                    .foregroundStyle(PingTheme.Color.contentPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             if let message = viewModel.notification.message {
                 Text(message)
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
+                    .pingSupportingText()
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
@@ -180,32 +157,21 @@ struct PingOneMFANotificationView: View {
 
     /// SELECT_NUMBER path: tappable number buttons, one per option.
     private var selectNumberSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: PingTheme.Spacing.medium) {
             Text("Select the number shown on your other device")
-                .font(.system(size: 15))
-                .foregroundColor(.secondary)
+                .pingBodySecondary()
                 .multilineTextAlignment(.center)
 
             let options = viewModel.notification.getNumbersChallenge
             if options.isEmpty {
                 Text("No options available")
-                    .font(.system(size: 14))
-                    .foregroundColor(.red)
+                    .font(PingTheme.Typography.supporting)
+                    .foregroundStyle(PingTheme.Color.statusError)
             } else {
-                HStack(spacing: 16) {
+                HStack(spacing: PingTheme.Spacing.medium) {
                     ForEach(options, id: \.self) { number in
-                        Button {
+                        PingChallengeNumberButton(number: number) {
                             viewModel.approve(numberChallenge: number)
-                        } label: {
-                            Text("\(number)")
-                                .font(.system(size: 24, weight: .bold))
-                                .foregroundColor(.themeButtonBackground)
-                                .frame(width: 80, height: 80)
-                                .background(Color.clear)
-                                .overlay(
-                                    Circle()
-                                        .stroke(Color.themeButtonBackground, lineWidth: 2)
-                                )
                         }
                         .disabled(viewModel.isLoading)
                     }
@@ -216,16 +182,15 @@ struct PingOneMFANotificationView: View {
 
     /// ENTER_MANUALLY (or any non-empty non-SELECT_NUMBER) path: numeric text field.
     private var enterManuallySection: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: PingTheme.Spacing.medium) {
             Text("Enter the number shown on your other device")
-                .font(.system(size: 15))
-                .foregroundColor(.secondary)
+                .pingBodySecondary()
                 .multilineTextAlignment(.center)
             
             TextField("Number", text: $enteredText)
                 .keyboardType(.numberPad)
-                .textFieldStyle(.roundedBorder)
-                .font(.system(size: 20, design: .monospaced))
+                .pingTextFieldStyle()
+                .font(PingTheme.Typography.screenTitle.monospaced())
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 160)
             
@@ -238,30 +203,23 @@ struct PingOneMFANotificationView: View {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                         Text("Confirm Number")
-                            .fontWeight(.semibold)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(enteredText.isEmpty || Int(enteredText) == nil ? Color.gray : Color.green)
-                    .foregroundColor(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
+                .buttonStyle(.pingAffirmative)
                 .disabled(enteredText.isEmpty || Int(enteredText) == nil)
             }
         }
     }
 
     private var loadingIndicator: some View {
-        ProgressView()
-            .progressViewStyle(CircularProgressViewStyle(tint: .red))
-            .scaleEffect(1.5)
+        PingLoadingSpinner()
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
+            .padding(.vertical, PingTheme.Spacing.medium)
     }
 
-    /// Approve (green) and Deny (red) action buttons — always shown.
+    /// Approve and Deny action buttons — always shown.
     private var actionButtons: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: PingTheme.Spacing.medium) {
             // Deny button
             Button {
                 viewModel.deny()
@@ -269,14 +227,9 @@ struct PingOneMFANotificationView: View {
                 HStack {
                     Image(systemName: "xmark.circle.fill")
                     Text("Deny")
-                        .fontWeight(.semibold)
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(Color.red)
-                .foregroundColor(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
+            .buttonStyle(.pingDestructive)
 
             // Approve button (only shown when no number-matching UI is active)
             if viewModel.notification.pushType == .default {
@@ -286,14 +239,9 @@ struct PingOneMFANotificationView: View {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                         Text("Approve")
-                            .fontWeight(.semibold)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
+                .buttonStyle(.pingAffirmative)
             }
         }
     }

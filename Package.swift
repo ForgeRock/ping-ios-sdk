@@ -150,7 +150,7 @@ var targets: [Target] = [
         ),
         .target(
             name: "PingJourneyPlugin",
-            dependencies: ["PingOrchestrate"],
+            dependencies: ["PingOrchestrate", "PingLogger"],
             path: "JourneyPlugin/JourneyPlugin",
             exclude: ["JourneyPlugin.h"],
             resources: [.copy("PrivacyInfo.xcprivacy")]
@@ -181,7 +181,6 @@ var targets: [Target] = [
         .target(
             name: "PingJourney",
             dependencies: [
-                "PingDeviceProfile",
                 "PingJourneyPlugin",
                 "PingOidc"
             ],
@@ -339,7 +338,7 @@ var targets: [Target] = [
             dependencies: [
                 "PingLogger",
                 "PingDavinciPlugin",
-                .product(name: "PingOneSDK", package: "pingone-mobile-sdk-ios")
+                .product(name: "PingOneSDK", package: "pingone-mobile-sdk-ios", condition: .when(platforms: [.iOS]))
             ],
             path: "PingOneMFA/PingOneMFA",
             exclude: ["PingOneMFA.h"],

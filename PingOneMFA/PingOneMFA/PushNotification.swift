@@ -9,6 +9,7 @@
 //
 
 import Foundation
+#if canImport(PingOneSDK)
 import PingOneSDK
 
 public typealias MFAPushNotification = PushNotification
@@ -100,3 +101,5 @@ public struct PushNotification: Sendable, Identifiable {
 // Placing the conformance here means that if a future PingOneSDK marks `NotificationObject`
 // as `Sendable`, this becomes a redundant-conformance compiler error and surfaces for review.
 extension NotificationObject: @retroactive @unchecked Sendable {}
+
+#endif

@@ -22,29 +22,19 @@ struct NameCallbackView: View {
     @State var text: String = ""
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            TextField(
-                callback.prompt,
-                text: $text
-            )
-            .autocorrectionDisabled()
-            .textInputAutocapitalization(.never)
-            .textContentType(isConditionalMediationActive ? .username : nil)
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.gray, lineWidth: 1)
-            )
-            .onAppear(perform: {
-                text = callback.name
-            })
-            .onChange(of: text) { newValue in
-                callback.name = newValue // update internal state only
-            }
-            .onSubmit {
-                onNodeUpdated() // commit to node state only when done
-            }
-            .padding()
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
+            Text(callback.prompt)
+                .pingSectionHeader()
+
+            TextField(callback.prompt, text: $text)
+                .pingTextFieldStyle()
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+                .textContentType(isConditionalMediationActive ? .username : nil)
+                .onSubmit(onNodeUpdated)
         }
+        .onAppear { text = callback.name }
+        .onChange(of: text) { callback.name = $0 }
+        .padding(.vertical, PingTheme.Spacing.small)
     }
 }

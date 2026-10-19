@@ -19,22 +19,29 @@ import PingExternalIdPApple
 import PingExternalIdPGoogle
 
 public struct SocialButtonView: View {
-    
+
     @StateObject public var socialButtonViewModel: SocialButtonViewModel
-    
+
     public let onNext: (Bool) -> Void
     public let onStart: () -> Void
-    
+
+    // Blocks a second tap while a ceremony/authorization is in flight; the button now has
+    // real pressed/disabled feedback via `PingActionButtonStyle`, so this must be wired
+    // explicitly instead of relying on system button behavior during the async `Task`.
+    @State private var isAuthenticating = false
+
     public var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
             if socialButtonViewModel.isFacebook {
                 Toggle("Limited Login (OIDC ID token)", isOn: $socialButtonViewModel.facebookLimitedLoginEnabled)
-                    .font(.subheadline)
-                    .frame(width: 300)
+                    .font(PingTheme.Typography.supporting)
+                    .frame(maxWidth: .infinity)
             }
             Button {
+                isAuthenticating = true
                 Task {
                     let result = await socialButtonViewModel.startSocialAuthentication()
+                    isAuthenticating = false
                     switch result {
                     case .success(_):
                         onNext(true)
@@ -44,10 +51,15 @@ public struct SocialButtonView: View {
                     }
                 }
             } label: {
-                socialButtonViewModel.socialButtonText()
+                Text(socialButtonViewModel.idpCollector.label)
             }
+            .buttonStyle(PingActionButtonStyle(role: .provider(
+                background: socialButtonViewModel.providerBackground,
+                foreground: .white
+            )))
+            .disabled(isAuthenticating)
         }
-        .padding()
+        .padding(.vertical, PingTheme.Spacing.small)
         .frame(maxWidth: .infinity)
     }
 }
@@ -72,27 +84,21 @@ public class SocialButtonViewModel: ObservableObject {
     public func startSocialAuthentication() async -> Result<Bool, IdpExceptions> {
         return await idpCollector.authorize()
     }
-    
-    public func socialButtonText() -> some View {
-        let bgColor: Color
+
+    /// The provider-branded surface for this collector's identity provider.
+    ///
+    /// Brand color selection stays caller-decided per DESIGN_SYSTEM.md; the
+    /// `default` branch is a generic fallback and uses ``PingTheme/Color/actionPrimary``.
+    public var providerBackground: Color {
         switch idpCollector.idpType {
         case Constants.APPLE:
-            bgColor = Color.appleButtonBackground
+            return PingTheme.Color.brandApple
         case Constants.GOOGLE:
-            bgColor = Color.googleButtonBackground
+            return PingTheme.Color.brandGoogle
         case Constants.FACEBOOK:
-            bgColor = Color.facebookButtonBackground
+            return PingTheme.Color.brandFacebook
         default:
-            bgColor = Color.themeButtonBackground
+            return PingTheme.Color.actionPrimary
         }
-        let text = Text(idpCollector.label)
-            .font(.headline)
-            .foregroundColor(.white)
-            .padding()
-            .frame(width: 300, height: 50)
-            .background(bgColor)
-            .cornerRadius(15.0)
-        
-        return text
     }
 }

@@ -292,6 +292,7 @@ public class OidcDeviceClient: @unchecked Sendable {
             throw OidcError.unknown(message: "authorize: no redirectUri scheme configured")
         }
 
+        #if canImport(UIKit)
         _ = try await BrowserLauncher.currentBrowser.launch(
             url: url,
             customParams: nil,
@@ -300,6 +301,13 @@ public class OidcDeviceClient: @unchecked Sendable {
             callbackURLScheme: callbackURLScheme,
             logger: logger
         )
+        #else
+        // `BrowserLauncher` (SFSafariViewController-based external user-agent) is iOS-only.
+        // On other platforms the caller must display `verificationUriComplete` itself and
+        // continue the polling loop from `deviceAuthorization()`; a browser launch here
+        // cannot be performed.
+        throw BrowserError.httpsCallbackUnsupportedOS
+        #endif
     }
 
     // MARK: - Revoke

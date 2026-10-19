@@ -69,18 +69,13 @@ struct DavinciView: View {
             }
             
             Spacer()
-            
+
             // Show an activity indicator when loading.
             if davinciViewModel.isLoading {
-                Color.black.opacity(0.4)
-                    .edgesIgnoringSafeArea(.all)
-                
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .scaleEffect(2)
-                    .tint(.themeButtonBackground)
+                PingLoadingOverlay()
             }
         }
+        .pingScreenBackground()
     }
 }
 

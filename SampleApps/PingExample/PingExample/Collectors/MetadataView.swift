@@ -33,50 +33,41 @@ struct MetadataView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.medium) {
             Text("SDK Metadata")
-                .font(.headline)
+                .pingSectionHeader()
 
             Text("Payload from DaVinci:")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .pingSupportingText()
 
             ScrollView {
                 Text(prettyMetadata)
-                    .font(.system(.footnote, design: .monospaced))
+                    .font(PingTheme.Typography.monospacedCaption)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(8)
-                    .background(Color.gray.opacity(0.1))
-                    .cornerRadius(8)
+                    .padding(PingTheme.Spacing.small)
+                    .background(PingTheme.Color.groupedSurface)
+                    .clipShape(RoundedRectangle(cornerRadius: PingTheme.Shape.fieldRadius))
             }
             .frame(maxHeight: 240)
 
-            HStack(spacing: 12) {
+            HStack(spacing: PingTheme.Spacing.medium) {
                 Button {
                     field.setResult(["verified": true, "score": 92])
                     onNext(true)
                 } label: {
                     Text("Simulate success")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.themeButtonBackground)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
                 }
+                .buttonStyle(.pingAffirmative)
 
                 Button {
                     field.setError(code: "USER_CANCELLED", message: "User cancelled the operation")
                     onNext(true)
                 } label: {
                     Text("Simulate error")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.red.opacity(0.85))
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
                 }
+                .buttonStyle(.pingDestructive)
             }
         }
-        .padding()
+        .padding(.vertical, PingTheme.Spacing.small)
     }
 }

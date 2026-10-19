@@ -26,11 +26,10 @@ struct FidoAuthenticationCallbackView: View {
             // bar of the sibling username field, and a heading with nothing beneath it would just
             // look broken.
             if !callback.isConditionalMediationRequested || callback.isManualButtonEnabled {
-                Text("FIDO Authentication")
-                    .font(.title)
+            Text("FIDO Authentication")
+                .pingScreenTitle()
 
-                Toggle("Local credentials only", isOn: $preferImmediatelyAvailableCredentials)
-                    .padding(.horizontal)
+            Toggle("Local credentials only", isOn: $preferImmediatelyAvailableCredentials)
 
                 Button(action: {
                     Task {
@@ -93,6 +92,7 @@ struct FidoAuthenticationCallbackView: View {
                 // successful ceremony should.
                 print("FIDO Conditional UI authentication did not complete: \(error.localizedDescription)")
             }
+            .buttonStyle(.pingPrimary)
         }
     }
 

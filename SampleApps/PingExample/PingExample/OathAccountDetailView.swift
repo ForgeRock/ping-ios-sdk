@@ -2,7 +2,7 @@
 //  OathAccountDetailView.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -57,7 +57,7 @@ struct OathAccountDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: PingTheme.Spacing.large) {
                 headerSection
 
                 codeSection
@@ -84,25 +84,24 @@ struct OathAccountDetailView: View {
                     showDeleteAlert = true
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 20)
-            .padding(.bottom, 30)
+            .pingScrollContentPadding()
             .onReceive(Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()) { _ in
                 currentTime = Date()
             }
         }
-        .background(Color(.systemGroupedBackground))
+        .pingScreenBackground()
         .navigationTitle("Account Details")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                HStack(spacing: 16) {
+                HStack(spacing: PingTheme.Spacing.medium) {
                     Button {
                         UIPasteboard.general.string = code
                     } label: {
                         Image(systemName: "doc.on.doc")
                     }
-                    
+                    .accessibilityLabel("Copy Code")
+
                     Button {
                         let displayCredential = currentCredential ?? credential
                         editedIssuer = displayCredential.displayIssuer
@@ -111,6 +110,7 @@ struct OathAccountDetailView: View {
                     } label: {
                         Image(systemName: "pencil")
                     }
+                    .accessibilityLabel("Edit Account")
                 }
             }
         }
@@ -147,99 +147,75 @@ struct OathAccountDetailView: View {
         } message: {
             Text("Are you sure you want to unlock this account?")
         }
-        .alert("Error", isPresented: .constant(errorMessage != nil)) {
-            Button("OK") {
-                errorMessage = nil
-            }
-        } message: {
-            if let error = errorMessage {
-                Text(error)
-            }
-        }
+        .pingErrorAlert(errorMessage: $errorMessage)
     }
     
     private var headerSection: some View {
         let displayCredential = currentCredential ?? credential
-        return VStack(spacing: 12) {
-            Image(systemName: displayCredential.oathType == .totp ? "clock.fill" : "number.circle.fill")
-                .font(.system(size: 50))
-                .foregroundColor(.white)
-                .frame(width: 100, height: 100)
-                .background(
-                    LinearGradient(
-                        colors: [.themeButtonBackground, Color(red: 0.6, green: 0.1, blue: 0.1)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
-                )
-                .clipShape(Circle())
+        return VStack(spacing: PingTheme.Spacing.large) {
+            PingIconTile(
+                systemName: displayCredential.oathType == .totp ? "clock.fill" : "number.circle.fill",
+                diameter: 100,
+                iconSize: 50,
+                shape: .circle
+            )
 
             Text(displayCredential.displayIssuer)
-                .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.primary)
+                .font(PingTheme.Typography.screenTitle.weight(.bold))
+                .foregroundStyle(PingTheme.Color.contentPrimary)
 
             Text(displayCredential.displayAccountName)
-                .font(.system(size: 16))
-                .foregroundColor(.secondary)
+                .pingBodySecondary()
         }
-        .padding()
+        .padding(PingTheme.Spacing.medium)
     }
 
     private var codeSection: some View {
         let displayCredential = currentCredential ?? credential
         let isLocked = displayCredential.isLocked
         
-        return VStack(spacing: 16) {
+        return VStack(spacing: PingTheme.Spacing.medium) {
             if credential.oathType == .totp {
                 ZStack {
-                    Circle()
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 8)
-                        .frame(width: 120, height: 120)
+                    PingProgressRing(
+                        progress: progress,
+                        lineWidth: 8,
+                        diameter: 120,
+                        tint: isLocked ? PingTheme.Color.statusError : PingTheme.Color.actionPrimary
+                    )
 
-                    Circle()
-                        .trim(from: 0, to: progress)
-                        .stroke(isLocked ? Color.red.opacity(0.5) : Color.themeButtonBackground, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                        .frame(width: 120, height: 120)
-                        .rotationEffect(.degrees(-90))
-
-                    VStack(spacing: 4) {
+                    VStack(spacing: PingTheme.Spacing.xSmall) {
                         if isLocked {
                             Image(systemName: "lock.fill")
-                                .font(.system(size: 32, weight: .bold))
-                                .foregroundColor(.white)
+                                .font(PingTheme.Typography.codeLarge)
+                                .foregroundColor(PingTheme.Color.contentPrimary)
                         } else {
                             Text("\(timeRemaining)")
-                                .font(.system(size: 32, weight: .bold))
-                                .foregroundColor(.primary)
+                                .font(PingTheme.Typography.codeLarge)
+                                .foregroundColor(PingTheme.Color.contentPrimary)
                         }
 
                         Text(isLocked ? "Locked" : "seconds")
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
+                            .pingCaptionText()
                     }
                 }
             }
 
             if isLocked {
-                VStack(spacing: 8) {
+                VStack(spacing: PingTheme.Spacing.small) {
                     Text("------")
-                        .font(.system(size: 48, weight: .bold, design: .monospaced))
-                        .foregroundColor(.gray)
-                        .padding()
-                        .background(Color(.secondarySystemGroupedBackground))
-                        .cornerRadius(12)
-                    
+                        .font(PingTheme.Typography.code)
+                        .foregroundColor(PingTheme.Color.contentSecondary)
+                        .pingCardStyle()
+
                     Text("Account is locked")
-                        .font(.system(size: 14))
-                        .foregroundColor(.secondary)
+                        .pingSupportingText()
                 }
             } else {
                 Text(code)
-                    .font(.system(size: 48, weight: .bold, design: .monospaced))
-                    .foregroundColor(.themeButtonBackground)
-                    .padding()
-                    .background(Color(.secondarySystemGroupedBackground))
-                    .cornerRadius(12)
+                    .font(PingTheme.Typography.code)
+                    .foregroundColor(PingTheme.Color.actionPrimary)
+                    .pingCardStyle()
 
                 if credential.oathType == .hotp {
                     Button {
@@ -251,46 +227,36 @@ struct OathAccountDetailView: View {
                             Image(systemName: "arrow.clockwise")
                             Text("Generate New Code")
                         }
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.themeButtonBackground)
-                        .cornerRadius(12)
                     }
+                    .buttonStyle(.pingPrimary)
                 }
             }
         }
-        .padding()
-        .background(Color(.secondarySystemGroupedBackground))
-        .cornerRadius(12)
+        .pingCardStyle()
     }
 
     private var accountInfoSection: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Account Information")
-                .font(.system(size: 18, weight: .semibold))
-                .foregroundColor(.primary)
-                .padding(.bottom, 16)
+                .pingScreenTitle()
+                .padding(.bottom, PingTheme.Spacing.medium)
 
-            InfoRow(label: "Type", value: credential.oathType == .totp ? "TOTP (Time-based)" : "HOTP (Counter-based)")
-            Divider().padding(.leading, 100)
+            PingInfoRow(label: "Type", value: credential.oathType == .totp ? "TOTP (Time-based)" : "HOTP (Counter-based)", labelWidth: 90)
+            Divider().padding(.leading, PingTheme.Control.infoRowDividerInset)
 
-            InfoRow(label: "Algorithm", value: algorithmName)
-            Divider().padding(.leading, 100)
+            PingInfoRow(label: "Algorithm", value: algorithmName, labelWidth: 90)
+            Divider().padding(.leading, PingTheme.Control.infoRowDividerInset)
 
-            InfoRow(label: "Digits", value: "\(credential.digits)")
-            Divider().padding(.leading, 100)
+            PingInfoRow(label: "Digits", value: "\(credential.digits)", labelWidth: 90)
+            Divider().padding(.leading, PingTheme.Control.infoRowDividerInset)
 
             if credential.oathType == .totp {
-                InfoRow(label: "Period", value: "\(credential.period) seconds")
+                PingInfoRow(label: "Period", value: "\(credential.period) seconds", labelWidth: 90)
             } else {
-                InfoRow(label: "Counter", value: "\(credential.counter)")
+                PingInfoRow(label: "Counter", value: "\(credential.counter)", labelWidth: 90)
             }
         }
-        .padding()
-        .background(Color(.secondarySystemGroupedBackground))
-        .cornerRadius(12)
+        .pingCardStyle()
     }
 
     private var algorithmName: String {
@@ -424,64 +390,36 @@ struct OathAccountDetailView: View {
     }
 }
 
-struct InfoRow: View {
-    let label: String
-    let value: String
-
-    var body: some View {
-        HStack {
-            Text(label)
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
-                .frame(width: 90, alignment: .leading)
-
-            Text(value)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.primary)
-
-            Spacer()
-        }
-        .padding(.vertical, 12)
-    }
-}
-
 /// Reusable delete button component.
 struct DeleteButton: View {
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             HStack {
                 Image(systemName: "trash")
                 Text("Delete")
             }
-            .font(.system(size: 16, weight: .semibold))
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.themeButtonBackground)
-            .cornerRadius(12)
         }
+        .buttonStyle(.pingDestructive)
     }
 }
 
 /// Reusable lock/unlock button component.
+///
+/// Locking/unlocking reads as a normal alternative action rather than a
+/// caution, so it uses the secondary role rather than destructive/affirmative.
 struct LockUnlockButton: View {
     let locked: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             HStack {
                 Image(systemName: locked ? "lock.open.fill" : "lock.fill")
                 Text(locked ? "Unlock Account" : "Lock Account")
             }
-            .font(.system(size: 16, weight: .semibold))
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.themeButtonBackground)
-            .cornerRadius(12)
         }
+        .buttonStyle(.pingSecondary)
     }
 }

@@ -2,7 +2,7 @@
 //  CustomUserKeySelector.swift
 //  PingExample
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -63,33 +63,30 @@ struct UserKeySelectorView: View {
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 20) {
+            VStack(spacing: PingTheme.Spacing.large) {
                 if !prompt.description.isEmpty {
                     Text(prompt.description)
-                        .font(.body)
+                        .pingBodySecondary()
                         .multilineTextAlignment(.center)
-                        .padding()
                 }
                 
                 List(userKeys, id: \.id) { userKey in
                     Button(action: {
                         completion(userKey)
                     }) {
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: PingTheme.Spacing.xSmall) {
                             if !userKey.username.isEmpty {
                                 Text(userKey.username)
-                                    .font(.headline)
+                                    .pingSectionHeader()
                             }
                             if !userKey.userId.isEmpty {
                                 Text("User ID: \(userKey.userId)")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
+                                    .pingCaptionText()
                             }
                             Text("Auth: \(userKey.authType.rawValue)")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                                .pingCaptionText()
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, PingTheme.Spacing.xSmall)
                     }
                 }
             }

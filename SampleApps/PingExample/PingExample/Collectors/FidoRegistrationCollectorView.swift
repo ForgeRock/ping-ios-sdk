@@ -27,14 +27,14 @@ struct FidoRegistrationCollectorView: View {
     @State private var failureMessage: String?
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: PingTheme.Spacing.medium) {
             Text("FIDO Registration")
-                .font(.title)
+                .pingScreenTitle()
 
             if collector.isAutomatic {
                 if let failureMessage {
-                    ErrorMessageView(errors: [failureMessage])
-                    HStack(spacing: 16) {
+                    PingFieldMessages(errorMessages: [failureMessage])
+                    HStack(spacing: PingTheme.Spacing.medium) {
                         Button("Try again") {
                             self.failureMessage = nil
                             hasLaunched = false
@@ -43,24 +43,22 @@ struct FidoRegistrationCollectorView: View {
                                 await performRegistration()
                             }
                         }
+                        .buttonStyle(.pingSecondary)
                         Button("Continue") {
                             onNext()
                         }
+                        .buttonStyle(.pingPrimary)
                     }
                 } else {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .scaleEffect(1.5)
-                        .tint(.themeButtonBackground)
+                    PingLoadingSpinner()
                     Text("Waiting for passkey…")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .pingSupportingText()
                 }
             } else {
                 // TextField remains, but isn't used by the async call below
                 TextField("Device Name (Optional)", text: $deviceName)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
+                    .pingTextFieldStyle(showsError: false)
+                    .padding(.vertical, PingTheme.Spacing.small)
 
                 Button(action: {
                     Task {
@@ -73,9 +71,10 @@ struct FidoRegistrationCollectorView: View {
                         Text(collector.label)
                     }
                 }
+                .buttonStyle(.pingPrimary)
             }
         }
-        .padding()
+        .padding(.vertical, PingTheme.Spacing.small)
         .task {
             guard collector.isAutomatic, !hasLaunched else { return }
             hasLaunched = true

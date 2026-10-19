@@ -27,14 +27,14 @@ struct FidoAuthenticationCollectorView: View {
     @State private var failureMessage: String?
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: PingTheme.Spacing.medium) {
             Text("FIDO Authentication")
-                .font(.title)
+                .pingScreenTitle()
 
             if collector.isAutomatic {
                 if let failureMessage {
-                    ErrorMessageView(errors: [failureMessage])
-                    HStack(spacing: 16) {
+                    PingFieldMessages(errorMessages: [failureMessage])
+                    HStack(spacing: PingTheme.Spacing.medium) {
                         Button("Try again") {
                             self.failureMessage = nil
                             hasLaunched = false
@@ -43,22 +43,19 @@ struct FidoAuthenticationCollectorView: View {
                                 await performAuthentication()
                             }
                         }
+                        .buttonStyle(.pingSecondary)
                         Button("Continue") {
                             onNext()
                         }
+                        .buttonStyle(.pingPrimary)
                     }
                 } else {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .scaleEffect(1.5)
-                        .tint(.themeButtonBackground)
+                    PingLoadingSpinner()
                     Text("Waiting for passkey…")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .pingSupportingText()
                 }
             } else {
                 Toggle("Local credentials only", isOn: $preferImmediatelyAvailableCredentials)
-                    .padding(.horizontal)
 
                 Button(action: {
                     Task {
@@ -71,9 +68,10 @@ struct FidoAuthenticationCollectorView: View {
                         Text(collector.label)
                     }
                 }
+                .buttonStyle(.pingPrimary)
             }
         }
-        .padding()
+        .padding(.vertical, PingTheme.Spacing.small)
         .task {
             guard collector.isAutomatic, !hasLaunched else { return }
             hasLaunched = true
