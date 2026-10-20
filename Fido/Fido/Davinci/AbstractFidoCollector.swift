@@ -127,6 +127,10 @@ public class AbstractFidoCollector: AnyFieldCollector, DaVinciAware, Submittable
 
         if let fidoError = error as? FidoError {
             switch fidoError {
+            case .canceled:
+                logger.d("FIDO ceremony was superseded or cancelled")
+                errorCode = FidoConstants.ERROR_NOT_ALLOWED
+                return .canceled
             case .timeout:
                 logger.d("FIDO operation timed out")
                 errorCode = FidoConstants.ERROR_TIMEOUT

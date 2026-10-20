@@ -71,12 +71,18 @@ class MockContinueNode: ContinueNode, @unchecked Sendable {
 class MockFido: Fido, @unchecked Sendable {
     var registrationResult: Result<[String: Any], Error>?
     var authenticationResult: Result<[String: Any], Error>?
-    /// Captures the `logger` parameter passed to the most recent call to `register` or
-    /// `authenticate`, so tests can assert callers propagate the workflow logger.
+    /// A separate result from `authenticationResult` so tests can give `authenticate` and
+    /// `authenticateWithAutoFill` independent mock outcomes without cross-test coupling.
+    var autoFillAuthenticationResult: Result<[String: Any], Error>?
+    /// Captures the `logger` parameter passed to the most recent call to `register`,
+    /// `authenticate`, or `authenticateWithAutoFill`, so tests can assert callers propagate the
+    /// workflow logger.
     var capturedLogger: Logger?
     /// Captures the `preferImmediatelyAvailableCredentials` flag passed to the most recent
     /// call to `authenticate`, so tests can assert callers forward it.
     var capturedPreferImmediatelyAvailableCredentials: Bool?
+    /// Set when `cancel()` is called, so tests can assert callers delegate to it.
+    var cancelCalled = false
 
     override func register(options: [String : Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String : Any], Error>) -> Void) {
         capturedLogger = logger
@@ -91,6 +97,17 @@ class MockFido: Fido, @unchecked Sendable {
         if let result = authenticationResult {
             completion(result)
         }
+    }
+
+    override func authenticateWithAutoFill(options: [String : Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String : Any], Error>) -> Void) {
+        capturedLogger = logger
+        if let result = autoFillAuthenticationResult {
+            completion(result)
+        }
+    }
+
+    override func cancel() {
+        cancelCalled = true
     }
 }
 

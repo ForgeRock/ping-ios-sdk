@@ -1,3 +1,7 @@
+## [UNRELEASED]
+#### Added
+- Added WebAuthn Conditional UI (autofill-assisted passkey sign-in) support to `PingFido`: `Fido.authenticateWithAutoFill(options:window:logger:completion:)` performs an `ASAuthorizationController.performAutoFillAssistedRequests()` ceremony, and `Fido.cancel()` cancels or supersedes an in-flight ceremony. `FidoAuthenticationCallback` gained a matching `authenticateWithAutoFill(window:)`, plus `isConditionalMediationRequested`/`isManualButtonEnabled` parsed from the server's `mediation`/`conditional`/`manualButtonEnabled` metadata fields, and `cancel()` (on `FidoCallback`) to tear down a listener on teardown. The app's UI layer is still responsible for setting `UITextContentType.username` on the relevant text field [SDKS-4575]
+
 ## [2.2.0]
 
 #### Added

@@ -131,6 +131,7 @@ class FidoCollectorTests: XCTestCase {
         let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
 
         let cases: [(FidoError, String)] = [
+            (.canceled, FidoConstants.ERROR_NOT_ALLOWED),
             (.timeout, FidoConstants.ERROR_TIMEOUT),
             (.unsupportedAction("msg"), FidoConstants.ERROR_NOT_SUPPORTED),
             (.invalidResponse, FidoConstants.ERROR_INVALID_STATE),
