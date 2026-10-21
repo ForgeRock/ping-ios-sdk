@@ -227,6 +227,24 @@ private final class CapturingBrowser: BrowserLauncherProtocol, @unchecked Sendab
     /// Overridable per-test so the completion path can be exercised with a canned code/state.
     var callbackURL: URL = URL(string: "frauth://com.forgerock.ios.frexample?code=fake-code&state=fake")!
 
+    /// Builds the callback URL returned by `launch`: echoes the state from the launched
+    /// authorize URL (mirroring a real authorization server, which returns the client's
+    /// own state so the callback passes the CSRF state validation) and substitutes the
+    /// per-test `code` when the test overrode `callbackURL`.
+    private func callbackResponse(url: URL) -> URL {
+        var callback = callbackURL
+        if let launchedState = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+            .queryItems?.first(where: { $0.name == "state" })?.value {
+            var components = URLComponents(url: callback, resolvingAgainstBaseURL: false)!
+            var items = components.queryItems ?? []
+            items.removeAll { $0.name == "state" }
+            items.append(URLQueryItem(name: "state", value: launchedState))
+            components.queryItems = items
+            callback = components.url ?? callback
+        }
+        return callback
+    }
+
     func launch(
         url: URL,
         customParams: [String: String]?,
@@ -237,7 +255,7 @@ private final class CapturingBrowser: BrowserLauncherProtocol, @unchecked Sendab
     ) async throws -> URL {
         launchedURL = url
         launchedBrowserType = browserType
-        return callbackURL
+        return callbackResponse(url: url)
     }
 
     func launch(
@@ -252,7 +270,7 @@ private final class CapturingBrowser: BrowserLauncherProtocol, @unchecked Sendab
         launchedURL = url
         launchedBrowserType = browserType
         launchedRedirectUri = redirectUri
-        return callbackURL
+        return callbackResponse(url: url)
     }
 
     func reset() {}

@@ -31,6 +31,10 @@ public class OidcWebClientConfig: WorkflowConfig, @unchecked Sendable {
 public struct OidcOptions: Sendable {
     /// Additional parameters for OIDC login.
     public var additionalParameters: [String: String] = [:]
+    /// RFC 9396 Rich Authorization Details for this login transaction only. Unlike
+    /// `additionalParameters`, this is threaded through the PAR-safe path — it correctly
+    /// reaches the PAR POST body when PAR is enabled.
+    public var authorizationDetails: [AuthorizationDetail]?
 }
 
 public extension OidcWebClient {
@@ -110,7 +114,8 @@ public extension OidcWebClient {
         config.logger.i("Starting...")
         let currentRequest = request
         self.sharedContext.set(key: SharedContext.Keys.oidcParameters, value: options.additionalParameters)
-        
+        self.sharedContext.set(key: SharedContext.Keys.oidcAuthorizationDetails, value: options.authorizationDetails as Any)
+
         return await self.start(currentRequest)
     }
 

@@ -84,6 +84,16 @@ enum JsonConfigLoader {
         let signOutUri = oidc?[JsonConfigKey.signOutRedirectUri] as? String
         let acrValues = oidc?[JsonConfigKey.acrValues] as? String
         let environment = discoveryEndpoint.isEmpty ? "" : deriveEnvironment(from: discoveryEndpoint)
+        // Optional RAR/PAR fields, so field-built clients (including the dedicated RAR
+        // workflow) behave like the JSON-built ones: the unified JSON builder applies these
+        // via `OidcClientConfig.apply(json:)`, but the `Configuration` struct must carry them
+        // for anything built from fields instead of JSON.
+        let par = oidc?[JsonConfigKey.par] as? Bool
+        var rarDetailsJson: String?
+        if let rawArray = oidc?[JsonConfigKey.authorizationDetails] as? [Any],
+           let data = try? JSONSerialization.data(withJSONObject: rawArray, options: [.sortedKeys]) {
+            rarDetailsJson = String(decoding: data, as: UTF8.self)
+        }
 
         let base = Configuration(
             name: name,
@@ -98,6 +108,8 @@ enum JsonConfigLoader {
             serverUrl: serverUrl,
             realm: realm,
             acrValues: acrValues,
+            par: par,
+            authorizationDetailsJson: rarDetailsJson,
             jsonFileName: filename
         )
 
