@@ -660,13 +660,27 @@ class FidoCollectorTests: XCTestCase {
 
     @MainActor
     func testRegistrationCollectorToFidoFailsBeforeAnyRequestWhenUserIDIsEmpty() async {
-        let (requests, result) = await registerWithRealFido(davinciRegistrationJson(userID: []))
+        let json = davinciRegistrationJson(userID: [])
+        let fido = NoUIFido()
+        let collector = FidoRegistrationCollector(with: json)
+        collector.fido = fido
+
+        var requests: [ASAuthorizationRequest] = []
+        fido.testRequestCapture = { request in
+            requests.append(request)
+        }
+
+        let result = await collector.register(window: MockASPresentationAnchor())
 
         XCTAssertTrue(requests.isEmpty, "No request should be created for an empty user ID")
         guard case .failure(let error) = result, case FidoError.missingParameters = error else {
             XCTFail("Expected FidoError.missingParameters, got \(result)")
             return
         }
+        XCTAssertEqual(collector.errorCode, FidoConstants.ERROR_NOT_SUPPORTED,
+                       "The decode failure must be surfaced to the DaVinci flow as a collector error code")
+        XCTAssertTrue(collector.payload()?.isEmpty ?? false,
+                      "payload() must return the empty error shape the DaVinci flow expects")
     }
 
     // MARK: - Trigger Tests

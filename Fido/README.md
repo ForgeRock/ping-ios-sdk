@@ -119,6 +119,8 @@ Passkeys registered through DaVinci with SDK 2.2.0 and earlier stored the user I
 
 The authenticator user ID of an existing passkey cannot be changed after creation, so those passkeys keep the previous user ID. Registering the passkey again is the only way to obtain a passkey with the corrected user ID. Apps should prompt affected users to delete the old passkey and register a new one.
 
+Registration requires the DaVinci `user.id` to be a base64 or base64url string of the raw bytes, which is what the DaVinci FIDO2 connector supplies. A `user.id` that is not valid base64 fails with a registration error instead of being registered as text, and any passkey created that way by an earlier SDK version must be registered again.
+
 ### Trigger behaviour
 
 The DaVinci FIDO2 form field carries a `trigger` property that tells the client whether the FIDO ceremony should be launched by a button press or automatically on render. `AbstractFidoCollector` (and therefore both `FidoRegistrationCollector` and `FidoAuthenticationCollector`) exposes this as:

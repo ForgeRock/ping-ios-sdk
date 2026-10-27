@@ -18,8 +18,12 @@ import AuthenticationServices
 
 class MockASAuthorizationController: ASAuthorizationController {
     var performRequestsCalled = false
-    
+
     override func performRequests() {
+        performRequestsCalled = true
+    }
+
+    override func performRequests(options: ASAuthorizationController.RequestOptions) {
         performRequestsCalled = true
     }
 }
