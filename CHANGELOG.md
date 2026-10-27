@@ -14,11 +14,15 @@
 - Fixed a `state` or `authorization_details` entry in `OidcClientConfig.additionalParameters` being sent twice (next to the generated state) on the standard flow; it is now sent once, and the callback is validated against a config-level `state` [SDKS-5425]
 - `Journey.journeyUser()` now returns a user whose `token()` can complete on a restored session (it previously failed with "No AuthCode is available."); the DaVinci `daVinciUser()` fallback reports an actionable error message [SDKS-5423]
 - Fixed literal `+` characters in query and form parameter values being decoded as spaces by the server; `URLSessionHttpRequest` now RFC 3986-encodes query and form values (e.g. `+` as `%2B`) and renders `nil`-valued items as `name=` [SDKS-5423]
+- Fixed `PingFido` DaVinci registration storing the user ID as the UTF-8 text of its base64 form instead of the raw bytes, and the authentication collector returning the user handle as UTF-8 text, so passkeys now interoperate with browser-created passkeys on the same DaVinci FIDO2 policy [SDKS-5531]
 
 #### Changed
 
 - `OidcClientConfig.buildAuthorizeParams(pkce:extraParameters:onParam:)` is now `throws`; callers need `try` [SDKS-5423, SDKS-5425]
 - A raw `authorization_details` in `OidcClient.generateAuthorizeUrl(customParams:)` is now sent once, in the PAR POST body when PAR is enabled (it previously went onto the front-channel URL only). When typed `authorizationDetails` are also passed, the typed value wins and a warning is logged [SDKS-5423]
+- `PingFido` DaVinci `attestationValue` and `assertionValue` now encode `rawId` as base64url without padding, `assertionValue.authenticatorAttachment` reports the real authenticator type (it was always `platform`), and the `userHandle` key is omitted when the authenticator returns none [SDKS-5531]
+- DaVinci passkeys created with earlier SDK versions keep their previous user ID, which cannot be changed; users need to delete and register them again to obtain the corrected user ID [SDKS-5531]
+- `Fido.register(options:window:userIDEncoding:logger:completion:)` has a new `userIDEncoding` parameter that defaults to the previous behavior [SDKS-5531]
 
 ## [2.2.0]
 

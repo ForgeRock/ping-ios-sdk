@@ -70,6 +70,11 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
     ///
     /// This method uses the `fido.authenticate` method to perform the authentication ceremony.
     /// On success, it constructs and stores the `assertionValue`, then returns it.
+    ///
+    /// Every binary field of the `assertionValue` (`id`, `rawId`, `clientDataJSON`,
+    /// `authenticatorData`, `signature`, `userHandle`) is encoded as base64url without padding.
+    /// The `userHandle` key is omitted when the authenticator returns none, and
+    /// `authenticatorAttachment` reports the type of the authenticator that was used.
     /// - Parameters:
     ///   - window: The `ASPresentationAnchor` to present the FIDO UI.
     ///   - preferImmediatelyAvailableCredentials: When `true`, restricts the ceremony to
@@ -114,18 +119,21 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
             }
             
             // 3. Construct the assertionValue payload
-            let userIDString = String(decoding: userHandleData, as: UTF8.self)
+            let authenticatorAttachment = response[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String ?? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
+            var assertionResponse: [String: Any] = [
+                FidoConstants.FIELD_AUTHENTICATOR_DATA: authenticatorData.base64URLEncodedString(),
+                FidoConstants.FIELD_CLIENT_DATA_JSON: clientData.base64URLEncodedString(),
+                FidoConstants.FIELD_SIGNATURE: signatureData.base64URLEncodedString()
+            ]
+            if !userHandleData.isEmpty {
+                assertionResponse[FidoConstants.FIELD_USER_HANDLE] = userHandleData.base64URLEncodedString()
+            }
             let newAssertionValue: [String: Any] = [
                 FidoConstants.FIELD_ID: credIDData.base64URLEncodedString(),
-                FidoConstants.FIELD_RAW_ID: credIDData.base64EncodedString(),
-                FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: "platform",
+                FidoConstants.FIELD_RAW_ID: credIDData.base64URLEncodedString(),
+                FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: authenticatorAttachment,
                 FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,
-                FidoConstants.FIELD_RESPONSE: [
-                    FidoConstants.FIELD_AUTHENTICATOR_DATA: authenticatorData.base64URLEncodedString(),
-                    FidoConstants.FIELD_CLIENT_DATA_JSON: clientData.base64URLEncodedString(),
-                    FidoConstants.FIELD_SIGNATURE: signatureData.base64URLEncodedString(),
-                    FidoConstants.FIELD_USER_HANDLE: userIDString
-                ]
+                FidoConstants.FIELD_RESPONSE: assertionResponse
             ]
             
             logger.d("assertionValue object created successfully")

@@ -113,6 +113,12 @@ func handleDaVinciFido(json: [String: Any]) {
 }
 ```
 
+#### Passkeys created by earlier SDK versions
+
+Passkeys registered through DaVinci with SDK 2.2.0 and earlier stored the user ID as the UTF-8 text of its base64 form instead of the raw bytes supplied by DaVinci. Registrations made with the current SDK store the raw bytes. Passkeys created with the previous user ID do not interoperate with passkeys created in a browser for the same user.
+
+The authenticator user ID of an existing passkey cannot be changed after creation, so those passkeys keep the previous user ID. Registering the passkey again is the only way to obtain a passkey with the corrected user ID. Apps should prompt affected users to delete the old passkey and register a new one.
+
 ### Trigger behaviour
 
 The DaVinci FIDO2 form field carries a `trigger` property that tells the client whether the FIDO ceremony should be launched by a button press or automatically on render. `AbstractFidoCollector` (and therefore both `FidoRegistrationCollector` and `FidoAuthenticationCollector`) exposes this as:

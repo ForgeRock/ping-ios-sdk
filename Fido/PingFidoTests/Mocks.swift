@@ -77,9 +77,15 @@ class MockFido: Fido, @unchecked Sendable {
     /// Captures the `preferImmediatelyAvailableCredentials` flag passed to the most recent
     /// call to `authenticate`, so tests can assert callers forward it.
     var capturedPreferImmediatelyAvailableCredentials: Bool?
+    /// Captures the `userIDEncoding` passed to the most recent call to `register`.
+    var capturedUserIDEncoding: FidoUserIDEncoding?
+    /// Captures the `options` passed to the most recent call to `register`.
+    var capturedOptions: [String: Any]?
 
-    override func register(options: [String : Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String : Any], Error>) -> Void) {
+    override func register(options: [String : Any], window: ASPresentationAnchor, userIDEncoding: FidoUserIDEncoding = .utf8, logger: Logger? = nil, completion: @escaping (Result<[String : Any], Error>) -> Void) {
         capturedLogger = logger
+        capturedUserIDEncoding = userIDEncoding
+        capturedOptions = options
         if let result = registrationResult {
             completion(result)
         }

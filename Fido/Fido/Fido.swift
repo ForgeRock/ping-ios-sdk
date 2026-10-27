@@ -14,6 +14,15 @@ import AuthenticationServices
 import UIKit
 #endif
 import PingLogger
+import PingCommons
+
+/// Describes how `user.id` in the registration options is converted to the user ID bytes stored by the authenticator.
+public enum FidoUserIDEncoding: Sendable {
+    /// Uses the UTF-8 bytes of `user.id`.
+    case utf8
+    /// Decodes `user.id` as base64 into raw bytes. The standard and URL-safe alphabets are accepted, with or without padding.
+    case base64
+}
 
 /// Fido is a class that provides FIDO registration and authentication functionalities.
 ///
@@ -55,12 +64,15 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     /// - Parameters:
     ///   - options: A dictionary containing the registration options.
     ///   - window: The window to present the registration UI in.
+    ///   - userIDEncoding: How `user.id` is converted to the stored user ID bytes. Defaults to `.utf8`.
+    ///     With `.base64`, an undecodable or empty `user.id` completes with `FidoError.missingParameters`
+    ///     before any system UI is shown.
     ///   - logger: Optional logger for ceremony state transitions and errors. Pass the
     ///     workflow logger (e.g. `davinci?.config.logger`); when `nil` no log output is
     ///     produced. Scoped to this call only — overwritten by subsequent ceremonies and
     ///     cleared in `cleanup()`.
     ///   - completion: A closure to be called with the registration result.
-    public func register(options: [String: Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+    public func register(options: [String: Any], window: ASPresentationAnchor, userIDEncoding: FidoUserIDEncoding = .utf8, logger: Logger? = nil, completion: @escaping (Result<[String: Any], Error>) -> Void) {
         self.logger = logger
         logger?.d("Fido: Starting registration")
         self.window = window
@@ -78,7 +90,19 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
                 cleanup()
                 return
             }
-            let userID = Data(registrationOptions.user.id.utf8)
+            let userID: Data
+            switch userIDEncoding {
+            case .utf8:
+                userID = Data(registrationOptions.user.id.utf8)
+            case .base64:
+                guard let decoded = Base64.decodeBase64UrlToData(registrationOptions.user.id), !decoded.isEmpty else {
+                    logger?.e("Fido: Registration failed - user.id is not valid base64", error: nil)
+                    completion(.failure(FidoError.missingParameters("user.id is not valid base64")))
+                    cleanup()
+                    return
+                }
+                userID = decoded
+            }
 
             // 3. Determine which requests to create based on selection criteria
             var requests: [ASAuthorizationRequest] = []

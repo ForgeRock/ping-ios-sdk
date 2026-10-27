@@ -69,6 +69,11 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
     ///
     /// This method uses the `fido.register` method to perform the registration ceremony.
     /// On success, it constructs and stores the `attestationValue`, then returns it.
+    ///
+    /// The `user.id` supplied by DaVinci is registered with the authenticator as raw bytes.
+    /// Every binary field of the `attestationValue` (`id`, `rawId`, `clientDataJSON`,
+    /// `attestationObject`) is encoded as base64url without padding, and
+    /// `authenticatorAttachment` reports the type of the authenticator that was used.
     /// - Parameter window: The `ASPresentationAnchor` to present the FIDO UI.
     /// - Returns: A dictionary representing the `attestationValue`.
     /// - Throws: An error if the registration process fails or the response is invalid.
@@ -82,7 +87,7 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
             let response: [String: Any] = try await withUnsafeThrowingContinuation { continuation in
                 // Pass the workflow logger so the underlying ASAuthorization ceremony
                 // emits log messages through the same logger as the surrounding flow.
-                fido.register(options: publicKeyCredentialCreationOptions, window: window, logger: logger) { [continuation] result in
+                fido.register(options: publicKeyCredentialCreationOptions, window: window, userIDEncoding: .base64, logger: logger) { [continuation] result in
                     Task {
                         await MainActor.run {
                             nonisolated(unsafe) let sendableResult = result
@@ -110,7 +115,7 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
             let newAttestationValue: [String: Any] = [
                 FidoConstants.FIELD_ID: rawIdData.base64URLEncodedString(),
                 FidoConstants.FIELD_TYPE: FidoConstants.FIELD_PUB_KEY,
-                FidoConstants.FIELD_RAW_ID: rawIdData.base64EncodedString(),
+                FidoConstants.FIELD_RAW_ID: rawIdData.base64URLEncodedString(),
                 FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: authenticatorAttachment,
                 FidoConstants.FIELD_RESPONSE: [
                     FidoConstants.FIELD_CLIENT_DATA_JSON: clientDataJSONData.base64URLEncodedString(),
@@ -145,7 +150,6 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
         var output = input
         
         if let user = output[FidoConstants.FIELD_USER] as? [String: Any] {
-            logger.d("User: \(user)")
             if let userId = user[FidoConstants.FIELD_ID] as? [Int] {
                 var newUser = user
                 let data = Data(userId.map { UInt8(bitPattern: Int8($0)) })
@@ -155,7 +159,6 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
         }
         
         if let challenge = output[FidoConstants.FIELD_CHALLENGE] as? [Int] {
-            logger.d("Challenge: \(challenge)")
             let data = Data(challenge.map { UInt8(bitPattern: Int8($0)) })
             output[FidoConstants.FIELD_CHALLENGE] = data.base64EncodedString()
         }
@@ -168,7 +171,6 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
         }
         
         if let excludeCredentials = output[FidoConstants.FIELD_EXCLUDE_CREDENTIALS] as? [[String: Any]] {
-            logger.d("Exclude credentials: \(excludeCredentials)")
             let updatedCredentials = excludeCredentials.map { credential -> [String: Any] in
                 var newCredential = credential
                 if let id = newCredential[FidoConstants.FIELD_ID] as? [Int] {

@@ -99,7 +99,10 @@ class FidoCollectorTests: XCTestCase {
             XCTAssertNotNil(resultAssertionValue)
             // Example check - adjust based on your actual construction logic and expected Base64URL
             XCTAssertEqual(resultAssertionValue[FidoConstants.FIELD_ID] as? String, "rawId".data(using: .utf8)!.base64URLEncodedString())
-            
+            XCTAssertEqual(resultAssertionValue[FidoConstants.FIELD_RAW_ID] as? String, "rawId".data(using: .utf8)!.base64URLEncodedString())
+            let responseObject = resultAssertionValue[FidoConstants.FIELD_RESPONSE] as? [String: Any]
+            XCTAssertEqual(responseObject?[FidoConstants.FIELD_USER_HANDLE] as? String, "userHandle".data(using: .utf8)!.base64URLEncodedString())
+
             // Also verify the internal state was set for payload()
             XCTAssertNotNil(collector.assertionValue)
             XCTAssertEqual(collector.assertionValue?[FidoConstants.FIELD_ID] as? String, resultAssertionValue[FidoConstants.FIELD_ID] as? String)
@@ -125,6 +128,126 @@ class FidoCollectorTests: XCTestCase {
         }
     }
     
+    // MARK: - FidoAuthenticationCollector Payload Shape Tests
+
+    private func assertBase64URLUnpadded(_ value: Any?, equals expected: Data, _ field: String, file: StaticString = #filePath, line: UInt = #line) {
+        guard let string = value as? String else {
+            XCTFail("Expected \(field) to be a String", file: file, line: line)
+            return
+        }
+        XCTAssertNotNil(string.range(of: "^[A-Za-z0-9_-]*$", options: .regularExpression), "\(field) is not unpadded base64url: \(string)", file: file, line: line)
+        XCTAssertEqual(Base64.decodeBase64UrlToData(string), expected, "\(field) does not round-trip", file: file, line: line)
+    }
+
+    @MainActor
+    private func authenticate(_ response: [String: Any]) async -> (result: Result<[String: Any], Error>, collector: FidoAuthenticationCollector) {
+        let mockFido = MockFido()
+        let collector = FidoAuthenticationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_REQUEST_OPTIONS: ["challenge": "test"]])
+        collector.fido = mockFido
+        mockFido.authenticationResult = .success(response)
+        let result = await collector.authenticate(window: MockASPresentationAnchor())
+        return (result, collector)
+    }
+
+    @MainActor
+    func testFidoAuthenticationCollectorPayloadFieldsAreBase64URLUnpadded() async {
+        let credentialID = Data([0xFB, 0xFF, 0xBF, 0xFE])
+        let authenticatorData = Data([0xFF, 0xFB, 0xBF, 0xFE, 0x01])
+        let clientData = Data([0xBF, 0xFB, 0xFF])
+        let signature = Data([0xFE, 0xFF, 0xFB, 0xBF, 0x02, 0x03])
+        let userHandle = Data([0xFB, 0xFF, 0xBF, 0xFE, 0xFF])
+
+        let (result, _) = await authenticate([
+            FidoConstants.FIELD_RAW_ID: credentialID,
+            FidoConstants.FIELD_CLIENT_DATA_JSON: clientData,
+            FidoConstants.FIELD_AUTHENTICATOR_DATA: authenticatorData,
+            FidoConstants.FIELD_SIGNATURE: signature,
+            FidoConstants.FIELD_USER_HANDLE: userHandle
+        ])
+
+        guard case .success(let value) = result else {
+            XCTFail("Expected authenticate to succeed")
+            return
+        }
+        let responseObject = value[FidoConstants.FIELD_RESPONSE] as? [String: Any]
+        assertBase64URLUnpadded(value[FidoConstants.FIELD_ID], equals: credentialID, "id")
+        assertBase64URLUnpadded(value[FidoConstants.FIELD_RAW_ID], equals: credentialID, "rawId")
+        assertBase64URLUnpadded(responseObject?[FidoConstants.FIELD_AUTHENTICATOR_DATA], equals: authenticatorData, "authenticatorData")
+        assertBase64URLUnpadded(responseObject?[FidoConstants.FIELD_CLIENT_DATA_JSON], equals: clientData, "clientDataJSON")
+        assertBase64URLUnpadded(responseObject?[FidoConstants.FIELD_SIGNATURE], equals: signature, "signature")
+        assertBase64URLUnpadded(responseObject?[FidoConstants.FIELD_USER_HANDLE], equals: userHandle, "userHandle")
+        XCTAssertEqual(value[FidoConstants.FIELD_RAW_ID] as? String, value[FidoConstants.FIELD_ID] as? String)
+    }
+
+    @MainActor
+    func testFidoAuthenticationCollectorEncodesNonUTF8UserHandleAsBase64URL() async {
+        let (result, _) = await authenticate([
+            FidoConstants.FIELD_RAW_ID: Data([0x01]),
+            FidoConstants.FIELD_CLIENT_DATA_JSON: Data([0x02]),
+            FidoConstants.FIELD_AUTHENTICATOR_DATA: Data([0x03]),
+            FidoConstants.FIELD_SIGNATURE: Data([0x04]),
+            FidoConstants.FIELD_USER_HANDLE: Data([0xFB, 0xFF, 0xBF])
+        ])
+
+        guard case .success(let value) = result else {
+            XCTFail("Expected authenticate to succeed")
+            return
+        }
+        let responseObject = value[FidoConstants.FIELD_RESPONSE] as? [String: Any]
+        XCTAssertEqual(responseObject?[FidoConstants.FIELD_USER_HANDLE] as? String, "-_-_")
+    }
+
+    @MainActor
+    func testFidoAuthenticationCollectorPassesThroughAuthenticatorAttachment() async {
+        let base: [String: Any] = [
+            FidoConstants.FIELD_RAW_ID: Data([0x01]),
+            FidoConstants.FIELD_CLIENT_DATA_JSON: Data([0x02]),
+            FidoConstants.FIELD_AUTHENTICATOR_DATA: Data([0x03]),
+            FidoConstants.FIELD_SIGNATURE: Data([0x04]),
+            FidoConstants.FIELD_USER_HANDLE: Data([0x05])
+        ]
+
+        for attachment in ["platform", "cross-platform"] {
+            var response = base
+            response[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] = attachment
+            let (result, collector) = await authenticate(response)
+            guard case .success(let value) = result else {
+                XCTFail("Expected authenticate to succeed for \(attachment)")
+                continue
+            }
+            XCTAssertEqual(value[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String, attachment)
+            XCTAssertEqual(collector.assertionValue?[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String, attachment)
+        }
+
+        let (result, _) = await authenticate(base)
+        guard case .success(let value) = result else {
+            XCTFail("Expected authenticate to succeed without an attachment")
+            return
+        }
+        XCTAssertEqual(value[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String, "platform")
+    }
+
+    @MainActor
+    func testFidoAuthenticationCollectorOmitsUserHandleWhenEmpty() async {
+        let (result, collector) = await authenticate([
+            FidoConstants.FIELD_RAW_ID: Data([0x01]),
+            FidoConstants.FIELD_CLIENT_DATA_JSON: Data([0x02]),
+            FidoConstants.FIELD_AUTHENTICATOR_DATA: Data([0x03]),
+            FidoConstants.FIELD_SIGNATURE: Data([0x04]),
+            FidoConstants.FIELD_USER_HANDLE: Data()
+        ])
+
+        guard case .success(let value) = result else {
+            XCTFail("Expected authenticate to succeed with an empty user handle")
+            return
+        }
+        let responseObject = value[FidoConstants.FIELD_RESPONSE] as? [String: Any]
+        XCTAssertNotNil(responseObject)
+        XCTAssertNil(responseObject?[FidoConstants.FIELD_USER_HANDLE])
+        let payloadResponse = (collector.payload()?[FidoConstants.FIELD_ASSERTION_VALUE] as? [String: Any])?[FidoConstants.FIELD_RESPONSE] as? [String: Any]
+        XCTAssertNil(payloadResponse?[FidoConstants.FIELD_USER_HANDLE])
+    }
+
     // MARK: - Error Propagation Tests
 
     func testHandleErrorSetsDOMExceptionNameForFidoErrors() {
@@ -258,6 +381,35 @@ class FidoCollectorTests: XCTestCase {
         XCTAssertTrue(collector2.publicKeyCredentialCreationOptions.isEmpty)
     }
     
+    @MainActor
+    func testFidoRegistrationCollectorAlwaysRequestsBase64UserIDEncoding() async {
+        let successResponse: [String: Any] = [
+            FidoConstants.FIELD_RAW_ID: "rawId".data(using: .utf8)!,
+            FidoConstants.FIELD_CLIENT_DATA_JSON: "clientDataJSON".data(using: .utf8)!,
+            FidoConstants.FIELD_ATTESTATION_OBJECT: "attestationObject".data(using: .utf8)!
+        ]
+
+        for userID: Any in [[-5, -1, -65], "dGVzdHVzZXI"] {
+            let mockFido = MockFido()
+            mockFido.registrationResult = .success(successResponse)
+            let collector = FidoRegistrationCollector(with: [
+                FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: [
+                    "rp": ["name": "test"],
+                    "user": ["id": userID, "name": "janedoe", "displayName": "Jane Doe"]
+                ]
+            ])
+            collector.fido = mockFido
+
+            _ = await collector.register(window: MockASPresentationAnchor())
+
+            XCTAssertEqual(mockFido.capturedUserIDEncoding, .base64)
+            if let stringUserID = userID as? String {
+                let capturedUser = mockFido.capturedOptions?["user"] as? [String: Any]
+                XCTAssertEqual(capturedUser?["id"] as? String, stringUserID)
+            }
+        }
+    }
+
     func testFidoRegistrationCollectorPayload() {
         // ... (this test remains unchanged)
         let collector = FidoRegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
@@ -315,6 +467,40 @@ class FidoCollectorTests: XCTestCase {
                 return
             }
             XCTAssertEqual(fidoError, .invalidChallenge)
+        }
+    }
+
+    @MainActor
+    func testFidoRegistrationCollectorPayloadFieldsAreBase64URLUnpadded() async {
+        let credentialID = Data([0xFB, 0xFF, 0xBF, 0xFE])
+        let clientData = Data([0xBF, 0xFB, 0xFF])
+        let attestationObject = Data([0xFF, 0xFB, 0xBF, 0xFE, 0x01])
+
+        for attachment in ["platform", "cross-platform"] {
+            let mockFido = MockFido()
+            let collector = FidoRegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
+            collector.fido = mockFido
+            mockFido.registrationResult = .success([
+                FidoConstants.FIELD_RAW_ID: credentialID,
+                FidoConstants.FIELD_CLIENT_DATA_JSON: clientData,
+                FidoConstants.FIELD_ATTESTATION_OBJECT: attestationObject,
+                FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT: attachment
+            ])
+
+            let result = await collector.register(window: MockASPresentationAnchor())
+
+            guard case .success(let value) = result else {
+                XCTFail("Expected register to succeed for \(attachment)")
+                continue
+            }
+            let responseObject = value[FidoConstants.FIELD_RESPONSE] as? [String: Any]
+            assertBase64URLUnpadded(value[FidoConstants.FIELD_ID], equals: credentialID, "id")
+            assertBase64URLUnpadded(value[FidoConstants.FIELD_RAW_ID], equals: credentialID, "rawId")
+            assertBase64URLUnpadded(responseObject?[FidoConstants.FIELD_CLIENT_DATA_JSON], equals: clientData, "clientDataJSON")
+            assertBase64URLUnpadded(responseObject?[FidoConstants.FIELD_ATTESTATION_OBJECT], equals: attestationObject, "attestationObject")
+            XCTAssertEqual(value[FidoConstants.FIELD_RAW_ID] as? String, value[FidoConstants.FIELD_ID] as? String)
+            XCTAssertEqual(value[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String, attachment)
+            XCTAssertEqual(collector.attestationValue?[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String, attachment)
         }
     }
 
