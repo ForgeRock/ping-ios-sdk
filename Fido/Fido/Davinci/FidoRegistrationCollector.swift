@@ -87,6 +87,10 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
             let response: [String: Any] = try await withUnsafeThrowingContinuation { continuation in
                 // Pass the workflow logger so the underlying ASAuthorization ceremony
                 // emits log messages through the same logger as the surrounding flow.
+                // `.base64` is always passed: DaVinci delivers `user.id` as a signed byte array, `transform`
+                // renders it as a base64 string for the local options, and the authenticator must be given
+                // the original raw bytes. Registering the string's UTF-8 text instead would store a different
+                // user ID, which cannot be changed once the credential exists.
                 fido.register(options: publicKeyCredentialCreationOptions, window: window, userIDEncoding: .base64, logger: logger) { [continuation] result in
                     Task {
                         await MainActor.run {
@@ -111,6 +115,10 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
             }
             
             // 3. Construct the attestationValue payload
+            //    Every binary field sent to the server is base64url without padding. `id` and `rawId`
+            //    carry the same value because both are the credential ID, in the same encoding.
+            //    The attachment is the one reported by the authenticator ceremony; it falls back to
+            //    "platform" only when the response does not include one.
             let authenticatorAttachment = response[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String ?? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
             let newAttestationValue: [String: Any] = [
                 FidoConstants.FIELD_ID: rawIdData.base64URLEncodedString(),
@@ -143,6 +151,9 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
     /// Transforms the FIDO registration request options from the server to the format expected by the `ASAuthorization` framework.
     ///
     /// This involves converting byte arrays for `user.id`, `challenge`, and `excludeCredentials` IDs to Base64 encoded strings.
+    ///
+    /// The output is the format of the local options consumed by `Fido.register` (standard base64 with
+    /// padding), not the format sent back to the server, which is base64url without padding.
     /// - Parameter input: The dictionary of options received from the server.
     /// - Returns: A transformed dictionary of options.
     private func transform(_ input: [String: Any]) -> [String: Any] {
@@ -152,6 +163,9 @@ public class FidoRegistrationCollector: AbstractFidoCollector, Closeable, @unche
         if let user = output[FidoConstants.FIELD_USER] as? [String: Any] {
             if let userId = user[FidoConstants.FIELD_ID] as? [Int] {
                 var newUser = user
+                // The server serializes bytes as signed values (-128...127). `Int8($0)` reads each value as a
+                // signed byte and `UInt8(bitPattern:)` reinterprets the same bits as the unsigned byte,
+                // so -13 becomes 0xF3. A plain `UInt8($0)` would trap on negative values.
                 let data = Data(userId.map { UInt8(bitPattern: Int8($0)) })
                 newUser[FidoConstants.FIELD_ID] = data.base64EncodedString()
                 output[FidoConstants.FIELD_USER] = newUser

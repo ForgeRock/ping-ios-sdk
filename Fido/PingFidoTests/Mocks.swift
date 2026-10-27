@@ -100,6 +100,17 @@ class MockFido: Fido, @unchecked Sendable {
     }
 }
 
+/// A real `Fido` whose authorization controller never presents system UI, so the unmodified
+/// `register` and `authenticate` logic runs and its requests can be observed through `testRequestCapture`.
+class NoUIFido: Fido, @unchecked Sendable {
+    override func makeAuthorizationController(requests: [ASAuthorizationRequest]) -> ASAuthorizationController {
+        requests.forEach { testRequestCapture?($0) }
+        let controller = MockASAuthorizationController(authorizationRequests: requests)
+        authorizationController = controller
+        return controller
+    }
+}
+
 class MockASPresentationAnchor: UIWindow {
     
 }

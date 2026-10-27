@@ -274,6 +274,61 @@ class PingFidoTests: XCTestCase {
         }
     }
 
+    @MainActor func testRegisterBase64SingleByteUserIDWorksForBothRequestTypes() {
+        var platformRequest: ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest?
+        fido.testRequestCapture = { request in
+            platformRequest = request as? ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest
+        }
+        fido.register(options: registrationOptions(userID: "+w==", attachment: "platform"),
+                      window: UIWindow(),
+                      userIDEncoding: .base64) { _ in }
+        XCTAssertEqual(platformRequest?.userID, Data([0xFB]))
+
+        var securityKeyRequest: ASAuthorizationSecurityKeyPublicKeyCredentialRegistrationRequest?
+        fido.testRequestCapture = { request in
+            securityKeyRequest = request as? ASAuthorizationSecurityKeyPublicKeyCredentialRegistrationRequest
+        }
+        fido.register(options: registrationOptions(userID: "-w", attachment: "cross-platform"),
+                      window: UIWindow(),
+                      userIDEncoding: .base64) { _ in }
+        XCTAssertEqual(securityKeyRequest?.userID, Data([0xFB]))
+    }
+
+    @MainActor func testRegisterUTF8NonASCIIUserIDUsesItsUTF8Bytes() {
+        var capturedRequest: ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest?
+        fido.testRequestCapture = { request in
+            capturedRequest = request as? ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest
+        }
+
+        fido.register(options: registrationOptions(userID: "üser-é", attachment: "platform"),
+                      window: UIWindow(),
+                      userIDEncoding: .utf8) { _ in }
+
+        XCTAssertEqual(capturedRequest?.userID, Data([0xC3, 0xBC, 0x73, 0x65, 0x72, 0x2D, 0xC3, 0xA9]))
+    }
+
+    @MainActor func testRegisterBase64UserIDWithWhitespaceFails() {
+        for invalidUserID in ["dGVz dHVz", "dGVzdHVz\n", "dGVz\ndHVz", " dGVzdHVz"] {
+            var requestCaptured = false
+            fido.testRequestCapture = { _ in requestCaptured = true }
+
+            var completionError: Error?
+            fido.register(options: registrationOptions(userID: invalidUserID),
+                          window: UIWindow(),
+                          userIDEncoding: .base64) { result in
+                if case .failure(let error) = result {
+                    completionError = error
+                }
+            }
+
+            guard let fidoError = completionError as? FidoError, case .missingParameters = fidoError else {
+                XCTFail("Expected FidoError.missingParameters for user ID '\(invalidUserID)', got \(String(describing: completionError))")
+                continue
+            }
+            XCTAssertFalse(requestCaptured, "No ceremony should start for user ID '\(invalidUserID)'")
+        }
+    }
+
     @MainActor func testAuthenticatePreferImmediatelyAvailableCredentialsExcludesSecurityKeyRequest() {
         // With allowCredentials present, the default (false) ceremony builds a platform request
         // plus a security-key request. Setting preferImmediatelyAvailableCredentials to true must

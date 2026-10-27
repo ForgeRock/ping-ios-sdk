@@ -119,15 +119,22 @@ public class FidoAuthenticationCollector: AbstractFidoCollector, Closeable, @unc
             }
             
             // 3. Construct the assertionValue payload
+            //    Every binary field sent to the server is base64url without padding.
+            //    The attachment is the one reported by the authenticator ceremony; it falls back to
+            //    "platform" only when the response does not include one.
             let authenticatorAttachment = response[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String ?? FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT_PLATFORM
             var assertionResponse: [String: Any] = [
                 FidoConstants.FIELD_AUTHENTICATOR_DATA: authenticatorData.base64URLEncodedString(),
                 FidoConstants.FIELD_CLIENT_DATA_JSON: clientData.base64URLEncodedString(),
                 FidoConstants.FIELD_SIGNATURE: signatureData.base64URLEncodedString()
             ]
+            // The user handle is the raw user ID bytes stored at registration, not text, so it is encoded
+            // as bytes rather than interpreted as a string. The key is left out when the authenticator
+            // returned no handle, instead of sending an empty value.
             if !userHandleData.isEmpty {
                 assertionResponse[FidoConstants.FIELD_USER_HANDLE] = userHandleData.base64URLEncodedString()
             }
+            // `id` and `rawId` carry the same value because both are the credential ID, in the same encoding.
             let newAssertionValue: [String: Any] = [
                 FidoConstants.FIELD_ID: credIDData.base64URLEncodedString(),
                 FidoConstants.FIELD_RAW_ID: credIDData.base64URLEncodedString(),

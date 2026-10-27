@@ -248,6 +248,75 @@ class FidoCollectorTests: XCTestCase {
         XCTAssertNil(payloadResponse?[FidoConstants.FIELD_USER_HANDLE])
     }
 
+    @MainActor
+    func testFidoAuthenticationCollectorReturnsRawUserIDBytesAsUserHandle() async {
+        // Raw user ID bytes F3 9A 01, as registered for a DaVinci passkey.
+        let rawUserID = Data([0xF3, 0x9A, 0x01])
+        let (result, collector) = await authenticate([
+            FidoConstants.FIELD_RAW_ID: Data([0x01]),
+            FidoConstants.FIELD_CLIENT_DATA_JSON: Data([0x02]),
+            FidoConstants.FIELD_AUTHENTICATOR_DATA: Data([0x03]),
+            FidoConstants.FIELD_SIGNATURE: Data([0x04]),
+            FidoConstants.FIELD_USER_HANDLE: rawUserID
+        ])
+
+        guard case .success = result else {
+            XCTFail("Expected authenticate to succeed")
+            return
+        }
+        let responseObject = collector.assertionValue?[FidoConstants.FIELD_RESPONSE] as? [String: Any]
+        let userHandle = responseObject?[FidoConstants.FIELD_USER_HANDLE] as? String
+        XCTAssertEqual(userHandle, "85oB")
+        XCTAssertEqual(Base64.decodeBase64UrlToData(userHandle ?? ""), rawUserID)
+    }
+
+    @MainActor
+    func testFidoAuthenticationCollectorReportsLegacyTextUserIDBytesAsBase64URL() async {
+        // Passkeys created by earlier versions stored the UTF-8 bytes of the text "85oB" (38 35 6F 42).
+        let legacyUserID = Data("85oB".utf8)
+        XCTAssertEqual(legacyUserID, Data([0x38, 0x35, 0x6F, 0x42]))
+
+        let (result, collector) = await authenticate([
+            FidoConstants.FIELD_RAW_ID: Data([0x01]),
+            FidoConstants.FIELD_CLIENT_DATA_JSON: Data([0x02]),
+            FidoConstants.FIELD_AUTHENTICATOR_DATA: Data([0x03]),
+            FidoConstants.FIELD_SIGNATURE: Data([0x04]),
+            FidoConstants.FIELD_USER_HANDLE: legacyUserID
+        ])
+
+        guard case .success = result else {
+            XCTFail("Expected authenticate to succeed")
+            return
+        }
+        let responseObject = collector.assertionValue?[FidoConstants.FIELD_RESPONSE] as? [String: Any]
+        XCTAssertEqual(responseObject?[FidoConstants.FIELD_USER_HANDLE] as? String, "ODVvQg")
+    }
+
+    @MainActor
+    func testFidoAuthenticationCollectorEncodesOneByteAndThirtyTwoByteUserHandlesAsUnpaddedBase64URL() async {
+        // 32 bytes encode to 43 base64url characters and one byte to 2; both would carry "=" padding in standard base64.
+        let thirtyTwoBytes = Data((0..<32).map { UInt8(truncatingIfNeeded: 0xFB &+ $0 &* 7) })
+        let handles: [(data: Data, length: Int)] = [(Data([0xFB]), 2), (thirtyTwoBytes, 43)]
+
+        for handle in handles {
+            let (result, _) = await authenticate([
+                FidoConstants.FIELD_RAW_ID: Data([0x01]),
+                FidoConstants.FIELD_CLIENT_DATA_JSON: Data([0x02]),
+                FidoConstants.FIELD_AUTHENTICATOR_DATA: Data([0x03]),
+                FidoConstants.FIELD_SIGNATURE: Data([0x04]),
+                FidoConstants.FIELD_USER_HANDLE: handle.data
+            ])
+
+            guard case .success(let value) = result else {
+                XCTFail("Expected authenticate to succeed for a \(handle.data.count)-byte user handle")
+                continue
+            }
+            let responseObject = value[FidoConstants.FIELD_RESPONSE] as? [String: Any]
+            assertBase64URLUnpadded(responseObject?[FidoConstants.FIELD_USER_HANDLE], equals: handle.data, "userHandle")
+            XCTAssertEqual((responseObject?[FidoConstants.FIELD_USER_HANDLE] as? String)?.count, handle.length)
+        }
+    }
+
     // MARK: - Error Propagation Tests
 
     func testHandleErrorSetsDOMExceptionNameForFidoErrors() {
@@ -501,6 +570,102 @@ class FidoCollectorTests: XCTestCase {
             XCTAssertEqual(value[FidoConstants.FIELD_RAW_ID] as? String, value[FidoConstants.FIELD_ID] as? String)
             XCTAssertEqual(value[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String, attachment)
             XCTAssertEqual(collector.attestationValue?[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String, attachment)
+        }
+    }
+
+    @MainActor
+    func testFidoRegistrationCollectorReportsPlatformAttachmentWhenResponseHasNone() async {
+        let mockFido = MockFido()
+        let collector = FidoRegistrationCollector(with: [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: ["rp": ["name": "test"]]])
+        collector.fido = mockFido
+        mockFido.registrationResult = .success([
+            FidoConstants.FIELD_RAW_ID: Data([0x01]),
+            FidoConstants.FIELD_CLIENT_DATA_JSON: Data([0x02]),
+            FidoConstants.FIELD_ATTESTATION_OBJECT: Data([0x03])
+        ])
+
+        let result = await collector.register(window: MockASPresentationAnchor())
+
+        guard case .success(let value) = result else {
+            XCTFail("Expected register to succeed")
+            return
+        }
+        XCTAssertEqual(value[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String, "platform")
+        XCTAssertEqual(collector.attestationValue?[FidoConstants.FIELD_AUTHENTICATOR_ATTACHMENT] as? String, "platform")
+    }
+
+    // MARK: - Registration User ID Composition Tests
+
+    private func davinciRegistrationJson(userID: [Int], attachment: String? = nil) -> [String: Any] {
+        var options: [String: Any] = [
+            "rp": ["id": "example.com", "name": "Example Corp"],
+            "user": ["id": userID, "name": "janedoe", "displayName": "Jane Doe"],
+            "challenge": [1, 2, 3, 4],
+            "pubKeyCredParams": [["type": "public-key", "alg": -7]]
+        ]
+        if let attachment {
+            options["authenticatorSelection"] = ["authenticatorAttachment": attachment]
+        }
+        return [FidoConstants.FIELD_PUBLIC_KEY_CREDENTIAL_CREATION_OPTIONS: options]
+    }
+
+    /// Runs `register(window:)` against a real `Fido` without system UI and returns the captured requests.
+    /// The pending ceremony is completed from the capture hook so that `register(window:)` returns.
+    @MainActor
+    private func registerWithRealFido(_ json: [String: Any]) async -> (requests: [ASAuthorizationRequest], result: Result<[String: Any], Error>) {
+        let fido = NoUIFido()
+        let collector = FidoRegistrationCollector(with: json)
+        collector.fido = fido
+
+        var requests: [ASAuthorizationRequest] = []
+        fido.testRequestCapture = { [unowned fido] request in
+            requests.append(request)
+            let completion = fido.completion
+            fido.completion = nil
+            completion?(.failure(FidoError.timeout))
+        }
+
+        let result = await collector.register(window: MockASPresentationAnchor())
+        return (requests, result)
+    }
+
+    @MainActor
+    func testRegistrationCollectorToFidoRegistersSignedByteUserIDAsRawBytesOnPlatformRequest() async {
+        // Signed values -13, -102, 1 are the bytes F3 9A 01.
+        let (requests, _) = await registerWithRealFido(davinciRegistrationJson(userID: [-13, -102, 1], attachment: "platform"))
+
+        XCTAssertEqual(requests.count, 1)
+        let request = requests.first as? ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest
+        XCTAssertNotNil(request, "Platform registration request was not created")
+        XCTAssertEqual(request?.userID, Data([0xF3, 0x9A, 0x01]))
+    }
+
+    @MainActor
+    func testRegistrationCollectorToFidoRegistersSignedByteUserIDAsRawBytesOnSecurityKeyRequest() async {
+        let (requests, _) = await registerWithRealFido(davinciRegistrationJson(userID: [-13, -102, 1], attachment: "cross-platform"))
+
+        XCTAssertEqual(requests.count, 1)
+        let request = requests.first as? ASAuthorizationSecurityKeyPublicKeyCredentialRegistrationRequest
+        XCTAssertNotNil(request, "Security key registration request was not created")
+        XCTAssertEqual(request?.userID, Data([0xF3, 0x9A, 0x01]))
+    }
+
+    @MainActor
+    func testRegistrationCollectorToFidoPreservesSignedByteEdgeValues() async {
+        let (requests, _) = await registerWithRealFido(davinciRegistrationJson(userID: [-128, 127, 0, -1], attachment: "platform"))
+
+        let request = requests.first as? ASAuthorizationPlatformPublicKeyCredentialRegistrationRequest
+        XCTAssertEqual(request?.userID, Data([0x80, 0x7F, 0x00, 0xFF]))
+    }
+
+    @MainActor
+    func testRegistrationCollectorToFidoFailsBeforeAnyRequestWhenUserIDIsEmpty() async {
+        let (requests, result) = await registerWithRealFido(davinciRegistrationJson(userID: []))
+
+        XCTAssertTrue(requests.isEmpty, "No request should be created for an empty user ID")
+        guard case .failure(let error) = result, case FidoError.missingParameters = error else {
+            XCTFail("Expected FidoError.missingParameters, got \(result)")
+            return
         }
     }
 
