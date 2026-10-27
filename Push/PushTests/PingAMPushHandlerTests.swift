@@ -87,6 +87,46 @@ final class PingAMPushHandlerTests: XCTestCase {
         XCTAssertFalse(handler.canHandle(message: "invalid.jwt.value"))
     }
 
+    func testParseMessageParsesStringTypedTimeIntervalClaim() throws {
+        // The `i` claim may arrive as a JSON string (e.g. "1731000000000"). The
+        // handler must accept it and expose it as an Int `timeInterval` still
+        // representing milliseconds since epoch. This locks in the
+        // `Int(stringValue)` branch of `parseInteger`.
+        let jwt = try jwt(withStringInterval: "1731000000000")
+        let messageData: [String: Any] = [
+            "messageId": "message-string-i",
+            "message": jwt
+        ]
+
+        let parsed = try handler.parseMessage(messageData: messageData)
+
+        XCTAssertEqual(parsed["timeInterval"] as? Int, 1_731_000_000_000)
+    }
+
+    func testProcessNotificationSetsSentAtFromStringTypedIntervalClaim() async throws {
+        // End-to-end lock for the `i` claim contract: the claim is milliseconds
+        // since epoch, so a string-typed "1731000000000" must surface as
+        // `sentAt == Date(timeIntervalSince1970: 1_731_000_000)` on the stored
+        // notification. Uses the real `PingAMPushHandler` through the service.
+        let jwt = try jwt(withStringInterval: "1731000000000")
+        let service = PushService(
+            storage: TestInMemoryPushStorage(),
+            configuration: PushConfiguration(),
+            httpClient: HttpClient.createClient(),
+            policyEvaluator: MfaPolicyEvaluator.create()
+        )
+
+        let messageData: [String: Any] = [
+            "messageId": "message-string-i",
+            "message": jwt
+        ]
+
+        let notification = try await service.processNotification(messageData: messageData)
+
+        XCTAssertNotNil(notification)
+        XCTAssertEqual(notification?.sentAt, Date(timeIntervalSince1970: 1_731_000_000))
+    }
+
     func testSendApprovalDefaultPush() async throws {
         mockResponder.authenticationResult = true
         let notification = makeNotification(pushType: .default)
@@ -188,6 +228,21 @@ final class PingAMPushHandlerTests: XCTestCase {
             "d": "user-123",
             "e": "iPhone 16",
             "extraField": "extraValue"
+        ]
+        return try CompactJwt.signJwtClaims(base64Secret: base64Secret, claims: claims)
+    }
+
+    /// Builds a minimal signed PingAM push JWT whose `i` claim carries the
+    /// supplied value verbatim, so tests can exercise non-numeric claim types
+    /// (e.g. a string-typed interval) exactly as AM would serialize them.
+    private func jwt(withStringInterval interval: String) throws -> String {
+        let claims: [String: Any] = [
+            "u": "mechanism-id",
+            "c": challengeBase64,
+            "t": 180,
+            "i": interval,
+            "m": "Approve login?",
+            "k": "DEFAULT"
         ]
         return try CompactJwt.signJwtClaims(base64Secret: base64Secret, claims: claims)
     }

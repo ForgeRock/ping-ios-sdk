@@ -1,5 +1,4 @@
 ## [UNRELEASED]
-
 #### Added
 
 - Added RFC 9396 (Rich Authorization Requests) support to `PingOidc`. `Token.authorizationDetails` exposes the granted details. Typed details can be set config-wide (`OidcClientConfig.authorizationDetails`), per call (`OidcClient.generateAuthorizeUrl(authorizationDetails:)`) or per login (`OidcOptions.authorizationDetails`), and are sent in the PAR POST body when PAR is enabled. A raw `authorization_details` string in `OidcOptions.additionalParameters` or `customParams` is still forwarded when no typed details are set. A malformed `authorization_details` in a token response keeps the token without details and logs a warning [SDKS-5423, SDKS-5425]
@@ -10,6 +9,7 @@
 
 #### Fixed
 
+- Fixed `PushNotification.isExpired` calculating expiry from the local creation time instead of the server send time (`sentAt`); notifications without a send time fall back to the creation time with unchanged behaviour [SDKS-5490]
 - Fixed a `state` override passed via `OidcOptions.additionalParameters` or `customParams` being sent twice on the standard flow and never reaching the PAR body. It is now sent once [SDKS-5425]
 - Fixed a `state` or `authorization_details` entry in `OidcClientConfig.additionalParameters` being sent twice (next to the generated state) on the standard flow; it is now sent once, and the callback is validated against a config-level `state` [SDKS-5425]
 - `Journey.journeyUser()` now returns a user whose `token()` can complete on a restored session (it previously failed with "No AuthCode is available."); the DaVinci `daVinciUser()` fallback reports an actionable error message [SDKS-5423]
@@ -17,6 +17,7 @@
 
 #### Changed
 
+- `PushError` now includes `notificationExpired`; exhaustive `switch` statements over `PushError` must handle the new case. Approving or denying an expired notification now throws locally instead of being rejected by the server with HTTP 400 [SDKS-5490]
 - `OidcClientConfig.buildAuthorizeParams(pkce:extraParameters:onParam:)` is now `throws`; callers need `try` [SDKS-5423, SDKS-5425]
 - A raw `authorization_details` in `OidcClient.generateAuthorizeUrl(customParams:)` is now sent once, in the PAR POST body when PAR is enabled (it previously went onto the front-channel URL only). When typed `authorizationDetails` are also passed, the typed value wins and a warning is logged [SDKS-5423]
 
