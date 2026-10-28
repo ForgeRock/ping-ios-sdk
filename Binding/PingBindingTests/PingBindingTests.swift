@@ -366,6 +366,23 @@ final class PingBindingTests: XCTestCase {
         XCTAssertTrue((appPinConfig.logger as? StandardLogger) === logger)
     }
 
+    func testDeviceBindingConfig_PreservesAppSuppliedAuthenticatorLogger() {
+        // Given
+        let workflowLogger = StandardLogger()
+        let appLogger = StandardLogger()
+        let config = DeviceBindingConfig()
+        config.logger = workflowLogger
+        let appPinConfig = AppPinConfig(logger: appLogger)
+        config.authenticatorConfig = appPinConfig
+
+        // When
+        let authenticator = config.authenticator(type: .applicationPin, prompt: Prompt(title: "", subtitle: "", description: ""))
+
+        // Then - the app-supplied logger survives the propagation
+        XCTAssertTrue(authenticator is AppPinAuthenticator)
+        XCTAssertTrue((appPinConfig.logger as? StandardLogger) === appLogger)
+    }
+
     func testDeviceBindingConfig_ES256AlgorithmAndKeySize() {
         // Given
         let config = DeviceBindingConfig()

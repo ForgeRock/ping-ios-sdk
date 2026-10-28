@@ -11,7 +11,6 @@
 import Foundation
 import PingDeviceId
 import PingLogger
-import PingOrchestrate
 
 #if canImport(UIKit)
 import UIKit
@@ -119,10 +118,13 @@ public class DeviceBindingConfig {
                 }
             }()
 
-            // Propagate the device binding logger to the authenticator, matching Android's
-            // DeviceBindingConfig.createBiometricConfig/createAppPinConfig which pre-set
-            // logger on every fresh authenticator config.
-            config?.logger = logger
+            // Propagate the device binding logger to the authenticator without
+            // overwriting a logger the app set on a supplied config, matching
+            // Android's createBiometricConfig/createAppPinConfig which apply
+            // the user's configuration last.
+            if config?.logger == nil {
+                config?.logger = logger
+            }
 
             let authenticator = type.getAuthType(config: config)
             authenticator.setPrompt(prompt)

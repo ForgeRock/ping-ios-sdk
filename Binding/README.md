@@ -364,9 +364,9 @@ The SDK allows for customization of the device authentication process, particula
 
 #### Device Binding Configuration
 
-Both `bind` and `sign` accept a configuration closure on `DeviceBindingConfig`. The available options mirror the Android SDK's `DeviceBindingConfig`: `deviceName`, `deviceIdentifier`, `userKeyStorage`, `claims`, `userKeySelector`, `issueTime`, `notBeforeTime`, `expirationTime`, and `logger`.
+Both `bind` and `sign` accept a configuration closure on `DeviceBindingConfig`. Its options include `deviceName`, `deviceIdentifier`, `userKeyStorage`, `claims`, `userKeySelector`, `issueTime`, `notBeforeTime`, `expirationTime`, `logger`, `deviceAuthenticator`, and `authenticatorConfig`; `userKeySelector` is available only on platforms that can import UIKit (iOS).
 
-The `logger` property is seeded from the Journey workflow's logger before the configuration closure runs, so binding and signing operations log through the logger the app configured on the Journey (or DaVinci) client. It is also propagated to the authenticator configuration, and can be overridden in the closure:
+The `logger` property is seeded from the Journey workflow's logger before the configuration closure runs, so binding and signing operations log through the logger the app configured on the Journey client. It is also propagated to the authenticator configuration, and can be overridden in the closure:
 
 ```swift
 let result = await callback.bind { config in

@@ -19,7 +19,7 @@
 
 #### Changed
 
-- `DeviceBindingConfig` gains a `logger` property, seeded from the Journey/DaVinci workflow logger during `bind` and `sign` and propagated to the authenticator configuration, so device binding operations log through the app's configured logger [SDKS-4764]
+- `DeviceBindingConfig` gains a `logger` property, seeded from the Journey workflow logger during `bind` and `sign` and propagated to the authenticator configuration, so device binding operations log through the app's configured logger; the app can still override it in the configuration closure [SDKS-4764]
 
 - `OidcClientConfig.buildAuthorizeParams(pkce:extraParameters:onParam:)` is now `throws`; callers need `try` [SDKS-5423, SDKS-5425]
 - A raw `authorization_details` in `OidcClient.generateAuthorizeUrl(customParams:)` is now sent once, in the PAR POST body when PAR is enabled (it previously went onto the front-channel URL only). When typed `authorizationDetails` are also passed, the typed value wins and a warning is logged [SDKS-5423]

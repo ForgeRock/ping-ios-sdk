@@ -351,7 +351,9 @@ var targets: [Target] = [
             dependencies: [
                 "PingCommons",
                 "PingDeviceId",
-                "PingJourneyPlugin"
+                "PingJourneyPlugin",
+                "PingOrchestrate",
+                "PingLogger"
             ],
             path: "Binding/Binding",
             exclude: ["Binding.h"],
