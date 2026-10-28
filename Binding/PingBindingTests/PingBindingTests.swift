@@ -12,6 +12,7 @@ import XCTest
 @testable import PingBinding
 @testable import PingJourneyPlugin
 @testable import PingStorage
+@testable import PingLogger
 import PingDeviceId
 
 final class PingBindingTests: XCTestCase {
@@ -309,6 +310,7 @@ final class PingBindingTests: XCTestCase {
         XCTAssertEqual(config.timeout, 60)
         XCTAssertEqual(config.attestation, .none)
         XCTAssertEqual(config.deviceBindingAuthenticationType, .none)
+        XCTAssertNil(config.logger)
         XCTAssertTrue(config.claims.isEmpty)
     }
     
@@ -341,13 +343,29 @@ final class PingBindingTests: XCTestCase {
         let expectedId = "custom-device-id-12345"
         let config = DeviceBindingConfig()
         config.deviceIdentifier = StaticDeviceIdentifier(expectedId)
-        
+
         // Then
         let customIdentifier = try XCTUnwrap(config.deviceIdentifier)
         let resolvedId = try await customIdentifier.id
         XCTAssertEqual(resolvedId, expectedId)
     }
-    
+
+    func testDeviceBindingConfig_LoggerPropagatesToAuthenticatorConfig() {
+        // Given
+        let logger = StandardLogger()
+        let config = DeviceBindingConfig()
+        config.logger = logger
+
+        // When - build an AppPin authenticator around a shared config instance
+        let appPinConfig = AppPinConfig()
+        config.authenticatorConfig = appPinConfig
+        let authenticator = config.authenticator(type: .applicationPin, prompt: Prompt(title: "", subtitle: "", description: ""))
+
+        // Then - the shared config instance received the device binding logger
+        XCTAssertTrue(authenticator is AppPinAuthenticator)
+        XCTAssertTrue((appPinConfig.logger as? StandardLogger) === logger)
+    }
+
     func testDeviceBindingConfig_ES256AlgorithmAndKeySize() {
         // Given
         let config = DeviceBindingConfig()

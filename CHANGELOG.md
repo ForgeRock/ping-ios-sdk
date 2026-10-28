@@ -15,8 +15,11 @@
 - `Journey.journeyUser()` now returns a user whose `token()` can complete on a restored session (it previously failed with "No AuthCode is available."); the DaVinci `daVinciUser()` fallback reports an actionable error message [SDKS-5423]
 - Fixed literal `+` characters in query and form parameter values being decoded as spaces by the server; `URLSessionHttpRequest` now RFC 3986-encodes query and form values (e.g. `+` as `%2B`) and renders `nil`-valued items as `name=` [SDKS-5423]
 - Fixed `PingFido` DaVinci registration storing the user ID as the UTF-8 text of its base64 form instead of the raw bytes, and the authentication collector returning the user handle as UTF-8 text, so passkeys now interoperate with browser-created passkeys on the same DaVinci FIDO2 policy [SDKS-5531]
+- DaVinci 4XX responses with `code: "timedOut"` (polling challenges that exhausted all retries) now return a recoverable `ErrorNode` carrying the server message, instead of an unrecoverable `FailureNode` — matching the Android SDK. `code: 1999` and `code: "requestTimedOut"` still return a `FailureNode` [SDKS-5095]
 
 #### Changed
+
+- `DeviceBindingConfig` gains a `logger` property, seeded from the Journey/DaVinci workflow logger during `bind` and `sign` and propagated to the authenticator configuration, so device binding operations log through the app's configured logger [SDKS-4764]
 
 - `OidcClientConfig.buildAuthorizeParams(pkce:extraParameters:onParam:)` is now `throws`; callers need `try` [SDKS-5423, SDKS-5425]
 - A raw `authorization_details` in `OidcClient.generateAuthorizeUrl(customParams:)` is now sent once, in the PAR POST body when PAR is enabled (it previously went onto the front-channel URL only). When typed `authorizationDetails` are also passed, the typed value wins and a warning is logged [SDKS-5423]

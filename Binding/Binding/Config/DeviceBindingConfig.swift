@@ -10,6 +10,8 @@
 
 import Foundation
 import PingDeviceId
+import PingLogger
+import PingOrchestrate
 
 #if canImport(UIKit)
 import UIKit
@@ -18,6 +20,9 @@ import UIKit
 /// Configuration for device binding.
 /// This class allows you to customize the behavior of the device binding and signing process.
 public class DeviceBindingConfig {
+    /// Logger instance used for debugging and monitoring device binding operations.
+    /// Propagated to the authenticator configurations created by `authenticator(type:prompt:)`.
+    public var logger: Logger? = nil
     #if canImport(UIKit)
     /// Helper private variable for deviceName
     private var _deviceName: String?
@@ -103,18 +108,22 @@ public class DeviceBindingConfig {
         guard let deviceAuthenticator = deviceAuthenticator else {
             #if canImport(UIKit)
             // If no custom config is provided, create a default one with the appropriate key size
-            var config = authenticatorConfig
-            if config == nil {
+            var config: AuthenticatorConfig? = authenticatorConfig ?? {
                 switch type {
                 case .biometricOnly, .biometricAllowFallback:
-                    config = BiometricAuthenticatorConfig()
+                    return BiometricAuthenticatorConfig()
                 case .applicationPin:
-                    config = AppPinConfig()
+                    return AppPinConfig()
                 case .none:
-                    break
+                    return nil
                 }
-            }
-            
+            }()
+
+            // Propagate the device binding logger to the authenticator, matching Android's
+            // DeviceBindingConfig.createBiometricConfig/createAppPinConfig which pre-set
+            // logger on every fresh authenticator config.
+            config?.logger = logger
+
             let authenticator = type.getAuthType(config: config)
             authenticator.setPrompt(prompt)
             return authenticator

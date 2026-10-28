@@ -272,7 +272,7 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         }
     }
     
-    func testDaVinciPollingTimedOutCodeReturnsFailureNode() async throws {
+    func testDaVinciPollingTimedOutCodeReturnsErrorNode() async throws {
         MockURLProtocol.requestHandler = { request in
             switch request.url!.path {
             case MockAPIEndpoint.discovery.url.path:
@@ -296,10 +296,10 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
             }
         }
-        
+
         let daVinci = DaVinci.createDaVinci { config in
             config.httpClient = MockURLProtocol.makeClient()
-            
+
             config.module(PingDavinci.OidcModule.config) { oidcValue in
                 oidcValue.clientId = self.config.clientId
                 oidcValue.scopes = Set(self.config.scopes)
@@ -308,25 +308,22 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
                 oidcValue.storage = MemoryStorage()
                 oidcValue.logger = LogManager.standard
             }
-            
+
             config.module(CookieModule.config) { cookieValue in
                 cookieValue.cookieStorage = MemoryStorage()
                 cookieValue.persist = ["ST"]
             }
         }
-        
+
         let node = await daVinci.start()
-        XCTAssertTrue(node is FailureNode, "Expected FailureNode for code=timedOut, got \(type(of: node))")
-        guard let failureNode = node as? FailureNode,
-              let apiError = failureNode.cause as? ApiError else {
-            XCTFail("Expected FailureNode with ApiError")
+        XCTAssertTrue(node is ErrorNode, "Expected ErrorNode for code=timedOut, got \(type(of: node))")
+        guard let errorNode = node as? ErrorNode else {
+            XCTFail("Expected ErrorNode")
             return
         }
-        switch apiError {
-        case .error(let code, let json, _):
-            XCTAssertEqual(code, 400)
-            XCTAssertEqual(json["code"] as? String, "timedOut")
-        }
+        XCTAssertEqual(errorNode.status, 400)
+        XCTAssertEqual(errorNode.message, "timedOut")
+        XCTAssertEqual(errorNode.input["code"] as? String, "timedOut")
     }
     
     func testDaVinciAuthorizeEndpointFailedBetween400To499() async throws {
