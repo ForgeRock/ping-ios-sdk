@@ -14,6 +14,26 @@ import AuthenticationServices
 import UIKit
 #endif
 import PingLogger
+import PingCommons
+
+/// Describes how `user.id` in the registration options is converted to the user ID bytes stored by the authenticator.
+///
+/// Two modes exist because the two server flows deliver the user ID differently. Journey (PingAM) supplies it
+/// as plain text, whereas DaVinci supplies raw bytes that the DaVinci collector renders as a base64 string
+/// before the options reach `Fido.register`, so they must be decoded back to the original bytes.
+///
+/// The authenticator stores the user ID when the credential is created and it cannot be changed afterwards,
+/// so the mode must match how the server produced `user.id`.
+public enum FidoUserIDEncoding: Sendable {
+    /// Uses the UTF-8 bytes of `user.id`, which is a plain-text value (the Journey flow).
+    case utf8
+    /// Decodes `user.id` as base64 into raw bytes (the DaVinci flow).
+    ///
+    /// The standard and URL-safe alphabets are accepted, with or without padding. The value must be base64:
+    /// a plain-text string that is not base64 either fails to decode or, when it happens to consist of valid
+    /// base64 characters, decodes to bytes that differ from its text.
+    case base64
+}
 
 /// Fido is a class that provides FIDO registration and authentication functionalities.
 ///
@@ -55,12 +75,18 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     /// - Parameters:
     ///   - options: A dictionary containing the registration options.
     ///   - window: The window to present the registration UI in.
+    ///   - userIDEncoding: How `user.id` is converted to the stored user ID bytes. Defaults to `.utf8`,
+    ///     which suits a plain-text `user.id` such as the one supplied by Journey. Use `.base64` when `user.id`
+    ///     is a base64 string (standard or URL-safe, with or without padding) that represents raw bytes, as
+    ///     supplied by DaVinci. The authenticator keeps the user ID it receives at creation and it cannot be
+    ///     changed afterwards. With `.base64`, an undecodable or empty `user.id` completes with
+    ///     `FidoError.missingParameters` before any system UI is shown.
     ///   - logger: Optional logger for ceremony state transitions and errors. Pass the
     ///     workflow logger (e.g. `davinci?.config.logger`); when `nil` no log output is
     ///     produced. Scoped to this call only — overwritten by subsequent ceremonies and
     ///     cleared in `cleanup()`.
     ///   - completion: A closure to be called with the registration result.
-    public func register(options: [String: Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+    public func register(options: [String: Any], window: ASPresentationAnchor, userIDEncoding: FidoUserIDEncoding = .utf8, logger: Logger? = nil, completion: @escaping (Result<[String: Any], Error>) -> Void) {
         self.logger = logger
         logger?.d("Fido: Starting registration")
         self.window = window
@@ -78,7 +104,25 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
                 cleanup()
                 return
             }
-            let userID = Data(registrationOptions.user.id.utf8)
+
+            // The authenticator stores this user ID when the credential is created and it can never be
+            // changed afterwards, so it has to be right before any system UI is shown. It is resolved
+            // after the challenge check above, and an invalid value fails here without starting a ceremony.
+            let userID: Data
+            switch userIDEncoding {
+            case .utf8:
+                userID = Data(registrationOptions.user.id.utf8)
+            case .base64:
+                // Fails for non-base64 input (including whitespace) and for an empty result: a credential
+                // must not be created with an empty user ID.
+                guard let decoded = Base64.decodeBase64UrlToData(registrationOptions.user.id), !decoded.isEmpty else {
+                    logger?.e("Fido: Registration failed - user.id is not valid base64", error: nil)
+                    completion(.failure(FidoError.missingParameters("user.id is not valid base64")))
+                    cleanup()
+                    return
+                }
+                userID = decoded
+            }
 
             // 3. Determine which requests to create based on selection criteria
             var requests: [ASAuthorizationRequest] = []

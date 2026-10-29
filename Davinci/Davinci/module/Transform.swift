@@ -32,8 +32,7 @@ public class NodeTransformModule {
                 
                 // Filter out client-side "timeout" related unrecoverable failures
                 if json[Constants.code] as? Int == Constants.code_1999 ||
-                    json[Constants.code] as? String == Constants.requestTimedOut ||
-                    json[Constants.code] as? String == Constants.pollingValueTimedOut {
+                    json[Constants.code] as? String == Constants.requestTimedOut {
                     return FailureNode(cause: ApiError.error(status, json, body))
                 }
                 

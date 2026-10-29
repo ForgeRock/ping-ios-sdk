@@ -6,6 +6,7 @@
 - The authorization callback now validates the returned `state` (RFC 6749 §10.12) before surfacing an error redirect. A mismatch or missing `state` throws `OidcError.authorizeError` [SDKS-5425]
 - A PAR response whose `expires_in` is missing, non-numeric, non-positive or at most 30 seconds now logs a warning [SDKS-5423]
 - The callback `state` is read from the query string or the fragment, so `response_mode=fragment` error redirects are validated and surfaced correctly [SDKS-5425]
+- Added `DeviceBindingConfig.logger`. `bind` and `sign` seed it from the Journey workflow logger before the configuration closure runs and propagate it to the authenticator configuration, so device binding operations log through the app's configured logger. A logger the app sets in the closure, or on its own `authenticatorConfig`, takes precedence [SDKS-4764]
 
 #### Fixed
 
@@ -14,12 +15,18 @@
 - Fixed a `state` or `authorization_details` entry in `OidcClientConfig.additionalParameters` being sent twice (next to the generated state) on the standard flow; it is now sent once, and the callback is validated against a config-level `state` [SDKS-5425]
 - `Journey.journeyUser()` now returns a user whose `token()` can complete on a restored session (it previously failed with "No AuthCode is available."); the DaVinci `daVinciUser()` fallback reports an actionable error message [SDKS-5423]
 - Fixed literal `+` characters in query and form parameter values being decoded as spaces by the server; `URLSessionHttpRequest` now RFC 3986-encodes query and form values (e.g. `+` as `%2B`) and renders `nil`-valued items as `name=` [SDKS-5423]
+- Fixed `PingFido` DaVinci registration storing the user ID as the UTF-8 text of its base64 form instead of the raw bytes, and the authentication collector returning the user handle as UTF-8 text, so passkeys now interoperate with browser-created passkeys on the same DaVinci FIDO2 policy [SDKS-5531]
+- Fixed DaVinci 4XX responses with `code: "timedOut"` (a polling challenge that exhausted all retries) returning an unrecoverable `FailureNode`. They now return a recoverable `ErrorNode` carrying the server message and status, matching the Android SDK. `code: 1999` and `code: "requestTimedOut"` still return a `FailureNode` [SDKS-5095]
 
 #### Changed
 
 - `PushError` now includes `notificationExpired`; exhaustive `switch` statements over `PushError` must handle the new case. Approving or denying an expired notification now throws locally instead of being rejected by the server with HTTP 400 [SDKS-5490]
 - `OidcClientConfig.buildAuthorizeParams(pkce:extraParameters:onParam:)` is now `throws`; callers need `try` [SDKS-5423, SDKS-5425]
 - A raw `authorization_details` in `OidcClient.generateAuthorizeUrl(customParams:)` is now sent once, in the PAR POST body when PAR is enabled (it previously went onto the front-channel URL only). When typed `authorizationDetails` are also passed, the typed value wins and a warning is logged [SDKS-5423]
+- `PingFido` DaVinci `attestationValue` and `assertionValue` now encode `rawId` as base64url without padding, `assertionValue.authenticatorAttachment` reports the real authenticator type (it was always `platform`), and the `userHandle` key is omitted when the authenticator returns none [SDKS-5531]
+- DaVinci passkeys created with earlier SDK versions keep their previous user ID, which cannot be changed; users need to delete and register them again to obtain the corrected user ID [SDKS-5531]
+- `Fido.register(options:window:userIDEncoding:logger:completion:)` has a new `userIDEncoding` parameter that defaults to the previous behavior [SDKS-5531]
+- `PingBinding` now declares `PingOrchestrate` and `PingLogger` as direct dependencies in `Package.swift` and `PingBinding.podspec`. Both were already resolved transitively through `PingJourneyPlugin` [SDKS-4764]
 
 ## [2.2.0]
 
