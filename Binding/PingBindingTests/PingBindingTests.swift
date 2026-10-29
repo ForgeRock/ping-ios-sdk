@@ -11,6 +11,7 @@
 import XCTest
 @testable import PingBinding
 @testable import PingJourneyPlugin
+@testable import PingOrchestrate
 @testable import PingStorage
 @testable import PingLogger
 import PingDeviceId
@@ -381,6 +382,265 @@ final class PingBindingTests: XCTestCase {
         // Then - the app-supplied logger survives the propagation
         XCTAssertTrue(authenticator is AppPinAuthenticator)
         XCTAssertTrue((appPinConfig.logger as? StandardLogger) === appLogger)
+    }
+
+    func testDeviceBindingConfig_PreservesAppSuppliedBiometricAuthenticatorLogger() {
+        // Given
+        let workflowLogger = StandardLogger()
+        let appLogger = StandardLogger()
+        let config = DeviceBindingConfig()
+        config.logger = workflowLogger
+        let biometricConfig = BiometricAuthenticatorConfig(logger: appLogger)
+        config.authenticatorConfig = biometricConfig
+
+        // When
+        let authenticator = config.authenticator(type: .biometricOnly, prompt: Prompt(title: "", subtitle: "", description: ""))
+
+        // Then
+        XCTAssertTrue(authenticator is BiometricOnlyAuthenticator)
+        XCTAssertTrue((biometricConfig.logger as? StandardLogger) === appLogger)
+    }
+
+    func testDeviceBindingConfig_SuppliedBiometricConfigWithoutLoggerReceivesLogger() {
+        // Given
+        let logger = StandardLogger()
+        let config = DeviceBindingConfig()
+        config.logger = logger
+        let biometricConfig = BiometricAuthenticatorConfig()
+        config.authenticatorConfig = biometricConfig
+
+        // When
+        _ = config.authenticator(type: .biometricAllowFallback, prompt: Prompt(title: "", subtitle: "", description: ""))
+
+        // Then
+        XCTAssertTrue((biometricConfig.logger as? StandardLogger) === logger)
+    }
+
+    func testDeviceBindingConfig_FreshAuthenticatorConfigReceivesLogger() {
+        // Given - no authenticatorConfig supplied, so the config is created per authenticator type
+        let logger = StandardLogger()
+        let config = DeviceBindingConfig()
+        config.logger = logger
+
+        // When / Then
+        let types: [DeviceBindingAuthenticationType] = [.applicationPin, .biometricOnly, .biometricAllowFallback]
+        for type in types {
+            let authenticator = config.authenticator(type: type, prompt: Prompt(title: "", subtitle: "", description: ""))
+            guard let storedConfig = authenticatorConfig(of: authenticator) else {
+                XCTFail("Expected a stored authenticator configuration for \(type)")
+                continue
+            }
+            XCTAssertTrue((storedConfig.logger as? StandardLogger) === logger, "Logger not propagated for \(type)")
+        }
+    }
+
+    func testDeviceBindingConfig_FreshAuthenticatorConfigHasNoLoggerWhenConfigLoggerIsNil() {
+        // Given
+        let config = DeviceBindingConfig()
+        XCTAssertNil(config.logger)
+
+        // When
+        let authenticator = config.authenticator(type: .applicationPin, prompt: Prompt(title: "", subtitle: "", description: ""))
+
+        // Then
+        XCTAssertNil(authenticatorConfig(of: authenticator)?.logger)
+    }
+
+    func testDeviceBindingConfig_NoneAuthenticatorIgnoresLogger() {
+        // Given
+        let config = DeviceBindingConfig()
+        config.logger = StandardLogger()
+
+        // When
+        let authenticator = config.authenticator(type: .none, prompt: Prompt(title: "", subtitle: "", description: ""))
+
+        // Then - there is no authenticator configuration to propagate to
+        XCTAssertTrue(authenticator is NoneAuthenticator)
+        XCTAssertNil(authenticatorConfig(of: authenticator))
+    }
+
+    // MARK: - Logger Seeding in bind and sign
+
+    func testBind_SeedsConfigLoggerFromJourneyBeforeConfigClosure() async {
+        // Given
+        let journeyLogger = StandardLogger()
+        let appPinConfig = AppPinConfig(pinCollector: CancellingPinCollector())
+        var loggerSeenByClosure: Logger?
+
+        // When
+        await bindStoppingAtPinPrompt(journey: makeJourney(logger: journeyLogger), userId: "loggerBindSeed") { config in
+            loggerSeenByClosure = config.logger
+            config.authenticatorConfig = appPinConfig
+        }
+
+        // Then - seeded before the closure ran, and propagated to the authenticator configuration
+        XCTAssertTrue((loggerSeenByClosure as? StandardLogger) === journeyLogger)
+        XCTAssertTrue((appPinConfig.logger as? StandardLogger) === journeyLogger)
+    }
+
+    func testBind_ConfigClosureLoggerOverridesJourneyLogger() async {
+        // Given
+        let journeyLogger = StandardLogger()
+        let appLogger = StandardLogger()
+        let appPinConfig = AppPinConfig(pinCollector: CancellingPinCollector())
+
+        // When
+        await bindStoppingAtPinPrompt(journey: makeJourney(logger: journeyLogger), userId: "loggerBindOverride") { config in
+            config.logger = appLogger
+            config.authenticatorConfig = appPinConfig
+        }
+
+        // Then
+        XCTAssertTrue((appPinConfig.logger as? StandardLogger) === appLogger)
+    }
+
+    func testBind_AppSuppliedAuthenticatorLoggerWinsOverJourneyLogger() async {
+        // Given
+        let journeyLogger = StandardLogger()
+        let authenticatorLogger = StandardLogger()
+        let appPinConfig = AppPinConfig(logger: authenticatorLogger, pinCollector: CancellingPinCollector())
+
+        // When
+        await bindStoppingAtPinPrompt(journey: makeJourney(logger: journeyLogger), userId: "loggerBindSupplied") { config in
+            config.authenticatorConfig = appPinConfig
+        }
+
+        // Then
+        XCTAssertTrue((appPinConfig.logger as? StandardLogger) === authenticatorLogger)
+    }
+
+    func testBind_WithoutJourneyLeavesLoggerUnset() async {
+        // Given
+        let appPinConfig = AppPinConfig(pinCollector: CancellingPinCollector())
+        var loggerSeenByClosure: Logger?
+
+        // When
+        await bindStoppingAtPinPrompt(journey: nil, userId: "loggerBindNoJourney") { config in
+            loggerSeenByClosure = config.logger
+            config.authenticatorConfig = appPinConfig
+        }
+
+        // Then
+        XCTAssertNil(loggerSeenByClosure)
+        XCTAssertNil(appPinConfig.logger)
+    }
+
+    func testSign_SeedsConfigLoggerFromJourneyBeforeConfigClosure() async throws {
+        // Given
+        let journeyLogger = StandardLogger()
+        let appPinConfig = AppPinConfig(pinCollector: CancellingPinCollector())
+        var loggerSeenByClosure: Logger?
+
+        // When
+        let error = try await signStoppingAtPinPrompt(journey: makeJourney(logger: journeyLogger), userId: "loggerSignSeed") { config in
+            loggerSeenByClosure = config.logger
+            config.authenticatorConfig = appPinConfig
+        }
+
+        // Then - the PIN prompt was reached, so the authenticator configuration was resolved
+        XCTAssertEqual(error as? DeviceBindingError, .userCanceled)
+        XCTAssertTrue((loggerSeenByClosure as? StandardLogger) === journeyLogger)
+        XCTAssertTrue((appPinConfig.logger as? StandardLogger) === journeyLogger)
+    }
+
+    func testSign_ConfigClosureLoggerOverridesJourneyLogger() async throws {
+        // Given
+        let journeyLogger = StandardLogger()
+        let appLogger = StandardLogger()
+        let appPinConfig = AppPinConfig(pinCollector: CancellingPinCollector())
+
+        // When
+        let error = try await signStoppingAtPinPrompt(journey: makeJourney(logger: journeyLogger), userId: "loggerSignOverride") { config in
+            config.logger = appLogger
+            config.authenticatorConfig = appPinConfig
+        }
+
+        // Then
+        XCTAssertEqual(error as? DeviceBindingError, .userCanceled)
+        XCTAssertTrue((appPinConfig.logger as? StandardLogger) === appLogger)
+    }
+
+    func testSign_AppSuppliedAuthenticatorLoggerWinsOverJourneyLogger() async throws {
+        // Given
+        let journeyLogger = StandardLogger()
+        let authenticatorLogger = StandardLogger()
+        let appPinConfig = AppPinConfig(logger: authenticatorLogger, pinCollector: CancellingPinCollector())
+
+        // When
+        let error = try await signStoppingAtPinPrompt(journey: makeJourney(logger: journeyLogger), userId: "loggerSignSupplied") { config in
+            config.authenticatorConfig = appPinConfig
+        }
+
+        // Then
+        XCTAssertEqual(error as? DeviceBindingError, .userCanceled)
+        XCTAssertTrue((appPinConfig.logger as? StandardLogger) === authenticatorLogger)
+    }
+
+    func testSign_WithoutJourneyLeavesLoggerUnset() async throws {
+        // Given
+        let appPinConfig = AppPinConfig(pinCollector: CancellingPinCollector())
+        var loggerSeenByClosure: Logger?
+
+        // When
+        let error = try await signStoppingAtPinPrompt(journey: nil, userId: "loggerSignNoJourney") { config in
+            loggerSeenByClosure = config.logger
+            config.authenticatorConfig = appPinConfig
+        }
+
+        // Then
+        XCTAssertEqual(error as? DeviceBindingError, .userCanceled)
+        XCTAssertNil(loggerSeenByClosure)
+        XCTAssertNil(appPinConfig.logger)
+    }
+
+    // MARK: - Logger Test Helpers
+
+    /// A PIN collector that cancels immediately, so `bind` and `sign` stop at the PIN prompt without UI.
+    private final class CancellingPinCollector: PinCollector {
+        func collectPin(prompt: Prompt, completion: @escaping @Sendable (String?) -> Void) {
+            completion(nil)
+        }
+    }
+
+    /// Builds a Journey whose workflow logger is `logger`. Setting `WorkflowConfig.logger` also replaces
+    /// the global `LogManager.logger`, which is restored so other tests are unaffected.
+    private func makeJourney(logger: Logger) -> Journey {
+        let previousLogger = LogManager.logger
+        defer { LogManager.logger = previousLogger }
+        return Workflow.createWorkflow { config in
+            config.logger = logger
+        }
+    }
+
+    /// Reads the private `config` stored by the biometric and application PIN authenticators.
+    private func authenticatorConfig(of authenticator: DeviceAuthenticator) -> AuthenticatorConfig? {
+        Mirror(reflecting: authenticator).children.first { $0.label == "config" }?.value as? AuthenticatorConfig
+    }
+
+    /// Runs `Binding.bind` for an Application PIN callback. The key is never created: the simulator
+    /// reports Application PIN as unsupported, and on a device the cancelling collector aborts registration.
+    private func bindStoppingAtPinPrompt(journey: Journey?, userId: String, configure: (DeviceBindingConfig) -> Void) async {
+        let callback = DeviceBindingCallback()
+        callback.userId = userId
+        callback.userName = userId
+        callback.challenge = "challenge"
+        callback.deviceBindingAuthenticationType = .applicationPin
+        _ = try? await Binding.bind(callback: callback, journey: journey, config: configure)
+    }
+
+    /// Runs `Binding.sign` against a stored Application PIN key. The cancelling collector ends the
+    /// authentication with `DeviceBindingError.userCanceled` once the authenticator configuration is resolved.
+    private func signStoppingAtPinPrompt(journey: Journey?, userId: String, configure: (DeviceBindingConfig) -> Void) async throws -> Error? {
+        try await userKeyStorage.save(userKey: UserKey(keyTag: "tag-\(userId)", userId: userId, username: userId, kid: "kid-\(userId)", authType: .applicationPin))
+        let callback = DeviceSigningVerifierCallback()
+        callback.userId = userId
+        callback.challenge = "challenge"
+        do {
+            _ = try await Binding.sign(callback: callback, journey: journey, config: configure)
+            return nil
+        } catch {
+            return error
+        }
     }
 
     func testDeviceBindingConfig_ES256AlgorithmAndKeySize() {

@@ -325,6 +325,113 @@ class DaVinciErrorTests: DaVinciBaseTests, @unchecked Sendable {
         XCTAssertEqual(errorNode.message, "timedOut")
         XCTAssertEqual(errorNode.input["code"] as? String, "timedOut")
     }
+
+    func testDaVinciPollingTimedOutCodeReturnsErrorNodeForAny4xxStatus() async throws {
+        let status = Int.random(in: 400 ..< 500)
+        let node = await startFlow(authorizeStatus: status, authorizeBody: """
+        {
+            "id": "czys1qteu6",
+            "code": "timedOut",
+            "message": "timedOut"
+        }
+        """)
+
+        guard let errorNode = node as? ErrorNode else {
+            XCTFail("Expected ErrorNode for code=timedOut with status \(status), got \(type(of: node))")
+            return
+        }
+        XCTAssertEqual(errorNode.status, status)
+        XCTAssertEqual(errorNode.message, "timedOut")
+    }
+
+    func testDaVinciPollingTimedOutCodeStillHonoursUnrecoverableConnectorFailure() async throws {
+        // "timedOut" no longer short-circuits to a FailureNode, but it must not mask the
+        // PingOne Authentication Connector failures that are unrecoverable.
+        let status = Int.random(in: 400 ..< 500)
+        let node = await startFlow(authorizeStatus: status, authorizeBody: """
+        {
+            "id": "7bbe285f-c0e0-41ef-8925-c5c5bb370acc",
+            "connectorId": "pingOneAuthenticationConnector",
+            "capabilityName": "setSession",
+            "code": "timedOut",
+            "message": "timedOut"
+        }
+        """)
+
+        guard let failureNode = node as? FailureNode, let apiError = failureNode.cause as? ApiError else {
+            XCTFail("Expected FailureNode with ApiError, got \(type(of: node))")
+            return
+        }
+        switch apiError {
+        case .error(let code, let json, _):
+            XCTAssertEqual(code, status)
+            XCTAssertEqual(json["code"] as? String, "timedOut")
+        }
+    }
+
+    func testDaVinciClientTimeoutCodesReturnFailureNodeWithServerPayload() async throws {
+        // The Int 1999 and the String "requestTimedOut" remain the only code values that
+        // classify a 4XX response as an unrecoverable client-side timeout.
+        let codes: [(literal: String, expected: Any)] = [("1999", 1999), ("\"requestTimedOut\"", "requestTimedOut")]
+        for (literal, expected) in codes {
+            let status = Int.random(in: 400 ..< 500)
+            let node = await startFlow(authorizeStatus: status, authorizeBody: """
+            {
+                "id": "7bbe285f-c0e0-41ef-8925-c5c5bb370acc",
+                "code": \(literal),
+                "message": "Request timed out. Please try again."
+            }
+            """)
+
+            guard let failureNode = node as? FailureNode, let apiError = failureNode.cause as? ApiError else {
+                XCTFail("Expected FailureNode with ApiError for code \(literal), got \(type(of: node))")
+                continue
+            }
+            switch apiError {
+            case .error(let code, let json, _):
+                XCTAssertEqual(code, status)
+                if let expectedInt = expected as? Int {
+                    XCTAssertEqual(json["code"] as? Int, expectedInt)
+                } else if let expectedString = expected as? String {
+                    XCTAssertEqual(json["code"] as? String, expectedString)
+                }
+            }
+        }
+    }
+
+    /// Starts a DaVinci flow whose authorize endpoint answers with the given status and JSON body.
+    private func startFlow(authorizeStatus: Int, authorizeBody: String) async -> Node {
+        MockURLProtocol.requestHandler = { request in
+            switch request.url!.path {
+            case MockAPIEndpoint.discovery.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfigurationResponse)
+            case MockAPIEndpoint.authorization.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.authorization.url, statusCode: authorizeStatus, httpVersion: nil, headerFields: MockResponse.headers)!, authorizeBody.data(using: .utf8)!)
+            default:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+            }
+        }
+
+        let daVinci = DaVinci.createDaVinci { config in
+            config.httpClient = MockURLProtocol.makeClient()
+
+            config.module(PingDavinci.OidcModule.config) { oidcValue in
+                oidcValue.clientId = self.config.clientId
+                oidcValue.scopes = Set(self.config.scopes)
+                oidcValue.redirectUri = self.config.redirectUri
+                oidcValue.discoveryEndpoint = self.config.discoveryEndpoint
+                oidcValue.storage = MemoryStorage()
+                oidcValue.logger = LogManager.standard
+            }
+
+            config.module(CookieModule.config) { cookieValue in
+                cookieValue.cookieStorage = MemoryStorage()
+                cookieValue.persist = ["ST"]
+            }
+        }
+
+        return await daVinci.start()
+    }
     
     func testDaVinciAuthorizeEndpointFailedBetween400To499() async throws {
         MockURLProtocol.requestHandler = { request in
