@@ -129,7 +129,32 @@ final class OidcClientTests: XCTestCase {
         XCTAssertEqual(MockURLProtocol.requestHistory.count, 3)
         XCTAssertEqual(Int(MockURLProtocol.requestHistory.last!.value(forHTTPHeaderField: "Content-Length")!), "grant_type=refresh_token&refresh_token=Dummy%20RefreshToken&client_id=test-client-id".count)
     }
-    
+
+    /// RFC 9396 §7: the refresh-token response also echoes granted `authorization_details`,
+    /// and the decoded `Token` must carry them through the full HTTP → decode loop.
+    func testRefreshTokenResponseCarriesAuthorizationDetails() async throws {
+        MockURLProtocol.requestHandler = { request in
+            switch request.url!.path {
+            case MockAPIEndpoint.discovery.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.openIdConfiguration)
+            case MockAPIEndpoint.token.url.path:
+                return (HTTPURLResponse(url: MockAPIEndpoint.token.url, statusCode: 200, httpVersion: nil, headerFields: MockResponse.headers)!, MockResponse.tokenWithAuthorizationDetails)
+            default:
+                return (HTTPURLResponse(url: MockAPIEndpoint.discovery.url, statusCode: 500, httpVersion: nil, headerFields: nil)!, Data())
+            }
+        }
+
+        let refreshed = try await oidcClient.refreshToken("Dummy RefreshToken")
+        let details = try XCTUnwrap(refreshed.authorizationDetails, "refresh response authorization_details must survive decoding")
+        XCTAssertEqual(details.count, 1)
+        XCTAssertEqual(details[0].type, "payment_initiation")
+        if case .object(let amount)? = details[0].additionalFields["instructedAmount"] {
+            XCTAssertEqual(amount["currency"], .string("EUR"))
+        } else {
+            XCTFail("instructedAmount did not decode")
+        }
+    }
+
     // TestRailCase(24712)
     func testRevokeShouldDeleteTokenFromStorage() async throws {
         // First, get an access token

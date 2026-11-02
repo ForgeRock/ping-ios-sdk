@@ -170,7 +170,7 @@ public class OidcDeviceClient: @unchecked Sendable {
 
                         if tokenResponse.status.isSuccess() {
                             // Attempt to decode as a Token
-                            if let token = try? JSONDecoder().decode(Token.self, from: tokenResponse.body ?? Data()) {
+                            if let token = try? Token.decode(response: tokenResponse.body ?? Data(), logger: capturedConfig.logger) {
                                 try? await storage.save(item: token)
                                 continuation.yield(.success(OidcUser(config: capturedConfig)))
                                 continuation.finish()

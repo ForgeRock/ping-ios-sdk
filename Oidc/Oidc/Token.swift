@@ -2,7 +2,7 @@
 //  Token.swift
 //  PingOidc
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -10,6 +10,7 @@
 
 
 import Foundation
+import PingLogger
 
 /// Struct representing an OIDC token.
 public struct Token: Codable, Sendable {
@@ -27,7 +28,9 @@ public struct Token: Codable, Sendable {
     public let idToken: String?
     /// The exact timestamp (in seconds since 1970) when the token expires.
     public let expiresAt: Int64
-    
+    /// The RFC 9396 Rich Authorization Details granted for this token, if any.
+    public let authorizationDetails: [AuthorizationDetail]?
+
     /// Initializes a new instance of `Token`.
     /// - Parameters:
     ///   - accessToken: The access token string.
@@ -36,7 +39,8 @@ public struct Token: Codable, Sendable {
     ///   - expiresIn: The duration (in seconds) for which the token is valid.
     ///   - refreshToken: The refresh token string (optional).
     ///   - idToken: The ID token string (optional).
-    public init(accessToken: String, tokenType: String?, scope: String?, expiresIn: Int64, refreshToken: String?, idToken: String?) {
+    ///   - authorizationDetails: The RFC 9396 Rich Authorization Details granted for this token (optional).
+    public init(accessToken: String, tokenType: String?, scope: String?, expiresIn: Int64, refreshToken: String?, idToken: String?, authorizationDetails: [AuthorizationDetail]? = nil) {
         self.accessToken = accessToken
         self.tokenType = tokenType
         self.scope = scope
@@ -44,6 +48,7 @@ public struct Token: Codable, Sendable {
         self.refreshToken = refreshToken
         self.idToken = idToken
         self.expiresAt = Int64(Date().timeIntervalSince1970) + expiresIn
+        self.authorizationDetails = authorizationDetails
     }
     
     /// A Boolean value indicating whether the token has expired.
@@ -71,6 +76,27 @@ public struct Token: Codable, Sendable {
         refreshToken = try container.decodeIfPresent(String.self, forKey: .refreshToken)
         idToken = try container.decodeIfPresent(String.self, forKey: .idToken)
         expiresAt = try container.decodeIfPresent(Int64.self, forKey: .expiresAt) ?? Int64(Date().timeIntervalSince1970) + expiresIn
+        // Optional field: a malformed value must not invalidate an otherwise valid token.
+        authorizationDetails = try? container.decodeIfPresent([AuthorizationDetail].self, forKey: .authorizationDetails)
+    }
+
+    /// Decodes a token endpoint response and logs a warning when `authorization_details` is
+    /// present but malformed. The token is returned without authorization details in that case.
+    static func decode(response data: Data, logger: Logger) throws -> Token {
+        let token = try JSONDecoder().decode(Token.self, from: data)
+        if token.authorizationDetails == nil,
+           let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+           let raw = json[CodingKeys.authorizationDetails.rawValue], !(raw is NSNull) {
+            var decodeError: Error?
+            do {
+                let rawData = try JSONSerialization.data(withJSONObject: raw, options: .fragmentsAllowed)
+                _ = try JSONDecoder().decode([AuthorizationDetail].self, from: rawData)
+            } catch {
+                decodeError = error
+            }
+            logger.w("Token response contains a malformed authorization_details value. Keeping the token without authorization details.", error: decodeError)
+        }
+        return token
     }
     
     /// Encodes the `Token` instance to an encoder.
@@ -85,6 +111,7 @@ public struct Token: Codable, Sendable {
         try container.encode(refreshToken, forKey: .refreshToken)
         try container.encode(idToken, forKey: .idToken)
         try container.encode(expiresAt, forKey: .expiresAt)
+        try container.encodeIfPresent(authorizationDetails, forKey: .authorizationDetails)
     }
 }
 
@@ -100,6 +127,7 @@ extension Token {
         case refreshToken = "refresh_token"
         case idToken = "id_token"
         case expiresAt = "expires_at"
+        case authorizationDetails = "authorization_details"
     }
 }
 

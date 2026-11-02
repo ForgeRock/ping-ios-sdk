@@ -66,7 +66,9 @@ actor TestInMemoryPushStorage: PushStorage {
     }
 
     func getPendingPushNotifications() async throws -> [PushNotification] {
-        notifications.values.filter { $0.pending }
+        // Mirrors PushKeychainStorage: pending-list results exclude expired
+        // notifications (expiry based on `sentAt ?? createdAt`, SDKS-5490).
+        notifications.values.filter { $0.pending && !$0.isExpired }
     }
 
     func retrievePushNotification(notificationId: String) async throws -> PushNotification? {

@@ -2,7 +2,7 @@
 //  PushKeychainStorageTests.swift
 //  PushTests
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -597,10 +597,67 @@ final class PushKeychainStorageTests: XCTestCase {
         
         // When
         let pending = try await storage.getPendingPushNotifications()
-        
+
         // Then
         XCTAssertEqual(pending.count, 1)
         XCTAssertEqual(pending.first?.id, "notif-7")
+    }
+
+    func testGetPendingPushNotificationsExcludesSentAtExpired() async throws {
+        // Given - a notification that was sent long ago (sentAt 10 minutes ago)
+        // but only created locally just now, with a small TTL. Expiry is based
+        // on `sentAt` (SDKS-5490), so the fresh `createdAt` must not keep it in
+        // the pending list.
+        let sentAtExpired = PushNotification(
+            id: "notif-sentat-expired",
+            credentialId: "cred-sentat",
+            ttl: 60,
+            messageId: "msg-sentat-expired",
+            messageText: "Late delivery",
+            customPayload: nil,
+            challenge: nil,
+            numbersChallenge: nil,
+            loadBalancer: nil,
+            contextInfo: nil,
+            pushType: .default,
+            createdAt: Date(),
+            sentAt: Date().addingTimeInterval(-600),
+            respondedAt: nil,
+            additionalData: nil,
+            approved: false,
+            pending: true
+        )
+        // Control: a genuinely fresh notification with no `sentAt`, which must
+        // remain in the pending list.
+        let fresh = PushNotification(
+            id: "notif-sentat-fresh",
+            credentialId: "cred-sentat",
+            ttl: 60,
+            messageId: "msg-sentat-fresh",
+            messageText: "Fresh delivery",
+            customPayload: nil,
+            challenge: nil,
+            numbersChallenge: nil,
+            loadBalancer: nil,
+            contextInfo: nil,
+            pushType: .default,
+            createdAt: Date(),
+            sentAt: nil,
+            respondedAt: nil,
+            additionalData: nil,
+            approved: false,
+            pending: true
+        )
+
+        try await storage.storePushNotification(sentAtExpired)
+        try await storage.storePushNotification(fresh)
+
+        // When
+        let pending = try await storage.getPendingPushNotifications()
+
+        // Then
+        XCTAssertEqual(pending.count, 1)
+        XCTAssertEqual(pending.first?.id, "notif-sentat-fresh")
     }
     
     func testRetrievePushNotificationByID() async throws {

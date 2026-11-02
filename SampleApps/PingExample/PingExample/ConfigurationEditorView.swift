@@ -9,6 +9,7 @@
 //
 
 import SwiftUI
+import PingOidc
 
 struct ConfigurationEditorView: View {
     @ObservedObject private var configManager = ConfigurationManager.shared
@@ -29,6 +30,7 @@ struct ConfigurationEditorView: View {
     @State private var realm: String = ""
     @State private var acrValues: String = ""
     @State private var par: Bool = false
+    @State private var authorizationDetailsJson: String = ""
     
     @State private var showValidationError = false
     @State private var validationMessage = ""
@@ -136,6 +138,10 @@ struct ConfigurationEditorView: View {
                         }
                         .tint(PingTheme.Color.actionPrimary)
                     }
+
+                    if type != .device {
+                        authorizationDetailsSection
+                    }
                 }
             }
             .pingScrollContentPadding()
@@ -179,6 +185,75 @@ struct ConfigurationEditorView: View {
 
             VStack(alignment: .leading, spacing: PingTheme.Spacing.medium) {
                 content()
+            }
+        }
+    }
+
+    // MARK: - RFC 9396 Authorization Details (config-level)
+
+    /// Monospaced editor for a config-level `authorization_details` JSON array (RFC 9396 §2).
+    /// Applied to every authorize request built from this config; parsed by `RarJson` at
+    /// SDK-build time. Blank means unset.
+    private var authorizationDetailsSection: some View {
+        VStack(alignment: .leading, spacing: PingTheme.Spacing.small) {
+            Text("RFC 9396 Authorization Details (advanced)")
+                .font(.system(size: 14, weight: .medium))
+            Text("JSON array sent as the `authorization_details` parameter on every authorize request (PAR body included). Leave blank for none.")
+                .pingSupportingText()
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(RarPreset.allCases) { preset in
+                        Button {
+                            authorizationDetailsJson = preset.json
+                        } label: {
+                            Text(presetLabel(preset))
+                                .font(.system(size: 11, weight: .medium))
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(
+                                    Capsule().fill(Color.blue.opacity(0.12))
+                                )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            TextEditor(text: $authorizationDetailsJson)
+                .font(.system(size: 12, design: .monospaced))
+                .frame(minHeight: 90)
+                .padding(6)
+                .background(RoundedRectangle(cornerRadius: 6).fill(Color(.systemBackground)))
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+            validationFooter
+        }
+    }
+
+    private func presetLabel(_ preset: RarPreset) -> String {
+        switch preset {
+        case .paymentInitiation: return "payment_initiation"
+        case .accountInformation: return "account_information"
+        case .empty: return "Blank"
+        }
+    }
+
+    @ViewBuilder
+    private var validationFooter: some View {
+        let trimmed = authorizationDetailsJson.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            Text("Not set — no authorization_details will be sent from this config.")
+                .font(.system(size: 11))
+                .foregroundColor(.secondary)
+        } else {
+            switch RarJson.decode(trimmed) {
+            case .success(let details):
+                Text("Valid — \(details.count) object(s).")
+                    .font(.system(size: 11))
+                    .foregroundColor(.green)
+            case .failure(let error):
+                Text(verbatim: "Invalid JSON: \(error.message)")
+                    .font(.system(size: 11))
+                    .foregroundColor(.red)
             }
         }
     }
@@ -236,6 +311,7 @@ struct ConfigurationEditorView: View {
         realm = config.realm ?? ""
         acrValues = config.acrValues ?? ""
         par = config.par ?? false
+        authorizationDetailsJson = config.authorizationDetailsJson ?? ""
     }
     
     private func save() {
@@ -280,7 +356,22 @@ struct ConfigurationEditorView: View {
             .split(separator: ",")
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
-        
+
+        let trimmedDetails = authorizationDetailsJson.trimmingCharacters(in: .whitespacesAndNewlines)
+        let parsedDetails: [AuthorizationDetail]?
+        if trimmedDetails.isEmpty {
+            parsedDetails = nil
+        } else {
+            switch RarJson.decode(trimmedDetails) {
+            case .success(let details):
+                parsedDetails = details
+            case .failure(let error):
+                validationMessage = "Authorization Details JSON is invalid: \(error.message)"
+                showValidationError = true
+                return
+            }
+        }
+
         let config = Configuration(
             name: trimmedName,
             type: type,
@@ -294,7 +385,8 @@ struct ConfigurationEditorView: View {
             serverUrl: serverUrl.isEmpty ? nil : serverUrl.trimmingCharacters(in: .whitespaces),
             realm: realm.isEmpty ? nil : realm.trimmingCharacters(in: .whitespaces),
             acrValues: acrValues.isEmpty ? nil : acrValues.trimmingCharacters(in: .whitespaces),
-            par: par
+            par: par,
+            authorizationDetailsJson: parsedDetails == nil ? nil : trimmedDetails
         )
         
         if let existing = editingConfig {

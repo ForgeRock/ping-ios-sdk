@@ -521,6 +521,207 @@ final class PushServiceTests: XCTestCase {
         XCTAssertEqual(updated?.userId, "server-user")
     }
 
+    // The `timeInterval` claim is milliseconds since epoch, so every
+    // accepted representation must surface as
+    // `sentAt == Date(timeIntervalSince1970: ms / 1000.0)`.
+
+    func testProcessNotificationParsesTimeIntervalAsInt() async throws {
+        let stubHandler = StubPushHandler()
+        stubHandler.canHandleMessageDataResult = true
+
+        let service = makeService(handler: stubHandler)
+
+        let credential = PushCredential(
+            issuer: "ForgeRock",
+            accountName: "interval-int@example.com",
+            serverEndpoint: "https://example.com",
+            sharedSecret: "c2VjcmV0"
+        )
+        _ = try await service.addCredential(credential)
+
+        stubHandler.parseMessageDataResult = makeParsedNotificationData(
+            credentialId: credential.id,
+            messageId: "interval-int",
+            additional: ["timeInterval": 1_731_000_000_000]
+        )
+
+        let payload: [String: Any] = [
+            "messageId": "interval-int",
+            "message": "payload"
+        ]
+
+        let notification = try await service.processNotification(messageData: payload)
+
+        XCTAssertNotNil(notification)
+        XCTAssertEqual(notification?.sentAt, Date(timeIntervalSince1970: 1_731_000_000))
+    }
+
+    func testProcessNotificationParsesTimeIntervalAsString() async throws {
+        let stubHandler = StubPushHandler()
+        stubHandler.canHandleMessageDataResult = true
+
+        let service = makeService(handler: stubHandler)
+
+        let credential = PushCredential(
+            issuer: "ForgeRock",
+            accountName: "interval-string@example.com",
+            serverEndpoint: "https://example.com",
+            sharedSecret: "c2VjcmV0"
+        )
+        _ = try await service.addCredential(credential)
+
+        stubHandler.parseMessageDataResult = makeParsedNotificationData(
+            credentialId: credential.id,
+            messageId: "interval-string",
+            additional: ["timeInterval": "1731000000000"]
+        )
+
+        let payload: [String: Any] = [
+            "messageId": "interval-string",
+            "message": "payload"
+        ]
+
+        let notification = try await service.processNotification(messageData: payload)
+
+        XCTAssertNotNil(notification)
+        XCTAssertEqual(notification?.sentAt, Date(timeIntervalSince1970: 1_731_000_000))
+    }
+
+    func testProcessNotificationParsesTimeIntervalAsDouble() async throws {
+        let stubHandler = StubPushHandler()
+        stubHandler.canHandleMessageDataResult = true
+
+        let service = makeService(handler: stubHandler)
+
+        let credential = PushCredential(
+            issuer: "ForgeRock",
+            accountName: "interval-double@example.com",
+            serverEndpoint: "https://example.com",
+            sharedSecret: "c2VjcmV0"
+        )
+        _ = try await service.addCredential(credential)
+
+        stubHandler.parseMessageDataResult = makeParsedNotificationData(
+            credentialId: credential.id,
+            messageId: "interval-double",
+            additional: ["timeInterval": 1_731_000_000_500.5]
+        )
+
+        let payload: [String: Any] = [
+            "messageId": "interval-double",
+            "message": "payload"
+        ]
+
+        let notification = try await service.processNotification(messageData: payload)
+
+        XCTAssertNotNil(notification)
+        // Doubles are consumed by the NSNumber branch of `intValue`, which
+        // truncates to whole milliseconds before the `/ 1000.0` conversion.
+        XCTAssertEqual(notification?.sentAt, Date(timeIntervalSince1970: 1_731_000_000.5))
+    }
+
+    func testProcessNotificationSentAtNilWhenTimeIntervalAbsent() async throws {
+        let stubHandler = StubPushHandler()
+        stubHandler.canHandleMessageDataResult = true
+
+        let service = makeService(handler: stubHandler)
+
+        let credential = PushCredential(
+            issuer: "ForgeRock",
+            accountName: "interval-absent@example.com",
+            serverEndpoint: "https://example.com",
+            sharedSecret: "c2VjcmV0"
+        )
+        _ = try await service.addCredential(credential)
+
+        stubHandler.parseMessageDataResult = makeParsedNotificationData(
+            credentialId: credential.id,
+            messageId: "interval-absent"
+        )
+
+        let payload: [String: Any] = [
+            "messageId": "interval-absent",
+            "message": "payload"
+        ]
+
+        let notification = try await service.processNotification(messageData: payload)
+
+        XCTAssertNotNil(notification)
+        XCTAssertNil(notification?.sentAt)
+        // With no `sentAt`, expiry falls back to the fresh local `createdAt`,
+        // so the notification must not be reported expired. (The fallback basis
+        // itself is locked at the model level in PushNotificationTests.)
+        XCTAssertFalse(notification?.isExpired ?? true)
+    }
+
+    func testProcessNotificationSentAtNilWhenTimeIntervalInvalid() async throws {
+        let stubHandler = StubPushHandler()
+        stubHandler.canHandleMessageDataResult = true
+
+        let service = makeService(handler: stubHandler)
+
+        let credential = PushCredential(
+            issuer: "ForgeRock",
+            accountName: "interval-invalid@example.com",
+            serverEndpoint: "https://example.com",
+            sharedSecret: "c2VjcmV0"
+        )
+        _ = try await service.addCredential(credential)
+
+        stubHandler.parseMessageDataResult = makeParsedNotificationData(
+            credentialId: credential.id,
+            messageId: "interval-invalid",
+            additional: ["timeInterval": "abc"]
+        )
+
+        let payload: [String: Any] = [
+            "messageId": "interval-invalid",
+            "message": "payload"
+        ]
+
+        let notification = try await service.processNotification(messageData: payload)
+
+        XCTAssertNotNil(notification)
+        XCTAssertNil(notification?.sentAt)
+        // An unparseable interval must behave like a missing one: no `sentAt`,
+        // expiry evaluated against the fresh `createdAt` fallback.
+        XCTAssertFalse(notification?.isExpired ?? true)
+    }
+
+    func testProcessNotificationSentAtNilWhenTimeIntervalNotPositive() async throws {
+        for (index, interval) in [0, -1_731_000_000_000].enumerated() {
+            let stubHandler = StubPushHandler()
+            stubHandler.canHandleMessageDataResult = true
+
+            let service = makeService(handler: stubHandler)
+
+            let credential = PushCredential(
+                issuer: "ForgeRock",
+                accountName: "interval-nonpositive-\(index)@example.com",
+                serverEndpoint: "https://example.com",
+                sharedSecret: "c2VjcmV0"
+            )
+            _ = try await service.addCredential(credential)
+
+            stubHandler.parseMessageDataResult = makeParsedNotificationData(
+                credentialId: credential.id,
+                messageId: "interval-nonpositive-\(index)",
+                additional: ["timeInterval": interval]
+            )
+
+            let payload: [String: Any] = [
+                "messageId": "interval-nonpositive-\(index)",
+                "message": "payload"
+            ]
+
+            let notification = try await service.processNotification(messageData: payload)
+
+            XCTAssertNotNil(notification)
+            XCTAssertNil(notification?.sentAt, "interval \(interval) must be treated as missing")
+            XCTAssertFalse(notification?.isExpired ?? true)
+        }
+    }
+
     func testApproveNotificationMarksNotificationWhenHandlerSucceeds() async throws {
         let handler = StubPushHandler()
         let service = makeService(handler: handler)
@@ -639,6 +840,267 @@ final class PushServiceTests: XCTestCase {
         let stored = try await storage.retrievePushNotification(notificationId: notification.id)
         XCTAssertEqual(stored?.pending, true)
         XCTAssertEqual(stored?.approved, false)
+    }
+
+    func testApproveNotificationThrowsWhenNotificationExpired() async throws {
+        let handler = StubPushHandler()
+        let service = makeService(handler: handler)
+
+        let credential = PushCredential(
+            issuer: "ForgeRock",
+            accountName: "approve-expired@example.com",
+            serverEndpoint: "https://example.com",
+            sharedSecret: "secret"
+        )
+        _ = try await service.addCredential(credential)
+
+        let notification = makeNotification(
+            credentialId: credential.id,
+            messageId: "approve-expired",
+            ttl: 120,
+            sentAt: Date().addingTimeInterval(-600)
+        )
+        try await storage.storePushNotification(notification)
+
+        do {
+            _ = try await service.approveNotification(notificationId: notification.id)
+            XCTFail("Expected notificationExpired error")
+        } catch let error as PushError {
+            guard case .notificationExpired(let notificationId, let ttl) = error else {
+                XCTFail("Expected notificationExpired error, got \(error)")
+                return
+            }
+            XCTAssertEqual(notificationId, notification.id)
+            XCTAssertEqual(ttl, 120)
+        }
+
+        XCTAssertTrue(handler.sendApprovalCalls.isEmpty)
+
+        let stored = try await storage.retrievePushNotification(notificationId: notification.id)
+        XCTAssertEqual(stored?.pending, true)
+        XCTAssertEqual(stored?.approved, false)
+    }
+
+    func testDenyNotificationThrowsWhenNotificationExpired() async throws {
+        let handler = StubPushHandler()
+        let service = makeService(handler: handler)
+
+        let credential = PushCredential(
+            issuer: "ForgeRock",
+            accountName: "deny-expired@example.com",
+            serverEndpoint: "https://example.com",
+            sharedSecret: "secret"
+        )
+        _ = try await service.addCredential(credential)
+
+        let notification = makeNotification(
+            credentialId: credential.id,
+            messageId: "deny-expired",
+            ttl: 120,
+            sentAt: Date().addingTimeInterval(-600)
+        )
+        try await storage.storePushNotification(notification)
+
+        do {
+            _ = try await service.denyNotification(notificationId: notification.id)
+            XCTFail("Expected notificationExpired error")
+        } catch let error as PushError {
+            guard case .notificationExpired(let notificationId, let ttl) = error else {
+                XCTFail("Expected notificationExpired error, got \(error)")
+                return
+            }
+            XCTAssertEqual(notificationId, notification.id)
+            XCTAssertEqual(ttl, 120)
+        }
+
+        XCTAssertTrue(handler.sendDenialCalls.isEmpty)
+
+        let stored = try await storage.retrievePushNotification(notificationId: notification.id)
+        XCTAssertEqual(stored?.pending, true)
+        XCTAssertEqual(stored?.approved, false)
+    }
+
+    func testApproveAndDenyReturnFalseWhenExpiredNotificationNotPending() async throws {
+        let handler = StubPushHandler()
+        let service = makeService(handler: handler)
+
+        let credential = PushCredential(
+            issuer: "ForgeRock",
+            accountName: "expired-not-pending@example.com",
+            serverEndpoint: "https://example.com",
+            sharedSecret: "secret"
+        )
+        _ = try await service.addCredential(credential)
+
+        let notification = makeNotification(
+            credentialId: credential.id,
+            messageId: "expired-not-pending",
+            ttl: 120,
+            sentAt: Date().addingTimeInterval(-600),
+            pending: false
+        )
+        try await storage.storePushNotification(notification)
+
+        let approved = try await service.approveNotification(notificationId: notification.id)
+        let denied = try await service.denyNotification(notificationId: notification.id)
+
+        XCTAssertFalse(approved)
+        XCTAssertFalse(denied)
+        XCTAssertTrue(handler.sendApprovalCalls.isEmpty)
+        XCTAssertTrue(handler.sendDenialCalls.isEmpty)
+    }
+
+    func testExpiredErrorTakesPrecedenceOverCredentialLocked() async throws {
+        let handler = StubPushHandler()
+        let service = makeService(handler: handler)
+
+        let credential = PushCredential(
+            issuer: "ForgeRock",
+            accountName: "expired-locked@example.com",
+            serverEndpoint: "https://example.com",
+            sharedSecret: "secret",
+            lockingPolicy: "biometricOnly",
+            isLocked: true
+        )
+        _ = try await service.addCredential(credential)
+
+        let notification = makeNotification(
+            credentialId: credential.id,
+            messageId: "expired-locked",
+            ttl: 120,
+            sentAt: Date().addingTimeInterval(-600)
+        )
+        try await storage.storePushNotification(notification)
+
+        do {
+            _ = try await service.approveNotification(notificationId: notification.id)
+            XCTFail("Expected notificationExpired error")
+        } catch let error as PushError {
+            guard case .notificationExpired = error else {
+                XCTFail("Expected notificationExpired error, got \(error)")
+                return
+            }
+        }
+
+        do {
+            _ = try await service.denyNotification(notificationId: notification.id)
+            XCTFail("Expected notificationExpired error")
+        } catch let error as PushError {
+            guard case .notificationExpired = error else {
+                XCTFail("Expected notificationExpired error, got \(error)")
+                return
+            }
+        }
+
+        XCTAssertTrue(handler.sendApprovalCalls.isEmpty)
+        XCTAssertTrue(handler.sendDenialCalls.isEmpty)
+    }
+
+    func testApproveAndDenyThrowWhenExpiredByCreatedAtFallback() async throws {
+        let handler = StubPushHandler()
+        let service = makeService(handler: handler)
+
+        let credential = PushCredential(
+            issuer: "ForgeRock",
+            accountName: "expired-created-at@example.com",
+            serverEndpoint: "https://example.com",
+            sharedSecret: "secret"
+        )
+        _ = try await service.addCredential(credential)
+
+        let notification = PushNotification(
+            credentialId: credential.id,
+            ttl: 120,
+            messageId: "expired-created-at",
+            messageText: "Approve login?",
+            pushType: .default,
+            createdAt: Date().addingTimeInterval(-600),
+            sentAt: nil
+        )
+        try await storage.storePushNotification(notification)
+
+        do {
+            _ = try await service.approveNotification(notificationId: notification.id)
+            XCTFail("Expected notificationExpired error")
+        } catch let error as PushError {
+            guard case .notificationExpired = error else {
+                XCTFail("Expected notificationExpired error, got \(error)")
+                return
+            }
+        }
+
+        do {
+            _ = try await service.denyNotification(notificationId: notification.id)
+            XCTFail("Expected notificationExpired error")
+        } catch let error as PushError {
+            guard case .notificationExpired = error else {
+                XCTFail("Expected notificationExpired error, got \(error)")
+                return
+            }
+        }
+
+        XCTAssertTrue(handler.sendApprovalCalls.isEmpty)
+        XCTAssertTrue(handler.sendDenialCalls.isEmpty)
+    }
+
+    func testApproveNotificationSucceedsWhenSentAtInFuture() async throws {
+        // A `sentAt` ahead of the device clock (device behind the server) is
+        // not expired: elapsed time is negative. This documents the skew
+        // behaviour described in `PushNotification.isExpired`.
+        let handler = StubPushHandler()
+        let service = makeService(handler: handler)
+
+        let credential = PushCredential(
+            issuer: "ForgeRock",
+            accountName: "approve-future@example.com",
+            serverEndpoint: "https://example.com",
+            sharedSecret: "secret"
+        )
+        _ = try await service.addCredential(credential)
+
+        let notification = makeNotification(
+            credentialId: credential.id,
+            messageId: "approve-future",
+            ttl: 120,
+            sentAt: Date().addingTimeInterval(3_600)
+        )
+        try await storage.storePushNotification(notification)
+
+        let result = try await service.approveNotification(notificationId: notification.id)
+
+        XCTAssertTrue(result)
+        XCTAssertEqual(handler.sendApprovalCalls.count, 1)
+    }
+
+    func testApproveNotificationSucceedsWhenSentAtRecent() async throws {
+        let handler = StubPushHandler()
+        let service = makeService(handler: handler)
+
+        let credential = PushCredential(
+            issuer: "ForgeRock",
+            accountName: "approve-recent@example.com",
+            serverEndpoint: "https://example.com",
+            sharedSecret: "secret"
+        )
+        _ = try await service.addCredential(credential)
+
+        let notification = makeNotification(
+            credentialId: credential.id,
+            messageId: "approve-recent",
+            ttl: 120,
+            sentAt: Date().addingTimeInterval(-30)
+        )
+        try await storage.storePushNotification(notification)
+
+        let result = try await service.approveNotification(notificationId: notification.id)
+
+        XCTAssertTrue(result)
+        XCTAssertEqual(handler.sendApprovalCalls.count, 1)
+
+        let stored = try await storage.retrievePushNotification(notificationId: notification.id)
+        XCTAssertEqual(stored?.pending, false)
+        XCTAssertEqual(stored?.approved, true)
+        XCTAssertNotNil(stored?.respondedAt)
     }
 
     func testDenyNotificationMarksNotificationWhenHandlerSucceeds() async throws {
@@ -1123,15 +1585,18 @@ private extension PushServiceTests {
     func makeNotification(
         credentialId: String,
         messageId: String,
+        ttl: Int = 120,
+        sentAt: Date? = nil,
         pending: Bool = true,
         approved: Bool = false
     ) -> PushNotification {
         PushNotification(
             credentialId: credentialId,
-            ttl: 120,
+            ttl: ttl,
             messageId: messageId,
             messageText: "Approve login?",
             pushType: .default,
+            sentAt: sentAt,
             approved: approved,
             pending: pending
         )

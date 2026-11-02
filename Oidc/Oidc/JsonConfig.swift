@@ -42,6 +42,7 @@ public enum JsonConfigKey {
     public static let uiLocales = "uiLocales"
     public static let acrValues = "acrValues"
     public static let additionalParameters = "additionalParameters"
+    public static let authorizationDetails = "authorizationDetails"
     public static let openId = "openId"
 
     // MARK: - openId endpoint overrides

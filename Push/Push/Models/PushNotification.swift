@@ -2,7 +2,7 @@
 //  PushNotification.swift
 //  PingPush
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -52,7 +52,9 @@ import Foundation
 /// try await client.approveNotification(notification.id)
 /// ```
 ///
-/// - Note: Notifications have a time-to-live (TTL) and can expire.
+/// - Note: Notifications have a time-to-live (TTL) and can expire. Expiry is based on the
+///   server send time (`sentAt`) when available, otherwise the local creation time
+///   (`createdAt`).
 public struct PushNotification: Codable, Identifiable, @unchecked Sendable, CustomStringConvertible {
     
     // MARK: - Properties
@@ -127,10 +129,15 @@ public struct PushNotification: Codable, Identifiable, @unchecked Sendable, Cust
     public var responded: Bool { approved || !pending }
     
     /// Checks if this notification has expired.
-    /// A notification is expired if the elapsed time since creation exceeds the TTL.
+    ///
+    /// A notification is expired if the elapsed time since it was sent (falling back to its
+    /// local creation time when no send time is available) exceeds the TTL.
+    ///
+    /// - Note: Expiry is evaluated against the device clock. If the device clock is skewed
+    ///   relative to the server, the result may differ from the server's own expiry decision.
     public var isExpired: Bool {
-        let elapsedTimeSeconds = Date().timeIntervalSince(createdAt)
-        return elapsedTimeSeconds > Double(ttl)
+        let expiryBase = sentAt ?? createdAt
+        return Date().timeIntervalSince(expiryBase) > Double(ttl)
     }
     
     // MARK: - CustomStringConvertible
