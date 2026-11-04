@@ -84,6 +84,28 @@ class FidoCallbackTests: XCTestCase {
         }
     }
     
+    @MainActor
+    func testFidoRegistrationCallbackKeepsUTF8UserIDEncoding() async {
+        let callback = FidoRegistrationCallback()
+        callback.fido = mockFido
+
+        let journey = Journey.createJourney()
+        let hiddenValueCallback = HiddenValueCallback()
+        hiddenValueCallback.initValue(name: JourneyConstants.id, value: FidoConstants.WEB_AUTHN_OUTCOME)
+        callback.journey = journey
+        callback.continueNode = MockContinueNode(callbacks: Callbacks([hiddenValueCallback]))
+
+        mockFido.registrationResult = .success([
+            FidoConstants.FIELD_RAW_ID: "rawId".data(using: .utf8)!,
+            FidoConstants.FIELD_CLIENT_DATA_JSON: "clientDataJSON".data(using: .utf8)!,
+            FidoConstants.FIELD_ATTESTATION_OBJECT: "attestationObject".data(using: .utf8)!
+        ])
+
+        _ = await callback.register(window: MockASPresentationAnchor())
+
+        XCTAssertEqual(mockFido.capturedUserIDEncoding, .utf8)
+    }
+
     @MainActor // Mark test as running on MainActor
     func testFidoAuthenticationCallbackAuthenticate() async { // Removed 'throws'
         let callback = FidoAuthenticationCallback()
@@ -139,6 +161,32 @@ class FidoCallbackTests: XCTestCase {
             // Verify the side effect on hiddenValueCallback
             XCTAssertTrue((hiddenValueCallback.value).starts(with: "ERROR::"))
         }
+    }
+
+    @MainActor
+    func testFidoAuthenticationCallbackKeepsUTF8UserHandle() async {
+        let callback = FidoAuthenticationCallback()
+        callback.fido = mockFido
+
+        let hiddenValueCallback = HiddenValueCallback()
+        hiddenValueCallback.initValue(name: JourneyConstants.id, value: FidoConstants.WEB_AUTHN_OUTCOME)
+        callback.journey = Journey.createJourney()
+        callback.continueNode = MockContinueNode(callbacks: Callbacks([hiddenValueCallback]))
+
+        let credentialID = Data([0xFB, 0xFF, 0xBF, 0xFE])
+        mockFido.authenticationResult = .success([
+            FidoConstants.FIELD_RAW_ID: credentialID,
+            FidoConstants.FIELD_CLIENT_DATA_JSON: "clientDataJSON".data(using: .utf8)!,
+            FidoConstants.FIELD_AUTHENTICATOR_DATA: "authenticatorData".data(using: .utf8)!,
+            FidoConstants.FIELD_SIGNATURE: "signature".data(using: .utf8)!,
+            FidoConstants.FIELD_USER_HANDLE: Data("userHandle".utf8)
+        ])
+
+        _ = await callback.authenticate(window: MockASPresentationAnchor())
+
+        let components = hiddenValueCallback.value.components(separatedBy: FidoConstants.DATA_SEPARATOR)
+        XCTAssertEqual(components.last, "userHandle")
+        XCTAssertEqual(components.count >= 2 ? components[components.count - 2] : nil, "-_-__g")
     }
 
     @MainActor

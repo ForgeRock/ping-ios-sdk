@@ -63,4 +63,19 @@ class FidoRegistrationCollectorTests: XCTestCase {
         XCTAssertNil(collector.errorCode)
         XCTAssertNil(collector.payload())
     }
+
+    func testTransformEncodesSignedByteArrayUserIDAsLocalBase64() {
+        let json: [String: Any] = [
+            "type": "FidoRegistrationCollector",
+            "publicKeyCredentialCreationOptions": [
+                "challenge": "someChallenge",
+                "user": ["id": [-5, -1, -65], "name": "janedoe", "displayName": "Jane Doe"]
+            ]
+        ]
+
+        let registrationCollector = FidoRegistrationCollector(with: json)
+        let user = registrationCollector.publicKeyCredentialCreationOptions["user"] as? [String: Any]
+
+        XCTAssertEqual(user?["id"] as? String, "+/+/")
+    }
 }
