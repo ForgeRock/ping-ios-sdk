@@ -102,6 +102,15 @@ public struct FidoConstants {
     public static let FIELD_RESIDENT_KEY = "residentKey"
     /// The key indicating support for a JSON response.
     public static let FIELD_SUPPORTS_JSON_RESPONSE = "supportsJsonResponse"
+    /// The key for the WebAuthn mediation requested by the server (e.g. "conditional").
+    public static let FIELD_MEDIATION = "mediation"
+    /// The key for the legacy/redundant boolean flag mirroring `FIELD_MEDIATION == MEDIATION_CONDITIONAL`.
+    public static let FIELD_CONDITIONAL = "conditional"
+    /// The key indicating whether the server wants a manual "Sign in with a passkey" button shown
+    /// alongside Conditional UI.
+    public static let FIELD_MANUAL_BUTTON_ENABLED = "manualButtonEnabled"
+    /// The `mediation` value requesting WebAuthn Conditional UI (autofill-assisted sign-in).
+    public static let MEDIATION_CONDITIONAL = "conditional"
     /// The key for the assertion value in a DaVinci response.
     public static let FIELD_ASSERTION_VALUE = "assertionValue"
     /// The key for the attestation value in a DaVinci response.
