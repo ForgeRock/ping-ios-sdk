@@ -362,6 +362,20 @@ func handleDeviceSigning(callback: DeviceSigningVerifierCallback, onNext: @escap
 
 The SDK allows for customization of the device authentication process, particularly for handling Application PIN authentication with a custom user interface.
 
+#### Device Binding Configuration
+
+Both `bind` and `sign` accept a configuration closure on `DeviceBindingConfig`. Its options include `deviceName`, `deviceIdentifier`, `userKeyStorage`, `claims`, `userKeySelector`, `issueTime`, `notBeforeTime`, `expirationTime`, `logger`, `deviceAuthenticator`, and `authenticatorConfig`; `userKeySelector` is available only on platforms that can import UIKit (iOS).
+
+The `logger` property is seeded from the Journey workflow's logger before the configuration closure runs, so binding and signing operations log through the logger the app configured on the Journey client. It is also propagated to the authenticator configuration, and can be overridden in the closure:
+
+```swift
+let result = await callback.bind { config in
+    config.logger = myCustomLogger // optional: override the workflow logger
+}
+```
+
+Signing is always performed with ES256 (P-256), which is the algorithm iOS Secure Enclave supports; there is no `signingAlgorithm` option.
+
 #### Using a Custom PIN Collector
 
 By default, if Application PIN authentication is required, the SDK presents a system alert to collect the PIN. You can override this behavior by providing a custom implementation of the `PinCollector` protocol. This allows you to present your own UI for PIN entry.
