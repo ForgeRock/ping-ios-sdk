@@ -276,8 +276,10 @@ Collectors have a `validate()` method to validate the input value. The `validate
 For example, to validate the `TextCollector` input value, you can use the following code:
 
 ```swift
-var result: [ValidationError] = = textCollector.validate()
+var result: [ValidationError] = textCollector.validate()
 ```
+
+`validate()` requires the entire value to match the server's `validation.regex`, equivalent to wrapping the pattern in `\A(?:...)\z`; anchors such as `^...$` are optional. For example, `[0-9]+` rejects `abc1` and `12ab` and accepts `1234`. A pattern that does not compile is ignored.
 
 | ValidationError | Description                                                                                                                                                                                               |
 |-----------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -286,7 +288,7 @@ var result: [ValidationError] = = textCollector.validate()
 | .maxRepeat       | Indicates that the maxRepeatedCharacters policy requirement is not met. The MaxRepeat error specifies the maximum allowed repetitions of a character.                                                     |
 | .minCharacters   | Indicates that the minCharacters password policy requirement is not met.                                                                                                                                  |
 | .required        | Indicates that the input value has not been supplied, but is required.                                                                                                                                    |
-| .regex           | Indicates that the input value does not match the required pattern. The Regex error contains the required regular expression.                                                                             |
+| .regexError      | Indicates that the input value does not match the entire `validation.regex` pattern. The error carries the server-provided error message.                                                                 |
 
 ### Error Handling
 

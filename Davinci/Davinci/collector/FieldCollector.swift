@@ -74,13 +74,32 @@ open class FieldCollector<T>: Collector, AnyFieldCollector, Validator, @unchecke
 public struct Validation {
     public let regex: NSRegularExpression?
     public let errorMessage: String
+    /// The pattern wrapped as `\A(?:pattern)\z`; nil when `regex` or the wrapped pattern does not compile.
+    internal let fullMatchRegex: NSRegularExpression?
     
     /// Initializes a new instance of `Validation`.
     /// - Parameters:
     ///   - regexPattern: The regex pattern.
     ///   - errorMessage: The error message.
     public init(regexPattern: String, errorMessage: String) {
-        self.regex = try? NSRegularExpression(pattern: regexPattern)
+        let regex = try? NSRegularExpression(pattern: regexPattern)
+        self.regex = regex
+        self.fullMatchRegex = regex.flatMap { _ in try? NSRegularExpression(pattern: "\\A(?:\(regexPattern))\\z") }
         self.errorMessage = errorMessage
+    }
+    
+    /// Checks whether the whole value matches the regex, not just a part of it.
+    /// A pattern that cannot be wrapped keeps the partial match, and one that does not compile is ignored.
+    /// - Parameter value: The value to check.
+    /// - Returns: `true` if the entire value matches, or if the pattern does not compile.
+    internal func matchesEntireValue(_ value: String) -> Bool {
+        let range = NSRange(location: 0, length: value.utf16.count)
+        if let fullMatchRegex = fullMatchRegex {
+            return fullMatchRegex.firstMatch(in: value, range: range) != nil
+        }
+        if let regex = regex {
+            return regex.firstMatch(in: value, range: range) != nil
+        }
+        return true
     }
 }

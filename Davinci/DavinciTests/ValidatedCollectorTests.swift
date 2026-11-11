@@ -12,6 +12,7 @@
 import Foundation
 import XCTest
 @testable import PingDavinci
+import PingDavinciPlugin
 
 class ValidatedCollectorTest: XCTestCase {
     
@@ -71,5 +72,97 @@ class ValidatedCollectorTest: XCTestCase {
         collector.value = ""
         
         XCTAssertEqual([.required, .regexError(message: "Must be digits")], collector.validate())
+    }
+
+    // MARK: - Full-match evaluation
+
+    private func validationInput(regex: String, message: String = "Digits only") -> [String: Any] {
+        return [
+            "validation": [
+                "regex": regex,
+                "errorMessage": message
+            ]
+        ]
+    }
+
+    private func validate(regex: String, value: String) -> [ValidationError] {
+        let collector = ValidatedCollector(with: validationInput(regex: regex))
+        collector.value = value
+        return collector.validate()
+    }
+
+    func testUnanchoredPatternRejectsPartialMatch() {
+        XCTAssertEqual([.regexError(message: "Digits only")], validate(regex: "[0-9]+", value: "abc1"))
+    }
+
+    func testUnanchoredPatternAcceptsFullMatch() {
+        XCTAssertEqual([], validate(regex: "[0-9]+", value: "1234"))
+    }
+
+    func testUnanchoredPatternRejectsTrailingJunk() {
+        XCTAssertEqual([.regexError(message: "Digits only")], validate(regex: "[0-9]+", value: "12ab"))
+    }
+
+    func testUnanchoredPatternRejectsLeadingJunk() {
+        XCTAssertEqual([.regexError(message: "Digits only")], validate(regex: "[0-9]+", value: "ab12"))
+    }
+
+    func testAnchoredPatternBehaviorUnchanged() {
+        XCTAssertEqual([], validate(regex: "^[0-9]+$", value: "1234"))
+        XCTAssertEqual([.regexError(message: "Digits only")], validate(regex: "^[0-9]+$", value: "abc1"))
+    }
+
+    func testAlternationBacktracksToFullMatch() {
+        XCTAssertEqual([], validate(regex: "a|ab", value: "ab"))
+    }
+
+    func testAnchoredPatternRejectsTrailingNewline() {
+        XCTAssertEqual([.regexError(message: "Digits only")], validate(regex: "^[0-9]+$", value: "123\n"))
+    }
+
+    func testInlineFlagsApplyToFullMatch() {
+        XCTAssertEqual([], validate(regex: "(?i)abc", value: "ABC"))
+    }
+
+    func testInvalidPatternIsIgnored() {
+        XCTAssertEqual([], validate(regex: "a)|(b", value: "anything"))
+    }
+
+    func testPublicRegexKeepsOriginalPattern() {
+        let collector = ValidatedCollector(with: validationInput(regex: "[0-9]+"))
+        XCTAssertEqual("[0-9]+", collector.validation?.regex?.pattern)
+    }
+
+    func testPatternThatCannotBeWrappedFallsBackToPartialMatch() {
+        XCTAssertEqual([], validate(regex: "\\Qabc", value: "abc"))
+        XCTAssertEqual([.regexError(message: "Digits only")], validate(regex: "\\Qabc", value: "zzz"))
+    }
+
+    func testDotDoesNotSpanNewlineInFullMatch() {
+        XCTAssertEqual([.regexError(message: "Digits only")], validate(regex: ".*", value: "a\nb"))
+    }
+
+    func testTextCollectorRequiresFullMatch() {
+        let collector = TextCollector(with: validationInput(regex: "[0-9]+"))
+        collector.value = "abc1"
+        XCTAssertEqual([.regexError(message: "Digits only")], collector.validate())
+        collector.value = "1234"
+        XCTAssertEqual([], collector.validate())
+    }
+
+    func testPasswordCollectorRequiresFullMatch() {
+        let collector = PasswordCollector(with: validationInput(regex: "[0-9]+"))
+        collector.value = "abc1"
+        XCTAssertEqual([.regexError(message: "Digits only")], collector.validate())
+        collector.value = "1234"
+        XCTAssertEqual([], collector.validate())
+    }
+
+    func testSingleSelectCollectorRequiresFullMatch() {
+        let collector = SingleSelectCollector(with: validationInput(regex: "[0-9]+"))
+        collector.value = "abc1"
+        XCTAssertEqual([.regexError(message: "Digits only")], collector.validate())
+        collector.value = "1234"
+        XCTAssertEqual([], collector.validate())
     }
 }
