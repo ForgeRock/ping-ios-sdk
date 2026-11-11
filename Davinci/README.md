@@ -279,7 +279,7 @@ For example, to validate the `TextCollector` input value, you can use the follow
 var result: [ValidationError] = textCollector.validate()
 ```
 
-`validate()` requires the entire value to match the server's `validation.regex`, equivalent to wrapping the pattern in `\A(?:...)\z`; anchors such as `^...$` are optional. For example, `[0-9]+` rejects `abc1` and `12ab` and accepts `1234`. A pattern that does not compile is ignored.
+`validate()` requires the entire value to match the server's `validation.regex`, equivalent to wrapping the pattern in `\A(?:...)\z`; anchors such as `^...$` are optional. For example, `[0-9]+` rejects `abc1` and `12ab` and accepts `1234`. A pattern that compiles but cannot be wrapped (for example an unterminated `\Q`) keeps the previous partial-match check. A pattern that does not compile is ignored.
 
 | ValidationError | Description                                                                                                                                                                                               |
 |-----------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
