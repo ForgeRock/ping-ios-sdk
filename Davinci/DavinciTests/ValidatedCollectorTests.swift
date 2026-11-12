@@ -169,4 +169,48 @@ class ValidatedCollectorTest: XCTestCase {
         collector.value = "1234"
         XCTAssertEqual([], collector.validate())
     }
+
+    func testAnchoredTenantPatternsBehaveAsBefore() {
+        let username = "^[a-zA-Z0-9]+$"
+        XCTAssertEqual([], validate(regex: username, value: "user123"))
+        XCTAssertEqual([.regexError(message: "Digits only")], validate(regex: username, value: "user 123"))
+
+        let email = "^[^@]+@[^@]+\\.[^@]+$"
+        XCTAssertEqual([], validate(regex: email, value: "valid@email.com"))
+        XCTAssertEqual([.regexError(message: "Digits only")], validate(regex: email, value: "not an email"))
+    }
+
+    func testEmptyOptionalValueIsCheckedAgainstPattern() {
+        XCTAssertEqual([.regexError(message: "Digits only")], validate(regex: "[0-9]+", value: ""))
+        XCTAssertEqual([], validate(regex: "[0-9]*", value: ""))
+    }
+
+    func testEmptyPatternThroughPublicInitIsIgnored() {
+        let validation = Validation(regexPattern: "", errorMessage: "ignored")
+        XCTAssertNil(validation.regex)
+        XCTAssertTrue(validation.matchesEntireValue("anything"))
+    }
+
+    func testNonBmpAndCombiningValuesMatchWholeValue() {
+        XCTAssertEqual([], validate(regex: "^.$", value: "😀"))
+        XCTAssertEqual([.regexError(message: "Digits only")], validate(regex: "^.$", value: "😀😀"))
+        XCTAssertEqual([], validate(regex: ".+", value: "e\u{301}"))
+    }
+
+    func testWrapperKeepsBackreferenceNumbering() {
+        XCTAssertEqual([], validate(regex: "(a)\\1", value: "aa"))
+        XCTAssertEqual([.regexError(message: "Digits only")], validate(regex: "(a)\\1", value: "ab"))
+    }
+
+    func testMultilineValueMatchesWhenPatternSpansNewlines() {
+        XCTAssertEqual([], validate(regex: "[\\s\\S]*", value: "a\nb"))
+    }
+
+    func testPasswordCollectorReportsRegexErrorBeforePolicyErrors() {
+        var input = validationInput(regex: "[0-9]+")
+        input["passwordPolicy"] = ["maxRepeatedCharacters": 2]
+        let collector = PasswordCollector(with: input)
+        collector.value = "aaabbb"
+        XCTAssertEqual([.regexError(message: "Digits only"), .maxRepeat(max: 2)], collector.validate())
+    }
 }
