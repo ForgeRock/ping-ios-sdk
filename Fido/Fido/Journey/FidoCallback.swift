@@ -47,6 +47,14 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
         
     }
 
+    /// Cancels the in-flight FIDO ceremony on the underlying `Fido` instance, if any. Safe to call
+    /// when nothing is in flight (no-op). Useful for tearing down a Conditional UI
+    /// (autofill-assisted) listener, e.g. when its view disappears.
+    @MainActor
+    public func cancel() {
+        fido.cancel()
+    }
+
     /// Sets a value to the `HiddenValueCallback` associated with the WebAuthn outcome.
     ///
     /// - Parameter value: The value to set for the WebAuthn outcome.
@@ -69,6 +77,10 @@ public class FidoCallback: AbstractCallback, JourneyAware, ContinueNodeAware, @u
         // Check if it's a FidoError first
         if let fidoError = error as? FidoError {
             switch fidoError {
+            case .canceled:
+                logger.d("FIDO ceremony was superseded or cancelled")
+                setError(error: FidoConstants.ERROR_NOT_ALLOWED, message: FidoConstants.ERROR_NOT_ALLOWED_MESSAGE)
+                return
             case .timeout:
                 logger.d("FIDO operation timed out")
                 setError(error: FidoConstants.ERROR_TIMEOUT, message: "Operation timedout")
