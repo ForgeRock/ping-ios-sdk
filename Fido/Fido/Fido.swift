@@ -14,14 +14,39 @@ import AuthenticationServices
 import UIKit
 #endif
 import PingLogger
+import PingCommons
+
+/// Describes how `user.id` in the registration options is converted to the user ID bytes stored by the authenticator.
+///
+/// Two modes exist because the two server flows deliver the user ID differently. Journey (PingAM) supplies it
+/// as plain text, whereas DaVinci supplies raw bytes that the DaVinci collector renders as a base64 string
+/// before the options reach `Fido.register`, so they must be decoded back to the original bytes.
+///
+/// The authenticator stores the user ID when the credential is created and it cannot be changed afterwards,
+/// so the mode must match how the server produced `user.id`.
+public enum FidoUserIDEncoding: Sendable {
+    /// Uses the UTF-8 bytes of `user.id`, which is a plain-text value (the Journey flow).
+    case utf8
+    /// Decodes `user.id` as base64 into raw bytes (the DaVinci flow).
+    ///
+    /// The standard and URL-safe alphabets are accepted, with or without padding. The value must be base64:
+    /// a plain-text string that is not base64 either fails to decode or, when it happens to consist of valid
+    /// base64 characters, decodes to bytes that differ from its text.
+    case base64
+}
 
 /// Fido is a class that provides FIDO registration and authentication functionalities.
 ///
 /// `Fido` is single-flight: a registration or authentication ceremony retains state on the
 /// instance (window, completion handler, logger, timeout task) until the underlying
-/// `ASAuthorization` delegate callback or timeout fires. Concurrent ceremonies on the same
-/// instance will overwrite each other, which is why callers consume it through the
-/// `Fido.shared` singleton serialized by the surrounding workflow.
+/// `ASAuthorization` delegate callback or timeout fires. Starting a new ceremony
+/// (`register`/`authenticate`/`authenticateWithAutoFill`) or calling `cancel()` while one is
+/// already in flight supersedes it: the superseded ceremony's completion is invoked
+/// synchronously with `.failure(FidoError.canceled)` before the new ceremony's state is set, and
+/// an identity check in the `ASAuthorizationControllerDelegate` methods discards any late
+/// callback from the superseded `ASAuthorizationController`. This is what lets a long-lived
+/// `authenticateWithAutoFill` listener coexist with a button-triggered `authenticate` ceremony
+/// on the same `Fido.shared` singleton.
 public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
 
     /// The shared singleton FIDO instance.
@@ -32,6 +57,13 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     var completion: ((Result<[String: Any], Error>) -> Void)?
     var timeoutTask: Task<Void, Never>?
     var authorizationController: ASAuthorizationController?
+
+    /// Monotonically increasing identity for the current ceremony, bumped by
+    /// `supersedeInFlightCeremony()`. Lets a scheduled timeout (`startTimeout`/`fireTimeout`)
+    /// detect that it has been superseded even after it has already passed its
+    /// `Task.isCancelled` check, closing a race the delegate methods' `===` identity guard alone
+    /// doesn't cover.
+    var ceremonyGeneration = 0
 
     /// Logger for the in-flight ceremony. Set by `register`/`authenticate` and cleared in
     /// `cleanup()`, so each ceremony uses its caller's workflow logger and nothing else.
@@ -55,12 +87,20 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     /// - Parameters:
     ///   - options: A dictionary containing the registration options.
     ///   - window: The window to present the registration UI in.
+    ///   - userIDEncoding: How `user.id` is converted to the stored user ID bytes. Defaults to `.utf8`,
+    ///     which suits a plain-text `user.id` such as the one supplied by Journey. Use `.base64` when `user.id`
+    ///     is a base64 string (standard or URL-safe, with or without padding) that represents raw bytes, as
+    ///     supplied by DaVinci. The authenticator keeps the user ID it receives at creation and it cannot be
+    ///     changed afterwards. With `.base64`, an undecodable or empty `user.id` completes with
+    ///     `FidoError.missingParameters` before any system UI is shown.
     ///   - logger: Optional logger for ceremony state transitions and errors. Pass the
     ///     workflow logger (e.g. `davinci?.config.logger`); when `nil` no log output is
     ///     produced. Scoped to this call only — overwritten by subsequent ceremonies and
     ///     cleared in `cleanup()`.
     ///   - completion: A closure to be called with the registration result.
-    public func register(options: [String: Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+    public func register(options: [String: Any], window: ASPresentationAnchor, userIDEncoding: FidoUserIDEncoding = .utf8, logger: Logger? = nil, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+        supersedeInFlightCeremony()
+        let generation = ceremonyGeneration
         self.logger = logger
         logger?.d("Fido: Starting registration")
         self.window = window
@@ -78,7 +118,25 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
                 cleanup()
                 return
             }
-            let userID = Data(registrationOptions.user.id.utf8)
+
+            // The authenticator stores this user ID when the credential is created and it can never be
+            // changed afterwards, so it has to be right before any system UI is shown. It is resolved
+            // after the challenge check above, and an invalid value fails here without starting a ceremony.
+            let userID: Data
+            switch userIDEncoding {
+            case .utf8:
+                userID = Data(registrationOptions.user.id.utf8)
+            case .base64:
+                // Fails for non-base64 input (including whitespace) and for an empty result: a credential
+                // must not be created with an empty user ID.
+                guard let decoded = Base64.decodeBase64UrlToData(registrationOptions.user.id), !decoded.isEmpty else {
+                    logger?.e("Fido: Registration failed - user.id is not valid base64", error: nil)
+                    completion(.failure(FidoError.missingParameters("user.id is not valid base64")))
+                    cleanup()
+                    return
+                }
+                userID = decoded
+            }
 
             // 3. Determine which requests to create based on selection criteria
             var requests: [ASAuthorizationRequest] = []
@@ -115,7 +173,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
             } else {
                 // 4. Start timeout if specified
                 if let timeout = registrationOptions.timeout, timeout > 0 {
-                    startTimeout(milliseconds: timeout)
+                    startTimeout(milliseconds: timeout, generation: generation)
                 }
 
                 // 5. Perform requests
@@ -126,6 +184,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
         } catch {
             logger?.e("Fido: Registration failed", error: error)
             completion(.failure(error))
+            cleanup()
         }
     }
     
@@ -150,25 +209,16 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     ///     cleared in `cleanup()`.
     ///   - completion: A closure to be called with the authentication result.
     public func authenticate(options: [String: Any], window: ASPresentationAnchor, preferImmediatelyAvailableCredentials: Bool = false, logger: Logger? = nil, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+        supersedeInFlightCeremony()
+        let generation = ceremonyGeneration
         self.logger = logger
         logger?.d("Fido: Starting authentication")
         self.window = window
         self.completion = completion
 
         do {
-            let jsonData = try JSONSerialization.data(withJSONObject: options, options: [])
-            let authenticationOptions = try JSONDecoder().decode(PublicKeyCredentialRequestOptions.self, from: jsonData)
-
-            let platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier: authenticationOptions.rpId ?? "")
-
-            guard let challengeData = Data(base64Encoded: authenticationOptions.challenge, options: .ignoreUnknownCharacters) else {
-                logger?.e("Fido: Authentication failed - invalid challenge", error: nil)
-                completion(.failure(FidoError.invalidChallenge))
-                cleanup()
-                return
-            }
-            let assertionRequest = platformProvider.createCredentialAssertionRequest(challenge: challengeData)
-            assertionRequest.userVerificationPreference = ASAuthorizationPublicKeyCredentialUserVerificationPreference(rawValue: authenticationOptions.userVerification?.rawValue ?? "preferred")
+            let (authenticationOptions, challengeData) = try decodeAuthenticationOptions(options)
+            let assertionRequest = makePlatformAssertionRequest(from: authenticationOptions, challenge: challengeData)
 
             var requests: [ASAuthorizationRequest] = [assertionRequest]
 
@@ -194,7 +244,7 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
 
             // Start timeout if specified
             if let timeout = authenticationOptions.timeout, timeout > 0 {
-                startTimeout(milliseconds: timeout)
+                startTimeout(milliseconds: timeout, generation: generation)
             }
 
             let authorizationController = makeAuthorizationController(requests: requests)
@@ -211,9 +261,123 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
         } catch {
             logger?.e("Fido: Authentication failed", error: error)
             completion(.failure(error))
+            cleanup()
         }
     }
-    
+
+    /// Starts a WebAuthn Conditional UI (autofill-assisted) authentication ceremony.
+    ///
+    /// Unlike `authenticate`, this builds only a single platform (passkey) assertion request —
+    /// `ASAuthorizationController.performAutoFillAssistedRequests()` requires exactly one platform
+    /// public-key credential assertion request, so no cross-platform security-key request is ever
+    /// built, regardless of `allowCredentials`. No timeout is scheduled: the ceremony is meant to
+    /// stay active for the lifetime of the autofillable text field, not a fixed duration — callers
+    /// are responsible for calling `cancel()` when the field is torn down (or superseding it by
+    /// starting another ceremony, e.g. a button-triggered `authenticate()`).
+    ///
+    /// - Parameters:
+    ///   - options: A dictionary containing the authentication options.
+    ///   - window: The window to present the autofill-assisted UI in.
+    ///   - logger: Optional logger for ceremony state transitions and errors. Scoped to this call
+    ///     only — overwritten by subsequent ceremonies and cleared in `cleanup()`.
+    ///   - completion: A closure to be called with the authentication result.
+    public func authenticateWithAutoFill(options: [String: Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+        supersedeInFlightCeremony()
+        self.logger = logger
+        logger?.d("Fido: Starting autofill-assisted authentication")
+        self.window = window
+        self.completion = completion
+
+        do {
+            let (authenticationOptions, challengeData) = try decodeAuthenticationOptions(options)
+            let assertionRequest = makePlatformAssertionRequest(from: authenticationOptions, challenge: challengeData)
+
+            let authorizationController = makeAuthorizationController(requests: [assertionRequest])
+            logger?.d("Fido: Performing autofill-assisted authentication request")
+            // `performAutoFillAssistedRequests()` is iOS-only — the SDK header marks it
+            // API_UNAVAILABLE(macos, macCatalyst) (verified in Xcode 27.0's ASAuthorizationController.h,
+            // both the macOS SDK and its iOSSupport/Catalyst copy), even though Apple's docs page lists
+            // Mac Catalyst 16.0+. The compiler follows the header, so Catalyst falls back to the same
+            // modal flow as native macOS: Conditional UI has no Catalyst surface at all.
+            #if os(iOS) && !targetEnvironment(macCatalyst)
+            authorizationController.performAutoFillAssistedRequests()
+            #else
+            authorizationController.performRequests()
+            #endif
+        } catch {
+            logger?.e("Fido: Autofill-assisted authentication failed", error: error)
+            completion(.failure(error))
+            cleanup()
+        }
+    }
+
+    /// Cancels the in-flight ceremony (registration, authentication, or autofill-assisted
+    /// authentication), if any.
+    ///
+    /// The captured completion is invoked synchronously with `.failure(FidoError.canceled)` —
+    /// deterministic, not dependent on the underlying `ASAuthorizationController`'s asynchronous
+    /// delegate callback — before the controller itself is told to cancel. Safe to call when
+    /// nothing is in flight (no-op).
+    public func cancel() {
+        supersedeInFlightCeremony()
+    }
+
+    /// Cancels the in-flight ceremony only if it is still the one identified by `generation`.
+    ///
+    /// Teardown paths that race with ceremony starts — e.g. `withTaskCancellationHandler`'s
+    /// `onCancel`, which may run *after* the cancelled operation has already returned — must not
+    /// unconditionally kill whatever ceremony is current by then: that could be an unrelated
+    /// newer ceremony on the same singleton (the next journey node's own FIDO call, say). This
+    /// variant, unlike `cancel()`, supersedes nothing unless `generation` still identifies the
+    /// current ceremony. Intentionally internal: external callers always want the unconditional
+    /// `cancel()`.
+    ///
+    /// - Parameter generation: The `ceremonyGeneration` value captured by the caller's ceremony.
+    public func cancel(generation: Int) {
+        guard generation == ceremonyGeneration else {
+            logger?.d("Fido: Skipping cancel — the ceremony has already been superseded")
+            return
+        }
+        supersedeInFlightCeremony()
+    }
+
+    /// Decodes and validates the authentication options shared by `authenticate` and
+    /// `authenticateWithAutoFill`.
+    private func decodeAuthenticationOptions(_ options: [String: Any]) throws -> (PublicKeyCredentialRequestOptions, Data) {
+        let jsonData = try JSONSerialization.data(withJSONObject: options, options: [])
+        let authenticationOptions = try JSONDecoder().decode(PublicKeyCredentialRequestOptions.self, from: jsonData)
+        guard let challengeData = Data(base64Encoded: authenticationOptions.challenge, options: .ignoreUnknownCharacters) else {
+            throw FidoError.invalidChallenge
+        }
+        return (authenticationOptions, challengeData)
+    }
+
+    /// Builds the platform (passkey) assertion request shared by `authenticate` and
+    /// `authenticateWithAutoFill`.
+    private func makePlatformAssertionRequest(from authenticationOptions: PublicKeyCredentialRequestOptions, challenge: Data) -> ASAuthorizationPlatformPublicKeyCredentialAssertionRequest {
+        let platformProvider = ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier: authenticationOptions.rpId ?? "")
+        let assertionRequest = platformProvider.createCredentialAssertionRequest(challenge: challenge)
+        assertionRequest.userVerificationPreference = ASAuthorizationPublicKeyCredentialUserVerificationPreference(rawValue: authenticationOptions.userVerification?.rawValue ?? "preferred")
+        return assertionRequest
+    }
+
+    /// Supersedes any in-flight ceremony: synchronously completes it with
+    /// `.failure(FidoError.canceled)`, tells the underlying `ASAuthorizationController` to cancel
+    /// (fire-and-forget — becomes a no-op once state below is cleared), and clears instance state.
+    /// No-op if nothing is in flight. Shared by `cancel()` and the start of `register`,
+    /// `authenticate`, and `authenticateWithAutoFill`.
+    private func supersedeInFlightCeremony() {
+        // Bumped unconditionally, even when nothing is in flight, so every ceremony this
+        // instance ever starts (or explicit `cancel()`) gets a fresh identity to compare against.
+        ceremonyGeneration += 1
+        guard let controller = authorizationController else { return }
+        logger?.d("Fido: Superseding in-flight ceremony")
+        let pendingCompletion = completion
+        cleanup()
+        controller.cancel()
+        pendingCompletion?(.failure(FidoError.canceled))
+    }
+
     ///- Returns: The presentation anchor.
     public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         guard let window = window else {
@@ -235,6 +399,14 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     ///   - controller: The authorization controller.
     ///   - authorization: The authorization object containing the credential.
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        // `cancel()`/a new ceremony can supersede this controller before its delegate callback
+        // arrives — `ASAuthorizationController.cancel()` re-invokes the delegate asynchronously,
+        // so a stale callback from an already-superseded controller must not touch the new
+        // ceremony's state.
+        guard controller === self.authorizationController else {
+            logger?.d("Fido: Ignoring stale authorization completion from a superseded ceremony")
+            return
+        }
         logger?.d("Fido: Authorization completed successfully")
         cancelTimeout()
         didComplete(with: authorization.credential)
@@ -246,6 +418,10 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     ///   - controller: The authorization controller.
     ///   - error: The error that occurred.
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        guard controller === self.authorizationController else {
+            logger?.d("Fido: Ignoring stale authorization error from a superseded ceremony")
+            return
+        }
         logger?.e("Fido: Authorization failed", error: error)
         cancelTimeout()
         completion?(.failure(error))
@@ -253,16 +429,22 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
     }
     
     // MARK: - Timeout Management
-    
-    /// Starts a timeout task that will cancel the authorization after the specified duration
+
+    /// Starts a timeout task that will cancel the authorization after the specified duration.
     ///
-    /// - Parameter milliseconds: The timeout duration in milliseconds
-    private func startTimeout(milliseconds: Int) {
+    /// - Parameters:
+    ///   - milliseconds: The timeout duration in milliseconds.
+    ///   - generation: The `ceremonyGeneration` captured by the ceremony that scheduled this
+    ///     timeout. The `Task.isCancelled` check below only catches cancellation that lands
+    ///     *before* the check runs; a supersede that lands after the check passes but before the
+    ///     `MainActor.run` body executes would otherwise still fire against whatever ceremony is
+    ///     current by then. `fireTimeout(generation:)` re-checks this generation once actually
+    ///     isolated on the actor, closing that window.
+    private func startTimeout(milliseconds: Int, generation: Int) {
         // Cancel any existing timeout
         cancelTimeout()
 
         let timeoutSeconds = Double(milliseconds) / 1000.0
-        let capturedLogger = logger
 
         timeoutTask = Task { [weak self] in
             try? await Task.sleep(nanoseconds: UInt64(timeoutSeconds * 1_000_000_000))
@@ -270,21 +452,25 @@ public class Fido: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationC
             guard !Task.isCancelled else { return }
 
             await MainActor.run { [weak self] in
-                guard let self = self else { return }
-
-                capturedLogger?.d("Fido: Operation timed out after \(Int(timeoutSeconds))s")
-
-                // Cancel the authorization controller if still active
-                self.authorizationController?.cancel()
-
-                // Call completion with timeout error
-                let timeoutError = FidoError.timeout
-                self.completion?(.failure(timeoutError))
-
-                // Clean up
-                self.cleanup()
+                self?.fireTimeout(generation: generation, timeoutSeconds: timeoutSeconds)
             }
         }
+    }
+
+    /// Fires the timeout for a specific ceremony generation: cancels the authorization
+    /// controller and completes with `FidoError.timeout`. No-op if a newer ceremony has since
+    /// superseded this one (`generation` no longer matches `ceremonyGeneration`) — see
+    /// `startTimeout`'s doc comment for why this guard is necessary. Exposed (not `private`) so
+    /// tests can simulate the stale-timeout race deterministically.
+    func fireTimeout(generation: Int, timeoutSeconds: Double = 0) {
+        guard generation == ceremonyGeneration else {
+            logger?.d("Fido: Ignoring stale timeout from a superseded ceremony")
+            return
+        }
+        logger?.d("Fido: Operation timed out after \(Int(timeoutSeconds))s")
+        authorizationController?.cancel()
+        completion?(.failure(FidoError.timeout))
+        cleanup()
     }
     
     /// Cancels the timeout task if one is active
@@ -466,9 +652,15 @@ public enum FidoError: Error, LocalizedError, Equatable, Sendable {
     case unsupportedAction(String)
     case missingParameters(String)
     case timeout
+    /// The ceremony was superseded by a new one, or explicitly cancelled via `Fido.cancel()`.
+    /// Distinct from the native `ASAuthorizationError.canceled`, which means the user dismissed
+    /// a modal system sheet.
+    case canceled
 
     public var errorDescription: String? {
         switch self {
+        case .canceled:
+            return "FIDO ceremony was superseded by a new request or cancelled"
         case .timeout:
             return "ERROR::TimeoutError:Operation timedout"
         case .invalidChallenge:

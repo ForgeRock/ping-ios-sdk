@@ -207,6 +207,14 @@ public class OidcClientConfig: @unchecked Sendable {
     public var acrValues: String?
     /// Additional parameters for OIDC.
     public var additionalParameters = [String: String]()
+    /// RFC 9396 Rich Authorization Details to include in every authorization request built from
+    /// this configuration. Serialized by `buildAuthorizeParams` into the single `authorization_details`
+    /// parameter, so it is automatically carried in the PAR POST body when `par == true`.
+    ///
+    /// - Note: if the legacy string escape hatch `additionalParameters` also contains an
+    ///   `authorization_details` entry, the typed value here wins and the raw entry is ignored. A
+    ///   per-call or per-login `authorization_details` (typed or raw) takes precedence over both.
+    public var authorizationDetails: [AuthorizationDetail]?
     /// Enable PAR (Pushed Authorization Request) RFC 9126.
     /// When enabled, authorization parameters are pushed to the server before authorization.
     public var par: Bool = false
@@ -393,6 +401,7 @@ public class OidcClientConfig: @unchecked Sendable {
         self.uiLocales = other.uiLocales
         self.acrValues = other.acrValues
         self.additionalParameters = other.additionalParameters
+        self.authorizationDetails = other.authorizationDetails
         self.par = other.par
         self.httpClient = other.httpClient
         self.programmaticOpenIdOverride = other.programmaticOpenIdOverride
@@ -481,6 +490,20 @@ public class OidcClientConfig: @unchecked Sendable {
             }
         }
 
+        // --- authorizationDetails (RFC 9396) ---
+        var parsedAuthorizationDetails: [AuthorizationDetail]?
+        if let rawArray: [Any] = try p.optionalValue(JsonConfigKey.authorizationDetails, field: f(JsonConfigKey.authorizationDetails)) {
+            do {
+                // Decode through the `AuthorizationDetail(anyValue:)` bridge, not JSONDecoder:
+                // on the iOS < 17 runtime JSONDecoder bridges JSON `true` to NSNumber(1), which
+                // decodes as .double(1) and re-serializes as `1` on the wire. The bridge
+                // classifies CFBoolean correctly on every OS version.
+                parsedAuthorizationDetails = try rawArray.map { try AuthorizationDetail(anyValue: $0) }
+            } catch {
+                throw JsonConfigError.invalidType(field: f(JsonConfigKey.authorizationDetails), expected: "array of RFC 9396 authorization_details objects")
+            }
+        }
+
         // --- openId endpoint overrides (optional) ---
         // Maps to `openIdOverride` — applied to the OpenID document exactly once (see oidcInitialize).
         // To add a new endpoint: add one entry to `endpointSetters`; no other change required.
@@ -533,6 +556,7 @@ public class OidcClientConfig: @unchecked Sendable {
         self.uiLocales = uiLocales
         self.acrValues = acrValues
         self.additionalParameters = parsedAdditional
+        self.authorizationDetails = parsedAuthorizationDetails
 
         // Every successful `apply(json:)` reconfigures the OpenID source, invalidating any
         // previously materialized document: an `openId`-only JSON seeds it directly (no

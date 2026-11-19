@@ -56,11 +56,13 @@ struct DavinciView: View {
                         }
                     case let errorNode as ErrorNode:
                         ErrorNodeView(node: errorNode)
-                        if let nextNode = errorNode.continueNode {
+                        // A timed-out PollingCollector auto-submits on appearance, so re-rendering
+                        // its form would resubmit and loop on the same timedOut error.
+                        if let nextNode = errorNode.continueNode,
+                           !nextNode.collectors.contains(where: { ($0 as? PollingCollector)?.payload() == "timedOut" }) {
                             ConnectorView(davinciViewModel: davinciViewModel, node: nextNode)
                         }
-                        
-                        
+
                     default:
                         // Show an empty view for unhandled cases.
                         EmptyView()

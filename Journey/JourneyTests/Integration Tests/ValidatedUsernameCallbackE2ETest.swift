@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+ * Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -17,6 +17,8 @@ class ValidatedUsernameCallbackE2ETest: JourneyE2EBaseTest, @unchecked Sendable 
     var testTree = "ValidatedUsernameCallbackTest"
     
     func testValidatedUsernameCallback() async throws {
+        try XCTSkipIf(true, "AIC bug: Sandbox (Rapid 24326.0+) does not enforce valid-username uniqueness - see TRIAGE-38428")
+
         // Start the journey and cast to ContinueNode
         guard let node = await defaultJourney.start(testTree) as? ContinueNode else {
             XCTFail("Expected ContinueNode at start")

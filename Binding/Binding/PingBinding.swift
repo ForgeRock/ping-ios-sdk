@@ -11,6 +11,7 @@
 import Foundation
 import PingDeviceId
 import PingJourneyPlugin
+import PingOrchestrate
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -37,10 +38,14 @@ class Binding {
     /// - Throws: A `DeviceBindingError` if the device is not supported, or if any other error occurs during the binding process.
     static func bind(callback: DeviceBindingCallback, journey: Journey?, config: (DeviceBindingConfig) -> Void = { _ in }) async throws -> String {
         let deviceBindingConfig = DeviceBindingConfig()
+        // Seed the config logger from the Journey workflow before applying the app's config
+        // block, so the app block can override it (matches Android's
+        // DeviceBindingConfig().apply { this.logger = journey.config.logger }.apply(config)).
+        deviceBindingConfig.logger = journey?.config.logger
         config(deviceBindingConfig)
-        
+
         // Check for and migrate legacy data if present
-        _ = await BindingMigration.migrateIfNeeded()
+        _ = await BindingMigration.migrateIfNeeded(logger: deviceBindingConfig.logger)
         
         var deviceAuthenticator = deviceBindingConfig.authenticator(type: callback.deviceBindingAuthenticationType, prompt: Prompt(title: callback.title, subtitle: callback.subtitle, description: callback.description))
         deviceAuthenticator.journey = callback.journey
@@ -118,18 +123,22 @@ class Binding {
     /// - Throws: A `DeviceBindingError` if the device is not registered, or if any other error occurs during the signing process.
     static func sign(callback: DeviceSigningVerifierCallback, journey: Journey?, config: (DeviceBindingConfig) -> Void = { _ in }) async throws -> String {
         let deviceBindingConfig = DeviceBindingConfig()
+        // Seed the config logger from the Journey workflow before applying the app's config
+        // block, so the app block can override it (matches Android's
+        // DeviceBindingConfig().apply { this.logger = journey.config.logger }.apply(config)).
+        deviceBindingConfig.logger = journey?.config.logger
         config(deviceBindingConfig)
         
         let startTime = Date()
-        
+
         let claims = deviceBindingConfig.claims
         try validate(customClaims: claims)
-        
+
         let storage = deviceBindingConfig.keyStorage()
-        
+
         // Check for and migrate legacy data if present
         // This ensures legacy keys are available for signing
-        _ = await BindingMigration.migrateIfNeeded()
+        _ = await BindingMigration.migrateIfNeeded(logger: deviceBindingConfig.logger)
         
         // Retrieve the user key from storage.
         let retrievedUserKey: UserKey

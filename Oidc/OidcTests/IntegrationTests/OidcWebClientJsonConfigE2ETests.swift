@@ -285,6 +285,22 @@ private final class OidcJsonCapturingBrowser: BrowserLauncherProtocol, @unchecke
     var isInProgress: Bool = false
     private let callbackURL = URL(string: "frauth://com.forgerock.ios.frexample?code=fake-code&state=fake")!
 
+    /// Substitutes the `state` from the launched authorize URL for the fixture's
+    /// `state=fake`, mirroring a real authorization server so the transport's CSRF
+    /// state validation passes (the suite's non-PAR flows all send state on the URL).
+    private func callbackResponse(url: URL) -> URL {
+        guard let sentState = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+            .queryItems?.first(where: { $0.name == "state" })?.value else {
+            return callbackURL
+        }
+        var components = URLComponents(url: callbackURL, resolvingAgainstBaseURL: false)!
+        var items = components.queryItems ?? []
+        items.removeAll { $0.name == "state" }
+        items.append(URLQueryItem(name: "state", value: sentState))
+        components.queryItems = items
+        return components.url ?? callbackURL
+    }
+
     func launch(
         url: URL,
         customParams: [String: String]?,
@@ -294,7 +310,7 @@ private final class OidcJsonCapturingBrowser: BrowserLauncherProtocol, @unchecke
         logger: PingLogger.Logger
     ) async throws -> URL {
         launchedURL = url
-        return callbackURL
+        return callbackResponse(url: url)
     }
 
     func launch(
@@ -308,7 +324,7 @@ private final class OidcJsonCapturingBrowser: BrowserLauncherProtocol, @unchecke
     ) async throws -> URL {
         launchedURL = url
         launchedRedirectUri = redirectUri
-        return callbackURL
+        return callbackResponse(url: url)
     }
 
     func reset() {}

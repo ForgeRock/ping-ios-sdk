@@ -146,16 +146,19 @@ final class PushNotificationTests: XCTestCase {
     }
     
     func testIsExpiredProperty() {
-        // Not expired (just created with 120s TTL)
+        // Not expired: no `sentAt`, so expiry is based on the `createdAt` fallback
+        // (created just now, 120s TTL).
         let notification1 = PushNotification(
             credentialId: "credential-123",
             ttl: 120,
             messageId: "msg-456",
             pushType: .default
         )
+        XCTAssertNil(notification1.sentAt)
         XCTAssertFalse(notification1.isExpired)
-        
-        // Expired (created 2 minutes ago with 60s TTL)
+
+        // Expired: no `sentAt`, so expiry is based on the `createdAt` fallback
+        // (created 2 minutes ago with 60s TTL).
         let notification2 = PushNotification(
             credentialId: "credential-123",
             ttl: 60,
@@ -163,7 +166,54 @@ final class PushNotificationTests: XCTestCase {
             pushType: .default,
             createdAt: Date(timeIntervalSinceNow: -120)
         )
+        XCTAssertNil(notification2.sentAt)
         XCTAssertTrue(notification2.isExpired)
+    }
+
+    func testIsExpiredUsesSentAtWhenPresent() {
+        // The bug scenario: the notification was sent 10 minutes ago but only
+        // processed/created locally just now. Expiry must be based on `sentAt`
+        // (600s elapsed > 120s TTL), not on the fresh local `createdAt`.
+        let notification = PushNotification(
+            credentialId: "credential-123",
+            ttl: 120,
+            messageId: "msg-456",
+            pushType: .default,
+            createdAt: Date(),
+            sentAt: Date(timeIntervalSinceNow: -600)
+        )
+        XCTAssertNotNil(notification.sentAt)
+        XCTAssertTrue(notification.isExpired, "Notification sent 10 minutes ago with a 120s TTL must be expired even when created locally just now")
+    }
+
+    func testIsExpiredNotExpiredWhenSentAtRecent() {
+        // Regression test for SDKS-5490: a recently sent notification must not be
+        // expired even if it was created locally long before (e.g. restored from
+        // storage or processed late). Expiry is based on `sentAt` (just sent,
+        // 120s TTL), not on the 10-minute-old `createdAt`.
+        let notification = PushNotification(
+            credentialId: "credential-123",
+            ttl: 120,
+            messageId: "msg-456",
+            pushType: .default,
+            createdAt: Date(timeIntervalSinceNow: -600),
+            sentAt: Date()
+        )
+        XCTAssertFalse(notification.isExpired, "A just-sent notification must not be expired regardless of the local creation time")
+    }
+
+    func testIsExpiredJustInsideTtlIsNotExpired() {
+        // A notification sent 119.5s ago with a 120s TTL is still inside its
+        // window. The half-second margin absorbs the delay between building the
+        // date and evaluating the property, so the test stays deterministic.
+        let notification = PushNotification(
+            credentialId: "credential-123",
+            ttl: 120,
+            messageId: "msg-456",
+            pushType: .default,
+            sentAt: Date(timeIntervalSinceNow: -119.5)
+        )
+        XCTAssertFalse(notification.isExpired, "A notification still within its TTL window must not be expired")
     }
     
     // MARK: - Action Methods Tests

@@ -21,6 +21,7 @@
 		CA001032FACE000000000001 /* PingOneRecognizeEnrollCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA001022FACE000000000001 /* PingOneRecognizeEnrollCallback.swift */; };
 		CA001033FACE000000000001 /* PingOneRecognizeAuthenticateCallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA001023FACE000000000001 /* PingOneRecognizeAuthenticateCallback.swift */; };
 		CA001035FACE000000000001 /* RecognizeConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA001025FACE000000000001 /* RecognizeConfig.swift */; };
+		CA001036FACE000000000001 /* SharedErrorCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA001026FACE000000000001 /* SharedErrorCode.swift */; };
 		CA001003FACE000000000001 /* PingJourneyPlugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA001013FACE000000000001 /* PingJourneyPlugin.framework */; };
 		CA001005FACE000000000001 /* PingOrchestrate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA001014FACE000000000001 /* PingOrchestrate.framework */; };
 		CA001007FACE000000000001 /* KeylessSDK in Frameworks */ = {isa = PBXBuildFile; productRef = CA001009FACE000000000001 /* KeylessSDK */; };
@@ -54,6 +55,7 @@
 		CA001022FACE000000000001 /* PingOneRecognizeEnrollCallback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PingOneRecognizeEnrollCallback.swift; sourceTree = "<group>"; };
 		CA001023FACE000000000001 /* PingOneRecognizeAuthenticateCallback.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PingOneRecognizeAuthenticateCallback.swift; sourceTree = "<group>"; };
 		CA001025FACE000000000001 /* RecognizeConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecognizeConfig.swift; sourceTree = "<group>"; };
+		CA001026FACE000000000001 /* SharedErrorCode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SharedErrorCode.swift; sourceTree = "<group>"; };
 		CA001013FACE000000000001 /* PingJourneyPlugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingJourneyPlugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CA001014FACE000000000001 /* PingOrchestrate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PingOrchestrate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -142,6 +144,7 @@
 				CA001020FACE000000000001 /* Journey */,
 				23747A468B193A07933A2FA6 /* Recognize.swift */,
 				CA001024FACE000000000001 /* RecognizeSuccess.swift */,
+				CA001026FACE000000000001 /* SharedErrorCode.swift */,
 				951DF260F40F275A380F1AED /* Recognize.h */,
 				20321EB47E479572B21EEDA4 /* PrivacyInfo.xcprivacy */,
 			);
@@ -272,6 +275,7 @@
 			files = (
 				0EC5DC84AE2E1330BB3E4A0C /* Recognize.swift in Sources */,
 				CA001034FACE000000000001 /* RecognizeSuccess.swift in Sources */,
+				CA001036FACE000000000001 /* SharedErrorCode.swift in Sources */,
 				CA001031FACE000000000001 /* AbstractRecognizeCallback.swift in Sources */,
 				CA001032FACE000000000001 /* PingOneRecognizeEnrollCallback.swift in Sources */,
 				CA001033FACE000000000001 /* PingOneRecognizeAuthenticateCallback.swift in Sources */,

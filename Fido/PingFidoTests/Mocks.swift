@@ -18,8 +18,12 @@ import AuthenticationServices
 
 class MockASAuthorizationController: ASAuthorizationController {
     var performRequestsCalled = false
-    
+
     override func performRequests() {
+        performRequestsCalled = true
+    }
+
+    override func performRequests(options: ASAuthorizationController.RequestOptions) {
         performRequestsCalled = true
     }
 }
@@ -71,15 +75,27 @@ class MockContinueNode: ContinueNode, @unchecked Sendable {
 class MockFido: Fido, @unchecked Sendable {
     var registrationResult: Result<[String: Any], Error>?
     var authenticationResult: Result<[String: Any], Error>?
-    /// Captures the `logger` parameter passed to the most recent call to `register` or
-    /// `authenticate`, so tests can assert callers propagate the workflow logger.
+    /// A separate result from `authenticationResult` so tests can give `authenticate` and
+    /// `authenticateWithAutoFill` independent mock outcomes without cross-test coupling.
+    var autoFillAuthenticationResult: Result<[String: Any], Error>?
+    /// Captures the `logger` parameter passed to the most recent call to `register`,
+    /// `authenticate`, or `authenticateWithAutoFill`, so tests can assert callers propagate the
+    /// workflow logger.
     var capturedLogger: Logger?
     /// Captures the `preferImmediatelyAvailableCredentials` flag passed to the most recent
     /// call to `authenticate`, so tests can assert callers forward it.
     var capturedPreferImmediatelyAvailableCredentials: Bool?
+    /// Set when `cancel()` is called, so tests can assert callers delegate to it.
+    var cancelCalled = false
+    /// Captures the `userIDEncoding` passed to the most recent call to `register`.
+    var capturedUserIDEncoding: FidoUserIDEncoding?
+    /// Captures the `options` passed to the most recent call to `register`.
+    var capturedOptions: [String: Any]?
 
-    override func register(options: [String : Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String : Any], Error>) -> Void) {
+    override func register(options: [String : Any], window: ASPresentationAnchor, userIDEncoding: FidoUserIDEncoding = .utf8, logger: Logger? = nil, completion: @escaping (Result<[String : Any], Error>) -> Void) {
         capturedLogger = logger
+        capturedUserIDEncoding = userIDEncoding
+        capturedOptions = options
         if let result = registrationResult {
             completion(result)
         }
@@ -91,6 +107,28 @@ class MockFido: Fido, @unchecked Sendable {
         if let result = authenticationResult {
             completion(result)
         }
+    }
+
+    override func authenticateWithAutoFill(options: [String : Any], window: ASPresentationAnchor, logger: Logger? = nil, completion: @escaping (Result<[String : Any], Error>) -> Void) {
+        capturedLogger = logger
+        if let result = autoFillAuthenticationResult {
+            completion(result)
+        }
+    }
+
+    override func cancel() {
+        cancelCalled = true
+    }
+}
+
+/// A real `Fido` whose authorization controller never presents system UI, so the unmodified
+/// `register` and `authenticate` logic runs and its requests can be observed through `testRequestCapture`.
+class NoUIFido: Fido, @unchecked Sendable {
+    override func makeAuthorizationController(requests: [ASAuthorizationRequest]) -> ASAuthorizationController {
+        requests.forEach { testRequestCapture?($0) }
+        let controller = MockASAuthorizationController(authorizationRequests: requests)
+        authorizationController = controller
+        return controller
     }
 }
 

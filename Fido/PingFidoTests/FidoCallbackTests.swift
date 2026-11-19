@@ -10,6 +10,7 @@
 //
 
 import XCTest
+import AuthenticationServices
 @testable import PingFido
 @testable import PingJourneyPlugin
 @testable import PingJourney
@@ -84,6 +85,28 @@ class FidoCallbackTests: XCTestCase {
         }
     }
     
+    @MainActor
+    func testFidoRegistrationCallbackKeepsUTF8UserIDEncoding() async {
+        let callback = FidoRegistrationCallback()
+        callback.fido = mockFido
+
+        let journey = Journey.createJourney()
+        let hiddenValueCallback = HiddenValueCallback()
+        hiddenValueCallback.initValue(name: JourneyConstants.id, value: FidoConstants.WEB_AUTHN_OUTCOME)
+        callback.journey = journey
+        callback.continueNode = MockContinueNode(callbacks: Callbacks([hiddenValueCallback]))
+
+        mockFido.registrationResult = .success([
+            FidoConstants.FIELD_RAW_ID: "rawId".data(using: .utf8)!,
+            FidoConstants.FIELD_CLIENT_DATA_JSON: "clientDataJSON".data(using: .utf8)!,
+            FidoConstants.FIELD_ATTESTATION_OBJECT: "attestationObject".data(using: .utf8)!
+        ])
+
+        _ = await callback.register(window: MockASPresentationAnchor())
+
+        XCTAssertEqual(mockFido.capturedUserIDEncoding, .utf8)
+    }
+
     @MainActor // Mark test as running on MainActor
     func testFidoAuthenticationCallbackAuthenticate() async { // Removed 'throws'
         let callback = FidoAuthenticationCallback()
@@ -139,6 +162,226 @@ class FidoCallbackTests: XCTestCase {
             // Verify the side effect on hiddenValueCallback
             XCTAssertTrue((hiddenValueCallback.value).starts(with: "ERROR::"))
         }
+    }
+
+    func testFidoAuthenticationCallbackParsesConditionalMediation() {
+        let callback = FidoAuthenticationCallback()
+        let data: [String: Any] = [
+            FidoConstants.FIELD_CHALLENGE: "someChallenge",
+            FidoConstants.FIELD_MEDIATION: "conditional"
+        ]
+        callback.initValue(name: FidoConstants.FIELD_DATA, value: data)
+        XCTAssertTrue(callback.isConditionalMediationRequested)
+    }
+
+    func testFidoAuthenticationCallbackParsesLegacyConditionalFlag() {
+        // Mirrors the JS SDK's defensive `mediation === 'conditional' || conditional === true`
+        // check — the real AM payload can carry the redundant boolean without `mediation` set.
+        let callback = FidoAuthenticationCallback()
+        let data: [String: Any] = [
+            FidoConstants.FIELD_CHALLENGE: "someChallenge",
+            FidoConstants.FIELD_CONDITIONAL: true
+        ]
+        callback.initValue(name: FidoConstants.FIELD_DATA, value: data)
+        XCTAssertTrue(callback.isConditionalMediationRequested)
+    }
+
+    func testFidoAuthenticationCallbackDefaultsToNonConditional() {
+        let callback = FidoAuthenticationCallback()
+        let data: [String: Any] = [
+            FidoConstants.FIELD_CHALLENGE: "someChallenge"
+        ]
+        callback.initValue(name: FidoConstants.FIELD_DATA, value: data)
+        XCTAssertFalse(callback.isConditionalMediationRequested)
+        XCTAssertTrue(callback.isManualButtonEnabled, "Defaults to true when absent from the payload")
+    }
+
+    func testFidoAuthenticationCallbackParsesManualButtonEnabled() {
+        let callback = FidoAuthenticationCallback()
+        let data: [String: Any] = [
+            FidoConstants.FIELD_CHALLENGE: "someChallenge",
+            FidoConstants.FIELD_MANUAL_BUTTON_ENABLED: false
+        ]
+        callback.initValue(name: FidoConstants.FIELD_DATA, value: data)
+        XCTAssertFalse(callback.isManualButtonEnabled)
+    }
+
+    @MainActor
+    func testFidoAuthenticationCallbackAuthenticateWithAutoFillSuccess() async {
+        let callback = FidoAuthenticationCallback()
+        callback.fido = mockFido
+
+        let journey = Journey.createJourney()
+        let hiddenValueCallback = HiddenValueCallback()
+        hiddenValueCallback.initValue(name: JourneyConstants.id, value: FidoConstants.WEB_AUTHN_OUTCOME)
+        let continueNode = MockContinueNode(callbacks: Callbacks([hiddenValueCallback]))
+        callback.journey = journey
+        callback.continueNode = continueNode
+
+        let successResponse: [String: Any] = [
+            FidoConstants.FIELD_RAW_ID: "rawId".data(using: .utf8)!,
+            FidoConstants.FIELD_CLIENT_DATA_JSON: "clientDataJSON".data(using: .utf8)!,
+            FidoConstants.FIELD_AUTHENTICATOR_DATA: "authenticatorData".data(using: .utf8)!,
+            FidoConstants.FIELD_SIGNATURE: "signature".data(using: .utf8)!,
+            FidoConstants.FIELD_USER_HANDLE: "userHandle".data(using: .utf8)!
+        ]
+        mockFido.autoFillAuthenticationResult = .success(successResponse)
+
+        let result = await callback.authenticateWithAutoFill(window: MockASPresentationAnchor())
+
+        switch result {
+        case .success(let responseDict):
+            XCTAssertEqual(responseDict[FidoConstants.FIELD_RAW_ID] as? Data, "rawId".data(using: .utf8)!)
+            XCTAssertFalse((hiddenValueCallback.value).starts(with: "ERROR::"))
+        case .failure(let error):
+            XCTFail("Expected authenticateWithAutoFill to succeed, but it failed with \(error).")
+        }
+    }
+
+    @MainActor
+    func testFidoAuthenticationCallbackAuthenticateWithAutoFillSkipsHandleErrorOnFidoErrorCanceled() async {
+        let callback = FidoAuthenticationCallback()
+        callback.fido = mockFido
+
+        let journey = Journey.createJourney()
+        let hiddenValueCallback = HiddenValueCallback()
+        hiddenValueCallback.initValue(name: JourneyConstants.id, value: FidoConstants.WEB_AUTHN_OUTCOME)
+        let continueNode = MockContinueNode(callbacks: Callbacks([hiddenValueCallback]))
+        callback.journey = journey
+        callback.continueNode = continueNode
+        let baseline = hiddenValueCallback.value
+
+        mockFido.autoFillAuthenticationResult = .failure(FidoError.canceled)
+
+        let result = await callback.authenticateWithAutoFill(window: MockASPresentationAnchor())
+
+        switch result {
+        case .success:
+            XCTFail("Expected authenticateWithAutoFill to fail with FidoError.canceled")
+        case .failure(let error):
+            guard let fidoError = error as? FidoError else {
+                XCTFail("Expected FidoError.canceled, but got \(error).")
+                return
+            }
+            XCTAssertEqual(fidoError, .canceled)
+            XCTAssertEqual(hiddenValueCallback.value, baseline, "A superseded/cancelled Conditional UI ceremony must not write to WEB_AUTHN_OUTCOME")
+        }
+    }
+
+    @MainActor
+    func testFidoAuthenticationCallbackAuthenticateWithAutoFillSkipsHandleErrorOnNativeCanceled() async {
+        let callback = FidoAuthenticationCallback()
+        callback.fido = mockFido
+
+        let journey = Journey.createJourney()
+        let hiddenValueCallback = HiddenValueCallback()
+        hiddenValueCallback.initValue(name: JourneyConstants.id, value: FidoConstants.WEB_AUTHN_OUTCOME)
+        let continueNode = MockContinueNode(callbacks: Callbacks([hiddenValueCallback]))
+        callback.journey = journey
+        callback.continueNode = continueNode
+        let baseline = hiddenValueCallback.value
+
+        let nativeCanceled = NSError(domain: ASAuthorizationError.errorDomain, code: ASAuthorizationError.canceled.rawValue, userInfo: nil)
+        mockFido.autoFillAuthenticationResult = .failure(nativeCanceled)
+
+        let result = await callback.authenticateWithAutoFill(window: MockASPresentationAnchor())
+
+        switch result {
+        case .success:
+            XCTFail("Expected authenticateWithAutoFill to fail with the native cancellation error")
+        case .failure:
+            XCTAssertEqual(hiddenValueCallback.value, baseline, "A native cancellation on the mediated path must not write to WEB_AUTHN_OUTCOME")
+        }
+    }
+
+    @MainActor
+    func testFidoAuthenticationCallbackAuthenticateWithAutoFillStillHandlesNonCancellationErrors() async {
+        // The mediated path's silent-cancellation behavior must not blanket-suppress genuine
+        // errors: a non-cancellation failure (e.g. invalidChallenge) still has to go through
+        // handleError and report to the server.
+        let callback = FidoAuthenticationCallback()
+        callback.fido = mockFido
+
+        let journey = Journey.createJourney()
+        let hiddenValueCallback = HiddenValueCallback()
+        hiddenValueCallback.initValue(name: JourneyConstants.id, value: FidoConstants.WEB_AUTHN_OUTCOME)
+        let continueNode = MockContinueNode(callbacks: Callbacks([hiddenValueCallback]))
+        callback.journey = journey
+        callback.continueNode = continueNode
+
+        mockFido.autoFillAuthenticationResult = .failure(FidoError.invalidChallenge)
+
+        let result = await callback.authenticateWithAutoFill(window: MockASPresentationAnchor())
+
+        switch result {
+        case .success:
+            XCTFail("Expected authenticateWithAutoFill to fail with FidoError.invalidChallenge")
+        case .failure(let error):
+            XCTAssertEqual(error as? FidoError, .invalidChallenge)
+        }
+        // handleError's pre-existing mapping for invalidChallenge on the Journey side: not a
+        // cancellation, so it must be reported (the specific DOMException code here is
+        // unchanged legacy behavior — UnknownError via the generic fallback).
+        XCTAssertEqual(hiddenValueCallback.value, "ERROR::UnknownError:Invalid challenge")
+    }
+
+    @MainActor
+    func testFidoAuthenticationCallbackAuthenticateStillReportsNativeCanceledAsNotAllowedError() async {
+        // Regression pin: the traditional (button-triggered) path's handling of a native
+        // ASAuthorizationError.canceled must be completely unchanged by the mediated path's
+        // new silent-cancellation behavior.
+        let callback = FidoAuthenticationCallback()
+        callback.fido = mockFido
+
+        let journey = Journey.createJourney()
+        let hiddenValueCallback = HiddenValueCallback()
+        hiddenValueCallback.initValue(name: JourneyConstants.id, value: FidoConstants.WEB_AUTHN_OUTCOME)
+        let continueNode = MockContinueNode(callbacks: Callbacks([hiddenValueCallback]))
+        callback.journey = journey
+        callback.continueNode = continueNode
+
+        let nativeCanceled = NSError(domain: ASAuthorizationError.errorDomain, code: ASAuthorizationError.canceled.rawValue, userInfo: nil)
+        mockFido.authenticationResult = .failure(nativeCanceled)
+
+        _ = await callback.authenticate(window: MockASPresentationAnchor())
+
+        XCTAssertEqual(hiddenValueCallback.value, "ERROR::NotAllowedError:The operation was canceled.")
+    }
+
+    @MainActor
+    func testFidoCallbackCancelDelegatesToFido() {
+        let callback = FidoAuthenticationCallback()
+        callback.fido = mockFido
+
+        callback.cancel()
+
+        XCTAssertTrue(mockFido.cancelCalled)
+    }
+
+    @MainActor
+    func testFidoAuthenticationCallbackKeepsUTF8UserHandle() async {
+        let callback = FidoAuthenticationCallback()
+        callback.fido = mockFido
+
+        let hiddenValueCallback = HiddenValueCallback()
+        hiddenValueCallback.initValue(name: JourneyConstants.id, value: FidoConstants.WEB_AUTHN_OUTCOME)
+        callback.journey = Journey.createJourney()
+        callback.continueNode = MockContinueNode(callbacks: Callbacks([hiddenValueCallback]))
+
+        let credentialID = Data([0xFB, 0xFF, 0xBF, 0xFE])
+        mockFido.authenticationResult = .success([
+            FidoConstants.FIELD_RAW_ID: credentialID,
+            FidoConstants.FIELD_CLIENT_DATA_JSON: "clientDataJSON".data(using: .utf8)!,
+            FidoConstants.FIELD_AUTHENTICATOR_DATA: "authenticatorData".data(using: .utf8)!,
+            FidoConstants.FIELD_SIGNATURE: "signature".data(using: .utf8)!,
+            FidoConstants.FIELD_USER_HANDLE: Data("userHandle".utf8)
+        ])
+
+        _ = await callback.authenticate(window: MockASPresentationAnchor())
+
+        let components = hiddenValueCallback.value.components(separatedBy: FidoConstants.DATA_SEPARATOR)
+        XCTAssertEqual(components.last, "userHandle")
+        XCTAssertEqual(components.count >= 2 ? components[components.count - 2] : nil, "-_-__g")
     }
 
     @MainActor

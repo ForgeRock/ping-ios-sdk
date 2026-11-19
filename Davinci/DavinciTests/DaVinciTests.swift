@@ -282,7 +282,10 @@ final class DaVinciTests: DaVinciBaseTests, @unchecked Sendable {
         XCTAssertTrue(authorizeReq.url?.query?.contains("response_mode=pi.flow") ?? false)
         XCTAssertTrue(authorizeReq.url?.query?.contains("code_challenge_method=S256") ?? false)
         XCTAssertTrue(authorizeReq.url?.query?.contains("code_challenge=") ?? false)
-        XCTAssertTrue(authorizeReq.url?.query?.contains("redirect_uri=http://localhost:8080") ?? false)
+        // The query is RFC 3986 percent-encoded (see PingNetwork setQueryParameters):
+        // `:` and `/` in the redirect_uri value are sent as %3A and %2F, and the
+        // authorization server decodes the value back to http://localhost:8080.
+        XCTAssertTrue(authorizeReq.url?.query?.contains("redirect_uri=http%3A%2F%2Flocalhost%3A8080") ?? false)
         XCTAssertTrue(authorizeReq.url?.query?.contains("acr_values=acrValues") ?? false)
         XCTAssertTrue(authorizeReq.url?.query?.contains("display=display") ?? false)
         XCTAssertTrue(authorizeReq.url?.query?.contains("login_hint=login_hint") ?? false)

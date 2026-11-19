@@ -311,7 +311,8 @@ public final class PushClient: @unchecked Sendable {
     /// - Returns: `true` when the approval succeeds, `false` when the notification is no longer pending
     ///   or the handler reports failure.
     /// - Throws: `PushError` when the client is not initialized, the notification cannot be found, or
-    ///   handler/storage operations fail.
+    ///   handler/storage operations fail. Throws `PushError.notificationExpired` when the notification's
+    ///   time-to-live has elapsed.
     public func approveNotification(_ notificationId: String) async throws -> Bool {
         try checkInitialized()
         return try await pushService.approveNotification(
@@ -326,8 +327,8 @@ public final class PushClient: @unchecked Sendable {
     ///   - notificationId: Identifier of the notification to approve.
     ///   - challengeResponse: User-provided response required for number-matching flows.
     /// - Returns: `true` when the approval succeeds.
-    /// - Throws: `PushError.invalidParameterValue` when the response is empty, or `PushError` surfaced
-    ///   by the underlying service.
+    /// - Throws: `PushError.invalidParameterValue` when the response is empty, `PushError.notificationExpired`
+    ///   when the notification has expired, or `PushError` surfaced by the underlying service.
     public func approveChallengeNotification(
         _ notificationId: String,
         challengeResponse: String
@@ -350,7 +351,8 @@ public final class PushClient: @unchecked Sendable {
     ///   - notificationId: Identifier of the notification to approve.
     ///   - authenticationMethod: Method used to authenticate the user (for example, "face" or "fingerprint").
     /// - Returns: `true` when the approval succeeds.
-    /// - Throws: `PushError.invalidParameterValue` when the method is empty, or any `PushError` from the service.
+    /// - Throws: `PushError.invalidParameterValue` when the method is empty, `PushError.notificationExpired`
+    ///   when the notification has expired, or any other `PushError` from the service.
     public func approveBiometricNotification(
         _ notificationId: String,
         authenticationMethod: String
@@ -371,7 +373,8 @@ public final class PushClient: @unchecked Sendable {
     ///
     /// - Parameter notificationId: Identifier of the notification to deny.
     /// - Returns: `true` when the denial succeeds.
-    /// - Throws: `PushError` surfaced from the underlying service operations.
+    /// - Throws: `PushError.notificationExpired` when the notification has expired, or `PushError`
+    ///   surfaced from the underlying service operations.
     public func denyNotification(_ notificationId: String) async throws -> Bool {
         try checkInitialized()
         return try await pushService.denyNotification(
