@@ -2,7 +2,7 @@
 //  ValidatedCollector.swift
 //  PingDavinci
 //
-//  Copyright (c) 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2025 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -34,6 +34,7 @@ open class ValidatedCollector: SingleValueCollector, @unchecked Sendable {
     }
     
     /// Validates the collector’s value and returns a list of validation errors, if any.
+    /// The `validation` regex matches anywhere in the value, as in PingOne Forms; anchor it with `^` and `$` to require the entire value.
     /// - Returns: An array of `ValidationError`.
     open override func validate() -> [ValidationError] {
         var errors = [ValidationError]()

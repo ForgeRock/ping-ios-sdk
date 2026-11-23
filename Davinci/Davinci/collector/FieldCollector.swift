@@ -2,7 +2,7 @@
 //  FieldCollector.swift
 //  PingDavinci
 //
-//  Copyright (c) 2024 - 2025 Ping Identity Corporation. All rights reserved.
+//  Copyright (c) 2024 - 2026 Ping Identity Corporation. All rights reserved.
 //
 //  This software may be modified and distributed under the terms
 //  of the MIT license. See the LICENSE file for details.
@@ -69,7 +69,8 @@ open class FieldCollector<T>: Collector, AnyFieldCollector, Validator, @unchecke
 
 
 /// Struct representing the validation of the field collector.
-/// - property regex: The regex of the validation.
+/// - property regex: The regex of the validation. It is not anchored: like PingOne Forms, which evaluates it as a
+///   JavaScript `RegExp.test`, it matches if it is found anywhere in the value. Use `^` and `$` to require the entire value.
 /// - property errorMessage: The error message of the validation.
 public struct Validation {
     public let regex: NSRegularExpression?
