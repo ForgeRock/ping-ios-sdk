@@ -19,7 +19,7 @@ This module provides FIDO functionality for the Ping Orchestration SDK for iOS, 
 
 ### Installation
 
-To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` file.
 
 #### Swift Package Manager
 
@@ -30,12 +30,6 @@ dependencies: [
 ```
 
 Then add the `PingFido` product to your target's dependencies.
-
-#### CocoaPods
-
-```ruby
-pod 'PingFido', '~> <version>'
-```
 
 ### Import the Module
 

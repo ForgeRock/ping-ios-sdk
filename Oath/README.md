@@ -19,7 +19,7 @@ PingOath is a comprehensive iOS SDK module that provides One-Time Password (OTP)
 
 ### Installation
 
-To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` file.
 
 #### Swift Package Manager
 
@@ -33,11 +33,6 @@ dependencies: [
 
 Then add the `PingOath` product to your target's dependencies.
 
-#### CocoaPods
-
-```ruby
-pod 'PingOath', '~> <version>'
-```
 ### Import the Module
 
 ```swift

@@ -175,7 +175,7 @@ EOF
 
 This report measures the size of each iOS SDK module as a generated **Release framework bundle**.
 
-Because the iOS SDK is distributed through SPM and CocoaPods, modules are compiled inside the consuming application. The framework size reported here is a **CI-friendly approximation of compiled module footprint**, not a direct prediction of final app size.
+Because the iOS SDK is distributed through SPM, modules are compiled inside the consuming application. The framework size reported here is a **CI-friendly approximation of compiled module footprint**, not a direct prediction of final app size.
 
 ## Column definitions
 

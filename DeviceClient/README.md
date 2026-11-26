@@ -19,7 +19,7 @@ PingDeviceClient module simplifies device management operations for Ping AIC. It
 
 ### Installation
 
-To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` file.
 
 #### Swift Package Manager
 
@@ -29,12 +29,6 @@ Add to your `Package.swift`:
 dependencies: [
     .package(url: "https://github.com/ForgeRock/ping-ios-sdk.git", from: "<version>")
 ]
-```
-
-#### CocoaPods
-
-```ruby
-pod 'PingDeviceClient', '~> <version>'
 ```
 
 ### Import the Module

@@ -16,7 +16,7 @@
 
 ### Installation
 
-To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` file.
 
 #### Swift Package Manager
 
@@ -27,12 +27,6 @@ dependencies: [
 ```
 
 Then add the `PingOrchestrate` product to your target's dependencies.
-
-#### CocoaPods
-
-```ruby
-pod 'PingOrchestrate', '~> <version>'
-```
 
 ### Import the Module
 

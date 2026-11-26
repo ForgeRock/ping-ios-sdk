@@ -19,11 +19,11 @@ Journey is an iOS module designed to streamline Authentication and Authorization
 
 ### Installation
 
-To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` file.
 
 **Note:** `PingJourney` depends on `PingOrchestrate` (and its transitive dependencies `PingNetwork`, `PingStorage`, `PingLogger`, `PingCommons`, and `PingOidc`) which will be automatically installed.
 
-**Note:** `PingDeviceProfile` is no longer pulled in transitively via `PingJourney`. If your journeys use the `DeviceProfileCallback` node (see [Journey's Callback Customization & Extension](#journeys-callback-customization--extension)), explicitly add the `PingDeviceProfile` product to your target's dependencies (Swift Package Manager) or the `PingDeviceProfile` pod to your `Podfile` (CocoaPods).
+**Note:** `PingDeviceProfile` is no longer pulled in transitively via `PingJourney`. If your journeys use the `DeviceProfileCallback` node (see [Journey's Callback Customization & Extension](#journeys-callback-customization--extension)), explicitly add the `PingDeviceProfile` product to your target's dependencies.
 
 #### Swift Package Manager
 
@@ -34,12 +34,6 @@ dependencies: [
 ```
 
 Then add the `PingJourney` product to your target's dependencies.
-
-#### CocoaPods
-
-```ruby
-pod 'PingJourney', '~> <version>'
-```
 
 ### Import the Module
 

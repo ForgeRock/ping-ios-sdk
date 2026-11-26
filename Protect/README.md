@@ -22,10 +22,7 @@
 
 ### Installation
 
-To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
-
-> [!NOTE]
-> The module name differs depending on the dependency manager. Use **`PingProtect`** for Swift Package Manager (SPM), and **`PingOneProtect`** for CocoaPods.
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` file.
 
 #### Swift Package Manager
 
@@ -34,14 +31,6 @@ To integrate the module into your iOS project, add the following dependency to y
 ```
 
 Then add the `PingProtect` product to your target's dependencies.
-
-#### CocoaPods
-
-```ruby
-pod 'PingOneProtect', '~> <version>'
-```
-
-Replace `<version>` with the latest version of the SDK.
 
 ### Import the Module
 

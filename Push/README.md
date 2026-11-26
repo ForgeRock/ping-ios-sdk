@@ -23,7 +23,7 @@ The Push module facilitates multi-factor authentication using push notifications
 
 ### Installation
 
-To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` file.
 
 #### Swift Package Manager
 
@@ -34,12 +34,6 @@ dependencies: [
 ```
 
 Add the `PingPush` product to your target dependencies.
-
-#### CocoaPods
-
-```ruby
-pod 'PingPush', '~> <version>'
-```
 
 ### Import the Module
 

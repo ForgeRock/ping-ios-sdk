@@ -18,7 +18,7 @@ PingTamperDetector module provides comprehensive utilities for analyzing iOS dev
 
 ### Installation
 
-To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` file.
 
 #### Swift Package Manager
 
@@ -29,12 +29,6 @@ dependencies: [
 ```
 
 Then add the `PingTamperDetector` product to your target's dependencies.
-
-#### CocoaPods
-
-```ruby
-pod 'PingTamperDetector', '~> <version>'
-```
 
 ### Import the Module
 

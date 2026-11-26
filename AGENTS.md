@@ -8,14 +8,14 @@ This file provides guidance to AI coding agents (Claude Code, Cursor, GitHub Cop
 
 ## Overview
 
-This is the Ping Orchestration SDK for iOS — a modular Swift Package Manager-based SDK integrating with PingAM, Ping AIC (DaVinci), and PingOne platforms. It targets iOS 16.0+ and macOS 13.0+, uses Swift 6.0+, and supports both SPM and CocoaPods distribution.
+This is the Ping Orchestration SDK for iOS — a modular Swift Package Manager-based SDK integrating with PingAM, Ping AIC (DaVinci), and PingOne platforms. It targets iOS 16.0+ and macOS 13.0+, uses Swift 6.0+, and is distributed via Swift Package Manager.
 
 ## Platform & Toolchain
 
 - **iOS:** 16.0+
 - **macOS:** 13.0+
 - **Swift:** 6.0 (strict concurrency mode; `// swift-tools-version: 6.0` in Package.swift)
-- **Distribution:** Swift Package Manager AND CocoaPods. Every module has a matching `Ping<Module>.podspec` at the repo root that must stay in sync with `Package.swift`. Both distribution paths are equally supported — changes to one must be reflected in the other.
+- **Distribution:** Swift Package Manager only. CocoaPods distribution was removed in 2.3.0 (CocoaPods is being sunset); there are no `.podspec` files to keep in sync.
 - **Xcode:** Latest stable. The CI-pinned version is defined in `.github/workflows/build-and-test.yaml`.
 
 ## External Dependencies
@@ -145,7 +145,7 @@ PingDeviceProfile ← PingDeviceId, PingJourneyPlugin, PingTamperDetector
 
 ## Project Layout
 
-Source lives at `<ModuleName>/<ModuleName>/` (e.g. `Davinci/Davinci/`). Tests are at `<ModuleName>/<ModuleName>Tests/`. Each module also ships a `.podspec` at the repo root and a `PrivacyInfo.xcprivacy` file.
+Source lives at `<ModuleName>/<ModuleName>/` (e.g. `Davinci/Davinci/`). Tests are at `<ModuleName>/<ModuleName>Tests/`. Each module also ships a `PrivacyInfo.xcprivacy` file.
 
 The sample app workspace is `SampleApps/Ping.xcworkspace` with `PingTestHost` as the test scheme.
 
