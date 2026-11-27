@@ -21,7 +21,7 @@ The main purpose of this plugin is to decouple modules from the concrete impleme
 
 ### Installation
 
-To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` file.
 
 #### Swift Package Manager
 
@@ -33,11 +33,7 @@ dependencies: [
 
 Then add the `PingDavinciPlugin` product to your target's dependencies.
 
-#### CocoaPods
-
-```ruby
-pod 'PingDavinciPlugin', '~> <version>'
-```
+In an app project without a `Package.swift`, use File → Add Package Dependencies… with the repository URL and select the module's product.
 
 ### Import the Module
 

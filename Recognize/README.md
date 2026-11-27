@@ -21,7 +21,7 @@
 
 ### Installation
 
-To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile`.
+To integrate the module into your iOS project, add the following dependency to your `Package.swift`.
 
 #### Swift Package Manager
 
@@ -31,14 +31,7 @@ To integrate the module into your iOS project, add the following dependency to y
 
 Then add the `PingRecognize` product to your target's dependencies.
 
-#### CocoaPods
-
-```ruby
-pod 'PingRecognize', '~> <version>'
-pod 'PingJourney',   '~> <version>'
-```
-
-Replace `<version>` with the latest version of the SDK.
+In an app project without a `Package.swift`, use File → Add Package Dependencies… with the repository URL and select the module's product.
 
 ### Import the Module
 

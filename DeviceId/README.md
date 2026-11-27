@@ -20,7 +20,7 @@ The core implementation, `DefaultDeviceIdentifier`, is built as a Swift `actor` 
 
 ### Installation
 
-To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` file.
 
 #### Swift Package Manager
 
@@ -30,13 +30,7 @@ To integrate the module into your iOS project, add the following dependency to y
 
 Select the `PingDeviceId` library from the list of package products.
 
-#### CocoaPods
-
-```ruby
-pod 'PingDeviceId', '~> <version>'
-```
-
-Replace `<version>` with the latest version of the SDK.
+In an app project without a `Package.swift`, use File → Add Package Dependencies… with the repository URL and select the module's product.
 
 ### Import the Module
 

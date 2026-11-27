@@ -253,7 +253,7 @@ generated = """\
 //  "Identify your iPhone/iPad model" support articles. Identifiers without a
 //  verified commercial name are intentionally omitted (they resolve to nil at
 //  runtime). Identifiers of devices that cannot run iOS 16 — the SDK's
-//  deployment target (Package.swift / podspec) — are excluded as unreachable.
+//  deployment target (Package.swift) — are excluded as unreachable.
 //
 
 import Foundation

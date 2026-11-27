@@ -18,7 +18,7 @@ The Commons module provides the core foundation and shared functionality for all
 
 ### Installation
 
-The Commons module is typically included as a transitive dependency when you add other modules using it. However, you can also add it explicitly into your iOS project, add the dependency to your `Package.swift` or `Podfile` file.
+The Commons module is typically included as a transitive dependency when you add other modules using it. However, you can also add it explicitly into your iOS project, add the dependency to your `Package.swift` file.
 
 **Dependencies:** PingCommons depends on `PingLogger` which will be automatically installed.
 
@@ -32,11 +32,7 @@ dependencies: [
 
 Then add the `PingCommons` product to your target's dependencies.
 
-#### CocoaPods
-
-```ruby
-pod 'PingCommons', '~> <version>'
-```
+In an app project without a `Package.swift`, use File → Add Package Dependencies… with the repository URL and select the module's product.
 
 ## Usage
 

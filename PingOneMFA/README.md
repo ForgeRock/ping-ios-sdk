@@ -65,6 +65,8 @@ dependencies: [
 
 Then add `PingOneMFA` to your target's dependencies.
 
+In an app project without a `Package.swift`, use File → Add Package Dependencies… with the repository URL and select the `PingOneMFA` product.
+
 ---
 
 ## Setup and Configuration

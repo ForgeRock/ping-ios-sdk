@@ -19,7 +19,7 @@ The PingBinding Module provides device binding and signing capabilities for nati
 
 ### Installation
 
-To integrate the module into your iOS project, add the following dependency to your `Package.swift` or `Podfile` file.
+To integrate the module into your iOS project, add the following dependency to your `Package.swift` file.
 
 #### Swift Package Manager
 
@@ -31,11 +31,7 @@ dependencies: [
 
 Then add the `PingBinding` product to your target's dependencies.
 
-#### CocoaPods
-
-```ruby
-pod 'PingBinding', '~> <version>'
-```
+In an app project without a `Package.swift`, use File → Add Package Dependencies… with the repository URL and select the module's product.
 
 ### Import the Module
 
@@ -49,11 +45,11 @@ PingBinding has the following dependencies which will be automatically installed
 
 | Dependency | Version | Description |
 |------------|---------|-------------|
-| `PingOrchestrate` | ~> 2.2.0 | Core orchestration framework |
-| `PingJourneyPlugin` | ~> 2.2.0 | Journey-based authentication flow management |
-| `PingCommons` | ~> 2.2.0 | Common utilities including JWT signing |
-| `PingStorage` | ~> 2.2.0 | Secure storage capabilities |
-| `PingLogger` | ~> 2.2.0 | Logging framework |
+| `PingOrchestrate` | ~> 2.3.0 | Core orchestration framework |
+| `PingJourneyPlugin` | ~> 2.3.0 | Journey-based authentication flow management |
+| `PingCommons` | ~> 2.3.0 | Common utilities including JWT signing |
+| `PingStorage` | ~> 2.3.0 | Secure storage capabilities |
+| `PingLogger` | ~> 2.3.0 | Logging framework |
 
 These dependencies provide the foundation for device binding operations, including secure key storage, JWT signing, and authentication flow management.
 
