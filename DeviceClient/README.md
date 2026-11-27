@@ -31,6 +31,10 @@ dependencies: [
 ]
 ```
 
+Then add the `PingDeviceClient` product to your target's dependencies.
+
+In an app project without a `Package.swift`, use File → Add Package Dependencies… with the repository URL and select the `PingDeviceClient` product.
+
 ### Import the Module
 
 ```swift

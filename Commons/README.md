@@ -32,6 +32,8 @@ dependencies: [
 
 Then add the `PingCommons` product to your target's dependencies.
 
+In an app project without a `Package.swift`, use File → Add Package Dependencies… with the repository URL and select the module's product.
+
 ## Usage
 
 The Commons module is not intended to be used directly by applications. Instead, it provides the underlying functionality for the other modules. For usage examples, please refer to the documentation for the specific module you are using.

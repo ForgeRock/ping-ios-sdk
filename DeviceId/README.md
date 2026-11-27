@@ -30,6 +30,8 @@ To integrate the module into your iOS project, add the following dependency to y
 
 Select the `PingDeviceId` library from the list of package products.
 
+In an app project without a `Package.swift`, use File → Add Package Dependencies… with the repository URL and select the module's product.
+
 ### Import the Module
 
 ```swift

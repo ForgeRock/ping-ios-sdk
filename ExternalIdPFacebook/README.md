@@ -33,6 +33,8 @@ To integrate the module into your iOS project, add the following dependency to y
 
 Then add the `PingExternalIdPFacebook` product to your target's dependencies.
 
+In an app project without a `Package.swift`, use File → Add Package Dependencies… with the repository URL and select the module's product.
+
 ### Import the Module
 
 ```swift

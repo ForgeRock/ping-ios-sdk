@@ -34,6 +34,8 @@ dependencies: [
 
 Then add the `PingNetwork` product to your target's dependencies.
 
+In an app project without a `Package.swift`, use File → Add Package Dependencies… with the repository URL and select the module's product.
+
 ### Import the Module
 
 ```swift
